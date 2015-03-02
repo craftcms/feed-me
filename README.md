@@ -75,15 +75,21 @@ When running the feed task multiple times, there may or may not be the same data
 
 You may choose multiple fields to determine if an entry is a duplicate. Most commonly, you'll want to compare the `Title` field, but can be any fields you require.
 
-**Add Entries:**Existing entries will be skipped and left untouched, new entries however, will be added to the section. Use case: Feed aggregation, blog entries, etc.
+**Add Entries:**
+
+Existing entries will be skipped and left untouched, new entries however, will be added to the section. Use case: Feed aggregation, blog entries, etc.
 
 _"I want to keep existing entries untouched but add new ones."_
 
-**Update Entries:**Existing entries will have their fields updated with data from this feed. Use case: Any feed which needs to be kept up to date.
+**Update Entries**
+
+Existing entries will have their fields updated with data from this feed. Use case: Any feed which needs to be kept up to date.
 
 _"I want to update existing entries and add new ones."_
 
-**Delete Entries:**Delete all existing entries in this section, adding only entries from this feed. **Be careful.** Use case: Events, or when only data from the current feed is required.
+**Delete Entries**
+
+Delete all existing entries in this section, adding only entries from this feed. **Be careful.** Use case: Events, or when only data from the current feed is required.
 
 _"I want only the entries from this feed in this section."_
 
