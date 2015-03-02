@@ -20,7 +20,8 @@ This is particularly useful if you wish to setup a Cron job to continually fetch
 - Add the `feedme` directory into your `craft/plugins` directory.
 - Navigate to Settings -> Plugins and click the "Install" button.
 
-### Plugin options
+**Plugin options**
+
 - Change the plugin name as it appear in the CP navigation.
 - Set the default cache (for calls using the template tag only).
 
@@ -63,7 +64,9 @@ Feed Me supports mapping data from your feeds to the following Fieldtypes:
 - Users (existing users only)
 
 **Assets:** Only supports mapping existing assets to this entry. Must provide filename (without extension) to successfully map. 
+
 **Entries:** Only supports mapping existing entries to this entry. The feed field must contain either the Title or Slug of the entry to successfully map. 
+
 **Users:** Only supports mapping existing users to this entry. The feed field must contain either the users email or username to successfully map. 
 
 ### Duplication Handling
@@ -72,17 +75,20 @@ When running the feed task multiple times, there may or may not be the same data
 
 You may choose multiple fields to determine if an entry is a duplicate. Most commonly, you'll want to compare the `Title` field, but can be any fields you require.
 
-####Add Entries
+**Add Entries**
+
 Existing entries will be skipped and left untouched, new entries however, will be added to the section. Use case: Feed aggregation, blog entries, etc.
 
 _"I want to keep existing entries untouched but add new ones."_
 
-####Update Entries
+**Update Entries**
+
 Existing entries will have their fields updated with data from this feed. Use case: Any feed which needs to be kept up to date.
 
 _"I want to update existing entries and add new ones."_
 
-####Delete Entries
+**Delete Entries**
+
 Delete all existing entries in this section, adding only entries from this feed. **Be careful.** Use case: Events, or when only data from the current feed is required.
 
 _"I want only the entries from this feed in this section."_
@@ -139,14 +145,14 @@ If you're looking to consume REST feeds, APIs or other third-party platforms (Fa
 - Batch processing for very long feeds
 - Support authentication for feed access (Basic, OAuth, Token)
 
-Have a suggestion? We'd love to hear about it! [Make a suggestion](https://github.com/engram-design/feed-me/issues)
+Have a suggestion? We'd love to hear about it! [Make a suggestion](https://github.com/engram-design/FeedMe/issues)
 
 ## Bugs, feature requests, support
 
-Found a bug? Have a suggestion? [Submit an issue](https://github.com/engram-design/feed-me/issues)
+Found a bug? Have a suggestion? [Submit an issue](https://github.com/engram-design/FeedMe/issues)
 
 ## Thanks / Contributions
 
-A massive thanks to [Bob Olde Hampsink](https://github.com/boboldehampsink) and his amazing work on the [Import](https://github.com/boboldehampsink/import) which this plugin is clearly influenced by, and [Clearbold](https://github.com/clearbold) for [Craft Import](https://github.com/clearbold/craftimport).
+A massive thanks to [Bob Olde Hampsink](https://github.com/boboldehampsink) and his amazing work on the [Import](https://github.com/boboldehampsink/import) plugin, which this plugin is clearly influenced by, and [Clearbold](https://github.com/clearbold) for [Craft Import](https://github.com/clearbold/craftimport).
 
 [Pixel & Tonic](https://github.com/pixelandtonic) for their amazing support, assistance, and of course for creating Craft.
