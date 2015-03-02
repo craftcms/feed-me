@@ -1,0 +1,44 @@
+{% extends "_layouts/cp" %}
+
+{% set crumbs = [
+    { label: craft.feedme.name, url: url('feedme') },
+    { label: "Logs"|t, url: url('feedme/logs') }
+] %}
+
+{% set title = craft.feedme.name %}
+
+{% set tabs = {
+    overview: { label: "Feeds"|t, url: url('feedme/feeds') },
+    logs: { label: "Logs"|t, url: url('feedme/logs') },
+} %}
+
+{% set selectedTab = 'logs' %}
+
+{% set content %}
+    <table id="logs" class="data fullwidth collapsible">
+        <thead>
+            <tr>
+                <th scope="col">{{ "Feed Name"|t }}</th>
+                <th scope="col">{{ "Feed URL"|t }}</th>
+                <th scope="col">{{ "Duplicates"|t }}</th>
+                <th scope="col">{{ "Feed items"|t }}</th>
+                <th scope="col">{{ "Start"|t }}</th>
+                <th scope="col">{{ "Finish"|t }}</th>
+                <th scope="col">{{ "Log"|t }}</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for item in craft.feedme.logs %}
+            <tr>
+                <td><a href="feeds/{{ item.feed.id }}">{{ item.feed.name|t }}</a></td>
+                <td>{{ item.feed.feedUrl }}</td>
+                <td>{{ item.feed.duplicateHandle | capitalize }}</td>
+                <td>{{ item.items }}</td>
+                <td>{{ item.dateCreated | datetime }}</td>
+                <td>{{ item.dateUpdated | datetime }}</td>
+                <td><a href="logs/{{ item.id }}">View Log</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endset %}

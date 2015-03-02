@@ -1,0 +1,77 @@
+{% extends "_layouts/cp" %}
+
+{% set crumbs = [
+    { label: craft.feedme.name, url: url('feedme') },
+    { label: "Feeds"|t, url: url('feedme/feeds') }
+] %}
+
+{% set title = craft.feedme.name %}
+
+{% set tabs = {
+    overview: { label: "Feeds"|t, url: url('feedme/feeds') },
+    logs: { label: "Logs"|t, url: url('feedme/logs') },
+} %}
+
+{% set selectedTab = 'overview' %}
+
+{% set content %}
+    <div id="nofeeds"{% if feeds %} class="hidden"{% endif %}>
+        <p>{{ "No feeds exist yet."|t }}</p>
+    </div>
+
+    {% if feeds|length %}
+        <table id="feeds" class="data fullwidth collapsible">
+            <thead>
+                <th scope="col">{{ "ID"|t }}</th>
+                <th scope="col">{{ "Name"|t }}</th>
+                <th scope="col">{{ "Type"|t }}</th>
+                <th scope="col">{{ "Feed URL"|t }}</th>
+                <th scope="col">{{ "Section"|t }}</th>
+                <th scope="col">{{ "Entry Type"|t }}</th>
+                <th scope="col">{{ "Duplicates"|t }}</th>
+                <th scope="col">{{ "Tasks"|t }}</th>
+                <th scope="col">{{ "Delete"|t }}</th>
+            </thead>
+            <tbody>
+                {% for feed in feeds %}
+                    {% set section = craft.sections.getSectionById(feed.section) %}
+
+                    <tr data-id="{{ feed.id }}" data-name="{{ feed.name|t }}">
+                        <td>{{ feed.id }}</td>
+                        <td><a href="{{ url('feedme/feeds/' ~ feed.id) }}">{{ feed.name|t }}</a></td>
+                        <td>{{ feed.feedType | upper }}</td>
+                        <td>{{ feed.feedUrl }}</td>
+                        <td>{{ (section | length > 0) ? section.name : '' }}</td>
+                        <td>
+                            {% if section | length > 0 %}
+                                {% set entryTypes = section.getEntryTypes('id') %}
+                                {{ entryTypes[feed.entrytype].name }}
+                            {% endif %}
+                        </td>
+                        <td>{{ feed.duplicateHandle | capitalize }}</td>
+                        <td><a href="{{ url('feedme/runTask/' ~ feed.id) }}">{{ 'Run Task'|t }}</a></td>
+                        <td><a class="delete icon" title="{{ 'Delete'|t }}" role="button"></a></td>
+                    </tr>
+                   
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    <div id="newcalendarcontainer" class="buttons">
+        <a href="{{ url('feedme/feeds/new') }}" class="btn submit add icon">{{ "New feed"|t }}</a>
+    </div>
+{% endset %}
+
+
+{% set js %}
+    var adminTable = new Craft.AdminTable({
+        tableSelector: '#feeds',
+        noObjectsSelector: '#nofeeds',
+        newObjectBtnSelector: '#newfeedcontainer',
+        deleteAction: 'feedMe/feeds/deleteFeed',
+        confirmDeleteMessage: '{{ "Are you sure you want to delete “{name}”?"|t }}'
+    });
+{% endset %}
+{% includeJs js %}
+

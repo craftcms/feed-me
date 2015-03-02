@@ -1,0 +1,120 @@
+{% extends "_layouts/cp" %}
+
+{% includeCssResource 'feedme/css/feedme.css' %}
+{% includeJsResource 'feedme/js/feedme.js' %}
+
+{% set crumbs = [
+	{ label: craft.feedme.name|t, url: url('feedme') },
+] %}
+
+{% if feed.id %}
+	{% set crumbs = crumbs | merge([
+		{ label: feed.name|t, url: url('feedme/feeds/' ~ feed.id) },
+	]) %}
+{% endif %}
+
+{% set title = (feed.id) ? feed.name : 'Create a new feed'|t %}
+
+{% import "_includes/forms" as forms %}
+
+{% block content %}
+	<form method="post" accept-charset="UTF-8" data-saveshortcut="1">
+		<input type="hidden" name="action" value="">
+		{% if feed.id %}<input type="hidden" name="feedId" value="{{ feed.id }}">{% endif %}
+
+		{{ forms.textField({
+			first: true,
+			label: "Name"|t,
+			instructions: "What this feed will be called in the CP."|t,
+			id: 'name',
+			name: 'name',
+			value: feed.name,
+			errors: feed.getErrors('name'),
+			autofocus: true,
+			required: true,
+			translatable: true,
+		}) }}
+
+		{{ forms.textField({
+			label: "Feed URL"|t,
+			instructions: "Can be a file on the local file system or from a website site url (http://...)."|t,
+			id: 'feedUrl',
+			name: 'feedUrl',
+			value: feed.feedUrl,
+			errors: feed.getErrors('feedUrl'),
+			required: true,
+		}) }}
+
+		{{ forms.selectField({
+			label: "Feed Type" | t,
+			instructions: 'Choose what type of feed you\'re retrieving. Select XML Feed if unsure.'|t,
+			id: 'feedType',
+			name: 'feedType',
+			options: {'xml': 'XML Feed', 'rss': 'RSS Feed', 'atom': 'ATOM Feed'},
+			value: feed.feedType,
+			required: true,
+		}) }}
+
+		{{ forms.textField({
+			label: "Primary XML Element"|t,
+			instructions: "The primary XML element that contains the records you intend to parse. "|t,
+			id: 'primaryElement',
+			class: 'code',
+			name: 'primaryElement',
+			value: feed.primaryElement,
+			errors: feed.getErrors('primaryElement'),
+			required: true,
+		}) }}
+
+		<hr>
+
+		{% set sections = craft.feedme.getGroups() %}
+
+		{{ forms.selectField({
+			label: "Section" | t,
+			instructions: 'Choose the Section you want to save your feed data to.'|t,
+			id: 'section',
+			name: 'section',
+			options: craft.feedme.getSelectOptions(sections),
+			value: feed.section,
+			required: true,
+		}) }}
+
+		{% if craft.sections.getSectionById(feed.section) | length > 0 %}
+			{% set entrytypes = (feed.id) ? craft.sections.getSectionById(feed.section).getEntryTypes() : '' %}
+		{% else %}
+			{% set entrytypes = [] %}
+		{% endif %}
+
+		{{ forms.selectField({
+			label: "Entry Type" | t,
+			instructions: 'Choose the Entry Type you want to save your feed data to.'|t,
+			id: 'entrytype',
+			name: 'entrytype',
+			options: craft.feedme.getSelectOptions(entrytypes),
+			value: feed.entrytype,
+			required: true,
+		}) }}
+
+		<hr>
+
+		{{ forms.selectField({
+			label: "Duplicate Entry Action <span class='info'><span style='display:inline-block;'><strong>Add Entries:</strong> Duplicate entries will be skipped, new entries however, will be added. <em>\"I want to keep existing entries untouched but add new ones.\"</em></span><span style='display:inline-block;'><strong>Update Entries:</strong> Select fields to compare duplicate entries with, updating all other fields.<em>\"I want to update existing entries and add new ones.\"</em></span><span style='display:inline-block;'><strong>Delete Entries:</strong> Delete all existing entries in this section, adding only entries from this feed. Be careful.<em>\"I want only the entries from this feed in this section.\"</em></span></span>" | t,
+			instructions: 'Choose how to handle duplicate records.',
+			id: 'duplicateHandle',
+			name: 'duplicateHandle',
+			options: {'add': 'Add Entries', 'update': 'Update Entries', 'delete': 'Delete Entries'},
+			value: feed.duplicateHandle,
+			required: true,
+		}) }}
+
+		<hr>
+
+		<div class="buttons">
+			<input type="submit" data-action="FeedMe/feeds/saveFeed" class="btn submit" value="{{ 'Save'|t }}">
+			<input type="submit" data-action="FeedMe/feeds/mapFeed" class="btn submit" value="{{ 'Save & Continue'|t }}">
+		</div>
+	</form>
+{% endblock %}
+
+

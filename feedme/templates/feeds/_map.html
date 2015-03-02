@@ -1,0 +1,143 @@
+{% extends "_layouts/cp" %}
+
+{% includeCssResource 'feedme/css/feedme.css' %}
+{% includeJsResource 'feedme/js/feedme.js' %}
+
+{% macro generateOption(label, value, key, feed) %}
+	{% set selected = '' %}
+	{% if key in feed.fieldMapping | keys %}
+	    {% set selected = (feed.fieldMapping[key] == value) ? 'selected' : '' %}
+	{% endif %}
+
+	<option {{ selected }} value="{{ value }}">{{ label }}</option>
+{% endmacro %}
+{% from _self import generateOption %}
+
+{% set crumbs = [
+	{ label: craft.feedme.name|t, url: url('feedme') },
+	{ label: feed.name|t, url: url('feedme/feeds/' ~ feed.id) },
+] %}
+
+{% set title = feed.name %}
+
+{% import "_includes/forms" as forms %}
+
+{% block content %}
+	<form method="post" accept-charset="UTF-8" data-saveshortcut="1">
+		<input type="hidden" name="action" value="">
+		{% if feed.id %}<input type="hidden" name="feedId" value="{{ feed.id }}">{% endif %}
+
+		{# list all existing fields from the previous step - needs to be present for model to save #}
+		{% for field, value in feed %}
+			{% if field != 'fieldMapping' and field != 'fieldUnique' %}
+				<input type="hidden" name="{{ field }}" value="{{ value }}">
+			{% endif %}
+		{% endfor %}
+
+		{% set entrytypes = craft.sections.getSectionById(feed.section).getEntryTypes() %}
+		    
+		<p>{{ 'Choose the destination fields for your feed data. "' ~ entrytypes[0].titleLabel ~ '" is always required.'|t }}</p>
+
+		{% if feed.duplicateHandle != 'delete' %}
+		<p>{{ 'Select the field(s) to use to check for existing duplicate entries to update.'|t }}</p>
+		{% endif %}
+
+		<table class="data">
+		    <tr>
+		        <th>{{ "Element name"|t }}</th>
+		        <th>{{ "Field name"|t }}</th>
+		        {% if feed.duplicateHandle != 'delete' %}
+		        <th>{{ "Duplicate field"|t }} <span class="info">{{ "Use this field to check for duplicate entries."|t }}</span></th>
+		        {% endif %}
+		        <th>{{ "Value"|t }}</th>
+		    </tr>
+
+			{% for key, data in feedData[0] %}
+			    <tr>
+			        <td>
+			            <div class="field">
+			                <div class="heading">
+			                    <label><code>&lt;{{ key }}&gt;</code></label>
+			                    <div class="instructions">
+			                        <p>{{ "will be imported into:"|t }}</p>                
+			                    </div>
+			                </div>
+			            </div>
+			        </td>
+			        
+			        <td>
+			            <div class="field">
+			                <div class="input">
+			                    <div class="select mapper">
+			                        <select name="fieldMapping[{{ key }}]" class="feedFields">
+			                            <option value="noimport">{{ "Don't import"|t }}</option>
+						                {% for entrytype in entrytypes %}
+						                    {% if loop.first %}
+						                    	{{ generateOption(entrytype.titleLabel ~ '*', 'title', key, feed) }}
+						                    	{{ generateOption("Slug"|t, 'slug', key, feed) }}
+						                    	{{ generateOption("Parent Entry"|t, 'parentId', key, feed) }}
+						                    	{{ generateOption("Ancestors"|t, 'ancestors', key, feed) }}
+						                    	{{ generateOption("Author"|t, 'authorId', key, feed) }}
+						                    	{{ generateOption("Post Date"|t, 'postDate', key, feed) }}
+						                    	{{ generateOption("Expiry Date"|t, 'expiryDate', key, feed) }}
+						                    	{{ generateOption("Enabled"|t, 'enabled', key, feed) }}
+						                    {% endif %}
+
+						                    {% for tab in craft.fields.getLayoutById(entrytype.fieldLayoutId).getTabs() %}
+					                            <optgroup label="{{ tab.name }}">
+
+						                        {% for field in tab.getFields() %}
+						                            {% set f = field.getField() %}
+						                            {% set label = (f.required) ? f.name ~ '*' : f.name %}
+						                            {{ generateOption(label, f.handle, key, feed) }}
+						                        {% endfor %}
+
+					                            </optgroup>
+						                    {% endfor %}
+						                {% endfor %}
+			                        </select>
+			                    </div>
+			                </div>
+			            </div>
+			        </td>
+
+			        {% if feed.duplicateHandle != 'delete' %}
+				        <td class="duplicateHandle">
+					        {{ forms.checkboxField({
+					        	label: 'Check for duplicate',
+					            name: "fieldUnique[" ~ key ~ "]",
+					            class: "fieldUnique",
+					            checked: loop.first,
+					        }) }}
+				        </td>
+			        {% endif %}
+
+			        <td width="60%">
+			            <div class="field">
+			                <div class="heading">
+			                    <div class="instructions">
+			                    	{% if data is not iterable %}
+				                        <p>eg: {{ data }}</p>
+			                    	{% else %}
+				                        <p>eg: [{{ data | join('], [') }}]</p>
+			                        {% endif %}
+			                    </div>
+			                </div>
+			            </div>
+			        </td>
+
+			    </tr>
+		    {% endfor %}
+		</table>
+
+		<hr>
+
+		<div class="buttons">
+			<a href="javascript: window.history.go(-1)" class="btn submit">{{ 'Back'|t }}</a>
+			<input type="submit" data-action="FeedMe/feeds/saveFeed" class="btn submit" value="{{ 'Save'|t }}">
+			<input type="submit" data-action="FeedMe/feeds/performFeed" class="btn submit" value="{{ 'Save & Import'|t }}">
+		</div>
+	</form>
+{% endblock %}
+
+
