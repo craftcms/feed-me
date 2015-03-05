@@ -4,6 +4,7 @@ Feed Me is a Craft plugin which makes it easy to import entries and entry data f
 
 This is particularly useful if you wish to setup a Cron job to continually fetch data from a feed to be inserted into a section (think events, affiliate news, etc).
 
+
 ## Features
 
 - Import data from XML, RSS or ATOM feeds.
@@ -15,6 +16,7 @@ This is particularly useful if you wish to setup a Cron job to continually fetch
 - Troubleshoot feed processing issues with logs.
 - Grab feed data directly from your twig templates.
 
+
 ## Install
 
 - Add the `feedme` directory into your `craft/plugins` directory.
@@ -24,6 +26,7 @@ This is particularly useful if you wish to setup a Cron job to continually fetch
 
 - Change the plugin name as it appear in the CP navigation.
 - Set the default cache (for calls using the template tag only).
+
 
 ## Usage
 
@@ -42,17 +45,20 @@ Then, select what data from the feed you wish to capture, and what fields to map
 
 Save the feed for later, or start the import.
 
+
 ### Supported Fieldtypes
 
 Feed Me supports mapping data from your feeds to the following Fieldtypes:
 
-- Assets (existing assets only)
+**Craft**
+
+- Assets
 - Categories
 - Checkboxes
 - Color
 - Date/Time
 - Dropdown
-- Entries (existing entries only)
+- Entries
 - Lightswitch
 - Multi-Select
 - Number
@@ -61,13 +67,32 @@ Feed Me supports mapping data from your feeds to the following Fieldtypes:
 - Radio Buttons
 - Rich Text
 - Tags
-- Users (existing users only)
+- Users
 
-**Assets:** Only supports mapping existing assets to this entry. Must provide filename (without extension) to successfully map. 
+**Planned support**
+
+- Matrix
+- Table
+
+
+###Element Creation
+
+For certain elements, it may be benefitial to create the element's data, if not already created. Like if an Asset doesn't exist in your Assets collection, upload it. Similarly with Categories, and other fields.
+
+Currently, Feed Me handles the following applicable fields in these ways:
+
+**Assets:** Only supports mapping existing assets to this entry. Must provide filename (without extension) to successfully map.
+
+**Categories:** Are created if they do not exist, or mapped if they do. The value provided in the feed data must be the Name for the category.
 
 **Entries:** Only supports mapping existing entries to this entry. The feed field must contain either the Title or Slug of the entry to successfully map. 
 
+**Tags:** Are always created.
+
 **Users:** Only supports mapping existing users to this entry. The feed field must contain either the users email or username to successfully map. 
+
+We plan to include options for whether you would like to do this on a per-field basis.
+
 
 ### Duplication Handling
 
@@ -93,11 +118,13 @@ Delete all existing entries in this section, adding only entries from this feed.
 
 _"I want only the entries from this feed in this section."_
 
+
 ### Using with a Cron job
 
 Scheduling feed processing is not something thats currently built into Feed Me. Instead, you'll need to setup a Cron job, or a similar scheduled task to fire the feed processing at the desired interval. A direct link can be retrieved by copying the `Run Task` link in the CP, and appending `?direct=true` to not be redirected back to the control panel.
 
 `http://your.domain/admin/feedme/runTask/1?direct=true`
+
 
 ## Template example
 
@@ -131,6 +158,7 @@ Feeds are cached for performance (default to 60 seconds), which can be set by a 
 
 If you're looking to consume REST feeds, APIs or other third-party platforms (Facebook, Twitter, etc), I would highly recommend using [alecritson's Placid](https://github.com/alecritson/Placid) plugin, which supports a great deal more than this plugin offers.
 
+
 ## Roadmap
 
 - Support mapping for all common Craft Fieldtypes (Matrix, Table)
@@ -144,15 +172,33 @@ If you're looking to consume REST feeds, APIs or other third-party platforms (Fa
 - JSON feed support
 - Batch processing for very long feeds
 - Support authentication for feed access (Basic, OAuth, Token)
+- Support for locale's
 
 Have a suggestion? We'd love to hear about it! [Make a suggestion](https://github.com/engram-design/FeedMe/issues)
+
 
 ## Bugs, feature requests, support
 
 Found a bug? Have a suggestion? [Submit an issue](https://github.com/engram-design/FeedMe/issues)
+
 
 ## Thanks / Contributions
 
 A massive thanks to [Bob Olde Hampsink](https://github.com/boboldehampsink) and his amazing work on the [Import](https://github.com/boboldehampsink/import) plugin, which this plugin is clearly influenced by, and [Clearbold](https://github.com/clearbold) for [Craft Import](https://github.com/clearbold/craftimport).
 
 [Pixel & Tonic](https://github.com/pixelandtonic) for their amazing support, assistance, and of course for creating Craft.
+
+
+## Changelog
+
+#### 1.1
+
+- Prep for Table/Matrix mapping.
+- Better depth-mapping for feed data (was limited to depth-2).
+- Refactor field-mapping processing.
+- Set minimum Craft build.
+
+#### 1.0
+
+- Initial release.
+

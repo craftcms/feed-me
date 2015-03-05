@@ -52,7 +52,7 @@ class FeedMe_EntryService extends BaseApplicationComponent
     public function prepForElementModel(&$fields, EntryModel $element)
     {
         // Set author
-        $author = 'authorId';
+        $author = FeedMe_Element::Author;
         if (isset($fields[$author])) {
             $element->$author = intval($fields[$author]);
             unset($fields[$author]);
@@ -61,43 +61,43 @@ class FeedMe_EntryService extends BaseApplicationComponent
         }
 
         // Set slug
-        $slug = 'slug';
+        $slug = FeedMe_Element::Slug;
         if (isset($fields[$slug])) {
             $element->$slug = ElementHelper::createSlug($fields[$slug]);
             unset($fields[$slug]);
         }
 
         // Set postdate
-        $postDate = 'postDate';
+        $postDate = FeedMe_Element::PostDate;
         if (isset($fields[$postDate])) {
             $element->$postDate = DateTime::createFromString($fields[$postDate], craft()->timezone);
             unset($fields[$postDate]);
         }
 
         // Set expiry date
-        $expiryDate = 'expiryDate';
+        $expiryDate = FeedMe_Element::ExpiryDate;
         if (isset($fields[$expiryDate])) {
             $element->$expiryDate = DateTime::createFromString($fields[$expiryDate], craft()->timezone);
             unset($fields[$expiryDate]);
         }
 
         // Set enabled
-        $enabled = 'enabled';
+        $enabled = FeedMe_Element::Enabled;
         if (isset($fields[$enabled])) {
             $element->$enabled = (bool) $fields[$enabled];
             unset($fields[$enabled]);
         }
 
         // Set title
-        $title = 'title';
+        $title = FeedMe_Element::Title;
         if (isset($fields[$title])) {
             $element->getContent()->$title = $fields[$title];
             unset($fields[$title]);
         }
 
         // Set parent or ancestors
-        $parent = 'parentId';
-        $ancestors = 'ancestors';
+        $parent = FeedMe_Element::Parent;
+        $ancestors = FeedMe_Element::Ancestors;
 
         if (isset($fields[$parent])) {
            $data = $fields[$parent];

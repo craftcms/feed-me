@@ -52,7 +52,7 @@
 		        <th>{{ "Value"|t }}</th>
 		    </tr>
 
-			{% for key, data in feedData[0] %}
+			{% for key, data in feedData %}
 			    <tr>
 			        <td>
 			            <div class="field">
@@ -64,7 +64,7 @@
 			                </div>
 			            </div>
 			        </td>
-			        
+
 			        <td>
 			            <div class="field">
 			                <div class="input">
@@ -116,11 +116,7 @@
 			            <div class="field">
 			                <div class="heading">
 			                    <div class="instructions">
-			                    	{% if data is not iterable %}
-				                        <p>eg: {{ data }}</p>
-			                    	{% else %}
-				                        <p>eg: [{{ data | join('], [') }}]</p>
-			                        {% endif %}
+			                        <p>eg: {{ data }}</p>
 			                    </div>
 			                </div>
 			            </div>

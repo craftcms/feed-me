@@ -88,7 +88,7 @@ class FeedMe_FeedsController extends BaseController
 			craft()->userSession->setNotice(Craft::t('Feed saved.'));
 
 			// Get the data for the mapping screen, based on the URL provided
-	        $feedData = craft()->feedMe_feedXML->getFeed($feed->feedUrl, $feed->primaryElement, 2);
+	        $feedData = craft()->feedMe_feedXML->getFeedMapping($feed->feedUrl, $feed->primaryElement);
 
 	        if ($feedData) {
 	            $this->renderTemplate('feedme/feeds/_map', array(

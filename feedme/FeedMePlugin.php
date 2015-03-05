@@ -1,6 +1,13 @@
 <?php
 namespace Craft;
 
+// http://craftcms.stackexchange.com/questions/1097/best-way-to-use-custom-enums-in-my-plugin-templates
+include(dirname(__FILE__) . '/enums/FeedMe_Duplicate.php');
+include(dirname(__FILE__) . '/enums/FeedMe_Element.php');
+include(dirname(__FILE__) . '/enums/FeedMe_FeedType.php');
+include(dirname(__FILE__) . '/enums/FeedMe_FieldType.php');
+include(dirname(__FILE__) . '/enums/FeedMe_Status.php');
+
 class FeedMePlugin extends BasePlugin
 {
     /* --------------------------------------------------------------
@@ -17,7 +24,7 @@ class FeedMePlugin extends BasePlugin
 
     public function getVersion()
     {
-        return '1.0';
+        return '1.1';
     }
 
     public function getDeveloper()
@@ -61,6 +68,22 @@ class FeedMePlugin extends BasePlugin
 
             'feedme/logs/(?P<logsId>\d+)'       => 'feedme/logs/_log',
         );
+    }
+
+    public function onAfterInstall()
+    {
+        $minBuild = '2636';
+
+        if (craft()->getBuild() < $minBuild) {
+            craft()->plugins->disablePlugin($this->getClassHandle());
+
+            craft()->plugins->uninstallPlugin($this->getClassHandle());
+
+            craft()->userSession->setError(Craft::t('{plugin} only works on Craft build {build} or higher', array(
+                'plugin' => $this->getName(),
+                'build' => $minBuild,
+            )));
+        }
     }
 
 

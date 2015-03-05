@@ -3,7 +3,7 @@ namespace Craft;
 
 class FeedMe_FeedXMLService extends BaseApplicationComponent
 {
-	public function getFeed($url, $primaryElement, $depth = null) {
+	public function getFeed($url, $primaryElement) {
     	if (false === ($raw_content = @file_get_contents($url))) {
     		craft()->userSession->setError(Craft::t('Unable to parse Feed URL.'));
     		return false;
@@ -14,11 +14,6 @@ class FeedMe_FeedXMLService extends BaseApplicationComponent
 		if (!is_array($xml_array)) {
     		craft()->userSession->setError(Craft::t('Invalid XML.'));
     		return false;
-    	}
-
-    	// If we only want a certain depth
-    	if ($depth) {
-    		$xml_array = $this->cutArray($xml_array, $depth);
     	}
 
 		return $xml_array;
@@ -183,5 +178,41 @@ class FeedMe_FeedXMLService extends BaseApplicationComponent
 	    return false;
 	}
 
+	public function getFeedMapping($url, $primaryElement) {
+		$xml_array = $this->getFeed($url, $primaryElement);
 
+    	$xml_array = $this->getFormattedMapping($xml_array[0]);
+
+		return $xml_array;
+	}
+
+	public function getFormattedMapping($data, $sep = '') {
+		$return = array();
+
+		if ($sep != '') {
+			$sep .= '/';
+		}
+
+		if (!is_array($data)) {
+			return $data;
+		}
+
+		foreach($data as $key => $value) {
+			if (!is_array($value)) {
+				$return[$sep . $key] = $value;
+			} elseif (count($value) == 0) {
+				$return[$sep . $key . '/[...]'] = array();
+			} elseif(isset($value[0])) {
+				if (is_string($value[0])) {
+					$return[$sep . $key] = $value[0];
+				} else {
+					$return = array_merge($return, $this->getFormattedMapping($value[0], $sep . $key.'/[...]'));
+				}
+			} else {
+				$return = array_merge($return, $this->getFormattedMapping($value, $sep . $key));
+			}
+		}
+
+		return $return;
+	}
 }
