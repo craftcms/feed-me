@@ -7,8 +7,6 @@ class FeedMeService extends BaseApplicationComponent
 	{
         $canSaveEntry = true;
 
-		craft()->config->maxPowerCaptain();
-
 		// Protect from malformed data
         if (count($feed['fieldMapping']) != count($node)) {
             craft()->feedMe_logs->log($settings->logsId, Craft::t('Columns and data did not match, could be due to malformed feed.'), LogLevel::Error);

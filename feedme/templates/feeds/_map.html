@@ -25,6 +25,8 @@
 {% block content %}
 	<form method="post" accept-charset="UTF-8" data-saveshortcut="1">
 		<input type="hidden" name="action" value="">
+		{{ getCsrfInput() }}
+		
 		{% if feed.id %}<input type="hidden" name="feedId" value="{{ feed.id }}">{% endif %}
 
 		{# list all existing fields from the previous step - needs to be present for model to save #}
