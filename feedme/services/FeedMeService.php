@@ -20,11 +20,9 @@ class FeedMeService extends BaseApplicationComponent
         }
 
         // Get our field data via what we've mapped
-        foreach ($feed['fieldMapping'] as $k => $v) {
-            if (array_key_exists($k, $node)) {
-                $fields[$k] = $node[$k];
-            }
-        }
+        $count = min(count($feed['fieldMapping']), count($node));
+        $fields = array_combine(array_slice($feed['fieldMapping'], 0, $count), array_slice($node, 0, $count));
+
 
         // But don't map any fields we've said not to import
         if (isset($fields['noimport'])) { unset($fields['noimport']); }
