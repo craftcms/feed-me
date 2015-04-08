@@ -98,6 +98,7 @@ class FeedMeService extends BaseApplicationComponent
         //
 
         if ($canSaveEntry) {
+            
             // Prepare Element model (the default stuff)
             $entry = craft()->feedMe_entry->prepForElementModel($fields, $entry);
 

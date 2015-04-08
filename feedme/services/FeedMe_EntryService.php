@@ -51,6 +51,7 @@ class FeedMe_EntryService extends BaseApplicationComponent
     // Prepare reserved ElementModel values
     public function prepForElementModel(&$fields, EntryModel $element)
     {
+
         // Set author
         $author = FeedMe_Element::Author;
         if (isset($fields[$author])) {
@@ -61,7 +62,7 @@ class FeedMe_EntryService extends BaseApplicationComponent
             $user = craft()->userSession->getUser();
             $element->$author = ($element->$author ? $element->$author : ($user ? $user->id : 1));
         }
-        
+
         // Set slug
         $slug = FeedMe_Element::Slug;
         if (isset($fields[$slug])) {
@@ -72,14 +73,20 @@ class FeedMe_EntryService extends BaseApplicationComponent
         // Set postdate
         $postDate = FeedMe_Element::PostDate;
         if (isset($fields[$postDate])) {
-            $element->$postDate = DateTime::createFromString($fields[$postDate], craft()->timezone);
+            $d = date_parse($fields[$postDate]);
+            $date_string = date('Y-m-d H:i:s', mktime($d['hour'], $d['minute'], $d['second'], $d['month'], $d['day'], $d['year']));
+
+            $element->$postDate = DateTime::createFromString($date_string, craft()->timezone);
             unset($fields[$postDate]);
         }
 
         // Set expiry date
         $expiryDate = FeedMe_Element::ExpiryDate;
         if (isset($fields[$expiryDate])) {
-            $element->$expiryDate = DateTime::createFromString($fields[$expiryDate], craft()->timezone);
+            $d = date_parse($fields[$expiryDate]);
+            $date_string = date('Y-m-d H:i:s', mktime($d['hour'], $d['minute'], $d['second'], $d['month'], $d['day'], $d['year']));
+            
+            $element->$expiryDate = DateTime::createFromString($date_string, craft()->timezone);
             unset($fields[$expiryDate]);
         }
 
