@@ -145,7 +145,6 @@ class FeedMe_FeedsController extends BaseController
         //
         // DEBUG
         //
-        
         /*
 		// Get the data for the mapping screen, based on the URL provided
         $feedData = craft()->feedMe_feedXML->getFeed($feed->feedUrl, $feed->primaryElement);
@@ -153,9 +152,9 @@ class FeedMe_FeedsController extends BaseController
 
         // For direct-access debugging
 		foreach($feedData as $step => $data) {
-			craft()->feedMe->importNode($step, $data, $feed, $settings);
-		}
-		*/
+			craft()->feedMe->importNode($step, $data, $feed, (object)$settings);
+		}*/
+		
 	}
 
 }

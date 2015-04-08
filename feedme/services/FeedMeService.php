@@ -8,24 +8,29 @@ class FeedMeService extends BaseApplicationComponent
         $canSaveEntry = true;
 
 		// Protect from malformed data
-        if (count($feed['fieldMapping']) != count($node)) {
-            craft()->feedMe_logs->log($settings->logsId, Craft::t('Columns and data did not match, could be due to malformed feed.'), LogLevel::Error);
+        if (count($feed['fieldMapping'], false) != count($node, false)) {
+            if (property_exists($settings, 'logsId')) {
+                craft()->feedMe_logs->log($settings->logsId, Craft::t('Columns and data did not match, could be due to malformed feed.'), LogLevel::Error);
+            }
+
             FeedMePlugin::log(count($feed['fieldMapping']) . ' - ' . count($node), LogLevel::Error);
             FeedMePlugin::log(print_r($feed, true), LogLevel::Error);
             FeedMePlugin::log(print_r($node, true), LogLevel::Error);
-            return false;
+            //return false;
         }
 
         // Get our field data via what we've mapped
-		$fields = array_combine($feed['fieldMapping'], $node);
+        foreach ($feed['fieldMapping'] as $k => $v) {
+            if (array_key_exists($k, $node)) {
+                $fields[$k] = $node[$k];
+            }
+        }
 
         // But don't map any fields we've said not to import
         if (isset($fields['noimport'])) { unset($fields['noimport']); }
 
 		// Prepare an EntryModel (for this section and entrytype)
 		$entry = craft()->feedMe_entry->setModel($feed);
-
-
 
         //
         // Check for Add/Update/Delete for existing entries
@@ -47,11 +52,17 @@ class FeedMeService extends BaseApplicationComponent
                 try {
                     // Delete
                     if (!craft()->feedMe_entry->delete($entries)) {
-                        craft()->feedMe_logs->log($settings->logsId, Craft::t('Something went wrong while deleting entries.'), LogLevel::Error);
+                        if (property_exists($settings, 'logsId')) {
+                            craft()->feedMe_logs->log($settings->logsId, Craft::t('Something went wrong while deleting entries.'), LogLevel::Error);
+                        }
+
                         return false;
                     }
                 } catch (\Exception $e) {
-                    craft()->feedMe_logs->log($settings->logsId, Craft::t('Error: ' . $e->getMessage() . '. Check plugin log files for full error.'), LogLevel::Error);
+                    if (property_exists($settings, 'logsId')) {
+                        craft()->feedMe_logs->log($settings->logsId, Craft::t('Error: ' . $e->getMessage() . '. Check plugin log files for full error.'), LogLevel::Error);
+                    }
+
                     return false;
                 }
             }
@@ -98,7 +109,10 @@ class FeedMeService extends BaseApplicationComponent
                     return craft()->feedMe_fields->prepForFieldType($data, $handle);
                 });
             } catch (\Exception $e) {
-                craft()->feedMe_logs->log($settings->logsId, Craft::t('Field Error: ' . $e->getMessage() . '. Check plugin log files for full error.'), LogLevel::Error);
+                if (property_exists($settings, 'logsId')) {
+                    craft()->feedMe_logs->log($settings->logsId, Craft::t('Field Error: ' . $e->getMessage() . '. Check plugin log files for full error.'), LogLevel::Error);
+                }
+
                 return false;
             }
 
@@ -108,11 +122,17 @@ class FeedMeService extends BaseApplicationComponent
             try {
                 // Save the entry!
                 if (!craft()->feedMe_entry->save($entry, $feed)) {
-                    craft()->feedMe_logs->log($settings->logsId, $entry->getErrors(), LogLevel::Error);
+                    if (property_exists($settings, 'logsId')) {
+                        craft()->feedMe_logs->log($settings->logsId, $entry->getErrors(), LogLevel::Error);
+                    }
+
                     return false;
                 }
             } catch (\Exception $e) {
-                craft()->feedMe_logs->log($settings->logsId, Craft::t('Save Error: ' . $e->getMessage() . '. Check plugin log files for full error.'), LogLevel::Error);
+                if (property_exists($settings, 'logsId')) {
+                    craft()->feedMe_logs->log($settings->logsId, Craft::t('Save Error: ' . $e->getMessage() . '. Check plugin log files for full error.'), LogLevel::Error);
+                }
+
                 return false;
             }
         }

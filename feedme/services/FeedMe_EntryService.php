@@ -54,10 +54,12 @@ class FeedMe_EntryService extends BaseApplicationComponent
         // Set author
         $author = FeedMe_Element::Author;
         if (isset($fields[$author])) {
-            $element->$author = (is_numeric($fields[$author]) ? $fields[$author] : ($user = craft()->users->getUserByUsernameOrEmail($fields[$author]) ? $user->id : 1));
+            $user = craft()->users->getUserByUsernameOrEmail($fields[$author]);
+            $element->$author = (is_numeric($fields[$author]) ? $fields[$author] : ($user ? $user->id : 1));
             unset($fields[$author]);
         } else {
-            $element->$author = ($element->$author ? $element->$author : ($user = craft()->userSession->getUser() ? $user->id : 1));
+            $user = craft()->userSession->getUser();
+            $element->$author = ($element->$author ? $element->$author : ($user ? $user->id : 1));
         }
         
         // Set slug
