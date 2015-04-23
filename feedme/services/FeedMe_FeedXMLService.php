@@ -130,7 +130,7 @@ class FeedMe_FeedXMLService extends BaseApplicationComponent
 	}
 
 
-	function cutArray($array, $depth, $currDepth = 0) {
+	/*function cutArray($array, $depth, $currDepth = 0) {
 		$contains_array = false;
 
 		if ($currDepth > $depth) {
@@ -176,7 +176,7 @@ class FeedMe_FeedXMLService extends BaseApplicationComponent
 
 	function containsArray(&$array){
 	    return false;
-	}
+	}*/
 
 	public function getFeedMapping($url, $primaryElement) {
 		$xml_array = $this->getFeed($url, $primaryElement);
@@ -215,4 +215,27 @@ class FeedMe_FeedXMLService extends BaseApplicationComponent
 
 		return $return;
 	}
+
+    function getValueForNode($nodeIndex, $feedNodes)
+    {
+        if (empty($feedNodes)) {
+            return false;
+        }
+
+        if (isset($feedNodes[$nodeIndex])) {
+            return $feedNodes[$nodeIndex];
+        }
+
+        foreach ($feedNodes as $key => $val) {
+            if (is_array($val)) {
+                $return = $this->getValueForNode($nodeIndex, $val);
+
+                if ($return !== false) {
+                    return $return;
+                }
+            }
+        }
+
+        return false;
+    }	
 }

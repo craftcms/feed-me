@@ -127,9 +127,16 @@ class FeedMe_FeedsController extends BaseController
 		$feed = craft()->feedMe_feeds->getFeedById($feedId);
 
         $settings = array(
-        	'feedId' => $feedId,
+        	'feed' => $feed,
         );
-        
+
+        // If a custom URL param is provided (for direct-processing), use that instead of stored URL
+        if (craft()->request->getParam('direct') && craft()->request->getParam('url')) {
+        	$feed->feedUrl = craft()->request->getParam('url');
+        }
+
+        // Check if this is being run directly - if not, its being run from CP
+
 		// Create the import task
         craft()->tasks->createTask('FeedMe', $feed->name, $settings);
 
@@ -139,15 +146,15 @@ class FeedMe_FeedsController extends BaseController
 
 	        $this->redirect('feedme/feeds');
         }
-        
+
 
 
         //
         // DEBUG
         //
-        /*
+        
 		// Get the data for the mapping screen, based on the URL provided
-        $feedData = craft()->feedMe_feedXML->getFeed($feed->feedUrl, $feed->primaryElement);
+        /*$feedData = craft()->feedMe_feedXML->getFeed($feed->feedUrl, $feed->primaryElement);
 
 
         // For direct-access debugging

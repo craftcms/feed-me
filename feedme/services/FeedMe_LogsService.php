@@ -28,7 +28,7 @@ class FeedMe_LogsService extends BaseApplicationComponent
     public function start($settings)
     {
         $logs              = new FeedMe_LogsRecord();
-        $logs->feedId      = $settings['feedId'];
+        $logs->feedId      = $settings['feed']->id;
         $logs->items       = $settings['items'];
 
         $logs->save(false);
@@ -36,25 +36,33 @@ class FeedMe_LogsService extends BaseApplicationComponent
         return $logs->id;
     }
 
-    public function log($logsId, $errors, $level)
+    public function log($settings, $errors, $level)
     {
         // Firstly, store in plugin log file (use $level to control log level)
         FeedMePlugin::log(print_r($errors, true), $level);
 
         // Save this log to the DB as well
-        if (FeedMe_LogsRecord::model()->findById($logsId)) {
-            $log = new FeedMe_LogRecord();
-            $log->logsId = $logsId;
-            $log->errors = print_r($errors, true);
+        if (isset($settings->attributes['logsId'])) {
+            $logsId = $settings->logsId;
 
-            $log->save(false);
+            if (FeedMe_LogsRecord::model()->findById($logsId)) {
+                $log = new FeedMe_LogRecord();
+                $log->logsId = $logsId;
+                $log->errors = print_r($errors, true);
+
+                $log->save(false);
+            }
         }
     }
 
-    public function end($logsId)
+    public function end($settings)
     {
-        $logs = FeedMe_LogsRecord::model()->findById($logsId);
+        if (isset($settings->attributes['logsId'])) {
+            $logsId = $settings->logsId;
 
-        $logs->save(false);
+            $logs = FeedMe_LogsRecord::model()->findById($logsId);
+
+            $logs->save(false);
+        }
     }
 }

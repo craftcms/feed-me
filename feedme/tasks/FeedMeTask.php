@@ -4,13 +4,14 @@ namespace Craft;
 class FeedMeTask extends BaseTask
 {
     private $_feed;
+    private $_logsId;
     private $_feedData;
     private $_backup;
 
     protected function defineSettings()
     {
         return array(
-            'feedId' => AttributeType::String,
+            'feed' => AttributeType::Mixed,
             'items' => AttributeType::Number,
             'logsId' => AttributeType::Number,
         );
@@ -27,7 +28,7 @@ class FeedMeTask extends BaseTask
         $settings = $this->getSettings();
 
         // Get the Feed
-        $this->_feed = craft()->feedMe_feeds->getFeedById($settings->feedId);
+        $this->_feed = $settings->feed;
 
         // Get the data for the mapping screen, based on the URL provided
         $this->_feedData = craft()->feedMe_feedXML->getFeed($this->_feed->feedUrl, $this->_feed->primaryElement);
@@ -49,12 +50,13 @@ class FeedMeTask extends BaseTask
         craft()->db->backup();
 
         // Create a new Log entry to record logs with
-        $settings->logsId = craft()->feedMe_logs->start($settings);
+        $this->_logsId = $settings->logsId = craft()->feedMe_logs->start($settings);
     }
 
     public function runStep($step)
     {
         $settings = $this->getSettings();
+        $settings->logsId = $this->_logsId;
 
         // On start
         if (!$step) {
@@ -64,15 +66,15 @@ class FeedMeTask extends BaseTask
         if (isset($this->_feedData[$step])) {
             try {
                 // Start our import
-                craft()->feedMe_logs->log($settings->logsId, Craft::t('Started importing node: ' . $step), LogLevel::Info);
+                craft()->feedMe_logs->log($settings, Craft::t('Started importing node: ' . $step), LogLevel::Info);
                 
                 // Do the import
                 craft()->feedMe->importNode($step, $this->_feedData[$step], $this->_feed, $settings);
-                
+
                 // If no exception caused above, we've a-okay!
-                craft()->feedMe_logs->log($settings->logsId, Craft::t('Finished importing node: ' . $step), LogLevel::Info);
+                craft()->feedMe_logs->log($settings, Craft::t('Finished importing node: ' . $step), LogLevel::Info);
             } catch (\Exception $e) {
-                craft()->feedMe_logs->log($settings->logsId, Craft::t('Error: ' . $e->getMessage() . '. Check plugin log files for full error.'), LogLevel::Error);
+                craft()->feedMe_logs->log($settings, Craft::t('FeedMeError: ' . $e->getMessage() . '. Check plugin log files for full error.'), LogLevel::Error);
                 return false;
             }
         }
@@ -88,6 +90,6 @@ class FeedMeTask extends BaseTask
     public function finish() {
         $settings = $this->getSettings();
 
-        craft()->feedMe_logs->end($settings->logsId);
+        craft()->feedMe_logs->end($settings);
     }
 }

@@ -34,6 +34,8 @@ class FeedMe_FieldsService extends BaseApplicationComponent
                     $data = $this->prepNumber($data, $field); break;
                 case FeedMe_FieldType::RadioButtons:
                     $data = $this->prepRadioButtons($data, $field); break;
+                case FeedMe_FieldType::RichText:
+                    $data = $this->prepRichText($data, $field); break;
                 case FeedMe_FieldType::Table:
                     $data = $this->prepTable($data, $field); break;
                 case FeedMe_FieldType::Tags:
@@ -41,7 +43,7 @@ class FeedMe_FieldsService extends BaseApplicationComponent
                 case FeedMe_FieldType::Users:
                     $data = $this->prepUsers($data, $field); break;
 
-                // Color, Lightswitch, RichText, PlainText, PositionSelect all take care of themselves
+                // Color, Lightswitch, PlainText, PositionSelect all take care of themselves
             }
         }
 
@@ -200,6 +202,14 @@ class FeedMe_FieldsService extends BaseApplicationComponent
 
     public function prepNumber($data, $field) {
         return floatval(LocalizationHelper::normalizeNumber($data));
+    }
+
+    public function prepRichText($data, $field) {
+        if (is_array($data)) {
+            return implode($data);
+        } else {
+            return $data;
+        }
     }
 
     public function prepRadioButtons($data, $field) {

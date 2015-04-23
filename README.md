@@ -125,6 +125,10 @@ Scheduling feed processing is not something thats currently built into Feed Me. 
 
 `http://your.domain/admin/feedme/runTask/1?direct=true`
 
+You can also pass in a `url` value, which will apply your saved field mappings to a specific url. Useful if your feed URL constantly changes - but be careful to ensure the structure of the passed-in feed matches your field mappings.
+
+`http://your.domain/admin/feedme/runTask/1?direct=true&url=http://mynewfeed.com/feed.xml`
+
 
 ## Template example
 

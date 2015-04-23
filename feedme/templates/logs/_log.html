@@ -26,7 +26,7 @@
         <tbody>
         {% for item in craft.feedme.log(logsId) %}
             <tr>
-                <td>{{ item.errors | join(', ') }}</td>
+                <td>{{ item.errors | json_encode }}</td>
                 <td>{{ item.dateCreated | datetime }}</td>
             </tr>
         {% endfor %}
