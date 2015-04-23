@@ -3,6 +3,8 @@ namespace Craft;
 
 class FeedMe_FeedsController extends BaseController
 {
+	protected $allowAnonymous = array('actionRunTask');
+
 	public function actionFeedsIndex()
 	{
 		$variables['feeds'] = craft()->feedMe_feeds->getFeeds();
@@ -119,7 +121,15 @@ class FeedMe_FeedsController extends BaseController
 	public function actionRunTask(array $variables = array())
 	{
 		if (!empty($variables['feedId'])) {
-			$this->runImportTask($variables['feedId']);
+			$feedId = $variables['feedId'];
+	    } else if (craft()->request->getParam('feedId')) {
+	    	$feedId = craft()->request->getParam('feedId');
+	    } else {
+	    	$feedId = null;
+	    }
+
+	    if ($feedId) {
+			$this->runImportTask($feedId);
 	    }
 	}
 
@@ -145,7 +155,11 @@ class FeedMe_FeedsController extends BaseController
 	        craft()->userSession->setNotice(Craft::t('Feed processing started.'));
 
 	        $this->redirect('feedme/feeds');
+        } else {
+			$this->returnJson(array('success' => 'Feed Task started'));
         }
+
+
 
 
 
