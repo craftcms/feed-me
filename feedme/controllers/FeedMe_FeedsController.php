@@ -146,36 +146,50 @@ class FeedMe_FeedsController extends BaseController
         }
 
         // Check if this is being run directly - if not, its being run from CP
+        if (craft()->request->getParam('direct')) {
+        	$this->runDirectImportTask($feed, $settings);
+        } else {
+        	$this->runTaskImportTask($feed, $settings);
+        }
+	}
+
+	//
+	// Bypass creating a Task when running directly - otherwise need to manually trigger task
+	//
+	public function runDirectImportTask($feed, $settings) {
+
+    	// Being run via direct (cron)
+    	$feedData = craft()->feedMe_feedXML->getFeed($feed->feedUrl, $feed->primaryElement);
+
+    	// Cast settings as Craft Model
+    	$model = new Model(array(
+            'feed' => AttributeType::Mixed,
+            'items' => AttributeType::Number,
+            'logsId' => AttributeType::Number,
+        ));
+
+    	$model->setAttributes($settings);
+
+        // For direct-access debugging
+		foreach($feedData as $step => $data) {
+			craft()->feedMe->importNode($step, $data, $feed, $model);
+		}
+
+    	$this->returnJson(array('success' => 'Feed Task started'));
+	}
+
+	//
+	// Create a Task that handles processing the feed nicely
+	//
+	public function runTaskImportTask($feed, $settings) {
 
 		// Create the import task
         craft()->tasks->createTask('FeedMe', $feed->name, $settings);
 
         // if not using the direct param for this request, so UI stuff 
-        if (!craft()->request->getParam('direct')) {
-	        craft()->userSession->setNotice(Craft::t('Feed processing started.'));
+        craft()->userSession->setNotice(Craft::t('Feed processing started.'));
 
-	        $this->redirect('feedme/feeds');
-        } else {
-			$this->returnJson(array('success' => 'Feed Task started'));
-        }
-
-
-
-
-
-        //
-        // DEBUG
-        //
-        
-		// Get the data for the mapping screen, based on the URL provided
-        /*$feedData = craft()->feedMe_feedXML->getFeed($feed->feedUrl, $feed->primaryElement);
-
-
-        // For direct-access debugging
-		foreach($feedData as $step => $data) {
-			craft()->feedMe->importNode($step, $data, $feed, (object)$settings);
-		}*/
-		
+        $this->redirect('feedme/feeds');
 	}
 
 }
