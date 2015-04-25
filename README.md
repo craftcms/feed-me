@@ -130,17 +130,18 @@ _"I want only the entries from this feed in this section."_
 Scheduling feed processing is not something thats currently built into Feed Me. Instead, you'll need to setup a Cron job, or a similar scheduled task to fire the feed processing at the desired interval. Right-click on the 'Direct feed link' icon (next to the delete icon) on the main Feed Me page and select 'Copy Link Address'. Use one of the following to setup as a Cron Job - replacing the URL with what you just copied.
 
 ```
-/usr/bin/wget -O - -q -t 1 "http://your.domain/index.php/admin/actions/feedMe/feeds/runTask?direct=1&feedId=1"
+/usr/bin/wget -O - -q -t 1 "http://your.domain/actions/feedMe/feeds/runTask?direct=1&feedId=1&passkey=FwafY5kg3c"
 
-curl --silent --compressed "http://your.domain/index.php/admin/actions/feedMe/feeds/runTask?direct=1&feedId=1"
+curl --silent --compressed "http://your.domain/actions/feedMe/feeds/runTask?direct=1&feedId=1&passkey=FwafY5kg3c"
 
-/usr/bin/lynx -source "http://your.domain/index.php/admin/actions/feedMe/feeds/runTask?direct=1&feedId=1"
+/usr/bin/lynx -source "http://your.domain/actions/feedMe/feeds/runTask?direct=1&feedId=1&passkey=FwafY5kg3c"
 ```
 
 ### Parameters
 
 - `direct` _(required)_ - Must be set to `1` or `true`. Tells Feed Me this is a externally-triggered task.
 - `feedId` _(required)_ - The ID of the feed item you wish to process.
+- `passkey` _(required)_ - A unqiue, generated identifier for this feed. Ensures not just anyone can trigger the import.
 - `url` _(optional)_ - If your feed URL changes, you can specify it here. Ensure the structure of the feed matches your field mappings.
 
 

@@ -13,39 +13,34 @@ class FeedMeService extends BaseApplicationComponent
 		// Protect from malformed data
         if (count($feed['fieldMapping'], false) != count($node, false)) {
             craft()->feedMe_logs->log($settings, Craft::t('FeedMeError - Columns and data did not match, could be due to malformed feed.'), LogLevel::Error);
-
-            //FeedMePlugin::log(count($feed['fieldMapping']) . ' - ' . count($node), LogLevel::Error);
-            //FeedMePlugin::log(print_r($feed, true), LogLevel::Error);
-            //FeedMePlugin::log(print_r($node, true), LogLevel::Error);
-            //return false;
         }
 
         // Get our field data via what we've mapped
         $fields = array();
 
         // Start looping through all the mapped fields - checking for nested nodes
-        foreach ($feed['fieldMapping'] as $xmlNode => $destination) {
+        foreach ($feed['fieldMapping'] as $itemNode => $destination) {
 
             // Forget about any fields mapped as not to import
             if ($destination != 'noimport') {
 
                 // Split the string-based node reference into array indexes - handles nested attr
-                $indexes = explode('/', $xmlNode);
+                $indexes = explode('/', $itemNode);
 
                 // Then grab the actual value from our feed
                 $topNodeIndex = $indexes[count($indexes)-1];
-                $fieldValue = craft()->feedMe_feedXML->getValueForNode($topNodeIndex, $node);
+
+                // Fetch the proper value for the field - dependant on type of feed
+                if ($feed['feedType'] == FeedMe_FeedType::JSON) {
+                    // TODO
+
+                } else {
+                    $fieldValue = craft()->feedMe_feedXML->getValueForNode($topNodeIndex, $node);
+                }
 
                 $fields[$destination] = $fieldValue;
             }
         }
-
-        // Get our field data via what we've mapped
-        //$count = min(count($feed['fieldMapping']), count($node));
-        //$fields = array_combine(array_slice($feed['fieldMapping'], 0, $count), array_slice($node, 0, $count));
-
-        // But don't map any fields we've said not to import
-        //if (isset($fields['noimport'])) { unset($fields['noimport']); }
 
 		// Prepare an EntryModel (for this section and entrytype)
 		$entry = craft()->feedMe_entry->setModel($feed);

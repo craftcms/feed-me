@@ -29,6 +29,7 @@ class FeedMe_FeedRecord extends BaseRecord
 			)),
 			'fieldMapping'		=> array(AttributeType::Mixed),
 			'fieldUnique'		=> array(AttributeType::Mixed),
+			'passkey'			=> array(AttributeType::String),
 		);
 	}
 

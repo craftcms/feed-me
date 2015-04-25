@@ -90,5 +90,11 @@ class FeedMePlugin extends BasePlugin
     /* --------------------------------------------------------------
     * HOOKS
     * ------------------------------------------------------------ */
+
+    public function addTwigExtension()
+    {
+        Craft::import('plugins.feedme.twigextensions.UniqidTwigExtension');
+        return new UniqidTwigExtension();
+    }
  
 }

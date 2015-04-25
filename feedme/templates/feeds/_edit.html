@@ -112,6 +112,19 @@
 
 		<hr>
 
+		{{ forms.textField({
+			label: "Passkey"|t,
+			instructions: "A generated, unique string to increase security against imports being run inadvertently. No need to change this."|t,
+			id: 'passkey',
+			name: 'passkey',
+			value: (feed.passkey) ? feed.passkey : uniqid(10),
+			errors: feed.getErrors('passkey'),
+			required: true,
+			translatable: true,
+		}) }}
+
+		<hr>
+
 		<div class="buttons">
 			<input type="submit" data-action="FeedMe/feeds/saveFeed" class="btn submit" value="{{ 'Save'|t }}">
 			<input type="submit" data-action="FeedMe/feeds/mapFeed" class="btn submit" value="{{ 'Save & Continue'|t }}">

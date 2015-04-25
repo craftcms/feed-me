@@ -30,6 +30,7 @@ class FeedMe_FeedModel extends BaseModel
 			)),
 			'fieldMapping'		=> AttributeType::Mixed,
 			'fieldUnique'		=> AttributeType::Mixed,
+			'passkey'			=> array(AttributeType::String),
 		);
 	}
 }

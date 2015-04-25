@@ -40,6 +40,7 @@ class FeedMe_FeedsController extends BaseController
 		$feed->section			= craft()->request->getPost('section');
 		$feed->entrytype		= craft()->request->getPost('entrytype');
 		$feed->duplicateHandle	= craft()->request->getPost('duplicateHandle');
+		$feed->passkey			= craft()->request->getPost('passkey');
 
 		// Don't overwrite mappings when saving from first screen
 		if (craft()->request->getPost('fieldMapping')) {
@@ -147,7 +148,11 @@ class FeedMe_FeedsController extends BaseController
 
         // Check if this is being run directly - if not, its being run from CP
         if (craft()->request->getParam('direct')) {
-        	$this->runDirectImportTask($feed, $settings);
+	        if (craft()->request->getParam('passkey') == $feed['passkey']) {
+	        	$this->runDirectImportTask($feed, $settings);
+	        } else {
+	        	$this->returnJson(array('error' => 'Invalid Passkey'));
+	        }
         } else {
         	$this->runTaskImportTask($feed, $settings);
         }
@@ -175,7 +180,7 @@ class FeedMe_FeedsController extends BaseController
 			craft()->feedMe->importNode($step, $data, $feed, $model);
 		}
 
-    	$this->returnJson(array('success' => 'Feed Task started'));
+    	$this->returnJson(array('success' => 'Feed ID: '.$feed['id'].' - Task started'));
 	}
 
 	//
