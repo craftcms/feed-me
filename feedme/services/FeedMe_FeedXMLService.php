@@ -201,12 +201,12 @@ class FeedMe_FeedXMLService extends BaseApplicationComponent
 			if (!is_array($value)) {
 				$return[$sep . $key] = $value;
 			} elseif (count($value) == 0) {
-				$return[$sep . $key . '/[...]'] = array();
+				$return[$sep . $key . '/...'] = array();
 			} elseif(isset($value[0])) {
 				if (is_string($value[0])) {
 					$return[$sep . $key] = $value[0];
 				} else {
-					$return = array_merge($return, $this->getFormattedMapping($value[0], $sep . $key.'/[...]'));
+					$return = array_merge($return, $this->getFormattedMapping($value[0], $sep . $key.'/...'));
 				}
 			} else {
 				$return = array_merge($return, $this->getFormattedMapping($value, $sep . $key));

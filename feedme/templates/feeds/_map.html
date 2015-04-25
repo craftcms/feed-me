@@ -3,16 +3,6 @@
 {% includeCssResource 'feedme/css/feedme.css' %}
 {% includeJsResource 'feedme/js/feedme.js' %}
 
-{% macro generateOption(label, value, key, feed) %}
-	{% set selected = '' %}
-	{% if key in feed.fieldMapping | keys %}
-	    {% set selected = (feed.fieldMapping[key] == value) ? 'selected' : '' %}
-	{% endif %}
-
-	<option {{ selected }} value="{{ value }}">{{ label }}</option>
-{% endmacro %}
-{% from _self import generateOption %}
-
 {% set crumbs = [
 	{ label: craft.feedme.name|t, url: url('feedme') },
 	{ label: feed.name|t, url: url('feedme/feeds/' ~ feed.id) },
@@ -81,14 +71,14 @@
 			                        <select name="fieldMapping[{{ key }}]" class="feedFields">
 			                            <option value="noimport">{{ "Don't import"|t }}</option>
 					                    {% if loop.first %}
-					                    	{{ generateOption(entrytype.titleLabel ~ '*', 'title', key, feed) }}
-					                    	{{ generateOption("Slug"|t, 'slug', key, feed) }}
-					                    	{{ generateOption("Parent Entry"|t, 'parentId', key, feed) }}
-					                    	{{ generateOption("Ancestors"|t, 'ancestors', key, feed) }}
-					                    	{{ generateOption("Author"|t, 'authorId', key, feed) }}
-					                    	{{ generateOption("Post Date"|t, 'postDate', key, feed) }}
-					                    	{{ generateOption("Expiry Date"|t, 'expiryDate', key, feed) }}
-					                    	{{ generateOption("Enabled"|t, 'enabled', key, feed) }}
+					                    	{{ _self.generateOption(entrytype.titleLabel ~ '*', 'title', key, feed) }}
+					                    	{{ _self.generateOption("Slug"|t, 'slug', key, feed) }}
+					                    	{{ _self.generateOption("Parent Entry"|t, 'parentId', key, feed) }}
+					                    	{{ _self.generateOption("Ancestors"|t, 'ancestors', key, feed) }}
+					                    	{{ _self.generateOption("Author"|t, 'authorId', key, feed) }}
+					                    	{{ _self.generateOption("Post Date"|t, 'postDate', key, feed) }}
+					                    	{{ _self.generateOption("Expiry Date"|t, 'expiryDate', key, feed) }}
+					                    	{{ _self.generateOption("Enabled"|t, 'enabled', key, feed) }}
 					                    {% endif %}
 
 					                    {% for tab in craft.fields.getLayoutById(entrytype.fieldLayoutId).getTabs() %}
@@ -97,7 +87,13 @@
 					                        {% for field in tab.getFields() %}
 					                            {% set f = field.getField() %}
 					                            {% set label = (f.required) ? f.name ~ '*' : f.name %}
-					                            {{ generateOption(label, f.handle, key, feed) }}
+
+												{# Special case for Matrix fields #}
+												{% if f.type == 'Matrix' %}
+						                            {{ _self.generateMatrixOption(f, label, f.handle, key, feed) }}
+												{% else %}
+						                            {{ _self.generateOption(label, f.handle, key, feed) }}
+						                        {% endif %}
 					                        {% endfor %}
 
 				                            </optgroup>
@@ -141,6 +137,34 @@
 			<input type="submit" data-action="FeedMe/feeds/performFeed" class="btn submit" value="{{ 'Save & Import'|t }}">
 		</div>
 	</form>
+
 {% endblock %}
 
+{% macro generateOption(label, value, key, feed) %}
+	{% set selected = '' %}
+	{% if key in feed.fieldMapping | keys %}
+	    {% set selected = (feed.fieldMapping[key] == value) ? 'selected' : '' %}
+	{% endif %}
+
+	<option {{ selected }} value="{{ value }}">{{ label }}</option>
+{% endmacro %}
+
+{% macro generateMatrixOption(field, label, value, key, feed) %}
+	{% for blocktype in craft.feedme.getMatrixBlocks(field.id) %}
+		
+		<optgroup class="blocktype" label="{{ field.name }} > {{ blocktype.name }}">
+			{% for blocktypefield in blocktype.getFields() %}
+
+				{% set selected = '' %}
+				{% if key in feed.fieldMapping | keys %}
+				    {% set selected = (feed.fieldMapping[key] == blocktypefield.handle) ? 'selected' : '' %}
+				{% endif %}
+
+				<option {{ selected }} value="{{ blocktypefield.handle }}">{{ blocktypefield.name }}</option>
+
+		    {% endfor %}
+		</optgroup>
+
+    {% endfor %}
+{% endmacro %}
 

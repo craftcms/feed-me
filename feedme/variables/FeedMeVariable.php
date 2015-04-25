@@ -39,7 +39,11 @@ class FeedMeVariable
     }
         
 
-
+    // Helper function for handling Matrix fields
+    public function getMatrixBlocks($fieldId)
+    {
+        return craft()->matrix->getBlockTypesByFieldId($fieldId);
+    }
 
 
 
