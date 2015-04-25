@@ -1,5 +1,8 @@
 {% extends "_layouts/cp" %}
 
+{% includeCssResource 'feedme/css/font-awesome.min.css' %}
+{% includeCssResource 'feedme/css/feedme.css' %}
+
 {% set crumbs = [
     { label: craft.feedme.name, url: url('feedme') },
     { label: "Feeds"|t, url: url('feedme/feeds') }
@@ -30,7 +33,7 @@
                 <th scope="col">{{ "Entry Type"|t }}</th>
                 <th scope="col">{{ "Duplicates"|t }}</th>
                 <th scope="col">{{ "Tasks"|t }}</th>
-                <th colspan="2"></th>
+                <th colspan="2">{{ "Actions"|t }}</th>
             </thead>
             <tbody>
                 {% for feed in feeds %}
@@ -52,7 +55,7 @@
                         
                         <td><a href="{{ url('feedme/runTask/' ~ feed.id) }}">{{ 'Run Task'|t }}</a></td>
 
-                        <td class="thin action"><a href="{{ actionUrl('feedMe/feeds/runTask/', { direct: true, feedId: feed.id }) }}" target="_blank" class="settings icon" title="{{ 'Direct'|t }}" role="button"></a></td>
+                        <td class="thin action"><a href="{{ actionUrl('feedMe/feeds/runTask/', { direct: true, feedId: feed.id }) }}" target="_blank" class="direct fa-icon" title="{{ 'Direct feed link'|t }}" role="button"><i class="fa fa-external-link"></i></a></td>
                         
                         <td class="thin action"><a class="delete icon" title="{{ 'Delete'|t }}" role="button"></a></td>
                     </tr>

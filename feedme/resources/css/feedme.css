@@ -1,7 +1,23 @@
-.duplicateHandle input.checkbox + label {
+/*.duplicateHandle input.checkbox + label {
 	display: block;
-}
+}*/
 
 span.info {
 	vertical-align: top;
+}
+
+.fa {
+	vertical-align: middle;
+}
+
+.fa-icon.direct .fa-external-link {
+	color: rgba(0, 0, 0, 0.2);
+}
+
+.fa-icon.direct:hover .fa-external-link {
+	color: #0d78f2;
+}
+
+body.ltr table.data td:last-child {
+	padding-left: 10px;
 }
