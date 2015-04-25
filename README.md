@@ -1,8 +1,10 @@
 # Feed Me
 
-Feed Me is a Craft plugin which makes it easy to import entries and entry data from XML, RSS or ATOM feeds. Feeds can be setup as a task in Craft's Control Panel, or called on-demand for use in your twig templates.
+Feed Me is a Craft plugin to make it easy to import entries and entry data from XML, RSS or ATOM feeds. Feeds can be setup as a task in Craft's Control Panel, or called on-demand for use in your twig templates.
 
-This is particularly useful if you wish to setup a Cron job to continually fetch data from a feed to be inserted into a section (think events, affiliate news, etc).
+A common use-case for this plugin is to consume external feeds (news, events), but can be also used once-off for importing content when migrating from other sites.
+
+<img src="https://raw.githubusercontent.com/engram-design/FeedMe/master/screenshots/main.png" />
 
 
 ## Features
@@ -41,7 +43,11 @@ Enter the required details to configure your feed:
 - Select the Section and Entry Type for where you want to put the feed data.
 - Decide how you'd like to handle duplicate feed items (if you're going to be re-running this feed).
 
+<img src="https://raw.githubusercontent.com/engram-design/FeedMe/master/screenshots/mapping_1.png" />
+
 Then, select what data from the feed you wish to capture, and what fields to map it to, depending on your Section and Entry Type selection. Here you'll be able to choose which fields (can be more than one) you'd like to compare to determine if a feed item is a duplicate.
+
+<img src="https://raw.githubusercontent.com/engram-design/FeedMe/master/screenshots/mapping_2.png" />
 
 Save the feed for later, or start the import.
 
@@ -121,13 +127,21 @@ _"I want only the entries from this feed in this section."_
 
 ### Using with a Cron job
 
-Scheduling feed processing is not something thats currently built into Feed Me. Instead, you'll need to setup a Cron job, or a similar scheduled task to fire the feed processing at the desired interval. A direct link can be retrieved by copying the `Run Task` link in the CP, and appending `?direct=true` to not be redirected back to the control panel.
+Scheduling feed processing is not something thats currently built into Feed Me. Instead, you'll need to setup a Cron job, or a similar scheduled task to fire the feed processing at the desired interval. Right-click on the 'Direct feed link' icon (next to the delete icon) on the main Feed Me page and select 'Copy Link Address'. Use one of the following to setup as a Cron Job - replacing the URL with what you just copied.
 
-`http://your.domain/admin/feedme/runTask/1?direct=true`
+```
+/usr/bin/wget -O - -q -t 1 "http://your.domain/index.php/admin/actions/feedMe/feeds/runTask?direct=1&feedId=1"
 
-You can also pass in a `url` value, which will apply your saved field mappings to a specific url. Useful if your feed URL constantly changes - but be careful to ensure the structure of the passed-in feed matches your field mappings.
+curl --silent --compressed "http://your.domain/index.php/admin/actions/feedMe/feeds/runTask?direct=1&feedId=1"
 
-`http://your.domain/admin/feedme/runTask/1?direct=true&url=http://mynewfeed.com/feed.xml`
+/usr/bin/lynx -source "http://your.domain/index.php/admin/actions/feedMe/feeds/runTask?direct=1&feedId=1"
+```
+
+### Parameters
+
+- `direct` _(required)_ - Must be set to `1` or `true`. Tells Feed Me this is a externally-triggered task.
+- `feedId` _(required)_ - The ID of the feed item you wish to process.
+- `url` _(optional)_ - If your feed URL changes, you can specify it here. Ensure the structure of the feed matches your field mappings.
 
 
 ## Template example
@@ -177,6 +191,7 @@ If you're looking to consume REST feeds, APIs or other third-party platforms (Fa
 - Batch processing for very long feeds
 - Support authentication for feed access (Basic, OAuth, Token)
 - Support for locale's
+- Organise documentation into Wiki
 
 Have a suggestion? We'd love to hear about it! [Make a suggestion](https://github.com/engram-design/FeedMe/issues)
 
@@ -184,6 +199,8 @@ Have a suggestion? We'd love to hear about it! [Make a suggestion](https://githu
 ## Bugs, feature requests, support
 
 Found a bug? Have a suggestion? [Submit an issue](https://github.com/engram-design/FeedMe/issues)
+
+For support, either [Submit an issue](https://github.com/engram-design/FeedMe/issues) or ask for assistance in the [Craft Slack Group](https://buildwithcraft.com/community#slack).
 
 
 ## Thanks / Contributions
@@ -194,6 +211,16 @@ A massive thanks to [Bob Olde Hampsink](https://github.com/boboldehampsink) and 
 
 
 ## Changelog
+
+#### 1.2
+
+- Lots of fixes and improvements for direct-processing. Includes URL parameter, passkey and non-Task processing.
+- Fixes with logging - now more informative!
+- Improvement nested element parsing.
+- Better date parsing.
+- CSRF protection compatibility.
+- Fix for duplicate field mapping not being remembered.
+
 
 #### 1.1
 

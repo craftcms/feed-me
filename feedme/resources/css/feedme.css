@@ -1,6 +1,6 @@
-/*.duplicateHandle input.checkbox + label {
+.duplicateHandle input.checkbox + label {
 	display: block;
-}*/
+}
 
 span.info {
 	vertical-align: top;

@@ -109,7 +109,7 @@
 					        	label: 'Check for duplicate',
 					            name: "fieldUnique[" ~ key ~ "]",
 					            class: "fieldUnique",
-					            checked: loop.first,
+					            checked: feed.fieldUnique[key] is defined ? feed.fieldUnique[key] : false,
 					        }) }}
 				        </td>
 			        {% endif %}
