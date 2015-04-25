@@ -2,7 +2,7 @@
 
 Feed Me is a Craft plugin to make it easy to import entries and entry data from XML, RSS or ATOM feeds. Feeds can be setup as a task in Craft's Control Panel, or called on-demand for use in your twig templates.
 
-A common use-case for this plugin is to consume external feeds (news, events), but can be also used once-off for importing content when migrating from other sites.
+A common use-case for this plugin is to consume external feeds (news, events), but can also be used as a once-off task for importing content when migrating from other sites.
 
 <img src="https://raw.githubusercontent.com/engram-design/FeedMe/master/screenshots/main.png" />
 
@@ -180,14 +180,13 @@ If you're looking to consume REST feeds, APIs or other third-party platforms (Fa
 
 ## Roadmap
 
-- Support mapping for all common Craft Fieldtypes (Matrix, Table)
-- Full support (creation) for search-only Fieldtypes (Assets, Entries, Users)
-- Support third-party Fieldtypes through hook
+- Support mapping for all common Craft field types (Matrix, Table)
+- Full support (creation) for search-only field types (Assets, Entries, Users)
+- Support third-party field types through hook
 - Finer control over category/tag creation
 - Improved logging of import process for individual feed items
 - Allow feed processing to be reverted
-- Allow static values to be set for fields when mapping
-- Support feeds with content more than 2 levels from the start node
+- Allow static/default values to be set for fields when mapping
 - JSON feed support
 - Batch processing for very long feeds
 - Support authentication for feed access (Basic, OAuth, Token)

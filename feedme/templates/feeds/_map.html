@@ -37,8 +37,15 @@
 		{% endfor %}
 
 		{% set entrytypes = craft.sections.getSectionById(feed.section).getEntryTypes() %}
+		{% set entrytype = entrytypes[0] %}
+
+		{% for et in entrytypes %}
+			{% if et.id == feed.entrytype %}
+				{% set entrytype = et %}
+			{% endif %}
+		{% endfor %}
 		    
-		<p>{{ 'Choose the destination fields for your feed data. "' ~ entrytypes[0].titleLabel ~ '" is always required.'|t }}</p>
+		<p>{{ 'Choose the destination fields for your feed data. "' ~ entrytype.titleLabel ~ '" is always required.'|t }}</p>
 
 		{% if feed.duplicateHandle != 'delete' %}
 		<p>{{ 'Select the field(s) to use to check for existing duplicate entries to update.'|t }}</p>
@@ -73,30 +80,28 @@
 			                    <div class="select mapper">
 			                        <select name="fieldMapping[{{ key }}]" class="feedFields">
 			                            <option value="noimport">{{ "Don't import"|t }}</option>
-						                {% for entrytype in entrytypes %}
-						                    {% if loop.first %}
-						                    	{{ generateOption(entrytype.titleLabel ~ '*', 'title', key, feed) }}
-						                    	{{ generateOption("Slug"|t, 'slug', key, feed) }}
-						                    	{{ generateOption("Parent Entry"|t, 'parentId', key, feed) }}
-						                    	{{ generateOption("Ancestors"|t, 'ancestors', key, feed) }}
-						                    	{{ generateOption("Author"|t, 'authorId', key, feed) }}
-						                    	{{ generateOption("Post Date"|t, 'postDate', key, feed) }}
-						                    	{{ generateOption("Expiry Date"|t, 'expiryDate', key, feed) }}
-						                    	{{ generateOption("Enabled"|t, 'enabled', key, feed) }}
-						                    {% endif %}
+					                    {% if loop.first %}
+					                    	{{ generateOption(entrytype.titleLabel ~ '*', 'title', key, feed) }}
+					                    	{{ generateOption("Slug"|t, 'slug', key, feed) }}
+					                    	{{ generateOption("Parent Entry"|t, 'parentId', key, feed) }}
+					                    	{{ generateOption("Ancestors"|t, 'ancestors', key, feed) }}
+					                    	{{ generateOption("Author"|t, 'authorId', key, feed) }}
+					                    	{{ generateOption("Post Date"|t, 'postDate', key, feed) }}
+					                    	{{ generateOption("Expiry Date"|t, 'expiryDate', key, feed) }}
+					                    	{{ generateOption("Enabled"|t, 'enabled', key, feed) }}
+					                    {% endif %}
 
-						                    {% for tab in craft.fields.getLayoutById(entrytype.fieldLayoutId).getTabs() %}
-					                            <optgroup label="{{ tab.name }}">
+					                    {% for tab in craft.fields.getLayoutById(entrytype.fieldLayoutId).getTabs() %}
+				                            <optgroup label="{{ tab.name }}">
 
-						                        {% for field in tab.getFields() %}
-						                            {% set f = field.getField() %}
-						                            {% set label = (f.required) ? f.name ~ '*' : f.name %}
-						                            {{ generateOption(label, f.handle, key, feed) }}
-						                        {% endfor %}
+					                        {% for field in tab.getFields() %}
+					                            {% set f = field.getField() %}
+					                            {% set label = (f.required) ? f.name ~ '*' : f.name %}
+					                            {{ generateOption(label, f.handle, key, feed) }}
+					                        {% endfor %}
 
-					                            </optgroup>
-						                    {% endfor %}
-						                {% endfor %}
+				                            </optgroup>
+					                    {% endfor %}
 			                        </select>
 			                    </div>
 			                </div>
