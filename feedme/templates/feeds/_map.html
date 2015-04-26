@@ -88,9 +88,11 @@
 					                            {% set f = field.getField() %}
 					                            {% set label = (f.required) ? f.name ~ '*' : f.name %}
 
-												{# Special case for Matrix fields #}
+												{# Special case for Matrix and Table fields #}
 												{% if f.type == 'Matrix' %}
 						                            {{ _self.generateMatrixOption(f, label, f.handle, key, feed) }}
+												{% elseif f.type == 'Table' %}
+						                            {{ _self.generateTableOption(f, label, f.handle, key, feed) }}
 												{% else %}
 						                            {{ _self.generateOption(label, f.handle, key, feed) }}
 						                        {% endif %}
@@ -168,5 +170,20 @@
 		</optgroup>
 
     {% endfor %}
+{% endmacro %}
+
+{% macro generateTableOption(field, label, value, key, feed) %}
+	<optgroup label="{{ field.name }}">
+		{% for col in field.settings.columns %}
+			{% set fieldHandle = '__table__' ~ field.handle ~ '__col' ~ loop.index %}
+
+			{% set selected = '' %}
+			{% if key in feed.fieldMapping | keys %}
+			    {% set selected = (feed.fieldMapping[key] == fieldHandle) ? 'selected' : '' %}
+			{% endif %}
+			
+			<option {{ selected }} value="{{ fieldHandle }}">{{ col.heading }}</option>
+	    {% endfor %}
+    </optgroup>
 {% endmacro %}
 

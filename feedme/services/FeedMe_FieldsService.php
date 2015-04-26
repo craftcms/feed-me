@@ -22,6 +22,16 @@ class FeedMe_FieldsService extends BaseApplicationComponent
             $field = craft()->fields->getFieldByHandle($matrixInfo[0]);
         }
 
+        // Special case for Table fields
+        if (substr($handle, 0, 9) == '__table__') {
+            $handle = str_replace('__table__', '', $handle);
+
+            // [0]table - [1]column
+            $tableInfo = explode('__', $handle);
+
+            $field = craft()->fields->getFieldByHandle($tableInfo[0]);
+        }
+
         if (!is_null($field)) {
             switch ($field->type) {
                 case FeedMe_FieldType::Assets:
@@ -47,7 +57,7 @@ class FeedMe_FieldsService extends BaseApplicationComponent
                 case FeedMe_FieldType::RichText:
                     $data = $this->prepRichText($data, $field); break;
                 case FeedMe_FieldType::Table:
-                    $data = $this->prepTable($data, $field); break;
+                    $data = $this->prepTable($data, $tableInfo, $field, $handle); break;
                 case FeedMe_FieldType::Tags:
                     $data = $this->prepTags($data, $field); break;
                 case FeedMe_FieldType::Users:
@@ -258,10 +268,24 @@ class FeedMe_FieldsService extends BaseApplicationComponent
         return $fieldData;
     }
 
-    public function prepTable($data, $field) {
+    public function prepTable($data, $tableInfo, $field, &$handle) {
         $fieldData = array();
 
-        // TODO
+        // Set the original handle (index key) property to the table field handle
+        $handle = $tableInfo[0];
+
+        $rows = ArrayHelper::stringToArray($data);
+
+        foreach ($rows as $i => $row) {
+            // Check for false for checkbox
+            if ($row === 'false') {
+                $row = null;
+            }
+
+            $fieldData[$i+1] = array(
+                $tableInfo[1] => $row,
+            );
+        }
 
         return $fieldData;
     }
@@ -363,4 +387,46 @@ class FeedMe_FieldsService extends BaseApplicationComponent
 
         return $slug;
     }
+
+
+
+    // Extra functions when dealing with certain field types - mostly revolves around combining fields for Table and Matrix
+    public function handleMatrixData($newFields, $handle, $content)
+    {
+        $return = $content;
+
+        if (isset($newFields[$handle])) {
+            foreach ($newFields[$handle] as $matrixBlockKey => $matrixBlock) {
+                if (isset($content[$matrixBlockKey])) {
+                    // Merge just the fields property
+                    $merged = array_merge($content[$matrixBlockKey]['fields'], $matrixBlock['fields']);
+                    $return[$matrixBlockKey]['fields'] = $merged;
+                } else {
+                    $return = array_merge($newFields[$handle], $content);
+                }
+            }
+        }
+        
+        return $return;
+    }
+
+    public function handleTableData($newFields, $handle, $content)
+    {
+        $return = $content;
+
+        if (isset($newFields[$handle])) {
+            foreach ($newFields[$handle] as $rowId => $row) {
+                if (isset($content[$rowId])) {
+                    // Merge just the fields property
+                    $merged = array_merge($content[$rowId], $row);
+                    $return[$rowId] = array_merge($content[$rowId], $row);
+                } else {
+                    $return = array_merge($newFields[$handle], $content);
+                }
+            }
+        }
+
+        return $return;
+    }
+
 }

@@ -122,17 +122,12 @@ class FeedMeService extends BaseApplicationComponent
                     // Check to see if this is a Matrix field - need to merge any other fields mapped elsewhere in the feed
                     // along with fields we've processed already. Involved due to multiple blocks can be defined at once.
                     if (substr($oldHandle, 0, 10) == '__matrix__') {
-                        if (isset($newFields[$handle])) {
-                            foreach ($newFields[$handle] as $matrixBlockKey => $matrixBlock) {
-                                if (isset($content[$matrixBlockKey])) {
-                                    // Merge just the fields property
-                                    $merged = array_merge($content[$matrixBlockKey]['fields'], $matrixBlock['fields']);
-                                    $content[$matrixBlockKey]['fields'] = $merged;
-                                } else {
-                                    $content = array_merge($newFields[$handle], $content);
-                                }
-                            }
-                        }
+                        $content = craft()->feedMe_fields->handleMatrixData($newFields, $handle, $content);
+                    }
+
+                    // And another special case for Table data
+                    if (substr($oldHandle, 0, 9) == '__table__') {
+                        $content = craft()->feedMe_fields->handleTableData($newFields, $handle, $content);
                     }
 
                     $newFields[$handle] = $content;
@@ -145,6 +140,10 @@ class FeedMeService extends BaseApplicationComponent
 
                 return false;
             }
+
+            //echo '<pre>';
+            //print_r($fields);
+            //echo '</pre>';
 
             // Set our data for this EntryModel (our mapped data)
             $entry->setContentFromPost($fields);
