@@ -12,6 +12,16 @@ class FeedMe_FieldsService extends BaseApplicationComponent
 
         $field = craft()->fields->getFieldByHandle($handle);
 
+        // Special case for Matrix fields
+        if (substr($handle, 0, 10) == '__matrix__') {
+            $handle = str_replace('__matrix__', '', $handle);
+
+            // [0]matrix - [1]blocktype - [2]field
+            $matrixInfo = explode('__', $handle);
+
+            $field = craft()->fields->getFieldByHandle($matrixInfo[0]);
+        }
+
         if (!is_null($field)) {
             switch ($field->type) {
                 case FeedMe_FieldType::Assets:
@@ -27,7 +37,7 @@ class FeedMe_FieldsService extends BaseApplicationComponent
                 case FeedMe_FieldType::Entries:
                     $data = $this->prepEntries($data, $field); break;
                 case FeedMe_FieldType::Matrix:
-                    $data = $this->prepMatrix($data, $field); break;
+                    $data = $this->prepMatrix($data, $matrixInfo); break;
                 case FeedMe_FieldType::MultiSelect:
                     $data = $this->prepMultiSelect($data, $field); break;
                 case FeedMe_FieldType::Number:
@@ -188,10 +198,36 @@ class FeedMe_FieldsService extends BaseApplicationComponent
         return $fieldData;
     }
 
-    public function prepMatrix($data, $field) {
+    public function prepMatrix($data, $matrixInfo) {
         $fieldData = array();
 
-        // TODO
+        //$matrixHandle = $matrixInfo[0];
+        //$blocktypeHandle = $matrixInfo[1];
+        //$fieldHandle = $matrixInfo[2];
+
+        //$matrix = craft()->fields->getFieldByHandle($matrixHandle);
+        //$blocktype = craft()->matrix->getBlockTypeById($blocktypeHandle);
+        //$field = $matrixInfo[2];
+
+        //echo '<pre>';
+        //print_r($data);
+        //echo '</pre>';
+       // if (!empty($data)) {
+
+            //$categories = ArrayHelper::stringToArray($data);
+
+            //foreach ($categories as $category) {
+
+                // [0]matrix - [1]blocktype - [2]field
+                //$matrixInfo = explode('__', $handle);
+
+                // TODO
+
+                
+                //var_dump($matrixInfo);
+
+           // }
+        //}
 
         return $fieldData;
     }

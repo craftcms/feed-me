@@ -129,55 +129,6 @@ class FeedMe_FeedXMLService extends BaseApplicationComponent
 		return $elements[0];
 	}
 
-
-	/*function cutArray($array, $depth, $currDepth = 0) {
-		$contains_array = false;
-
-		if ($currDepth > $depth) {
-			return null;  
-		}
-
-		$returnArray = array();
-		foreach($array as $key => $value) {        
-			if (is_array($value)) {
-
-				// Helps to remove max-depth nodes whose children contains arrays.
-				// This is mainly to take care of deeply nested objects in the feed which (at this stage) can't be mapped effectively
-				//
-				// eg = okay: array(
-				//     'category1',
-				//     'category2',
-				// )
-				//
-				// eg = not okay: array(
-				//     'category1',
-				//     'category2' => array( // this will be removed
-				//			'category2'
-				// 		)
-				// )
-				//
-
-				if ($currDepth+1 == $depth) {
-				    foreach ($value as $i => $v) {
-				        if (is_array($v)) {
-				        	unset($value[$i]); // remove this array - keeps all other elements
-				        }
-				    }
-				}
-
-				$returnArray[$key] = $this->cutArray($value, $depth , $currDepth +1);
-			} else {
-				$returnArray[$key] = $value;
-			}
-		}
-
-		return $returnArray;
-	}
-
-	function containsArray(&$array){
-	    return false;
-	}*/
-
 	public function getFeedMapping($url, $primaryElement) {
 		$xml_array = $this->getFeed($url, $primaryElement);
 
@@ -216,26 +167,100 @@ class FeedMe_FeedXMLService extends BaseApplicationComponent
 		return $return;
 	}
 
-    function getValueForNode($nodeIndex, $feedNodes)
-    {
-        if (empty($feedNodes)) {
-            return false;
-        }
+	public function getValueForNode($element, $data)
+	{
+		if (empty($data)) {
+			return null;
+		}
 
-        if (isset($feedNodes[$nodeIndex])) {
-            return $feedNodes[$nodeIndex];
-        }
+		if (!is_string($element) OR $element == '') {
+			return null;
+		}
 
-        foreach ($feedNodes as $key => $val) {
-            if (is_array($val)) {
-                $return = $this->getValueForNode($nodeIndex, $val);
+		if (stristr($element, '/')) {
+			$original_data = $data;
 
-                if ($return !== false) {
-                    return $return;
-                }
-            }
-        }
+            $indexes = explode('/', $element);
 
-        return false;
-    }	
+			while(count($indexes) > 0) {
+				$elementNode = array_shift($indexes);
+
+				if ($elementNode === '...') {
+					if (is_array($data)) {
+
+						if (isset($data[0])) {
+							$next = array_shift($indexes);
+
+							if (!isset($next)) {
+								return $data;
+							}
+
+							$next_data = array();
+
+							foreach($data as $subkey => $subvalue) {
+								unset($data[$subkey]);
+								$next_element = $this->getValueForNode($next, $subvalue);
+
+								if (!empty($next_element)) {
+									$next_data[] = $next_element;
+								}
+							}
+
+							$data = (empty($next_data)) ? false : $next_data;
+						} else {
+							return null;
+						}
+					} else {
+						$data = (is_string($data)) ? $data : null;
+					}
+				} else {
+					$data = $this->getValueForNode($elementNode, $data);
+				}
+
+				if ($data === null) {
+					break;
+				}
+			}
+
+			if ($data !== false) {
+				return $data;
+			}
+
+			$data = $original_data;
+		}
+
+		if (isset($data[$element])) {
+			if (is_array($data[$element])) {
+				if (count($data[$element]) == 0) {
+					return '';
+				}
+
+				if (isset($data[$element][0])) {
+					return $data[$element];
+				}
+			}
+
+			return $data[$element];
+		}
+
+		if (is_array($data)) {
+			foreach ($data as $key => $val) {
+				if (is_array($val)) {
+					$return = $this->getValueForNode($element, $val);
+
+					if ($return !== null) {
+						if (is_array($return) && isset($return[0])) {
+							return $return;
+						}
+
+						return $return;
+					}
+				}
+			}
+		}
+
+		return null;
+	}
+
+
 }

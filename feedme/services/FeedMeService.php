@@ -24,23 +24,22 @@ class FeedMeService extends BaseApplicationComponent
             // Forget about any fields mapped as not to import
             if ($destination != 'noimport') {
 
-                // Split the string-based node reference into array indexes - handles nested attr
-                $indexes = explode('/', $itemNode);
-
-                // Then grab the actual value from our feed
-                $topNodeIndex = $indexes[count($indexes)-1];
-
                 // Fetch the proper value for the field - dependant on type of feed
                 if ($feed['feedType'] == FeedMe_FeedType::JSON) {
                     // TODO
 
                 } else {
-                    $fieldValue = craft()->feedMe_feedXML->getValueForNode($topNodeIndex, $node);
+                    $fieldValue = craft()->feedMe_feedXML->getValueForNode($itemNode, $node);
                 }
 
                 $fields[$destination] = $fieldValue;
             }
         }
+
+
+        echo '<pre>';
+        print_r($fields);
+        echo '</pre>';
 
 		// Prepare an EntryModel (for this section and entrytype)
 		$entry = craft()->feedMe_entry->setModel($feed);
@@ -144,4 +143,16 @@ class FeedMeService extends BaseApplicationComponent
             }
         }
 	}
+
+    public static function serialize_data_array(&$data)
+    {
+        if ( ! is_array($data)) return FALSE;
+
+        foreach($data as &$item)
+        {
+            $item = serialize($item);
+        }
+
+        return $data;
+    }
 }

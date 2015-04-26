@@ -155,12 +155,14 @@
 		<optgroup class="blocktype" label="{{ field.name }} > {{ blocktype.name }}">
 			{% for blocktypefield in blocktype.getFields() %}
 
+				{% set fieldHandle = '__matrix__' ~ field.handle ~ '__' ~ blocktype.handle ~ '__' ~ blocktypefield.handle %}
+
 				{% set selected = '' %}
 				{% if key in feed.fieldMapping | keys %}
-				    {% set selected = (feed.fieldMapping[key] == blocktypefield.handle) ? 'selected' : '' %}
+				    {% set selected = (feed.fieldMapping[key] == fieldHandle) ? 'selected' : '' %}
 				{% endif %}
 
-				<option {{ selected }} value="{{ blocktypefield.handle }}">{{ blocktypefield.name }}</option>
+				<option {{ selected }} value="{{ fieldHandle }}">{{ blocktypefield.name }}</option>
 
 		    {% endfor %}
 		</optgroup>
