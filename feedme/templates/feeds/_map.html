@@ -151,37 +151,33 @@
 
 {% macro generateMatrixOption(field, label, value, key, feed) %}
 	{% for blocktype in craft.feedme.getMatrixBlocks(field.id) %}
-		
-		<optgroup class="blocktype" label="{{ field.name }} > {{ blocktype.name }}">
-			{% for blocktypefield in blocktype.getFields() %}
+		<option disabled label="{{ field.name }} > {{ blocktype.name }}">
 
-				{% set fieldHandle = '__matrix__' ~ field.handle ~ '__' ~ blocktype.handle ~ '__' ~ blocktypefield.handle %}
+		{% for blocktypefield in blocktype.getFields() %}
 
-				{% set selected = '' %}
-				{% if key in feed.fieldMapping | keys %}
-				    {% set selected = (feed.fieldMapping[key] == fieldHandle) ? 'selected' : '' %}
-				{% endif %}
-
-				<option {{ selected }} value="{{ fieldHandle }}">{{ blocktypefield.name }}</option>
-
-		    {% endfor %}
-		</optgroup>
-
-    {% endfor %}
-{% endmacro %}
-
-{% macro generateTableOption(field, label, value, key, feed) %}
-	<optgroup label="{{ field.name }}">
-		{% for col in field.settings.columns %}
-			{% set fieldHandle = '__table__' ~ field.handle ~ '__col' ~ loop.index %}
+			{% set fieldHandle = '__matrix__' ~ field.handle ~ '__' ~ blocktype.handle ~ '__' ~ blocktypefield.handle %}
 
 			{% set selected = '' %}
 			{% if key in feed.fieldMapping | keys %}
 			    {% set selected = (feed.fieldMapping[key] == fieldHandle) ? 'selected' : '' %}
 			{% endif %}
-			
-			<option {{ selected }} value="{{ fieldHandle }}">{{ col.heading }}</option>
+
+			<option {{ selected }} value="{{ fieldHandle }}">-- {{ blocktypefield.name }}</option>
 	    {% endfor %}
-    </optgroup>
+    {% endfor %}
+{% endmacro %}
+
+{% macro generateTableOption(field, label, value, key, feed) %}
+	<option disabled label="{{ field.name }}">
+	{% for col in field.settings.columns %}
+		{% set fieldHandle = '__table__' ~ field.handle ~ '__col' ~ loop.index %}
+
+		{% set selected = '' %}
+		{% if key in feed.fieldMapping | keys %}
+		    {% set selected = (feed.fieldMapping[key] == fieldHandle) ? 'selected' : '' %}
+		{% endif %}
+		
+		<option {{ selected }} value="{{ fieldHandle }}">-- {{ col.heading }}</option>
+    {% endfor %}
 {% endmacro %}
 
