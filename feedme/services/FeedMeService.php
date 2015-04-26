@@ -36,11 +36,6 @@ class FeedMeService extends BaseApplicationComponent
             }
         }
 
-
-        echo '<pre>';
-        print_r($fields);
-        echo '</pre>';
-
 		// Prepare an EntryModel (for this section and entrytype)
 		$entry = craft()->feedMe_entry->setModel($feed);
 
@@ -143,16 +138,4 @@ class FeedMeService extends BaseApplicationComponent
             }
         }
 	}
-
-    public static function serialize_data_array(&$data)
-    {
-        if ( ! is_array($data)) return FALSE;
-
-        foreach($data as &$item)
-        {
-            $item = serialize($item);
-        }
-
-        return $data;
-    }
 }
