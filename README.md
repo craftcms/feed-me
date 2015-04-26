@@ -66,19 +66,16 @@ Feed Me supports mapping data from your feeds to the following Fieldtypes:
 - Dropdown
 - Entries
 - Lightswitch
+- Matrix
 - Multi-Select
 - Number
 - Plain Text
 - Position Select
 - Radio Buttons
 - Rich Text
+- Table
 - Tags
 - Users
-
-**Planned support**
-
-- Matrix
-- Table
 
 
 ###Element Creation
@@ -180,7 +177,6 @@ If you're looking to consume REST feeds, APIs or other third-party platforms (Fa
 
 ## Roadmap
 
-- Support mapping for all common Craft field types (Matrix, Table)
 - Full support (creation) for search-only field types (Assets, Entries, Users)
 - Support third-party field types through hook
 - Finer control over category/tag creation
@@ -211,6 +207,14 @@ A massive thanks to [Bob Olde Hampsink](https://github.com/boboldehampsink) and 
 
 
 ## Changelog
+
+#### 1.2.1
+
+- Matrix support.
+- Table support.
+- Even better element-search.
+- Remove square brackets for nested field - serialization issues. *Breaking change* you will need to re-map some fields due to this fix.
+- Fix for supporting multiple entry types when selecting fields to map.
 
 #### 1.2
 
