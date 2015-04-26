@@ -3,7 +3,7 @@ namespace Craft;
 
 class FeedMe_FieldsService extends BaseApplicationComponent
 {
-    public function prepForFieldType(&$data, $handle)
+    public function prepForFieldType(&$data, &$handle)
     {
         if (!is_array($data)) {
 	        $data = StringHelper::convertToUTF8($data);
@@ -37,7 +37,7 @@ class FeedMe_FieldsService extends BaseApplicationComponent
                 case FeedMe_FieldType::Entries:
                     $data = $this->prepEntries($data, $field); break;
                 case FeedMe_FieldType::Matrix:
-                    $data = $this->prepMatrix($data, $matrixInfo); break;
+                    $data = $this->prepMatrix($data, $matrixInfo, $handle); break;
                 case FeedMe_FieldType::MultiSelect:
                     $data = $this->prepMultiSelect($data, $field); break;
                 case FeedMe_FieldType::Number:
@@ -198,36 +198,29 @@ class FeedMe_FieldsService extends BaseApplicationComponent
         return $fieldData;
     }
 
-    public function prepMatrix($data, $matrixInfo) {
+    public function prepMatrix($data, $matrixInfo, &$handle) {
         $fieldData = array();
 
-        //$matrixHandle = $matrixInfo[0];
-        //$blocktypeHandle = $matrixInfo[1];
-        //$fieldHandle = $matrixInfo[2];
+        $matrixHandle = $matrixInfo[0];
+        $blocktypeHandle = $matrixInfo[1];
+        $fieldHandle = $matrixInfo[2];
 
-        //$matrix = craft()->fields->getFieldByHandle($matrixHandle);
-        //$blocktype = craft()->matrix->getBlockTypeById($blocktypeHandle);
-        //$field = $matrixInfo[2];
+        // Set the original handle (index key) property to the matrix field handle
+        $handle = $matrixHandle;
 
-        //echo '<pre>';
-        //print_r($data);
-        //echo '</pre>';
-       // if (!empty($data)) {
+        if (!empty($data)) {
+            $blockFieldData = ArrayHelper::stringToArray($data);
 
-            //$categories = ArrayHelper::stringToArray($data);
-
-            //foreach ($categories as $category) {
-
-                // [0]matrix - [1]blocktype - [2]field
-                //$matrixInfo = explode('__', $handle);
-
-                // TODO
-
-                
-                //var_dump($matrixInfo);
-
-           // }
-        //}
+            foreach ($blockFieldData as $i => $singleFieldData) {
+                $fieldData['new'.$blocktypeHandle.($i+1)] = array(
+                    'type' => $blocktypeHandle,
+                    'enabled' => true,
+                    'fields' => array(
+                        $fieldHandle => $singleFieldData,
+                    )
+                );
+            }
+        }
 
         return $fieldData;
     }

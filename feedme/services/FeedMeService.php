@@ -108,10 +108,38 @@ class FeedMeService extends BaseApplicationComponent
             $entry = craft()->feedMe_entry->prepForElementModel($fields, $entry);
 
             try {
-                // Hook to prepare as appropriate fieldtypes
-                array_walk($fields, function(&$data, $handle) {
-                    return craft()->feedMe_fields->prepForFieldType($data, $handle);
-                });
+                // Get data depending on field type
+                $newFields = array(); // this is because the structure of the array could change. See Matrix notes below.
+
+                // We've swapped out array_walk() because we need to modify the handle (key) for Matrix fields
+                // It's passed in as matrixfieldhandle_blocktypehandle_fieldhandle - that needs to change!
+                foreach ($fields as $oldHandle => &$data) {
+                    $handle = $oldHandle; // keep track of it - handy to know if Matrix or not
+
+                    // Grab the field's content - formatted specifically for it
+                    $content = craft()->feedMe_fields->prepForFieldType($data, $handle);
+
+                    // Check to see if this is a Matrix field - need to merge any other fields mapped elsewhere in the feed
+                    // along with fields we've processed already. Involved due to multiple blocks can be defined at once.
+                    if (substr($oldHandle, 0, 10) == '__matrix__') {
+                        if (isset($newFields[$handle])) {
+                            foreach ($newFields[$handle] as $matrixBlockKey => $matrixBlock) {
+                                if (isset($content[$matrixBlockKey])) {
+                                    // Merge just the fields property
+                                    $merged = array_merge($content[$matrixBlockKey]['fields'], $matrixBlock['fields']);
+                                    $content[$matrixBlockKey]['fields'] = $merged;
+                                } else {
+                                    $content = array_merge($newFields[$handle], $content);
+                                }
+                            }
+                        }
+                    }
+
+                    $newFields[$handle] = $content;
+                }
+
+                // Copy back to our original array
+                $fields = $newFields;
             } catch (\Exception $e) {
                 craft()->feedMe_logs->log($settings, Craft::t('Field FeedMeError: ' . $e->getMessage() . '. Check plugin log files for full error.'), LogLevel::Error);
 
