@@ -55,8 +55,10 @@
                         
                         <td><a href="{{ url('feedme/runTask/' ~ feed.id) }}">{{ 'Run Task'|t }}</a></td>
 
-                        {% set directUrl = url(craft.config.siteUrl ~ '/' ~ craft.config.actionTrigger ~ '/feedMe/feeds/runTask', { direct: true, feedId: feed.id, passkey: feed.passkey }) %}
-                        <td class="thin action"><a href="{{ directUrl }}" target="_blank" class="direct fa-icon" title="{{ 'Direct feed link'|t }}" role="button"><i class="fa fa-external-link"></i></a></td>
+                        <td class="thin action">
+                            {% set directUrl = url(craft.config.siteUrl ~ '/' ~ craft.config.actionTrigger ~ '/feedMe/feeds/runTask', { direct: true, feedId: feed.id, passkey: feed.passkey }) %}
+                            <a href="{{ directUrl }}" target="_blank" class="direct fa-icon" title="{{ 'Direct feed link'|t }}" role="button"><i class="fa fa-external-link"></i></a>
+                        </td>
                         
                         <td class="thin action"><a class="delete icon" title="{{ 'Delete'|t }}" role="button"></a></td>
                     </tr>

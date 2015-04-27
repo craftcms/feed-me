@@ -5,7 +5,8 @@ class FeedMe_FeedsService extends BaseApplicationComponent
 {
     public function getFeeds()
     {
-        return FeedMe_FeedRecord::model()->findAll();
+        $feedRecords = FeedMe_FeedRecord::model()->findAll();
+        return FeedMe_FeedModel::populateModels($feedRecords);
     }
 
 	public function getTotalFeeds()
