@@ -31,7 +31,7 @@ class FeedMeTask extends BaseTask
         $this->_feed = $settings->feed;
 
         // Get the data for the mapping screen, based on the URL provided
-        $this->_feedData = craft()->feedMe_feedXML->getFeed($this->_feed->feedUrl, $this->_feed->primaryElement);
+        $this->_feedData = craft()->feedMe_feed->getFeed($this->_feed->feedType, $this->_feed->feedUrl, $this->_feed->primaryElement);
 
         $settings->items = count($this->_feedData);
 

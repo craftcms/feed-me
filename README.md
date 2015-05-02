@@ -1,6 +1,6 @@
 # Feed Me
 
-Feed Me is a Craft plugin to make it easy to import entries and entry data from XML, RSS or ATOM feeds. Feeds can be setup as a task in Craft's Control Panel, or called on-demand for use in your twig templates.
+Feed Me is a Craft plugin to make it easy to import entries and entry data from XML, RSS, ATOM or JSON feeds. Feeds can be setup as a task in Craft's Control Panel, or called on-demand for use in your twig templates.
 
 A common use-case for this plugin is to consume external feeds (news, events), but can also be used as a once-off task for importing content when migrating from other sites.
 
@@ -9,7 +9,7 @@ A common use-case for this plugin is to consume external feeds (news, events), b
 
 ## Features
 
-- Import data from XML, RSS or ATOM feeds.
+- Import data from XML, RSS, ATOM or JSON feeds.
 - Feeds are saved to allow easy re-processing on-demand, or to be used in a Cron job.
 - Map feed data to your entry fields. See Supported Fieldtypes.
 - Duplication handling - control what happens when feeds are processed again.
@@ -39,7 +39,7 @@ Enter the required details to configure your feed:
 - Name this feed something useful so you'll remember what it does.
 - The actual URL to your feed.
 - Set the Feed Type to assist with mapping the correct elements.
-- The Primary XML Element reflects which node in the feed your data sits.
+- The Primary Element reflects which node in the feed your data sits.
 - Select the Section and Entry Type for where you want to put the feed data.
 - Decide how you'd like to handle duplicate feed items (if you're going to be re-running this feed).
 
@@ -150,6 +150,7 @@ Feeds are cached for performance (default to 60 seconds), which can be set by a 
 
 	{% set params = {
 	    url: 'http://path.to/feed/',
+	    type: 'xml',
 	    element: 'item',
 	    cache: 60,
 	} %}
@@ -168,9 +169,10 @@ Feeds are cached for performance (default to 60 seconds), which can be set by a 
 
 ### Template parameters
 
-- `url` _(string)_ - URL to the feed. Required
-- `element` _(string)_ - Element to start feed from. Useful for deep feeds. Optional
-- `cache` _(bool or number)_ - Whether or not to cache the request. If true, will use the default as set in the plugin settings, or if a number, will use that as its duration. Optional
+- `url` _(string, required)_ - URL to the feed.
+- `type` _(string, optional)_ - The type of feed you're fetching data from. Valid options are `json` or `xml` (defaults to `xml`).
+- `element` _(string, optional)_ - Element to start feed from. Useful for deep feeds.
+- `cache` _(bool or number, optional)_ - Whether or not to cache the request. If `true`, will use the default as set in the plugin settings, or if a number, will use that as its duration. Setting to `false` will disable cache completely.
 
 If you're looking to consume REST feeds, APIs or other third-party platforms (Facebook, Twitter, etc), I would highly recommend using [alecritson's Placid](https://github.com/alecritson/Placid) plugin, which supports a great deal more than this plugin offers.
 
@@ -183,7 +185,6 @@ If you're looking to consume REST feeds, APIs or other third-party platforms (Fa
 - Improved logging of import process for individual feed items
 - Allow feed processing to be reverted
 - Allow static/default values to be set for fields when mapping
-- JSON feed support
 - Batch processing for very long feeds
 - Support authentication for feed access (Basic, OAuth, Token)
 - Support for locale's
@@ -208,12 +209,16 @@ A massive thanks to [Bob Olde Hampsink](https://github.com/boboldehampsink) and 
 
 ## Changelog
 
+#### 1.2.2
+
+- JSON feed support.
+
 #### 1.2.1
 
 - Matrix support.
 - Table support.
 - Even better element-search.
-- Remove square brackets for nested field - serialization issues. *Breaking change* you will need to re-map some fields due to this fix.
+- Remove square brackets for nested field - serialization issues. **Breaking change** you will need to re-map some fields due to this fix.
 - Fix for supporting multiple entry types when selecting fields to map.
 
 #### 1.2

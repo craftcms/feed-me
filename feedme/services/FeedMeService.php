@@ -25,12 +25,7 @@ class FeedMeService extends BaseApplicationComponent
             if ($destination != 'noimport') {
 
                 // Fetch the proper value for the field - dependant on type of feed
-                if ($feed['feedType'] == FeedMe_FeedType::JSON) {
-                    // TODO
-
-                } else {
-                    $fieldValue = craft()->feedMe_feedXML->getValueForNode($itemNode, $node);
-                }
+                $fieldValue = craft()->feedMe_feed->getValueForNode($itemNode, $node);
 
                 $fields[$destination] = $fieldValue;
             }

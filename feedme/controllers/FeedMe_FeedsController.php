@@ -91,7 +91,7 @@ class FeedMe_FeedsController extends BaseController
 			craft()->userSession->setNotice(Craft::t('Feed saved.'));
 
 			// Get the data for the mapping screen, based on the URL provided
-	        $feedData = craft()->feedMe_feedXML->getFeedMapping($feed->feedUrl, $feed->primaryElement);
+	        $feedData = craft()->feedMe_feed->getFeedMapping($feed->feedType, $feed->feedUrl, $feed->primaryElement);
 
 	        if ($feedData) {
 	            $this->renderTemplate('feedme/feeds/_map', array(
@@ -164,7 +164,7 @@ class FeedMe_FeedsController extends BaseController
 	public function runDirectImportTask($feed, $settings) {
 
     	// Being run via direct (cron)
-    	$feedData = craft()->feedMe_feedXML->getFeed($feed->feedUrl, $feed->primaryElement);
+    	$feedData = craft()->feedMe_feed->getFeed($feed->feedType, $feed->feedUrl, $feed->primaryElement);
 
     	// Cast settings as Craft Model
     	$model = new Model(array(

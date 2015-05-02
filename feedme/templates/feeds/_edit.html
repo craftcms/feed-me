@@ -39,7 +39,7 @@
 
 		{{ forms.textField({
 			label: "Feed URL"|t,
-			instructions: "Can be a file on the local file system or from a website site url (http://...)."|t,
+			instructions: "Can be a file on the local file system or from a website url (http://...)."|t,
 			id: 'feedUrl',
 			name: 'feedUrl',
 			value: feed.feedUrl,
@@ -49,17 +49,17 @@
 
 		{{ forms.selectField({
 			label: "Feed Type" | t,
-			instructions: 'Choose what type of feed you\'re retrieving. Select XML Feed if unsure.'|t,
+			instructions: 'Choose what type of feed you\'re retrieving.'|t,
 			id: 'feedType',
 			name: 'feedType',
-			options: {'xml': 'XML Feed', 'rss': 'RSS Feed', 'atom': 'ATOM Feed'},
+			options: {'xml': 'XML Feed', 'rss': 'RSS Feed', 'atom': 'ATOM Feed', 'json': 'JSON Feed'},
 			value: feed.feedType,
 			required: true,
 		}) }}
 
 		{{ forms.textField({
-			label: "Primary XML Element"|t,
-			instructions: "The primary XML element that contains the records you intend to parse. "|t,
+			label: "Primary Element"|t,
+			instructions: "The primary element that contains the records you intend to parse. Selecting a Feed Type above will assist in most cases."|t,
 			id: 'primaryElement',
 			class: 'code',
 			name: 'primaryElement',

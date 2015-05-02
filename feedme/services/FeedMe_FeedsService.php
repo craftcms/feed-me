@@ -29,6 +29,7 @@ class FeedMe_FeedsService extends BaseApplicationComponent
         $settings = $plugin->getSettings();
 
         $url = (array_key_exists('url', $options) ? $options['url'] : null);
+        $type = (array_key_exists('type', $options) ? $options['type'] : FeedMe_FeedType::XML);
         $element = (array_key_exists('element', $options) ? $options['element'] : '');
         $cache = (array_key_exists('cache', $options) ? $options['cache'] : true);
         $cacheId = $url . '#' . $element; // cache for this URL and Element Node
@@ -40,7 +41,7 @@ class FeedMe_FeedsService extends BaseApplicationComponent
 
         // If cache explicitly set to false, always return latest data
         if ($cache === false) {
-            return craft()->feedMe_feedXML->getFeed($url, $element);
+            return craft()->feedMe_feed->getFeed($type, $url, $element);
         }
 
         // We want some caching action!
@@ -52,7 +53,7 @@ class FeedMe_FeedsService extends BaseApplicationComponent
             if ($cachedRequest) {
                 return $cachedRequest;
             } else {
-                $data = craft()->feedMe_feedXML->getFeed($url, $element);
+                $data = craft()->feedMe_feed->getFeed($type, $url, $element);
                 craft()->feedMe_cache->set($cacheId, $data, $cache);
 
                 return $data;
@@ -112,4 +113,5 @@ class FeedMe_FeedsService extends BaseApplicationComponent
     {
         return craft()->db->createCommand()->delete('feedme_feeds', array('id' => $feedId));
     }
+
 }
