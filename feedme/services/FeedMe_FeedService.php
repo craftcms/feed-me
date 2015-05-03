@@ -3,20 +3,58 @@ namespace Craft;
 
 class FeedMe_FeedService extends BaseApplicationComponent
 {
-    public function getFeedMapping($type, $url, $element) {
-        if ($type == FeedMe_FeedType::JSON) {
-            return craft()->feedMe_feedJSON->getFeedMapping($url, $element);
-        } else {
-            return craft()->feedMe_feedXML->getFeedMapping($url, $element);
-        }
-    }
-
     public function getFeed($type, $url, $element) {
         if ($type == FeedMe_FeedType::JSON) {
             return craft()->feedMe_feedJSON->getFeed($url, $element);
         } else {
             return craft()->feedMe_feedXML->getFeed($url, $element);
         }
+    }
+
+    public function getFeedMapping($type, $url, $element) {
+        $array = $this->getFeed($type, $url, $element);
+
+        if (array_key_exists('0', $array)) {
+            $array = $array[0];
+        }
+
+        $array = $this->getFormattedMapping($array);
+
+        return $array;
+    }
+
+    function findPrimaryElement($element, $parsed) {
+        if (empty($parsed)) {
+            return false;
+        }
+
+        // If no primary element, return root
+        if (!$element) {
+            return array($parsed);
+        }
+
+        if (isset($parsed[$element])) {
+            // Ensure we return an array - even if only one element found
+            if (is_array($parsed[$element])) {
+                if (array_key_exists('0', $parsed[$element])) { // is multidimensional
+                    return $parsed[$element];
+                } else {
+                    return array($parsed[$element]);
+                }
+            }
+        }
+
+        foreach ($parsed as $key => $val) {
+            if (is_array($val)) {
+                $return = $this->findPrimaryElement($element, $val);
+
+                if ($return !== false) {
+                    return $return;
+                }
+            }
+        }
+
+        return false;
     }
 
     public function getFormattedMapping($data, $sep = '') {

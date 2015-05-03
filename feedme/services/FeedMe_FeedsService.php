@@ -74,7 +74,14 @@ class FeedMe_FeedsService extends BaseApplicationComponent
 		}
 
         // Set attributes
-        $feedRecord->setAttributes($feed->getAttributes());
+        $feedRecord->name             = $feed->name;
+        $feedRecord->feedUrl          = $feed->feedUrl;
+        $feedRecord->feedType         = $feed->feedType;
+        $feedRecord->primaryElement   = $feed->primaryElement;
+        $feedRecord->section          = $feed->section;
+        $feedRecord->entrytype        = $feed->entrytype;
+        $feedRecord->duplicateHandle  = $feed->duplicateHandle;
+        $feedRecord->passkey          = $feed->passkey;
 
         if ($feed->fieldMapping) {
             $feedRecord->setAttribute('fieldMapping', json_encode($feed->fieldMapping));

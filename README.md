@@ -124,7 +124,9 @@ _"I want only the entries from this feed in this section."_
 
 ### Using with a Cron job
 
-Scheduling feed processing is not something thats currently built into Feed Me. Instead, you'll need to setup a Cron job, or a similar scheduled task to fire the feed processing at the desired interval. Right-click on the 'Direct feed link' icon (next to the delete icon) on the main Feed Me page and select 'Copy Link Address'. Use one of the following to setup as a Cron Job - replacing the URL with what you just copied.
+Scheduling feed processing is not something thats currently built into Feed Me. Instead, you'll need to setup a Cron job, or a similar scheduled task to fire the feed processing at the desired interval. 
+
+Find the 'Direct feed link' icon (next to the delete icon) on the main Feed Me page and copy this URL. Use one of the following to setup as a Cron Job - replacing the URL with what you just copied.
 
 ```
 /usr/bin/wget -O - -q -t 1 "http://your.domain/actions/feedMe/feeds/runTask?direct=1&feedId=1&passkey=FwafY5kg3c"
@@ -137,8 +139,8 @@ curl --silent --compressed "http://your.domain/actions/feedMe/feeds/runTask?dire
 ### Parameters
 
 - `direct` _(required)_ - Must be set to `1` or `true`. Tells Feed Me this is a externally-triggered task.
-- `feedId` _(required)_ - The ID of the feed item you wish to process.
-- `passkey` _(required)_ - A unqiue, generated identifier for this feed. Ensures not just anyone can trigger the import.
+- `feedId` _(required)_ - The ID of the feed you wish to process.
+- `passkey` _(required)_ - A unique, generated identifier for this feed. Ensures not just anyone can trigger the import.
 - `url` _(optional)_ - If your feed URL changes, you can specify it here. Ensure the structure of the feed matches your field mappings.
 
 
@@ -208,6 +210,13 @@ A massive thanks to [Bob Olde Hampsink](https://github.com/boboldehampsink) and 
 
 
 ## Changelog
+
+#### 1.2.3
+
+- Primary Element is no longer required - important for JSON feeds.
+- Fixes for when no primary element specified. It's pretty much optional now.
+- UI tidy for mapping table.
+- Fix for duplication handling not matching in some cases. Now uses element search.
 
 #### 1.2.2
 

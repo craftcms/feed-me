@@ -9,7 +9,14 @@ class FeedMe_FeedXMLService extends BaseApplicationComponent
     		return false;
     	}
 
-		$xml_array = $this->fetchXML($raw_content, $primaryElement);
+    	// Parse the XML string
+		$xml_array = $this->parseXML($raw_content);
+
+		// Convert it to an array
+		$xml_array = $this->elementArray($xml_array);
+
+		// Look for and return only the items for primary element
+    	$xml_array = craft()->feedMe_feed->findPrimaryElement($primaryElement, $xml_array);
 
 		if (!is_array($xml_array)) {
     		craft()->userSession->setError(Craft::t('Invalid XML.'));
@@ -18,17 +25,6 @@ class FeedMe_FeedXMLService extends BaseApplicationComponent
 
 		return $xml_array;
 	}
-
-    public function fetchXML($raw_content, $primaryElement) {
-    	// Parse the XML string
-		$parsedXML = $this->parseXML($raw_content);
-
-		// Convert it to an array
-		$parsed = $this->elementArray($parsedXML);
-
-		// Look for and return only the items for primary element
-    	return $this->findPrimaryElement($primaryElement, $parsed);
-    }
 
 	function elementArray($xml, $first = true)
 	{
@@ -62,40 +58,6 @@ class FeedMe_FeedXMLService extends BaseApplicationComponent
 		return $return;
 	}
 
-	function findPrimaryElement($element, $xml) {
-		if (empty($xml)) {
-			return false;
-		}
-
-		// If no primary element, return root
-		if (!$element) {
-			return $xml;
-		}
-
-		if (isset($xml[$element])) {
-			// Ensure we return an array - even if only one element found
-			if (is_array($xml[$element])) {
-				if (array_key_exists('0', $xml[$element])) { // is multidimensional
-					return $xml[$element];
-				} else {
-					return array($xml[$element]);
-				}
-			}
-		}
-
-		foreach ($xml as $key => $val) {
-			if (is_array($val)) {
-				$return = $this->findPrimaryElement( $element, $val);
-
-				if ($return !== false) {
-					return $return;
-				}
-			}
-		}
-
-		return false;
-	}
-
 	function parseXML($xml) {
 		$xmlArray = null;
 
@@ -127,14 +89,6 @@ class FeedMe_FeedXMLService extends BaseApplicationComponent
 		}
 
 		return $elements[0];
-	}
-
-	public function getFeedMapping($url, $primaryElement) {
-		$xml_array = $this->getFeed($url, $primaryElement);
-
-    	$xml_array = craft()->feedMe_feed->getFormattedMapping($xml_array[0]);
-
-		return $xml_array;
 	}
 
 }

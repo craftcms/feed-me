@@ -34,99 +34,100 @@
 				{% set entrytype = et %}
 			{% endif %}
 		{% endfor %}
-		    
+
 		<p>{{ 'Choose the destination fields for your feed data. "' ~ entrytype.titleLabel ~ '" is always required.'|t }}</p>
 
 		{% if feed.duplicateHandle != 'delete' %}
 		<p>{{ 'Select the field(s) to use to check for existing duplicate entries to update.'|t }}</p>
 		{% endif %}
 
-		<table class="data">
-		    <tr>
+	    <table class="data fullwidth collapsible">
+	        <thead>
 		        <th>{{ "Element name"|t }}</th>
 		        <th>{{ "Field name"|t }}</th>
 		        {% if feed.duplicateHandle != 'delete' %}
 		        <th>{{ "Duplicate field"|t }} <span class="info">{{ "Use this field to check for duplicate entries."|t }}</span></th>
 		        {% endif %}
 		        <th>{{ "Value"|t }}</th>
-		    </tr>
-
-			{% for key, data in feedData %}
-			    <tr>
-			        <td>
-			            <div class="field">
-			                <div class="heading">
-			                    <label><code>&lt;{{ key }}&gt;</code></label>
-			                    <div class="instructions">
-			                        <p>{{ "will be imported into:"|t }}</p>                
-			                    </div>
-			                </div>
-			            </div>
-			        </td>
-
-			        <td>
-			            <div class="field">
-			                <div class="input">
-			                    <div class="select mapper">
-			                        <select name="fieldMapping[{{ key }}]" class="feedFields">
-			                            <option value="noimport">{{ "Don't import"|t }}</option>
-				                    	{{ _self.generateOption(entrytype.titleLabel ~ '*', 'title', key, feed) }}
-				                    	{{ _self.generateOption("Slug"|t, 'slug', key, feed) }}
-				                    	{{ _self.generateOption("Parent Entry"|t, 'parentId', key, feed) }}
-				                    	{{ _self.generateOption("Ancestors"|t, 'ancestors', key, feed) }}
-				                    	{{ _self.generateOption("Author"|t, 'authorId', key, feed) }}
-				                    	{{ _self.generateOption("Post Date"|t, 'postDate', key, feed) }}
-				                    	{{ _self.generateOption("Expiry Date"|t, 'expiryDate', key, feed) }}
-				                    	{{ _self.generateOption("Enabled"|t, 'enabled', key, feed) }}
-
-					                    {% for tab in craft.fields.getLayoutById(entrytype.fieldLayoutId).getTabs() %}
-				                            <optgroup label="{{ tab.name }}">
-
-					                        {% for field in tab.getFields() %}
-					                            {% set f = field.getField() %}
-					                            {% set label = (f.required) ? f.name ~ '*' : f.name %}
-
-												{# Special case for Matrix and Table fields #}
-												{% if f.type == 'Matrix' %}
-						                            {{ _self.generateMatrixOption(f, label, f.handle, key, feed) }}
-												{% elseif f.type == 'Table' %}
-						                            {{ _self.generateTableOption(f, label, f.handle, key, feed) }}
-												{% else %}
-						                            {{ _self.generateOption(label, f.handle, key, feed) }}
-						                        {% endif %}
-					                        {% endfor %}
-
-				                            </optgroup>
-					                    {% endfor %}
-			                        </select>
-			                    </div>
-			                </div>
-			            </div>
-			        </td>
-
-			        {% if feed.duplicateHandle != 'delete' %}
-				        <td class="duplicateHandle">
-					        {{ forms.checkboxField({
-					        	label: 'Check for duplicate',
-					            name: "fieldUnique[" ~ key ~ "]",
-					            class: "fieldUnique",
-					            checked: feed.fieldUnique[key] is defined ? feed.fieldUnique[key] : false,
-					        }) }}
+	        </thead>
+	        <tbody>
+				{% for key, data in feedData %}
+				    <tr>
+				        <td>
+				            <div class="field">
+				                <div class="heading">
+				                    <label><code>&lt;{{ key }}&gt;</code></label>
+				                    <div class="instructions">
+				                        <p>{{ "will be imported into:"|t }}</p>                
+				                    </div>
+				                </div>
+				            </div>
 				        </td>
-			        {% endif %}
 
-			        <td width="60%">
-			            <div class="field">
-			                <div class="heading">
-			                    <div class="instructions">
-			                        <p>eg: {{ data }}</p>
-			                    </div>
-			                </div>
-			            </div>
-			        </td>
+				        <td>
+				            <div class="field">
+				                <div class="input">
+				                    <div class="select mapper">
+				                        <select name="fieldMapping[{{ key }}]" class="feedFields">
+				                            <option value="noimport">{{ "Don't import"|t }}</option>
+					                    	{{ _self.generateOption(entrytype.titleLabel ~ '*', 'title', key, feed) }}
+					                    	{{ _self.generateOption("Slug"|t, 'slug', key, feed) }}
+					                    	{{ _self.generateOption("Parent Entry"|t, 'parentId', key, feed) }}
+					                    	{{ _self.generateOption("Ancestors"|t, 'ancestors', key, feed) }}
+					                    	{{ _self.generateOption("Author"|t, 'authorId', key, feed) }}
+					                    	{{ _self.generateOption("Post Date"|t, 'postDate', key, feed) }}
+					                    	{{ _self.generateOption("Expiry Date"|t, 'expiryDate', key, feed) }}
+					                    	{{ _self.generateOption("Enabled"|t, 'enabled', key, feed) }}
 
-			    </tr>
-		    {% endfor %}
+						                    {% for tab in craft.fields.getLayoutById(entrytype.fieldLayoutId).getTabs() %}
+					                            <optgroup label="{{ tab.name }}">
+
+						                        {% for field in tab.getFields() %}
+						                            {% set f = field.getField() %}
+						                            {% set label = (f.required) ? f.name ~ '*' : f.name %}
+
+													{# Special case for Matrix and Table fields #}
+													{% if f.type == 'Matrix' %}
+							                            {{ _self.generateMatrixOption(f, label, f.handle, key, feed) }}
+													{% elseif f.type == 'Table' %}
+							                            {{ _self.generateTableOption(f, label, f.handle, key, feed) }}
+													{% else %}
+							                            {{ _self.generateOption(label, f.handle, key, feed) }}
+							                        {% endif %}
+						                        {% endfor %}
+
+					                            </optgroup>
+						                    {% endfor %}
+				                        </select>
+				                    </div>
+				                </div>
+				            </div>
+				        </td>
+
+				        {% if feed.duplicateHandle != 'delete' %}
+					        <td class="duplicateHandle">
+						        {{ forms.checkboxField({
+						        	label: 'Check for duplicate',
+						            name: "fieldUnique[" ~ key ~ "]",
+						            class: "fieldUnique",
+						            checked: feed.fieldUnique[key] is defined ? feed.fieldUnique[key] : false,
+						        }) }}
+					        </td>
+				        {% endif %}
+
+				        <td class="">
+				            <div class="field">
+				                <div class="heading">
+				                    <div class="instructions">
+				                        <p>eg: {{ data }}</p>
+				                    </div>
+				                </div>
+				            </div>
+				        </td>
+
+				    </tr>
+			    {% endfor %}
+			</tbody>
 		</table>
 
 		<hr>

@@ -70,11 +70,10 @@ class FeedMeService extends BaseApplicationComponent
         $cmodel = array();
         foreach ($feed['fieldMapping'] as $key => $value) {
             if (isset($feed['fieldUnique'][$key]) && intval($feed['fieldUnique'][$key]) == 1 && !empty($fields[$value])) {
-                $criteria->$feed['fieldMapping'][$key] = $cmodel[$feed['fieldMapping'][$key]] = $fields[$value];
+                 $cmodel[$feed['fieldMapping'][$key]] = $fields[$value];
+                 $criteria->search = $feed['fieldMapping'][$key].':'.$fields[$value];
             }
         }
-
-
 
         // If there's an existing matching entry
         if (count($cmodel) && $criteria->count()) {
@@ -110,6 +109,8 @@ class FeedMeService extends BaseApplicationComponent
                 // It's passed in as matrixfieldhandle_blocktypehandle_fieldhandle - that needs to change!
                 foreach ($fields as $oldHandle => &$data) {
                     $handle = $oldHandle; // keep track of it - handy to know if Matrix or not
+
+
 
                     // Grab the field's content - formatted specifically for it
                     $content = craft()->feedMe_fields->prepForFieldType($data, $handle);

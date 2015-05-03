@@ -19,7 +19,7 @@ class FeedMe_FeedRecord extends BaseRecord
 			    FeedMe_FeedType::ATOM,
 			    FeedMe_FeedType::JSON,
 			)),
-			'primaryElement'	=> array(AttributeType::String, 'required' => true),
+			'primaryElement'	=> array(AttributeType::String),
 			'section'			=> array(AttributeType::String, 'required' => true),
 			'entrytype'			=> array(AttributeType::String, 'required' => true),
 			'duplicateHandle'	=> array(AttributeType::Enum, 'required' => true, 'values' => array(
