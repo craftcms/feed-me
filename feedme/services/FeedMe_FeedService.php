@@ -14,11 +14,7 @@ class FeedMe_FeedService extends BaseApplicationComponent
     public function getFeedMapping($type, $url, $element) {
         $array = $this->getFeed($type, $url, $element);
 
-        if (array_key_exists('0', $array)) {
-            $array = $array[0];
-        }
-
-        $array = $this->getFormattedMapping($array);
+        $array = $this->getFormattedMapping($array[0]);
 
         return $array;
     }
@@ -30,7 +26,7 @@ class FeedMe_FeedService extends BaseApplicationComponent
 
         // If no primary element, return root
         if (!$element) {
-            return array($parsed);
+            return $parsed;
         }
 
         if (isset($parsed[$element])) {

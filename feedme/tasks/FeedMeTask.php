@@ -69,7 +69,10 @@ class FeedMeTask extends BaseTask
                 craft()->feedMe_logs->log($settings, Craft::t('Started importing node: ' . $step), LogLevel::Info);
                 
                 // Do the import
-                craft()->feedMe->importNode($step, $this->_feedData[$step], $this->_feed, $settings);
+                $result = craft()->feedMe->importNode($step, $this->_feedData[$step], $this->_feed, $settings);
+
+                $result = null;
+                unset($result);
 
                 // If no exception caused above, we've a-okay!
                 craft()->feedMe_logs->log($settings, Craft::t('Finished importing node: ' . $step), LogLevel::Info);
