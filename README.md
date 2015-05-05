@@ -211,6 +211,10 @@ A massive thanks to [Bob Olde Hampsink](https://github.com/boboldehampsink) and 
 
 ## Changelog
 
+#### 1.2.4
+
+- Added support to fallback on cURL when `file_get_contents()` is not available. Can occur on some hosts where `allow_url_fopen = 0`.
+
 #### 1.2.3
 
 - Primary Element is no longer required - important for JSON feeds.

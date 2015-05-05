@@ -4,7 +4,7 @@ namespace Craft;
 class FeedMe_FeedJSONService extends BaseApplicationComponent
 {
 	public function getFeed($url, $primaryElement) {
-    	if (false === ($raw_content = @file_get_contents($url))) {
+    	if (false === ($raw_content = craft()->feedMe_feed->getRawData($url))) {
     		craft()->userSession->setError(Craft::t('Unable to parse Feed URL.'));
     		return false;
     	}
