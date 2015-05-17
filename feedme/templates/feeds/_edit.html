@@ -122,6 +122,14 @@
 			translatable: true,
 		}) }}
 
+		{{ forms.lightswitchField({
+			first: true,
+			label: 'Backup',
+			instructions: 'Perform a full backup each time this feed is processed.'|t,
+			name: 'backup',
+			on: (feed.backup) ? feed.backup : true,
+		}) }}
+
 		<hr>
 
 		<div class="buttons">

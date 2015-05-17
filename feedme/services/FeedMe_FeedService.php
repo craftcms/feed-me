@@ -181,7 +181,7 @@ class FeedMe_FeedService extends BaseApplicationComponent
     public function getRawData($url)
     {
         if (file_get_contents(__FILE__) && ini_get('allow_url_fopen')) {
-            $content = file_get_contents($url);
+            $content = @file_get_contents($url);
         } else if (function_exists('curl_version')) {
             $curl = curl_init();
             curl_setopt($curl, CURLOPT_URL, $url);

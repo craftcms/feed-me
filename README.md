@@ -144,6 +144,19 @@ curl --silent --compressed "http://your.domain/actions/feedMe/feeds/runTask?dire
 - `url` _(optional)_ - If your feed URL changes, you can specify it here. Ensure the structure of the feed matches your field mappings.
 
 
+### Performance
+
+Feed Me can handle importing large feeds by using Craft's Tasks service. Testing has shown that processing a feed with 10K items take roughly 15 minutes to import.
+
+To get the most out of your feed processing, follow the below suggestions:
+
+- Turn off `devMode`. Craft's built-in logging when `devMode` is switched on will greatly slow down the import process, and causes a high degree of memory overhead.
+- Consider selecting the `Add Entries` option for duplication handling, depending on your requirements.
+- Consider turning off the `Backup` option for the feed. This will depend on your specific circumstances.
+
+When directly running a feed, you will need to adjust the `memory_limit` and `max_execution_time` values in your php.ini file. This is due to the fact that directly processing a feed doesn't utalize Craft's Tasks service, which provides workarounds to these issues.
+
+
 ## Template example
 
 While you can create a feed task to insert data as entries, there are times which you may prefer to capture feed data on-demand, rather than saving as an entry. You can easily do this through your twig templates using the below. 
@@ -210,6 +223,13 @@ A massive thanks to [Bob Olde Hampsink](https://github.com/boboldehampsink) and 
 
 
 ## Changelog
+
+#### 1.2.5
+
+- Refactoring for performance improvements.
+- Remove database logging until a better performing option is figured out. Logging still occurs to the file system under `craft/storage/runtime/logs/`.
+- Added optional backup option per-feed (default to true).
+- Minor fix so direct feed link doesn't use `siteUrl`.
 
 #### 1.2.4
 

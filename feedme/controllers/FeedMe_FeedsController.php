@@ -166,18 +166,15 @@ class FeedMe_FeedsController extends BaseController
     	// Being run via direct (cron)
     	$feedData = craft()->feedMe_feed->getFeed($feed->feedType, $feed->feedUrl, $feed->primaryElement);
 
-    	// Cast settings as Craft Model
-    	$model = new Model(array(
-            'feed' => AttributeType::Mixed,
-            'items' => AttributeType::Number,
-            'logsId' => AttributeType::Number,
-        ));
+		$chunkedFeedData = array_chunk($feedData, 100);
 
-    	$model->setAttributes($settings);
+        $feedSettings = craft()->feedMe->setupForImport($feed);
+
+        craft()->templateCache->deleteCachesByElementType('Entry');
 
         // For direct-access debugging
-		foreach($feedData as $step => $data) {
-			craft()->feedMe->importNode($step, $data, $feed, $model);
+		foreach($chunkedFeedData as $step => $data) {
+			craft()->feedMe->importNode($data, $feed, $feedSettings);
 		}
 
     	$this->returnJson(array('success' => 'Feed ID: '.$feed['id'].' - Task started'));

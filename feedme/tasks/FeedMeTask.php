@@ -6,14 +6,14 @@ class FeedMeTask extends BaseTask
     private $_feed;
     private $_logsId;
     private $_feedData;
+    private $_feedSettings;
     private $_backup;
+    private $_chunkedFeedData;
 
     protected function defineSettings()
     {
         return array(
             'feed' => AttributeType::Mixed,
-            'items' => AttributeType::Number,
-            'logsId' => AttributeType::Number,
         );
     }
 
@@ -30,69 +30,31 @@ class FeedMeTask extends BaseTask
         // Get the Feed
         $this->_feed = $settings->feed;
 
+        // There are also a few once-off things we can do for this feed to assist with processing.
+        $this->_feedSettings = craft()->feedMe->setupForImport($this->_feed);
+
         // Get the data for the mapping screen, based on the URL provided
         $this->_feedData = craft()->feedMe_feed->getFeed($this->_feed->feedType, $this->_feed->feedUrl, $this->_feed->primaryElement);
 
-        $settings->items = count($this->_feedData);
+        // Chunk the feed data into chunks of 100 - optimises mapping process by not calling service each step
+        $this->_chunkedFeedData = array_chunk($this->_feedData, 100);
 
         // Delete all the entry caches
         craft()->templateCache->deleteCachesByElementType('Entry');
 
-        // Take a step for every row
-        return $settings->items;
-    }
-
-    public function start() {
-        $settings = $this->getSettings();
-
         // Create a backup before we do anything to the DB
-        // Strangely, this hangs the task if in getTotalSteps()
-        craft()->db->backup();
+        if ($this->_feed->backup) {
+            $backup = craft()->db->backup();
+        }
 
-        // Create a new Log entry to record logs with
-        $this->_logsId = $settings->logsId = craft()->feedMe_logs->start($settings);
+        // Take a step for every row
+        return count($this->_chunkedFeedData);
     }
 
     public function runStep($step)
     {
-        $settings = $this->getSettings();
-        $settings->logsId = $this->_logsId;
-
-        // On start
-        if (!$step) {
-            $this->start();
-        }
-
-        if (isset($this->_feedData[$step])) {
-            try {
-                // Start our import
-                craft()->feedMe_logs->log($settings, Craft::t('Started importing node: ' . $step), LogLevel::Info);
-                
-                // Do the import
-                $result = craft()->feedMe->importNode($step, $this->_feedData[$step], $this->_feed, $settings);
-
-                $result = null;
-                unset($result);
-
-                // If no exception caused above, we've a-okay!
-                craft()->feedMe_logs->log($settings, Craft::t('Finished importing node: ' . $step), LogLevel::Info);
-            } catch (\Exception $e) {
-                craft()->feedMe_logs->log($settings, Craft::t('FeedMeError: ' . $e->getMessage() . '. Check plugin log files for full error.'), LogLevel::Error);
-                return false;
-            }
-        }
-
-        // On finish
-        if ($step == ($settings->items - 1)) {
-            $this->finish();
-        }
+        craft()->feedMe->importNode($this->_chunkedFeedData[$step], $this->_feed, $this->_feedSettings);
 
         return true;
-    }
-
-    public function finish() {
-        $settings = $this->getSettings();
-
-        craft()->feedMe_logs->end($settings);
     }
 }

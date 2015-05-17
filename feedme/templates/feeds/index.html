@@ -12,7 +12,6 @@
 
 {% set tabs = {
     overview: { label: "Feeds"|t, url: url('feedme/feeds') },
-    logs: { label: "Logs"|t, url: url('feedme/logs') },
 } %}
 
 {% set selectedTab = 'overview' %}
@@ -56,7 +55,7 @@
                         <td><a href="{{ url('feedme/runTask/' ~ feed.id) }}">{{ 'Run Task'|t }}</a></td>
 
                         <td class="thin action">
-                            {% set directUrl = url(craft.config.siteUrl ~ '/' ~ craft.config.actionTrigger ~ '/feedMe/feeds/runTask', { direct: true, feedId: feed.id, passkey: feed.passkey }) %}
+                            {% set directUrl = actionUrl('/feedMe/feeds/runTask', { direct: true, feedId: feed.id, passkey: feed.passkey }) | replace(craft.config.cpTrigger ~ '/', '') %}
                             <a href="{{ directUrl }}" target="_blank" class="direct fa-icon" title="{{ 'Direct feed link'|t }}" role="button"><i class="fa fa-external-link"></i></a>
                         </td>
                         
