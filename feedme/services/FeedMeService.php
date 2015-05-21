@@ -81,7 +81,7 @@ class FeedMeService extends BaseApplicationComponent
 
             // While we're in the loop, lets check for unique data to match existing entries on.
             if (isset($feed['fieldUnique'][$itemNode]) && intval($feed['fieldUnique'][$itemNode]) == 1 && !empty($data)) {
-                $criteria->$destination = $data;
+                $criteria->$destination = DbHelper::escapeParam($data);
             }
 
             //
