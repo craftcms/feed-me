@@ -102,6 +102,14 @@ class FeedMe_FieldsService extends BaseApplicationComponent
             }
         }
 
+        // Check for field limit - only return the specified amount
+        if ($fieldData) {
+            if ($field->settings['limit']) {
+                $fieldData = array_chunk($fieldData, $field->settings['limit']);
+                $fieldData = $fieldData[0];
+            }
+        }
+
         return $fieldData;
     }
 
@@ -145,6 +153,14 @@ class FeedMe_FieldsService extends BaseApplicationComponent
 
                 // Add categories to data array
                 $fieldData = array_merge($fieldData, $categoryArray);
+            }
+        }
+
+        // Check for field limit - only return the specified amount
+        if ($fieldData) {
+            if ($field->settings['limit']) {
+                $fieldData = array_chunk($fieldData, $field->settings['limit']);
+                $fieldData = $fieldData[0];
             }
         }
 
@@ -208,6 +224,14 @@ class FeedMe_FieldsService extends BaseApplicationComponent
                 $criteria->search = 'title:'.$entry.' OR slug:'.$entry;
 
                 $fieldData = array_merge($fieldData, $criteria->ids());
+            }
+        }
+
+        // Check for field limit - only return the specified amount
+        if ($fieldData) {
+            if ($field->settings['limit']) {
+                $fieldData = array_chunk($fieldData, $field->settings['limit']);
+                $fieldData = $fieldData[0];
             }
         }
 
@@ -367,6 +391,14 @@ class FeedMe_FieldsService extends BaseApplicationComponent
                 $criteria->search = 'username:'.$user.' OR email:'.$user;
 
                 $fieldData = array_merge($fieldData, $criteria->ids());
+            }
+        }
+
+        // Check for field limit - only return the specified amount
+        if ($fieldData) {
+            if ($field->settings['limit']) {
+                $fieldData = array_chunk($fieldData, $field->settings['limit']);
+                $fieldData = $fieldData[0];
             }
         }
 
