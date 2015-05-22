@@ -41,6 +41,7 @@ class FeedMe_FeedsController extends BaseController
 		$feed->entrytype		= craft()->request->getPost('entrytype');
 		$feed->duplicateHandle	= craft()->request->getPost('duplicateHandle');
 		$feed->passkey			= craft()->request->getPost('passkey');
+		$feed->backup			= craft()->request->getPost('backup');
 
 		// Don't overwrite mappings when saving from first screen
 		if (craft()->request->getPost('fieldMapping')) {

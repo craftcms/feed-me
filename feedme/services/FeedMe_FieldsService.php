@@ -118,6 +118,8 @@ class FeedMe_FieldsService extends BaseApplicationComponent
             $categories = ArrayHelper::stringToArray($data);
 
             foreach ($categories as $category) {
+                $categoryArray = array();
+                
                 if (!empty($category)) {
 
                     // Find existing category
