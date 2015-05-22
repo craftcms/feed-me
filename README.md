@@ -224,6 +224,13 @@ A massive thanks to [Bob Olde Hampsink](https://github.com/boboldehampsink) and 
 
 ## Changelog
 
+#### 1.2.7
+
+- Fix where entries would not import if mapping element fields had more values that their field limit.
+- Fix for multiple matches found on existing categories, where only one should match.
+- Fix for escaping special characters in tags/category name.
+- Minor fix for tags/category mapping.
+
 #### 1.2.6
 
 - Fix for matching fields containing special characters.
