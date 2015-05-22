@@ -119,12 +119,12 @@ class FeedMe_FieldsService extends BaseApplicationComponent
 
             foreach ($categories as $category) {
                 $categoryArray = array();
-                
+
                 if (!empty($category)) {
 
                     // Find existing category
                     $criteria = craft()->elements->getCriteria(ElementType::Category);
-                    $criteria->title = $category;
+                    $criteria->title = DbHelper::escapeParam($category);
                     $criteria->groupId = $groupId;
 
                     if (!$criteria->total()) {
@@ -314,7 +314,7 @@ class FeedMe_FieldsService extends BaseApplicationComponent
 
                     // Find existing tag
                     $criteria = craft()->elements->getCriteria(ElementType::Tag);
-                    $criteria->title = $tag;
+                    $criteria->title = DbHelper::escapeParam($tag);
                     $criteria->groupId = $groupId;
 
                     if (!$criteria->total()) {
