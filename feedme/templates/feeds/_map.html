@@ -105,12 +105,24 @@
 				        </td>
 
 				        {% if feed.duplicateHandle != 'delete' %}
+				        	{% set checked = false %}
+
+				        	{% if feed.fieldUnique %}
+				        		{% if feed.fieldUnique[key] is defined %}
+				        			{% set checked = feed.fieldUnique[key] %}
+				        		{% endif %}
+				        	{% else %}
+				        		{% if loop.first %}
+						        	{% set checked = true %}
+				        		{% endif %}
+				        	{% endif %}
+
 					        <td class="duplicateHandle">
 						        {{ forms.checkboxField({
 						        	label: 'Check for duplicate',
 						            name: "fieldUnique[" ~ key ~ "]",
 						            class: "fieldUnique",
-						            checked: feed.fieldUnique[key] is defined ? feed.fieldUnique[key] : false,
+						            checked: checked,
 						        }) }}
 					        </td>
 				        {% endif %}

@@ -224,6 +224,13 @@ A massive thanks to [Bob Olde Hampsink](https://github.com/boboldehampsink) and 
 
 ## Changelog
 
+#### 1.2.6
+
+- Fix for matching fields containing special characters.
+- Fix for tags and category mapping, mapping all available if supplied empty value.
+- Fix for backup lightswitch reflecting the saved state.
+- Fix to ensure at least one duplicate field is checked.
+
 #### 1.2.5
 
 - Refactoring for performance improvements.
