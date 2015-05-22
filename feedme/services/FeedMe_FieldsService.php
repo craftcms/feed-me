@@ -119,7 +119,7 @@ class FeedMe_FieldsService extends BaseApplicationComponent
 
             foreach ($categories as $category) {
                 if (!empty($category)) {
-                    
+
                     // Find existing category
                     $criteria = craft()->elements->getCriteria(ElementType::Category);
                     $criteria->title = $category;
@@ -306,6 +306,8 @@ class FeedMe_FieldsService extends BaseApplicationComponent
             $tags = ArrayHelper::stringToArray($data);
 
             foreach ($tags as $tag) {
+                $tagArray = array();
+
                 if (!empty($tag)) {
 
                     // Find existing tag
