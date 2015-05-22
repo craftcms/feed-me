@@ -126,6 +126,7 @@ class FeedMe_FieldsService extends BaseApplicationComponent
                     $criteria = craft()->elements->getCriteria(ElementType::Category);
                     $criteria->title = DbHelper::escapeParam($category);
                     $criteria->groupId = $groupId;
+                    $criteria->limit = 1;
 
                     if (!$criteria->total()) {
                         // Create category if one doesn't already exist
@@ -315,6 +316,7 @@ class FeedMe_FieldsService extends BaseApplicationComponent
                     // Find existing tag
                     $criteria = craft()->elements->getCriteria(ElementType::Tag);
                     $criteria->title = DbHelper::escapeParam($tag);
+                    $criteria->limit = 1;
                     $criteria->groupId = $groupId;
 
                     if (!$criteria->total()) {
