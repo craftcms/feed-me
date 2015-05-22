@@ -118,23 +118,26 @@ class FeedMe_FieldsService extends BaseApplicationComponent
             $categories = ArrayHelper::stringToArray($data);
 
             foreach ($categories as $category) {
-                // Find existing category
-                $criteria = craft()->elements->getCriteria(ElementType::Category);
-                $criteria->title = $category;
-                $criteria->groupId = $groupId;
+                if (!empty($category)) {
+                    
+                    // Find existing category
+                    $criteria = craft()->elements->getCriteria(ElementType::Category);
+                    $criteria->title = $category;
+                    $criteria->groupId = $groupId;
 
-                if (!$criteria->total()) {
-                    // Create category if one doesn't already exist
-                    $newCategory = new CategoryModel();
-                    $newCategory->getContent()->title = $category;
-                    $newCategory->groupId = $groupId;
+                    if (!$criteria->total()) {
+                        // Create category if one doesn't already exist
+                        $newCategory = new CategoryModel();
+                        $newCategory->getContent()->title = $category;
+                        $newCategory->groupId = $groupId;
 
-                    // Save category
-                    if (craft()->categories->saveCategory($newCategory)) {
-                        $categoryArray = array($newCategory->id);
+                        // Save category
+                        if (craft()->categories->saveCategory($newCategory)) {
+                            $categoryArray = array($newCategory->id);
+                        }
+                    } else {
+                        $categoryArray = $criteria->ids();
                     }
-                } else {
-                    $categoryArray = $criteria->ids();
                 }
 
                 // Add categories to data array
@@ -303,23 +306,26 @@ class FeedMe_FieldsService extends BaseApplicationComponent
             $tags = ArrayHelper::stringToArray($data);
 
             foreach ($tags as $tag) {
-                // Find existing tag
-                $criteria = craft()->elements->getCriteria(ElementType::Tag);
-                $criteria->title = $tag;
-                $criteria->groupId = $groupId;
+                if (!empty($tag)) {
 
-                if (!$criteria->total()) {
-                    // Create tag if one doesn't already exist
-                    $newtag = new TagModel();
-                    $newtag->getContent()->title = $tag;
-                    $newtag->groupId = $groupId;
+                    // Find existing tag
+                    $criteria = craft()->elements->getCriteria(ElementType::Tag);
+                    $criteria->title = $tag;
+                    $criteria->groupId = $groupId;
 
-                    // Save tag
-                    if (craft()->tags->saveTag($newtag)) {
-                        $tagArray = array($newtag->id);
+                    if (!$criteria->total()) {
+                        // Create tag if one doesn't already exist
+                        $newtag = new TagModel();
+                        $newtag->getContent()->title = $tag;
+                        $newtag->groupId = $groupId;
+
+                        // Save tag
+                        if (craft()->tags->saveTag($newtag)) {
+                            $tagArray = array($newtag->id);
+                        }
+                    } else {
+                        $tagArray = $criteria->ids();
                     }
-                } else {
-                    $tagArray = $criteria->ids();
                 }
 
                 // Add tags to data array
