@@ -41,7 +41,7 @@ class FeedMe_FeedsService extends BaseApplicationComponent
 
         // If cache explicitly set to false, always return latest data
         if ($cache === false) {
-            return craft()->feedMe_feed->getFeed($type, $url, $element);
+            return craft()->feedMe_feed->getFeed($type, $url, $element, true);
         }
 
         // We want some caching action!
@@ -53,7 +53,7 @@ class FeedMe_FeedsService extends BaseApplicationComponent
             if ($cachedRequest) {
                 return $cachedRequest;
             } else {
-                $data = craft()->feedMe_feed->getFeed($type, $url, $element);
+                $data = craft()->feedMe_feed->getFeed($type, $url, $element, true);
                 craft()->feedMe_cache->set($cacheId, $data, $cache);
 
                 return $data;

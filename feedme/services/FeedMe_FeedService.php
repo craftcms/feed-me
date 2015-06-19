@@ -3,11 +3,11 @@ namespace Craft;
 
 class FeedMe_FeedService extends BaseApplicationComponent
 {
-    public function getFeed($type, $url, $element) {
+    public function getFeed($type, $url, $element, $returnAttr = false) {
         if ($type == FeedMe_FeedType::JSON) {
             return craft()->feedMe_feedJSON->getFeed($url, $element);
         } else {
-            return craft()->feedMe_feedXML->getFeed($url, $element);
+            return craft()->feedMe_feedXML->getFeed($url, $element, $returnAttr);
         }
     }
 
