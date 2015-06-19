@@ -4,6 +4,7 @@
 
 - Move changelog - so much change!
 - Add support for attribute values for XML feeds (template tags only).
+- Add missing log statement for successful update/add.
 
 #### 1.2.7
 

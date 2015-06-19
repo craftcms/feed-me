@@ -169,6 +169,12 @@ class FeedMeService extends BaseApplicationComponent
                 } else {
 
                     // Successfully saved/added entry
+                    if ($feed['duplicateHandle'] == FeedMe_Duplicate::Update) {
+                        FeedMePlugin::log('Entry successfully updated: ' . $entry->id, LogLevel::Info);
+                    } else if ($feed['duplicateHandle'] == FeedMe_Duplicate::Add) {
+                        FeedMePlugin::log('Entry successfully added: ' . $entry->id, LogLevel::Info);
+                    }
+
                     return true;
                 }
             } catch (\Exception $e) {
