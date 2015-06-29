@@ -202,7 +202,7 @@
 
 		{% for blocktypefield in blocktype.getFields() %}
 
-			{% set fieldHandle = '__supertable__' ~ field.handle ~ '__' ~ '__' ~ blocktypefield.handle %}
+			{% set fieldHandle = '__supertable__' ~ field.handle ~ '__' ~ blocktype.id ~ '__' ~ blocktypefield.handle %}
 
 			{% set selected = '' %}
 			{% if key in feed.fieldMapping | keys %}

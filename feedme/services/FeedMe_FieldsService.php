@@ -3,14 +3,16 @@ namespace Craft;
 
 class FeedMe_FieldsService extends BaseApplicationComponent
 {
-    public function prepForFieldType(&$data, &$handle)
+    public function prepForFieldType(&$data, &$handle, $field = null)
     {
         if (!is_array($data)) {
             $data = StringHelper::convertToUTF8($data);
             $data = trim($data);
         }
 
-        $field = craft()->fields->getFieldByHandle($handle);
+        if (!$field) {
+            $field = craft()->fields->getFieldByHandle($handle);
+        }
 
         // Special case for Matrix fields
         if (substr($handle, 0, 10) == '__matrix__') {
@@ -57,7 +59,7 @@ class FeedMe_FieldsService extends BaseApplicationComponent
                 case FeedMe_FieldType::Entries:
                     $data = $this->prepEntries($data, $field); break;
                 case FeedMe_FieldType::Matrix:
-                    $data = $this->prepMatrix($data, $matrixInfo, $handle); break;
+                    $data = $this->prepMatrix($data, $matrixInfo, $field, $handle); break;
                 case FeedMe_FieldType::MultiSelect:
                     $data = $this->prepMultiSelect($data, $field); break;
                 case FeedMe_FieldType::Number:
@@ -77,7 +79,7 @@ class FeedMe_FieldsService extends BaseApplicationComponent
 
                 // Third-Party
                 case FeedMe_FieldType::SuperTable:
-                    $data = $this->prepSuperTable($data, $matrixInfo, $handle); break;
+                    $data = $this->prepSuperTable($data, $matrixInfo, $field, $handle); break;
             }
         }
 
@@ -252,7 +254,7 @@ class FeedMe_FieldsService extends BaseApplicationComponent
         return $fieldData;
     }
 
-    public function prepMatrix($data, $matrixInfo, &$handle) {
+    public function prepMatrix($data, $matrixInfo, $field, &$handle) {
         $fieldData = array();
 
         $matrixHandle = $matrixInfo[0];
@@ -266,11 +268,23 @@ class FeedMe_FieldsService extends BaseApplicationComponent
             $blockFieldData = ArrayHelper::stringToArray($data);
 
             foreach ($blockFieldData as $i => $singleFieldData) {
+
+                // For each field in each Matrix block, be sure to run these through the same
+                // process as we would for standalone fields.
+                $blockTypes = craft()->matrix->getBlockTypesByFieldId($field->id, 'handle');
+                $blockType = $blockTypes[$blocktypeHandle];
+
+                foreach ($blockType->getFields() as $f) {
+                    if ($f->handle == $fieldHandle) {
+                        $parsedFieldData = $this->prepForFieldType($singleFieldData, $fieldHandle, $f);
+                    }
+                }
+
                 $fieldData['new'.$blocktypeHandle.($i+1)] = array(
                     'type' => $blocktypeHandle,
                     'enabled' => true,
                     'fields' => array(
-                        $fieldHandle => $singleFieldData,
+                        $fieldHandle => $parsedFieldData,
                     )
                 );
             }
@@ -312,11 +326,11 @@ class FeedMe_FieldsService extends BaseApplicationComponent
         return $fieldData;
     }
 
-    public function prepSuperTable($data, $matrixInfo, &$handle) {
+    public function prepSuperTable($data, $matrixInfo, $field, &$handle) {
         $fieldData = array();
 
         $matrixHandle = $matrixInfo[0];
-        $blocktypeHandle = $matrixInfo[1];
+        $blocktypeId = $matrixInfo[1];
         $fieldHandle = $matrixInfo[2];
 
         // Set the original handle (index key) property to the matrix field handle
@@ -326,11 +340,23 @@ class FeedMe_FieldsService extends BaseApplicationComponent
             $blockFieldData = ArrayHelper::stringToArray($data);
 
             foreach ($blockFieldData as $i => $singleFieldData) {
-                $fieldData['new'.$blocktypeHandle.($i+1)] = array(
-                    'type' => $blocktypeHandle,
+
+                // For each field in each Matrix block, be sure to run these through the same
+                // process as we would for standalone fields.
+                $blockTypes = craft()->superTable->getBlockTypesByFieldId($field->id, 'id');
+                $blockType = $blockTypes[$blocktypeId];
+
+                foreach ($blockType->getFields() as $f) {
+                    if ($f->handle == $fieldHandle) {
+                        $parsedFieldData = $this->prepForFieldType($singleFieldData, $fieldHandle, $f);
+                    }
+                }
+
+                $fieldData['new'.$blocktypeId.($i+1)] = array(
+                    'type' => $blocktypeId,
                     'enabled' => true,
                     'fields' => array(
-                        $fieldHandle => $singleFieldData,
+                        $fieldHandle => $parsedFieldData,
                     )
                 );
             }
