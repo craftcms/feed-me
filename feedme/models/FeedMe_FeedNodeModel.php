@@ -5,7 +5,7 @@ class FeedMe_FeedNodeModel extends BaseModel
 {
 	function __toString()
 	{
-		return Craft::t($this->value);
+		return $this->value;
 	}
 
 	protected function defineAttributes()

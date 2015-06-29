@@ -107,6 +107,11 @@ class FeedMeService extends BaseApplicationComponent
                     $content = craft()->feedMe_fields->handleTableData($fieldData, $handle, $content);
                 }
 
+                // And another special case for SuperTable data
+                if (substr($destination, 0, 14) == '__supertable__') {
+                    $content = craft()->feedMe_fields->handleSuperTableData($fieldData, $handle, $content);
+                }
+
                 // Finally - we have our mapped data, formatted for the particular field as required
                 $fieldData[$handle] = $content;
             } catch (\Exception $e) {

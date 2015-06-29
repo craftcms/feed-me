@@ -91,6 +91,8 @@
 							                            {{ _self.generateMatrixOption(f, label, f.handle, key, feed) }}
 													{% elseif f.type == 'Table' %}
 							                            {{ _self.generateTableOption(f, label, f.handle, key, feed) }}
+													{% elseif f.type == 'SuperTable' %}
+							                            {{ _self.generateSuperTableOption(f, label, f.handle, key, feed) }}
 													{% else %}
 							                            {{ _self.generateOption(label, f.handle, key, feed) }}
 							                        {% endif %}
@@ -194,3 +196,20 @@
     {% endfor %}
 {% endmacro %}
 
+{% macro generateSuperTableOption(field, label, value, key, feed) %}
+	{% for blocktype in craft.feedme.getSuperTableBlocks(field.id) %}
+		<option disabled label="{{ field.name }}">
+
+		{% for blocktypefield in blocktype.getFields() %}
+
+			{% set fieldHandle = '__supertable__' ~ field.handle ~ '__' ~ '__' ~ blocktypefield.handle %}
+
+			{% set selected = '' %}
+			{% if key in feed.fieldMapping | keys %}
+			    {% set selected = (feed.fieldMapping[key] == fieldHandle) ? 'selected' : '' %}
+			{% endif %}
+
+			<option {{ selected }} value="{{ fieldHandle }}">-- {{ blocktypefield.name }}</option>
+	    {% endfor %}
+    {% endfor %}
+{% endmacro %}

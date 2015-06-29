@@ -6,15 +6,25 @@ class FeedMe_FieldsService extends BaseApplicationComponent
     public function prepForFieldType(&$data, &$handle)
     {
         if (!is_array($data)) {
-	        $data = StringHelper::convertToUTF8($data);
-	        $data = trim($data);
-	    }
+            $data = StringHelper::convertToUTF8($data);
+            $data = trim($data);
+        }
 
         $field = craft()->fields->getFieldByHandle($handle);
 
         // Special case for Matrix fields
         if (substr($handle, 0, 10) == '__matrix__') {
             $handle = str_replace('__matrix__', '', $handle);
+
+            // [0]matrix - [1]blocktype - [2]field
+            $matrixInfo = explode('__', $handle);
+
+            $field = craft()->fields->getFieldByHandle($matrixInfo[0]);
+        }
+
+        // Special case for SuperTable fields
+        if (substr($handle, 0, 14) == '__supertable__') {
+            $handle = str_replace('__supertable__', '', $handle);
 
             // [0]matrix - [1]blocktype - [2]field
             $matrixInfo = explode('__', $handle);
@@ -64,6 +74,10 @@ class FeedMe_FieldsService extends BaseApplicationComponent
                     $data = $this->prepUsers($data, $field); break;
 
                 // Color, Lightswitch, PlainText, PositionSelect all take care of themselves
+
+                // Third-Party
+                case FeedMe_FieldType::SuperTable:
+                    $data = $this->prepSuperTable($data, $matrixInfo, $handle); break;
             }
         }
 
@@ -298,6 +312,33 @@ class FeedMe_FieldsService extends BaseApplicationComponent
         return $fieldData;
     }
 
+    public function prepSuperTable($data, $matrixInfo, &$handle) {
+        $fieldData = array();
+
+        $matrixHandle = $matrixInfo[0];
+        $blocktypeHandle = $matrixInfo[1];
+        $fieldHandle = $matrixInfo[2];
+
+        // Set the original handle (index key) property to the matrix field handle
+        $handle = $matrixHandle;
+
+        if (!empty($data)) {
+            $blockFieldData = ArrayHelper::stringToArray($data);
+
+            foreach ($blockFieldData as $i => $singleFieldData) {
+                $fieldData['new'.$blocktypeHandle.($i+1)] = array(
+                    'type' => $blocktypeHandle,
+                    'enabled' => true,
+                    'fields' => array(
+                        $fieldHandle => $singleFieldData,
+                    )
+                );
+            }
+        }
+
+        return $fieldData;
+    }
+
     public function prepTable($data, $tableInfo, $field, &$handle) {
         $fieldData = array();
 
@@ -470,6 +511,25 @@ class FeedMe_FieldsService extends BaseApplicationComponent
             }
         }
 
+        return $return;
+    }
+
+    public function handleSuperTableData($newFields, $handle, $content)
+    {
+        $return = $content;
+
+        if (isset($newFields[$handle])) {
+            foreach ($newFields[$handle] as $matrixBlockKey => $matrixBlock) {
+                if (isset($content[$matrixBlockKey])) {
+                    // Merge just the fields property
+                    $merged = array_merge($content[$matrixBlockKey]['fields'], $matrixBlock['fields']);
+                    $return[$matrixBlockKey]['fields'] = $merged;
+                } else {
+                    $return = array_merge($newFields[$handle], $content);
+                }
+            }
+        }
+        
         return $return;
     }
 

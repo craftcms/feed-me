@@ -21,4 +21,7 @@ class FeedMe_FieldType extends BaseEnum
     const Table         = 'Table';
     const Tags          = 'Tags';
     const Users         = 'Users';
+
+    // Third-Party
+    const SuperTable    = 'SuperTable';
 }

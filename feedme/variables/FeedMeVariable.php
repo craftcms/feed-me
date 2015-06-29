@@ -45,6 +45,11 @@ class FeedMeVariable
         return craft()->matrix->getBlockTypesByFieldId($fieldId);
     }
 
+    public function getSuperTableBlocks($fieldId)
+    {
+        return craft()->superTable->getBlockTypesByFieldId($fieldId);
+    }
+
 
 
 }
