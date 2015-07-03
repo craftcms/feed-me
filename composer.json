@@ -1,11 +1,15 @@
 {
-    "name": "engram-design/FeedMe",
+    "name": "engram-design/feedme",
     "description": "A Craft CMS plugin which makes it easy to import entries and entry data from XML, RSS or ATOM feeds.",
+    "homepage": "https://github.com/engram-design/FeedMe",
+    "type": "craft-plugin",
+    "keywords": ["craft","plugin"],
+    "license": "MIT",
     "authors": [{
         "name": "S. Group",
-        "email": "joshua@sgroup.com.au"
+        "email": "joshua@sgroup.com.au",
+	"homepage": "http://sgroup.com.au/"
 	}],
-    "type": "craft-plugin",
     "require": {
         "composer/installers": "~1.0"
     }
