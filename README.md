@@ -196,25 +196,29 @@ If you're looking to consume REST feeds, APIs or other third-party platforms (Fa
 
 ## Roadmap
 
-- Full support (creation) for search-only field types (Assets, Entries, Users)
+- Improve mapping by:
+  - More refined and flexible mapping interface.
+  - Support importing into specific locale's.
+  - Allow for default value to be set.
+  - Finer control over category/tag creation
+  - Support uploading of assets.
+  - Full support (creation) for search-only field types (Assets, Entries, Users)
 - Support third-party field types through hook
-- Finer control over category/tag creation
-- Improved logging of import process for individual feed items
 - Allow feed processing to be reverted
-- Allow static/default values to be set for fields when mapping
-- Batch processing for very long feeds
+- Better support for long feeds when triggering via Direct Processing
 - Support authentication for feed access (Basic, OAuth, Token)
-- Support for locale's
 - Organise documentation into Wiki
 
 Have a suggestion? We'd love to hear about it! [Make a suggestion](https://github.com/engram-design/FeedMe/issues)
 
 
-## Bugs, feature requests, support
+## Support
 
-Found a bug? Have a suggestion? [Submit an issue](https://github.com/engram-design/FeedMe/issues)
+If you're having an issue using Feed Me, the best course of action is to send us a message through the support form on the Help tab. This will provide us with enough detail to assist.
 
-For support, either [Submit an issue](https://github.com/engram-design/FeedMe/issues) or ask for assistance in the [Craft Slack Group](https://buildwithcraft.com/community#slack).
+<img width="456" src="https://raw.githubusercontent.com/engram-design/FeedMe/master/screenshots/support.png" />
+
+Otherwise, either [Submit an issue](https://github.com/engram-design/FeedMe/issues) or ask for assistance in the [Craft Slack Group](https://buildwithcraft.com/community#slack).
 
 
 ## Thanks / Contributions
@@ -226,4 +230,14 @@ A massive thanks to [Bob Olde Hampsink](https://github.com/boboldehampsink) and 
 
 ## Changelog
 
-[View Changelog](https://github.com/engram-design/FeedMe/blob/master/CHANGELOG.md)
+#### 1.2.9
+
+- Added support for [SuperTable](https://github.com/engram-design/SuperTable).
+- Added log tab to read in `craft/storage/runtime/logs/feedme.log`.
+- Added help tab, allowing users to submit their feed info and setup for debugging/troubleshooting.
+- Fix for fields in Matrix blocks only succesfully mapping textual fields. Complex fields such as Assets, Entries, etc were not mapping correctly.
+- Fix for only one item being processed when Delete duplication handling was selected.
+- Fix for Dropdown/RadioButtons causing a critical error when a provided value didn't exist in the field.
+- Added credit and plugin url to footer.
+
+[View Full Changelog](https://github.com/engram-design/FeedMe/blob/master/CHANGELOG.md)

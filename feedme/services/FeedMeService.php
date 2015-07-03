@@ -130,7 +130,7 @@ class FeedMeService extends BaseApplicationComponent
 
 
         // If there's an existing matching entry
-        if ($existingEntry) {
+        if ($existingEntry && $feed['duplicateHandle'] != FeedMe_Duplicate::Delete) {
 
             // If we're updating
             if ($feed['duplicateHandle'] == FeedMe_Duplicate::Update) {

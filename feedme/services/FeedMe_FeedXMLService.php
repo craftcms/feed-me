@@ -29,6 +29,10 @@ class FeedMe_FeedXMLService extends BaseApplicationComponent
 
 	function elementArray($xml, $first = true, $returnAttr = false)
 	{
+		if (!$xml) {
+			return null;
+		}
+
 		if (empty($xml->children)) {
 			if ($returnAttr) {
 				// Used when calling via template code - return the attributes for the node
@@ -80,7 +84,7 @@ class FeedMe_FeedXMLService extends BaseApplicationComponent
 		foreach ($xmlArray as $item) {
 			$current = count($elements);
 
-			if ($item['type'] == 'open' OR $item['type'] == 'complete') {
+			if ($item['type'] == 'open' || $item['type'] == 'complete') {
 				$elements[$current] 			= new \stdClass;
 				$elements[$current]->tag		= $item['tag'];
 				$elements[$current]->attributes	= (array_key_exists('attributes', $item)) ? $item['attributes'] : '';
@@ -97,7 +101,11 @@ class FeedMe_FeedXMLService extends BaseApplicationComponent
 			}
 		}
 
-		return $elements[0];
+		if ($elements) {
+			return $elements[0];
+		} else {
+			return null;
+		}
 	}
 
 }

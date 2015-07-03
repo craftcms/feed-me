@@ -24,7 +24,7 @@ class FeedMePlugin extends BasePlugin
 
     public function getVersion()
     {
-        return '1.2.8';
+        return '1.2.9';
     }
 
     public function getDeveloper()
@@ -35,6 +35,11 @@ class FeedMePlugin extends BasePlugin
     public function getDeveloperUrl()
     {
         return 'http://sgroup.com.au';
+    }
+
+    public function getPluginUrl()
+    {
+        return 'https://github.com/engram-design/FeedMe';
     }
 
     public function hasCpSection()
@@ -54,6 +59,7 @@ class FeedMePlugin extends BasePlugin
         return array(
             'pluginNameOverride'    => AttributeType::String,
             'cache'                 => array(AttributeType::Number, 'default' => 60),
+            'enabledTabs'           => array(AttributeType::Mixed, 'default' => true),
         );
     }
 
@@ -66,7 +72,7 @@ class FeedMePlugin extends BasePlugin
             'feedme/feeds/(?P<feedId>\d+)'      => array('action' => 'FeedMe/feeds/editFeed'),
             'feedme/runTask/(?P<feedId>\d+)'    => array('action' => 'FeedMe/feeds/runTask'),
 
-            'feedme/logs/(?P<logsId>\d+)'       => 'feedme/logs/_log',
+            'feedme/logs'                       => array('action' => 'FeedMe/logs/logs'),
         );
     }
 

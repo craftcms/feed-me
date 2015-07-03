@@ -4,8 +4,8 @@
 {% includeJsResource 'feedme/js/feedme.js' %}
 
 {% set crumbs = [
-	{ label: craft.feedme.name|t, url: url('feedme') },
-	{ label: feed.name|t, url: url('feedme/feeds/' ~ feed.id) },
+	{ label: craft.feedme.getPluginName | t, url: url('feedme') },
+	{ label: feed.name | t, url: url('feedme/feeds/' ~ feed.id) },
 ] %}
 
 {% set title = feed.name %}
@@ -35,20 +35,20 @@
 			{% endif %}
 		{% endfor %}
 
-		<p>{{ 'Choose the destination fields for your feed data. "' ~ entrytype.titleLabel ~ '" is always required.'|t }}</p>
+		<p>{{ 'Choose the destination fields for your feed data. "' ~ entrytype.titleLabel ~ '" is always required.' | t }}</p>
 
 		{% if feed.duplicateHandle != 'delete' %}
-		<p>{{ 'Select the field(s) to use to check for existing duplicate entries to update.'|t }}</p>
+		<p>{{ 'Select the field(s) to use to check for existing duplicate entries to update.' | t }}</p>
 		{% endif %}
 
 	    <table class="data fullwidth collapsible">
 	        <thead>
-		        <th>{{ "Element name"|t }}</th>
-		        <th>{{ "Field name"|t }}</th>
+		        <th>{{ "Element name" | t }}</th>
+		        <th>{{ "Field name" | t }}</th>
 		        {% if feed.duplicateHandle != 'delete' %}
-		        <th>{{ "Duplicate field"|t }} <span class="info">{{ "Use this field to check for duplicate entries."|t }}</span></th>
+		        <th>{{ "Duplicate field" | t }} <span class="info">{{ "Use this field to check for duplicate entries." | t }}</span></th>
 		        {% endif %}
-		        <th>{{ "Value"|t }}</th>
+		        <th>{{ "Value" | t }}</th>
 	        </thead>
 	        <tbody>
 				{% for key, data in feedData %}
@@ -58,7 +58,7 @@
 				                <div class="heading">
 				                    <label><code>&lt;{{ key }}&gt;</code></label>
 				                    <div class="instructions">
-				                        <p>{{ "will be imported into:"|t }}</p>                
+				                        <p>{{ "will be imported into:" | t }}</p>                
 				                    </div>
 				                </div>
 				            </div>
@@ -69,15 +69,15 @@
 				                <div class="input">
 				                    <div class="select mapper">
 				                        <select name="fieldMapping[{{ key }}]" class="feedFields">
-				                            <option value="noimport">{{ "Don't import"|t }}</option>
+				                            <option value="noimport">{{ "Don't import" | t }}</option>
 					                    	{{ _self.generateOption(entrytype.titleLabel ~ '*', 'title', key, feed) }}
-					                    	{{ _self.generateOption("Slug"|t, 'slug', key, feed) }}
-					                    	{{ _self.generateOption("Parent Entry"|t, 'parentId', key, feed) }}
-					                    	{{ _self.generateOption("Ancestors"|t, 'ancestors', key, feed) }}
-					                    	{{ _self.generateOption("Author"|t, 'authorId', key, feed) }}
-					                    	{{ _self.generateOption("Post Date"|t, 'postDate', key, feed) }}
-					                    	{{ _self.generateOption("Expiry Date"|t, 'expiryDate', key, feed) }}
-					                    	{{ _self.generateOption("Enabled"|t, 'enabled', key, feed) }}
+					                    	{{ _self.generateOption("Slug" | t, 'slug', key, feed) }}
+					                    	{{ _self.generateOption("Parent Entry" | t, 'parentId', key, feed) }}
+					                    	{{ _self.generateOption("Ancestors" | t, 'ancestors', key, feed) }}
+					                    	{{ _self.generateOption("Author" | t, 'authorId', key, feed) }}
+					                    	{{ _self.generateOption("Post Date" | t, 'postDate', key, feed) }}
+					                    	{{ _self.generateOption("Expiry Date" | t, 'expiryDate', key, feed) }}
+					                    	{{ _self.generateOption("Enabled" | t, 'enabled', key, feed) }}
 
 						                    {% for tab in craft.fields.getLayoutById(entrytype.fieldLayoutId).getTabs() %}
 					                            <optgroup label="{{ tab.name }}">
@@ -146,11 +146,21 @@
 
 		<hr>
 
-		<div class="buttons">
-			<a href="javascript: window.history.go(-1)" class="btn submit">{{ 'Back'|t }}</a>
-			<input type="submit" data-action="FeedMe/feeds/saveFeed" class="btn submit" value="{{ 'Save'|t }}">
-			<input type="submit" data-action="FeedMe/feeds/performFeed" class="btn submit" value="{{ 'Save & Import'|t }}">
-		</div>
+		<div id="plugin-footer">
+	        <div class="footer-left">
+	            <div class="buttons">
+					<a href="javascript: window.history.go(-1)" class="btn submit">{{ 'Back' | t }}</a>
+					<input type="submit" data-action="FeedMe/feeds/saveFeed" class="btn submit" value="{{ 'Save' | t }}">
+					<input type="submit" data-action="FeedMe/feeds/performFeed" class="btn submit" value="{{ 'Save & Import' | t }}">
+				</div>
+	        </div>
+
+	        <div class="footer-right">
+	            <div class="plugin-credit">
+	                <p>{{ craft.feedme.getPluginName }} {{ craft.feedme.getPluginVersion }} &bull; <a href="{{ craft.feedme.getPluginUrl }}" target="_blank">GitHub</a></p>
+	            </div>
+	        </div>
+	    </div>
 	</form>
 
 {% endblock %}

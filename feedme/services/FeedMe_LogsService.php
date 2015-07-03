@@ -39,7 +39,7 @@ class FeedMe_LogsService extends BaseApplicationComponent
     public function log($settings, $errors, $level)
     {
         // Firstly, store in plugin log file (use $level to control log level)
-        FeedMePlugin::log(print_r($errors, true), $level);
+        FeedMePlugin::log(print_r($errors, true), $level, true);
 
         // Save this log to the DB as well
         if (isset($settings->attributes['logsId'])) {

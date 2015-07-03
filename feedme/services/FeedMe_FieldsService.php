@@ -192,7 +192,7 @@ class FeedMe_FieldsService extends BaseApplicationComponent
     }
 
     public function prepDropdown($data, $field) {
-        $fieldData = array();
+        $fieldData = null;
 
         $settings = $field->getFieldType()->getSettings();
         $options = $settings->getAttribute('options');
@@ -310,7 +310,7 @@ class FeedMe_FieldsService extends BaseApplicationComponent
     }
 
     public function prepRadioButtons($data, $field) {
-        $fieldData = array();
+        $fieldData = null;
 
         $settings = $field->getFieldType()->getSettings();
         $options = $settings->getAttribute('options');

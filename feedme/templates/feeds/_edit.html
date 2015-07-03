@@ -4,16 +4,16 @@
 {% includeJsResource 'feedme/js/feedme.js' %}
 
 {% set crumbs = [
-	{ label: craft.feedme.name|t, url: url('feedme') },
+	{ label: craft.feedme.getPluginName | t, url: url('feedme') },
 ] %}
 
 {% if feed.id %}
 	{% set crumbs = crumbs | merge([
-		{ label: feed.name|t, url: url('feedme/feeds/' ~ feed.id) },
+		{ label: feed.name | t, url: url('feedme/feeds/' ~ feed.id) },
 	]) %}
 {% endif %}
 
-{% set title = (feed.id) ? feed.name : 'Create a new feed'|t %}
+{% set title = (feed.id) ? feed.name : 'Create a new feed' | t %}
 
 {% import "_includes/forms" as forms %}
 
@@ -26,8 +26,8 @@
 
 		{{ forms.textField({
 			first: true,
-			label: "Name"|t,
-			instructions: "What this feed will be called in the CP."|t,
+			label: "Name" | t,
+			instructions: "What this feed will be called in the CP." | t,
 			id: 'name',
 			name: 'name',
 			value: feed.name,
@@ -38,8 +38,8 @@
 		}) }}
 
 		{{ forms.textField({
-			label: "Feed URL"|t,
-			instructions: "Can be a file on the local file system or from a website url (http://...)."|t,
+			label: "Feed URL" | t,
+			instructions: "Can be a file on the local file system or from a website url (http://...)." | t,
 			id: 'feedUrl',
 			name: 'feedUrl',
 			value: feed.feedUrl,
@@ -49,7 +49,7 @@
 
 		{{ forms.selectField({
 			label: "Feed Type" | t,
-			instructions: 'Choose what type of feed you\'re retrieving.'|t,
+			instructions: 'Choose what type of feed you\'re retrieving.' | t,
 			id: 'feedType',
 			name: 'feedType',
 			options: {'xml': 'XML Feed', 'rss': 'RSS Feed', 'atom': 'ATOM Feed', 'json': 'JSON Feed'},
@@ -58,8 +58,8 @@
 		}) }}
 
 		{{ forms.textField({
-			label: "Primary Element"|t,
-			instructions: "The primary element that contains the records you intend to parse. Selecting a Feed Type above will assist in most cases."|t,
+			label: "Primary Element" | t,
+			instructions: "The primary element that contains the records you intend to parse. Selecting a Feed Type above will assist in most cases." | t,
 			id: 'primaryElement',
 			class: 'code',
 			name: 'primaryElement',
@@ -73,7 +73,7 @@
 
 		{{ forms.selectField({
 			label: "Section" | t,
-			instructions: 'Choose the Section you want to save your feed data to.'|t,
+			instructions: 'Choose the Section you want to save your feed data to.' | t,
 			id: 'section',
 			name: 'section',
 			options: craft.feedme.getSelectOptions(sections),
@@ -89,7 +89,7 @@
 
 		{{ forms.selectField({
 			label: "Entry Type" | t,
-			instructions: 'Choose the Entry Type you want to save your feed data to.'|t,
+			instructions: 'Choose the Entry Type you want to save your feed data to.' | t,
 			id: 'entrytype',
 			name: 'entrytype',
 			options: craft.feedme.getSelectOptions(entrytypes),
@@ -112,8 +112,8 @@
 		<hr>
 
 		{{ forms.textField({
-			label: "Passkey"|t,
-			instructions: "A generated, unique string to increase security against imports being run inadvertently. No need to change this."|t,
+			label: "Passkey" | t,
+			instructions: "A generated, unique string to increase security against imports being run inadvertently. No need to change this." | t,
 			id: 'passkey',
 			name: 'passkey',
 			value: (feed.passkey) ? feed.passkey : uniqid(10),
@@ -125,17 +125,27 @@
 		{{ forms.lightswitchField({
 			first: true,
 			label: 'Backup',
-			instructions: 'Perform a full backup each time this feed is processed.'|t,
+			instructions: 'Perform a full backup each time this feed is processed.' | t,
 			name: 'backup',
 			on: (feed.id) ? feed.backup : true,
 		}) }}
 
 		<hr>
 
-		<div class="buttons">
-			<input type="submit" data-action="FeedMe/feeds/saveFeed" class="btn submit" value="{{ 'Save'|t }}">
-			<input type="submit" data-action="FeedMe/feeds/mapFeed" class="btn submit" value="{{ 'Save & Continue'|t }}">
-		</div>
+	    <div id="plugin-footer">
+	        <div class="footer-left">
+	            <div class="buttons">
+					<input type="submit" data-action="FeedMe/feeds/saveFeed" class="btn submit" value="{{ 'Save' | t }}">
+					<input type="submit" data-action="FeedMe/feeds/mapFeed" class="btn submit" value="{{ 'Save & Continue' | t }}">
+				</div>
+	        </div>
+
+	        <div class="footer-right">
+	            <div class="plugin-credit">
+	                <p>{{ craft.feedme.getPluginName }} {{ craft.feedme.getPluginVersion }} &bull; <a href="{{ craft.feedme.getPluginUrl }}" target="_blank">GitHub</a></p>
+	            </div>
+	        </div>
+	    </div>
 	</form>
 {% endblock %}
 
