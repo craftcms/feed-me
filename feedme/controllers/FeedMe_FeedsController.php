@@ -147,52 +147,38 @@ class FeedMe_FeedsController extends BaseController
         	$feed->feedUrl = craft()->request->getParam('url');
         }
 
-        // Check if this is being run directly - if not, its being run from CP
+        // Are we running from the CP?
+        if (craft()->request->isCpRequest()) {
+			// Create the import task
+	        craft()->tasks->createTask('FeedMe', $feed->name, $settings);
+
+	        // if not using the direct param for this request, so UI stuff 
+	        craft()->userSession->setNotice(Craft::t('Feed processing started.'));
+
+	        $this->redirect('feedme/feeds');
+        }
+
+        // If not, are we running directly?
         if (craft()->request->getParam('direct')) {
 	        if (craft()->request->getParam('passkey') == $feed['passkey']) {
-	        	$this->runDirectImportTask($feed, $settings);
+				// Create the import task
+		        craft()->tasks->createTask('FeedMe', $feed->name, $settings);
+
+		        // Trigger the task to run right now!
+		        if (!craft()->tasks->isTaskRunning()) {
+				    $task = craft()->tasks->getNextPendingTask();
+
+				    if ($task) {
+				        craft()->tasks->runPendingTasks();
+				    }
+				}
+
+				// Let the requester know whats going on.
+				$this->returnJson(array('success' => 'Feed ID: '.$feed['id'].' - Task started'));
 	        } else {
 	        	$this->returnJson(array('error' => 'Invalid Passkey'));
 	        }
-        } else {
-        	$this->runTaskImportTask($feed, $settings);
         }
-	}
-
-	//
-	// Bypass creating a Task when running directly - otherwise need to manually trigger task
-	//
-	public function runDirectImportTask($feed, $settings) {
-
-    	// Being run via direct (cron)
-    	$feedData = craft()->feedMe_feed->getFeed($feed->feedType, $feed->feedUrl, $feed->primaryElement);
-
-		$chunkedFeedData = array_chunk($feedData, 100);
-
-        $feedSettings = craft()->feedMe->setupForImport($feed);
-
-        craft()->templateCache->deleteCachesByElementType('Entry');
-
-        // For direct-access debugging
-		foreach($chunkedFeedData as $step => $data) {
-			craft()->feedMe->importNode($data, $feed, $feedSettings);
-		}
-
-    	$this->returnJson(array('success' => 'Feed ID: '.$feed['id'].' - Task started'));
-	}
-
-	//
-	// Create a Task that handles processing the feed nicely
-	//
-	public function runTaskImportTask($feed, $settings) {
-
-		// Create the import task
-        craft()->tasks->createTask('FeedMe', $feed->name, $settings);
-
-        // if not using the direct param for this request, so UI stuff 
-        craft()->userSession->setNotice(Craft::t('Feed processing started.'));
-
-        $this->redirect('feedme/feeds');
 	}
 
 }

@@ -205,7 +205,6 @@ If you're looking to consume REST feeds, APIs or other third-party platforms (Fa
   - Full support (creation) for search-only field types (Assets, Entries, Users)
 - Support third-party field types through hook
 - Allow feed processing to be reverted
-- Better support for long feeds when triggering via Direct Processing
 - Support authentication for feed access (Basic, OAuth, Token)
 - Organise documentation into Wiki
 
@@ -230,14 +229,8 @@ A massive thanks to [Bob Olde Hampsink](https://github.com/boboldehampsink) and 
 
 ## Changelog
 
-#### 1.2.9
+#### 1.3.0
 
-- Added support for [SuperTable](https://github.com/engram-design/SuperTable).
-- Added log tab to read in `craft/storage/runtime/logs/feedme.log`.
-- Added help tab, allowing users to submit their feed info and setup for debugging/troubleshooting.
-- Fix for fields in Matrix blocks only succesfully mapping textual fields. Complex fields such as Assets, Entries, etc were not mapping correctly.
-- Fix for only one item being processed when Delete duplication handling was selected.
-- Fix for Dropdown/RadioButtons causing a critical error when a provided value didn't exist in the field.
-- Added credit and plugin url to footer.
+- Refactored direct processing to utalize Craft's tasks service, rather than using pure PHP processing. This greatly improves performance as PHP processing would run out of memory extremely quickly.
 
 [View Full Changelog](https://github.com/engram-design/FeedMe/blob/master/CHANGELOG.md)

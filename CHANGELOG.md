@@ -1,5 +1,15 @@
 ## Changelog
 
+#### 1.2.9
+
+- Added support for [SuperTable](https://github.com/engram-design/SuperTable).
+- Added log tab to read in `craft/storage/runtime/logs/feedme.log`.
+- Added help tab, allowing users to submit their feed info and setup for debugging/troubleshooting.
+- Fix for fields in Matrix blocks only succesfully mapping textual fields. Complex fields such as Assets, Entries, etc were not mapping correctly.
+- Fix for only one item being processed when Delete duplication handling was selected.
+- Fix for Dropdown/RadioButtons causing a critical error when a provided value didn't exist in the field.
+- Added credit and plugin url to footer.
+
 #### 1.2.8
 
 - Move changelog - so much change!
