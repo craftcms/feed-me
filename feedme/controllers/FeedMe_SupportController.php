@@ -131,7 +131,7 @@ class FeedMe_SupportController extends BaseController
                     }
                 }
             } catch(\Exception $e) {
-                FeedMePlugin::log('Tried to attach debug logs to a support request and something went horribly wrong: '.$e->getMessage(), LogLevel::Warning);
+                FeedMePlugin::log('Tried to attach debug logs to a support request and something went horribly wrong: '.$e->getMessage(), LogLevel::Warning, true);
             }
 
             $email = new EmailModel();

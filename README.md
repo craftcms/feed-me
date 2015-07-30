@@ -229,8 +229,8 @@ A massive thanks to [Bob Olde Hampsink](https://github.com/boboldehampsink) and 
 
 ## Changelog
 
-#### 1.3.0
+#### 1.3.1
 
-- Refactored direct processing to utalize Craft's tasks service, rather than using pure PHP processing. This greatly improves performance as PHP processing would run out of memory extremely quickly.
+- Fix for info/notice log messages not saving when `devMode` is off.
 
 [View Full Changelog](https://github.com/engram-design/FeedMe/blob/master/CHANGELOG.md)
