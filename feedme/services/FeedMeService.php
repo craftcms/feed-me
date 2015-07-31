@@ -32,7 +32,7 @@ class FeedMeService extends BaseApplicationComponent
                     FeedMePlugin::log('FeedMeError - Something went wrong while deleting entries.', LogLevel::Error, true);
                 }
             } catch (\Exception $e) {
-                FeedMePlugin::log('FeedMeError: ' . $e->getMessage() . '.', LogLevel::Error, true);
+                FeedMePlugin::log($feed->name . ': FeedMeError: ' . $e->getMessage() . '.', LogLevel::Error, true);
             }
         }
 
@@ -46,11 +46,18 @@ class FeedMeService extends BaseApplicationComponent
 
     public function importNode($nodes, $feed, $settings)
     {
+        $time_start = microtime(true); 
+        FeedMePlugin::log($feed->name . ': Processing started', LogLevel::Info, true);
+
         foreach ($nodes as $key => $node) {
             $this->importSingleNode($node, $feed, $settings);
 
             //echo number_format(memory_get_usage()) . "<br>";
         }
+
+        $time_end = microtime(true);
+        $execution_time = number_format(($time_end - $time_start), 2);
+        FeedMePlugin::log($feed->name . ': Processing finished in ' . $execution_time . 's', LogLevel::Info, true);
 
         return true;
     }
@@ -115,7 +122,7 @@ class FeedMeService extends BaseApplicationComponent
                 // Finally - we have our mapped data, formatted for the particular field as required
                 $fieldData[$handle] = $content;
             } catch (\Exception $e) {
-                FeedMePlugin::log('FeedMeError: ' . $e->getMessage() . '.', LogLevel::Error, true);
+                FeedMePlugin::log($feed->name . ': FeedMeError: ' . $e->getMessage() . '.', LogLevel::Error, true);
 
                 return false;
             }
@@ -168,22 +175,22 @@ class FeedMeService extends BaseApplicationComponent
             try {
                 // Save the entry!
                 if (!craft()->entries->saveEntry($entry)) {
-                    FeedMePlugin::log(print_r($entry->getErrors(), true), LogLevel::Error, true);
+                    FeedMePlugin::log($feed->name . ': ' . print_r($entry->getErrors(), true), LogLevel::Error, true);
 
                     return false;
                 } else {
 
                     // Successfully saved/added entry
                     if ($feed['duplicateHandle'] == FeedMe_Duplicate::Update) {
-                        FeedMePlugin::log('Entry successfully updated: ' . $entry->id, LogLevel::Info, true);
+                        FeedMePlugin::log($feed->name . ': Entry successfully updated: ' . $entry->id, LogLevel::Info, true);
                     } else if ($feed['duplicateHandle'] == FeedMe_Duplicate::Add) {
-                        FeedMePlugin::log('Entry successfully added: ' . $entry->id, LogLevel::Info, true);
+                        FeedMePlugin::log($feed->name . ': Entry successfully added: ' . $entry->id, LogLevel::Info, true);
                     }
 
                     return true;
                 }
             } catch (\Exception $e) {
-                FeedMePlugin::log('Entry FeedMeError: ' . $e->getMessage() . '.', LogLevel::Error, true);
+                FeedMePlugin::log($feed->name . ': Entry FeedMeError: ' . $e->getMessage() . '.', LogLevel::Error, true);
 
                 return false;
             }

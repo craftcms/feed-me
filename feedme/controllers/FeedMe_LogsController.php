@@ -42,7 +42,7 @@ class FeedMe_LogsController extends BaseController
                         $rowContents = explode("\n", $message);
 
                         // This is a non-devMode log entry.
-                        $logEntryModel->message = $rowContents[0];
+                        $logEntryModel->message = str_replace('[Forced]', '', $rowContents[0]);
 
                         // And save the log entry.
                         $logEntries[] = $logEntryModel;

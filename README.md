@@ -229,8 +229,8 @@ A massive thanks to [Bob Olde Hampsink](https://github.com/boboldehampsink) and 
 
 ## Changelog
 
-#### 1.3.1
+#### 1.3.2
 
-- Fix for info/notice log messages not saving when `devMode` is off.
+- Alterations to logging information to provide better feedback. Thanks to [@russback](https://github.com/russback).
 
 [View Full Changelog](https://github.com/engram-design/FeedMe/blob/master/CHANGELOG.md)
