@@ -1,5 +1,9 @@
 ## Changelog
 
+#### 1.3.2
+
+- Alterations to logging information to provide better feedback. Thanks to [@russback](https://github.com/russback).
+
 #### 1.3.1
 
 - Fix for info/notice log messages not saving when `devMode` is off.

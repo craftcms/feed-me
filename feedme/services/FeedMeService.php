@@ -175,7 +175,7 @@ class FeedMeService extends BaseApplicationComponent
             try {
                 // Save the entry!
                 if (!craft()->entries->saveEntry($entry)) {
-                    FeedMePlugin::log($feed->name . ': ' . print_r($entry->getErrors(), true), LogLevel::Error, true);
+                    FeedMePlugin::log($feed->name . ': ' . json_encode($entry->getErrors()), LogLevel::Error, true);
 
                     return false;
                 } else {
