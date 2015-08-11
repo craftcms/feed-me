@@ -229,8 +229,8 @@ A massive thanks to [Bob Olde Hampsink](https://github.com/boboldehampsink) and 
 
 ## Changelog
 
-#### 1.3.3
+#### 1.3.4
 
-- Minor fix for log reporting which wasn't displaying errors in a useful way.
+- Minor fix for template mapping. Caused an issue when using a JSON feed and came across a empty nested array.
 
 [View Full Changelog](https://github.com/engram-design/FeedMe/blob/master/CHANGELOG.md)

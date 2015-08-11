@@ -1,5 +1,9 @@
 ## Changelog
 
+#### 1.3.3
+
+- Minor fix for log reporting which wasn't displaying errors in a useful way.
+
 #### 1.3.2
 
 - Alterations to logging information to provide better feedback. Thanks to [@russback](https://github.com/russback).

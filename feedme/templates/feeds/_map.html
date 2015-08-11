@@ -133,7 +133,9 @@
 				            <div class="field">
 				                <div class="heading">
 				                    <div class="instructions">
-				                        <p>eg: {{ data }}</p>
+				                    	{% if data is not iterable %}
+					                        <p>eg: {{ data }}</p>
+					                    {% endif %}
 				                    </div>
 				                </div>
 				            </div>
