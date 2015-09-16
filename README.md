@@ -203,11 +203,12 @@ If you're looking to consume REST feeds, APIs or other third-party platforms (Fa
   - Finer control over category/tag creation
   - Support uploading of assets.
   - Full support (creation) for search-only field types (Assets, Entries, Users)
+  - Attribute-mapping support for XML feeds
+  - Wildcard node names (for non-consistent node names)
 - Support third-party field types through hook
 - Allow feed processing to be reverted
 - Support authentication for feed access (Basic, OAuth, Token)
 - Organise documentation into Wiki
-- Attribute-mapping support for XML feeds
 
 Have a suggestion? We'd love to hear about it! [Make a suggestion](https://github.com/engram-design/FeedMe/issues)
 
