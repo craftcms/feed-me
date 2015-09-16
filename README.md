@@ -207,6 +207,7 @@ If you're looking to consume REST feeds, APIs or other third-party platforms (Fa
 - Allow feed processing to be reverted
 - Support authentication for feed access (Basic, OAuth, Token)
 - Organise documentation into Wiki
+- Attribute-mapping support for XML feeds
 
 Have a suggestion? We'd love to hear about it! [Make a suggestion](https://github.com/engram-design/FeedMe/issues)
 
