@@ -1,5 +1,9 @@
 ## Changelog
 
+#### 1.3.4
+
+- Minor fix for template mapping. Caused an issue when using a JSON feed and came across a empty nested array.
+
 #### 1.3.3
 
 - Minor fix for log reporting which wasn't displaying errors in a useful way.

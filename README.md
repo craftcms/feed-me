@@ -232,8 +232,8 @@ A massive thanks to [Bob Olde Hampsink](https://github.com/boboldehampsink) and 
 
 ## Changelog
 
-#### 1.3.4
+#### 1.3.5
 
-- Minor fix for template mapping. Caused an issue when using a JSON feed and came across a empty nested array.
+- Minor fix for logging. When Delete duplication option was set, import success was never recorded in the logs.
 
 [View Full Changelog](https://github.com/engram-design/FeedMe/blob/master/CHANGELOG.md)
