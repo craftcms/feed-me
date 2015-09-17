@@ -183,7 +183,7 @@ class FeedMeService extends BaseApplicationComponent
                     // Successfully saved/added entry
                     if ($feed['duplicateHandle'] == FeedMe_Duplicate::Update) {
                         FeedMePlugin::log($feed->name . ': Entry successfully updated: ' . $entry->id, LogLevel::Info, true);
-                    } else if ($feed['duplicateHandle'] == FeedMe_Duplicate::Add) {
+                    } else {
                         FeedMePlugin::log($feed->name . ': Entry successfully added: ' . $entry->id, LogLevel::Info, true);
                     }
 
