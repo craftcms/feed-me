@@ -9,12 +9,12 @@ class FeedMe_FeedsService extends BaseApplicationComponent
         return FeedMe_FeedModel::populateModels($feedRecords);
     }
 
-	public function getTotalFeeds()
-	{
-		return count($this->getFeeds());
-	}
+    public function getTotalFeeds()
+    {
+        return count($this->getFeeds());
+    }
 
-	public function getFeedById($feedId)
+    public function getFeedById($feedId)
     {
         $feedRecord = FeedMe_FeedRecord::model()->findById($feedId);
         if ($feedRecord) {
@@ -61,17 +61,17 @@ class FeedMe_FeedsService extends BaseApplicationComponent
         }
     }
 
-	public function saveFeed(FeedMe_FeedModel $feed)
-	{
-		if ($feed->id) {
-			$feedRecord = FeedMe_FeedRecord::model()->findById($feed->id);
+    public function saveFeed(FeedMe_FeedModel $feed)
+    {
+        if ($feed->id) {
+            $feedRecord = FeedMe_FeedRecord::model()->findById($feed->id);
 
-			if (!$feedRecord) {
-				throw new Exception(Craft::t('No feed exists with the ID “{id}”', array('id' => $feed->id)));
-			}
-		} else {
-			$feedRecord = new FeedMe_FeedRecord();
-		}
+            if (!$feedRecord) {
+                throw new Exception(Craft::t('No feed exists with the ID “{id}”', array('id' => $feed->id)));
+            }
+        } else {
+            $feedRecord = new FeedMe_FeedRecord();
+        }
 
         // Set attributes
         $feedRecord->name               = $feed->name;
@@ -100,22 +100,22 @@ class FeedMe_FeedsService extends BaseApplicationComponent
         if (!$feed->hasErrors()) {
             if ($feedRecord->save()) {
 
-            	// Update Model with ID from Database
-            	$feed->setAttribute('id', $feedRecord->getAttribute('id'));
+                // Update Model with ID from Database
+                $feed->setAttribute('id', $feedRecord->getAttribute('id'));
                 $feed->setAttribute('fieldMapping', $feedRecord->getAttribute('fieldMapping'));
                 $feed->setAttribute('fieldUnique', $feedRecord->getAttribute('fieldUnique'));
 
-            	return true;
+                return true;
             } else {
-            	$feed->addErrors($feedRecord->getErrors());
-            	return false;
+                $feed->addErrors($feedRecord->getErrors());
+                return false;
             }
         } else {
             //die(print_r($feed->getErrors()));
         }
 
         return false;
-	}
+    }
 
     public function deleteFeedById($feedId)
     {

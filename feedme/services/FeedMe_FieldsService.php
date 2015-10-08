@@ -81,6 +81,13 @@ class FeedMe_FieldsService extends BaseApplicationComponent
                 case FeedMe_FieldType::SuperTable:
                     $data = $this->prepSuperTable($data, $matrixInfo, $field, $handle); break;
             }
+
+            // Third-party fieldtype support
+            $thirdPartyFields = craft()->plugins->call('registerFeedMeField');
+
+            if (in_array($field->type, $thirdPartyFields)) {
+                craft()->plugins->call('prepForFeedMeFieldType', array(&$data, $handle));
+            }
         }
 
         return $data;
@@ -265,7 +272,7 @@ class FeedMe_FieldsService extends BaseApplicationComponent
         $handle = $matrixHandle;
 
         if (!empty($data)) {
-            $blockFieldData = ArrayHelper::stringToArray($data);
+            $blockFieldData = $this->prepForFieldType($data, $fieldHandle);
 
             foreach ($blockFieldData as $i => $singleFieldData) {
 
@@ -337,7 +344,7 @@ class FeedMe_FieldsService extends BaseApplicationComponent
         $handle = $matrixHandle;
 
         if (!empty($data)) {
-            $blockFieldData = ArrayHelper::stringToArray($data);
+            $blockFieldData = $this->prepForFieldType($data, $fieldHandle);
 
             foreach ($blockFieldData as $i => $singleFieldData) {
 

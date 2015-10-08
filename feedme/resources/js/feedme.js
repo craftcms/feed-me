@@ -35,14 +35,14 @@ $(function() {
 
     // Allow multiple back-end action hooks depending on button clicked. I'm sure there is a better way though!
     $(document).on('click', 'input[type="submit"]', function(e) {
-    	e.preventDefault();
-    	var form = $(this).parents('form');
+        e.preventDefault();
+        var form = $(this).parents('form');
 
-    	if ($(this).attr('data-action')) {
-	    	$(form).find('input[name="action"]').val($(this).attr('data-action'));
-    	}
+        if ($(this).attr('data-action')) {
+            $(form).find('input[name="action"]').val($(this).attr('data-action'));
+        }
 
-    	$(form).submit();
+        $(form).submit();
     });
 
     

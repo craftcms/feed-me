@@ -180,17 +180,19 @@ class FeedMe_FeedService extends BaseApplicationComponent
 
     public function getRawData($url)
     {
-        if (file_get_contents(__FILE__) && ini_get('allow_url_fopen')) {
-            $content = @file_get_contents($url);
-        } else if (function_exists('curl_version')) {
-            $curl = curl_init();
-            curl_setopt($curl, CURLOPT_URL, $url);
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-            $content = curl_exec($curl);
-            curl_close($curl);
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        $response = curl_exec($curl);
+
+        if (!$response) {
+            FeedMePlugin::log(curl_error($curl), LogLevel::Error, true);
+            return false;
         }
 
-        return ($content) ? $content : false;
+        curl_close($curl);
+
+        return $response;
     }
 
 }

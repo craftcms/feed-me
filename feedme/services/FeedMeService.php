@@ -17,7 +17,6 @@ class FeedMeService extends BaseApplicationComponent
             }
         }
 
-
         //
         // If our duplication handling is to delete - we delete all entries in this section/entrytype
         //
@@ -195,5 +194,5 @@ class FeedMeService extends BaseApplicationComponent
                 return false;
             }
         }
-	}
+    }
 }

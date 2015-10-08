@@ -3,17 +3,17 @@ namespace Craft;
 
 class UniqidTwigExtension extends \Twig_Extension
 {
-	public function getName()
-	{
-		return Craft::t('Uniqid');
-	}
+    public function getName()
+    {
+        return Craft::t('Uniqid');
+    }
 
-	public function getFunctions()
-	{
-		return array(
-			'uniqid' => new \Twig_Function_Method($this, 'generateRandomString')
-		);
-	}
+    public function getFunctions()
+    {
+        return array(
+            'uniqid' => new \Twig_Function_Method($this, 'generateRandomString')
+        );
+    }
 
     public static function generateRandomString($length = 5)
     {

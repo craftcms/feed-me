@@ -205,7 +205,6 @@ If you're looking to consume REST feeds, APIs or other third-party platforms (Fa
   - Full support (creation) for search-only field types (Assets, Entries, Users)
   - Attribute-mapping support for XML feeds
   - Wildcard node names (for non-consistent node names)
-- Support third-party field types through hook
 - Allow feed processing to be reverted
 - Support authentication for feed access (Basic, OAuth, Token)
 - Organise documentation into Wiki
@@ -232,8 +231,13 @@ A massive thanks to [Bob Olde Hampsink](https://github.com/boboldehampsink) and 
 
 ## Changelog
 
-#### 1.3.5
+#### 1.3.6
 
-- Minor fix for logging. When Delete duplication option was set, import success was never recorded in the logs.
+- Removed `file_get_contents` as default method of fetching feed data in favour of Curl.
+- Better error logging when trying to consume feed data.
+- Fix for when mapping to Matrix field, commas were escaping content into new blocks.
+- Ensure fields within Matrix and SuperTable are parsed through necessary field processing functions.
+- Added `prepForFeedMeFieldType` hook for other plugins to handle their own fields.
+
 
 [View Full Changelog](https://github.com/engram-design/FeedMe/blob/master/CHANGELOG.md)
