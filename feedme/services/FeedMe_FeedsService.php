@@ -83,6 +83,7 @@ class FeedMe_FeedsService extends BaseApplicationComponent
         $feedRecord->duplicateHandle    = $feed->duplicateHandle;
         $feedRecord->passkey            = $feed->passkey;
         $feedRecord->backup             = $feed->backup;
+        $feedRecord->status             = $feed->status;
 
         if ($feed->fieldMapping) {
             $feedRecord->setAttribute('fieldMapping', json_encode($feed->fieldMapping));

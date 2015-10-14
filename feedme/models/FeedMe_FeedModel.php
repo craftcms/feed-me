@@ -32,9 +32,9 @@ class FeedMe_FeedModel extends BaseModel
             'fieldUnique'       => AttributeType::Mixed,
             'passkey'           => AttributeType::String,
             'backup'            => AttributeType::Bool,
+            'status'            => AttributeType::Bool,
         );
     }
 }
 
 
-  

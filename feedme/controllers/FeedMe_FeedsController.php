@@ -42,6 +42,7 @@ class FeedMe_FeedsController extends BaseController
         $feed->duplicateHandle  = craft()->request->getPost('duplicateHandle');
         $feed->passkey          = craft()->request->getPost('passkey');
         $feed->backup           = craft()->request->getPost('backup');
+        $feed->status           = craft()->request->getPost('status');
 
         // Don't overwrite mappings when saving from first screen
         if (craft()->request->getPost('fieldMapping')) {
@@ -152,7 +153,7 @@ class FeedMe_FeedsController extends BaseController
             // Create the import task
             craft()->tasks->createTask('FeedMe', $feed->name, $settings);
 
-            // if not using the direct param for this request, so UI stuff 
+            // if not using the direct param for this request, so UI stuff
             craft()->userSession->setNotice(Craft::t('Feed processing started.'));
 
             $this->redirect('feedme/feeds');

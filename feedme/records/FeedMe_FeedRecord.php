@@ -31,6 +31,7 @@ class FeedMe_FeedRecord extends BaseRecord
             'fieldUnique'       => array(AttributeType::Mixed),
             'passkey'           => array(AttributeType::String, 'required' => true),
             'backup'            => AttributeType::Bool,
+            'status'            => AttributeType::Bool,
         );
     }
 
