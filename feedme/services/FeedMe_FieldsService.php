@@ -274,6 +274,10 @@ class FeedMe_FieldsService extends BaseApplicationComponent
         if (!empty($data)) {
             $blockFieldData = $this->prepForFieldType($data, $fieldHandle);
 
+            if (!is_array($blockFieldData)) {
+                $blockFieldData = array($blockFieldData);
+            }
+
             foreach ($blockFieldData as $i => $singleFieldData) {
 
                 // For each field in each Matrix block, be sure to run these through the same
