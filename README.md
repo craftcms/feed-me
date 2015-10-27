@@ -154,7 +154,7 @@ To get the most out of your feed processing, follow the below suggestions:
 - Consider selecting the `Add Entries` option for duplication handling, depending on your requirements.
 - Consider turning off the `Backup` option for the feed. This will depend on your specific circumstances.
 
-When directly running a feed, you will need to adjust the `memory_limit` and `max_execution_time` values in your php.ini file. This is due to the fact that directly processing a feed doesn't utalize Craft's Tasks service, which provides workarounds to these issues.
+You may also need to adjust the `memory_limit` and `max_execution_time` values in your php.ini file if you run into memory issues.
 
 
 ## Template example
