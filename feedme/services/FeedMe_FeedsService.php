@@ -3,6 +3,9 @@ namespace Craft;
 
 class FeedMe_FeedsService extends BaseApplicationComponent
 {
+    // Public Methods
+    // =========================================================================
+
     public function getFeeds()
     {
         $feedRecords = FeedMe_FeedRecord::model()->findAll();

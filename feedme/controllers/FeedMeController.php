@@ -3,6 +3,9 @@ namespace Craft;
 
 class FeedMeController extends BaseController
 {
+    // Public Methods
+    // =========================================================================
+
     public function actionGetEntryTypes()
     {
         // Only ajax post requests

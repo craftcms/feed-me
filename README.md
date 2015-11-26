@@ -17,6 +17,7 @@ A common use-case for this plugin is to consume external feeds (news, events), b
 - Database backups before each feed processing.
 - Troubleshoot feed processing issues with logs.
 - Grab feed data directly from your twig templates.
+- Craft 2.5 compatible.
 
 
 ## Install
@@ -28,6 +29,7 @@ A common use-case for this plugin is to consume external feeds (news, events), b
 
 - Change the plugin name as it appear in the CP navigation.
 - Set the default cache (for calls using the template tag only).
+- Enable or disable specific tabs for Feed Me.
 
 
 ## Usage
@@ -46,6 +48,8 @@ Enter the required details to configure your feed:
 <img src="https://raw.githubusercontent.com/engram-design/FeedMe/master/screenshots/mapping_1.png" />
 
 Then, select what data from the feed you wish to capture, and what fields to map it to, depending on your Section and Entry Type selection. Here you'll be able to choose which fields (can be more than one) you'd like to compare to determine if a feed item is a duplicate.
+
+You must map data to at least the Title field, or any other required field for your entry.
 
 <img src="https://raw.githubusercontent.com/engram-design/FeedMe/master/screenshots/mapping_2.png" />
 
@@ -77,6 +81,11 @@ Feed Me supports mapping data from your feeds to the following Fieldtypes:
 - Tags
 - Users
 
+**Third-Party**
+
+- Super Table
+- SmartMap
+
 
 ###Element Creation
 
@@ -84,15 +93,19 @@ For certain elements, it may be benefitial to create the element's data, if not 
 
 Currently, Feed Me handles the following applicable fields in these ways:
 
-**Assets:** Only supports mapping existing assets to this entry. Must provide filename (without extension) to successfully map.
+**Assets:** Only supports mapping existing assets to this entry.
 
-**Categories:** Are created if they do not exist, or mapped if they do. The value provided in the feed data must be the Name for the category.
+**Categories:** Are created if they do not exist, or mapped if they do.
 
 **Entries:** Only supports mapping existing entries to this entry. The feed field must contain either the Title or Slug of the entry to successfully map. 
 
 **Tags:** Are always created.
 
-**Users:** Only supports mapping existing users to this entry. The feed field must contain either the users email or username to successfully map. 
+**Users:** Only supports mapping existing users to this entry.
+
+Internally, Feed Me uses Craft's element search to match against the value in your feed for an element. For example, if you have `my_filename.png` as a value in your feed, and you are mapping to an Asset, ensure that searching through the Assets index screen actually returns what you expect.
+
+For troubleshooting, ensure you have completed the Rebuild Search Indexes task.
 
 We plan to include options for whether you would like to do this on a per-field basis.
 
@@ -194,6 +207,11 @@ For XML-based feeds, you will also have access to all attributes for a particula
 If you're looking to consume REST feeds, APIs or other third-party platforms (Facebook, Twitter, etc), I would highly recommend using [alecritson's Placid](https://github.com/alecritson/Placid) plugin, which supports a great deal more than this plugin offers.
 
 
+## Hooks
+
+For third-party field type integration, consult the [Wiki](https://github.com/engram-design/FeedMe/wiki/Hooks).
+
+
 ## Roadmap
 
 - Improve mapping by:
@@ -208,7 +226,7 @@ If you're looking to consume REST feeds, APIs or other third-party platforms (Fa
 - Allow feed processing to be reverted
 - Support authentication for feed access (Basic, OAuth, Token)
 - Organise documentation into Wiki
-- Fix issue with mapping of Assets and the source not being set to All.
+- Fix issue with mapping of Assets and the source not being set to All (not reproducible).
 
 Have a suggestion? We'd love to hear about it! [Make a suggestion](https://github.com/engram-design/FeedMe/issues)
 
@@ -224,20 +242,11 @@ Otherwise, either [Submit an issue](https://github.com/engram-design/FeedMe/issu
 
 ## Thanks / Contributions
 
-A massive thanks to [Bob Olde Hampsink](https://github.com/boboldehampsink) and his amazing work on the [Import](https://github.com/boboldehampsink/import) plugin, which this plugin is clearly influenced by, and [Clearbold](https://github.com/clearbold) for [Craft Import](https://github.com/clearbold/craftimport).
+A massive thanks to [Bob Olde Hampsink](https://github.com/boboldehampsink) and his amazing work on the [Import](https://github.com/boboldehampsink/import) plugin, which this plugin is clearly influenced by, and [Clearbold](https://github.com/clearbold) for [Craft Import](https://github.com/clearbold/craftimport), along with all the great users who have helped provide feedback, testing and bug reports.
 
 [Pixel & Tonic](https://github.com/pixelandtonic) for their amazing support, assistance, and of course for creating Craft.
 
 
 ## Changelog
 
-#### 1.3.6
-
-- Removed `file_get_contents` as default method of fetching feed data in favour of Curl.
-- Better error logging when trying to consume feed data.
-- Fix for when mapping to Matrix field, commas were escaping content into new blocks.
-- Ensure fields within Matrix and SuperTable are parsed through necessary field processing functions.
-- Added `prepForFeedMeFieldType` hook for other plugins to handle their own fields.
-
-
-[View Full Changelog](https://github.com/engram-design/FeedMe/blob/master/CHANGELOG.md)
+[View JSON Changelog](https://github.com/engram-design/FeedMe/blob/master/changelog.json)

@@ -3,6 +3,9 @@ namespace Craft;
 
 class FeedMeService extends BaseApplicationComponent
 {
+    // Public Methods
+    // =========================================================================
+
     public function setupForImport($feed)
     {
         // Return a collection of only the fields we're mapping
@@ -45,20 +48,25 @@ class FeedMeService extends BaseApplicationComponent
 
     public function importNode($nodes, $feed, $settings)
     {
+        $hasAnyErrors = false;
+
         $time_start = microtime(true); 
         FeedMePlugin::log($feed->name . ': Processing started', LogLevel::Info, true);
 
         foreach ($nodes as $key => $node) {
-            $this->importSingleNode($node, $feed, $settings);
+            $result = $this->importSingleNode($node, $feed, $settings);
 
-            //echo number_format(memory_get_usage()) . "<br>";
+            // Report back if even one feed node failed
+            if (!$result) {
+                $hasAnyErrors = true;
+            }
         }
 
         $time_end = microtime(true);
         $execution_time = number_format(($time_end - $time_start), 2);
         FeedMePlugin::log($feed->name . ': Processing finished in ' . $execution_time . 's', LogLevel::Info, true);
 
-        return true;
+        return !$hasAnyErrors;
     }
 
     public function importSingleNode($node, $feed, $settings)
@@ -80,14 +88,14 @@ class FeedMeService extends BaseApplicationComponent
 
         
         // Start looping through all the mapped fields - grab their data from the feed node
-        foreach ($fields as $itemNode => &$destination) {
+        foreach ($fields as $itemNode => $handle) {
 
             // Fetch the value for the field from the feed node. Deep-search.
             $data = craft()->feedMe_feed->getValueForNode($itemNode, $node);
 
             // While we're in the loop, lets check for unique data to match existing entries on.
             if (isset($feed['fieldUnique'][$itemNode]) && intval($feed['fieldUnique'][$itemNode]) == 1 && !empty($data)) {
-                $criteria->$destination = DbHelper::escapeParam($data);
+                $criteria->$handle = DbHelper::escapeParam($data);
             }
 
             //
@@ -95,37 +103,30 @@ class FeedMeService extends BaseApplicationComponent
             //
 
             try {
-                // The field handle needs to be modified in some cases (Matrix and Table). Here, we don't override
-                // the original handle for future iterations. We use the original handle to identify Matrix/Table fields.
-                $handle = $destination;
-
                 // Grab the field's content - formatted specifically for it
                 $content = craft()->feedMe_fields->prepForFieldType($data, $handle);
 
-                // Check to see if this is a Matrix field - need to merge any other fields mapped elsewhere in the feed
-                // along with fields we've processed already. Involved due to multiple blocks can be defined at once.
-                if (substr($destination, 0, 10) == '__matrix__') {
-                    $content = craft()->feedMe_fields->handleMatrixData($fieldData, $handle, $content);
+                // The first key of $content will always be the field handle - grab that to create our field data.
+                $fieldHandle = array_keys($content)[0];
+
+                // Then, we check if we've already got any partial content for the field. Most commongly, this is
+                // the case for Matrix and Table fields, but also likely other Third-Party fields. So its important to
+                // combine values, rather than overwriting or omitting as each feed node contains just part of the data.
+                if (array_key_exists($fieldHandle, $fieldData) && is_array($fieldData[$fieldHandle])) {
+                    $fieldData[$fieldHandle] = array_replace_recursive($fieldData[$fieldHandle], $content[$fieldHandle]);
+                } else {
+                    $fieldData[$fieldHandle] = $content[$fieldHandle];
                 }
 
-                // And another special case for Table data
-                if (substr($destination, 0, 9) == '__table__') {
-                    $content = craft()->feedMe_fields->handleTableData($fieldData, $handle, $content);
-                }
-
-                // And another special case for SuperTable data
-                if (substr($destination, 0, 14) == '__supertable__') {
-                    $content = craft()->feedMe_fields->handleSuperTableData($fieldData, $handle, $content);
-                }
-
-                // Finally - we have our mapped data, formatted for the particular field as required
-                $fieldData[$handle] = $content;
             } catch (\Exception $e) {
                 FeedMePlugin::log($feed->name . ': FeedMeError: ' . $e->getMessage() . '.', LogLevel::Error, true);
 
                 return false;
             }
         }
+
+        // Any post-processing on our nice collection of entry-ready data.
+        craft()->feedMe_fields->postForFieldType($fieldData);
 
         $existingEntry = $criteria->first();
 
@@ -168,7 +169,7 @@ class FeedMeService extends BaseApplicationComponent
             $entry->setContentFromPost($fieldData);
 
             //echo '<pre>';
-            //print_r($entry->title);
+            //print_r($fieldData);
             //echo '</pre>';
 
             try {

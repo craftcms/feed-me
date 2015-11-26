@@ -3,7 +3,13 @@ namespace Craft;
 
 class FeedMe_FeedService extends BaseApplicationComponent
 {
+    // Public Methods
+    // =========================================================================
+
     public function getFeed($type, $url, $element, $returnAttr = false) {
+        // Check for and environment variables in url
+        $url = craft()->config->parseEnvironmentString($url);
+
         if ($type == FeedMe_FeedType::JSON) {
             return craft()->feedMe_feedJSON->getFeed($url, $element);
         } else {
@@ -98,7 +104,7 @@ class FeedMe_FeedService extends BaseApplicationComponent
 
             $indexes = explode('/', $element);
 
-            while(count($indexes) > 0) {
+            while (count($indexes) > 0) {
                 $elementNode = array_shift($indexes);
 
                 if ($elementNode === '...') {
@@ -122,7 +128,7 @@ class FeedMe_FeedService extends BaseApplicationComponent
                                 }
                             }
 
-                            $data = (empty($next_data)) ? false : $next_data;
+                            return (empty($next_data)) ? false : $next_data;
                         } else {
                             return null;
                         }

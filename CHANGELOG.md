@@ -1,5 +1,27 @@
 ## Changelog
 
+#### 1.4.0
+
+- Craft 2.5 support, including release feed and icons.
+- Code cleanup and refactoring field-mapping logic for performance and sanity.
+- Rewritten Matrix/Table mapping and processing logic. **Matrix and Table fields will need to be re-mapped**.
+- Fix for mapping multiple Matrix blocks being out of order from original feed.
+- Removed Super Table native support - please ensure you have the 0.3.9 release of Super Table. **Super Table fields will need to be re-mapped**.
+- Modified third-party hooks `prepForFeedMeFieldType` so it actually works! Thanks go to [@lindseydiloreto](https://github.com/lindseydiloreto).
+- Added `registerFeedMeMappingOptions` for third-party fieldtypes to control the options for mapping feed nodes to field data.
+- Added `postForFeedMeFieldType` for third-party fieldtypes to modify entry data before being saved to entry.
+- Added documentation for hooks. Refer to [Wiki](https://github.com/engram-design/FeedMe/wiki/Hooks).
+- Less strict user matching - should match against almost any value related to user.
+- Allow for Environment Variables to be used in the feed url. 
+
+#### 1.3.6
+
+- Removed `file_get_contents` as default method of fetching feed data in favour of Curl.
+- Better error logging when trying to consume feed data.
+- Fix for when mapping to Matrix field, commas were escaping content into new blocks.
+- Ensure fields within Matrix and SuperTable are parsed through necessary field processing functions.
+- Added `prepForFeedMeFieldType` hook for other plugins to handle their own fields.
+
 #### 1.3.5
 
 - Minor fix for logging. When Delete duplication option was set, import success was never recorded in the logs.
@@ -104,4 +126,3 @@
 #### 1.0
 
 - Initial release.
-

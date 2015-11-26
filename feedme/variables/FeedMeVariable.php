@@ -103,16 +103,16 @@ class FeedMeVariable
         return $result;
     }
 
+    public function customOption($fieldHandle)
+    {
+        return craft()->feedMe_fields->getCustomOption($fieldHandle);
+    }
+
 
     // Helper function for handling Matrix fields
     public function getMatrixBlocks($fieldId)
     {
         return craft()->matrix->getBlockTypesByFieldId($fieldId);
-    }
-
-    public function getSuperTableBlocks($fieldId)
-    {
-        return craft()->superTable->getBlockTypesByFieldId($fieldId);
     }
 
 

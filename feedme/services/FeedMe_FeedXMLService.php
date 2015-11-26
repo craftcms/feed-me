@@ -3,6 +3,9 @@ namespace Craft;
 
 class FeedMe_FeedXMLService extends BaseApplicationComponent
 {
+    // Public Methods
+    // =========================================================================
+
     public function getFeed($url, $primaryElement, $returnAttr = false)
     {
         if (false === ($raw_content = craft()->feedMe_feed->getRawData($url))) {
@@ -27,7 +30,7 @@ class FeedMe_FeedXMLService extends BaseApplicationComponent
         return $xml_array;
     }
 
-    function elementArray($xml, $first = true, $returnAttr = false)
+    public function elementArray($xml, $first = true, $returnAttr = false)
     {
         if (!$xml) {
             return null;
@@ -69,7 +72,7 @@ class FeedMe_FeedXMLService extends BaseApplicationComponent
         return $return;
     }
 
-    function parseXML($xml)
+    public function parseXML($xml)
     {
         $xmlArray = null;
 

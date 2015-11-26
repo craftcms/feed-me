@@ -3,7 +3,15 @@ namespace Craft;
 
 class FeedMe_FieldsService extends BaseApplicationComponent
 {
-    public function prepForFieldType(&$data, &$handle, $field = null)
+    // Properties
+    // =========================================================================
+
+    private $_entryFields = array();
+
+    // Public Methods
+    // =========================================================================
+
+    public function prepForFieldType(&$data, $handle, $field = null)
     {
         if (!is_array($data)) {
             $data = StringHelper::convertToUTF8($data);
@@ -11,83 +19,62 @@ class FeedMe_FieldsService extends BaseApplicationComponent
         }
 
         if (!$field) {
-            $field = craft()->fields->getFieldByHandle($handle);
-        }
+            // Check for sub-fields, we only want to grab the top-level handle (for now)
+            preg_match('/(\w+)/', $handle, $matches);
+            $fieldHandle = $matches[0];
 
-        // Special case for Matrix fields
-        if (substr($handle, 0, 10) == '__matrix__') {
-            $handle = str_replace('__matrix__', '', $handle);
+            if (isset($this->_entryFields[$fieldHandle])) {
+                $field = $this->_entryFields[$fieldHandle];
+            } else {
+                $field = craft()->fields->getFieldByHandle($fieldHandle);
 
-            // [0]matrix - [1]blocktype - [2]field
-            $matrixInfo = explode('__', $handle);
-
-            $field = craft()->fields->getFieldByHandle($matrixInfo[0]);
-        }
-
-        // Special case for SuperTable fields
-        if (substr($handle, 0, 14) == '__supertable__') {
-            $handle = str_replace('__supertable__', '', $handle);
-
-            // [0]matrix - [1]blocktype - [2]field
-            $matrixInfo = explode('__', $handle);
-
-            $field = craft()->fields->getFieldByHandle($matrixInfo[0]);
-        }
-
-        // Special case for Table fields
-        if (substr($handle, 0, 9) == '__table__') {
-            $handle = str_replace('__table__', '', $handle);
-
-            // [0]table - [1]column
-            $tableInfo = explode('__', $handle);
-
-            $field = craft()->fields->getFieldByHandle($tableInfo[0]);
+                $this->_entryFields[$fieldHandle] = $field;
+            }
+        } else {
+            $fieldHandle = $handle;
         }
 
         if (!is_null($field)) {
             switch ($field->type) {
                 case FeedMe_FieldType::Assets:
-                    $data = $this->prepAssets($data, $field); break;
+                    $data = array( $fieldHandle => $this->prepAssets($data, $field) ); break;
                 case FeedMe_FieldType::Categories:
-                    $data = $this->prepCategories($data, $field); break;
+                    $data = array( $fieldHandle => $this->prepCategories($data, $field) ); break;
                 case FeedMe_FieldType::Checkboxes:
-                    $data = $this->prepCheckboxes($data, $field); break;
+                    $data = array( $fieldHandle => $this->prepCheckboxes($data, $field) ); break;
                 case FeedMe_FieldType::Date:
-                    $data = $this->prepDate($data, $field); break;
+                    $data = array( $fieldHandle => $this->prepDate($data, $field) ); break;
                 case FeedMe_FieldType::Dropdown:
-                    $data = $this->prepDropdown($data, $field); break;
+                    $data = array( $fieldHandle => $this->prepDropdown($data, $field) ); break;
                 case FeedMe_FieldType::Entries:
-                    $data = $this->prepEntries($data, $field); break;
+                    $data = array( $fieldHandle => $this->prepEntries($data, $field) ); break;
                 case FeedMe_FieldType::Matrix:
-                    $data = $this->prepMatrix($data, $matrixInfo, $field, $handle); break;
+                    $data = array( $fieldHandle => $this->prepMatrix($data, $handle, $field) ); break;
                 case FeedMe_FieldType::MultiSelect:
-                    $data = $this->prepMultiSelect($data, $field); break;
+                    $data = array( $fieldHandle => $this->prepMultiSelect($data, $field) ); break;
                 case FeedMe_FieldType::Number:
-                    $data = $this->prepNumber($data, $field); break;
+                    $data = array( $fieldHandle => $this->prepNumber($data, $field) ); break;
                 case FeedMe_FieldType::RadioButtons:
-                    $data = $this->prepRadioButtons($data, $field); break;
+                    $data = array( $fieldHandle => $this->prepRadioButtons($data, $field) ); break;
                 case FeedMe_FieldType::RichText:
-                    $data = $this->prepRichText($data, $field); break;
+                    $data = array( $fieldHandle => $this->prepRichText($data, $field) ); break;
                 case FeedMe_FieldType::Table:
-                    $data = $this->prepTable($data, $tableInfo, $field, $handle); break;
+                    $data = array( $fieldHandle => $this->prepTable($data, $handle, $field) ); break;
                 case FeedMe_FieldType::Tags:
-                    $data = $this->prepTags($data, $field); break;
+                    $data = array( $fieldHandle => $this->prepTags($data, $field) ); break;
                 case FeedMe_FieldType::Users:
-                    $data = $this->prepUsers($data, $field); break;
+                    $data = array( $fieldHandle => $this->prepUsers($data, $field) ); break;
 
                 // Color, Lightswitch, PlainText, PositionSelect all take care of themselves
-
-                // Third-Party
-                case FeedMe_FieldType::SuperTable:
-                    $data = $this->prepSuperTable($data, $matrixInfo, $field, $handle); break;
+                default:
+                    $data = array( $fieldHandle => $data );
             }
 
             // Third-party fieldtype support
-            $thirdPartyFields = craft()->plugins->call('registerFeedMeField');
-
-            if (in_array($field->type, $thirdPartyFields)) {
-                craft()->plugins->call('prepForFeedMeFieldType', array(&$data, $handle));
-            }
+            craft()->plugins->call('prepForFeedMeFieldType', array($field, &$data, $handle));
+        } else {
+            // For core entry fields - still need to return with handle
+            $data = array( $fieldHandle => $data );
         }
 
         return $data;
@@ -261,43 +248,51 @@ class FeedMe_FieldsService extends BaseApplicationComponent
         return $fieldData;
     }
 
-    public function prepMatrix($data, $matrixInfo, $field, &$handle) {
+    public function prepMatrix($data, $handle, $field) {
         $fieldData = array();
 
-        $matrixHandle = $matrixInfo[0];
-        $blocktypeHandle = $matrixInfo[1];
-        $fieldHandle = $matrixInfo[2];
+        preg_match_all('/\w+/', $handle, $matches);
 
-        // Set the original handle (index key) property to the matrix field handle
-        $handle = $matrixHandle;
+        if (isset($matches[0])) {
+            $fieldHandle = $matches[0][0];
+            $blocktypeHandle = $matches[0][1];
+            $subFieldHandle = $matches[0][2];
 
-        if (!empty($data)) {
-            $blockFieldData = $this->prepForFieldType($data, $fieldHandle);
+            // Store the fields for this Matrix - can't use the fields service due to context
+            $blockTypes = craft()->matrix->getBlockTypesByFieldId($field->id, 'handle');
+            $blockType = $blockTypes[$blocktypeHandle];
 
-            if (!is_array($blockFieldData)) {
-                $blockFieldData = array($blockFieldData);
+            foreach ($blockType->getFields() as $f) {
+                if ($f->handle == $subFieldHandle) {
+                    $subField = $f;
+                }
             }
 
-            foreach ($blockFieldData as $i => $singleFieldData) {
+            $rows = array();
 
-                // For each field in each Matrix block, be sure to run these through the same
-                // process as we would for standalone fields.
-                $blockTypes = craft()->matrix->getBlockTypesByFieldId($field->id, 'handle');
-                $blockType = $blockTypes[$blocktypeHandle];
-
-                foreach ($blockType->getFields() as $f) {
-                    if ($f->handle == $fieldHandle) {
-                        $parsedFieldData = $this->prepForFieldType($singleFieldData, $fieldHandle, $f);
-                    }
+            if (!empty($data)) {
+                if (!is_array($data)) {
+                    $data = array($data);
                 }
 
-                $fieldData['new'.$blocktypeHandle.($i+1)] = array(
-                    'type' => $blocktypeHandle,
-                    'enabled' => true,
-                    'fields' => array(
-                        $fieldHandle => $parsedFieldData,
-                    )
-                );
+                foreach ($data as $i => $singleFieldData) {
+
+                    // Check to see if this is an array of items, or just a single item
+                    if (count($singleFieldData) != count($singleFieldData, 1)) {
+                        $elementFieldData = array_values($singleFieldData)[0];
+                        
+                        $subFieldData = $this->prepForFieldType($elementFieldData, $subFieldHandle, $subField);
+                    } else {
+                        $subFieldData = $this->prepForFieldType($singleFieldData, $subFieldHandle, $subField);
+                    }
+
+                    $fieldData['new'.$blocktypeHandle.($i+1)] = array(
+                        'type' => $blocktypeHandle,
+                        'order' => $i,
+                        'enabled' => true,
+                        'fields' => $subFieldData,
+                    );
+                }
             }
         }
 
@@ -337,62 +332,28 @@ class FeedMe_FieldsService extends BaseApplicationComponent
         return $fieldData;
     }
 
-    public function prepSuperTable($data, $matrixInfo, $field, &$handle) {
+    public function prepTable($data, $handle, $field) {
         $fieldData = array();
 
-        $matrixHandle = $matrixInfo[0];
-        $blocktypeId = $matrixInfo[1];
-        $fieldHandle = $matrixInfo[2];
+        // Get the table columns - sent through as fieldname[col]
+        preg_match_all('/\w+/', $handle, $matches);
 
-        // Set the original handle (index key) property to the matrix field handle
-        $handle = $matrixHandle;
+        if (isset($matches[0])) {
+            $fieldHandle = $matches[0][0];
+            $columnHandle = $matches[0][1];
 
-        if (!empty($data)) {
-            $blockFieldData = $this->prepForFieldType($data, $fieldHandle);
+            $rows = ArrayHelper::stringToArray($data);
 
-            foreach ($blockFieldData as $i => $singleFieldData) {
-
-                // For each field in each Matrix block, be sure to run these through the same
-                // process as we would for standalone fields.
-                $blockTypes = craft()->superTable->getBlockTypesByFieldId($field->id, 'id');
-                $blockType = $blockTypes[$blocktypeId];
-
-                foreach ($blockType->getFields() as $f) {
-                    if ($f->handle == $fieldHandle) {
-                        $parsedFieldData = $this->prepForFieldType($singleFieldData, $fieldHandle, $f);
-                    }
+            foreach ($rows as $i => $row) {
+                // Check for false for checkbox
+                if ($row === 'false') {
+                    $row = null;
                 }
 
-                $fieldData['new'.$blocktypeId.($i+1)] = array(
-                    'type' => $blocktypeId,
-                    'enabled' => true,
-                    'fields' => array(
-                        $fieldHandle => $parsedFieldData,
-                    )
+                $fieldData[$i+1] = array(
+                    'col'.$columnHandle => $row,
                 );
             }
-        }
-
-        return $fieldData;
-    }
-
-    public function prepTable($data, $tableInfo, $field, &$handle) {
-        $fieldData = array();
-
-        // Set the original handle (index key) property to the table field handle
-        $handle = $tableInfo[0];
-
-        $rows = ArrayHelper::stringToArray($data);
-
-        foreach ($rows as $i => $row) {
-            // Check for false for checkbox
-            if ($row === 'false') {
-                $row = null;
-            }
-
-            $fieldData[$i+1] = array(
-                $tableInfo[1] => $row,
-            );
         }
 
         return $fieldData;
@@ -466,7 +427,7 @@ class FeedMe_FieldsService extends BaseApplicationComponent
                 $criteria = craft()->elements->getCriteria(ElementType::User);
                 $criteria->groupId = $groupIds;
                 $criteria->limit = $settings->limit;
-                $criteria->search = 'username:'.$user.' OR email:'.$user;
+                $criteria->search = $user;
 
                 $fieldData = array_merge($fieldData, $criteria->ids());
             }
@@ -484,90 +445,50 @@ class FeedMe_FieldsService extends BaseApplicationComponent
     }
 
 
-
-
-    // Function that (almost) mimics Craft's inner slugify process.
-    // But... we allow forward slashes to stay, so we can create full uri's.
-    public function slugify($slug)
+    // Function for third-party plugins to provide custom mapping options for fieldtypes
+    public function getCustomOption($fieldHandle)
     {
+        $options = craft()->plugins->call('registerFeedMeMappingOptions');
 
-        // Remove HTML tags
-        $slug = preg_replace('/<(.*?)>/u', '', $slug);
-
-        // Remove inner-word punctuation.
-        $slug = preg_replace('/[\'"‘’“”\[\]\(\)\{\}:]/u', '', $slug);
-
-        if (craft()->config->get('allowUppercaseInSlug') === false) {
-            // Make it lowercase
-            $slug = StringHelper::toLowerCase($slug, 'UTF-8');
-        }
-
-        // Get the "words".  Split on anything that is not a unicode letter or number. Periods, underscores, hyphens and forward slashes get a pass.
-        preg_match_all('/[\p{L}\p{N}\.\/_-]+/u', $slug, $words);
-        $words = ArrayHelper::filterEmptyStringsFromArray($words[0]);
-        $slug = implode(craft()->config->get('slugWordSeparator'), $words);
-
-        return $slug;
-    }
-
-
-
-    // Extra functions when dealing with certain field types - mostly revolves around combining fields for Table and Matrix
-    public function handleMatrixData($newFields, $handle, $content)
-    {
-        $return = $content;
-
-        if (isset($newFields[$handle])) {
-            foreach ($newFields[$handle] as $matrixBlockKey => $matrixBlock) {
-                if (isset($content[$matrixBlockKey])) {
-                    // Merge just the fields property
-                    $merged = array_merge($content[$matrixBlockKey]['fields'], $matrixBlock['fields']);
-                    $return[$matrixBlockKey]['fields'] = $merged;
-                } else {
-                    $return = array_merge($newFields[$handle], $content);
-                }
+        foreach ($options as $pluginHandle => $option) {
+            if (isset($option[$fieldHandle])) {
+                return $option[$fieldHandle];
             }
         }
-        
-        return $return;
+
+        return false;
     }
 
-    public function handleTableData($newFields, $handle, $content)
-    {
-        $return = $content;
 
-        if (isset($newFields[$handle])) {
-            foreach ($newFields[$handle] as $rowId => $row) {
-                if (isset($content[$rowId])) {
-                    // Merge just the fields property
-                    $merged = array_merge($content[$rowId], $row);
-                    $return[$rowId] = array_merge($content[$rowId], $row);
-                } else {
-                    $return = array_merge($newFields[$handle], $content);
+    // Some post-processing needs to be done, specifically for a Matrix field. Unfortuntely, multiple 
+    // blocks are added out of order, which is messy - fix this here. Fortuntely, we have a 'order' attribute
+    // on each block. Also call any third-party post processing (looking at you Super Table).
+    public function postForFieldType(&$fieldData)
+    {
+        // This is less intensive than craft()->fields->getFieldByHandle($fieldHandle);
+        foreach ($fieldData as $fieldHandle => $data) {
+            if (is_array($data)) {
+                
+                // Check for the order attr, otherwise not what we're after
+                if (isset(array_values($data)[0]['order'])) {
+                    $orderedMatrixData = array();
+                    $tempMatrixData = array();
+
+                    foreach ($data as $key => $subField) {
+                        $tempMatrixData[$subField['order']][$key] = $subField;
+                    }
+
+                    $fieldData[$fieldHandle] = array();
+
+                    foreach ($tempMatrixData as $key => $subField) {
+                        $fieldData[$fieldHandle] = array_merge($fieldData[$fieldHandle], $subField);
+                    }
                 }
             }
         }
 
-        return $return;
-    }
-
-    public function handleSuperTableData($newFields, $handle, $content)
-    {
-        $return = $content;
-
-        if (isset($newFields[$handle])) {
-            foreach ($newFields[$handle] as $matrixBlockKey => $matrixBlock) {
-                if (isset($content[$matrixBlockKey])) {
-                    // Merge just the fields property
-                    $merged = array_merge($content[$matrixBlockKey]['fields'], $matrixBlock['fields']);
-                    $return[$matrixBlockKey]['fields'] = $merged;
-                } else {
-                    $return = array_merge($newFields[$handle], $content);
-                }
-            }
-        }
-        
-        return $return;
+        // Third-party fieldtype support
+        craft()->plugins->call('postForFeedMeFieldType', array(&$fieldData));
     }
 
 }

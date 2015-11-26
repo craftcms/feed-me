@@ -10,9 +10,9 @@ include(dirname(__FILE__) . '/enums/FeedMe_Status.php');
 
 class FeedMePlugin extends BasePlugin
 {
-    /* --------------------------------------------------------------
-    * PLUGIN INFO
-    * ------------------------------------------------------------ */
+    // =========================================================================
+    // PLUGIN INFO
+    // =========================================================================
 
     public function getName()
     {
@@ -22,9 +22,18 @@ class FeedMePlugin extends BasePlugin
         return ($pluginNameOverride) ? $pluginNameOverride : $pluginName;
     }
 
+    public function getDescription(){
+        return '';
+    }
+
     public function getVersion()
     {
-        return '1.3.6';
+        return '1.4.0';
+    }
+
+    public function getSchemaVersion()
+    {
+        return '1.0.0';
     }
 
     public function getDeveloper()
@@ -40,6 +49,16 @@ class FeedMePlugin extends BasePlugin
     public function getPluginUrl()
     {
         return 'https://github.com/engram-design/FeedMe';
+    }
+
+    public function getDocumentationUrl()
+    {
+        return $this->getPluginUrl() . '/blob/master/README.md';
+    }
+
+    public function getReleaseFeedUrl()
+    {
+        return $this->getPluginUrl() . '/blob/master/changelog.json';
     }
 
     public function hasCpSection()
@@ -76,26 +95,18 @@ class FeedMePlugin extends BasePlugin
         );
     }
 
-    public function onAfterInstall()
-    {
-        $minBuild = '2636';
-
-        if (craft()->getBuild() < $minBuild) {
-            craft()->plugins->disablePlugin($this->getClassHandle());
-
-            craft()->plugins->uninstallPlugin($this->getClassHandle());
-
-            craft()->userSession->setError(Craft::t('{plugin} only works on Craft build {build} or higher', array(
-                'plugin' => $this->getName(),
-                'build' => $minBuild,
-            )));
+    public function onBeforeInstall()
+    {   
+        // Craft 2.3.2636 fixed an issue with BaseEnum::getConstants()
+        if (version_compare(craft()->getVersion() . '.' . craft()->getBuild(), '2.3.2636', '<')) {
+            throw new Exception($this->getName() . ' requires Craft CMS 2.3.2636+ in order to run.');
         }
     }
 
 
-    /* --------------------------------------------------------------
-    * HOOKS
-    * ------------------------------------------------------------ */
+    // =========================================================================
+    // HOOKS
+    // =========================================================================
 
     public function addTwigExtension()
     {

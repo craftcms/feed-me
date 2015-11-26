@@ -3,7 +3,14 @@ namespace Craft;
 
 class FeedMe_FeedsController extends BaseController
 {
+    // Properties
+    // =========================================================================
+
     protected $allowAnonymous = array('actionRunTask');
+
+
+    // Public Methods
+    // =========================================================================
 
     public function actionFeedsIndex()
     {
@@ -152,6 +159,9 @@ class FeedMe_FeedsController extends BaseController
             // Create the import task
             craft()->tasks->createTask('FeedMe', $feed->name, $settings);
 
+            // Trigger the task to run right now!
+            $this->_runPendingTasks();
+
             // if not using the direct param for this request, so UI stuff 
             craft()->userSession->setNotice(Craft::t('Feed processing started.'));
 
@@ -165,18 +175,30 @@ class FeedMe_FeedsController extends BaseController
                 craft()->tasks->createTask('FeedMe', $feed->name, $settings);
 
                 // Trigger the task to run right now!
-                if (!craft()->tasks->isTaskRunning()) {
-                    $task = craft()->tasks->getNextPendingTask();
-
-                    if ($task) {
-                        craft()->tasks->runPendingTasks();
-                    }
-                }
+                $this->_runPendingTasks();
 
                 // Let the requester know whats going on.
                 $this->returnJson(array('success' => 'Feed ID: '.$feed['id'].' - Task started'));
             } else {
                 $this->returnJson(array('error' => 'Invalid Passkey'));
+            }
+        }
+
+        
+    }
+
+
+
+    // Private Methods
+    // =========================================================================
+
+    private function _runPendingTasks()
+    {
+        if (!craft()->tasks->isTaskRunning()) {
+            $task = craft()->tasks->getNextPendingTask();
+
+            if ($task) {
+                craft()->tasks->runPendingTasks();
             }
         }
     }
