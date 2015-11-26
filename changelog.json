@@ -9,8 +9,8 @@
             "[Improved] Rewritten Matrix/Table mapping and processing logic. **Matrix and Table fields will need to be re-mapped**.",
             "[Improved] Removed Super Table native support - please ensure you have the 0.3.9 release of Super Table. **Super Table fields will need to be re-mapped**.",
             "[Improved] Less strict user matching - should match against almost any value related to user.",
-            "[Improved] Allow for Environment Variables to be used in the feed url."
-            "[Improved] Better feedback on feed failure. Will fail task if _any_ feed node encounters an issue, and will show the red failed task indicator (prompting you to look at the logs)."
+            "[Improved] Allow for Environment Variables to be used in the feed url.",
+            "[Improved] Better feedback on feed failure. Will fail task if _any_ feed node encounters an issue, and will show the red failed task indicator (prompting you to look at the logs).",
             "[Fixed] Fix for mapping multiple Matrix blocks being out of order from original feed.",
             "[Fixed] Fix issue with task not firing when running from Control Panel. In some cases, this meant not even logging information was being recorded if something went wrong. This did not effect running directly.",
 
@@ -18,7 +18,7 @@
             "[Added] Added `registerFeedMeMappingOptions` for third-party fieldtypes to control the options for mapping feed nodes to field data.",
             "[Added] Added `postForFeedMeFieldType` for third-party fieldtypes to modify entry data before being saved to entry.",
             "[Added] Added documentation for hooks. Refer to [Wiki](https://github.com/engram-design/FeedMe/wiki/Hooks).",
-            "[Improved] Modified third-party hooks `prepForFeedMeFieldType` so it actually works! Thanks go to [@lindseydiloreto](https://github.com/lindseydiloreto).",
+            "[Improved] Modified third-party hooks `prepForFeedMeFieldType` so it actually works! Thanks go to [@lindseydiloreto](https://github.com/lindseydiloreto)."
         ]
     }
 ]
