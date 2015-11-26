@@ -1,5 +1,13 @@
 [
     {
+        "version": "1.4.1",
+        "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.1.zip",
+        "date": "2015-11-27 09:45:00",
+        "notes": [
+            "[Fixed] Fix css/js resources filename, which did not commit properly."
+        ]
+    },
+    {
         "version": "1.4.0",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.0.zip",
         "date": "2015-11-26 00:00:00",
