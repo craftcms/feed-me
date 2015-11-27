@@ -1,5 +1,13 @@
 [
     {
+        "version": "1.4.2",
+        "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.2.zip",
+        "date": "2015-11-28 00:35:00",
+        "notes": [
+            "[Improved] Minor improvements for plugin icons."
+        ]
+    },
+    {
         "version": "1.4.1",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.1.zip",
         "date": "2015-11-27 09:45:00",
