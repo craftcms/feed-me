@@ -76,7 +76,7 @@ class FeedMe_FeedService extends BaseApplicationComponent
             } elseif (count($value) == 0) {
                 $return[$sep . $key . '/...'] = array();
             } elseif(isset($value[0])) {
-                if (is_string($value[0])) {
+                if (is_string($value[0]) || is_numeric($value[0])) {
                     $return[$sep . $key] = $value[0];
                 } else {
                     $return = array_merge($return, $this->getFormattedMapping($value[0], $sep . $key.'/...'));

@@ -22,13 +22,9 @@ class FeedMePlugin extends BasePlugin
         return ($pluginNameOverride) ? $pluginNameOverride : $pluginName;
     }
 
-    public function getDescription(){
-        return '';
-    }
-
     public function getVersion()
     {
-        return '1.4.2';
+        return '1.4.3';
     }
 
     public function getSchemaVersion()

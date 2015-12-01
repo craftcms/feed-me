@@ -6,7 +6,7 @@
 - Code cleanup and refactoring field-mapping logic for performance and sanity.
 - Rewritten Matrix/Table mapping and processing logic. **Matrix and Table fields will need to be re-mapped**.
 - Fix for mapping multiple Matrix blocks being out of order from original feed.
-- Removed Super Table native support - please ensure you have the 0.3.9 release of Super Table. **Super Table fields will need to be re-mapped**.
+- Removed Super Table native support - please ensure you have the 0.4.0 release of Super Table. **Super Table fields will need to be re-mapped**.
 - Modified third-party hooks `prepForFeedMeFieldType` so it actually works! Thanks go to [@lindseydiloreto](https://github.com/lindseydiloreto).
 - Added `registerFeedMeMappingOptions` for third-party fieldtypes to control the options for mapping feed nodes to field data.
 - Added `postForFeedMeFieldType` for third-party fieldtypes to modify entry data before being saved to entry.

@@ -1,5 +1,13 @@
 [
     {
+        "version": "1.4.3",
+        "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.3.zip",
+        "date": "2015-12-01 19:35:00",
+        "notes": [
+            "[Fixed] Check for both numeric and string single-string arrays. Particularly an issue for JSON feeds."
+        ]
+    },
+    {
         "version": "1.4.2",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.2.zip",
         "date": "2015-11-28 00:35:00",
