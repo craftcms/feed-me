@@ -110,28 +110,28 @@ class FeedMe_FeedService extends BaseApplicationComponent
                 if ($elementNode === '...') {
                     if (is_array($data)) {
 
-                        if (isset($data[0])) {
-                            $next = array_shift($indexes);
-
-                            if (!isset($next)) {
-                                return $data;
-                            }
-
-                            $next_data = array();
-
-                            foreach($data as $subkey => $subvalue) {
-                                unset($data[$subkey]);
-                                $next_element = $this->getValueForNode($next, $subvalue);
-
-                                if (!empty($next_element)) {
-                                    $next_data[] = $next_element;
-                                }
-                            }
-
-                            return (empty($next_data)) ? false : $next_data;
-                        } else {
-                            return null;
+                        if (!isset($data[0])) {
+                            $data = array($data);
                         }
+                        
+                        $next = array_shift($indexes);
+
+                        if (!isset($next)) {
+                            return $data;
+                        }
+
+                        $next_data = array();
+
+                        foreach($data as $subkey => $subvalue) {
+                            unset($data[$subkey]);
+                            $next_element = $this->getValueForNode($next, $subvalue);
+
+                            if (!empty($next_element)) {
+                                $next_data[] = $next_element;
+                            }
+                        }
+
+                        return (empty($next_data)) ? false : $next_data;
                     } else {
                         $data = (is_string($data)) ? $data : null;
                     }
