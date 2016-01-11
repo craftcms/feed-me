@@ -3,6 +3,9 @@ namespace Craft;
 
 class FeedMeTask extends BaseTask
 {
+    // Properties
+    // =========================================================================
+
     private $_feed;
     private $_logsId;
     private $_feedData;
@@ -10,12 +13,8 @@ class FeedMeTask extends BaseTask
     private $_backup;
     private $_chunkedFeedData;
 
-    protected function defineSettings()
-    {
-        return array(
-            'feed' => AttributeType::Mixed,
-        );
-    }
+    // Public Methods
+    // =========================================================================
 
     public function getDescription()
     {
@@ -53,8 +52,22 @@ class FeedMeTask extends BaseTask
 
     public function runStep($step)
     {
-        craft()->feedMe->importNode($this->_chunkedFeedData[$step], $this->_feed, $this->_feedSettings);
+        $result = craft()->feedMe->importNode($this->_chunkedFeedData[$step], $this->_feed, $this->_feedSettings);
 
-        return true;
+        if (!$result) {
+            return 'Feed Me Failure: Check Feed Me logs.';
+        } else {
+            return true;
+        }
+    }
+
+    // Protected Methods
+    // =========================================================================
+
+    protected function defineSettings()
+    {
+        return array(
+            'feed' => AttributeType::Mixed,
+        );
     }
 }

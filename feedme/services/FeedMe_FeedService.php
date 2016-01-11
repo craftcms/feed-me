@@ -3,7 +3,13 @@ namespace Craft;
 
 class FeedMe_FeedService extends BaseApplicationComponent
 {
+    // Public Methods
+    // =========================================================================
+
     public function getFeed($type, $url, $element, $returnAttr = false) {
+        // Check for and environment variables in url
+        $url = craft()->config->parseEnvironmentString($url);
+
         if ($type == FeedMe_FeedType::JSON) {
             return craft()->feedMe_feedJSON->getFeed($url, $element);
         } else {
@@ -70,7 +76,7 @@ class FeedMe_FeedService extends BaseApplicationComponent
             } elseif (count($value) == 0) {
                 $return[$sep . $key . '/...'] = array();
             } elseif(isset($value[0])) {
-                if (is_string($value[0])) {
+                if (is_string($value[0]) || is_numeric($value[0])) {
                     $return[$sep . $key] = $value[0];
                 } else {
                     $return = array_merge($return, $this->getFormattedMapping($value[0], $sep . $key.'/...'));
@@ -98,34 +104,34 @@ class FeedMe_FeedService extends BaseApplicationComponent
 
             $indexes = explode('/', $element);
 
-            while(count($indexes) > 0) {
+            while (count($indexes) > 0) {
                 $elementNode = array_shift($indexes);
 
                 if ($elementNode === '...') {
                     if (is_array($data)) {
 
-                        if (isset($data[0])) {
-                            $next = array_shift($indexes);
-
-                            if (!isset($next)) {
-                                return $data;
-                            }
-
-                            $next_data = array();
-
-                            foreach($data as $subkey => $subvalue) {
-                                unset($data[$subkey]);
-                                $next_element = $this->getValueForNode($next, $subvalue);
-
-                                if (!empty($next_element)) {
-                                    $next_data[] = $next_element;
-                                }
-                            }
-
-                            $data = (empty($next_data)) ? false : $next_data;
-                        } else {
-                            return null;
+                        if (!isset($data[0])) {
+                            $data = array($data);
                         }
+                        
+                        $next = array_shift($indexes);
+
+                        if (!isset($next)) {
+                            return $data;
+                        }
+
+                        $next_data = array();
+
+                        foreach($data as $subkey => $subvalue) {
+                            unset($data[$subkey]);
+                            $next_element = $this->getValueForNode($next, $subvalue);
+
+                            if (!empty($next_element)) {
+                                $next_data[] = $next_element;
+                            }
+                        }
+
+                        return (empty($next_data)) ? false : $next_data;
                     } else {
                         $data = (is_string($data)) ? $data : null;
                     }

@@ -1,7 +1,7 @@
 {% extends "_layouts/cp" %}
 
-{% includeCssResource 'feedme/css/feedme.css' %}
-{% includeJsResource 'feedme/js/feedme.js' %}
+{% includeCssResource 'feedme/css/FeedMe.css' %}
+{% includeJsResource 'feedme/js/FeedMe.js' %}
 
 {% set crumbs = [
     { label: craft.feedme.getPluginName | t, url: url('feedme') },
@@ -86,13 +86,15 @@
                                                     {% set f = field.getField() %}
                                                     {% set label = (f.required) ? f.name ~ '*' : f.name %}
 
+                                                    {% set customOption = craft.feedMe.customOption(f.type) %}
+
                                                     {# Special case for Matrix and Table fields #}
                                                     {% if f.type == 'Matrix' %}
                                                         {{ _self.generateMatrixOption(f, label, f.handle, key, feed) }}
                                                     {% elseif f.type == 'Table' %}
                                                         {{ _self.generateTableOption(f, label, f.handle, key, feed) }}
-                                                    {% elseif f.type == 'SuperTable' %}
-                                                        {{ _self.generateSuperTableOption(f, label, f.handle, key, feed) }}
+                                                    {% elseif customOption %}
+                                                        {% include customOption with { field: f, label: label, value: f.handle, key: key, feed: feed } %}
                                                     {% else %}
                                                         {{ _self.generateOption(label, f.handle, key, feed) }}
                                                     {% endif %}
@@ -181,10 +183,9 @@
         <option disabled label="{{ field.name }} > {{ blocktype.name }}">
 
         {% for blocktypefield in blocktype.getFields() %}
-
-            {% set fieldHandle = '__matrix__' ~ field.handle ~ '__' ~ blocktype.handle ~ '__' ~ blocktypefield.handle %}
-
             {% set selected = '' %}
+            {% set fieldHandle = field.handle ~ '[' ~ blocktype.handle ~ '][' ~ blocktypefield.handle ~ ']' %}
+
             {% if key in feed.fieldMapping | keys %}
                 {% set selected = (feed.fieldMapping[key] == fieldHandle) ? 'selected' : '' %}
             {% endif %}
@@ -197,31 +198,13 @@
 {% macro generateTableOption(field, label, value, key, feed) %}
     <option disabled label="{{ field.name }}">
     {% for col in field.settings.columns %}
-        {% set fieldHandle = '__table__' ~ field.handle ~ '__col' ~ loop.index %}
-
         {% set selected = '' %}
+        {% set fieldHandle = field.handle ~ '[' ~ loop.index ~ ']' %}
+
         {% if key in feed.fieldMapping | keys %}
             {% set selected = (feed.fieldMapping[key] == fieldHandle) ? 'selected' : '' %}
         {% endif %}
         
         <option {{ selected }} value="{{ fieldHandle }}">-- {{ col.heading }}</option>
-    {% endfor %}
-{% endmacro %}
-
-{% macro generateSuperTableOption(field, label, value, key, feed) %}
-    {% for blocktype in craft.feedme.getSuperTableBlocks(field.id) %}
-        <option disabled label="{{ field.name }}">
-
-        {% for blocktypefield in blocktype.getFields() %}
-
-            {% set fieldHandle = '__supertable__' ~ field.handle ~ '__' ~ blocktype.id ~ '__' ~ blocktypefield.handle %}
-
-            {% set selected = '' %}
-            {% if key in feed.fieldMapping | keys %}
-                {% set selected = (feed.fieldMapping[key] == fieldHandle) ? 'selected' : '' %}
-            {% endif %}
-
-            <option {{ selected }} value="{{ fieldHandle }}">-- {{ blocktypefield.name }}</option>
-        {% endfor %}
     {% endfor %}
 {% endmacro %}

@@ -3,6 +3,9 @@ namespace Craft;
 
 class FeedMe_SupportController extends BaseController
 {
+    // Public Methods
+    // =========================================================================
+    
     public function actionSendSupportRequest()
     {
         $this->requirePostRequest();

@@ -3,6 +3,9 @@ namespace Craft;
 
 class FeedMe_LogsController extends BaseController
 {
+    // Public Methods
+    // =========================================================================
+
     public function actionLogs()
     {
         craft()->config->maxPowerCaptain();

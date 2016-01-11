@@ -3,6 +3,8 @@ namespace Craft;
 
 class FeedMe_LogsService extends BaseApplicationComponent
 {
+    // Public Methods
+    // =========================================================================
 
     public function show()
     {
