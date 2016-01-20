@@ -1,5 +1,13 @@
 [
     {
+        "version": "1.4.6",
+        "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.6.zip",
+        "date": "2016-01-13 18:15:00",
+        "notes": [
+            "[Fixed] Fixed an issue where an error would be incorrectly thrown when Add duplication handling is used."
+        ]
+    },
+    {
         "version": "1.4.5",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.5.zip",
         "date": "2016-01-13 18:15:00",

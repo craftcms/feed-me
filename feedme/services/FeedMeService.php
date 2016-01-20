@@ -194,6 +194,8 @@ class FeedMeService extends BaseApplicationComponent
 
                 return false;
             }
+        } else {
+            return true;
         }
     }
 }
