@@ -54,7 +54,7 @@ class FeedMePlugin extends BasePlugin
 
     public function getReleaseFeedUrl()
     {
-        return 'https://raw.githubusercontent.com/engram-design/FeedMe/blob/master/changelog.json';
+        return 'https://raw.githubusercontent.com/engram-design/FeedMe/master/changelog.json';
     }
 
     public function hasCpSection()
