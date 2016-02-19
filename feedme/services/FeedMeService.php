@@ -197,6 +197,12 @@ class FeedMeService extends BaseApplicationComponent
 
                 return false;
             }
+        } else {
+            if ($existingEntry) {
+                FeedMePlugin::log($feed->name . ': Entry skipped: ' . $existingEntry->id . '.', LogLevel::Error, true);
+            }
+
+            return true;
         }
     }
 }
