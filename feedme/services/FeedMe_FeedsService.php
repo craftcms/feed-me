@@ -83,6 +83,7 @@ class FeedMe_FeedsService extends BaseApplicationComponent
         $feedRecord->primaryElement     = $feed->primaryElement;
         $feedRecord->section            = $feed->section;
         $feedRecord->entrytype          = $feed->entrytype;
+        $feedRecord->locale             = $feed->locale;
         $feedRecord->duplicateHandle    = $feed->duplicateHandle;
         $feedRecord->passkey            = $feed->passkey;
         $feedRecord->backup             = $feed->backup;

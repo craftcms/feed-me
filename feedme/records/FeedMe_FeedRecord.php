@@ -12,7 +12,7 @@ class FeedMe_FeedRecord extends BaseRecord
     {
         return array(
             'name'              => array(AttributeType::String, 'required' => true),
-            'feedUrl'           => array(AttributeType::Url, 'required' => true),
+            'feedUrl'           => array(AttributeType::Uri, 'required' => true),
             'feedType'          => array(AttributeType::Enum, 'required' => true, 'values' => array(
                 FeedMe_FeedType::XML,
                 FeedMe_FeedType::RSS,
@@ -22,6 +22,7 @@ class FeedMe_FeedRecord extends BaseRecord
             'primaryElement'    => array(AttributeType::String),
             'section'           => array(AttributeType::String, 'required' => true),
             'entrytype'         => array(AttributeType::String, 'required' => true),
+            'locale'            => array(AttributeType::String),
             'duplicateHandle'   => array(AttributeType::Enum, 'required' => true, 'values' => array(
                 FeedMe_Duplicate::Add,
                 FeedMe_Duplicate::Update,

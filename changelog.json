@@ -1,5 +1,14 @@
 [
     {
+        "version": "1.4.7",
+        "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.7.zip",
+        "date": "2016-02-29 01:00:00",
+        "notes": [
+            "[Added] Added support for locales - set which locale you want your feed to go to.",
+            "[Added] Added support for non-http protocols for feeds (ftp://, file://, etc) [#29](https://github.com/engram-design/FeedMe/issues/29)"
+        ]
+    },
+    {
         "version": "1.4.6",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.6.zip",
         "date": "2016-01-20 13:00:00",

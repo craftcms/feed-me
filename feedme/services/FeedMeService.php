@@ -166,7 +166,9 @@ class FeedMeService extends BaseApplicationComponent
             $entry = craft()->feedMe_entry->prepForElementModel($fieldData, $entry);
 
             // Set our data for this EntryModel (our mapped data)
-            $entry->setContentFromPost($fieldData);
+            if (!$feed['locale']) {
+                $entry->setContentFromPost($fieldData);
+            }
 
             //echo '<pre>';
             //print_r($fieldData);
@@ -180,14 +182,40 @@ class FeedMeService extends BaseApplicationComponent
                     return false;
                 } else {
 
-                    // Successfully saved/added entry
-                    if ($feed['duplicateHandle'] == FeedMe_Duplicate::Update) {
-                        FeedMePlugin::log($feed->name . ': Entry successfully updated: ' . $entry->id, LogLevel::Info, true);
-                    } else {
-                        FeedMePlugin::log($feed->name . ': Entry successfully added: ' . $entry->id, LogLevel::Info, true);
-                    }
+                    // If we're importing into a specific locale, we need to create this entry if it doesn't already exist
+                    // completely blank of custom field content. After thats saved, we then re-fetch the entry for the specific
+                    // locale and then add our field data. Doing this ensures its not copied across all locales.
+                    if ($feed['locale']) {
+                        $entryLocale = craft()->entries->getEntryById($entry->id, $feed['locale']);
 
-                    return true;
+                        $entryLocale->setContentFromPost($fieldData);
+
+                        if (!craft()->entries->saveEntry($entryLocale)) {
+                            FeedMePlugin::log($feed->name . ': ' . json_encode($entryLocale->getErrors()), LogLevel::Error, true);
+
+                            return false;
+                        } else {
+
+                            // Successfully saved/added entry
+                            if ($feed['duplicateHandle'] == FeedMe_Duplicate::Update) {
+                                FeedMePlugin::log($feed->name . ': Entry successfully updated: ' . $entryLocale->id, LogLevel::Info, true);
+                            } else {
+                                FeedMePlugin::log($feed->name . ': Entry successfully added: ' . $entryLocale->id, LogLevel::Info, true);
+                            }
+
+                            return true;
+                        }
+                    } else {
+
+                        // Successfully saved/added entry
+                        if ($feed['duplicateHandle'] == FeedMe_Duplicate::Update) {
+                            FeedMePlugin::log($feed->name . ': Entry successfully updated: ' . $entry->id, LogLevel::Info, true);
+                        } else {
+                            FeedMePlugin::log($feed->name . ': Entry successfully added: ' . $entry->id, LogLevel::Info, true);
+                        }
+
+                        return true;
+                    }
                 }
             } catch (\Exception $e) {
                 FeedMePlugin::log($feed->name . ': Entry FeedMeError: ' . $e->getMessage() . '.', LogLevel::Error, true);

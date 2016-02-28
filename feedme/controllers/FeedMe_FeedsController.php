@@ -46,6 +46,7 @@ class FeedMe_FeedsController extends BaseController
         $feed->primaryElement   = craft()->request->getPost('primaryElement');
         $feed->section          = craft()->request->getPost('section');
         $feed->entrytype        = craft()->request->getPost('entrytype');
+        $feed->locale           = craft()->request->getPost('locale');
         $feed->duplicateHandle  = craft()->request->getPost('duplicateHandle');
         $feed->passkey          = craft()->request->getPost('passkey');
         $feed->backup           = craft()->request->getPost('backup');

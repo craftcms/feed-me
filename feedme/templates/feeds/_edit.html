@@ -97,6 +97,23 @@
             required: true,
         }) }}
 
+        {% if craft.isLocalized() %}
+            {% set locales = [] %}
+
+            {% for locale in craft.i18n.getSiteLocales() %}
+                {% set locales = locales | merge([{ label: locale.name ~ ' (' ~ locale.id ~ ')', value: locale.id }]) %}
+            {% endfor %}
+
+            {{ forms.selectField({
+                label: "Locale" | t,
+                instructions: 'Choose which locale you want to save your feed data to.' | t,
+                id: 'locale',
+                name: 'locale',
+                options: locales,
+                value: feed.locale,
+            }) }}
+        {% endif %}
+
         <hr>
 
         {{ forms.selectField({
