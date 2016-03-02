@@ -1,5 +1,14 @@
 [
     {
+        "version": "1.4.8",
+        "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.8.zip",
+        "date": "2016-03-03 10:00:00",
+        "notes": [
+            "[Added] Fix for json parsing when special characters in feed content.",
+            "[Improved] Better logging when a feed cannot be parsed."
+        ]
+    },
+    {
         "version": "1.4.7",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.7.zip",
         "date": "2016-02-29 01:00:00",
