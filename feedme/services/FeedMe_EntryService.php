@@ -29,6 +29,10 @@ class FeedMe_EntryService extends BaseApplicationComponent
         $element->sectionId = $settings['section'];
         $element->typeId = $settings['entrytype'];
 
+        if ($settings['locale']) {
+            $element->locale = $settings['locale'];
+        }
+
         return $element;
     }
 
@@ -43,6 +47,10 @@ class FeedMe_EntryService extends BaseApplicationComponent
         // Look in same section when replacing
         $criteria->sectionId = $settings['section'];
         $criteria->type = $settings['entrytype'];
+        
+        if ($settings['locale']) {
+            $criteria->locale = $settings['locale'];
+        }
 
         return $criteria;
     }

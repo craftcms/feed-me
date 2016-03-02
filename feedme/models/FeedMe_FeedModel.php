@@ -13,7 +13,7 @@ class FeedMe_FeedModel extends BaseModel
         return array(
             'id'                => AttributeType::Number,
             'name'              => AttributeType::String,
-            'feedUrl'           => AttributeType::Url,
+            'feedUrl'           => AttributeType::Uri,
             'feedType'          => array(AttributeType::Enum, 'values' => array(
                 FeedMe_FeedType::XML,
                 FeedMe_FeedType::RSS,
@@ -23,6 +23,7 @@ class FeedMe_FeedModel extends BaseModel
             'primaryElement'    => AttributeType::String,
             'section'           => AttributeType::String,
             'entrytype'         => AttributeType::String,
+            'locale'            => AttributeType::String,
             'duplicateHandle'   => array(AttributeType::Enum, 'values' => array(
                 FeedMe_Duplicate::Add,
                 FeedMe_Duplicate::Update,

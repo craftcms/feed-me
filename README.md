@@ -227,6 +227,7 @@ For third-party field type integration, consult the [Wiki](https://github.com/en
 - Support authentication for feed access (Basic, OAuth, Token)
 - Organise documentation into Wiki
 - Fix issue with mapping of Assets and the source not being set to All (not reproducible).
+- Write up full tutorial from start to finish (JSON/XML).
 
 Have a suggestion? We'd love to hear about it! [Make a suggestion](https://github.com/engram-design/FeedMe/issues)
 
