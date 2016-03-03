@@ -10,11 +10,17 @@ class FeedMe_FeedXMLService extends BaseApplicationComponent
     {
         if (false === ($raw_content = craft()->feedMe_feed->getRawData($url))) {
             craft()->userSession->setError(Craft::t('Unable to parse Feed URL.'));
+            FeedMePlugin::log('Unable to parse Feed URL.', LogLevel::Error, true);
+
             return false;
         }
 
+        // Perform cleanup on raw data first
+        $raw_content = preg_replace("/[\r\n]+/", " ", $raw_content);
+        $xml = utf8_encode($raw_content);
+
         // Parse the XML string
-        $xml_array = $this->parseXML($raw_content);
+        $xml_array = $this->parseXML($xml);
 
         // Convert it to an array
         $xml_array = $this->elementArray($xml_array, true, $returnAttr);
@@ -24,6 +30,8 @@ class FeedMe_FeedXMLService extends BaseApplicationComponent
 
         if (!is_array($xml_array)) {
             craft()->userSession->setError(Craft::t('Invalid XML.'));
+            FeedMePlugin::log('Invalid XML.', LogLevel::Error, true);
+
             return false;
         }
 

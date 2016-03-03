@@ -9,17 +9,25 @@ class FeedMe_FeedJSONService extends BaseApplicationComponent
     public function getFeed($url, $primaryElement) {
         if (false === ($raw_content = craft()->feedMe_feed->getRawData($url))) {
             craft()->userSession->setError(Craft::t('Unable to parse Feed URL.'));
+            FeedMePlugin::log('Unable to parse Feed URL.', LogLevel::Error, true);
+
             return false;
         }
 
+        // Perform cleanup on raw data first
+        $raw_content = preg_replace("/[\r\n]+/", " ", $raw_content);
+        $json = utf8_encode($raw_content);
+
         // Parse the JSON string
-        $json_array = json_decode($raw_content, true);
+        $json_array = json_decode($json, true);
 
         // Look for and return only the items for primary element
         $json_array = craft()->feedMe_feed->findPrimaryElement($primaryElement, $json_array);
 
         if (!is_array($json_array)) {
             craft()->userSession->setError(Craft::t('Invalid JSON.'));
+            FeedMePlugin::log('Invalid JSON.', LogLevel::Error, true);
+            
             return false;
         }
 
