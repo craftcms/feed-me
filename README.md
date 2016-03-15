@@ -232,6 +232,13 @@ For third-party field type integration, consult the [Wiki](https://github.com/en
 Have a suggestion? We'd love to hear about it! [Make a suggestion](https://github.com/engram-design/FeedMe/issues)
 
 
+## Release Notes
+
+Below are major release notes when updating from one version to another. Breaking changes will be listed here.
+
+- [Updating from 1.4.0](https://github.com/engram-design/FeedMe/wiki/Release-Notes#updating-from-140)
+
+
 ## Support
 
 If you're having an issue using Feed Me, the best course of action is to send us a message through the support form on the Help tab. This will provide us with enough detail to assist.

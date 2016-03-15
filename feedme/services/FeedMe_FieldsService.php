@@ -276,15 +276,7 @@ class FeedMe_FieldsService extends BaseApplicationComponent
                 }
 
                 foreach ($data as $i => $singleFieldData) {
-
-                    // Check to see if this is an array of items, or just a single item
-                    if (count($singleFieldData) != count($singleFieldData, 1)) {
-                        $elementFieldData = array_values($singleFieldData)[0];
-                        
-                        $subFieldData = $this->prepForFieldType($elementFieldData, $subFieldHandle, $subField);
-                    } else {
-                        $subFieldData = $this->prepForFieldType($singleFieldData, $subFieldHandle, $subField);
-                    }
+                    $subFieldData = $this->prepForFieldType($singleFieldData, $subFieldHandle, $subField);
 
                     $fieldData['new'.$blocktypeHandle.($i+1)] = array(
                         'type' => $blocktypeHandle,
@@ -466,7 +458,7 @@ class FeedMe_FieldsService extends BaseApplicationComponent
     public function postForFieldType(&$fieldData)
     {
         // This is less intensive than craft()->fields->getFieldByHandle($fieldHandle);
-        foreach ($fieldData as $fieldHandle => $data) {
+        /*foreach ($fieldData as $fieldHandle => $data) {
             if (is_array($data)) {
                 
                 // Check for the order attr, otherwise not what we're after
@@ -485,7 +477,7 @@ class FeedMe_FieldsService extends BaseApplicationComponent
                     }
                 }
             }
-        }
+        }*/
 
         // Third-party fieldtype support
         craft()->plugins->call('postForFeedMeFieldType', array(&$fieldData));
