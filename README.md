@@ -47,7 +47,7 @@ Enter the required details to configure your feed:
 
 <img src="https://raw.githubusercontent.com/engram-design/FeedMe/master/screenshots/mapping_1.png" />
 
-Then, select what data from the feed you wish to capture, and what fields to map it to, depending on your Section and Entry Type selection. Here you'll be able to choose which fields (can be more than one) you'd like to compare to determine if a feed item is a duplicate.
+Click on the `Save and continue` to be taken to the field mapping screen. Here, you select what data from the feed you wish to capture, and what fields to map it to, depending on your Section and Entry Type selection. Here you'll be able to choose which fields (can be more than one) you'd like to compare to determine if a feed item is a duplicate.
 
 You must map data to at least the Title field, or any other required field for your entry.
 
