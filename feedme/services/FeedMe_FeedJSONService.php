@@ -16,10 +16,13 @@ class FeedMe_FeedJSONService extends BaseApplicationComponent
 
         // Perform cleanup on raw data first
         $raw_content = preg_replace("/[\r\n]+/", " ", $raw_content);
-        $json = StringHelper::convertToUTF8($raw_content);
+        $json = utf8_encode($raw_content);
+        $json = StringHelper::convertToUTF8($json);
 
         // Parse the JSON string
         $json_array = json_decode($json, true);
+
+        var_dump(json_last_error_msg());
 
         // Look for and return only the items for primary element
         $json_array = craft()->feedMe_feed->findPrimaryElement($primaryElement, $json_array);
