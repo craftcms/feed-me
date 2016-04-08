@@ -22,8 +22,6 @@ class FeedMe_FeedJSONService extends BaseApplicationComponent
         // Parse the JSON string
         $json_array = json_decode($json, true);
 
-        var_dump(json_last_error_msg());
-
         // Look for and return only the items for primary element
         $json_array = craft()->feedMe_feed->findPrimaryElement($primaryElement, $json_array);
 
