@@ -17,7 +17,9 @@ class FeedMe_FeedXMLService extends BaseApplicationComponent
 
         // Perform cleanup on raw data first
         $raw_content = preg_replace("/[\r\n]+/", " ", $raw_content);
-        $xml = StringHelper::convertToUTF8($raw_content);
+        $xml = stripslashes($raw_content);
+        $xml = utf8_encode($xml);
+        $xml = StringHelper::convertToUTF8($xml);
 
         // Parse the XML string
         $xml_array = $this->parseXML($xml);

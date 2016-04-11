@@ -16,7 +16,9 @@ class FeedMe_FeedJSONService extends BaseApplicationComponent
 
         // Perform cleanup on raw data first
         $raw_content = preg_replace("/[\r\n]+/", " ", $raw_content);
-        $json = StringHelper::convertToUTF8($raw_content);
+        $json = stripslashes($raw_content);
+        $json = utf8_encode($json);
+        $json = StringHelper::convertToUTF8($json);
 
         // Parse the JSON string
         $json_array = json_decode($json, true);

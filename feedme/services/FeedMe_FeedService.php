@@ -95,7 +95,7 @@ class FeedMe_FeedService extends BaseApplicationComponent
             return null;
         }
 
-        if (!is_string($element) OR $element == '') {
+        if (!is_string($element) || $element == '') {
             return null;
         }
 
@@ -126,9 +126,9 @@ class FeedMe_FeedService extends BaseApplicationComponent
                             unset($data[$subkey]);
                             $next_element = $this->getValueForNode($next, $subvalue);
 
-                            if (!empty($next_element)) {
+                            //if (!empty($next_element)) {
                                 $next_data[] = $next_element;
-                            }
+                            //}
                         }
 
                         return (empty($next_data)) ? false : $next_data;
