@@ -1,5 +1,15 @@
 [
     {
+        "version": "1.4.10",
+        "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.10.zip",
+        "date": "2016-04-14 06:30:00",
+        "notes": [
+            "[Fixed] Fixed issue for repeatable fields containing empty values (table fields).",
+            "[Improved] FeedUrl attribute stored as `TEXT` column type to allow for longer URLs.",
+            "[Improved] Improved JSON parsing to use Yii's JsonHelper class, with better logging when failing."
+        ]
+    },
+    {
         "version": "1.4.9",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.9.zip",
         "date": "2016-03-15 22:25:00",
