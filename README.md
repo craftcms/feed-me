@@ -8,7 +8,7 @@
 - - Separate core vs custom fields
 - - Option to create elements if they don't exist
 - - Option to upload assets if they don't exist
-- Support for importing Categories, Users, Entries, Commerce Produts, and any third-party element
+- Support for importing Categories, Users, Entries, Commerce Products, and any third-party element
 - Support attribute-mapping for XML feeds
 - Support OAuth authentication for feed access
 - Massive improvement of performance creating elements
