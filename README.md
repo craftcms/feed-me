@@ -15,3 +15,4 @@
 - Write up full tutorials from start to finish (JSON/XML).
 - So many bugfixes
 
+Will be released as a public Beta for feedback and testing.
