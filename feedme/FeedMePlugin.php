@@ -24,12 +24,12 @@ class FeedMePlugin extends BasePlugin
 
     public function getVersion()
     {
-        return '1.4.9';
+        return '1.4.11';
     }
 
     public function getSchemaVersion()
     {
-        return '1.1.0';
+        return '1.2.0';
     }
 
     public function getDeveloper()

@@ -14,21 +14,17 @@ class FeedMe_FeedJSONService extends BaseApplicationComponent
             return false;
         }
 
-        // Perform cleanup on raw data first
-        $raw_content = preg_replace("/[\r\n]+/", " ", $raw_content);
-        $json = stripslashes($raw_content);
-        $json = utf8_encode($json);
-        $json = StringHelper::convertToUTF8($json);
-
-        // Parse the JSON string
-        $json_array = json_decode($json, true);
+        // Parse the JSON string - using Yii's built-in cleanup
+        $json_array = JsonHelper::decode($raw_content, true);
 
         // Look for and return only the items for primary element
         $json_array = craft()->feedMe_feed->findPrimaryElement($primaryElement, $json_array);
 
         if (!is_array($json_array)) {
-            craft()->userSession->setError(Craft::t('Invalid JSON.'));
-            FeedMePlugin::log('Invalid JSON.', LogLevel::Error, true);
+            $error = 'Invalid JSON. - ' . json_last_error_msg();
+
+            craft()->userSession->setError(Craft::t($error));
+            FeedMePlugin::log($error, LogLevel::Error, true);
             
             return false;
         }
