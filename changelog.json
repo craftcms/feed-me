@@ -1,5 +1,13 @@
 [
     {
+        "version": "1.4.11",
+        "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.11.zip",
+        "date": "2016-04-25 19:30:00",
+        "notes": [
+            "[Fixed] Fixed issue with XML parsing and special characters encoding incorrectly."
+        ]
+    },
+    {
         "version": "1.4.10",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.10.zip",
         "date": "2016-04-14 06:30:00",
