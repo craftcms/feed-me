@@ -20,7 +20,11 @@ class FeedMe_FeedService extends BaseApplicationComponent
     public function getFeedMapping($type, $url, $element) {
         $array = $this->getFeed($type, $url, $element);
 
-        $array = $this->getFormattedMapping($array[0]);
+        if (isset($array[0])) {
+            $array = $this->getFormattedMapping($array[0]);
+        } else {
+            $array = $this->getFormattedMapping($array);
+        }
 
         return $array;
     }
