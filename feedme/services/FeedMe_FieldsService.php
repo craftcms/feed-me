@@ -275,8 +275,19 @@ class FeedMe_FieldsService extends BaseApplicationComponent
                     $data = array($data);
                 }
 
+                // Additional check for Table or other 'special' nested fields
+                if (count($matches[0]) > 3) {
+                    $filteredSubFieldHandle = $matches[0][2] . '[' . $matches[0][3] . ']';
+                } else {
+                    $filteredSubFieldHandle = $subFieldHandle;
+                }
+
                 foreach ($data as $i => $singleFieldData) {
-                    $subFieldData = $this->prepForFieldType($singleFieldData, $subFieldHandle, $subField);
+                    $subFieldData = $this->prepForFieldType($singleFieldData, $filteredSubFieldHandle, $subField);
+
+                    if (count($matches[0]) > 3) {
+                        $subFieldData = array($subFieldHandle => $subFieldData[$filteredSubFieldHandle]);
+                    }
 
                     $fieldData['new'.$blocktypeHandle.($i+1)] = array(
                         'type' => $blocktypeHandle,

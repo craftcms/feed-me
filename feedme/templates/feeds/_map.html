@@ -190,7 +190,22 @@
                 {% set selected = (feed.fieldMapping[key] == fieldHandle) ? 'selected' : '' %}
             {% endif %}
 
-            <option {{ selected }} value="{{ fieldHandle }}">-- {{ blocktypefield.name }}</option>
+            {% if blocktypefield.type == 'Table' %}
+                <option disabled label="-- {{ blocktypefield.name }}">
+
+                {% for col in blocktypefield.settings.columns %}
+                    {% set selected = '' %}
+                    {% set blockfieldHandle = fieldHandle ~ '[' ~ loop.index ~ ']' %}
+
+                    {% if key in feed.fieldMapping | keys %}
+                        {% set selected = (feed.fieldMapping[key] == blockfieldHandle) ? 'selected' : '' %}
+                    {% endif %}
+                    
+                    <option {{ selected }} value="{{ blockfieldHandle }}">---- {{ col.heading }}</option>
+                {% endfor %}
+            {% else %}
+                <option {{ selected }} value="{{ fieldHandle }}">-- {{ blocktypefield.name }}</option>
+            {% endif %}
         {% endfor %}
     {% endfor %}
 {% endmacro %}
