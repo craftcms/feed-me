@@ -348,14 +348,27 @@ class FeedMe_FieldsService extends BaseApplicationComponent
             $rows = ArrayHelper::stringToArray($data);
 
             foreach ($rows as $i => $row) {
-                // Check for false for checkbox
-                if ($row === 'false') {
-                    $row = null;
-                }
+                if (is_array($row)) {
+                    foreach ($row as $j => $r) {
+                        // Check for false for checkbox
+                        if ($r === 'false') {
+                            $r = null;
+                        }
 
-                $fieldData[$i+1] = array(
-                    'col'.$columnHandle => $row,
-                );
+                        $fieldData[$i+1] = array(
+                            'col'.$columnHandle => $r,
+                        );
+                    }
+                } else {
+                    // Check for false for checkbox
+                    if ($row === 'false') {
+                        $row = null;
+                    }
+
+                    $fieldData[$i+1] = array(
+                        'col'.$columnHandle => $row,
+                    );
+                }
             }
         }
 
