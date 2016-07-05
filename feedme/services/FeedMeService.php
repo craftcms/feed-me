@@ -245,10 +245,12 @@ class FeedMeService extends BaseApplicationComponent
             $entriesToDelete = $criteria->find();
 
             try {
-                if (!craft()->entries->deleteEntry($entriesToDelete)) {
-                    FeedMePlugin::log('FeedMeError - Something went wrong while deleting entries.', LogLevel::Error, true);
-                } else {
-                    FeedMePlugin::log($feed->name . ': The following entries have been deleted: ' . print_r($deleteIds, true) . '.', LogLevel::Error, true);
+                if ($entriesToDelete) {
+                    if (!craft()->entries->deleteEntry($entriesToDelete)) {
+                        FeedMePlugin::log('FeedMeError - Something went wrong while deleting entries.', LogLevel::Error, true);
+                    } else {
+                        FeedMePlugin::log($feed->name . ': The following entries have been deleted: ' . print_r($deleteIds, true) . '.', LogLevel::Error, true);
+                    }
                 }
             } catch (\Exception $e) {
                 FeedMePlugin::log($feed->name . ': FeedMeError: ' . $e->getMessage() . '.', LogLevel::Error, true);
