@@ -1,5 +1,9 @@
 ## Changelog
 
+#### 1.4.12
+
+- Added Composer support
+
 #### 1.4.0
 
 - Craft 2.5 support, including release feed and icons.
@@ -12,7 +16,7 @@
 - Added `postForFeedMeFieldType` for third-party fieldtypes to modify entry data before being saved to entry.
 - Added documentation for hooks. Refer to [Wiki](https://github.com/engram-design/FeedMe/wiki/Hooks).
 - Less strict user matching - should match against almost any value related to user.
-- Allow for Environment Variables to be used in the feed url. 
+- Allow for Environment Variables to be used in the feed url.
 
 #### 1.3.6
 
