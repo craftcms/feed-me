@@ -43,7 +43,7 @@
                         <td>
                             {% if section | length > 0 %}
                                 {% set entryTypes = section.getEntryTypes('id') %}
-                                {{ entryTypes[feed.entrytype].name }}
+                                {{ (entryTypes[feed.entrytype] is defined) ? entryTypes[feed.entrytype].name }}
                             {% endif %}
                         </td>
                         <td>{{ feed.duplicateHandle | capitalize }}</td>

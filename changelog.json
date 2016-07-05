@@ -1,5 +1,16 @@
 [
     {
+        "version": "1.4.12",
+        "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.12.zip",
+        "date": "2016-07-06T01:00:00+10:00",
+        "notes": [
+            "[Improved] Altered terminology around Duplication Handling to hopefully be more clearer.",
+            "[Fixed] Protect against errors on Feed Me index page when sections/entry types no longer exist.",
+            "[Fixed] Fixed mapping issues with Table field inside Matrix blocks.",
+            "[Fixed] Fixed Dropdown field matching via Label, not Value."
+        ]
+    },
+    {
         "version": "1.4.11",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.11.zip",
         "date": "2016-04-25T19:30:00+10:00",
