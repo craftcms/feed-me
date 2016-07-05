@@ -1,0 +1,14 @@
+{
+    "name": "engram-design/FeedMe",
+    "description": "Craft plugin to make it easy to import entries and entry data from XML, RSS, ATOM or JSON feeds.",
+    "authors": [
+        {
+            "name": "S. Group",
+            "email": "info@sgroup.com.au"
+        }
+    ],
+    "type": "craft-plugin",
+    "require": {
+        "composer/installers": "~1.0"
+    }
+}
