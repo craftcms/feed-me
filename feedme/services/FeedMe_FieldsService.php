@@ -326,7 +326,7 @@ class FeedMe_FieldsService extends BaseApplicationComponent
 
         // find matching option label
         foreach ($options as $option) {
-            if ($data == $option['label']) {
+            if ($data == $option['value']) {
                 $fieldData = $option['value'];
                 break;
             }
