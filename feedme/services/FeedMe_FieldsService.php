@@ -479,7 +479,7 @@ class FeedMe_FieldsService extends BaseApplicationComponent
     // Some post-processing needs to be done, specifically for a Matrix field. Unfortuntely, multiple 
     // blocks are added out of order, which is messy - fix this here. Fortuntely, we have a 'order' attribute
     // on each block. Also call any third-party post processing (looking at you Super Table).
-    public function postForFieldType(&$fieldData)
+    public function postForFieldType(&$fieldData, $element)
     {
         // This is less intensive than craft()->fields->getFieldByHandle($fieldHandle);
         /*foreach ($fieldData as $fieldHandle => $data) {
@@ -504,7 +504,7 @@ class FeedMe_FieldsService extends BaseApplicationComponent
         }*/
 
         // Third-party fieldtype support
-        craft()->plugins->call('postForFeedMeFieldType', array(&$fieldData));
+        craft()->plugins->call('postForFeedMeFieldType', array(&$fieldData, $element));
     }
 
 }
