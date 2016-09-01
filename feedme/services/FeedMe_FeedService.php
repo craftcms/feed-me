@@ -193,10 +193,12 @@ class FeedMe_FeedService extends BaseApplicationComponent
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
         $response = curl_exec($curl);
 
         if (!$response) {
+            FeedMePlugin::log(print_r($response, true), LogLevel::Error, true);
             FeedMePlugin::log(curl_error($curl), LogLevel::Error, true);
             return false;
         }
