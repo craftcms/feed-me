@@ -103,7 +103,8 @@ class FeedMeService extends BaseApplicationComponent
                 $content = craft()->feedMe_fields->prepForFieldType($data, $handle);
 
                 // The first key of $content will always be the field handle - grab that to create our field data.
-                $fieldHandle = array_keys($content)[0];
+                $contentKeys = array_keys($content);
+                $fieldHandle = $contentKeys[0];
 
                 // Then, we check if we've already got any partial content for the field. Most commongly, this is
                 // the case for Matrix and Table fields, but also likely other Third-Party fields. So its important to
