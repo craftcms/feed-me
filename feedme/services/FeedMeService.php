@@ -122,9 +122,6 @@ class FeedMeService extends BaseApplicationComponent
             }
         }
 
-        // Any post-processing on our nice collection of entry-ready data.
-        craft()->feedMe_fields->postForFieldType($fieldData);
-
         $existingEntry = $criteria->first();
 
 
@@ -166,6 +163,9 @@ class FeedMeService extends BaseApplicationComponent
         //
 
         if ($canSaveEntry && $entry) {
+
+            // Any post-processing on our nice collection of entry-ready data.
+            craft()->feedMe_fields->postForFieldType($fieldData, $entry);
 
             // Prepare Element model (the default stuff)
             $entry = craft()->feedMe_entry->prepForElementModel($fieldData, $entry);
