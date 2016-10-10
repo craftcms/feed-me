@@ -37,13 +37,9 @@ Craft.FeedMeHelp = Garnish.Base.extend({
         this.$sendBtn.addClass('active');
         this.$spinner.removeClass('hidden');
 
-        var formData = this.$form.serialize();
-        
-        Craft.postActionRequest('feedMe/support/sendSupportRequest', formData, $.proxy(this, 'parseResponse'), {
-            cache: false,
-            contentType: false,
-            processData: false,
-        });
+        var data = this.$form.serialize();
+
+        Craft.postActionRequest('feedMe/help/sendSupportRequest', data, $.proxy(this, 'parseResponse'));
     },
 
     parseResponse: function(response, textStatus) {
