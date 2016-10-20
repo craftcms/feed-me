@@ -1,6 +1,6 @@
 # Feed Me 2.0 - Updates
 
-We're hard at work on the next version of Feed Me, with a massive amount of updates, fixes and improvements. Stay tuned to the [2.0 branch](https://github.com/engram-design/FeedMe/blob/2.0.0) for the beta.
+We're hard at work on the next version of Feed Me, with a massive amount of updates, fixes and improvements. Stay tuned to the [2.0 branch](https://github.com/engram-design/FeedMe/blob/2.0.0/README.md) for the beta.
 
 # Feed Me
 
