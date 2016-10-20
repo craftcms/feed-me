@@ -1,3 +1,7 @@
+# Feed Me 2.0 - Updates
+
+We're hard at work on the next version of Feed Me, with a massive amount of updates, fixes and improvements. Stay tuned to the [2.0 branch](https://github.com/engram-design/FeedMe/blob/2.0.0) for the beta.
+
 # Feed Me
 
 Feed Me is a Craft plugin to make it easy to import entries and entry data from XML, RSS, ATOM or JSON feeds. Feeds can be setup as a task in Craft's Control Panel, or called on-demand for use in your twig templates.
