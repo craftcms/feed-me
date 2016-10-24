@@ -1,8 +1,19 @@
 [
     {
+        "version": "1.4.12",
+        "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.12.zip",
+        "date": "2016-07-06T01:00:00+10:00",
+        "notes": [
+            "[Improved] Altered terminology around Duplication Handling to hopefully be more clearer.",
+            "[Fixed] Protect against errors on Feed Me index page when sections/entry types no longer exist.",
+            "[Fixed] Fixed mapping issues with Table field inside Matrix blocks.",
+            "[Fixed] Fixed Dropdown field matching via Label, not Value."
+        ]
+    },
+    {
         "version": "1.4.11",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.11.zip",
-        "date": "2016-04-25 19:30:00",
+        "date": "2016-04-25T19:30:00+10:00",
         "notes": [
             "[Fixed] Fixed issue with XML parsing and special characters encoding incorrectly."
         ]
@@ -10,7 +21,7 @@
     {
         "version": "1.4.10",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.10.zip",
-        "date": "2016-04-14 06:30:00",
+        "date": "2016-04-14T06:30:00+10:00",
         "notes": [
             "[Fixed] Fixed issue for repeatable fields containing empty values (table fields).",
             "[Improved] FeedUrl attribute stored as `TEXT` column type to allow for longer URLs.",
@@ -20,7 +31,7 @@
     {
         "version": "1.4.9",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.9.zip",
-        "date": "2016-03-15 22:25:00",
+        "date": "2016-03-15T22:25:00+10:00",
         "notes": [
             "[Fixed] Fixed issue with utf8 encoding for feeds.",
             "[Improved] Improvements to matrix processing."
@@ -29,7 +40,7 @@
     {
         "version": "1.4.8",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.8.zip",
-        "date": "2016-03-03 10:00:00",
+        "date": "2016-03-03T10:00:00+10:00",
         "notes": [
             "[Added] Fix for json parsing when special characters in feed content.",
             "[Improved] Better logging when a feed cannot be parsed."
@@ -38,7 +49,7 @@
     {
         "version": "1.4.7",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.7.zip",
-        "date": "2016-02-29 01:00:00",
+        "date": "2016-02-29T01:00:00+10:00",
         "notes": [
             "[Added] Added support for locales - set which locale you want your feed to go to.",
             "[Added] Added support for non-http protocols for feeds (ftp://, file://, etc) [#29](https://github.com/engram-design/FeedMe/issues/29)"
@@ -47,7 +58,7 @@
     {
         "version": "1.4.6",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.6.zip",
-        "date": "2016-01-20 13:00:00",
+        "date": "2016-01-20T13:00:00+10:00",
         "notes": [
             "[Fixed] Fixed an issue where an error would be incorrectly thrown when Add duplication handling is used."
         ]
@@ -55,7 +66,7 @@
     {
         "version": "1.4.5",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.5.zip",
-        "date": "2016-01-13 18:15:00",
+        "date": "2016-01-13T18:15:00+10:00",
         "notes": [
             "[Fixed] Fixed issue with plugin release feed url."
         ]
@@ -63,7 +74,7 @@
     {
         "version": "1.4.4",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.4.zip",
-        "date": "2015-12-28 13:10:00",
+        "date": "2015-12-28T13:10:00+10:00",
         "notes": [
             "[Fixed] Fixed issue with irregular nested elements. See [#24](https://github.com/engram-design/FeedMe/issues/24#issuecomment-167106972)."
         ]
@@ -71,7 +82,7 @@
     {
         "version": "1.4.3",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.3.zip",
-        "date": "2015-12-01 19:35:00",
+        "date": "2015-12-01T19:35:00+10:00",
         "notes": [
             "[Fixed] Check for both numeric and string single-string arrays. Particularly an issue for JSON feeds."
         ]
@@ -79,7 +90,7 @@
     {
         "version": "1.4.2",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.2.zip",
-        "date": "2015-11-28 00:35:00",
+        "date": "2015-11-28T00:35:00+10:00",
         "notes": [
             "[Improved] Minor improvements for plugin icons."
         ]
@@ -87,7 +98,7 @@
     {
         "version": "1.4.1",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.1.zip",
-        "date": "2015-11-27 09:45:00",
+        "date": "2015-11-27T09:45:00+10:00",
         "notes": [
             "[Fixed] Fix css/js resources filename, which did not commit properly."
         ]
@@ -95,7 +106,7 @@
     {
         "version": "1.4.0",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.0.zip",
-        "date": "2015-11-26 00:00:00",
+        "date": "2015-11-26T00:00:00+10:00",
         "notes": [
             "[Added] Craft 2.5 support, including release feed and icons.",
             "[Improved] Code cleanup and refactoring field-mapping logic for performance and sanity.",

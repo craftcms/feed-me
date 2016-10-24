@@ -1,3 +1,7 @@
+# Feed Me 2.0 - Updates
+
+We're hard at work on the next version of Feed Me, with a massive amount of updates, fixes and improvements. Stay tuned to the [2.0 branch](https://github.com/engram-design/FeedMe/tree/2.0.0) for the beta.
+
 # Feed Me
 
 Feed Me is a Craft plugin to make it easy to import entries and entry data from XML, RSS, ATOM or JSON feeds. Feeds can be setup as a task in Craft's Control Panel, or called on-demand for use in your twig templates.
@@ -43,7 +47,7 @@ Enter the required details to configure your feed:
 - Set the Feed Type to assist with mapping the correct elements.
 - The Primary Element reflects which node in the feed your data sits.
 - Select the Section and Entry Type for where you want to put the feed data.
-- Decide how you'd like to handle duplicate feed items (if you're going to be re-running this feed).
+- Decide on an import strategy: how you'd like to handle duplicate feed items (if you're going to be re-running this feed).
 
 <img src="https://raw.githubusercontent.com/engram-design/FeedMe/master/screenshots/mapping_1.png" />
 
@@ -110,11 +114,13 @@ For troubleshooting, ensure you have completed the Rebuild Search Indexes task.
 We plan to include options for whether you would like to do this on a per-field basis.
 
 
-### Duplication Handling
+### Import strategy
 
 When running the feed task multiple times, there may or may not be the same data present in the feed as the last time you ran the task. To deal with this, you can control what happens to old (and new) entries when the feed is processed again.
 
 You may choose multiple fields to determine if an entry is a duplicate. Most commonly, you'll want to compare the `Title` field, but can be any fields you require.
+
+#### Strategy options:
 
 **Add Entries:**
 

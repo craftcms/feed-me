@@ -12,6 +12,7 @@ class FeedMeTask extends BaseTask
     private $_feedSettings;
     private $_backup;
     private $_chunkedFeedData;
+    private $_processedEntries = array();
 
     // Public Methods
     // =========================================================================
@@ -35,6 +36,11 @@ class FeedMeTask extends BaseTask
         // Get the data for the mapping screen, based on the URL provided
         $this->_feedData = craft()->feedMe_feed->getFeed($this->_feed->feedType, $this->_feed->feedUrl, $this->_feed->primaryElement);
 
+        if (!$this->_feedData) {
+            FeedMePlugin::log($this->_feed->name . ': FeedMeError', LogLevel::Error, true);
+            return false;
+        }
+
         // Chunk the feed data into chunks of 100 - optimises mapping process by not calling service each step
         $this->_chunkedFeedData = array_chunk($this->_feedData, 100);
 
@@ -53,8 +59,14 @@ class FeedMeTask extends BaseTask
     public function runStep($step)
     {
         $result = craft()->feedMe->importNode($this->_chunkedFeedData[$step], $this->_feed, $this->_feedSettings);
+        $this->_processedEntries = array_merge($this->_processedEntries, $result['processedEntries']);
 
-        if (!$result) {
+        // For delete, at the end of our processing, we delete all entries not recorded
+        if ($step == $this->getTotalSteps()-1) {
+            craft()->feedMe->deleteLeftoverEntries($this->_feedSettings, $this->_feed, $this->_processedEntries, $result);
+        }
+
+        if (!$result['result']) {
             return 'Feed Me Failure: Check Feed Me logs.';
         } else {
             return true;

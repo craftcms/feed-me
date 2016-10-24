@@ -20,7 +20,11 @@ class FeedMe_FeedService extends BaseApplicationComponent
     public function getFeedMapping($type, $url, $element) {
         $array = $this->getFeed($type, $url, $element);
 
-        $array = $this->getFormattedMapping($array[0]);
+        if (isset($array[0])) {
+            $array = $this->getFormattedMapping($array[0]);
+        } else {
+            $array = $this->getFormattedMapping($array);
+        }
 
         return $array;
     }
@@ -189,9 +193,12 @@ class FeedMe_FeedService extends BaseApplicationComponent
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
         $response = curl_exec($curl);
 
         if (!$response) {
+            FeedMePlugin::log(print_r($response, true), LogLevel::Error, true);
             FeedMePlugin::log(curl_error($curl), LogLevel::Error, true);
             return false;
         }

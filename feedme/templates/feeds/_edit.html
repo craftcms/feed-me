@@ -117,11 +117,11 @@
         <hr>
 
         {{ forms.selectField({
-            label: "Duplicate Entry Action <span class='info'><span style='display:inline-block;'><strong>Add Entries:</strong> Duplicate entries will be skipped, new entries however, will be added. <em>\"I want to keep existing entries untouched but add new ones.\"</em></span><span style='display:inline-block;'><strong>Update Entries:</strong> Select fields to compare duplicate entries with, updating all other fields.<em>\"I want to update existing entries and add new ones.\"</em></span><span style='display:inline-block;'><strong>Delete Entries:</strong> Delete all existing entries in this section, adding only entries from this feed. Be careful.<em>\"I want only the entries from this feed in this section.\"</em></span></span>" | t,
-            instructions: 'Choose how to handle duplicate records.',
+            label: "Import strategy <span class='info'><span style='display:inline-block;'><strong>Add Unique Only:</strong> Duplicate entries will be skipped, new entries however, will be added. <em>\"I want to keep existing entries untouched but add new ones.\"</em></span><span style='display:inline-block;'><strong>Add and Update existing:</strong> Select fields to compare duplicate entries with, updating all other fields.<em>\"I want to update existing entries and add new ones.\"</em></span><span style='display:inline-block;'><strong>Delete Entries existing:</strong> Update any existing entries, and delete any entries not updated by this feed. Be careful.<em>\"I want only the entries from this feed in this section.\"</em></span></span>" | t,
+            instructions: 'Choose what happens when this feed is run again. Click tooltip above for explanation.',
             id: 'duplicateHandle',
             name: 'duplicateHandle',
-            options: {'add': 'Add Entries', 'update': 'Update Entries', 'delete': 'Delete Entries'},
+            options: {'add': 'Add Unique Only', 'update': 'Add and Update existing', 'delete': 'Delete old and Update existing'},
             value: feed.duplicateHandle,
             required: true,
         }) }}

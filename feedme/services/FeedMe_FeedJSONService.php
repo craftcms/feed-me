@@ -21,7 +21,7 @@ class FeedMe_FeedJSONService extends BaseApplicationComponent
         $json_array = craft()->feedMe_feed->findPrimaryElement($primaryElement, $json_array);
 
         if (!is_array($json_array)) {
-            $error = 'Invalid JSON. - ' . json_last_error_msg();
+            $error = 'Invalid JSON - ' . $this->getJsonError();
 
             craft()->userSession->setError(Craft::t($error));
             FeedMePlugin::log($error, LogLevel::Error, true);
@@ -30,5 +30,24 @@ class FeedMe_FeedJSONService extends BaseApplicationComponent
         }
 
         return $json_array;
+    }
+
+    public function getJsonError()
+    {
+        if (!function_exists('json_last_error_msg')) {
+            $errors = array(
+                JSON_ERROR_NONE             => null,
+                JSON_ERROR_DEPTH            => 'Maximum stack depth exceeded',
+                JSON_ERROR_STATE_MISMATCH   => 'Underflow or the modes mismatch',
+                JSON_ERROR_CTRL_CHAR        => 'Unexpected control character found',
+                JSON_ERROR_SYNTAX           => 'Syntax error, malformed JSON',
+                JSON_ERROR_UTF8             => 'Malformed UTF-8 characters, possibly incorrectly encoded'
+            );
+
+            $error = json_last_error();
+            return array_key_exists($error, $errors) ? $errors[$error] : "Unknown error ({$error})";
+        } else {
+            return json_last_error_msg();
+        }
     }
 }

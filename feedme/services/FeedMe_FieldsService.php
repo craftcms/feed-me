@@ -214,7 +214,7 @@ class FeedMe_FieldsService extends BaseApplicationComponent
 
         // find matching option label
         foreach ($options as $option) {
-            if ($data == $option['label']) {
+            if ($data == $option['value']) {
                 $fieldData = $option['value'];
                 break;
             }
@@ -296,8 +296,19 @@ class FeedMe_FieldsService extends BaseApplicationComponent
                     $data = array($data);
                 }
 
+                // Additional check for Table or other 'special' nested fields
+                if (count($matches[0]) > 3) {
+                    $filteredSubFieldHandle = $matches[0][2] . '[' . $matches[0][3] . ']';
+                } else {
+                    $filteredSubFieldHandle = $subFieldHandle;
+                }
+
                 foreach ($data as $i => $singleFieldData) {
-                    $subFieldData = $this->prepForFieldType($singleFieldData, $subFieldHandle, $subField);
+                    $subFieldData = $this->prepForFieldType($singleFieldData, $filteredSubFieldHandle, $subField);
+
+                    if (count($matches[0]) > 3) {
+                        $subFieldData = array($subFieldHandle => $subFieldData[$filteredSubFieldHandle]);
+                    }
 
                     $fieldData['new'.$blocktypeHandle.($i+1)] = array(
                         'type' => $blocktypeHandle,
@@ -336,7 +347,7 @@ class FeedMe_FieldsService extends BaseApplicationComponent
 
         // find matching option label
         foreach ($options as $option) {
-            if ($data == $option['label']) {
+            if ($data == $option['value']) {
                 $fieldData = $option['value'];
                 break;
             }
@@ -358,14 +369,27 @@ class FeedMe_FieldsService extends BaseApplicationComponent
             $rows = ArrayHelper::stringToArray($data);
 
             foreach ($rows as $i => $row) {
-                // Check for false for checkbox
-                if ($row === 'false') {
-                    $row = null;
-                }
+                if (is_array($row)) {
+                    foreach ($row as $j => $r) {
+                        // Check for false for checkbox
+                        if ($r === 'false') {
+                            $r = null;
+                        }
 
-                $fieldData[$i+1] = array(
-                    'col'.$columnHandle => $row,
-                );
+                        $fieldData[$i+1] = array(
+                            'col'.$columnHandle => $r,
+                        );
+                    }
+                } else {
+                    // Check for false for checkbox
+                    if ($row === 'false') {
+                        $row = null;
+                    }
+
+                    $fieldData[$i+1] = array(
+                        'col'.$columnHandle => $row,
+                    );
+                }
             }
         }
 
@@ -476,7 +500,7 @@ class FeedMe_FieldsService extends BaseApplicationComponent
     // Some post-processing needs to be done, specifically for a Matrix field. Unfortuntely, multiple
     // blocks are added out of order, which is messy - fix this here. Fortuntely, we have a 'order' attribute
     // on each block. Also call any third-party post processing (looking at you Super Table).
-    public function postForFieldType(&$fieldData)
+    public function postForFieldType(&$fieldData, $element)
     {
         // This is less intensive than craft()->fields->getFieldByHandle($fieldHandle);
         /*foreach ($fieldData as $fieldHandle => $data) {
@@ -501,7 +525,7 @@ class FeedMe_FieldsService extends BaseApplicationComponent
         }*/
 
         // Third-party fieldtype support
-        craft()->plugins->call('postForFeedMeFieldType', array(&$fieldData));
+        craft()->plugins->call('postForFeedMeFieldType', array(&$fieldData, $element));
     }
 
 }
