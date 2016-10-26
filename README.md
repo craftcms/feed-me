@@ -32,10 +32,11 @@
 - More streamlined third-party integration and implementation using `registerFeedMeFieldTypes`
 - Individual additional settings for some fieldtypes
 -- Elements can be created if they don't exist
--- Assets can be uploaded automatically
+-- Assets can be uploaded automatically, with options for conflict handling
 - Improved performance for Element fields - replaces `search` with attributes (ie: `asset->filename` over `asset->search`).
 - Matrix fields now smartly look at existing content and update only if data has changed. No more element bloat.
-- Matrix fields can now be ordered specifically using an `order` node from your feed.
+- Added support to map element fields' own custom fields (think fields for assets). Currently only supports simple fields.
+
 
 **Elements**
 - Support for importing Categories, Users, Entries, Commerce Products
@@ -63,6 +64,13 @@
 
 **Settings**
 - Added ability to clear pending tasks - can be called via Cron
+
+
+**Documentation**
+- Dedicated plugin page via http://sgroup.com.au/plugins/feedme
+- Start to finish examples
+- Examples for JSON/RSS/XML feeds
+- Developer resources for hooks and events, complete with example gists
 
 
 Will be released as a public Beta for feedback and testing.
