@@ -7,6 +7,7 @@
 - Support for third-party element types
 - Auto-upload Assets when mapping
 - Matrix smart-checking for existing content
+- Support to map content to element's inner fields (think fields for assets)
 - New parsing method for XML feeds, includes attribute-mapping
 - New mapping interface allows setting defaults for most fields
 
