@@ -195,6 +195,7 @@ class FeedMe_FeedService extends BaseApplicationComponent
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($curl, CURLOPT_USERAGENT, craft()->plugins->getPlugin('feedMe')->getName());
         $response = curl_exec($curl);
 
         if (!$response) {
