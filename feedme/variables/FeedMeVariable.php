@@ -10,12 +10,12 @@ class FeedMeVariable
 
     public function getPluginUrl()
     {
-        return $this->getPlugin()->getPluginUrl();
+        return $this->getPlugin('feedMe')->getPluginUrl();
     }
 
     public function getPluginName()
     {
-        return $this->getPlugin()->getName();
+        return $this->getPlugin('feedMe')->getName();
     }
 
     public function getPluginVersion()
@@ -23,71 +23,52 @@ class FeedMeVariable
         return $this->getPlugin()->getVersion();
     }
 
-    public function getCpTabs()
-    {
-        $settings = $this->getPlugin()->settings;
-        $tabs = array();
+    public function getSelectOptions($options, $label = 'name', $index = 'id', $includeNone = true) {
+        $values = array();
 
-        if ($settings['enabledTabs']) {
-            if (in_array('feeds', (array)$settings['enabledTabs']) || $settings['enabledTabs'] == '*') {
-                $tabs['feeds'] = array(
-                    'label' => Craft::t('Feeds'),
-                    'url' => UrlHelper::getUrl('feedme'),
-                );
-            }
+        if ($includeNone) {
+            $values[''] = 'None';
+        }
 
-            if (in_array('logs', (array)$settings['enabledTabs']) || $settings['enabledTabs'] == '*') {
-                $tabs['logs'] = array(
-                    'label' => Craft::t('Logs'),
-                    'url' => UrlHelper::getUrl('feedme/logs'),
-                );
-            }
-
-            if (in_array('help', (array)$settings['enabledTabs']) || $settings['enabledTabs'] == '*') {
-                $tabs['help'] = array(
-                    'label' => Craft::t('Help'),
-                    'url' => UrlHelper::getUrl('feedme/help'),
-                );
-            }
-
-            if (in_array('settings', (array)$settings['enabledTabs']) || $settings['enabledTabs'] == '*') {
-                $tabs['settings'] = array(
-                    'label' => Craft::t('Settings'),
-                    'url' => UrlHelper::getUrl('settings/plugins/feedme'),
-                );
+        if (is_array($options)) {
+            foreach ($options as $key => $value) {
+                $values[$value[$index]] = $value[$label];
             }
         }
 
-        return $tabs;
-    }
-
-    public function getSelectOptions($options, $includeNull = true) {
-        if ($includeNull) { $values[null] = 'None'; }
-
-        foreach($options as $key => $value) {
-            $values[$value['id']] = $value['name'];
-        }
         return $values;
     }
 
-    public function getGroups()
+    public function getElementTypeGroups($elementType)
     {
-        return craft()->feedMe_entry->getGroups();
+        if ($service = craft()->feedMe->getElementTypeService($elementType)) {
+            return $service->getGroups();
+        }
+
+        return false;
     }
 
-    public function logs()
+    public function getElementTypeGroupsTemplate($elementType)
     {
-        return craft()->feedMe_logs->show();
+        if ($service = craft()->feedMe->getElementTypeService($elementType)) {
+            return $service->getGroupsTemplate();
+        }
+
+        return false;
     }
 
-    public function log($logs)
+    public function getElementTypeColumnTemplate($elementType)
     {
-        return craft()->feedMe_logs->showLog($logs);
+        if ($service = craft()->feedMe->getElementTypeService($elementType)) {
+            return $service->getColumnTemplate();
+        }
+
+        return false;
     }
 
-    public function feed($options = array())
+    public function getEntryTypeById($entryTypeId)
     {
-        return craft()->feedMe_feeds->getFeedForTemplate($options);
+        return craft()->sections->getEntryTypeById($entryTypeId);
     }
 
     public function getFeeds()
@@ -103,16 +84,37 @@ class FeedMeVariable
         return $result;
     }
 
-    public function customOption($fieldHandle)
+    public function isProEdition()
     {
-        return craft()->feedMe_fields->getCustomOption($fieldHandle);
+        return craft()->feedMe_license->isProEdition();
     }
+
+    //
+    // Fields + Field Mapping
+    //
+
+    public function getFieldMapping($fieldHandle)
+    {
+        return craft()->feedMe_fields->getFieldMapping($fieldHandle);
+    }
+
+    public function formatDateTime($dateTime)
+    {
+        return DateTime::createFromString($dateTime, craft()->getTimeZone());
+    }
+
 
 
     // Helper function for handling Matrix fields
     public function getMatrixBlocks($fieldId)
     {
         return craft()->matrix->getBlockTypesByFieldId($fieldId);
+    }
+
+    // Commerce doesn't have a getProductTypeById() function
+    public function getProductTypeById($productTypeId)
+    {
+        return craft()->commerce_productTypes->getProductTypeById($productTypeId);
     }
 
 

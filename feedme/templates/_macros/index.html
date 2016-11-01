@@ -1,0 +1,52 @@
+{% macro generateRow(global, variables) %}
+    {% import "_includes/forms" as forms %}
+    {% set fieldHandle = variables.handle %}
+
+    {% if variables.parentElementField is defined %}
+        {% set fieldHandle = variables.parentElementField.handle ~ '-fields-' ~ variables.handle %}
+    {% endif %}
+
+    {% set name = variables.name is defined ? variables.name : fieldHandle %}
+    {% set value = variables.value ?? global.feed.fieldMapping[fieldHandle] ?? '' %}
+
+    <tr class="{{ (variables.parentElementField is defined) ? 'element-sub-field' : '' }}">
+        <td class="col-field">
+            <div class="field">
+                <div class="heading">
+                    <label>{{ variables.label }}</label>
+
+                    {% if variables.instructions is defined %}
+                        <div class="instructions">
+                            <p>{{ variables.instructions }}</p>
+                        </div>
+                    {% endif %}
+
+                    {% if variables.instructionsHandle is defined %}
+                        <div class="instructions">
+                            <code>{{ variables.instructionsHandle }}</code>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </td>
+
+        <td class="col-map">
+            {% namespace 'fieldMapping' %}
+                {{ forms.selectField({
+                    name: name,
+                    value: value,
+                    options: global.feedData,
+                }) }}
+            {% endnamespace %}
+        </td>
+
+        <td class="col-default">
+            <div class="default-fields">
+                {% if variables.default is defined %}
+                    {{ variables.default | raw }}
+                {% endif %}
+            </div>
+        </td>
+    </tr>
+{% endmacro %}
+

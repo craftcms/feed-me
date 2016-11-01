@@ -1,0 +1,66 @@
+{% for blocktype in craft.feedme.getMatrixBlocks(field.id) %}
+    {% for blocktypefield in blocktype.getFields() %}
+
+        {% if blocktypefield.type == 'Table' %}
+            {% for col in blocktypefield.settings.columns %}
+                <tr>
+                    <td class="col-field">
+                        <div class="field">
+                            <div class="heading">
+                                <label>{{ field.name }} - {{ blocktypefield.name }} - {{ col.heading }}</label>
+
+                                <div class="instructions">
+                                    <code>{{ field.handle }}[{{ blocktype.handle }}][{{ blocktypefield.handle }}][{{ col.handle }}]</code>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+
+                    <td class="col-map">
+                        {% namespace 'fieldMapping' %}
+                            {% set fieldHandle = field.handle ~ '--' ~ blocktype.handle ~ '--' ~ blocktypefield.handle ~ '--col' ~ loop.index %}
+
+                            {{ forms.selectField({
+                                id: fieldHandle,
+                                name: fieldHandle,
+                                value: feed.fieldMapping[fieldHandle] ?? '',
+                                options: feedData,
+                            }) }}
+                        {% endnamespace %}
+                    </td>
+
+                    <td class="col-default"></td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td class="col-field">
+                    <div class="field">
+                        <div class="heading">
+                            <label>{{ field.name }} - {{ blocktype.name }}: {{ blocktypefield.name }}</label>
+
+                            <div class="instructions">
+                                <code>{{ field.handle }}[{{ blocktype.handle }}][{{ blocktypefield.handle }}]</code>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+
+                <td class="col-map">
+                    {% namespace 'fieldMapping' %}
+                        {% set fieldHandle = field.handle ~ '--' ~ blocktype.handle ~ '--' ~ blocktypefield.handle %}
+
+                        {{ forms.selectField({
+                            id: fieldHandle,
+                            name: fieldHandle,
+                            value: feed.fieldMapping[fieldHandle] ?? '',
+                            options: feedData,
+                        }) }}
+                    {% endnamespace %}
+                </td>
+
+                <td class="col-default"></td>
+            </tr>
+        {% endif %}
+    {% endfor %}
+{% endfor %}

@@ -1,7 +1,4 @@
-{% extends "_layouts/cp" %}
-
-{% includeCssResource 'feedme/css/FeedMe.css' %}
-{% includeJsResource 'feedme/js/FeedMe.js' %}
+{% extends 'feedme/_layouts' %}
 
 {% set crumbs = [
     { label: craft.feedme.getPluginName | t, url: url('feedme') },
@@ -14,156 +11,142 @@
 {% endif %}
 
 {% set title = (feed.id) ? feed.name : 'Create a new feed' | t %}
+{% set noTabs = true %}
+{% set fullPageForm = true %}
 
-{% import "_includes/forms" as forms %}
+{% block saveButton %}{% endblock %}
 
-{% block content %}
-    <form method="post" accept-charset="UTF-8" data-saveshortcut="1">
-        <input type="hidden" name="action" value="">
-        {{ getCsrfInput() }}
-        
-        {% if feed.id %}<input type="hidden" name="feedId" value="{{ feed.id }}">{% endif %}
+{% block blockContent %}
+    <input type="hidden" name="action" value="feedMe/feeds/saveFeed">
 
-        {{ forms.textField({
-            first: true,
-            label: "Name" | t,
-            instructions: "What this feed will be called in the CP." | t,
-            id: 'name',
-            name: 'name',
-            value: feed.name,
-            errors: feed.getErrors('name'),
-            autofocus: true,
-            required: true,
-            translatable: true,
-        }) }}
+    {% if feed.id %}<input type="hidden" name="feedId" value="{{ feed.id }}">{% endif %}
 
-        {{ forms.textField({
-            label: "Feed URL" | t,
-            instructions: "Can be a file on the local file system or from a website url (http://...)." | t,
-            id: 'feedUrl',
-            name: 'feedUrl',
-            value: feed.feedUrl,
-            errors: feed.getErrors('feedUrl'),
-            required: true,
-        }) }}
+    {{ forms.textField({
+        first: true,
+        label: "Name" | t,
+        instructions: "What this feed will be called in the CP." | t,
+        id: 'name',
+        name: 'name',
+        value: feed.name,
+        errors: feed.getErrors('name'),
+        autofocus: true,
+        required: true,
+        translatable: true,
+    }) }}
 
-        {{ forms.selectField({
-            label: "Feed Type" | t,
-            instructions: 'Choose what type of feed you\'re retrieving.' | t,
-            id: 'feedType',
-            name: 'feedType',
-            options: {'xml': 'XML Feed', 'rss': 'RSS Feed', 'atom': 'ATOM Feed', 'json': 'JSON Feed'},
-            value: feed.feedType,
-            required: true,
-        }) }}
+    {{ forms.textField({
+        label: "Feed URL" | t,
+        instructions: "Can be a file on the local file system or from a website url (http://...)." | t,
+        id: 'feedUrl',
+        name: 'feedUrl',
+        value: feed.feedUrl,
+        errors: feed.getErrors('feedUrl'),
+        required: true,
+    }) }}
 
-        {{ forms.textField({
-            label: "Primary Element" | t,
-            instructions: "The primary element that contains the records you intend to parse. Selecting a Feed Type above will assist in most cases." | t,
-            id: 'primaryElement',
-            class: 'code',
-            name: 'primaryElement',
-            value: feed.primaryElement,
-            errors: feed.getErrors('primaryElement'),
-        }) }}
+    {{ forms.selectField({
+        label: "Feed Type" | t,
+        instructions: 'Choose what type of feed you\'re retrieving.' | t,
+        id: 'feedType',
+        name: 'feedType',
+        options: {'xml': 'XML Feed', 'rss': 'RSS Feed', 'atom': 'ATOM Feed', 'json': 'JSON Feed'},
+        value: feed.feedType,
+        errors: feed.getErrors('feedType'),
+        required: true,
+    }) }}
 
-        <hr>
+    {{ forms.textField({
+        label: "Primary Element" | t,
+        instructions: "The primary element that contains the records you intend to parse. Selecting a Feed Type above will assist in most cases." | t,
+        id: 'primaryElement',
+        class: 'code',
+        name: 'primaryElement',
+        value: feed.primaryElement,
+        errors: feed.getErrors('primaryElement'),
+    }) }}
 
-        {% set sections = craft.feedme.getGroups() %}
+    <hr>
 
-        {{ forms.selectField({
-            label: "Section" | t,
-            instructions: 'Choose the Section you want to save your feed data to.' | t,
-            id: 'section',
-            name: 'section',
-            options: craft.feedme.getSelectOptions(sections),
-            value: feed.section,
-            required: true,
-        }) }}
-
-        {% if craft.sections.getSectionById(feed.section) | length > 0 %}
-            {% set entrytypes = (feed.id) ? craft.sections.getSectionById(feed.section).getEntryTypes() : '' %}
-        {% else %}
-            {% set entrytypes = [] %}
+    {% set elementTypes = [] %}
+    {% for elementType in craft.elements.getAllElementTypes %}
+        {% if craft.feedMe.getElementTypeGroups(elementType.classHandle) %}
+            {% set elementTypes = elementTypes | merge({ (elementType.classHandle): elementType.name }) %}
         {% endif %}
+    {% endfor %}
 
-        {{ forms.selectField({
-            label: "Entry Type" | t,
-            instructions: 'Choose the Entry Type you want to save your feed data to.' | t,
-            id: 'entrytype',
-            name: 'entrytype',
-            options: craft.feedme.getSelectOptions(entrytypes),
-            value: feed.entrytype,
-            required: true,
-        }) }}
+    {{ forms.selectField({
+        label: "Element Type" | t,
+        instructions: 'Choose what element you want to save your feed data to.' | t,
+        id: 'elementType',
+        name: 'elementType',
+        options: [{ label: 'Select', value: '' }] | merge(elementTypes),
+        value: feed.elementType,
+        errors: feed.getErrors('elementType'),
+        required: true,
+    }) }}
 
-        {% if craft.isLocalized() %}
-            {% set locales = [] %}
-
-            {% for locale in craft.i18n.getSiteLocales() %}
-                {% set locales = locales | merge([{ label: locale.name ~ ' (' ~ locale.id ~ ')', value: locale.id }]) %}
-            {% endfor %}
-
-            {{ forms.selectField({
-                label: "Locale" | t,
-                instructions: 'Choose which locale you want to save your feed data to.' | t,
-                id: 'locale',
-                name: 'locale',
-                options: locales,
-                value: feed.locale,
-            }) }}
-        {% endif %}
-
-        <hr>
-
-        {{ forms.selectField({
-            label: "Duplicate Entry Action <span class='info'><span style='display:inline-block;'><strong>Add Entries:</strong> Duplicate entries will be skipped, new entries however, will be added. <em>\"I want to keep existing entries untouched but add new ones.\"</em></span><span style='display:inline-block;'><strong>Update Entries:</strong> Select fields to compare duplicate entries with, updating all other fields.<em>\"I want to update existing entries and add new ones.\"</em></span><span style='display:inline-block;'><strong>Delete Entries:</strong> Delete all existing entries in this section, adding only entries from this feed. Be careful.<em>\"I want only the entries from this feed in this section.\"</em></span></span>" | t,
-            instructions: 'Choose how to handle duplicate records.',
-            id: 'duplicateHandle',
-            name: 'duplicateHandle',
-            options: {'add': 'Add Entries', 'update': 'Update Entries', 'delete': 'Delete Entries'},
-            value: feed.duplicateHandle,
-            required: true,
-        }) }}
-
-        <hr>
-
-        {{ forms.textField({
-            label: "Passkey" | t,
-            instructions: "A generated, unique string to increase security against imports being run inadvertently. No need to change this." | t,
-            id: 'passkey',
-            name: 'passkey',
-            value: (feed.passkey) ? feed.passkey : uniqid(10),
-            errors: feed.getErrors('passkey'),
-            required: true,
-            translatable: true,
-        }) }}
-
-        {{ forms.lightswitchField({
-            first: true,
-            label: 'Backup',
-            instructions: 'Perform a full backup each time this feed is processed.' | t,
-            name: 'backup',
-            on: (feed.id) ? feed.backup : true,
-        }) }}
-
-        <hr>
-
-        <div id="plugin-footer">
-            <div class="footer-left">
-                <div class="buttons">
-                    <input type="submit" data-action="FeedMe/feeds/saveFeed" class="btn submit" value="{{ 'Save' | t }}">
-                    <input type="submit" data-action="FeedMe/feeds/mapFeed" class="btn submit" value="{{ 'Save & Continue' | t }}">
-                </div>
-            </div>
-
-            <div class="footer-right">
-                <div class="plugin-credit">
-                    <p>{{ craft.feedme.getPluginName }} {{ craft.feedme.getPluginVersion }} &bull; <a href="{{ craft.feedme.getPluginUrl }}" target="_blank">GitHub</a></p>
-                </div>
-            </div>
+    {% for elementType, elementTypeName in elementTypes %}
+        <div class="element-select element-select-{{ elementType }}">
+            {% set elementTypeGroups = craft.feedMe.getElementTypeGroupsTemplate(elementType) %}
+            {% include elementTypeGroups ignore missing %}
         </div>
-    </form>
+    {% endfor %}
+
+    {% if craft.isLocalized() %}
+        {% set locales = [] %}
+
+        {% for locale in craft.i18n.getSiteLocales() %}
+            {% set locales = locales | merge([{ label: locale.name ~ ' (' ~ locale.id ~ ')', value: locale.id }]) %}
+        {% endfor %}
+
+        {{ forms.selectField({
+            label: "Locale" | t,
+            instructions: 'Choose which locale you want to save your feed data to.' | t,
+            id: 'locale',
+            name: 'locale',
+            options: locales,
+            value: feed.locale,
+        }) }}
+    {% endif %}
+
+    <hr>
+
+    {{ forms.selectField({
+        label: "Import strategy <span class='info'><span style='display:inline-block;'><strong>Add Unique Only:</strong> Duplicate entries will be skipped, new entries however, will be added. <em>\"I want to keep existing entries untouched but add new ones.\"</em></span><span style='display:inline-block;'><strong>Add and Update existing:</strong> Select fields to compare duplicate entries with, updating all other fields.<em>\"I want to update existing entries and add new ones.\"</em></span><span style='display:inline-block;'><strong>Delete Entries existing:</strong> Update any existing entries, and delete any entries not updated by this feed. Be careful.<em>\"I want only the entries from this feed in this section.\"</em></span></span>" | t,
+        instructions: 'Choose what happens when this feed is run again. Click tooltip above for explanation.',
+        id: 'duplicateHandle',
+        name: 'duplicateHandle',
+        options: {'add': 'Add Unique Only', 'update': 'Add and Update existing', 'delete': 'Delete old and Update existing'},
+        value: feed.duplicateHandle,
+        required: true,
+    }) }}
+
+    <hr>
+
+    {{ forms.textField({
+        label: "Passkey" | t,
+        instructions: "A generated, unique string to increase security against imports being run inadvertently. No need to change this." | t,
+        id: 'passkey',
+        name: 'passkey',
+        value: (feed.passkey) ? feed.passkey : '',
+        errors: feed.getErrors('passkey'),
+        required: true,
+        translatable: true,
+    }) }}
+
+    {{ forms.lightswitchField({
+        first: true,
+        label: 'Backup',
+        instructions: 'Perform a full backup each time this feed is processed.' | t,
+        name: 'backup',
+        on: (feed.id) ? feed.backup : true,
+    }) }}
+
 {% endblock %}
 
-
+{% block footerButton %}
+    <div class="buttons">
+        <input type="button" data-action="feedMe/feeds/saveFeed" class="btn submit" value="{{ 'Save' | t }}">
+        <input type="button" data-action="feedMe/feeds/saveAndMapFeed" class="btn submit" value="{{ 'Save & Continue' | t }}">
+    </div>
+{% endblock %}

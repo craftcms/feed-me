@@ -1,46 +1,37 @@
-{% extends "_layouts/cp" %}
-
-{% includeCssResource 'feedme/css/font-awesome.min.css' %}
-{% includeCssResource 'feedme/css/FeedMe.css' %}
+{% extends 'feedme/_layouts' %}
 
 {% set crumbs = [
     { label: craft.feedme.getPluginName | t, url: url('feedme') },
     { label: "Logs" | t, url: url('feedme/logs') }
 ] %}
 
-{% set title = craft.feedme.getPluginName | t %}
-{% set tabs = craft.feedme.getCpTabs %}
 {% set selectedTab = 'logs' %}
 
-{% set content %}
-    <table id="logs" class="data fullwidth collapsible">
-        <thead>
+{% block blockContent %}
+
+<a class="btn right" href="{{ actionUrl('feedMe/logs/clear') }}">Clear logs</a>
+
+<table id="logs" class="data fullwidth collapsible">
+    <thead>
+        <tr>
+            <th scope="col">{{ "Date" | t }}</th>
+            <th scope="col">{{ "Message" | t }}</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for logEntry in logEntries %}
             <tr>
-                <th scope="col">{{ "Date" | t }}</th>
-                <th scope="col">{{ "Message" | t }}</th>
+                <td>
+                    <div style="width: 150px">
+                        {{ logEntry.dateTime.localeDate() ~ ' ' ~ logEntry.dateTime.localeTime() }}
+                    </div>
+                </td>
+
+                <td>{{ logEntry.message }}</td>
             </tr>
-        </thead>
+        {% endfor %}
+    </tbody>
+</table>
 
-        <tbody>
-            {% for logEntry in logEntries %}
-                <tr>
-                    <td>
-                        <div style="width: 150px">
-                            {{ logEntry.dateTime.localeDate() ~ ' ' ~ logEntry.dateTime.localeTime() }}
-                        </div>
-                    </td>
-
-                    <td>{{ logEntry.message }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <div id="plugin-footer">
-        <div class="footer-right">
-            <div class="plugin-credit">
-                <p>{{ craft.feedme.getPluginName }} {{ craft.feedme.getPluginVersion }} &bull; <a href="{{ craft.feedme.getPluginUrl }}" target="_blank">GitHub</a></p>
-            </div>
-        </div>
-    </div>
-{% endset %}
+{% endblock %}

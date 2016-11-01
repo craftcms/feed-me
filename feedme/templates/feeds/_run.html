@@ -1,0 +1,24 @@
+{% extends 'feedme/_layouts' %}
+
+{% set crumbs = [
+    { label: craft.feedme.getPluginName | t, url: url('feedme') },
+    { label: feed.name | t, url: url('feedme/feeds/' ~ feed.id) },
+] %}
+
+{% set title = feed.name %}
+
+{% set title = (feed.id) ? feed.name : 'Create a new feed' | t %}
+{% set noTabs = true %}
+
+{% block blockContent %}
+    <div class="feedme-fullpage fullpage-running fullpage-running-cp">
+        <img src="{{ resourceUrl('feedme/icon-success.svg') }}">
+        
+        <h2>{{ '{name} has started processing' | t({ name: feed.name }) }}</h2>
+        <p>{{ 'Data is now being imported from your feed. You can navigate away from this page without disrupting your feed processing.' | t }}</p>
+
+        <div class="progress-container">
+            <div class="spinner"></div>
+        </div>
+    </div>
+{% endblock %}

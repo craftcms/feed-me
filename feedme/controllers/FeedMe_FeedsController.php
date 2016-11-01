@@ -21,63 +21,67 @@ class FeedMe_FeedsController extends BaseController
 
     public function actionEditFeed(array $variables = array())
     {
-        if (!empty($variables['feedId'])) {
-            $variables['feed'] = craft()->feedMe_feeds->getFeedById($variables['feedId']);
-        } else {
-            $variables['feed'] = new FeedMe_FeedModel();
+        if (empty($variables['feed'])) {
+            if (!empty($variables['feedId'])) {
+                $variables['feed'] = craft()->feedMe_feeds->getFeedById($variables['feedId']);
+            } else {
+                $variables['feed'] = new FeedMe_FeedModel();
+                $variables['feed']->passkey = StringHelper::randomString(10);
+            }
         }
 
         $this->renderTemplate('feedme/feeds/_edit', $variables);
     }
 
-    public function getModelFromPost() {
-        $this->requirePostRequest();
+    public function actionMapFeed(array $variables = array())
+    {
+        if (empty($variables['feed'])) {
+            $feed = craft()->feedMe_feeds->getFeedById($variables['feedId']);
+            $feedData = craft()->feedMe_data->getFeedMapping($feed->feedType, $feed->feedUrl, $feed->primaryElement);
 
-        $feed = new FeedMe_FeedModel();
+            $variables['feed'] = $feed;
 
-        // Shared attributes
-        if (craft()->request->getPost('feedId')) {
-            $feed->id = craft()->request->getPost('feedId');
+            if ($feedData) {
+                $variables['feedRawData'] = $feedData;
+            }
         }
 
-        $feed->name             = craft()->request->getPost('name');
-        $feed->feedUrl          = craft()->request->getPost('feedUrl');
-        $feed->feedType         = craft()->request->getPost('feedType');
-        $feed->primaryElement   = craft()->request->getPost('primaryElement');
-        $feed->section          = craft()->request->getPost('section');
-        $feed->entrytype        = craft()->request->getPost('entrytype');
-        $feed->locale           = craft()->request->getPost('locale');
-        $feed->duplicateHandle  = craft()->request->getPost('duplicateHandle');
-        $feed->passkey          = craft()->request->getPost('passkey');
-        $feed->backup           = craft()->request->getPost('backup');
+        $this->renderTemplate('feedme/feeds/_map', $variables);
+    }
 
-        // Don't overwrite mappings when saving from first screen
-        if (craft()->request->getPost('fieldMapping')) {
-            $feed->fieldMapping = craft()->request->getPost('fieldMapping');
-        }
-        if (craft()->request->getPost('fieldUnique')) {
-            $feed->fieldUnique = craft()->request->getPost('fieldUnique');
-        }
+    public function actionRunFeed(array $variables = array())
+    {
+        $feed = craft()->feedMe_feeds->getFeedById($variables['feedId']);
 
-        return $feed;
+        $variables['feed'] = $feed;
+        $variables['task'] = $this->_runImportTask($feed->id);
+
+        if (craft()->request->getParam('direct')) {
+            $this->renderTemplate('feedme/feeds/_direct', $variables);
+        } else {
+            $this->renderTemplate('feedme/feeds/_run', $variables);
+        }
     }
 
     public function actionSaveFeed()
     {
-        $feed = $this->getModelFromPost();
+        $feed = $this->_getModelFromPost();
 
-        // Save it
-        if (craft()->feedMe_feeds->saveFeed($feed)) {
-            craft()->userSession->setNotice(Craft::t('Feed saved.'));
-            $this->redirect('feedme/feeds');
-        } else {
-            craft()->userSession->setError(Craft::t('Couldn’t save feed.'));
-        }
+        $this->_saveAndRedirect($feed, 'feedme/feeds/', true);
+    }
 
-        // Send the feed back to the template
-        craft()->urlManager->setRouteVariables(array(
-            'feed' => $feed
-        ));
+    public function actionSaveAndMapFeed()
+    {
+        $feed = $this->_getModelFromPost();
+
+        $this->_saveAndRedirect($feed, 'feedme/feeds/map/', true);
+    }
+
+    public function actionSaveAndImportFeed()
+    {
+        $feed = $this->_getModelFromPost();
+
+        $this->_saveAndRedirect($feed, 'feedme/feeds/run/', true);
     }
 
     public function actionDeleteFeed()
@@ -91,59 +95,32 @@ class FeedMe_FeedsController extends BaseController
         $this->returnJson(array('success' => true));
     }
 
-    public function actionMapFeed()
-    {
-        $feed = $this->getModelFromPost();
-
-        // We're onto the mapping step, but lets save what we've got so far anyway.
-        if (craft()->feedMe_feeds->saveFeed($feed)) {
-            craft()->userSession->setNotice(Craft::t('Feed saved.'));
-
-            // Get the data for the mapping screen, based on the URL provided
-            $feedData = craft()->feedMe_feed->getFeedMapping($feed->feedType, $feed->feedUrl, $feed->primaryElement);
-
-            if ($feedData) {
-                $this->renderTemplate('feedme/feeds/_map', array(
-                    'feed'      => $feed,
-                    'feedData'  => $feedData,
-                ));
-            }
-        } else {
-            craft()->userSession->setError(Craft::t('Couldn’t save feed.'));
-        }
-    }
-
-    public function actionPerformFeed()
-    {
-        $feed = $this->getModelFromPost();
-
-        // Mapping and all other setting are ready to go. Save and proceed with actual feed
-        if (craft()->feedMe_feeds->saveFeed($feed)) {
-            craft()->userSession->setNotice(Craft::t('Feed saved.'));
-
-            // Feed settings have saved, now we're ready to trigger the import
-            $this->runImportTask($feed->id);
-        } else {
-            craft()->userSession->setError(Craft::t('Couldn’t save feed.'));
-        }
-    }
-
     public function actionRunTask(array $variables = array())
     {
-        if (!empty($variables['feedId'])) {
-            $feedId = $variables['feedId'];
-        } else if (craft()->request->getParam('feedId')) {
-            $feedId = craft()->request->getParam('feedId');
-        } else {
-            $feedId = null;
-        }
-
-        if ($feedId) {
-            $this->runImportTask($feedId);
+        if (craft()->request->getParam('feedId')) {
+            $variables = array('feedId' => craft()->request->getParam('feedId'));
+            $this->actionRunFeed($variables);
         }
     }
 
-    public function runImportTask($feedId) {
+    public function actionDebug()
+    {
+        $feedId = craft()->request->getParam('feedId');
+        $limit = craft()->request->getParam('limit');
+
+        craft()->feedMe_process->debugFeed($feedId, $limit);
+        craft()->end();
+    }
+
+    
+
+
+
+    // Private Methods
+    // =========================================================================
+
+    private function _runImportTask($feedId)
+    {
         $feed = craft()->feedMe_feeds->getFeedById($feedId);
 
         $settings = array(
@@ -160,48 +137,83 @@ class FeedMe_FeedsController extends BaseController
             // Create the import task
             craft()->tasks->createTask('FeedMe', $feed->name, $settings);
 
-            // Trigger the task to run right now!
-            $this->_runPendingTasks();
-
-            // if not using the direct param for this request, so UI stuff 
+            // if not using the direct param for this request, do UI stuff 
             craft()->userSession->setNotice(Craft::t('Feed processing started.'));
-
-            $this->redirect('feedme/feeds');
         }
 
         // If not, are we running directly?
         if (craft()->request->getParam('direct')) {
-            if (craft()->request->getParam('passkey') == $feed['passkey']) {
-                // Create the import task
+            $proceed = craft()->request->getParam('passkey') == $feed['passkey'];
+
+            // Create the import task only if provided the correct passkey
+            if ($proceed) {
                 craft()->tasks->createTask('FeedMe', $feed->name, $settings);
-
-                // Trigger the task to run right now!
-                $this->_runPendingTasks();
-
-                // Let the requester know whats going on.
-                $this->returnJson(array('success' => 'Feed ID: '.$feed['id'].' - Task started'));
-            } else {
-                $this->returnJson(array('error' => 'Invalid Passkey'));
             }
-        }
 
-        
+            return $proceed;
+        }
     }
 
-
-
-    // Private Methods
-    // =========================================================================
-
-    private function _runPendingTasks()
+    private function _saveAndRedirect($feed, $redirect, $withId = false)
     {
-        if (!craft()->tasks->isTaskRunning()) {
-            $task = craft()->tasks->getNextPendingTask();
+        if (craft()->feedMe_feeds->saveFeed($feed)) {
+            craft()->userSession->setNotice(Craft::t('Feed saved.'));
 
-            if ($task) {
-                craft()->tasks->runPendingTasks();
+            if ($withId) {
+                $redirect = $redirect . $feed->id;
             }
+
+            $this->redirect($redirect);
+        } else {
+            craft()->userSession->setError(Craft::t('Couldn’t save feed: ' . implode($feed->getAllErrors(), ' ')));
         }
+
+        craft()->urlManager->setRouteVariables(array('feed' => $feed));
+    }
+
+    private function _getModelFromPost()
+    {
+        $this->requirePostRequest();
+
+        if (craft()->request->getPost('feedId')) {
+            $feed = craft()->feedMe_feeds->getFeedById(craft()->request->getPost('feedId'));
+        } else {
+            $feed = new FeedMe_FeedModel();
+        }
+
+        $feed->name             = craft()->request->getRequiredPost('name', $feed->name);
+        $feed->feedUrl          = craft()->request->getRequiredPost('feedUrl', $feed->feedUrl);
+        $feed->feedType         = craft()->request->getRequiredPost('feedType', $feed->feedType);
+        $feed->primaryElement   = craft()->request->getPost('primaryElement', $feed->primaryElement);
+        $feed->elementType      = craft()->request->getRequiredPost('elementType', $feed->elementType);
+        $feed->elementGroup     = craft()->request->getPost('elementGroup', $feed->elementGroup);
+        $feed->locale           = craft()->request->getPost('locale', $feed->locale);
+        $feed->duplicateHandle  = craft()->request->getPost('duplicateHandle', $feed->duplicateHandle);
+        $feed->passkey          = craft()->request->getRequiredPost('passkey', $feed->passkey);
+        $feed->backup           = craft()->request->getPost('backup', $feed->backup);
+
+        // Don't overwrite mappings when saving from first screen
+        if (craft()->request->getPost('fieldMapping')) {
+            $feed->fieldMapping = craft()->request->getPost('fieldMapping');
+        }
+        
+        if (craft()->request->getPost('fieldDefaults')) {
+            $feed->fieldDefaults = craft()->request->getPost('fieldDefaults');
+        }
+        
+        if (craft()->request->getPost('fieldElementMapping')) {
+            $feed->fieldElementMapping = craft()->request->getPost('fieldElementMapping');
+        }
+        
+        if (craft()->request->getPost('fieldElementDefaults')) {
+            $feed->fieldElementDefaults = craft()->request->getPost('fieldElementDefaults');
+        }
+        
+        if (craft()->request->getPost('fieldUnique')) {
+            $feed->fieldUnique = craft()->request->getPost('fieldUnique');
+        }
+
+        return $feed;
     }
 
 }

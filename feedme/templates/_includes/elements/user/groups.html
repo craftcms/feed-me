@@ -1,0 +1,11 @@
+{% set groups = craft.feedMe.getElementTypeGroups(elementType) %}
+
+{{ forms.selectField({
+    label: "User Group" | t,
+    instructions: 'Choose the user group you want to save your feed data into.' | t,
+    id: 'elementGroup-' ~ elementType,
+    name: 'elementGroup[' ~ elementType ~ ']',
+    options: craft.feedme.getSelectOptions(groups),
+    value: feed.elementGroup[elementType] ?? '',
+    required: true,
+}) }}

@@ -1,10 +1,8 @@
-.duplicateHandle input.checkbox + label {
-    display: block;
-}
 
-span.info {
-    vertical-align: top;
-}
+
+/* ==========================================================================
+// Feeds Index
+// ========================================================================== */
 
 .fa {
     vertical-align: middle;
@@ -18,29 +16,129 @@ span.info {
     color: #0d78f2;
 }
 
-body.ltr table.data td:last-child {
+body.ltr #feeds td:last-child {
     padding-left: 10px;
 }
 
-#plugin-footer {
-    margin: 24px 0 0 0;
-    width: 100% 
+
+
+
+/* ==========================================================================
+// Field-Mapping Step
+// ========================================================================== */
+
+.feedme-mapping th:nth-child(1) {
+    width: 30%;
 }
 
-#plugin-footer .footer-left {
-    float: left;
+.feedme-mapping th:nth-child(2) {
+    width: 40%;
 }
 
-#plugin-footer .footer-right {
-    float: right;
+.feedme-mapping th:nth-child(3) {
+    width: 30%;
 }
 
-#plugin-footer .plugin-credit {
+.feedme-mapping td.col-map .field .heading {
     font-size: 11px;
-    color: #8f98a3;
-    text-align: right;
-    margin-top: 10px;
 }
+
+.feedme-mapping td.col-map .field {
+    margin: 10px 0;
+}
+
+.feedme-mapping .field-extra-settings {
+    font-size: 11px;
+}
+
+.feedme-mapping .field-extra-settings input.checkbox + label:before,
+.feedme-mapping .field-extra-settings div.checkbox:before {
+    top: 0;
+}
+
+.feedme-mapping .field-extra-settings .assets-uploads .checkboxfield {
+    float: left;
+    margin-right: 10px;
+    padding-top: 2px;
+    margin-bottom: 0;
+    z-index: 1;
+}
+
+.feedme-mapping .field-extra-settings .assets-uploads select {
+    padding: 5px 22px 5px 10px !important;
+    font-size: 11px;
+    line-height: 11px;
+}
+
+.feedme-mapping .element-sub-field td {
+    background: #F7F7F8;
+}
+
+.feedme-mapping .element-sub-field .col-field {
+    padding-left: 10px;
+}
+
+.feedme-mapping .element-sub-field .col-default {
+    padding-right: 10px;
+}
+
+
+
+
+/* ==========================================================================
+// Full Page Screens for Error/Success
+// ========================================================================== */
+
+.feedme-fullpage {
+    text-align: center;
+    max-width: 40em;
+    margin: 24px auto 48px;
+}
+
+.feedme-fullpage h2 {
+    font-size: 18px;
+}
+
+.feedme-fullpage img {
+    width: 70px;
+}
+
+.feedme-fullpage .buttons {
+    display: inline-block;
+    margin-top: 15px;
+}
+
+.feedme-fullpage .progress-container {
+    display: inline-block;
+    margin-top: 15px;
+}
+
+
+
+/* ==========================================================================
+// Direct Feed Additional Styles
+// ========================================================================== */
+
+body.feedme-message .message-container .pane {
+    width: 36em;
+    padding: 2em;
+    margin: 0 auto !important;
+
+    -ms-transform: translate(0, -50%);
+    -webkit-transform: translate(0, -50%);
+    transform: translate(0, -50%);
+}
+
+body.feedme-message .feedme-fullpage {
+    margin-bottom: 24px;
+}
+
+
+
+
+/* ==========================================================================
+// Help Form
+// ========================================================================== */
 
 .feedme-help-form {
     width: 320px;
@@ -78,3 +176,80 @@ body.ltr table.data td:last-child {
     font-size: 12px;
     color: #8f98a3;
 }
+
+
+
+/* ==========================================================================
+// Plugin License
+// ========================================================================== */
+
+#loading-status { display: inline-block; padding: 6px 0; }
+
+.reg-header { position: relative; min-height: 150px; box-sizing: border-box; padding-top: 50px; }
+body.ltr .reg-header { padding-left: 150px; padding-right: 25px; }
+body.rtl .reg-header { padding-right: 150px; padding-left: 25px; }
+#unknown-license-header { padding-top: 42px; }
+
+.reg-header img { position: absolute; top: 25px; }
+body.ltr .reg-header img { left: 25px; }
+body.rtl .reg-header img { right: 25px; }
+
+.reg-header h2 { margin: 0; font-size: 20px; }
+.reg-header p { margin-top: 0.5em; max-width: 515px; }
+
+.license-meta { margin: 50px 0 25px; }
+.license-meta > .data { padding: 0 !important; }
+.license-meta > .data .heading { width: 125px; }
+body.ltr .license-meta > .data .heading { text-align: right; }
+body.rtl .license-meta > .data .heading { text-align: left; }
+.license-meta > .data .value { width: calc(100% - 150px); }
+
+body.ltr .indented { margin-left: 150px; }
+body.rtl .indented { margin-right: 150px; }
+
+#license-key-wrapper { display: inline-block; }
+
+@media only screen and (max-width: 768px) {
+    .reg-header { min-height: 0; padding: 0 !important; text-align: center; }
+    .reg-header img { position: static; margin-bottom: 14px; }
+
+    .meta > .data { display: block; }
+    .license-meta > .data .heading,
+    .license-meta > .data .value { width: auto; }
+    body.ltr .license-meta > .data .heading { text-align: left; }
+    body.rtl .license-meta > .data .heading { text-align: right; }
+
+    #license-key-wrapper { display: block; margin-bottom: 24px; }
+    #license-key-wrapper input { width: 100%; }
+
+    body.ltr .indented { margin-left: 0; }
+    body.rtl .indented { margin-right: 0; }
+}
+
+
+
+
+/* ==========================================================================
+// Plugin Footer
+// ========================================================================== */
+
+#plugin-footer {
+    margin: 24px 0 0 0;
+    width: 100%;
+}
+
+#plugin-footer .footer-left {
+    float: left;
+}
+
+#plugin-footer .footer-right {
+    float: right;
+}
+
+#plugin-footer .plugin-credit {
+    font-size: 11px;
+    color: #8f98a3;
+    text-align: right;
+    margin-top: 10px;
+}
+

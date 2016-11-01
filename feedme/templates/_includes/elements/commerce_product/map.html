@@ -1,0 +1,299 @@
+{% if feed.elementGroup %}
+    {% set productTypeId = feed.elementGroup[elementType] %}
+
+    {% set productType = craft.feedMe.getProductTypeById(productTypeId) %}
+{% endif %}
+
+{% set fields = [{
+    label: 'Title',
+    handle: 'title',
+    default: forms.textField({
+        id: 'fieldDefaults-title',
+        name: 'fieldDefaults[title]',
+        value: feed.fieldDefaults.title ?? '',
+    })
+}, {
+    label: 'Slug',
+    handle: 'slug',
+    instructions: 'If not set, the Slug will be automatically created from Title.' | t,
+}, {
+    label: 'Post Date',
+    handle: 'postDate',
+    instructions: 'Accepts Unix timestamp, or just about any English textual datetime description.' | t,
+    default: forms.dateTimeField({
+        id: 'fieldDefaults-postDate',
+        name: 'fieldDefaults[postDate]',
+        value: feed.fieldDefaults.postDate is defined ? craft.feedme.formatDateTime(feed.fieldDefaults.postDate) : '',
+    })
+}, {
+    label: 'Expiry Date',
+    handle: 'expiryDate',
+    instructions: 'Accepts Unix timestamp, or just about any English textual datetime description.' | t,
+    default: forms.dateTimeField({
+        id: 'fieldDefaults-expiryDate',
+        name: 'fieldDefaults[expiryDate]',
+        value: feed.fieldDefaults.expiryDate is defined ? craft.feedme.formatDateTime(feed.fieldDefaults.expiryDate) : '',
+    })
+}, {
+    label: 'Status',
+    handle: 'enabled',
+    instructions: 'Choose either a default status from the list or the imported field that will contain the status.' | t,
+    default: forms.selectField({
+        id: 'fieldDefaults-enabled',
+        name: 'fieldDefaults[enabled]',
+        value: feed.fieldDefaults.enabled ?? '1',
+        options: [
+            { label: 'Enabled', value: 1 },
+            { label: 'Disabled', value: 0 },
+        ],
+    })
+}, {
+    label: 'Tax Category',
+    handle: 'taxCategoryId',
+    default: forms.selectField({
+        id: 'fieldDefaults-taxCategoryId',
+        name: 'fieldDefaults[taxCategoryId]',
+        value: feed.fieldDefaults.taxCategoryId ?? '1',
+        options: craft.commerce.getTaxCategories(),
+    })
+}, {
+    label: 'Free Shipping',
+    handle: 'freeShipping',
+    default: forms.checkboxField({
+        id: 'fieldDefaults-freeShipping',
+        name: 'fieldDefaults[freeShipping]',
+        checked: feed.fieldDefaults.freeShipping ?? '',
+    })
+}, {
+    label: 'Promotable',
+    handle: 'promotable',
+    default: forms.checkboxField({
+        id: 'fieldDefaults-promotable',
+        name: 'fieldDefaults[promotable]',
+        checked: feed.fieldDefaults.promotable ?? '',
+    })
+}] %}
+
+
+{% set fieldsVariants = [{
+    label: 'Title' | t,
+    handle: 'variant-title',
+    name: 'variants[title]',
+    value: feed.fieldMapping.variants.title ?? '',
+    default: forms.textField({
+        id: 'fieldDefaults-variant-title',
+        name: 'fieldDefaults[variant-title]',
+        value: feed.fieldDefaults['variant-title'] ?? '',
+    })
+}, {
+    label: 'SKU' | t,
+    handle: 'variant-sku',
+    name: 'variants[sku]',
+    value: feed.fieldMapping.variants.sku ?? '',
+}, {
+    label: 'Price' | t,
+    handle: 'variant-price',
+    name: 'variants[price]',
+    value: feed.fieldMapping.variants.price ?? '',
+}, {
+    label: 'Stock' | t,
+    handle: 'variant-stock',
+    name: 'variants[stock]',
+    value: feed.fieldMapping.variants.stock ?? '',
+}, {
+    label: 'Unlimited Stock' | t,
+    handle: 'variant-unlimitedStock',
+    name: 'variants[unlimitedStock]',
+    value: feed.fieldMapping.variants.unlimitedStock ?? '',
+    default: forms.checkboxField({
+        id: 'fieldDefaults-variant-unlimitedStock',
+        name: 'fieldDefaults[variant-unlimitedStock]',
+        checked: feed.fieldDefaults['variant-unlimitedStock'] ?? '',
+    })
+}, {
+    label: 'Is Default' | t,
+    handle: 'variant-isDefault',
+    name: 'variants[isDefault]',
+    value: feed.fieldMapping.variants.isDefault ?? '',
+    default: forms.checkboxField({
+        id: 'fieldDefaults-variant-isDefault',
+        name: 'fieldDefaults[variant-isDefault]',
+        checked: feed.fieldDefaults['variant-isDefault'] ?? '',
+    })
+}, {
+    label: 'Minimum allowed quantity' | t,
+    handle: 'variant-minQty',
+    name: 'variants[minQty]',
+    value: feed.fieldMapping.variants.minQty ?? '',
+    default: forms.textField({
+        id: 'fieldDefaults-variant-minQty',
+        name: 'fieldDefaults[variant-minQty]',
+        value: feed.fieldDefaults['variant-minQty'] ?? '',
+    })
+}, { 
+    label: 'Maximum allowed quantity' | t,
+    handle: 'variant-maxQty',
+    name: 'variants[maxQty]',
+    value: feed.fieldMapping.variants.maxQty ?? '',
+    default: forms.textField({
+        id: 'fieldDefaults-variant-maxQty',
+        name: 'fieldDefaults[variant-maxQty]',
+        value: feed.fieldDefaults['variant-maxQty'] ?? '',
+    })
+}, {
+    label: 'Dimensions - Length' | t,
+    handle: 'variant-length',
+    name: 'variants[length]',
+    value: feed.fieldMapping.variants.length ?? '',
+    default: forms.textField({
+        id: 'fieldDefaults-variant-length',
+        name: 'fieldDefaults[variant-length]',
+        value: feed.fieldDefaults['variant-length'] ?? '',
+    })
+}, {
+    label: 'Dimensions - Width' | t,
+    handle: 'variant-width',
+    name: 'variants[width]',
+    value: feed.fieldMapping.variants.width ?? '',
+    default: forms.textField({
+        id: 'fieldDefaults-variant-width',
+        name: 'fieldDefaults[variant-width]',
+        value: feed.fieldDefaults['variant-width'] ?? '',
+    })
+}, {
+    label: 'Dimensions - Height' | t,
+    handle: 'variant-height',
+    name: 'variants[height]',
+    value: feed.fieldMapping.variants.height ?? '',
+    default: forms.textField({
+        id: 'fieldDefaults-variant-height',
+        name: 'fieldDefaults[variant-height]',
+        value: feed.fieldDefaults['variant-height'] ?? '',
+    })
+}, {
+    label: 'Weight' | t,
+    handle: 'variant-weight',
+    name: 'variants[weight]',
+    value: feed.fieldMapping.variants.weight ?? '',
+    default: forms.textField({
+        id: 'fieldDefaults-variant-weight',
+        name: 'fieldDefaults[variant-weight]',
+        value: feed.fieldDefaults['variant-weight'] ?? '',
+    })
+}] %}
+
+<h2>{{ 'Product Fields' | t }}</h2>
+
+<table class="feedme-mapping data fullwidth collapsible">
+    <thead>
+        <th>{{ 'Field' | t }}</th>
+        <th>{{ 'Feed Element' | t }}</th>
+        <th>{{ 'Default Value' | t }}</th>
+    </thead>
+    <tbody>
+        {% for field in fields %}
+            {{ feedMeMacro.generateRow(_context, field) }}
+        {% endfor %}
+    </tbody>
+</table>
+
+<hr>
+
+<h2>{{ 'Product Variant Fields' | t }}</h2>
+
+<table class="feedme-mapping data fullwidth collapsible">
+    <thead>
+        <th>{{ 'Field' | t }}</th>
+        <th>{{ 'Feed Element' | t }}</th>
+        <th>{{ 'Default Value' | t }}</th>
+    </thead>
+    <tbody>
+        {% for field in fieldsVariants %}
+            {{ feedMeMacro.generateRow(_context, field) }}
+        {% endfor %}
+    </tbody>
+</table>
+
+{% for tab in craft.fields.getLayoutById(productType.fieldLayoutId).getTabs() %}
+    <hr>
+
+    <h2>{{ tab.name }} Fields</h2>
+
+    <table class="feedme-mapping data fullwidth collapsible">
+        <thead>
+            <th>{{ 'Field' | t }}</th>
+            <th>{{ 'Feed Element' | t }}</th>
+            <th>{{ 'Default Value' | t }}</th>
+        </thead>
+        <tbody>
+            {% for fieldtype in tab.getFields() %}
+                {% set field = fieldtype.getField() %}
+
+                {% set fieldMapping = craft.feedMe.getFieldMapping(field.type) %}
+                {% set variables = { field: field, feed: feed, feedData: feedData } %}
+
+                {% if fieldMapping %}
+                    {% include fieldMapping with variables %}
+                {% else %}
+                    {% include 'feedme/_includes/fields/default' ignore missing with variables %}
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+{% endfor %}
+
+{% set variantFields = craft.fields.getLayoutByType('Commerce_Variant').getFields() %}
+
+{% if variantFields %}
+    <hr>
+
+    <h2>{{ "Variant Fields" | t }}</h2>
+
+    <table class="feedme-mapping data fullwidth collapsible">
+        <thead>
+            <th>{{ 'Field' | t }}</th>
+            <th>{{ 'Feed Element' | t }}</th>
+            <th>{{ 'Default Value' | t }}</th>
+        </thead>
+        <tbody>
+            {% for fieldtype in variantFields %}
+                {% set field = fieldtype.getField() %}
+
+                {% set fieldMapping = craft.feedMe.getFieldMapping(field.type) %}
+                {% set variables = { field: field, feed: feed, feedData: feedData } %}
+
+                {% if fieldMapping %}
+                    {% include fieldMapping ignore missing with variables %}
+                {% else %}
+                    {% include 'feedme/_includes/fields/default' ignore missing with variables %}
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+
+<hr>
+
+<h2>{{ "Set a unique identifier for existing elements" | t }}</h2>
+
+<p>{{ "Select the fields you want to use to check for existing elements. When selected, Feed Me will look for existing elements that match the fields provided below and either update, or skip depending on your choice of Import Strategy." | t }}</p>
+
+{% set fields = fields | merge(fieldsVariants) %}
+
+{% for tab in craft.fields.getLayoutById(productType.fieldLayoutId).getTabs() %}
+    {% for fieldtype in tab.getFields() %}
+        {% set field = fieldtype.getField() %}
+
+        {% set fields = fields | merge([{ label: field.name, handle: field.handle }]) %}
+    {% endfor %}
+{% endfor %}
+
+<div class="feedme-uniques">
+    {% for field in fields %}
+        {{ forms.checkboxField({
+            name: 'fieldUnique[' ~ field.handle ~ ']',
+            label: field.label,
+            checked: feed.fieldUnique[field.handle] ?? '',
+        }) }}
+    {% endfor %}
+</div>

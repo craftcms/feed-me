@@ -1,0 +1,135 @@
+{% if feed.elementGroup %}
+    {% set sectionId = feed.elementGroup[elementType].section %}
+    {% set entryTypeId = feed.elementGroup[elementType].entryType %}
+
+    {% set section = craft.sections.getSectionById(sectionId) %}
+    {% set entryType = craft.feedMe.getEntryTypeById(entryTypeId) %}
+{% endif %}
+
+{% set users = [] %}
+
+{% for user in craft.users.can('createEntries:' ~ entryType) %}
+    {% set users = users | merge([{ label: user, value: user.id }]) %}
+{% endfor %}
+
+{% set fields = [{
+    label: 'Title' | t,
+    handle: 'title',
+    default: forms.textField({
+        id: 'fieldDefaults-title',
+        name: 'fieldDefaults[title]',
+        value: feed.fieldDefaults.title ?? '',
+    }),
+}, {
+    label: 'Slug' | t,
+    handle: 'slug',
+    instructions: 'If not set, the Slug will be automatically created from Title.' | t,
+}, {
+    label: 'Post Date' | t,
+    handle: 'postDate',
+    instructions: 'Accepts Unix timestamp, or just about any English textual datetime description.' | t,
+    default: forms.dateTimeField({
+        id: 'fieldDefaults-postDate',
+        name: 'fieldDefaults[postDate]',
+        value: feed.fieldDefaults.postDate is defined ? craft.feedme.formatDateTime(feed.fieldDefaults.postDate) : '',
+    }),
+}, {
+    label: 'Expiry Date' | t,
+    handle: 'expiryDate',
+    instructions: 'Accepts Unix timestamp, or just about any English textual datetime description.' | t,
+    default: forms.dateTimeField({
+        id: 'fieldDefaults-expiryDate',
+        name: 'fieldDefaults[expiryDate]',
+        value: feed.fieldDefaults.expiryDate is defined ? craft.feedme.formatDateTime(feed.fieldDefaults.expiryDate) : '',
+    }),
+}, {
+    label: 'Status' | t,
+    handle: 'enabled',
+    instructions: 'Choose either a default status from the list or the imported field that will contain the status.' | t,
+    default: forms.selectField({
+        id: 'fieldDefaults-enabled',
+        name: 'fieldDefaults[enabled]',
+        value: feed.fieldDefaults.enabled ?? '1',
+        options: [
+            { label: 'Enabled', value: 1 },
+            { label: 'Disabled', value: 0 },
+        ],
+    }),
+}, {
+    label: 'Author' | t,
+    handle: 'authorId',
+    instructions: 'Entries will be assigned to the user in this field. If the field does not match any existing member, the default author will be assigned.' | t,
+    default: forms.selectField({
+        id: 'fieldDefaults-authorId',
+        name: 'fieldDefaults[authorId]',
+        value: feed.fieldDefaults.authorId ?? '',
+        options: users,
+    }),
+}] %}
+
+<h2>{{ 'Entry Fields' | t }}</h2>
+
+<table class="feedme-mapping data fullwidth collapsible">
+    <thead>
+        <th>{{ 'Field' | t }}</th>
+        <th>{{ 'Feed Element' | t }}</th>
+        <th>{{ 'Default Value' | t }}</th>
+    </thead>
+    <tbody>
+        {% for field in fields %}
+            {{ feedMeMacro.generateRow(_context, field) }}
+        {% endfor %}
+    </tbody>
+</table>
+
+{% for tab in craft.fields.getLayoutById(entryType.fieldLayoutId).getTabs() %}
+    <hr>
+
+    <h2>{{ tab.name }} Fields</h2>
+
+    <table class="feedme-mapping data fullwidth collapsible">
+        <thead>
+            <th>{{ 'Field' | t }}</th>
+            <th>{{ 'Feed Element' | t }}</th>
+            <th>{{ 'Default Value' | t }}</th>
+        </thead>
+        <tbody>
+            {% for fieldtype in tab.getFields() %}
+                {% set field = fieldtype.getField() %}
+
+                {% set fieldMapping = craft.feedMe.getFieldMapping(field.type) %}
+                {% set variables = { field: field, feed: feed, feedData: feedData } %}
+
+                {% if fieldMapping %}
+                    {% include fieldMapping ignore missing with variables %}
+                {% else %}
+                    {% include 'feedme/_includes/fields/default' ignore missing with variables %}
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+{% endfor %}
+
+<hr>
+
+<h2>{{ "Set a unique identifier for existing elements" | t }}</h2>
+
+<p>{{ "Select the fields you want to use to check for existing elements. When selected, Feed Me will look for existing elements that match the fields provided below and either update, or skip depending on your choice of Import Strategy." | t }}</p>
+
+{% for tab in craft.fields.getLayoutById(entryType.fieldLayoutId).getTabs() %}
+    {% for fieldtype in tab.getFields() %}
+        {% set field = fieldtype.getField() %}
+
+        {% set fields = fields | merge([{ label: field.name, handle: field.handle }]) %}
+    {% endfor %}
+{% endfor %}
+
+<div class="feedme-uniques">
+    {% for field in fields %}
+        {{ forms.checkboxField({
+            name: 'fieldUnique[' ~ field.handle ~ ']',
+            label: field.label,
+            checked: feed.fieldUnique[field.handle] ?? '',
+        }) }}
+    {% endfor %}
+</div>

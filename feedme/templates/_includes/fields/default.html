@@ -1,0 +1,58 @@
+{# Custom Code #}
+{#
+<tr>
+<td class="col-field">
+    <div class="field">
+        <div class="heading">
+            <label>{{ field.name }}</label>
+
+            <div class="instructions">
+                <code>{{ field.handle }}</code>
+            </div>
+        </div>
+    </div>
+</td>
+
+<td class="col-map">
+    {% namespace 'fieldMapping' %}
+        {{ forms.selectField({
+            id: field.handle,
+            name: field.handle,
+            value: feed.fieldMapping[field.handle] ?? '',
+            options: feedData,
+        }) }}
+    {% endnamespace %}
+</td>
+
+<td class="col-default">
+    <div class="default-fields">
+        {% namespace 'fieldDefaults' %}
+            {{ forms.textField({
+                id: field.handle,
+                name: field.handle,
+                value: feed.fieldDefaults[field.handle] ?? '',
+            }) }}
+        {% endnamespace %}
+    </div>
+</td>
+</tr>
+#}
+
+{# Macro Code #}
+{% set field = {
+    label: field.name,
+    handle: field.handle,
+    instructionsHandle: field.handle,
+    default: forms.textField({
+        id: 'fieldDefaults-' ~ field.handle,
+        name: 'fieldDefaults[' ~ field.handle ~ ']',
+        value: feedfieldDefaults[field.handle] ?? '',
+    }),
+} %}
+
+{% if parentElementField is defined %}
+    {% set field = field | merge({ parentElementField: parentElementField }) %}
+{% endif %}
+
+{{ feedMeMacro.generateRow(_context, field) }}
+

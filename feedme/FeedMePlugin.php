@@ -1,13 +1,6 @@
 <?php
 namespace Craft;
 
-// http://craftcms.stackexchange.com/questions/1097/best-way-to-use-custom-enums-in-my-plugin-templates
-include(dirname(__FILE__) . '/enums/FeedMe_Duplicate.php');
-include(dirname(__FILE__) . '/enums/FeedMe_Element.php');
-include(dirname(__FILE__) . '/enums/FeedMe_FeedType.php');
-include(dirname(__FILE__) . '/enums/FeedMe_FieldType.php');
-include(dirname(__FILE__) . '/enums/FeedMe_Status.php');
-
 class FeedMePlugin extends BasePlugin
 {
     // =========================================================================
@@ -24,12 +17,12 @@ class FeedMePlugin extends BasePlugin
 
     public function getVersion()
     {
-        return '1.4.10';
+        return '2.0.0 beta 1';
     }
 
     public function getSchemaVersion()
     {
-        return '1.2.0';
+        return '2.0.0 beta 1';
     }
 
     public function getDeveloper()
@@ -62,32 +55,33 @@ class FeedMePlugin extends BasePlugin
         return true;
     }
 
-    public function getSettingsHtml()
+    public function getSettingsUrl()
     {
-        return craft()->templates->render('feedme/settings', array(
-            'settings' => $this->getSettings()
-        ));
-    }
-
-    protected function defineSettings()
-    {
-        return array(
-            'pluginNameOverride'    => AttributeType::String,
-            'cache'                 => array(AttributeType::Number, 'default' => 60),
-            'enabledTabs'           => array(AttributeType::Mixed, 'default' => true),
-        );
+        return 'feedme/settings';
     }
 
     public function registerCpRoutes()
     {
         return array(
-            'feedme'                            => array('action' => 'FeedMe/feeds/feedsIndex'),
-            'feedme/feeds'                      => array('action' => 'FeedMe/feeds/feedsIndex'),
-            'feedme/feeds/new'                  => array('action' => 'FeedMe/feeds/editFeed'),
-            'feedme/feeds/(?P<feedId>\d+)'      => array('action' => 'FeedMe/feeds/editFeed'),
-            'feedme/runTask/(?P<feedId>\d+)'    => array('action' => 'FeedMe/feeds/runTask'),
+            'feedme' => array('action' => 'feedMe/feeds/feedsIndex'),
+            'feedme/feeds' => array('action' => 'feedMe/feeds/feedsIndex'),
+            'feedme/feeds/new' => array('action' => 'feedMe/feeds/editFeed'),
+            'feedme/feeds/(?P<feedId>\d+)' => array('action' => 'feedMe/feeds/editFeed'),
+            'feedme/feeds/map/(?P<feedId>\d+)' => array('action' => 'feedMe/feeds/mapFeed'),
+            'feedme/feeds/run/(?P<feedId>\d+)' => array('action' => 'feedMe/feeds/runFeed'),
+            'feedme/logs' => array('action' => 'feedMe/logs/logs'),
+            'feedme/settings/general' => array('action' => 'feedMe/settings'),
+            'feedme/settings/license' => array('action' => 'feedMe/license/edit'),
+        );
+    }
 
-            'feedme/logs'                       => array('action' => 'FeedMe/logs/logs'),
+    protected function defineSettings()
+    {
+        return array(
+            'pluginNameOverride' => AttributeType::String,
+            'cache' => array(AttributeType::Number, 'default' => 60),
+            'enabledTabs' => array(AttributeType::Mixed, 'default' => true),
+            'edition' => array(AttributeType::Mixed),
         );
     }
 
@@ -99,15 +93,69 @@ class FeedMePlugin extends BasePlugin
         }
     }
 
+    public function init()
+    {
+        Craft::import('plugins.feedMe.FeedMe.DataTypes.*');
+        Craft::import('plugins.feedMe.FeedMe.ElementTypes.*');
+        Craft::import('plugins.feedMe.FeedMe.FieldTypes.*');
+        Craft::import('plugins.feedMe.FeedMe.License.*');
+
+        if (craft()->request->isCpRequest()) {
+            craft()->feedMe_license->ping();
+        }
+    }
+
 
     // =========================================================================
     // HOOKS
     // =========================================================================
 
-    public function addTwigExtension()
+    // Native Data Type Support
+    public function registerFeedMeDataTypes()
     {
-        Craft::import('plugins.feedme.twigextensions.UniqidTwigExtension');
-        return new UniqidTwigExtension();
+        return array(
+            new JsonFeedMeDataType(),
+            new XmlFeedMeDataType(),
+        );
+    }
+
+    // Native Element Type Support
+    public function registerFeedMeElementTypes()
+    {
+        if (craft()->feedMe_license->isProEdition()) {
+            return array(
+                new CategoryFeedMeElementType(),
+                new Commerce_ProductFeedMeElementType(),
+                new EntryFeedMeElementType(),
+                new UserFeedMeElementType(),
+            );
+        } else {
+            return array(
+                new EntryFeedMeElementType(),
+            );
+        }
+    }
+
+    // Native Field Type Support
+    public function registerFeedMeFieldTypes()
+    {
+        return array(
+            new AssetsFeedMeFieldType(),
+            new CategoriesFeedMeFieldType(),
+            new CheckboxesFeedMeFieldType(),
+            new DateFeedMeFieldType(),
+            new DefaultFeedMeFieldType(),
+            new DropdownFeedMeFieldType(),
+            new EntriesFeedMeFieldType(),
+            new LightswitchFeedMeFieldType(),
+            new MatrixFeedMeFieldType(),
+            new MultiSelectFeedMeFieldType(),
+            new NumberFeedMeFieldType(),
+            new RadioButtonsFeedMeFieldType(),
+            new TableFeedMeFieldType(),
+            new TagsFeedMeFieldType(),
+            new UsersFeedMeFieldType(),
+        );
     }
  
 }

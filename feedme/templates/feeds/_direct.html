@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Responsive-ness -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ 'Feed Me - {name} has started processing' | t({ name: feed.name }) }}</title>
+
+    <!-- CSS -->
+    {% includeCssResource 'css/craft.css' %}
+    {% includeCssResource 'feedme/css/FeedMe.css' %}
+</head>
+<body class="message feedme-message">
+
+<div class="message-container">
+    <div id="message" class="pane">
+        {% if task %}
+            <div class="feedme-fullpage fullpage-running">
+                <img src="{{ resourceUrl('feedme/icon-success.svg') }}">
+                
+                <h2>{{ '{name} has started processing' | t({ name: feed.name }) }}</h2>
+                <p>{{ 'Data is now being imported from your feed. You can navigate away from this page without disrupting your feed processing.' | t }}</p>
+            </div>
+        {% else %}
+            <div class="feedme-fullpage fullpage-error">
+                <img src="{{ resourceUrl('feedme/icon-error.svg') }}">
+                
+                <h2>{{ 'Unable to start feed' | t }}</h2>
+                <p>{{ 'Please check your passkey, and verify the URL is correct.' | t }}</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% includeJsResource 'lib/jquery-2.2.1.min.js' %}
+
+{# Only proceed if the task has been created #}
+{% if task %}
+    {# Use Ajax to trigger running pending tasks. This ensures the CP isn't locked when feed processing runs. #}
+    {% set myJs %}
+
+    {# Support CSRF token if enabled #}
+    window.csrfTokenName = "{{ craft.config.csrfTokenName }}";
+    window.csrfTokenValue = "{{ craft.request.csrfToken }}";
+
+    (function($) {
+        var data = {};
+
+        if (csrfTokenValue && csrfTokenName) {
+            data[csrfTokenName] = csrfTokenValue;
+        }
+
+        var jqXHR = $.ajax({
+            url: '{{ actionUrl("tasks/runPendingTasks") }}',
+            type: 'POST',
+            data: data,
+        });
+    })(jQuery);
+
+    {% endset %}
+    {% includeJs myJs %}
+{% endif %}
+</body>
+</html>

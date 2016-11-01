@@ -1,0 +1,47 @@
+{% extends parentLayout | default("_layouts/cp") %}
+
+{% import "_includes/forms" as forms %}
+{% import "feedme/_macros" as feedMeMacro %}
+
+{% includeCssResource 'feedme/css/font-awesome.min.css' %}
+{% includeCssResource 'feedme/css/FeedMe.css' %}
+
+{% includeJsResource 'feedme/js/FeedMe.js' %}
+{% includeJsResource 'feedme/js/FeedMeHelp.js' %}
+
+{% if noTabs is not defined %}
+    {% set tabs = {
+        feeds: { label: "Feeds" | t, url: url('feedme/feeds') },
+        logs: { label: "Logs" | t, url: url('feedme/logs') },
+        help: { label: "Help" | t, url: url('feedme/help') },
+        settings: { label: "Settings" | t, url: url('feedme/settings') },
+    } %}
+{% endif %}
+
+{% if title is not defined %}
+    {% set title = craft.feedme.getPluginName ~ ' ' ~ tabs[selectedTab].label %}
+{% endif %}
+
+{% set content %}
+    {% block blockContent %}
+
+    {% endblock %}
+
+    <hr>
+    
+    <div id="plugin-footer">
+        <div class="footer-left">
+            {% block footerButton %}
+
+            {% endblock %}
+        </div>
+
+        <div class="footer-right">
+            <div class="plugin-credit">
+                {% set edition = (craft.feedMe.isProEdition) ? '(Pro)' : '' %}
+
+                <p>{{ craft.feedMe.getPluginName }} {{ craft.feedMe.getPluginVersion }} {{ edition }} &bull; <a href="{{ craft.feedMe.getPluginUrl }}" target="_blank">GitHub</a></p>
+            </div>
+        </div>
+    </div>
+{% endset %}
