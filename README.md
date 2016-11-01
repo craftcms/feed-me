@@ -1,6 +1,6 @@
-# Feed Me 2.0 - Updates
+# Feed Me 2.0 - Public Beta
 
-We're hard at work on the next version of Feed Me, with a massive amount of updates, fixes and improvements. Stay tuned to the [2.0 branch](https://github.com/engram-design/FeedMe/tree/2.0.0) for the beta.
+We've released the public beta for Feed Me 2.0.0, along with a brand new plugin site via http://sgroup.com.au/plugins/feedme/getting-started/updates.
 
 # Feed Me
 
