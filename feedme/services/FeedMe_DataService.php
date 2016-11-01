@@ -76,11 +76,24 @@ class FeedMe_DataService extends BaseApplicationComponent
     public function getRawData($url)
     {
         $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
-        curl_setopt($curl, CURLOPT_USERAGENT, craft()->plugins->getPlugin('feedMe')->getName());
+
+        $defaultOptions = array(
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_FOLLOWLOCATION => 1,
+            CURLOPT_SSL_VERIFYPEER => 0,
+            CURLOPT_USERAGENT => craft()->plugins->getPlugin('feedMe')->getName(),
+        );
+
+        $configOptions = craft()->config->get('curlOptions', 'feedMe');
+
+        if ($configOptions) {
+            $options = $configOptions + $defaultOptions;
+        } else {
+            $options = $defaultOptions;
+        }
+
+        curl_setopt_array($curl, $options);
         $response = curl_exec($curl);
 
         $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
