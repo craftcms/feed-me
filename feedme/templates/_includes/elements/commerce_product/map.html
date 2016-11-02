@@ -78,8 +78,8 @@
 {% set fieldsVariants = [{
     label: 'Title' | t,
     handle: 'variant-title',
-    name: 'variants[title]',
-    value: feed.fieldMapping.variants.title ?? '',
+    name: 'variants--title',
+    value: feed.fieldMapping['variants--title'] ?? '',
     default: forms.textField({
         id: 'fieldDefaults-variant-title',
         name: 'fieldDefaults[variant-title]',
@@ -88,23 +88,23 @@
 }, {
     label: 'SKU' | t,
     handle: 'variant-sku',
-    name: 'variants[sku]',
-    value: feed.fieldMapping.variants.sku ?? '',
+    name: 'variants--sku',
+    value: feed.fieldMapping['variants--sku'] ?? '',
 }, {
     label: 'Price' | t,
     handle: 'variant-price',
-    name: 'variants[price]',
-    value: feed.fieldMapping.variants.price ?? '',
+    name: 'variants--price',
+    value: feed.fieldMapping['variants--price'] ?? '',
 }, {
     label: 'Stock' | t,
     handle: 'variant-stock',
-    name: 'variants[stock]',
-    value: feed.fieldMapping.variants.stock ?? '',
+    name: 'variants--stock',
+    value: feed.fieldMapping['variants--stock'] ?? '',
 }, {
     label: 'Unlimited Stock' | t,
     handle: 'variant-unlimitedStock',
-    name: 'variants[unlimitedStock]',
-    value: feed.fieldMapping.variants.unlimitedStock ?? '',
+    name: 'variants--unlimitedStock',
+    value: feed.fieldMapping['variants--unlimitedStock'] ?? '',
     default: forms.checkboxField({
         id: 'fieldDefaults-variant-unlimitedStock',
         name: 'fieldDefaults[variant-unlimitedStock]',
@@ -113,8 +113,8 @@
 }, {
     label: 'Is Default' | t,
     handle: 'variant-isDefault',
-    name: 'variants[isDefault]',
-    value: feed.fieldMapping.variants.isDefault ?? '',
+    name: 'variants--isDefault',
+    value: feed.fieldMapping['variants--isDefault'] ?? '',
     default: forms.checkboxField({
         id: 'fieldDefaults-variant-isDefault',
         name: 'fieldDefaults[variant-isDefault]',
@@ -123,8 +123,8 @@
 }, {
     label: 'Minimum allowed quantity' | t,
     handle: 'variant-minQty',
-    name: 'variants[minQty]',
-    value: feed.fieldMapping.variants.minQty ?? '',
+    name: 'variants--minQty',
+    value: feed.fieldMapping['variants--minQty'] ?? '',
     default: forms.textField({
         id: 'fieldDefaults-variant-minQty',
         name: 'fieldDefaults[variant-minQty]',
@@ -133,8 +133,8 @@
 }, { 
     label: 'Maximum allowed quantity' | t,
     handle: 'variant-maxQty',
-    name: 'variants[maxQty]',
-    value: feed.fieldMapping.variants.maxQty ?? '',
+    name: 'variants--maxQty',
+    value: feed.fieldMapping['variants--maxQty'] ?? '',
     default: forms.textField({
         id: 'fieldDefaults-variant-maxQty',
         name: 'fieldDefaults[variant-maxQty]',
@@ -143,8 +143,8 @@
 }, {
     label: 'Dimensions - Length' | t,
     handle: 'variant-length',
-    name: 'variants[length]',
-    value: feed.fieldMapping.variants.length ?? '',
+    name: 'variants--length',
+    value: feed.fieldMapping['variants--length'] ?? '',
     default: forms.textField({
         id: 'fieldDefaults-variant-length',
         name: 'fieldDefaults[variant-length]',
@@ -153,8 +153,8 @@
 }, {
     label: 'Dimensions - Width' | t,
     handle: 'variant-width',
-    name: 'variants[width]',
-    value: feed.fieldMapping.variants.width ?? '',
+    name: 'variants--width',
+    value: feed.fieldMapping['variants--width'] ?? '',
     default: forms.textField({
         id: 'fieldDefaults-variant-width',
         name: 'fieldDefaults[variant-width]',
@@ -163,8 +163,8 @@
 }, {
     label: 'Dimensions - Height' | t,
     handle: 'variant-height',
-    name: 'variants[height]',
-    value: feed.fieldMapping.variants.height ?? '',
+    name: 'variants--height',
+    value: feed.fieldMapping['variants--height'] ?? '',
     default: forms.textField({
         id: 'fieldDefaults-variant-height',
         name: 'fieldDefaults[variant-height]',
@@ -173,8 +173,8 @@
 }, {
     label: 'Weight' | t,
     handle: 'variant-weight',
-    name: 'variants[weight]',
-    value: feed.fieldMapping.variants.weight ?? '',
+    name: 'variants--weight',
+    value: feed.fieldMapping['variants--weight'] ?? '',
     default: forms.textField({
         id: 'fieldDefaults-variant-weight',
         name: 'fieldDefaults[variant-weight]',

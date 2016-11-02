@@ -141,11 +141,13 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
         $variants = [];
         $count = 1;
 
-        if (!isset($data['variants'])) {
+        if (!isset($data['variants']) || $data['variants'] == ' ') {
             return false;
         } else {
             $variantData = $data['variants'];
         }
+
+        $variantData = $this->_prepProductData($variantData);
 
         foreach ($variantData as $key => $variant) {
             if ($product->id) {
@@ -156,26 +158,26 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
 
             $variantModel->setProduct($product);
 
-            $variantModel->enabled = isset($variant['enabled']) ? $variant['enabled'] : 1;
-            $variantModel->isDefault = isset($variant['isDefault']) ? $variant['isDefault'] : 0;
-            $variantModel->sku = isset($variant['sku']) ? $variant['sku'] : '';
-            $variantModel->price = isset($variant['price']) ? LocalizationHelper::normalizeNumber($variant['price']) : null;
-            $variantModel->width = isset($variant['width']) ? LocalizationHelper::normalizeNumber($variant['width']) : null;
-            $variantModel->height = isset($variant['height']) ? LocalizationHelper::normalizeNumber($variant['height']) : null;
-            $variantModel->length = isset($variant['length']) ? LocalizationHelper::normalizeNumber($variant['length']) : null;
-            $variantModel->weight = isset($variant['weight']) ? LocalizationHelper::normalizeNumber($variant['weight']) : null;
-            $variantModel->stock = isset($variant['stock']) ? LocalizationHelper::normalizeNumber($variant['stock']) : null;
-            $variantModel->unlimitedStock = isset($variant['unlimitedStock']) ? $variant['unlimitedStock'] : '';
-            $variantModel->minQty = isset($variant['minQty']) ? LocalizationHelper::normalizeNumber($variant['minQty']) : null;
-            $variantModel->maxQty = isset($variant['maxQty']) ? LocalizationHelper::normalizeNumber($variant['maxQty']) : null;
+            $variantModel->enabled = $this->_hasValue($variant, 'enabled') ? $variant['enabled'] : 1;
+            $variantModel->isDefault = $this->_hasValue($variant, 'isDefault') ? $variant['isDefault'] : 0;
+            $variantModel->sku = $this->_hasValue($variant, 'sku') ? $variant['sku'] : '';
+            $variantModel->price = $this->_hasValue($variant, 'price') ? LocalizationHelper::normalizeNumber($variant['price']) : null;
+            $variantModel->width = $this->_hasValue($variant, 'width') ? LocalizationHelper::normalizeNumber($variant['width']) : null;
+            $variantModel->height = $this->_hasValue($variant, 'height') ? LocalizationHelper::normalizeNumber($variant['height']) : null;
+            $variantModel->length = $this->_hasValue($variant, 'length') ? LocalizationHelper::normalizeNumber($variant['length']) : null;
+            $variantModel->weight = $this->_hasValue($variant, 'weight') ? LocalizationHelper::normalizeNumber($variant['weight']) : null;
+            $variantModel->stock = $this->_hasValue($variant, 'stock') ? LocalizationHelper::normalizeNumber($variant['stock']) : null;
+            $variantModel->unlimitedStock = $this->_hasValue($variant, 'unlimitedStock') ? $variant['unlimitedStock'] : '';
+            $variantModel->minQty = $this->_hasValue($variant, 'minQty') ? LocalizationHelper::normalizeNumber($variant['minQty']) : null;
+            $variantModel->maxQty = $this->_hasValue($variant, 'maxQty') ? LocalizationHelper::normalizeNumber($variant['maxQty']) : null;
 
             $variantModel->sortOrder = $count++;
 
-            if (isset($variant['fields'])) {
+            if ($this->_hasValue($variant, 'fields')) {
                 //$variantModel->setContentFromPost($variant['fields']);
             }
 
-            if (isset($variant['title'])) {
+            if ($this->_hasValue($variant, 'title')) {
                 $variantModel->getContent()->title = $variant['title'];
             }
 
@@ -183,6 +185,32 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
         }
 
         $product->setVariants($variants);
+    }
+
+    private function _prepProductData($variantData) {
+        $variants = array();
+
+        foreach ($variantData as $attribute => $variantCollection) {
+            if (!is_array($variantCollection)) {
+                $variantCollection = array($variantCollection);
+            }
+
+            foreach ($variantCollection as $key => $variant) {
+                $variants[$key][$attribute] = $variant;
+            }
+        }
+
+        return $variants;
+    }
+
+    private function _hasValue($object, $attribute) {
+        if (isset($object[$attribute])) {
+            if ($object[$attribute] != ' ') {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function _getVariantBySku($sku, $localeId = null)
