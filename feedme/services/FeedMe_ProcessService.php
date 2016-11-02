@@ -90,7 +90,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
 
         // For each chunck of import-ready data, we need to further prepare it for Craft
         foreach ($data as $handle => $preppedData) {
-            $options = $additionalOptions[$handle] ?? array();
+            $options = $additionalOptions[$handle] ?: array();
 
             // Check for our default data (if any provided, and if not already set in 'real' data)
             if (($preppedData == ' ') && isset($feed['fieldDefaults'][$handle])) {
