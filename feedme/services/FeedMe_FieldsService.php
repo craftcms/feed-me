@@ -136,28 +136,49 @@ class FeedMe_FieldsService extends BaseApplicationComponent
             $categories = ArrayHelper::stringToArray($data);
 
             foreach ($categories as $category) {
+
+                // Skip empty
+                if (empty($category)) {
+                    continue;
+                }
+
                 $categoryArray = array();
+                $category =  DbHelper::escapeParam($category);
 
-                if (!empty($category)) {
+                // Find existing category by title or slug
+                $criteria = craft()->elements->getCriteria(ElementType::Category);
+                $criteria->groupId = $groupId;
+                $criteria->limit = 1;
 
-                    // Find existing category
-                    $criteria = craft()->elements->getCriteria(ElementType::Category);
-                    $criteria->title = DbHelper::escapeParam($category);
-                    $criteria->groupId = $groupId;
-                    $criteria->limit = 1;
+                $query = craft()->elements->buildElementsQuery($criteria);
+                $query->select('elements.id');
 
-                    if (!$criteria->total()) {
-                        // Create category if one doesn't already exist
-                        $newCategory = new CategoryModel();
-                        $newCategory->getContent()->title = $category;
-                        $newCategory->groupId = $groupId;
+                $conditions = array(
+                    'or',
+                    array('in', 'title', $category),
+                    array('in', 'slug', $category)
+                );
 
-                        // Save category
-                        if (craft()->categories->saveCategory($newCategory)) {
-                            $categoryArray = array($newCategory->id);
-                        }
-                    } else {
-                        $categoryArray = $criteria->ids();
+                $query->andWhere($conditions);
+
+                $results = $query->queryAll();
+
+                if ( !empty($results) ) {
+
+                    foreach ($results as $result) {
+                        $categoryArray = [$result['id']];
+                    }
+
+                } else {
+
+                    // Create category if one doesn't already exist
+                    $newCategory = new CategoryModel();
+                    $newCategory->getContent()->title = $category;
+                    $newCategory->groupId = $groupId;
+
+                    // Save category
+                    if (craft()->categories->saveCategory($newCategory)) {
+                        $categoryArray = [$newCategory->id];
                     }
                 }
 
@@ -476,7 +497,7 @@ class FeedMe_FieldsService extends BaseApplicationComponent
     }
 
 
-    // Some post-processing needs to be done, specifically for a Matrix field. Unfortuntely, multiple 
+    // Some post-processing needs to be done, specifically for a Matrix field. Unfortuntely, multiple
     // blocks are added out of order, which is messy - fix this here. Fortuntely, we have a 'order' attribute
     // on each block. Also call any third-party post processing (looking at you Super Table).
     public function postForFieldType(&$fieldData, $element)
@@ -484,7 +505,7 @@ class FeedMe_FieldsService extends BaseApplicationComponent
         // This is less intensive than craft()->fields->getFieldByHandle($fieldHandle);
         /*foreach ($fieldData as $fieldHandle => $data) {
             if (is_array($data)) {
-                
+
                 // Check for the order attr, otherwise not what we're after
                 if (isset(array_values($data)[0]['order'])) {
                     $orderedMatrixData = array();
