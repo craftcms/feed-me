@@ -149,7 +149,7 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
 
         foreach ($variantData as $key => $variant) {
             if ($product->id) {
-                $variantModel = $this->_getVariantBySku($variant['sku']) ?? new Commerce_VariantModel();
+                $variantModel = $this->_getVariantBySku($variant['sku']) ?: new Commerce_VariantModel();
             } else {
                 $variantModel = new Commerce_VariantModel();
             }
