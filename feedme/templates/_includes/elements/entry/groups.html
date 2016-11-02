@@ -1,5 +1,7 @@
 {% set sections = craft.feedMe.getElementTypeGroups(elementType) %}
 
+{% set sectionEntryTypes = [] %}
+
 {# Create a section-indexed array of element types #}
 {% set entryTypes = [] %}
 {% for section in sections %}
@@ -17,7 +19,10 @@
 
 {% if sectionId is defined and sectionId %}
     {% set section = craft.sections.getSectionById(sectionId) %}
-    {% set sectionEntryTypes = section.getEntryTypes() %}
+
+    {% if section %}
+        {% set sectionEntryTypes = section.getEntryTypes() %}
+    {% endif %}
 {% else %}
     {% set sectionEntryTypes = sections[0].getEntryTypes() %}
 {% endif %}

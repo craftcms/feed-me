@@ -2,5 +2,10 @@
 {% set entryTypeId = feed.elementGroup[elementType].entryType %}
 
 {% if sectionId and entryTypeId %}
-    {{ craft.sections.getSectionById(sectionId).name }} / {{ craft.feedMe.getEntryTypeById(entryTypeId).name }}
+    {% set section = craft.sections.getSectionById(sectionId) %}
+    {% set entryType = craft.feedMe.getEntryTypeById(entryTypeId) %}
+
+    {% if section and entryType %}
+        {{ section.name }} / {{ entryType.name }}
+    {% endif %}
 {% endif %}
