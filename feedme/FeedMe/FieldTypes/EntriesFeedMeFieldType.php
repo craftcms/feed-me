@@ -50,7 +50,14 @@ class EntriesFeedMeFieldType extends BaseFeedMeFieldType
             $criteria = craft()->elements->getCriteria(ElementType::Entry);
             $criteria->sectionId = $sectionIds;
             $criteria->limit = $settings->limit;
-            $criteria->title = DbHelper::escapeParam($entry);
+
+            // Check if we've specified which attribute we're trying to match against
+            if (isset($options['options']['match'])) {
+                $attribute = $options['options']['match'];
+                $criteria->$attribute = DbHelper::escapeParam($entry);
+            } else {
+                $criteria->title = DbHelper::escapeParam($entry);
+            }
 
             $elements = $criteria->ids();
 

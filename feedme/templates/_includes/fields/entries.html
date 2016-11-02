@@ -28,6 +28,19 @@
             }) }}
 
             <div class="field-extra-settings">
+                <div class="element-match">
+                    <span>{{ 'Data provided for this entry is:' | t }}</span>
+
+                    {{ forms.selectField({
+                        name: fieldHandle ~ '-options-match',
+                        options: [
+                            { value: 'title', label: 'Title' | t },
+                            { value: 'slug', label: 'Slug' | t },
+                        ],
+                        value: feed.fieldMapping[fieldHandle ~ '-options-match'] ?? '',
+                    }) }}
+                </div>
+
                 {{ forms.checkboxField({
                     label: 'Create entries if they do not exist' | t,
                     name: fieldHandle ~ '-options-create',

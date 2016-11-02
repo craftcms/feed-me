@@ -37,7 +37,14 @@ class CategoriesFeedMeFieldType extends BaseFeedMeFieldType
             $criteria = craft()->elements->getCriteria(ElementType::Category);
             $criteria->groupId = $groupId;
             $criteria->limit = $settings->limit;
-            $criteria->title = DbHelper::escapeParam($category);
+
+            // Check if we've specified which attribute we're trying to match against
+            if (isset($options['options']['match'])) {
+                $attribute = $options['options']['match'];
+                $criteria->$attribute = DbHelper::escapeParam($category);
+            } else {
+                $criteria->title = DbHelper::escapeParam($category);
+            }
             
             $elements = $criteria->ids();
 
