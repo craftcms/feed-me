@@ -69,6 +69,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
     {
         $existingElement = false;
         $fieldData = array();
+        $uniqueMatches = array();
 
         //
         // Lets get started!
@@ -104,6 +105,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             // While we're in the loop, lets check for unique data to match existing elements on
             if (isset($feed['fieldUnique'][$handle]) && intval($feed['fieldUnique'][$handle]) == 1 && ($preppedData != ' ')) {
                 $criteria->$handle = DbHelper::escapeParam($preppedData);
+                $uniqueMatches[] = $handle; // Keeps count of fields to match on for later
             }
 
             // From each field, we may need to process the raw data for Craft fields
@@ -125,7 +127,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         }
 
         // If there's an existing matching element
-        if ($existingElement && $feed['duplicateHandle']) {
+        if ($existingElement && $feed['duplicateHandle'] && count($uniqueMatches)) {
 
             // If we're deleting or updating an existing element, we want to focus on that one
             if ($feed['duplicateHandle'] == FeedMe_Duplicate::Delete || $feed['duplicateHandle'] == FeedMe_Duplicate::Update) {
