@@ -6,7 +6,10 @@ class TagsFeedMeFieldType extends BaseFeedMeFieldType
     // Templates
     // =========================================================================
 
-
+    public function getMappingTemplate()
+    {
+        return 'feedme/_includes/fields/tags';
+    }
     
 
 
@@ -17,37 +20,81 @@ class TagsFeedMeFieldType extends BaseFeedMeFieldType
     {
         $fieldData = array();
 
-        if (!empty($data)) {
-            $settings = $field->getFieldType()->getSettings();
+        if (empty($data)) {
+            return;
+        }
 
-            // Get tag group id
-            $source = $settings->getAttribute('source');
-            list($type, $groupId) = explode(':', $source);
+        $settings = $field->getFieldType()->getSettings();
 
-            // Sanitize
-            $data = DbHelper::escapeParam($data);
+        // Get tag group id
+        $source = $settings->getAttribute('source');
+        list($type, $groupId) = explode(':', $source);
 
-            // Find existing tag
+        // Find existing
+        $tags = ArrayHelper::stringToArray($data);
+
+        foreach ($tags as $tag) {
             $criteria = craft()->elements->getCriteria(ElementType::Tag);
             $criteria->groupId = $groupId;
-            $criteria->title = $data;
+            $criteria->title = DbHelper::escapeParam($tag);
+            
+            $elements = $criteria->ids();
 
-            if (!$criteria->total()) {
-                // Create tag if one doesn't already exist
-                $newtag = new TagModel();
-                $newtag->getContent()->title = $data;
-                $newtag->groupId = $groupId;
+            $fieldData = array_merge($fieldData, $elements);
 
-                // Save tag
-                if (craft()->tags->saveTag($newtag)) {
-                    $fieldData = array($newtag->id);
+            // Create the elements if we require
+            if (count($elements) == 0) {
+                if (isset($options['options']['create'])) {
+                    $fieldData[] = $this->_createElement($tag, $groupId);
                 }
-            } else {
-                $fieldData = $criteria->ids();
             }
+        }
+
+        // Check if we've got any data for the fields in this element
+        if (isset($options['fields'])) {
+            $this->_populateElementFields($fieldData, $options['fields']);
         }
 
         return $fieldData;
     }
-    
+
+
+    // Private Methods
+    // =========================================================================
+
+    private function _populateElementFields($fieldData, $elementData)
+    {
+        foreach ($fieldData as $key => $id) {
+            $tag = craft()->tags->getTagById($id, null);
+
+            // Prep each inner field
+            $preppedElementData = array();
+            foreach ($elementData as $elementHandle => $elementContent) {
+                if ($elementContent != ' ') {
+                    $preppedElementData[$elementHandle] = craft()->feedMe_fields->prepForFieldType(null, $elementContent, $elementHandle, null);
+                }
+            }
+
+            $tag->setContentFromPost($preppedElementData);
+
+            if (!craft()->tags->saveTag($tag)) {
+                throw new Exception(json_encode($tag->getErrors()));
+            }
+        }
+    }
+
+    private function _createElement($tag, $groupId)
+    {
+        $element = new TagModel();
+        $element->getContent()->title = $tag;
+        $element->groupId = $groupId;
+
+        // Save tag
+        if (craft()->tags->saveTag($element)) {
+            return $element->id;
+        } else {
+            throw new Exception(json_encode($element->getErrors()));
+        }
+    }
+
 }
