@@ -28,6 +28,21 @@
             }) }}
 
             <div class="field-extra-settings">
+                <div class="element-match">
+                    <span>{{ 'Data provided for this user is:' | t }}</span>
+
+                    {{ forms.selectField({
+                        name: fieldHandle ~ '-options-match',
+                        options: [
+                            { value: 'email', label: 'Email' | t },
+                            { value: 'id', label: 'ID' | t },
+                            { value: 'username', label: 'Username' | t },
+                            { value: 'fullName', label: 'Full Name' | t },
+                        ],
+                        value: feed.fieldMapping[fieldHandle ~ '-options-match'] ?? '',
+                    }) }}
+                </div>
+
                 {{ forms.checkboxField({
                     label: 'Create user if they do not exist' | t,
                     name: fieldHandle ~ '-options-create',

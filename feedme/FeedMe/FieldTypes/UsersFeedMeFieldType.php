@@ -42,7 +42,14 @@ class UsersFeedMeFieldType extends BaseFeedMeFieldType
             $criteria = craft()->elements->getCriteria(ElementType::User);
             $criteria->groupId = $groupIds;
             $criteria->limit = $settings->limit;
-            $criteria->email = $user;
+
+            // Check if we've specified which attribute we're trying to match against
+            if (isset($options['options']['match'])) {
+                $attribute = $options['options']['match'];
+                $criteria->$attribute = DbHelper::escapeParam($user);
+            } else {
+                $criteria->email = DbHelper::escapeParam($user);
+            }
 
             $elements = $criteria->ids();
 
