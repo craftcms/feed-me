@@ -56,10 +56,10 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         // Setup a bunch of variables that can be done once-off at the start of feed processing
         // rather than on each step. This is done for max performance - even a little
         $this->_criteria = $this->_service->setCriteria($feed);
-        $this->_additionalOptions = $this->_getAdditionalFieldOptions($return['fields'], $feedData);
 
         foreach ($feedData as $key => $nodeData) {
             $this->_data[$key] = $this->_prepFieldData($return['fields'], $nodeData);
+            $this->_additionalOptions[$key] = $this->_getAdditionalFieldOptions($return['fields'], $nodeData);
         }
 
         return $return;
@@ -86,7 +86,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         // Grab a few more things form our feed - essentially just amalgamating additional options or settings
         // Includes additional options for fields (checkboxes), and element fields (if any)
         // We also store the original feed-node handle for the field mapping, which is handy for conditionals
-        $additionalOptions = $this->_additionalOptions;
+        $additionalOptions = $this->_additionalOptions[$step];
 
         // For each chunck of import-ready data, we need to further prepare it for Craft
         foreach ($data as $handle => $preppedData) {
