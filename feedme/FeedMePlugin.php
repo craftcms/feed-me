@@ -95,9 +95,10 @@ class FeedMePlugin extends BasePlugin
 
     public function init()
     {
-        Craft::import('plugins.feedMe.FeedMe.DataTypes.*');
-        Craft::import('plugins.feedMe.FeedMe.ElementTypes.*');
-        Craft::import('plugins.feedMe.FeedMe.FieldTypes.*');
+        Craft::import('plugins.feedme.FeedMe.DataTypes.*');
+        Craft::import('plugins.feedme.FeedMe.ElementTypes.*');
+        Craft::import('plugins.feedme.FeedMe.FieldTypes.*');
+        Craft::import('plugins.feedme.FeedMe.License.*');
 
         if (craft()->request->isCpRequest()) {
             craft()->feedMe_license->ping();

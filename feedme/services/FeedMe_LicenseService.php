@@ -26,8 +26,6 @@ class FeedMe_LicenseService extends BaseApplicationComponent
 
     public function init()
     {
-        Craft::import('plugins.feedMe.FeedMe.License.*', true);
-
         $this->plugin = craft()->plugins->getPlugin('feedMe');
         $this->pluginVersion = $this->plugin->getVersion();
         $this->licenseKey = $this->getLicenseKey();
