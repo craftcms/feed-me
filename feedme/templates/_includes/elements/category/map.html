@@ -23,8 +23,9 @@
     default: forms.selectField({
         id: 'fieldDefaults-enabled',
         name: 'fieldDefaults[enabled]',
-        value: feed.fieldDefaults.enabled ?? '1',
+        value: feed.fieldDefaults.enabled ?? '',
         options: [
+            { label: 'Don\'t import', value: '' },
             { label: 'Enabled', value: 1 },
             { label: 'Disabled', value: 0 },
         ],
