@@ -315,9 +315,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
                 $values = array();
 
                 foreach ($array as $arr) {
-                    if ($value = $this->_getValueFromKeyPath($arr, implode('/', $keys))) {
-                        $values[] = $value;
-                    }
+                    $values[] = $this->_getValueFromKeyPath($arr, implode('/', $keys));
                 }
 
                 if ($values) {
