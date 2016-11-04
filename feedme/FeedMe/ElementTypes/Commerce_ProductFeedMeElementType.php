@@ -73,6 +73,10 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
         }
 
         foreach ($data as $handle => $value) {
+            if ($value == '' || $value == ' ') {
+                continue;
+            }
+
             switch ($handle) {
                 case 'id';
                 case 'taxCategoryId';

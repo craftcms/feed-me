@@ -63,6 +63,10 @@ class CategoryFeedMeElementType extends BaseFeedMeElementType
         }
 
         foreach ($data as $handle => $value) {
+            if ($value == '' || $value == ' ') {
+                continue;
+            }
+
             switch ($handle) {
                 case 'id';
                     $element->$handle = $value;
