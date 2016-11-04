@@ -40,6 +40,15 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
         $assets = ArrayHelper::stringToArray($data);
 
         foreach ($assets as $asset) {
+            // Check config settings if we need to clean url
+            $cleanAssetUrls = craft()->config->get('cleanAssetUrls', 'feedMe');
+
+            if ($cleanAssetUrls) {
+                $asset = parse_url($asset, PHP_URL_PATH);
+            }
+
+            var_dump($asset);
+
             $criteria = craft()->elements->getCriteria(ElementType::Asset);
             $criteria->folderId = $folderIds;
             $criteria->limit = $settings->limit;
