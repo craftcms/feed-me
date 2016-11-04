@@ -41,13 +41,9 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
 
         foreach ($assets as $asset) {
             // Check config settings if we need to clean url
-            $cleanAssetUrls = craft()->config->get('cleanAssetUrls', 'feedMe');
-
-            if ($cleanAssetUrls) {
+            if (craft()->config->get('cleanAssetUrls', 'feedMe')) {
                 $asset = parse_url($asset, PHP_URL_PATH);
             }
-
-            var_dump($asset);
 
             $criteria = craft()->elements->getCriteria(ElementType::Asset);
             $criteria->folderId = $folderIds;
@@ -128,6 +124,11 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
         foreach ($urls as $key => $url) {
             if ($url == ' ') {
                 continue;
+            }
+
+            // Check config settings if we need to clean url
+            if (craft()->config->get('cleanAssetUrls', 'feedMe')) {
+                $url = parse_url($url, PHP_URL_PATH);
             }
 
             $filename = basename($url);
