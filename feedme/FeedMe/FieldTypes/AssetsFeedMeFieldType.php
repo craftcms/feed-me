@@ -26,13 +26,13 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
 
         $settings = $field->getFieldType()->getSettings();
 
-        // Get source id's for connecting
-        $sourceIds = array();
-        $sources = $settings->sources;
-        if (is_array($sources)) {
-            foreach ($sources as $source) {
-                list($type, $id) = explode(':', $source);
-                $sourceIds[] = $id;
+        // Get folder id's for connecting
+        $folderIds = array();
+        $folders = $settings->getAttribute('sources');
+        if (is_array($folders)) {
+            foreach ($folders as $folder) {
+                list(, $id) = explode(':', $folder);
+                $folderIds[] = $id;
             }
         }
 
@@ -41,7 +41,7 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
 
         foreach ($assets as $asset) {
             $criteria = craft()->elements->getCriteria(ElementType::Asset);
-            $criteria->sourceId = $sourceIds;
+            $criteria->folderId = $folderIds;
             $criteria->limit = $settings->limit;
             $criteria->filename = $asset;
 
