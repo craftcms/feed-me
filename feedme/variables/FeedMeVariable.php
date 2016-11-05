@@ -118,5 +118,44 @@ class FeedMeVariable
     }
 
 
+    // Helper functions for element fields in getting their inner-element field layouts
+    public function getAssetFieldLayout($assetSourceIds)
+    {
+        $fieldLayouts = array();
+
+        if ($assetSourceIds == '*') {
+            foreach (craft()->assetSources->getAllSources() as $assetSource) {
+                $layoutId = $assetSource->fieldLayoutId;
+                $fieldLayouts[] = craft()->fields->getLayoutById($layoutId);
+            }
+        } else {
+            foreach ($assetSourceIds as $assetSourceId) {
+                $id = str_replace('folder:', '', $assetSourceId);
+                $layoutId = craft()->assetSources->getSourceById($id)->fieldLayoutId;
+                $fieldLayouts[] = craft()->fields->getLayoutById($layoutId);
+            }
+        }
+
+        return $fieldLayouts;
+    }
+
+    public function getCategoriesFieldLayout($categoryGroup)
+    {
+        $id = str_replace('group:', '', $categoryGroup);
+        $layoutId = craft()->categories->getGroupById($id)->fieldLayoutId;
+        return craft()->fields->getLayoutById($layoutId);
+    }
+
+    public function getTagsFieldLayout($tagGroup)
+    {
+        $id = str_replace('taggroup:', '', $tagGroup);
+        $layoutId = craft()->tags->getTagGroupById($id)->fieldLayoutId;
+        return craft()->fields->getLayoutById($layoutId);
+    }
+
+
+
+
+
 
 }

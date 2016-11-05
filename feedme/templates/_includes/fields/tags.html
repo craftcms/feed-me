@@ -62,7 +62,7 @@
 ] %}
 
 {% if parentElementField is not defined %}
-    {% set elementFields = craft.fields.getLayoutByType('Tag').getFields() %}
+    {% set elementFields = craft.feedMe.getTagsFieldLayout(field.settings.source).getFields() %}
 
     {% for fieldtype in elementFields %}
         {% set innerField = fieldtype.getField() %}

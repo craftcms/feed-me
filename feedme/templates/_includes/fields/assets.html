@@ -74,22 +74,22 @@
 ] %}
 
 {% if parentElementField is not defined %}
-    {% set elementFields = craft.fields.getLayoutByType('Asset').getFields() %}
+    {% for fieldLayout in craft.feedMe.getAssetFieldLayout(field.settings.sources) %}
+        {% for fieldtype in fieldLayout.getFields() %}
+            {% set innerField = fieldtype.getField() %}
 
-    {% for fieldtype in elementFields %}
-        {% set innerField = fieldtype.getField() %}
+            {# Lets not allow a few fields at this time - itself for recursive reasons, and Matrix because :O #}
+            {% if innerField.type in supportedFields and elementType != 'Asset' %}
+                {% set fieldMapping = craft.feedMe.getFieldMapping(innerField.type) %}
+                {% set variables = { field: innerField, feed: feed, feedData: feedData, parentElementField: field } %}
 
-        {# Lets not allow a few fields at this time - itself for recursive reasons, and Matrix because :O #}
-        {% if innerField.type in supportedFields and elementType != 'Asset' %}
-            {% set fieldMapping = craft.feedMe.getFieldMapping(innerField.type) %}
-            {% set variables = { field: innerField, feed: feed, feedData: feedData, parentElementField: field } %}
-
-            {% if fieldMapping %}
-                {% include fieldMapping ignore missing with variables %}
-            {% else %}
-                {% include 'feedme/_includes/fields/default' ignore missing with variables %}
+                {% if fieldMapping %}
+                    {% include fieldMapping ignore missing with variables %}
+                {% else %}
+                    {% include 'feedme/_includes/fields/default' ignore missing with variables %}
+                {% endif %}
             {% endif %}
-        {% endif %}
+        {% endfor %}
     {% endfor %}
 {% endif %}
 

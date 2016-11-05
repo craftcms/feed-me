@@ -76,7 +76,7 @@
 ] %}
 
 {% if parentElementField is not defined %}
-    {% set elementFields = craft.fields.getLayoutByType('Category').getFields() %}
+    {% set elementFields = craft.feedMe.getCategoriesFieldLayout(field.settings.source).getFields() %}
 
     {% for fieldtype in elementFields %}
         {% set innerField = fieldtype.getField() %}
