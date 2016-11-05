@@ -243,9 +243,7 @@
     </table>
 {% endfor %}
 
-{% set variantFields = craft.fields.getLayoutByType('Commerce_Variant').getFields() %}
-
-{% if variantFields %}
+{% for tab in craft.fields.getLayoutById(productType.variantFieldLayoutId).getTabs() %}
     <hr>
 
     <h2>{{ "Variant Fields" | t }}</h2>
@@ -257,7 +255,7 @@
             <th>{{ 'Default Value' | t }}</th>
         </thead>
         <tbody>
-            {% for fieldtype in variantFields %}
+            {% for fieldtype in tab.getFields() %}
                 {% set field = fieldtype.getField() %}
 
                 {% set fieldMapping = craft.feedMe.getFieldMapping(field.type) %}
@@ -271,7 +269,7 @@
             {% endfor %}
         </tbody>
     </table>
-{% endif %}
+{% endfor %}
 
 <hr>
 
@@ -282,6 +280,14 @@
 {% set fields = fields | merge(fieldsVariants) %}
 
 {% for tab in craft.fields.getLayoutById(productType.fieldLayoutId).getTabs() %}
+    {% for fieldtype in tab.getFields() %}
+        {% set field = fieldtype.getField() %}
+
+        {% set fields = fields | merge([{ label: field.name, handle: field.handle }]) %}
+    {% endfor %}
+{% endfor %}
+
+{% for tab in craft.fields.getLayoutById(productType.variantFieldLayoutId).getTabs() %}
     {% for fieldtype in tab.getFields() %}
         {% set field = fieldtype.getField() %}
 
