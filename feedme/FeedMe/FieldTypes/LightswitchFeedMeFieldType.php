@@ -15,7 +15,7 @@ class LightswitchFeedMeFieldType extends BaseFeedMeFieldType
 
     public function prepFieldData($element, $field, $data, $handle, $options)
     {
-        if ($data == Craft::t('Yes')) {
+        if ($data == Craft::t('Yes') || $data == 'true' || $data == '1') {
             return true;
         } else {
             return false;
