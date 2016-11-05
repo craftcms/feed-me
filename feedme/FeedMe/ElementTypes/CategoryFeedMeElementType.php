@@ -51,6 +51,18 @@ class CategoryFeedMeElementType extends BaseFeedMeElementType
         return $criteria;
     }
 
+    public function matchExistingElement(&$criteria, $data, $settings)
+    {
+        foreach ($settings['fieldUnique'] as $handle => $value) {
+            if (intval($value) == 1 && ($data != ' ')) {
+                $criteria->$handle = DbHelper::escapeParam($data[$handle]);
+            }
+        }
+
+        // Check to see if an element already exists - interestingly, find()[0] is faster than first()
+        return $criteria->find();
+    }
+
     public function delete(array $elements)
     {
         return craft()->categories->deleteCategory($elements);

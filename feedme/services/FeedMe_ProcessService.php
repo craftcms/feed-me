@@ -101,12 +101,6 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             if (($preppedData == ' ') && isset($feed['fieldDefaults'][$handle])) {
                 $preppedData = $feed['fieldDefaults'][$handle];
             }
-            
-            // While we're in the loop, lets check for unique data to match existing elements on
-            if (isset($feed['fieldUnique'][$handle]) && intval($feed['fieldUnique'][$handle]) == 1 && ($preppedData != ' ')) {
-                $criteria->$handle = DbHelper::escapeParam($preppedData);
-                $uniqueMatches[] = $handle; // Keeps count of fields to match on for later
-            }
 
             // From each field, we may need to process the raw data for Craft fields
             $content = craft()->feedMe_fields->prepForFieldType($element, $preppedData, $handle, $options);
@@ -119,15 +113,15 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         // Check for Add/Update/Delete for existing elements
         //
 
-        // Check to see if an element already exists - interestingly, find()[0] is faster than first()
-        $existingElements = $criteria->find();
+        // Check to see if an element already exists
+        $existingElements = $this->_service->matchExistingElement($criteria, $fieldData, $feed);
 
         if (isset($existingElements[0])) {
             $existingElement = $existingElements[0];
         }
 
         // If there's an existing matching element
-        if ($existingElement && $feed['duplicateHandle'] && count($uniqueMatches)) {
+        if ($existingElement && $feed['duplicateHandle']) {
 
             // If we're deleting or updating an existing element, we want to focus on that one
             if ($feed['duplicateHandle'] == FeedMe_Duplicate::Delete || $feed['duplicateHandle'] == FeedMe_Duplicate::Update) {

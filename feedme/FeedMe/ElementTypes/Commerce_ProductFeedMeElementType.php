@@ -53,6 +53,39 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
         return $criteria;
     }
 
+    public function matchExistingElement(&$criteria, $data, $settings)
+    {
+        foreach ($settings['fieldUnique'] as $handle => $value) {
+            if (intval($value) == 1 && ($data != ' ')) {
+                if (strstr($handle, 'variants--')) {
+                    $attribute = str_replace('variants--', '', $handle);
+
+                    // If we're matching existing elements via a Variant property, we don't want to use the 
+                    // Commerce_Product element criteria
+                    $variantCriteria = craft()->elements->getCriteria('Commerce_Variant');
+                    $variantCriteria->status = null;
+                    $variantCriteria->limit = null;
+                    $variantCriteria->localeEnabled = null;
+
+                    $variantCriteria->$attribute = DbHelper::escapeParam($data['variants'][$attribute]);
+
+                    // Get the variants - interestingly, find()[0] is faster than first()
+                    $variants = $variantCriteria->find();
+
+                    // Set the Product ID for the criteria from our found variant - thats what we need to update
+                    if (isset($variants[0])) {
+                        $criteria->id = $variants[0]->productId;
+                    }
+                } else {
+                    $criteria->$handle = DbHelper::escapeParam($data[$handle]);
+                }
+            }
+        }
+
+        // Check to see if an element already exists - interestingly, find()[0] is faster than first()
+        return $criteria->find();
+    }
+
     public function delete(array $elements)
     {
         $return = true;
@@ -154,8 +187,8 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
         $variantData = $this->_prepProductData($variantData);
 
         foreach ($variantData as $key => $variant) {
-            if ($product->id) {
-                $variantModel = $this->_getVariantBySku($variant['sku']) ?: new Commerce_VariantModel();
+            if ($this->_getVariantBySku($variant['sku'])) {
+                $variantModel = $this->_getVariantBySku($variant['sku']);
             } else {
                 $variantModel = new Commerce_VariantModel();
             }
@@ -177,9 +210,21 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
 
             $variantModel->sortOrder = $count++;
 
-            if ($this->_hasValue($variant, 'fields')) {
-                //$variantModel->setContentFromPost($variant['fields']);
+            // Loop through each field for this Variant model - see if we have data
+            $variantContent = array();
+            foreach ($variantModel->getFieldLayout()->getFields() as $fieldLayout) {
+                $field = $fieldLayout->getField();
+
+                if (isset($variant[$field->handle])) {
+                    $data = $variant[$field->handle];
+                    $handle = $field->handle;
+
+                    $content = craft()->feedMe_fields->prepForFieldType($variantModel, $data, $handle, null);
+                    $variantContent[$handle] = $content;
+                }
             }
+
+            $variantModel->setContentFromPost($variantContent);
 
             if ($this->_hasValue($variant, 'title')) {
                 $variantModel->getContent()->title = $variant['title'];

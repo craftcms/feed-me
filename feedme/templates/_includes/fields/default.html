@@ -38,15 +38,21 @@
 </tr>
 #}
 
+{% if handlePrefix is defined %}
+    {% set fieldHandle = handlePrefix ~ field.handle %}
+{% else %}
+    {% set fieldHandle = field.handle %}
+{% endif %}
+
 {# Macro Code #}
 {% set field = {
     label: field.name,
-    handle: field.handle,
-    instructionsHandle: field.handle,
+    handle: fieldHandle,
+    instructionsHandle: fieldHandle,
     default: forms.textField({
-        id: 'fieldDefaults-' ~ field.handle,
-        name: 'fieldDefaults[' ~ field.handle ~ ']',
-        value: feedfieldDefaults[field.handle] ?? '',
+        id: 'fieldDefaults-' ~ fieldHandle,
+        name: 'fieldDefaults[' ~ fieldHandle ~ ']',
+        value: feedfieldDefaults[fieldHandle] ?? '',
     }),
 } %}
 

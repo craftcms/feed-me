@@ -259,7 +259,7 @@
                 {% set field = fieldtype.getField() %}
 
                 {% set fieldMapping = craft.feedMe.getFieldMapping(field.type) %}
-                {% set variables = { field: field, feed: feed, feedData: feedData } %}
+                {% set variables = { field: field, feed: feed, feedData: feedData, handlePrefix: 'variants--' } %}
 
                 {% if fieldMapping %}
                     {% include fieldMapping ignore missing with variables %}
@@ -277,13 +277,20 @@
 
 <p>{{ "Select the fields you want to use to check for existing elements. When selected, Feed Me will look for existing elements that match the fields provided below and either update, or skip depending on your choice of Import Strategy." | t }}</p>
 
-{% set fields = fields | merge(fieldsVariants) %}
+{% set uniqueFields = fields %}
+
+{% for field in fieldsVariants %}
+    {# Special-case for a few attributes - we need to select the default #}
+    {% set handle = field.handle | replace('variant-', '') %}
+
+    {% set uniqueFields = uniqueFields | merge([{ label: 'Variant ' ~ field.label, handle: field.name }]) %}
+{% endfor %}
 
 {% for tab in craft.fields.getLayoutById(productType.fieldLayoutId).getTabs() %}
     {% for fieldtype in tab.getFields() %}
         {% set field = fieldtype.getField() %}
 
-        {% set fields = fields | merge([{ label: field.name, handle: field.handle }]) %}
+        {% set uniqueFields = uniqueFields | merge([{ label: field.name, handle: field.handle }]) %}
     {% endfor %}
 {% endfor %}
 
@@ -291,12 +298,12 @@
     {% for fieldtype in tab.getFields() %}
         {% set field = fieldtype.getField() %}
 
-        {% set fields = fields | merge([{ label: field.name, handle: field.handle }]) %}
+        {% set uniqueFields = uniqueFields | merge([{ label: field.name, handle: 'variants--' ~ field.handle }]) %}
     {% endfor %}
 {% endfor %}
 
 <div class="feedme-uniques">
-    {% for field in fields %}
+    {% for field in uniqueFields %}
         {{ forms.checkboxField({
             name: 'fieldUnique[' ~ field.handle ~ ']',
             label: field.label,

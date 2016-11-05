@@ -25,6 +25,8 @@ abstract class BaseFeedMeElementType
 
     abstract public function setCriteria($settings);
 
+    abstract public function matchExistingElement(&$criteria, $data, $settings);
+
     abstract public function delete(array $elements);
 
     abstract public function prepForElementModel(BaseElementModel $element, array &$data, $settings);

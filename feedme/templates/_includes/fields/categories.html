@@ -5,6 +5,10 @@
     {% set fieldHandle = field.handle %}
 {% endif %}
 
+{% if handlePrefix is defined %}
+    {% set fieldHandle = handlePrefix ~ fieldHandle %}
+{% endif %}
+
 <tr class="{{ (parentElementField is defined) ? 'element-sub-field' }}">
     <td class="col-field">
         <div class="field">
