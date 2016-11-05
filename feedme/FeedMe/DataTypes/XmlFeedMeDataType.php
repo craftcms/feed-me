@@ -117,6 +117,68 @@ class XmlFeedMeDataType extends BaseFeedMeDataType
         return($xml_array);
     }*/
 
+    /*public function _parseXML($payload)
+    {
+        if ($payload) {
+            try {
+                $xml = simplexml_load_string($payload, 'SimpleXMLElement', (LIBXML_VERSION >= 20700) ? (LIBXML_PARSEHUGE | LIBXML_NOCDATA) : LIBXML_NOCDATA);
+                $ns = array('' => null) + $xml->getDocNamespaces(true);
+
+                return $this->_recursiveParse($xml, $ns);
+            } catch (\Exception $ex) {
+                throw new ParserException('Failed To Parse XML');
+            }
+        }
+
+        return array();
+    }
+
+
+    protected function _recursiveParse($xml, $ns)
+    {
+        $xml_string = (string)$xml;
+
+        if ($xml->count() == 0 and $xml_string != '') {
+            if (count($xml->attributes()) == 0) {
+                if (trim($xml_string) == '') {
+                    $result = null;
+                } else {
+                    $result = $xml_string;
+                }
+            } else {
+                $result[] = array('value' => $xml_string);
+            }
+        } else {
+            $result = null;
+        }
+
+        foreach ($xml->attributes() as $attName => $attValue) {
+            $result[][$attName] = (string)$attValue;
+        }
+
+        foreach ($xml->children() as $childName => $child) {
+
+            $child = $this->_recursiveParse($child, $ns);
+            if (is_array($result) and array_key_exists($childName, $result)) {
+                if (is_array($result[$childName]) and is_numeric(key($result[$childName]))) {
+                    if (isset($child[0])) {
+                        $result[$childName][] = $child[0];
+                    } else {
+                        $result[$childName][] = $child;
+                    }
+                } else {
+                    $temp = $result[$childName];
+
+                    $result[$childName] = array($temp, $child);
+                }
+            } else {
+                $result[$childName] = $child;
+            }
+        }
+
+        return $result;
+    }*/
+
 
     private function _parseXML($xml_string) {
         $xml = new \DomDocument('1.0', 'utf-8');

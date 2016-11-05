@@ -34,6 +34,10 @@ class TagsFeedMeFieldType extends BaseFeedMeFieldType
         $tags = ArrayHelper::stringToArray($data);
 
         foreach ($tags as $tag) {
+            if ($tag == ' ') {
+                continue;
+            }
+
             $criteria = craft()->elements->getCriteria(ElementType::Tag);
             $criteria->groupId = $groupId;
             $criteria->title = DbHelper::escapeParam($tag);

@@ -40,6 +40,10 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
         $assets = ArrayHelper::stringToArray($data);
 
         foreach ($assets as $asset) {
+            if ($asset == ' ') {
+                continue;
+            }
+            
             // Check config settings if we need to clean url
             if (craft()->config->get('cleanAssetUrls', 'feedMe')) {
                 $asset = UrlHelper::stripQueryString($asset);

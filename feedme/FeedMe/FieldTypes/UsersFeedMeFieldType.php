@@ -39,6 +39,10 @@ class UsersFeedMeFieldType extends BaseFeedMeFieldType
         $users = ArrayHelper::stringToArray($data);
 
         foreach ($users as $user) {
+            if ($user == ' ') {
+                continue;
+            }
+
             $criteria = craft()->elements->getCriteria(ElementType::User);
             $criteria->groupId = $groupIds;
             $criteria->limit = $settings->limit;

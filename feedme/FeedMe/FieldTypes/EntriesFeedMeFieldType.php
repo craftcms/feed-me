@@ -47,6 +47,10 @@ class EntriesFeedMeFieldType extends BaseFeedMeFieldType
         $entries = ArrayHelper::stringToArray($data);
 
         foreach ($entries as $entry) {
+            if ($entry == ' ') {
+                continue;
+            }
+
             $criteria = craft()->elements->getCriteria(ElementType::Entry);
             $criteria->sectionId = $sectionIds;
             $criteria->limit = $settings->limit;

@@ -34,6 +34,10 @@ class CategoriesFeedMeFieldType extends BaseFeedMeFieldType
         $categories = ArrayHelper::stringToArray($data);
 
         foreach ($categories as $category) {
+            if ($category == ' ') {
+                continue;
+            }
+
             $criteria = craft()->elements->getCriteria(ElementType::Category);
             $criteria->groupId = $groupId;
             $criteria->limit = $settings->limit;
