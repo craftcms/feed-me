@@ -171,9 +171,10 @@ class FeedMe_HelpController extends BaseController
             $errors = $getHelpModel->getErrors();
         }
 
-        $this->returnJson(array(
+        $this->renderTemplate('feedMe/help/response', array(
             'success' => $success,
-            'errors' => $errors,
+            'errors' => JsonHelper::encode($errors),
+            'widgetId' => 'feedMeHelp',
         ));
     }
 
