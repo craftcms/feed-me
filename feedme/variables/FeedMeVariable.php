@@ -121,10 +121,20 @@ class FeedMeVariable
     // Helper functions for element fields in getting their inner-element field layouts
     public function getAssetFieldLayout($assetSourceId)
     {
+        FeedMePlugin::log('assetSourceId = ' . $assetSourceId, LogLevel::Info, true);
+
         if ($assetSourceId) {
             $assetSource = craft()->assetSources->getSourceById($assetSourceId);
-            
+
+            FeedMePlugin::log('assetSource = ' . $assetSource, LogLevel::Info, true);
+
             if ($assetSource) {
+                FeedMePlugin::log('fieldLayoutId = ' . $assetSource->fieldLayoutId, LogLevel::Info, true);
+
+                foreach (craft()->fields->getLayoutById($assetSource->fieldLayoutId)->getFields() as $field) {
+                    FeedMePlugin::log('fieldLayoutId field = ' . $field->getField()->name, LogLevel::Info, true);
+                }
+
                 return craft()->fields->getLayoutById($assetSource->fieldLayoutId);
             }
         }
