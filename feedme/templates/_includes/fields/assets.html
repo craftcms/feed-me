@@ -78,12 +78,11 @@
 ] %}
 
 {% if parentElementField is not defined %}
-    {% set elementFields = craft.feedMe.getAssetFieldLayout(field.fieldtype.resolveSourcePath()).getFields() %}
+    {% set elementFields = craft.feedMe.getAssetFieldLayout(field.settings).getFields() %}
 
     {% for fieldtype in elementFields %}
         {% set innerField = fieldtype.getField() %}
 
-        {# Lets not allow a few fields at this time - itself for recursive reasons, and Matrix because :O #}
         {% if innerField.type in supportedFields and elementType != 'Asset' %}
             {% set fieldMapping = craft.feedMe.getFieldMapping(innerField.type) %}
             {% set variables = { field: innerField, feed: feed, feedData: feedData, parentElementField: field } %}
