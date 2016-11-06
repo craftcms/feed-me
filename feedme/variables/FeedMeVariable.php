@@ -121,8 +121,13 @@ class FeedMeVariable
     // Helper functions for element fields in getting their inner-element field layouts
     public function getAssetFieldLayout($assetSourceId)
     {
-        $layoutId = craft()->assetSources->getSourceById($assetSourceId)->fieldLayoutId;
-        return craft()->fields->getLayoutById($layoutId);
+        if ($assetSourceId) {
+            $assetSource = craft()->assetSources->getSourceById($assetSourceId);
+            
+            if ($assetSource) {
+                return craft()->fields->getLayoutById($assetSource->fieldLayoutId);
+            }
+        }
     }
 
     public function getCategoriesFieldLayout($categoryGroup)
