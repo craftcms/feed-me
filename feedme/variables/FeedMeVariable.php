@@ -71,6 +71,11 @@ class FeedMeVariable
         return craft()->sections->getEntryTypeById($entryTypeId);
     }
 
+    public function feed($options = array())
+    {
+        return craft()->feedMe_data->getFeedForTemplate($options);
+    }
+
     public function getFeeds()
     {
         $result = array();
