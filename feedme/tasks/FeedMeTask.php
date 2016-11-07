@@ -20,17 +20,24 @@ class FeedMeTask extends BaseTask
 
     public function getTotalSteps()
     {
-        // Get settings
-        $settings = $this->getSettings();
+        try {
+            // Get settings
+            $settings = $this->getSettings();
 
-        // Get the Feed
-        $this->_feed = $settings->feed;
+            // Get the Feed
+            $this->_feed = $settings->feed;
 
-        // Get the data for the mapping screen, based on the URL provided
-        $this->_feedData = craft()->feedMe_data->getFeed($this->_feed->feedType, $this->_feed->feedUrl, $this->_feed->primaryElement);
+            // Get the data for the mapping screen, based on the URL provided
+            $this->_feedData = craft()->feedMe_data->getFeed($this->_feed->feedType, $this->_feed->feedUrl, $this->_feed->primaryElement);
 
-        // There are also a few once-off things we can do for this feed to assist with processing.
-        $this->_feedSettings = craft()->feedMe_process->setupForProcess($this->_feed, $this->_feedData);
+            // There are also a few once-off things we can do for this feed to assist with processing.
+            $this->_feedSettings = craft()->feedMe_process->setupForProcess($this->_feed, $this->_feedData);
+
+        } catch (\Exception $e) {
+            FeedMePlugin::log($this->_feed->name . ': ' . $e->getMessage(), LogLevel::Error, true);
+
+            return 0;
+        }
 
         // Take a step for every row
         return count($this->_feedData);

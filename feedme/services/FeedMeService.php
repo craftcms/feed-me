@@ -16,6 +16,13 @@ class FeedMeService extends BaseApplicationComponent
         return $this->getPlugin()->getSettings();
     }
 
+    public function throwError($feedName, $message)
+    {
+        FeedMePlugin::log($feedName . ': ' . $message, LogLevel::Error, true);
+
+        throw new Exception(Craft::t($message));
+    }
+
     public function getElementTypeService($elementType)
     {
         // Check for third-party element type support

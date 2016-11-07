@@ -64,7 +64,11 @@ class UserFeedMeElementType extends BaseFeedMeElementType
     {
         foreach ($settings['fieldUnique'] as $handle => $value) {
             if (intval($value) == 1 && ($data != ' ')) {
-                $criteria->$handle = DbHelper::escapeParam($data[$handle]);
+                if (isset($data[$handle])) {
+                    $criteria->$handle = DbHelper::escapeParam($data[$handle]);
+                } else {
+                    throw new Exception(Craft::t('Unable to match against '.$handle.' - no data found.'));
+                }
             }
         }
 
