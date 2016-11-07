@@ -37,7 +37,7 @@ class FeedMe_FeedsController extends BaseController
     {
         if (empty($variables['feed'])) {
             $feed = craft()->feedMe_feeds->getFeedById($variables['feedId']);
-            $feedData = craft()->feedMe_data->getFeedMapping($feed->feedType, $feed->feedUrl, $feed->primaryElement);
+            $feedData = craft()->feedMe_data->getFeedMapping($feed->feedType, $feed->feedUrl, $feed->primaryElement, $feed);
 
             $variables['feed'] = $feed;
 

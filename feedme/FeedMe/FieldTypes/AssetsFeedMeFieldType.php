@@ -40,7 +40,7 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
         $assets = ArrayHelper::stringToArray($data);
 
         foreach ($assets as $asset) {
-            if ($asset == ' ') {
+            if ($asset == '__') {
                 continue;
             }
             
@@ -93,7 +93,7 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
             // Prep each inner field
             $preppedElementData = array();
             foreach ($elementData as $elementHandle => $elementContent) {
-                if ($elementContent != ' ') {
+                if ($elementContent != '__') {
                     $preppedElementData[$elementHandle] = craft()->feedMe_fields->prepForFieldType(null, $elementContent, $elementHandle, null);
                 }
             }
@@ -126,7 +126,7 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
 
         // Download each image
         foreach ($urls as $key => $url) {
-            if ($url == ' ') {
+            if ($url == '__') {
                 continue;
             }
 

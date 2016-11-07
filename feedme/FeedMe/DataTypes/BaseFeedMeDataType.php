@@ -15,6 +15,6 @@ abstract class BaseFeedMeDataType
     // Abstract Methods
     // =========================================================================
 
-    abstract public function getFeed($url, $primaryElement);
+    abstract public function getFeed($url, $primaryElement, $settings);
 
 }

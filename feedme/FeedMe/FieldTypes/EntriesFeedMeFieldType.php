@@ -47,7 +47,7 @@ class EntriesFeedMeFieldType extends BaseFeedMeFieldType
         $entries = ArrayHelper::stringToArray($data);
 
         foreach ($entries as $entry) {
-            if ($entry == ' ') {
+            if ($entry == '__') {
                 continue;
             }
 
@@ -104,7 +104,7 @@ class EntriesFeedMeFieldType extends BaseFeedMeFieldType
             // Prep each inner field
             $preppedElementData = array();
             foreach ($elementData as $elementHandle => $elementContent) {
-                if ($elementContent != ' ') {
+                if ($elementContent != '__') {
                     $preppedElementData[$elementHandle] = craft()->feedMe_fields->prepForFieldType(null, $elementContent, $elementHandle, null);
                 }
             }

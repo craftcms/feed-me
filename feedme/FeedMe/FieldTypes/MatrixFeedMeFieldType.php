@@ -19,92 +19,124 @@ class MatrixFeedMeFieldType extends BaseFeedMeFieldType
     public function prepFieldData($element, $field, $data, $handle, $options)
     {
         $fieldData = array();
+        $sortedData = array();
 
-        // When we import a non-repeatable node into a Matrix, we must ensure its treated consistently
-        // Because Matrix/MatrixItem/Node is not the same as Matrix/MatrixItem/.../Node - it should be the latter
-        if (!strstr($options['feedHandle'][0], '/.../')) {
-            foreach ($data as $blockHandle => $block) {
-                foreach ($block as $blockFieldHandle => $blockFieldData) {
-                    $data[$blockHandle][$blockFieldHandle] = array($blockFieldData);
+        // Because of how mapping works, we need to do some extra work here, which is a pain!
+        // This is to ensure blocks are ordered as they are provided. Data will be provided as:
+        // blockhandle = [
+        //   fieldHandle = [
+        //     orderIndex = [
+        //       data
+        //     ]
+        //   ]
+        // ]
+        //
+        // We change it to:
+        //
+        // orderIndex = [
+        //   blockhandle = [
+        //     orderIndex = [
+        //       data
+        //     ]
+        //   ]
+        // ]
+        foreach ($data as $blockHandle => $block) {
+            foreach ($block as $blockFieldHandle => $blockFieldData) {
+                // When we import a non-repeatable node into a Matrix, we must ensure its treated consistently
+                // Because Matrix/MatrixItem/Node is not the same as Matrix/MatrixItem/.../Node - it should be the latter
+                // This is why XML sucks - JSON just wouldn't have this issue...
+                if (!strstr($options['feedHandle'][0], '/.../')) {
+                    $blockFieldData = array($blockFieldData);
+                }
+
+                foreach ($blockFieldData as $blockOrder => $innerData) {
+                    $sortedData[$blockOrder][$blockHandle][$blockFieldHandle] = $innerData;
                 }
             }
         }
+
+        // Sort by the new ordering we've set
+        ksort($sortedData);
 
         // Store the fields for this Matrix - can't use the fields service due to context
         $blockTypes = craft()->matrix->getBlockTypesByFieldId($field->id, 'handle');
 
         $count = 0;
-        foreach ($data as $blockHandle => $block) {
-            $allPreppedFieldData = array();
+        $allPreppedFieldData = array();
 
-            // Do some pre-processing first, due to the way feed-mapping works, each data will be grouped across multiple blocks
-            // by its inner handle, which isn't really what we want. Instead, loop through each inner field,
-            // and ensure its stored on the appropriate outer block.
-            foreach ($block as $blockFieldHandle => $blockFieldData) {
-                if (!is_array($blockFieldData) || !isset($blockFieldData[0])) {
-                    $blockFieldData = array($blockFieldData);
-                }
+        foreach ($sortedData as $sortKey => $sortData) {
+            foreach ($sortData as $blockHandle => $blockFieldData) {
+                foreach ($blockFieldData as $blockFieldHandle => $blockFieldContent) {
 
-                foreach ($blockFieldData as $key => $blockFieldContent) {
-                    if ($blockFieldContent) {
+                    // Get the Matrix-contexted field for our regular field-prepping function
+                    $blockType = $blockTypes[$blockHandle];
 
-                        // Get the Matrix-contexted field for our regular field-prepping function
-                        $blockType = $blockTypes[$blockHandle];
-
-                        foreach ($blockType->getFields() as $f) {
-                            if ($f->handle == $blockFieldHandle) {
-                                $subField = $f;
-                            }
-                        }
-
-                        $options['field'] = $subField;
-                        $options['parentField'] = $field;
-
-                        // Parse this inner-field's data, just like a regular field
-                        $parsedData = craft()->feedMe_fields->prepForFieldType($element, $blockFieldContent, $blockFieldHandle, $options);
-
-                        if ($parsedData) {
-                            // Special-case for inner table - not a great solution at the moment, needs to be more flexible
-                            if (substr_count($options['feedHandle'][0], '/.../') == 2) {
-                                foreach ($parsedData as $i => $tableFieldRow) {
-                                    $next = reset($tableFieldRow);
-
-                                    if (!is_array($next)) {
-                                        $tableFieldRow = array($i => $tableFieldRow);
-                                    }
-
-                                    foreach ($tableFieldRow as $j => $tableFieldColumn) {
-                                        $allPreppedFieldData[$j][$blockHandle][$blockFieldHandle][$i] = $tableFieldColumn;
-                                    }
-                                }
-                            } else {
-                                $allPreppedFieldData[$blockHandle][$key][$blockFieldHandle] = $parsedData;
-                            }
+                    foreach ($blockType->getFields() as $f) {
+                        if ($f->handle == $blockFieldHandle) {
+                            $subField = $f;
                         }
                     }
-                }
-            }
 
-            // Now we've got a bit more sane data - its a simple (regular) import
-            if ($allPreppedFieldData) {
-                foreach ($allPreppedFieldData as $key => $preppedBlockFieldData) {
+                    if (!isset($subField)) {
+                        continue;
+                    }
 
-                    // Sort by keys - otherwise can potentially have issues with ordering
-                    ksort($preppedBlockFieldData);
+                    // Get any options for the field - stored a little different
+                    if (isset($options['options'][$blockHandle][$blockFieldHandle])) {
+                        $fieldOptions['options'] = $options['options'][$blockHandle][$blockFieldHandle];
+                    }
 
-                    foreach ($preppedBlockFieldData as $preppedFieldData) {
-                        $fieldData['new'.($count+1)] = array(
-                            'type' => $blockHandle,
-                            'order' => ($count+1),
-                            'enabled' => true,
-                            'fields' => $preppedFieldData,
-                        );
+                    $fieldOptions['feedHandle'] = $options['feedHandle'];
+                    $fieldOptions['field'] = $subField;
+                    $fieldOptions['parentField'] = $field;
 
-                        $count++;
+                    // Parse this inner-field's data, just like a regular field
+                    $parsedData = craft()->feedMe_fields->prepForFieldType($element, $blockFieldContent, $blockFieldHandle, $fieldOptions);
+                    
+                    if ($parsedData) {
+                        // Special-case for inner table - not a great solution at the moment, needs to be more flexible
+                        if ($subField->type == 'Table') {
+                            foreach ($parsedData as $i => $tableFieldRow) {
+                                $next = reset($tableFieldRow);
+
+                                if (!is_array($next)) {
+                                    $tableFieldRow = array($i => $tableFieldRow);
+                                }
+
+                                foreach ($tableFieldRow as $j => $tableFieldColumns) {
+                                    foreach ($tableFieldColumns as $k => $tableFieldColumn) {
+                                        $allPreppedFieldData[$k][$blockHandle][$blockFieldHandle][$j][$sortKey] = $tableFieldColumn;
+                                    }
+                                }
+                            }
+                        } else {
+                            $allPreppedFieldData[$sortKey][$blockHandle][$blockFieldHandle] = $parsedData;
+                        }
                     }
                 }
             }
         }
+
+        // Now we've got a bit more sane data - its a simple (regular) import
+        if ($allPreppedFieldData) {
+            foreach ($allPreppedFieldData as $key => $preppedBlockFieldData) {
+
+                // Sort by keys - otherwise can potentially have issues with ordering
+                ksort($preppedBlockFieldData);
+
+                foreach ($preppedBlockFieldData as $blockHandle => $preppedFieldData) {
+                    $fieldData['new'.($count+1)] = array(
+                        'type' => $blockHandle,
+                        'order' => ($count+1),
+                        'enabled' => true,
+                        'fields' => $preppedFieldData,
+                    );
+
+                    $count++;
+                }
+            }
+        }
+
 
         return $fieldData;
     }

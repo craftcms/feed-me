@@ -98,7 +98,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             }
 
             // Check for our default data (if any provided, and if not already set in 'real' data)
-            if (($preppedData == ' ') && isset($feed['fieldDefaults'][$handle])) {
+            if (($preppedData == '__') && isset($feed['fieldDefaults'][$handle])) {
                 $preppedData = $feed['fieldDefaults'][$handle];
             }
 
@@ -204,7 +204,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
     {
         $feed = craft()->feedMe_feeds->getFeedById($feedId);
 
-        $feedData = craft()->feedMe_data->getFeed($feed->feedType, $feed->feedUrl, $feed->primaryElement);
+        $feedData = craft()->feedMe_data->getFeed($feed->feedType, $feed->feedUrl, $feed->primaryElement, $feed);
         $feedSettings = craft()->feedMe_process->setupForProcess($feed, $feedData);
 
         // Do we even have any data to process?
@@ -255,6 +255,10 @@ class FeedMe_ProcessService extends BaseApplicationComponent
 
         foreach ($fields as $handle => $feedHandle) {
             $data = $this->_getValueFromKeyPath($feedData, $feedHandle);
+
+            if ($data == '__') {
+                continue;
+            }
 
             // Handle sub-fields and assigning to correct indexes
             if (strstr($handle, '--')) {
@@ -308,8 +312,12 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             } elseif ($key === '...') {
                 $values = array();
 
-                foreach ($array as $arr) {
-                    $values[] = $this->_getValueFromKeyPath($arr, implode('/', $keys));
+                foreach ($array as $i => $arr) {
+                    $nestedData = $this->_getValueFromKeyPath($arr, implode('/', $keys));
+
+                    if ($nestedData != '__') {
+                        $values[$i] = $nestedData;
+                    }
                 }
 
                 if ($values) {
@@ -322,7 +330,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             }
         } while ($keys);
 
-        return ' ';
+        return '__';
     }
 
     // Allows us to build an array with a provided path =  'key/to/value' turns into array[key][to][value] = $value
@@ -352,20 +360,29 @@ class FeedMe_ProcessService extends BaseApplicationComponent
 
         foreach ($fields as $handle => $feedHandle) {
             if (strstr($handle, '--')) {
-                $handle = explode('--', $handle);
-                $handle = $handle[0];
+                $topFieldHandle = explode('--', $handle);
+                $topFieldHandle = $topFieldHandle[0];
+            } else {
+                $topFieldHandle = $handle;
             }
 
-            if ($feedHandle) {
-                $array['feedHandle'][$handle][] = $feedHandle;
+            if ($feedHandle && !strstr($handle, '-options-') && !strstr($handle, '-fields-')) {
+                $array['feedHandle'][$topFieldHandle][] = $feedHandle;
             }
 
             // Handle additional options - checkboxes for things to perform for field
             if (strstr($handle, '-options-')) {
                 $subFields = explode('-options-', $handle);
-                
+
                 if ($feedHandle) {
-                    $this->_arraySetFromPath($array['options'], $subFields, $feedHandle);
+                    if (strstr($handle, '--')) {
+                        $opts = explode('--', $subFields[0]);
+                        $opts[] = $subFields[1];
+
+                        $this->_arraySetFromPath($array['options'], $opts, $feedHandle);
+                    } else {
+                        $this->_arraySetFromPath($array['options'], $subFields, $feedHandle);
+                    }
                 }
             }
 

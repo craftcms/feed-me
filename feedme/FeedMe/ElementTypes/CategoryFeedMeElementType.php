@@ -54,7 +54,7 @@ class CategoryFeedMeElementType extends BaseFeedMeElementType
     public function matchExistingElement(&$criteria, $data, $settings)
     {
         foreach ($settings['fieldUnique'] as $handle => $value) {
-            if (intval($value) == 1 && ($data != ' ')) {
+            if (intval($value) == 1 && ($data != '__')) {
                 if (isset($data[$handle])) {
                     $criteria->$handle = DbHelper::escapeParam($data[$handle]);
                 } else {
@@ -79,7 +79,7 @@ class CategoryFeedMeElementType extends BaseFeedMeElementType
         }
 
         foreach ($data as $handle => $value) {
-            if ($value == '' || $value == ' ') {
+            if ($value == '' || $value == '__') {
                 continue;
             }
 

@@ -6,7 +6,7 @@ class FeedMe_DataService extends BaseApplicationComponent
     // Public Methods
     // =========================================================================
 
-    public function getFeed($type, $url, $element) {
+    public function getFeed($type, $url, $element, $settings) {
         // Check for and environment variables in url
         $url = craft()->config->parseEnvironmentString($url);
 
@@ -14,7 +14,7 @@ class FeedMe_DataService extends BaseApplicationComponent
             throw new Exception(Craft::t('Unknown Data Type Service called.'));
         }
 
-        $data = $service->getFeed($url, $element);
+        $data = $service->getFeed($url, $element, $settings);
 
         if (empty($data[0])) {
             return null;
@@ -23,8 +23,8 @@ class FeedMe_DataService extends BaseApplicationComponent
         }
     }
 
-    public function getFeedMapping($type, $url, $element) {
-        $data_array = $this->getFeed($type, $url, $element);
+    public function getFeedMapping($type, $url, $element, $settings) {
+        $data_array = $this->getFeed($type, $url, $element, $settings);
 
         // Go through entire feed and grab all nodes - that way, its normalised across the entire feed
         // as some nodes don't exist on the first primary element, but do throughout the feed.
@@ -134,7 +134,7 @@ class FeedMe_DataService extends BaseApplicationComponent
 
         // If cache explicitly set to false, always return latest data
         if ($cache === false) {
-            return craft()->feedMe_data->getFeed($type, $url, $element, true);
+            return craft()->feedMe_data->getFeed($type, $url, $element, null);
         }
 
         // We want some caching action!
@@ -146,7 +146,7 @@ class FeedMe_DataService extends BaseApplicationComponent
             if ($cachedRequest) {
                 return $cachedRequest;
             } else {
-                $data = craft()->feedMe_data->getFeed($type, $url, $element, true);
+                $data = craft()->feedMe_data->getFeed($type, $url, $element, null);
                 $this->_set($cacheId, $data, $cache);
 
                 return $data;

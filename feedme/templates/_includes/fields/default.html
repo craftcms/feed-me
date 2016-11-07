@@ -1,64 +1,36 @@
-{# Custom Code #}
-{#
-<tr>
-<td class="col-field">
-    <div class="field">
-        <div class="heading">
-            <label>{{ field.name }}</label>
+<tr class="{{ (isSubElementField is defined) ? 'element-sub-field' }}">
+    <td class="col-field">
+        <div class="field">
+            <div class="heading">
+                <label>{{ labelName }}</label>
 
-            <div class="instructions">
-                <code>{{ field.handle }}</code>
+                <div class="instructions">
+                    <code>{{ labelHandle }}</code>
+                </div>
             </div>
         </div>
-    </div>
-</td>
+    </td>
 
-<td class="col-map">
-    {% namespace 'fieldMapping' %}
-        {{ forms.selectField({
-            id: field.handle,
-            name: field.handle,
-            value: feed.fieldMapping[field.handle] ?? '',
-            options: feedData,
-        }) }}
-    {% endnamespace %}
-</td>
-
-<td class="col-default">
-    <div class="default-fields">
-        {% namespace 'fieldDefaults' %}
-            {{ forms.textField({
-                id: field.handle,
-                name: field.handle,
-                value: feed.fieldDefaults[field.handle] ?? '',
+    <td class="col-map">
+        {% namespace 'fieldMapping' %}
+            {{ forms.selectField({
+                id: fieldHandle,
+                name: fieldHandle,
+                value: feed.fieldMapping[fieldHandle] ?? '',
+                options: feedData,
             }) }}
         {% endnamespace %}
-    </div>
-</td>
+    </td>
+
+    <td class="col-default">
+        <div class="default-fields">
+            {% namespace 'fieldDefaults' %}
+                {{ forms.textField({
+                    id: fieldHandle,
+                    name: fieldHandle,
+                    value: feed.fieldDefaults[fieldHandle] ?? '',
+                }) }}
+            {% endnamespace %}
+        </div>
+    </td>
 </tr>
-#}
-
-{% if handlePrefix is defined %}
-    {% set fieldHandle = handlePrefix ~ field.handle %}
-{% else %}
-    {% set fieldHandle = field.handle %}
-{% endif %}
-
-{# Macro Code #}
-{% set field = {
-    label: field.name,
-    handle: fieldHandle,
-    instructionsHandle: fieldHandle,
-    default: forms.textField({
-        id: 'fieldDefaults-' ~ fieldHandle,
-        name: 'fieldDefaults[' ~ fieldHandle ~ ']',
-        value: feedfieldDefaults[fieldHandle] ?? '',
-    }),
-} %}
-
-{% if parentElementField is defined %}
-    {% set field = field | merge({ parentElementField: parentElementField }) %}
-{% endif %}
-
-{{ feedMeMacro.generateRow(_context, field) }}
-

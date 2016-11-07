@@ -34,7 +34,7 @@ class CategoriesFeedMeFieldType extends BaseFeedMeFieldType
         $categories = ArrayHelper::stringToArray($data);
 
         foreach ($categories as $category) {
-            if ($category == ' ') {
+            if ($category == '__') {
                 continue;
             }
 
@@ -91,7 +91,7 @@ class CategoriesFeedMeFieldType extends BaseFeedMeFieldType
             // Prep each inner field
             $preppedElementData = array();
             foreach ($elementData as $elementHandle => $elementContent) {
-                if ($elementContent != ' ') {
+                if ($elementContent != '__') {
                     $preppedElementData[$elementHandle] = craft()->feedMe_fields->prepForFieldType(null, $elementContent, $elementHandle, null);
                 }
             }

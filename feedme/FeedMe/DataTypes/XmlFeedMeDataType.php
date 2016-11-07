@@ -6,16 +6,22 @@ class XmlFeedMeDataType extends BaseFeedMeDataType
     // Public Methods
     // =========================================================================
 
-    public function getFeed($url, $primaryElement)
+    public function getFeed($url, $primaryElement, $settings)
     {
         if (false === ($raw_content = craft()->feedMe_data->getRawData($url))) {
-            FeedMePlugin::log('Unable to reach ' . $url . '. Check this is the correct URL.', LogLevel::Error, true);
+            FeedMePlugin::log($settings->name . ': Unable to reach ' . $url . '. Check this is the correct URL.', LogLevel::Error, true);
 
             return false;
         }
 
         // Parse the XML string into an array
-        $xml_array = $this->_parseXML($raw_content);
+        try {
+            $xml_array = $this->_parseXML($raw_content);
+        } catch (Exception $e) {
+            FeedMePlugin::log($settings->name . ': Invalid XML - ' . $e->getMessage(), LogLevel::Error, true);
+
+            return false;
+        }
 
         // Look for and return only the items for primary element
         if ($primaryElement && is_array($xml_array)) {
@@ -23,7 +29,7 @@ class XmlFeedMeDataType extends BaseFeedMeDataType
         }
 
         if (!is_array($xml_array)) {
-            FeedMePlugin::log('Invalid XML - ' . print_r($xml_array, true), LogLevel::Error, true);
+            FeedMePlugin::log($settings->name . ': Invalid XML - ' . print_r($xml_array, true), LogLevel::Error, true);
 
             return false;
         }
@@ -181,17 +187,15 @@ class XmlFeedMeDataType extends BaseFeedMeDataType
 
 
     private function _parseXML($xml_string) {
+        libxml_use_internal_errors(true);
         $xml = new \DomDocument('1.0', 'utf-8');
 
         if (is_string($xml_string)) {
-            try {
-                $xml->loadXML($xml_string);
+            $xml->loadXML($xml_string);
 
-                if (!is_object($xml) || empty($xml->documentElement)) {
-                    throw new Exception();
-                }
-            } catch (Exception $ex) {
-                throw new Exception('[XML2Array] Error parsing the XML string.'.PHP_EOL . $ex->getMessage());
+            if (!is_object($xml) || empty($xml->documentElement)) {
+                $error = libxml_get_errors();
+                throw new Exception($error[0]->message);
             }
         }
 

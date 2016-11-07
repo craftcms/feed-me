@@ -1,23 +1,16 @@
 {% for col in field.settings.columns %}
-    {# Support for when this field is attached to a parent element (asset, user, entry) #}
-    {% if parentElementField is defined %}
-        {% set fieldHandle = parentElementField.handle ~ '-fields-' ~ field.handle ~ '--col' ~ loop.index %}
-    {% else %}
-        {% set fieldHandle = field.handle ~ '--col' ~ loop.index %}
-    {% endif %}
+    {% set table_fieldHandle = fieldHandle ~ '--col' ~ loop.index %}
+    {% set table_labelName = labelName ~ ' - ' ~ col.heading %}
+    {% set table_labelHandle = labelHandle ~ '[' ~ col.handle ~ ']' %}
 
-    {% if handlePrefix is defined %}
-        {% set fieldHandle = handlePrefix ~ fieldHandle %}
-    {% endif %}
-
-    <tr class="{{ (parentElementField is defined) ? 'element-sub-field' }}">
+    <tr>
         <td class="col-field">
             <div class="field">
                 <div class="heading">
-                    <label>{{ field.name }} - {{ col.heading }}</label>
+                    <label>{{ table_labelName }}</label>
 
                     <div class="instructions">
-                        <code>{{ field.handle }}[{{ col.handle }}]</code>
+                        <code>{{ table_labelHandle }}</code>
                     </div>
                 </div>
             </div>
@@ -26,9 +19,9 @@
         <td class="col-map">
             {% namespace 'fieldMapping' %}
                 {{ forms.selectField({
-                    id: fieldHandle,
-                    name: fieldHandle,
-                    value: feed.fieldMapping[fieldHandle] ?? '',
+                    id: table_fieldHandle,
+                    name: table_fieldHandle,
+                    value: feed.fieldMapping[table_fieldHandle] ?? '',
                     options: feedData,
                 }) }}
             {% endnamespace %}

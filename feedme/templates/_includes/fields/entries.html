@@ -1,22 +1,11 @@
-{# Support for when this field is attached to a parent element (asset, user, entry) #}
-{% if parentElementField is defined %}
-    {% set fieldHandle = parentElementField.handle ~ '-fields-' ~ field.handle %}
-{% else %}
-    {% set fieldHandle = field.handle %}
-{% endif %}
-
-{% if handlePrefix is defined %}
-    {% set fieldHandle = handlePrefix ~ fieldHandle %}
-{% endif %}
-
-<tr class="{{ (parentElementField is defined) ? 'element-sub-field' }}">
+<tr class="{{ (isSubElementField is defined) ? 'element-sub-field' }}">
     <td class="col-field">
         <div class="field">
             <div class="heading">
-                <label>{{ field.name }}</label>
+                <label>{{ labelName }}</label>
 
                 <div class="instructions">
-                    <code>{{ field.handle }}</code>
+                    <code>{{ labelHandle }}</code>
                 </div>
             </div>
         </div>
@@ -63,22 +52,6 @@
     </td>
 </tr>
 
-{# Include all fields that can be mapped inside this element #}
-{# Without some further refactoring, we can only support a subset of fields at the moment #}
-{% set supportedFields = [
-    'Checkboxes',
-    'Color',
-    'Date',
-    'Dropdown',
-    'Lightswitch',
-    'Multiselect',
-    'Number',
-    'PlainText',
-    'PositionSelect',
-    'Radio',
-    'RichText',
-] %}
-
 {% if parentElementField is not defined %}
     {% set elementFields = craft.fields.getLayoutByType('Entry').getFields() %}
 
@@ -86,15 +59,18 @@
         {% set innerField = fieldtype.getField() %}
 
         {# Lets not allow a few fields at this time - itself for recursive reasons, and Matrix because :O #}
-        {% if innerField.type in supportedFields and elementType != 'Entry' %}
-            {% set fieldMapping = craft.feedMe.getFieldMapping(innerField.type) %}
-            {% set variables = { field: innerField, feed: feed, feedData: feedData, parentElementField: field } %}
-
-            {% if fieldMapping %}
-                {% include fieldMapping ignore missing with variables %}
-            {% else %}
-                {% include 'feedme/_includes/fields/default' ignore missing with variables %}
-            {% endif %}
+        {% if innerField.type in supportedSubElementFields and elementType != 'Entry' %}
+            {% set variables = {
+                field: innerField,
+                feed: feed,
+                feedData: feedData,
+                handlePrefix: field.handle ~ '-fields-' ~ innerField.handle,
+                labelName: innerField.name,
+                labelHandle: innerField.handle,
+                isSubElementField: true,
+            } %}
+            
+            {% include 'feedme/_includes/field' with variables %}
         {% endif %}
     {% endfor %}
 {% endif %}

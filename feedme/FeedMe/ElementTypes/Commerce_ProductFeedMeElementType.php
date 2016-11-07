@@ -56,7 +56,7 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
     public function matchExistingElement(&$criteria, $data, $settings)
     {
         foreach ($settings['fieldUnique'] as $handle => $value) {
-            if (intval($value) == 1 && ($data != ' ')) {
+            if (intval($value) == 1 && ($data != '__')) {
                 if (strstr($handle, 'variants--')) {
                     $attribute = str_replace('variants--', '', $handle);
 
@@ -106,7 +106,7 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
         }
 
         foreach ($data as $handle => $value) {
-            if ($value == '' || $value == ' ') {
+            if ($value == '' || $value == '__') {
                 continue;
             }
 
@@ -178,7 +178,7 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
         $variants = [];
         $count = 1;
 
-        if (!isset($data['variants']) || $data['variants'] == ' ') {
+        if (!isset($data['variants']) || $data['variants'] == '__') {
             return false;
         } else {
             $variantData = $data['variants'];
@@ -254,7 +254,7 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
 
     private function _hasValue($object, $attribute) {
         if (isset($object[$attribute])) {
-            if ($object[$attribute] != ' ') {
+            if ($object[$attribute] != '__') {
                 return true;
             }
         }
