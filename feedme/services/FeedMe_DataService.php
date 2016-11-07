@@ -180,7 +180,11 @@ class FeedMe_DataService extends BaseApplicationComponent
                     $return[$sep . $key] = $value[0];
                 } else {
                     foreach ($value as $v) {
-                        $return = array_merge($return, $this->_getFormattedMapping($v, $sep . $key . '/...'));
+                        $nested = $this->_getFormattedMapping($v, $sep . $key . '/...');
+
+                        if (is_array($nested)) {
+                            $return = array_merge($return, $nested);
+                        }
                     }
                 }
             } else {
