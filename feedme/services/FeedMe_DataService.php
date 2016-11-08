@@ -16,6 +16,10 @@ class FeedMe_DataService extends BaseApplicationComponent
 
         $data = $service->getFeed($url, $element, $settings);
 
+        if (!isset($data[0])) {
+            $data = array($data);
+        }
+
         if (empty($data[0])) {
             return null;
         } else {
