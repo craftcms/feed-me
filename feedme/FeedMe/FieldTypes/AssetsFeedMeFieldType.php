@@ -139,12 +139,20 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
             $saveLocation = $tempPath . $filename;
 
             // Download the file - ensuring we're not loading into memory for efficiency
-            $opts = array(
+            $defaultOptions = array(
                 CURLOPT_FILE => fopen($saveLocation, 'w'),
                 CURLOPT_FOLLOWLOCATION => true,
                 CURLOPT_URL => $url,
                 CURLOPT_FAILONERROR => true,
             );
+
+            $configOptions = craft()->config->get('curlOptions', 'feedMe');
+
+            if ($configOptions) {
+                $opts = $configOptions + $defaultOptions;
+            } else {
+                $opts = $defaultOptions;
+            }
 
             $ch = curl_init();
             curl_setopt_array($ch, $opts);
