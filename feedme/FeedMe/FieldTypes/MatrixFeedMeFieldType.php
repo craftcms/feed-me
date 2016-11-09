@@ -45,8 +45,14 @@ class MatrixFeedMeFieldType extends BaseFeedMeFieldType
                 // When we import a non-repeatable node into a Matrix, we must ensure its treated consistently
                 // Because Matrix/MatrixItem/Node is not the same as Matrix/MatrixItem/.../Node - it should be the latter
                 // This is why XML sucks - JSON just wouldn't have this issue...
-                if (!strstr($options['feedHandle'][0], '/.../')) {
-                    $blockFieldData = array($blockFieldData);
+                if (isset($options['feedHandle'])) {
+                    if (!strstr($options['feedHandle'][0], '/.../')) {
+                        $blockFieldData = array($blockFieldData);
+                    }
+                }
+
+                if ($blockFieldData == '__') {
+                    continue;
                 }
 
                 foreach ($blockFieldData as $blockOrder => $innerData) {

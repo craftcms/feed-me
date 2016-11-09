@@ -257,7 +257,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             $data = $this->_getValueFromKeyPath($feedData, $feedHandle);
 
             if ($data == '__') {
-                continue;
+                //continue;
             }
 
             // Handle sub-fields and assigning to correct indexes
