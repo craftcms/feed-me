@@ -28,7 +28,7 @@ class FeedMeTask extends BaseTask
             $this->_feed = $settings->feed;
 
             // Get the data for the mapping screen, based on the URL provided
-            $this->_feedData = craft()->feedMe_data->getFeed($this->_feed->feedType, $this->_feed->feedUrl, $this->_feed->primaryElement), $this->_feed);
+            $this->_feedData = craft()->feedMe_data->getFeed($this->_feed->feedType, $this->_feed->feedUrl, $this->_feed->primaryElement, $this->_feed);
 
             // There are also a few once-off things we can do for this feed to assist with processing.
             $this->_feedSettings = craft()->feedMe_process->setupForProcess($this->_feed, $this->_feedData);
