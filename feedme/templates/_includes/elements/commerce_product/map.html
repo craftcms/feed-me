@@ -55,7 +55,7 @@
         id: 'fieldDefaults-taxCategoryId',
         name: 'fieldDefaults[taxCategoryId]',
         value: feed.fieldDefaults.taxCategoryId ?? '1',
-        options: craft.commerce.getTaxCategories(),
+        options: craft.commerce.getTaxCategories(true),
     })
 }, {
     label: 'Free Shipping',
