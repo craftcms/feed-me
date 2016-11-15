@@ -213,6 +213,35 @@ class FeedMe_FeedsController extends BaseController
             $feed->fieldUnique = craft()->request->getPost('fieldUnique');
         }
 
+        // Check conditionally on Element Group fields - depending on the Element Type selected
+        if (isset($feed->elementGroup[$feed->elementType])) {
+            $elementGroup = $feed->elementGroup[$feed->elementType];
+
+            if ($feed->elementType == 'Category') {
+                if (empty($elementGroup)) {
+                    $feed->addError('elementGroup', Craft::t('Category Group is required'));
+                }
+            }
+
+            if ($feed->elementType == 'Entry') {
+                if (empty($elementGroup['section']) || empty($elementGroup['entryType'])) {
+                    $feed->addError('elementGroup', Craft::t('Entry Section and Type are required'));
+                }
+            }
+
+            if ($feed->elementType == 'Commerce_Product') {
+                if (empty($elementGroup)) {
+                    $feed->addError('elementGroup', Craft::t('Commerce Product Type is required'));
+                }
+            }
+
+            if ($feed->elementType == 'User') {
+                if (empty($elementGroup)) {
+                    $feed->addError('elementGroup', Craft::t('User Group Type is required'));
+                }
+            }
+        }
+
         return $feed;
     }
 
