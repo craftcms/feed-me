@@ -39,10 +39,10 @@ class FeedMe_License
             'requestTime' => DateTimeHelper::currentTimeStamp(),
             'requestPort' => craft()->request->getPort(),
 
-            'craftBuild'   => CRAFT_BUILD,
-            'craftVersion' => CRAFT_VERSION,
+            'craftBuild'   => craft()->getBuild(),
+            'craftVersion' => craft()->getVersion(),
             'craftEdition' => craft()->getEdition(),
-            'craftTrack'   => CRAFT_TRACK,
+            'craftTrack'   => craft()->getTrack(),
             'userEmail'    => $userEmail,
 
             'requestProduct' => $this->requestProduct,
