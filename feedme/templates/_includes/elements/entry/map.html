@@ -9,7 +9,7 @@
 {% set users = [{ label: 'Don\'t import', value: '' }] %}
 
 {% if CraftEdition >= CraftClient %}
-    {% for user in craft.users.can('createEntries:' ~ entryType) %}
+    {% for user in craft.users.can('createEntries:' ~ entryTypeId) %}
         {% set users = users | merge([{ label: user, value: user.id }]) %}
     {% endfor %}
 {% endif %}
