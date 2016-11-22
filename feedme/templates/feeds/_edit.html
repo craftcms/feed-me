@@ -21,7 +21,7 @@
     <form method="post" accept-charset="UTF-8" data-saveshortcut="1">
         <input type="hidden" name="action" value="">
         {{ getCsrfInput() }}
-        
+
         {% if feed.id %}<input type="hidden" name="feedId" value="{{ feed.id }}">{% endif %}
 
         {{ forms.textField({
@@ -145,6 +145,14 @@
             instructions: 'Perform a full backup each time this feed is processed.' | t,
             name: 'backup',
             on: (feed.id) ? feed.backup : true,
+        }) }}
+
+        {{ forms.lightswitchField({
+            first: true,
+            label: 'Status',
+            instructions: 'Set status of imported entries.' | t,
+            name: 'status',
+            on: (feed.id) ? feed.status : true,
         }) }}
 
         <hr>

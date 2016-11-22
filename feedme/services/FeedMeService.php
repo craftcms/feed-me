@@ -179,6 +179,9 @@ class FeedMeService extends BaseApplicationComponent
             //print_r($fieldData);
             //echo '</pre>';
 
+            // Set enabled based on feed settings
+            $entry->enabled = (bool)$feed->status;
+
             try {
                 // Save the entry!
                 if (!craft()->entries->saveEntry($entry)) {
