@@ -244,8 +244,19 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
                 $variantCollection = array($variantCollection);
             }
 
-            foreach ($variantCollection as $key => $variant) {
-                $variants[$key][$attribute] = $variant;
+            // A special case for Table fields - because they're annoying...
+            $field = craft()->fields->getFieldByHandle($attribute);
+
+            if ($field && $field->type == 'Table') {
+                foreach ($variantCollection as $column => $rows) {
+                    foreach ($rows as $row => $data) {
+                        $variants[$row][$attribute][$column] = $data;
+                    }
+                }
+            } else {
+                foreach ($variantCollection as $key => $variant) {
+                    $variants[$key][$attribute] = $variant;
+                }
             }
         }
 
