@@ -108,8 +108,8 @@ class FeedMe_DataService extends BaseApplicationComponent
 
             return false;
         } else {
-            if ($httpCode != 200) {
-                FeedMePlugin::log($url . ' responded with ' . $httpCode, LogLevel::Error, true);
+            if ($httpCode != 200 && $httpCode != 226) {
+                FeedMePlugin::log($url . ' responded with code ' . $httpCode, LogLevel::Error, true);
 
                 return false;
             }
