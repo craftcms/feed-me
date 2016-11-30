@@ -20,6 +20,10 @@ class FeedMe_ProcessService extends BaseApplicationComponent
 
     public function setupForProcess($feed, $feedData)
     {
+        if (!$feedData) {
+            throw new Exception(Craft::t('No data to import.'));
+        }
+
         $return = $feed->attributes;
 
         // Set our start time to track feed processing time
