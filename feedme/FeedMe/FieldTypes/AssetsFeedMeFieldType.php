@@ -138,6 +138,17 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
             $filename = basename($url);
             $saveLocation = $tempPath . $filename;
 
+            // Check if this URL has has a file extension - grab it if not...
+            $extension = IOHelper::getExtension($saveLocation);
+
+            if (!$extension) {
+                $image = getimagesize($url);
+                $extension = FileHelper::getExtensionByMimeType($image['mime']);
+
+                $saveLocation = $saveLocation . '.' . $extension;
+                $filename = $filename . '.' . $extension;
+            }
+
             // Download the file - ensuring we're not loading into memory for efficiency
             $defaultOptions = array(
                 CURLOPT_FILE => fopen($saveLocation, 'w'),
