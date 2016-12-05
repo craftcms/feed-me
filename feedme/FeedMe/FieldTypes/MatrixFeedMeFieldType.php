@@ -131,14 +131,18 @@ class MatrixFeedMeFieldType extends BaseFeedMeFieldType
                 ksort($preppedBlockFieldData);
 
                 foreach ($preppedBlockFieldData as $blockHandle => $preppedFieldData) {
-                    $fieldData['new'.($count+1)] = array(
-                        'type' => $blockHandle,
-                        'order' => ($count+1),
-                        'enabled' => true,
-                        'fields' => $preppedFieldData,
-                    );
 
-                    $count++;
+                    // But check do we even have any field data to add?
+                    if ($this->_checkForFieldData($preppedFieldData)) {
+                        $fieldData['new'.($count+1)] = array(
+                            'type' => $blockHandle,
+                            'order' => ($count+1),
+                            'enabled' => true,
+                            'fields' => $preppedFieldData,
+                        );
+
+                        $count++;
+                    }
                 }
             }
         }
@@ -194,6 +198,22 @@ class MatrixFeedMeFieldType extends BaseFeedMeFieldType
             // data from the feed entirely, so the element doesn't get updated (because it doesn't need to),
             unset($data[$handle]);
         }
+    }
+
+
+    private function _checkForFieldData($fieldData)
+    {
+        // Check if we have any field data. Important to check for field options for elements. These
+        // will be included - wrongly showing we have data to import.
+        $validData = 0;
+
+        foreach ($fieldData as $key => $data) {
+            if ($data != '__') {
+                $validData++;
+            }
+        }
+
+        return (bool)$validData;
     }
     
 }
