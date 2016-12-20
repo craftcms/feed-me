@@ -87,7 +87,7 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
         return craft()->entries->deleteEntry($elements);
     }
 
-    public function prepForElementModel(BaseElementModel $element, array &$data, $settings)
+    public function prepForElementModel(BaseElementModel $element, array &$data, $settings, $options)
     {
         $checkAncestors = !isset($data['parentId']);
 

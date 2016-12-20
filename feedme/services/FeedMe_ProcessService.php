@@ -140,8 +140,8 @@ class FeedMe_ProcessService extends BaseApplicationComponent
 
         // Prepare Element Type model - this sets all Element Type attributes (Title, slug, etc).
         // Run once to setup defaults, second time for actual data from feed
-        $element = $this->_service->prepForElementModel($element, $feed['fieldDefaults'], $feed);
-        $element = $this->_service->prepForElementModel($element, $fieldData, $feed);
+        $element = $this->_service->prepForElementModel($element, $feed['fieldDefaults'], $feed, $additionalOptions);
+        $element = $this->_service->prepForElementModel($element, $fieldData, $feed, $additionalOptions);
 
         // Allow field types to modify content once an element has been properly setup and identified
         foreach ($data as $handle => $preppedData) {

@@ -72,7 +72,7 @@ class CategoryFeedMeElementType extends BaseFeedMeElementType
         return craft()->categories->deleteCategory($elements);
     }
     
-    public function prepForElementModel(BaseElementModel $element, array &$data, $settings)
+    public function prepForElementModel(BaseElementModel $element, array &$data, $settings, $options)
     {
         if (isset($settings['locale'])) {
             $element->localeEnabled = true;
