@@ -358,6 +358,12 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         $cur = $value;
     }
 
+    private function _multiExplode($delimiters, $string) {
+        $ready = str_replace($delimiters, '/', $string);
+        $launch = explode('/', $ready);
+        return $launch;
+    }
+
     private function _getAdditionalFieldOptions($fields, $feedData)
     {
         $array = array();
@@ -394,9 +400,9 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             if (strstr($handle, '-fields-')) {
                 $data = $this->_getValueFromKeyPath($feedData, $feedHandle);
 
-                $subFields = explode('-fields-', $handle);
+                $fieldHandles = $this->_multiExplode(array('--', '-fields-', '-'), $handle);
 
-                $this->_arraySetFromPath($array['fields'], $subFields, $data);
+                $this->_arraySetFromPath($array['fields'], $fieldHandles, $data);
             }
         }
 

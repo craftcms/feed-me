@@ -55,6 +55,10 @@ class MatrixFeedMeFieldType extends BaseFeedMeFieldType
                     continue;
                 }
 
+                if (!is_array($blockFieldData)) {
+                    $blockFieldData = array($blockFieldData);
+                }
+
                 foreach ($blockFieldData as $blockOrder => $innerData) {
                     $sortedData[$blockOrder][$blockHandle][$blockFieldHandle] = $innerData;
                 }
@@ -88,8 +92,13 @@ class MatrixFeedMeFieldType extends BaseFeedMeFieldType
                     }
 
                     // Get any options for the field - stored a little different
+                    $fieldOptions = array();
                     if (isset($options['options'][$blockHandle][$blockFieldHandle])) {
                         $fieldOptions['options'] = $options['options'][$blockHandle][$blockFieldHandle];
+                    }
+
+                    if (isset($options['fields'][$blockHandle][$blockFieldHandle])) {
+                        $fieldOptions['fields'] = $options['fields'][$blockHandle][$blockFieldHandle];
                     }
 
                     $fieldOptions['feedHandle'] = $options['feedHandle'];

@@ -60,11 +60,13 @@
 
         {# Lets not allow a few fields at this time - itself for recursive reasons, and Matrix because :O #}
         {% if innerField.type in supportedSubElementFields and elementType != 'Entry' %}
+            {% set handleFieldPrefix = (handlePrefix is defined) ? handlePrefix : '' %}
+            
             {% set variables = {
                 field: innerField,
                 feed: feed,
                 feedData: feedData,
-                handlePrefix: field.handle ~ '-fields-' ~ innerField.handle,
+                handlePrefix: handleFieldPrefix ~ field.handle ~ '-fields-',
                 labelName: innerField.name,
                 labelHandle: innerField.handle,
                 isSubElementField: true,
