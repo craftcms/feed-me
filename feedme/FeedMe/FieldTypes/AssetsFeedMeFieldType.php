@@ -59,7 +59,7 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
 
         // Check to see if we should be uploading these assets
         if (isset($options['options']['upload'])) {
-            $ids = $this->_fetchRemoteImage($data, $field, $options);
+            $ids = $this->_fetchRemoteImage($assets, $field, $options);
 
             $fieldData = array_merge($fieldData, $ids);
         }
@@ -180,35 +180,43 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
 
             // We've successfully downloaded the image - now insert it into Craft
             $conflictResolution = $options['options']['conflict'];
-            $response = craft()->assets->insertFileByLocalPath($saveLocation, $filename, $folderId, $conflictResolution);
 
-            if ($response->isSuccess()) {
-                $fileId = $response->getDataItem('fileId');
+            // Look for an existing file
+            $criteria = craft()->elements->getCriteria(ElementType::Asset);
+            $criteria->sourceId = null;
+            $criteria->limit = null;
+            $criteria->filename = $filename;
+            $targetFile = $criteria->find();
 
-                if ($fileId) {
-                    $fileIds[] = $fileId;
-                } else {
-                    // Here, we've succeeded in downloading and inserting this new asset into Craft - but no ID was returned.
-                    // Usually this is when its preferred a new file not replace an existing one. We want to return the existing one.
-                    $criteria = craft()->elements->getCriteria(ElementType::Asset);
-                    $criteria->sourceId = null;
-                    $criteria->limit = null;
-                    $criteria->filename = $filename;
-                    $file = $criteria->first();
-
-                    if ($file) {
-                        $fileIds[] = $file->id;
-                    }
-                }
+            // It seems that even when 'cancel' is set for a conflict resolution, a new element is created
+            // that seems unnecessary, and could easily cause element bloat...
+            if ($conflictResolution == AssetConflictResolution::Cancel && isset($targetFile[0])) {
+                $fileIds[] = $targetFile[0]->id;
             } else {
-                //throw new Exception($response->errorMessage);
-                FeedMePlugin::log('Asset error: ' . $url . ' - ' . $response->errorMessage, LogLevel::Error, true);
-                continue;
+                // Wrap in a try/catch to ensure any errors with saving an asset are logged, but don't break the import process
+                try {
+                    $response = craft()->assets->insertFileByLocalPath($saveLocation, $filename, $folderId, $conflictResolution);
+
+                    // Delete temporary file
+                    IOHelper::deleteFile($saveLocation, true);
+
+                    if ($response->isSuccess()) {
+                        $fileId = $response->getDataItem('fileId');
+
+                        if ($fileId) {
+                            $fileIds[] = $fileId;
+                        }
+                    } else {
+                        FeedMePlugin::log('Asset error: ' . $url . ' - ' . $response->errorMessage, LogLevel::Error, true);
+                        continue;
+                    }
+                } catch (Exception $e) {
+                    FeedMePlugin::log('Asset error: ' . $url . ' - ' . $e->getMessage(), LogLevel::Error, true);
+                }
             }
         }
 
         return $fileIds;
     }
 
-    
 }
