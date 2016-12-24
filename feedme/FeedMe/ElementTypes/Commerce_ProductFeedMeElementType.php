@@ -138,7 +138,7 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
             $data[$handle] = $element->$handle;
         }
 
-        $this->_populateProductVariantModels($element, $data, $options);
+        $this->_populateProductVariantModels($element, $data, $settings, $options);
 
         return $element;
     }
@@ -173,7 +173,7 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
         
     }
 
-    private function _populateProductVariantModels(Commerce_ProductModel &$product, $data, $options)
+    private function _populateProductVariantModels(Commerce_ProductModel &$product, $data, $settings, $options)
     {
         $variants = [];
         $count = 1;
@@ -194,6 +194,15 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
             }
 
             $variantModel->setProduct($product);
+
+            // Check for our default data (if any provided, and if not already set in 'real' data)
+            foreach ($settings['fieldDefaults'] as $defaultsHandle => $defaultsValue) {
+                if ($defaultsValue) {
+                    $variantPreppedHandle = str_replace('variants--', '', $defaultsHandle);
+
+                    $variant[$variantPreppedHandle] = $defaultsValue;
+                }
+            }
 
             $variantModel->enabled = $this->_hasValue($variant, 'enabled') ? $variant['enabled'] : 1;
             $variantModel->isDefault = $this->_hasValue($variant, 'isDefault') ? $variant['isDefault'] : 0;
