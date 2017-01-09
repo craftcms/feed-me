@@ -31,10 +31,17 @@ class FeedMe_HelpController extends BaseController
             $plugin = craft()->plugins->getPlugin('feedMe');
             $feed = craft()->feedMe_feeds->getFeedById($getHelpModel->feedIssue);
 
+            // Cater for pre-Craft 2.6.2951
+            if (version_compare(craft()->getVersion(), '2.6.2951', '<')) {
+                $version = craft()->getVersion() . '.' . craft()->getBuild();
+            } else {
+                $version = craft()->getVersion();
+            }
+
             // Add some extra info about this install
             $message = $getHelpModel->message . "\n\n" .
                 "------------------------------\n\n" .
-                'Craft '.craft()->getEditionName().' '.craft()->getVersion().'.'.craft()->getBuild() . "\n\n" .
+                'Craft '.craft()->getEditionName().' '.$version . "\n\n" .
                 'Feed Me '.$plugin->getVersion();
 
             try {
