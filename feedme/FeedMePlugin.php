@@ -1,6 +1,8 @@
 <?php
 namespace Craft;
 
+require 'vendor/autoload.php';
+
 class FeedMePlugin extends BasePlugin
 {
     // =========================================================================

@@ -87,15 +87,35 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
 
     private function _populateElementFields($fieldData, $elementData)
     {
+
+
+        //if ($field->handle == 'assetsMultiple') {
+
+
+            
+
+            echo '<pre>';
+            print_r($elementData);
+            echo '</pre>';
+
+        //}
+
         foreach ($fieldData as $key => $id) {
             $asset = craft()->assets->getFileById($id);
 
             // Prep each inner field
             $preppedElementData = array();
             foreach ($elementData as $elementHandle => $elementContent) {
-                if ($elementContent != '__') {
-                    $preppedElementData[$elementHandle] = craft()->feedMe_fields->prepForFieldType(null, $elementContent, $elementHandle, null);
-                }
+
+                //if (!is_array($elementContent)) {
+                   // $elementContent = array($elementContent);
+                //}
+
+                //foreach ($elementContent as $elementSingleContent) {
+                    if ($elementContent != '__') {
+                        $preppedElementData[$elementHandle] = craft()->feedMe_fields->prepForFieldType(null, $elementContent, $elementHandle, null);
+                    }
+                //}
             }
 
             $asset->setContentFromPost($preppedElementData);

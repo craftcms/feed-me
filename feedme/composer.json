@@ -1,0 +1,5 @@
+{
+    "require": {
+        "cakephp/utility": "3.*"
+    }
+}

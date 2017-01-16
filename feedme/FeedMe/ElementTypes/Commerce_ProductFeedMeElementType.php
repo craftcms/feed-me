@@ -173,7 +173,7 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
         
     }
 
-    private function _populateProductVariantModels(Commerce_ProductModel &$product, $data, $settings, $options)
+    private function _populateProductVariantModels(Commerce_ProductModel $product, $data, $settings, $options)
     {
         $variants = [];
         $count = 1;
@@ -187,9 +187,9 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
         $variantData = $this->_prepProductData($variantData);
 
         foreach ($variantData as $key => $variant) {
-            if ($this->_getVariantBySku($variant['sku'])) {
-                $variantModel = $this->_getVariantBySku($variant['sku']);
-            } else {
+            $variantModel = $this->_getVariantBySku($variant['sku']);
+
+            if (!$variantModel) {
                 $variantModel = new Commerce_VariantModel();
             }
 

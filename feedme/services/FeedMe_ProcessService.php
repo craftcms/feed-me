@@ -88,6 +88,10 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         // From the raw data in our feed, process it ready for mapping (more to do below)
         $data = $this->_data[$step];
 
+        echo '<pre>';
+            print_r($data);
+            echo '</pre>';
+
         // Grab a few more things form our feed - essentially just amalgamating additional options or settings
         // Includes additional options for fields (checkboxes), and element fields (if any)
         // We also store the original feed-node handle for the field mapping, which is handy for conditionals
