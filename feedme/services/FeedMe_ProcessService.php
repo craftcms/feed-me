@@ -245,7 +245,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         // First, loop through all the field defaults. Important to do first, as if we set a default
         // but aren't actually mapping it to anything, we'll never enter the below loop
         foreach ($fieldDefaults as $fieldHandle => $feedHandle) {
-            if (!empty($feedHandle)) {
+            if (isset($feedHandle) && $feedHandle !== '') {
                 $parsedData[$fieldHandle]['data'] = $feedHandle;
             }
         }
