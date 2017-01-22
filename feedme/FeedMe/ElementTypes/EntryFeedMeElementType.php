@@ -144,18 +144,36 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
         return $element;
     }
 
-    public function save(BaseElementModel &$element, $settings)
+    public function save(BaseElementModel &$element, array $data, $settings)
     {
-        return craft()->entries->saveEntry($element);
+        // Are we targeting a specific locale here? If so, we create an essentially blank element
+        // for the primary locale, and instead create a locale for the targeted locale
+        if (isset($settings['locale'])) {
+            // Save the default locale element empty
+            if (craft()->entries->saveEntry($element)) {
+                // Now get the successfully saved (empty) element, and set content on that instead
+                $elementLocale = craft()->entries->getEntryById($element->id, $settings['locale']);
+                $elementLocale->setContentFromPost($data);
+
+                // Save the locale entry
+                return craft()->entries->saveEntry($elementLocale);
+            } else {
+                if ($element->getErrors()) {
+                    throw new Exception(json_encode($element->getErrors()));
+                } else {
+                    throw new Exception(Craft::t('Unknown Element error occurred.'));
+                }
+            }
+
+            return false;
+        } else {
+            return craft()->entries->saveEntry($element);
+        }
     }
 
     public function afterSave(BaseElementModel $element, array $data, $settings)
     {
-        /*if (isset($settings['locale'])) {
-            $entry = craft()->entries->getEntryById($element->id, $settings['locale']);
 
-            return craft()->entries->saveEntry($entryEs);
-        }*/
     }
 
 

@@ -129,11 +129,13 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             craft()->feedMe_fields->postForFieldType($element, $fieldData, $handle, $handle);
         }
 
-        // Set the Element Type's fields data
-        $element->setContentFromPost($fieldData);
+        // Set the Element Type's fields data - but only if we're not targeting a locale
+        if (!$feed['locale']) {
+            $element->setContentFromPost($fieldData);
+        }
         
         // Save the element
-        if ($this->_service->save($element, $feed)) {
+        if ($this->_service->save($element, $fieldData, $feed)) {
             // Give elements a chance to perform actions after save
             $this->_service->afterSave($element, $fieldData, $feed);
 

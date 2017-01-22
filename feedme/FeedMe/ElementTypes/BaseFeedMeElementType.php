@@ -31,7 +31,7 @@ abstract class BaseFeedMeElementType
 
     abstract public function prepForElementModel(BaseElementModel $element, array &$data, $settings);
 
-    abstract public function save(BaseElementModel &$element, $settings);
+    abstract public function save(BaseElementModel &$element, array $data, $settings);
 
     abstract public function afterSave(BaseElementModel $element, array $data, $settings);
     

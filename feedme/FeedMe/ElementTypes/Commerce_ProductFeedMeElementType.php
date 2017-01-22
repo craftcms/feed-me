@@ -141,7 +141,7 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
         return $element;
     }
 
-    public function save(BaseElementModel &$element, $settings)
+    public function save(BaseElementModel &$element, array $data, $settings)
     {
         $result = craft()->commerce_products->saveProduct($element);
 
@@ -157,7 +157,7 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
         return $result;
     }
 
-    public function afterSave(BaseElementModel $element, array $fields, $settings)
+    public function afterSave(BaseElementModel $element, array $data, $settings)
     {
 
     }

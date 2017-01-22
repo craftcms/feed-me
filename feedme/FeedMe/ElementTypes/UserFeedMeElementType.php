@@ -123,7 +123,7 @@ class UserFeedMeElementType extends BaseFeedMeElementType
         return $element;
     }
 
-    public function save(BaseElementModel &$element, $settings)
+    public function save(BaseElementModel &$element, array $data, $settings)
     {
         if (craft()->users->saveUser($element)) {
             craft()->userGroups->assignUserToGroups($element->id, $settings['elementGroup']['User']);
