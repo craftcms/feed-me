@@ -1,6 +1,8 @@
 <?php
 namespace Craft;
 
+use Cake\Utility\Hash as Hash;
+
 class DefaultFeedMeFieldType extends BaseFeedMeFieldType
 {
     // Templates
@@ -16,8 +18,10 @@ class DefaultFeedMeFieldType extends BaseFeedMeFieldType
     // Public Methods
     // =========================================================================
 
-    public function prepFieldData($element, $field, $data, $handle, $options)
+    public function prepFieldData($element, $field, $fieldData, $handle, $options)
     {
+        $data = Hash::get($fieldData, 'data');
+
         return $data;
     }
     

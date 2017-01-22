@@ -1,6 +1,8 @@
 <?php
 namespace Craft;
 
+use Cake\Utility\Hash as Hash;
+
 class AssetsFeedMeFieldType extends BaseFeedMeFieldType
 {
     // Templates
@@ -16,12 +18,18 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
     // Public Methods
     // =========================================================================
 
-    public function prepFieldData($element, $field, $data, $handle, $options)
+    public function prepFieldData($element, $field, $fieldData, $handle, $options)
     {
-        $fieldData = array();
+        $preppedData = array();
+
+        $data = Hash::get($fieldData, 'data');
 
         if (empty($data)) {
             return;
+        }
+
+        if (!is_array($data)) {
+            $data = array($data);
         }
 
         $settings = $field->getFieldType()->getSettings();
@@ -37,13 +45,7 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
         }
 
         // Find existing asset
-        $assets = ArrayHelper::stringToArray($data);
-
-        foreach ($assets as $asset) {
-            if ($asset == '__') {
-                continue;
-            }
-            
+        foreach ($data as $asset) {
             // Check config settings if we need to clean url
             if (craft()->config->get('cleanAssetUrls', 'feedMe')) {
                 $asset = UrlHelper::stripQueryString($asset);
@@ -54,30 +56,30 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
             $criteria->limit = $settings->limit;
             $criteria->filename = $asset;
 
-            $fieldData = array_merge($fieldData, $criteria->ids());
+            $preppedData = array_merge($preppedData, $criteria->ids());
         }
 
         // Check to see if we should be uploading these assets
-        if (isset($options['options']['upload'])) {
-            $ids = $this->_fetchRemoteImage($assets, $field, $options);
+        if (isset($fieldData['options']['upload'])) {
+            $ids = $this->_fetchRemoteImage($data, $field, $fieldData['options']);
 
-            $fieldData = array_merge($fieldData, $ids);
+            $preppedData = array_merge($preppedData, $ids);
         }
 
         // Check for field limit - only return the specified amount
-        if ($fieldData) {
+        if ($preppedData) {
             if ($field->settings['limit']) {
-                $fieldData = array_chunk($fieldData, $field->settings['limit']);
-                $fieldData = $fieldData[0];
+                $preppedData = array_chunk($preppedData, $field->settings['limit']);
+                $preppedData = $preppedData[0];
             }
         }
 
         // Check if we've got any data for the fields in this element
-        if (isset($options['fields'])) {
-            $this->_populateElementFields($fieldData, $options['fields']);
+        if (isset($fieldData['fields'])) {
+            $this->_populateElementFields($preppedData, $fieldData['fields']);
         }
 
-        return $fieldData;
+        return $preppedData;
     }
 
 
@@ -85,43 +87,29 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
     // Private Methods
     // =========================================================================
 
-    private function _populateElementFields($fieldData, $elementData)
+    private function _populateElementFields($assetData, $fieldData)
     {
-
-
-        //if ($field->handle == 'assetsMultiple') {
-
-
-            
-
-            echo '<pre>';
-            print_r($elementData);
-            echo '</pre>';
-
-        //}
-
-        foreach ($fieldData as $key => $id) {
-            $asset = craft()->assets->getFileById($id);
+        foreach ($assetData as $i => $assetId) {
+            $asset = craft()->assets->getFileById($assetId);
 
             // Prep each inner field
-            $preppedElementData = array();
-            foreach ($elementData as $elementHandle => $elementContent) {
+            $preppedData = array();
+            foreach ($fieldData as $fieldHandle => $fieldContent) {
+                $data = craft()->feedMe_fields->prepForFieldType(null, $fieldContent, $fieldHandle, null);
 
-                //if (!is_array($elementContent)) {
-                   // $elementContent = array($elementContent);
-                //}
+                if (is_array($data)) {
+                    $data = Hash::get($data, $i);
+                }
 
-                //foreach ($elementContent as $elementSingleContent) {
-                    if ($elementContent != '__') {
-                        $preppedElementData[$elementHandle] = craft()->feedMe_fields->prepForFieldType(null, $elementContent, $elementHandle, null);
-                    }
-                //}
+                $preppedData[$fieldHandle] = $data;
             }
 
-            $asset->setContentFromPost($preppedElementData);
+            $asset->setContentFromPost($preppedData);
 
             if (!craft()->assets->storeFile($asset)) {
-                throw new Exception(json_encode($asset->getErrors()));
+                FeedMePlugin::log('Asset error: ' . json_encode($asset->getErrors()), LogLevel::Error, true);
+            } else {
+                FeedMePlugin::log('Updated Asset (ID ' . $assetId . ') inner-element with content: ' . json_encode($preppedData), LogLevel::Info, true);
             }
         }
     }
@@ -199,7 +187,7 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
             $folderId = $field->getFieldType()->resolveSourcePath();
 
             // We've successfully downloaded the image - now insert it into Craft
-            $conflictResolution = $options['options']['conflict'];
+            $conflictResolution = $options['conflict'];
 
             // Look for an existing file
             $criteria = craft()->elements->getCriteria(ElementType::Asset);

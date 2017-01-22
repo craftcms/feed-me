@@ -1,6 +1,8 @@
 <?php
 namespace Craft;
 
+use Cake\Utility\Hash as Hash;
+
 class FeedMe_FieldsService extends BaseApplicationComponent
 {
     // Properties
@@ -19,15 +21,9 @@ class FeedMe_FieldsService extends BaseApplicationComponent
         $this->_fields = craft()->fields->getAllFields('handle');
     }
 
-    public function prepForFieldType($element, $data, $handle, $options)
+    public function prepForFieldType($element, $data, $handle, $options = array())
     {
         $field = null;
-
-        if (!is_array($data)) {
-            // Performance issues here
-            //$data = StringHelper::convertToUTF8($data);
-            //$data = trim($data);
-        }
 
         if (isset($options['field'])) {
             $field = $options['field'];
@@ -44,7 +40,7 @@ class FeedMe_FieldsService extends BaseApplicationComponent
             return $service->prepFieldData($element, $field, $data, $handle, $options);
         }
 
-        return $data;
+        return Hash::get($data, 'data');
     }
 
     public function postForFieldType($element, &$data, $handle)

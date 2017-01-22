@@ -90,13 +90,9 @@ class UserFeedMeElementType extends BaseFeedMeElementType
         return $return;
     }
 
-    public function prepForElementModel(BaseElementModel $element, array &$data, $settings, $options)
+    public function prepForElementModel(BaseElementModel $element, array &$data, $settings)
     {
         foreach ($data as $handle => $value) {
-            if ($value == '' || $value == '__') {
-                continue;
-            }
-
             switch ($handle) {
                 case 'id':
                 case 'username':

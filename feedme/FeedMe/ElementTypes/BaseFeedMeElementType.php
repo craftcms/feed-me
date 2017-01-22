@@ -29,7 +29,7 @@ abstract class BaseFeedMeElementType
 
     abstract public function delete(array $elements);
 
-    abstract public function prepForElementModel(BaseElementModel $element, array &$data, $settings, $options);
+    abstract public function prepForElementModel(BaseElementModel $element, array &$data, $settings);
 
     abstract public function save(BaseElementModel &$element, $settings);
 

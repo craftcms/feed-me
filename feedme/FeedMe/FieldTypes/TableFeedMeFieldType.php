@@ -1,6 +1,8 @@
 <?php
 namespace Craft;
 
+use Cake\Utility\Hash as Hash;
+
 class TableFeedMeFieldType extends BaseFeedMeFieldType
 {
     // Templates
@@ -16,23 +18,35 @@ class TableFeedMeFieldType extends BaseFeedMeFieldType
     // Public Methods
     // =========================================================================
 
-    public function prepFieldData($element, $field, $data, $handle, $options)
+    public function prepFieldData($element, $field, $fieldData, $handle, $options)
     {
-        $fieldData = array();
+        $preppedData = array();
 
-        $next = reset($data);
+        $data = Hash::get($fieldData, 'data');
+
+        if (empty($data)) {
+            return;
+        }
+
+        
+
+        echo '<pre>';
+        //print_r(Hash::dimensions($data));
+        echo '</pre>';
+
+        //$next = reset($data);
 
         // When we import a non-repeatable node into a table, we must ensure its treated consistently
         // Because Table/Row/Column1 is not the same as Table/Row/.../Column1 - it should be the latter
-        if (!is_array($next)) {
+        if (Hash::dimensions($data) == 2) {
             foreach ($data as $columnHandle => $row) {
-                $data[$columnHandle] = array($row);
+                //$data[$columnHandle] = array($row);
             }
         }
 
         // And an even more special-case, when use it Matrix 'Matrix/MatrixItem/.../Table/Row/.../Column1'
         // we need to process it a little differently. Notice the two repeatable nodes.
-        if (substr_count($options['feedHandle'][0], '/.../') == 2) {
+        /*if (substr_count($options['feedHandle'][0], '/.../') == 2) {
             $next = reset($data);
             $next = reset($next);
 
@@ -45,17 +59,21 @@ class TableFeedMeFieldType extends BaseFeedMeFieldType
                                 $col = null;
                             }
 
-                            $fieldData[$k][($j+1)][$i] = $col;
+                            $preppedData[$k][($j+1)][$i] = $col;
                         }
                     }
                 }
 
-                return $fieldData;
+                return $preppedData;
             }
-        }
+        }*/
 
         foreach ($data as $i => $row) {
-            foreach ($row as $j => $column) {
+            if (!is_array($row['data'])) {
+                $row['data'] = array($row['data']);
+            }
+
+            foreach ($row['data'] as $j => $column) {
                 // Check for false for checkbox
                 if ($column === 'false') {
                     $column = null;
@@ -84,11 +102,11 @@ class TableFeedMeFieldType extends BaseFeedMeFieldType
                 //   }
                 // }
 
-                $fieldData[($j+1)][$i] = $column;
+                $preppedData[($j+1)][$i] = $column;
             }
         }
 
-        return $fieldData;
+        return $preppedData;
     }
     
 }

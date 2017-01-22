@@ -1,18 +1,20 @@
 <?php
 namespace Craft;
 
+use Cake\Utility\Hash as Hash;
+
 class FeedMe_ProcessService extends BaseApplicationComponent
 {
     // Properties
     // =========================================================================
 
+    private $_debug = false;
     private $_processedElements = array();
     private $_service = null;
     private $_time_start = null;
 
     private $_criteria = null;
     private $_data = null;
-    private $_additionalOptions = null;
 
 
     // Public Methods
@@ -61,15 +63,15 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         // rather than on each step. This is done for max performance - even a little
         $this->_criteria = $this->_service->setCriteria($feed);
 
+        // Our main data-parsing function. Handles the actual data values, defaults and field options
         foreach ($feedData as $key => $nodeData) {
-            $this->_data[$key] = $this->_prepFieldData($return['fields'], $nodeData);
-            $this->_additionalOptions[$key] = $this->_getAdditionalFieldOptions($return['fields'], $nodeData);
+            $this->_data[$key] = $this->_prepFieldData($return['fields'], $nodeData, $feed['fieldDefaults']);
         }
 
         return $return;
     }
 
-    public function processFeed($step, $feed, $debug = false)
+    public function processFeed($step, $feed)
     {
         $existingElement = false;
         $fieldData = array();
@@ -88,33 +90,10 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         // From the raw data in our feed, process it ready for mapping (more to do below)
         $data = $this->_data[$step];
 
-        echo '<pre>';
-            print_r($data);
-            echo '</pre>';
-
-        // Grab a few more things form our feed - essentially just amalgamating additional options or settings
-        // Includes additional options for fields (checkboxes), and element fields (if any)
-        // We also store the original feed-node handle for the field mapping, which is handy for conditionals
-        $additionalOptions = $this->_additionalOptions[$step];
-
         // For each chunck of import-ready data, we need to further prepare it for Craft
         foreach ($data as $handle => $preppedData) {
-            $options = array();
-
-            if (isset($additionalOptions[$handle])) {
-                $options = $additionalOptions[$handle];
-            }
-
-            // Check for our default data (if any provided, and if not already set in 'real' data)
-            if (($preppedData == '__') && isset($feed['fieldDefaults'][$handle])) {
-                $preppedData = $feed['fieldDefaults'][$handle];
-            }
-
             // From each field, we may need to process the raw data for Craft fields
-            $content = craft()->feedMe_fields->prepForFieldType($element, $preppedData, $handle, $options);
-
-            // Setup a new array with the data mapped to the correct Craft field
-            $fieldData[$handle] = $content;
+            $fieldData[$handle] = craft()->feedMe_fields->prepForFieldType($element, $preppedData, $handle);
         }
 
         //
@@ -143,9 +122,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         }
 
         // Prepare Element Type model - this sets all Element Type attributes (Title, slug, etc).
-        // Run once to setup defaults, second time for actual data from feed
-        $element = $this->_service->prepForElementModel($element, $feed['fieldDefaults'], $feed, $additionalOptions);
-        $element = $this->_service->prepForElementModel($element, $fieldData, $feed, $additionalOptions);
+        $element = $this->_service->prepForElementModel($element, $fieldData, $feed);
 
         // Allow field types to modify content once an element has been properly setup and identified
         foreach ($data as $handle => $preppedData) {
@@ -176,7 +153,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             }
         }
 
-        $this->_debugOutput($debug, $fieldData);
+        $this->_debugOutput($fieldData);
     }
 
     public function finalizeAfterProcess($settings, $feed)
@@ -205,11 +182,13 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         $execution_time = number_format(($time_end - $this->_time_start), 2);
         FeedMePlugin::log($feed->name . ': Processing ' . count($this->_processedElements) . ' elements finished in ' . $execution_time . 's', LogLevel::Info, true);
 
-        $this->_debugOutput(true, 'Processing ' . count($this->_processedElements) . ' elements finished in ' . $execution_time . 's.');
+        $this->_debugOutput('Processing ' . count($this->_processedElements) . ' elements finished in ' . $execution_time . 's.');
     }
 
     public function debugFeed($feedId, $limit)
     {
+        $this->_debug = true;
+
         $feed = craft()->feedMe_feeds->getFeedById($feedId);
 
         $feedData = craft()->feedMe_data->getFeed($feed->feedType, $feed->feedUrl, $feed->primaryElement, $feed);
@@ -217,12 +196,12 @@ class FeedMe_ProcessService extends BaseApplicationComponent
 
         // Do we even have any data to process?
         if (!count($feedData)) {
-            $this->_debugOutput(true, 'No feed items to process.');
+            $this->_debugOutput('No feed items to process.');
             return true;
         }
 
         foreach ($feedData as $key => $data) {
-            craft()->feedMe_process->processFeed($key, $feedSettings, true);
+            craft()->feedMe_process->processFeed($key, $feedSettings);
 
             if ($key === ($limit - 1)) {
                 break;
@@ -257,174 +236,131 @@ class FeedMe_ProcessService extends BaseApplicationComponent
     // Private Methods
     // =========================================================================
 
-    private function _prepFieldData($fields, $feedData)
+    private function _prepFieldData($fieldMapping, $feedData, $fieldDefaults)
     {
-        $temp = array();
+        $parsedData = array();
 
-        foreach ($fields as $handle => $feedHandle) {
-            $data = $this->_getValueFromKeyPath($feedData, $feedHandle);
-
-            if ($data == '__') {
-                //continue;
-            }
-
-            // Handle sub-fields and assigning to correct indexes
-            if (strstr($handle, '--')) {
-                $subFields = explode('--', $handle);
-
-                $this->_arraySetFromPath($temp, $subFields, $data);
-            } else {
-                $temp[$handle] = $data;
+        // First, loop through all the field defaults. Important to do first, as if we set a default
+        // but aren't actually mapping it to anything, we'll never enter the below loop
+        foreach ($fieldDefaults as $fieldHandle => $feedHandle) {
+            if (!empty($feedHandle)) {
+                $parsedData[$fieldHandle]['data'] = $feedHandle;
             }
         }
 
-        return $temp;
+        foreach ($fieldMapping as $fieldHandle => $feedHandle) {
+            if ($feedHandle == 'noimport') {
+                continue;
+            }
+
+            // We display and store field mapping with '/' and '/.../', for the users benefit,
+            // but Extract needs them as '.' or '{*}', so we convert them here.
+            // Turns 'my/repeating/.../field' into 'my.repeating.*.field'
+            $extractFeedHandle = str_replace('/.../', '.*.', $feedHandle);
+            $extractFeedHandle = str_replace('/', '.', $extractFeedHandle);
+
+            // Have a default ready to go in case a value can't be found in the feed
+            $defaultValue = isset($fieldDefaults[$fieldHandle]) ? $fieldDefaults[$fieldHandle] : null;
+
+            // Get our value from the feed
+            $value = FeedMeArrayHelper::arrayGet($feedData, $extractFeedHandle, $defaultValue);
+
+            // Store it in our data array, with the Craft field handle we're mapping to
+            if ($value) {
+                if (is_array($value)) {
+                    // Our arrayGet() function keeps empty indexes, which is super-important
+                    // for Matrix. Here, this filters them out, while keeping the indexes intact
+                    $value = Hash::filter($value);
+                }
+
+                $parsedData[$fieldHandle]['data'] = $value;
+            }
+
+            // If this field has any options, add those to the above node, rather than separate
+            if (strstr($fieldHandle, '-options-')) {
+
+                $fieldHandles = FeedMeArrayHelper::multiExplode(array('--', '-'), $fieldHandle);
+
+                if (strstr($fieldHandle, '--')) {
+                    array_splice($fieldHandles, 1, 0, 'data');
+                }
+
+                FeedMeArrayHelper::arraySet($parsedData, $fieldHandles, $feedHandle);
+                unset($parsedData[$fieldHandle]); // Remove un-needed original
+
+            } else if (strstr($fieldHandle, '-fields-')) {
+
+                // If this field has any nested fields, add those to the above node, rather than separate
+                // Note this has to be recursive as there is field-mapping for these inner fields.
+                $fieldHandles = FeedMeArrayHelper::multiExplode(array('--', '-'), $fieldHandle);
+
+                if (strstr($fieldHandle, '--')) {
+                    array_splice($fieldHandles, 1, 0, 'data');
+                }
+
+                $nestedData = $this->_getInnerFieldData($feedData, $feedHandle);
+
+                FeedMeArrayHelper::arraySet($parsedData, $fieldHandles, $nestedData);
+                unset($parsedData[$fieldHandle]); // Remove un-needed original
+
+            } else if (strstr($fieldHandle, '--')) {
+                // Some fields like a Table contain multiple blocks of data, each needing to be mapped individually
+                // which means feed-mapping will give us something like below. We need to re-jig things.
+                // [table--col1] => Array (
+                //     [0] => Option1
+                //     [1] => Option3
+                // )
+                // [table--col2] => Array (
+                //     [0] => Option2
+                //     [1] => Option4
+                // )
+
+                $split = explode('--', $fieldHandle);
+                array_splice($split, 1, 0, 'data');
+
+                //$nestedData = $parsedData[$fieldHandle];
+                $nestedData = $this->_getInnerFieldData($feedData, $feedHandle);
+
+                FeedMeArrayHelper::arraySet($parsedData, $split, $nestedData);
+                unset($parsedData[$fieldHandle]); // Remove un-needed original
+            }
+        }
+
+        //$this->_debugOutput($parsedData);
+
+        return $parsedData;
     }
 
-    // Allow to fetch a value from an array with a given key path - 'key/to/value'
-    // but also support wildcards for nested arrays - 'key/to/.../values'
-    private function _getValueFromKeyPath($array, $path)
+    // A more lightweight version of our main feed-data-getting function
+    // I suppose this could be recursive, but lets not make life harder than it already is...
+    private function _getInnerFieldData($feedData, $feedHandle)
     {
-        if (is_array($path)) {
-            $keys = $path;
-        } else {
-            if (is_array($array)) {
-                if (array_key_exists($path, $array)) {
-                    return $array[$path];
-                }
+        $parsedData = array();
+
+        // We display and store field mapping with '/' and '/.../', for the users benefit,
+        // but Extract needs them as '.' or '{*}', so we convert them here.
+        // Turns 'my/repeating/.../field' into 'my.repeating.*.field'
+        $extractFeedHandle = str_replace('/.../', '.*.', $feedHandle);
+        $extractFeedHandle = str_replace('/', '.', $extractFeedHandle);
+
+        // Use Extract to pull out our nested data. Super-cool!
+        $value = FeedMeArrayHelper::arrayGet($feedData, $extractFeedHandle);
+
+        // Store it in our data array, with the Craft field handle we're mapping to
+        if ($value) {
+            if (is_array($value)) {
+                $value = Hash::filter($value);
             }
 
-            $delimiter = '/';
-            $path = ltrim($path, "{$delimiter} ");
-            $path = rtrim($path, "{$delimiter} ...");
-            $keys = explode($delimiter, $path);
+            $parsedData['data'] = $value;
         }
 
-        do {
-            $key = array_shift($keys);
-
-            if (ctype_digit($key)) {
-                $key = (int)$key;
-            }
-
-            if (isset($array[$key])) {
-                if ($keys) {
-                    if (is_array($array[$key])) {
-                        $array = $array[$key];
-                    } else {
-                        break;
-                    }
-                } else {
-                    return $array[$key];
-                }
-            } elseif ($key === '...') {
-                $values = array();
-
-                foreach ($array as $i => $arr) {
-                    $nestedData = $this->_getValueFromKeyPath($arr, implode('/', $keys));
-
-                    if ($nestedData != '__') {
-                        $values[$i] = $nestedData;
-                    }
-                }
-
-                if ($values) {
-                    return $values;
-                } else {
-                    break;
-                }
-            } else {
-                break;
-            }
-        } while ($keys);
-
-        return '__';
+        return $parsedData;
     }
 
-    // Allows us to build an array with a provided path =  'key/to/value' turns into array[key][to][value] = $value
-    private function _arraySetFromPath(&$arr, $path, $value)
+    private function _debugOutput($data)
     {
-        if (!$path) {
-            return null;
-        }
-
-        $segments = is_array($path) ? $path : explode('/', $path);
-        $cur = &$arr;
-
-        foreach ($segments as $segment) {
-            if (!isset($cur[$segment])) {
-                $cur[$segment] = array();
-            }
-
-            $cur = &$cur[$segment];
-        }
-
-        $cur = $value;
-    }
-
-    private function _multiExplode($delimiters, $string) {
-        $ready = str_replace($delimiters, '/', $string);
-        $launch = explode('/', $ready);
-        return $launch;
-    }
-
-    private function _getAdditionalFieldOptions($fields, $feedData)
-    {
-        $array = array();
-
-        foreach ($fields as $handle => $feedHandle) {
-            if (strstr($handle, '--')) {
-                $topFieldHandle = explode('--', $handle);
-                $topFieldHandle = $topFieldHandle[0];
-            } else {
-                $topFieldHandle = $handle;
-            }
-
-            if ($feedHandle && !strstr($handle, '-options-') && !strstr($handle, '-fields-')) {
-                $array['feedHandle'][$topFieldHandle][] = $feedHandle;
-            }
-
-            // Handle additional options - checkboxes for things to perform for field
-            if (strstr($handle, '-options-')) {
-                $subFields = explode('-options-', $handle);
-
-                if ($feedHandle) {
-                    if (strstr($handle, '--')) {
-                        $opts = explode('--', $subFields[0]);
-                        $opts[] = $subFields[1];
-
-                        $this->_arraySetFromPath($array['options'], $opts, $feedHandle);
-                    } else {
-                        $this->_arraySetFromPath($array['options'], $subFields, $feedHandle);
-                    }
-                }
-            }
-
-            // Handle element sub-fields (ie - element fields for an asset field)
-            if (strstr($handle, '-fields-')) {
-                $data = $this->_getValueFromKeyPath($feedData, $feedHandle);
-
-                $fieldHandles = $this->_multiExplode(array('--', '-fields-', '-'), $handle);
-
-                $this->_arraySetFromPath($array['fields'], $fieldHandles, $data);
-            }
-        }
-
-        $return = array();
-        foreach ($array as $opt => $value) {
-            foreach ($value as $handle => $arr) {
-                foreach ($arr as $k => $a) {
-                    $return[$handle][$opt][$k] = $a;
-                }
-            }
-        }
-
-        return $return;
-    }
-
-    private function _debugOutput($debug, $data)
-    {
-        if ($debug) {
+        if ($this->_debug) {
             echo '<pre>';
             print_r($data);
             echo '</pre>';

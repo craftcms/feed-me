@@ -1,6 +1,8 @@
 <?php
 namespace Craft;
 
+use Cake\Utility\Hash as Hash;
+
 class MultiSelectFeedMeFieldType extends BaseFeedMeFieldType
 {
     // Templates
@@ -13,8 +15,10 @@ class MultiSelectFeedMeFieldType extends BaseFeedMeFieldType
     // Public Methods
     // =========================================================================
 
-    public function prepFieldData($element, $field, $data, $handle, $options)
+    public function prepFieldData($element, $field, $fieldData, $handle, $options)
     {
+        $data = Hash::get($fieldData, 'data');
+
         return ArrayHelper::stringToArray($data);
     }
     

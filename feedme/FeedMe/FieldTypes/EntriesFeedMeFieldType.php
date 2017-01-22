@@ -1,6 +1,8 @@
 <?php
 namespace Craft;
 
+use Cake\Utility\Hash as Hash;
+
 class EntriesFeedMeFieldType extends BaseFeedMeFieldType
 {
     // Templates
@@ -16,12 +18,18 @@ class EntriesFeedMeFieldType extends BaseFeedMeFieldType
     // Public Methods
     // =========================================================================
 
-    public function prepFieldData($element, $field, $data, $handle, $options)
+    public function prepFieldData($element, $field, $fieldData, $handle, $options)
     {
-        $fieldData = array();
+        $preppedData = array();
+
+        $data = Hash::get($fieldData, 'data');
 
         if (empty($data)) {
             return;
+        }
+
+        if (!is_array($data)) {
+            $data = array($data);
         }
 
         $settings = $field->getFieldType()->getSettings();
@@ -44,51 +52,40 @@ class EntriesFeedMeFieldType extends BaseFeedMeFieldType
         }
 
         // Find existing
-        $entries = ArrayHelper::stringToArray($data);
-
-        foreach ($entries as $entry) {
-            if ($entry == '__') {
-                continue;
-            }
-
+        foreach ($data as $entry) {
             $criteria = craft()->elements->getCriteria(ElementType::Entry);
             $criteria->sectionId = $sectionIds;
             $criteria->limit = $settings->limit;
 
             // Check if we've specified which attribute we're trying to match against
-            if (isset($options['options']['match'])) {
-                $attribute = $options['options']['match'];
-                $criteria->$attribute = DbHelper::escapeParam($entry);
-            } else {
-                $criteria->title = DbHelper::escapeParam($entry);
-            }
-
+            $attribute = Hash::get($fieldData, 'options.match', 'title');
+            $criteria->$attribute = DbHelper::escapeParam($entry);
             $elements = $criteria->ids();
 
-            $fieldData = array_merge($fieldData, $elements);
+            $preppedData = array_merge($preppedData, $elements);
 
             // Create the elements if we require
             if (count($elements) == 0) {
-                if (isset($options['options']['create'])) {
-                    $fieldData[] = $this->_createElement($entry, $sectionIds);
+                if (isset($fieldData['options']['create'])) {
+                    $preppedData[] = $this->_createElement($entry, $sectionIds);
                 }
             }
         }
 
         // Check for field limit - only return the specified amount
-        if ($fieldData) {
+        if ($preppedData) {
             if ($field->settings['limit']) {
-                $fieldData = array_chunk($fieldData, $field->settings['limit']);
-                $fieldData = $fieldData[0];
+                $preppedData = array_chunk($preppedData, $field->settings['limit']);
+                $preppedData = $preppedData[0];
             }
         }
 
         // Check if we've got any data for the fields in this element
-        if (isset($options['fields'])) {
-            $this->_populateElementFields($fieldData, $options['fields']);
+        if (isset($fieldData['fields'])) {
+            $this->_populateElementFields($preppedData, $fieldData['fields']);
         }
 
-        return $fieldData;
+        return $preppedData;
     }
 
 
@@ -96,23 +93,29 @@ class EntriesFeedMeFieldType extends BaseFeedMeFieldType
     // Private Methods
     // =========================================================================
 
-    private function _populateElementFields($fieldData, $elementData)
+    private function _populateElementFields($entryData, $fieldData)
     {
-        foreach ($fieldData as $key => $id) {
-            $entry = craft()->entries->getEntryById($id);
+        foreach ($entryData as $i => $entryId) {
+            $entry = craft()->entries->getEntryById($entryId);
 
             // Prep each inner field
-            $preppedElementData = array();
-            foreach ($elementData as $elementHandle => $elementContent) {
-                if ($elementContent != '__') {
-                    $preppedElementData[$elementHandle] = craft()->feedMe_fields->prepForFieldType(null, $elementContent, $elementHandle, null);
+            $preppedData = array();
+            foreach ($fieldData as $fieldHandle => $fieldContent) {
+                $data = craft()->feedMe_fields->prepForFieldType(null, $fieldContent, $fieldHandle, null);
+
+                if (is_array($data)) {
+                    $data = Hash::get($data, $i);
                 }
+
+                $preppedData[$fieldHandle] = $data;
             }
 
-            $entry->setContentFromPost($preppedElementData);
+            $entry->setContentFromPost($preppedData);
 
             if (!craft()->entries->saveEntry($entry)) {
-                throw new Exception(json_encode($entry->getErrors()));
+                FeedMePlugin::log('Entry error: ' . json_encode($entry->getErrors()), LogLevel::Error, true);
+            } else {
+                FeedMePlugin::log('Updated Entry (ID ' . $entryId . ') inner-element with content: ' . json_encode($preppedData), LogLevel::Info, true);
             }
         }
     }

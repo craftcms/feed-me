@@ -1,6 +1,8 @@
 <?php
 namespace Craft;
 
+use Cake\Utility\Hash as Hash;
+
 class MatrixFeedMeFieldType extends BaseFeedMeFieldType
 {
     // Templates
@@ -16,10 +18,16 @@ class MatrixFeedMeFieldType extends BaseFeedMeFieldType
     // Public Methods
     // =========================================================================
 
-    public function prepFieldData($element, $field, $data, $handle, $options)
+    public function prepFieldData($element, $field, $fieldData, $handle, $options)
     {
-        $fieldData = array();
+        $preppedData = array();
         $sortedData = array();
+
+        $data = Hash::get($fieldData, 'data');
+
+        if (empty($data)) {
+            return;
+        }
 
         // Because of how mapping works, we need to do some extra work here, which is a pain!
         // This is to ensure blocks are ordered as they are provided. Data will be provided as:
@@ -40,30 +48,44 @@ class MatrixFeedMeFieldType extends BaseFeedMeFieldType
         //     ]
         //   ]
         // ]
-        foreach ($data as $blockHandle => $block) {
-            foreach ($block as $blockFieldHandle => $blockFieldData) {
-                // When we import a non-repeatable node into a Matrix, we must ensure its treated consistently
-                // Because Matrix/MatrixItem/Node is not the same as Matrix/MatrixItem/.../Node - it should be the latter
-                // This is why XML sucks - JSON just wouldn't have this issue...
-                if (isset($options['feedHandle'])) {
-                    if (!strstr($options['feedHandle'][0], '/.../')) {
-                        $blockFieldData = array($blockFieldData);
-                    }
+        //
+        $optionsArray = array();
+        foreach (Hash::flatten($data) as $key => $value) {
+            $tempArray = explode('.', $key);
+
+            // Save field options for later - they're a special case
+            if (strstr($key, '.options.')) {
+                FeedMeArrayHelper::arraySet($optionsArray, $tempArray, $value);
+            } else {
+                $blockOrderIndex = array_keys($tempArray)[3];
+
+                if (strstr($key, '.fields.')) {
+                    $blockOrderIndex = array_keys($tempArray)[5];
                 }
 
-                if ($blockFieldData == '__') {
-                    continue;
-                }
+                $blockOrder = $tempArray[$blockOrderIndex];
+                unset($tempArray[$blockOrderIndex]);
 
-                if (!is_array($blockFieldData)) {
-                    $blockFieldData = array($blockFieldData);
-                }
+                if (is_numeric($blockOrder)) {
+                    array_splice($tempArray, 0, 0, $blockOrder);
 
-                foreach ($blockFieldData as $blockOrder => $innerData) {
-                    $sortedData[$blockOrder][$blockHandle][$blockFieldHandle] = $innerData;
+                    FeedMeArrayHelper::arraySet($sortedData, $tempArray, $value);
                 }
             }
         }
+
+        // Now a special case for field options. Because of the way field-mapping stored them, we need to
+        // loop through and apply across all blocks of this type. This also makes field-processing easier
+        foreach ($sortedData as $blockOrder => $blockData) {
+            foreach ($blockData as $blockHandle => $innerData) {
+                $optionData = Hash::get($optionsArray, $blockHandle);
+
+                if ($optionData) {
+                    $sortedData[$blockOrder][$blockHandle] = Hash::merge($innerData, $optionData);
+                }
+            }
+        }
+
 
         // Sort by the new ordering we've set
         ksort($sortedData);
@@ -91,23 +113,13 @@ class MatrixFeedMeFieldType extends BaseFeedMeFieldType
                         continue;
                     }
 
-                    // Get any options for the field - stored a little different
-                    $fieldOptions = array();
-                    if (isset($options['options'][$blockHandle][$blockFieldHandle])) {
-                        $fieldOptions['options'] = $options['options'][$blockHandle][$blockFieldHandle];
-                    }
-
-                    if (isset($options['fields'][$blockHandle][$blockFieldHandle])) {
-                        $fieldOptions['fields'] = $options['fields'][$blockHandle][$blockFieldHandle];
-                    }
-
-                    $fieldOptions['feedHandle'] = $options['feedHandle'];
-                    $fieldOptions['field'] = $subField;
-                    $fieldOptions['parentField'] = $field;
+                    $fieldOptions = array(
+                        'field' => $subField,
+                    );
 
                     // Parse this inner-field's data, just like a regular field
-                    $parsedData = craft()->feedMe_fields->prepForFieldType($element, $blockFieldContent, $blockFieldHandle, $fieldOptions);
-                    
+                    $parsedData = craft()->feedMe_fields->prepForFieldType(null, $blockFieldContent, $blockFieldHandle, $fieldOptions);
+
                     if ($parsedData) {
                         // Special-case for inner table - not a great solution at the moment, needs to be more flexible
                         if ($subField->type == 'Table') {
@@ -135,29 +147,20 @@ class MatrixFeedMeFieldType extends BaseFeedMeFieldType
         // Now we've got a bit more sane data - its a simple (regular) import
         if ($allPreppedFieldData) {
             foreach ($allPreppedFieldData as $key => $preppedBlockFieldData) {
-
-                // Sort by keys - otherwise can potentially have issues with ordering
-                ksort($preppedBlockFieldData);
-
                 foreach ($preppedBlockFieldData as $blockHandle => $preppedFieldData) {
+                    $preppedData['new'.($count+1)] = array(
+                        'type' => $blockHandle,
+                        'order' => ($count+1),
+                        'enabled' => true,
+                        'fields' => $preppedFieldData,
+                    );
 
-                    // But check do we even have any field data to add?
-                    if ($this->_checkForFieldData($preppedFieldData)) {
-                        $fieldData['new'.($count+1)] = array(
-                            'type' => $blockHandle,
-                            'order' => ($count+1),
-                            'enabled' => true,
-                            'fields' => $preppedFieldData,
-                        );
-
-                        $count++;
-                    }
+                    $count++;
                 }
             }
         }
 
-
-        return $fieldData;
+        return $preppedData;
     }
 
     // Allows us to smartly-check to look at existing Matrix fields for an element, and whether data has changed or not.
@@ -207,22 +210,6 @@ class MatrixFeedMeFieldType extends BaseFeedMeFieldType
             // data from the feed entirely, so the element doesn't get updated (because it doesn't need to),
             unset($data[$handle]);
         }
-    }
-
-
-    private function _checkForFieldData($fieldData)
-    {
-        // Check if we have any field data. Important to check for field options for elements. These
-        // will be included - wrongly showing we have data to import.
-        $validData = 0;
-
-        foreach ($fieldData as $key => $data) {
-            if ($data != '__') {
-                $validData++;
-            }
-        }
-
-        return (bool)$validData;
     }
     
 }

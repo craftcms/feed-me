@@ -87,7 +87,7 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
         return craft()->entries->deleteEntry($elements);
     }
 
-    public function prepForElementModel(BaseElementModel $element, array &$data, $settings, $options)
+    public function prepForElementModel(BaseElementModel $element, array &$data, $settings)
     {
         $checkAncestors = !isset($data['parentId']);
 
@@ -96,10 +96,6 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
         }
 
         foreach ($data as $handle => $value) {
-            if ($value == '' || $value == '__') {
-                continue;
-            }
-
             switch ($handle) {
                 case 'id';
                     $element->$handle = $value;
@@ -129,7 +125,7 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
                     }
                     break;
                 default:
-                    break 2;
+                    continue 2;
             }
 
             // Update the original data in our feed - for clarity in debugging
