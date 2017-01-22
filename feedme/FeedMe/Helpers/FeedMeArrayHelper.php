@@ -15,7 +15,7 @@ class FeedMeArrayHelper
         return $launch;
     }
 
-    public static function arraySet(&$array, $keys, $value, $merge = false)
+    public static function arraySet(&$array, $keys, $value)
     {
         while (count($keys) > 1) {
             $key = array_shift($keys);
@@ -30,11 +30,7 @@ class FeedMeArrayHelper
             $array = &$array[$key];
         }
 
-        //if (isset($array[array_shift($keys)]) && $merge) {
-            //$array[array_shift($keys)] = Hash::merge($array[array_shift($keys)], $value);
-        //} else {
-            $array[array_shift($keys)] = $value;
-        //}
+        $array[array_shift($keys)] = $value;
 
         return $array;
     }

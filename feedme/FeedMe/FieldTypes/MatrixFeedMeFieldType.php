@@ -50,27 +50,35 @@ class MatrixFeedMeFieldType extends BaseFeedMeFieldType
         // ]
         //
         $optionsArray = array();
-        foreach (Hash::flatten($data) as $key => $value) {
-            $tempArray = explode('.', $key);
+        $flatten = Hash::flatten($data);
+
+        foreach ($flatten as $keyedIndex => $value) {
+            $tempArray = explode('.', $keyedIndex);
 
             // Save field options for later - they're a special case
-            if (strstr($key, '.options.')) {
+            if (strstr($keyedIndex, '.options.')) {
                 FeedMeArrayHelper::arraySet($optionsArray, $tempArray, $value);
             } else {
-                $blockOrderIndex = array_keys($tempArray)[3];
-
-                if (strstr($key, '.fields.')) {
-                    $blockOrderIndex = array_keys($tempArray)[5];
+                preg_match_all('/data.(\d*)/', $keyedIndex, $blockKeys);
+                $blockKey = $blockKeys[1];
+    
+                // Single Row
+                if (!$blockKey) {
+                    $tempArray[] = 0;
+                    $blockKey = count($tempArray) - 1;
                 }
 
-                $blockOrder = $tempArray[$blockOrderIndex];
-                unset($tempArray[$blockOrderIndex]);
+                // Remove the index from inside [data], to the front
+                array_splice($tempArray, 0, 0, $blockKey);
 
-                if (is_numeric($blockOrder)) {
-                    array_splice($tempArray, 0, 0, $blockOrder);
-
-                    FeedMeArrayHelper::arraySet($sortedData, $tempArray, $value);
+                // Check for nested data (elements, table)
+                if (preg_match('/data.(\d*\.\d*)/', $keyedIndex)) {
+                    unset($tempArray[count($tempArray) - 2]);
+                } else {
+                    array_pop($tempArray);
                 }
+
+                FeedMeArrayHelper::arraySet($sortedData, $tempArray, $value);
             }
         }
 

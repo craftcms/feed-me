@@ -302,7 +302,7 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
                     array_splice($tempArray, 2, 0, 'data');
                 }
 
-                FeedMeArrayHelper::arraySet($variants, $tempArray, $value, true);
+                FeedMeArrayHelper::arraySet($variants, $tempArray, $value);
             }
         }
 
