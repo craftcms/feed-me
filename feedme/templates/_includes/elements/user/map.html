@@ -5,6 +5,10 @@
 {% endif %}
 
 {% set fields = [{
+    label: 'User ID' | t,
+    handle: 'id',
+    instructions: 'Specify the ID for this user.' | t,
+}, {
     label: 'Username',
     handle: 'username',
     default: forms.textField({
