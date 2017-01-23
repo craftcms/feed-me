@@ -100,7 +100,7 @@
             {% for fieldtype in profileFields %}
                 {% set field = fieldtype.getField() %}
                 
-                {% set variables = { field: field, feed: feed, feedData: feedData } %}
+                {% set variables = { field: field, fieldtype: fieldtype, feed: feed, feedData: feedData } %}
                 {% include 'feedme/_includes/field' with variables %}
             {% endfor %}
         </tbody>

@@ -7,7 +7,7 @@
         <td class="col-field">
             <div class="field">
                 <div class="heading">
-                    <label>{{ table_labelName }}</label>
+                    <label {% if fieldtype.required %}class="required"{% endif %}>{{ table_labelName }}</label>
 
                     <div class="instructions">
                         <code>{{ table_labelHandle }}</code>

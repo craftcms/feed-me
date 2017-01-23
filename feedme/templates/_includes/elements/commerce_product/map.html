@@ -243,7 +243,7 @@
             {% for fieldtype in tab.getFields() %}
                 {% set field = fieldtype.getField() %}
 
-                {% set variables = { field: field, feed: feed, feedData: feedData } %}
+                {% set variables = { field: field, fieldtype: fieldtype, feed: feed, feedData: feedData } %}
                 {% include 'feedme/_includes/field' with variables %}
             {% endfor %}
         </tbody>
@@ -265,7 +265,7 @@
             {% for fieldtype in tab.getFields() %}
                 {% set field = fieldtype.getField() %}
 
-                {% set variables = { field: field, feed: feed, feedData: feedData, handlePrefix: 'variants--' } %}
+                {% set variables = { field: field, fieldtype: fieldtype, feed: feed, feedData: feedData, handlePrefix: 'variants--' } %}
                 {% include 'feedme/_includes/field' with variables %}
             {% endfor %}
         </tbody>
