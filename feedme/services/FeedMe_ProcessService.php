@@ -268,7 +268,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             $value = FeedMeArrayHelper::arrayGet($feedData, $extractFeedHandle, $defaultValue);
 
             // Store it in our data array, with the Craft field handle we're mapping to
-            if ($value) {
+            if (isset($value) && $value !== '') {
                 if (is_array($value)) {
                     // Our arrayGet() function keeps empty indexes, which is super-important
                     // for Matrix. Here, this filters them out, while keeping the indexes intact
@@ -286,7 +286,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
                 $testSingleFeedHandle = str_replace('.*.', '.', $extractFeedHandle);
                 $value = FeedMeArrayHelper::arrayGet($feedData, $testSingleFeedHandle, $defaultValue);
 
-                if ($value) {
+                if (isset($value) && $value !== '') {
                     $parsedData[$fieldHandle]['data'] = $value;
                 }
             }
@@ -370,13 +370,13 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             $testSingleFeedHandle = $this->str_lreplace('.*.', '.', $extractFeedHandle);
             $tempValue = FeedMeArrayHelper::arrayGet($feedData, $testSingleFeedHandle);
 
-            if ($tempValue) {
+            if (isset($tempValue) && $tempValue !== '') {
                 $value = $tempValue;
             }
         }
 
         // Store it in our data array, with the Craft field handle we're mapping to
-        if ($value) {
+        if (isset($value) && $value !== '') {
             if (is_array($value)) {
                 $value = Hash::filter($value);
             }
