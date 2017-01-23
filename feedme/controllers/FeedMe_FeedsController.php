@@ -234,12 +234,6 @@ class FeedMe_FeedsController extends BaseController
                     $feed->addError('elementGroup', Craft::t('Commerce Product Type is required'));
                 }
             }
-
-            if ($feed->elementType == 'User') {
-                if (empty($elementGroup)) {
-                    $feed->addError('elementGroup', Craft::t('User Group Type is required'));
-                }
-            }
         }
 
         return $feed;
