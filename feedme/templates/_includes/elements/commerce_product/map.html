@@ -58,6 +58,15 @@
         options: craft.commerce.getTaxCategories(true),
     })
 }, {
+    label: 'Shipping Category',
+    handle: 'shippingCategoryId',
+    default: forms.selectField({
+        id: 'fieldDefaults-shippingCategoryId',
+        name: 'fieldDefaults[shippingCategoryId]',
+        value: feed.fieldDefaults.shippingCategoryId ?? '1',
+        options: craft.commerce.getShippingCategories(true),
+    })
+}, {
     label: 'Free Shipping',
     handle: 'freeShipping',
     default: forms.checkboxField({

@@ -111,6 +111,7 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
             switch ($handle) {
                 case 'id';
                 case 'taxCategoryId';
+                case 'shippingCategoryId';
                     $element->$handle = $value;
                     break;
                 case 'slug';
