@@ -278,6 +278,19 @@ class FeedMe_ProcessService extends BaseApplicationComponent
                 $parsedData[$fieldHandle]['data'] = $value;
             }
 
+            // An annoying check for inconsistent nodes - I'm looking at you XML
+            if (strstr($extractFeedHandle, '.*.')) {
+                // Check for any single data. While we expect something like: [Assets/Asset/.../Img] => image_1.jpg
+                // We often get data that can be mapped as: [Assets/Asset/Img] => image_3.jpg
+                // So we check for both...
+                $testSingleFeedHandle = str_replace('.*.', '.', $extractFeedHandle);
+                $value = FeedMeArrayHelper::arrayGet($feedData, $testSingleFeedHandle, $defaultValue);
+
+                if ($value) {
+                    $parsedData[$fieldHandle]['data'] = $value;
+                }
+            }
+
             // If this field has any options, add those to the above node, rather than separate
             if (strstr($fieldHandle, '-options-')) {
 
@@ -348,6 +361,20 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         // Use Extract to pull out our nested data. Super-cool!
         $value = FeedMeArrayHelper::arrayGet($feedData, $extractFeedHandle);
 
+        // An annoying check for inconsistent nodes - I'm looking at you XML
+        if (strstr($extractFeedHandle, '.*.')) {
+            // Check for any single data. While we expect something like: [Assets/Asset/.../Img] => image_1.jpg
+            // We often get data that can be mapped as: [Assets/Asset/Img] => image_3.jpg
+            // So we check for both...
+            //$testSingleFeedHandle = $this->str_lreplace('.*.', '.', $extractFeedHandle);
+            $testSingleFeedHandle = $this->str_lreplace('.*.', '.', $extractFeedHandle);
+            $tempValue = FeedMeArrayHelper::arrayGet($feedData, $testSingleFeedHandle);
+
+            if ($tempValue) {
+                $value = $tempValue;
+            }
+        }
+
         // Store it in our data array, with the Craft field handle we're mapping to
         if ($value) {
             if (is_array($value)) {
@@ -358,6 +385,17 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         }
 
         return $parsedData;
+    }
+
+    private function str_lreplace($search, $replace, $subject)
+    {
+        $pos = strrpos($subject, $search);
+
+        if ($pos !== false) {
+            $subject = substr_replace($subject, $replace, $pos, strlen($search));
+        }
+
+        return $subject;
     }
 
     private function _debugOutput($data)

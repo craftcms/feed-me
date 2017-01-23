@@ -38,6 +38,43 @@ class FeedMe_DataService extends BaseApplicationComponent
             foreach ($data_array as $data_array_item) {
                 $array = $array + $this->_getFormattedMapping($data_array_item);
             }
+
+            // Then - a little bit of post-processing to deal with inconsistent nodes
+            // XML in particular doesn't allow you to specifically state if there are multiple nodes
+            // For example, we have no way of detecting this sort of data:
+            // <Assets>
+            //     <Asset>
+            //         <Img>image_1.jpg</Img>
+            //     </Asset>
+            //     <Asset>
+            //         <Img>image_2.jpg</Img>
+            //     </Asset>
+            // </Assets>
+            // <Assets>
+            //     <Asset>
+            //         <Img>image_3.jpg</Img>
+            //     </Asset>
+            // </Assets>
+            // This ends up producing:
+            // [Assets/Asset/.../Img] => image_1.jpg
+            // [Assets/Asset/Img] => image_3.jpg
+            foreach ($array as $key => $value) {
+                $keys = explode('/', $key);
+
+                // Loop through each element, adding a '/.../' at various positions.
+                // We simply can't rely on it being in a specific condition, due to each field being different
+                if (count($keys) > 1) {
+                    for ($i = 0; $i < count($keys); $i++) {
+                        $temp = explode('/', $key);
+                        array_splice($temp, $i, 0, '...');
+                        $potentialKey = implode('/', $temp);
+
+                        if (isset($array[$potentialKey])) {
+                            unset($array[$key]);
+                        }
+                    }
+                }
+            }
         }
 
         return $array;

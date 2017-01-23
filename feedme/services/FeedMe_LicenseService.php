@@ -42,6 +42,13 @@ class FeedMe_LicenseService extends BaseApplicationComponent
                 craft()->cache->set($this->pingStateKey, true, $this->pingCacheTime);
 
                 return $this->_handleEtResponse($etResponse);
+            } else {
+                $requestIp = craft()->request->getIpAddress();
+
+                // Local requests get full access when unable to ping - but not a license
+                if ($requestIp == '::1') {
+                    $this->setEdition('1');
+                }
             }
         }
 
