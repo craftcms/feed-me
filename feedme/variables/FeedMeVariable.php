@@ -150,6 +150,11 @@ class FeedMeVariable
         return craft()->fields->getLayoutById($layoutId);
     }
 
+    public function getAssetSourceById($id)
+    {
+        return craft()->assetSources->getSourceById($id);
+    }
+
 
 
 

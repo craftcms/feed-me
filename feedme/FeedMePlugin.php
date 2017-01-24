@@ -134,6 +134,7 @@ class FeedMePlugin extends BasePlugin
     {
         if (craft()->feedMe_license->isProEdition()) {
             return array(
+                new AssetFeedMeElementType(),
                 new CategoryFeedMeElementType(),
                 new Commerce_ProductFeedMeElementType(),
                 new EntryFeedMeElementType(),
