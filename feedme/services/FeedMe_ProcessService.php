@@ -259,6 +259,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             // but Extract needs them as '.' or '{*}', so we convert them here.
             // Turns 'my/repeating/.../field' into 'my.repeating.*.field'
             $extractFeedHandle = str_replace('/.../', '.*.', $feedHandle);
+            $extractFeedHandle = str_replace('[]', '', $extractFeedHandle);
             $extractFeedHandle = str_replace('/', '.', $extractFeedHandle);
 
             // Have a default ready to go in case a value can't be found in the feed
@@ -333,7 +334,6 @@ class FeedMe_ProcessService extends BaseApplicationComponent
                 $split = explode('--', $fieldHandle);
                 array_splice($split, 1, 0, 'data');
 
-                //$nestedData = $parsedData[$fieldHandle];
                 $nestedData = $this->_getInnerFieldData($feedData, $feedHandle);
 
                 FeedMeArrayHelper::arraySet($parsedData, $split, $nestedData);
@@ -356,6 +356,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         // but Extract needs them as '.' or '{*}', so we convert them here.
         // Turns 'my/repeating/.../field' into 'my.repeating.*.field'
         $extractFeedHandle = str_replace('/.../', '.*.', $feedHandle);
+        $extractFeedHandle = str_replace('[]', '', $extractFeedHandle);
         $extractFeedHandle = str_replace('/', '.', $extractFeedHandle);
 
         // Use Extract to pull out our nested data. Super-cool!
@@ -381,7 +382,11 @@ class FeedMe_ProcessService extends BaseApplicationComponent
                 $value = Hash::filter($value);
             }
 
-            $parsedData['data'] = $value;
+            if (strstr($feedHandle, '[]')) {
+                $parsedData['data'] = array($value);
+            } else {
+                $parsedData['data'] = $value;
+            }
         }
 
         return $parsedData;

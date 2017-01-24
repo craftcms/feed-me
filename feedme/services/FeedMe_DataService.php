@@ -218,7 +218,7 @@ class FeedMe_DataService extends BaseApplicationComponent
                 $return[$sep . $key . '/...'] = array();
             } elseif (isset($value[0])) {
                 if (is_string($value[0]) || is_numeric($value[0])) {
-                    $return[$sep . $key] = $value[0];
+                    $return[$sep . $key . '[]'] = $value[0];
                 } else {
                     foreach ($value as $v) {
                         $nested = $this->_getFormattedMapping($v, $sep . $key . '/...');
