@@ -40,7 +40,7 @@ class FeedMe_FieldsService extends BaseApplicationComponent
             return $service->prepFieldData($element, $field, $data, $handle, $options);
         }
 
-        return Hash::get($data, 'data');
+        return $data;
     }
 
     public function postForFieldType($element, &$data, $handle)

@@ -71,7 +71,7 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
         foreach ($settings['fieldUnique'] as $handle => $value) {
             if (intval($value) == 1 && ($data != '__')) {
                 if (isset($data[$handle])) {
-                    $criteria->$handle = DbHelper::escapeParam($data[$handle]);
+                    $criteria->$handle = DbHelper::escapeParam($data[$handle]['data']);
                 } else {
                     throw new Exception(Craft::t('Unable to match against '.$handle.' - no data found.'));
                 }
@@ -98,30 +98,30 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
         foreach ($data as $handle => $value) {
             switch ($handle) {
                 case 'id';
-                    $element->$handle = $value;
+                    $element->$handle = $value['data'];
                     break;
                 case 'authorId';
-                    $element->$handle = $this->_prepareAuthorForElement($value);
+                    $element->$handle = $this->_prepareAuthorForElement($value['data']);
                     break;
                 case 'slug';
-                    $element->$handle = ElementHelper::createSlug($value);
+                    $element->$handle = ElementHelper::createSlug($value['data']);
                     break;
                 case 'postDate':
                 case 'expiryDate';
-                    $element->$handle = $this->_prepareDateForElement($value);
+                    $element->$handle = $this->_prepareDateForElement($value['data']);
                     break;
                 case 'enabled':
-                    $element->$handle = (bool)$value;
+                    $element->$handle = (bool)$value['data'];
                     break;
                 case 'title':
-                    $element->getContent()->$handle = $value;
+                    $element->getContent()->$handle = $value['data'];
                     break;
                 case 'parentId':
-                    $element->$handle = $this->_prepareParentForElement($value, $element->sectionId);
+                    $element->$handle = $this->_prepareParentForElement($value['data'], $element->sectionId);
                     break;
                 case 'ancestors':
                     if ($checkAncestors) {
-                        $element->parentId = $this->_prepareAncestorsForElement($value, $element->sectionId);
+                        $element->parentId = $this->_prepareAncestorsForElement($value['data'], $element->sectionId);
                     }
                     break;
                 default:

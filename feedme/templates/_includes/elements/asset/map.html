@@ -16,6 +16,7 @@
     label: 'Filename' | t,
     handle: 'filename',
     instructions: 'The filename for this asset (not including the path).' | t,
+    required: true,
 }, {
     label: 'Asset ID' | t,
     handle: 'id',
@@ -32,7 +33,11 @@
     </thead>
     <tbody>
         {% for field in fields %}
-            {{ feedMeMacro.generateRow(_context, field) }}
+            {% if field.handle == 'filename' %}
+                {{ feedMeMacro.generateAssetRow(_context, field) }}
+            {% else %}
+                {{ feedMeMacro.generateRow(_context, field) }}
+            {% endif %}
         {% endfor %}
     </tbody>
 </table>

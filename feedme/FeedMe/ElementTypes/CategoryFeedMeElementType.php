@@ -56,7 +56,7 @@ class CategoryFeedMeElementType extends BaseFeedMeElementType
         foreach ($settings['fieldUnique'] as $handle => $value) {
             if (intval($value) == 1 && ($data != '__')) {
                 if (isset($data[$handle])) {
-                    $criteria->$handle = DbHelper::escapeParam($data[$handle]);
+                    $criteria->$handle = DbHelper::escapeParam($data[$handle]['data']);
                 } else {
                     throw new Exception(Craft::t('Unable to match against '.$handle.' - no data found.'));
                 }
@@ -81,13 +81,13 @@ class CategoryFeedMeElementType extends BaseFeedMeElementType
         foreach ($data as $handle => $value) {
             switch ($handle) {
                 case 'id';
-                    $element->$handle = $value;
+                    $element->$handle = $value['data'];
                     break;
                 case 'slug':
-                    $element->$handle = ElementHelper::createSlug($value);
+                    $element->$handle = ElementHelper::createSlug($value['data']);
                     break;
                 case 'title':
-                    $element->getContent()->$handle = $value;
+                    $element->getContent()->$handle = $value['data'];
                     break;
                 default:
                     continue 2;

@@ -61,7 +61,10 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
 
         // Check to see if we should be uploading these assets
         if (isset($fieldData['options']['upload'])) {
-            $ids = $this->_fetchRemoteImage($data, $field, $fieldData['options']);
+            // Get the folder we should upload into from the field
+            $folderId = $field->getFieldType()->resolveSourcePath();
+
+            $ids = $this->fetchRemoteImage($data, $folderId, $fieldData['options']);
 
             $preppedData = array_merge($preppedData, $ids);
         }
@@ -82,39 +85,7 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
         return $preppedData;
     }
 
-
-
-    // Private Methods
-    // =========================================================================
-
-    private function _populateElementFields($assetData, $fieldData)
-    {
-        foreach ($assetData as $i => $assetId) {
-            $asset = craft()->assets->getFileById($assetId);
-
-            // Prep each inner field
-            $preppedData = array();
-            foreach ($fieldData as $fieldHandle => $fieldContent) {
-                $data = craft()->feedMe_fields->prepForFieldType(null, $fieldContent, $fieldHandle, null);
-
-                if (is_array($data)) {
-                    $data = Hash::get($data, $i);
-                }
-
-                $preppedData[$fieldHandle] = $data;
-            }
-
-            $asset->setContentFromPost($preppedData);
-
-            if (!craft()->assets->storeFile($asset)) {
-                FeedMePlugin::log('Asset error: ' . json_encode($asset->getErrors()), LogLevel::Error, true);
-            } else {
-                FeedMePlugin::log('Updated Asset (ID ' . $assetId . ') inner-element with content: ' . json_encode($preppedData), LogLevel::Info, true);
-            }
-        }
-    }
-
-    private function _fetchRemoteImage($urls, $field, $options)
+    public function fetchRemoteImage($urls, $folderId, $options)
     {
         if (!is_array($urls)) {
             $urls = array($urls);
@@ -134,7 +105,7 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
 
         // Download each image
         foreach ($urls as $key => $url) {
-            if ($url == '__') {
+            if (!isset($url) || $url === '') {
                 continue;
             }
 
@@ -183,15 +154,12 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
                 continue;
             }
 
-            // Get the folder we should upload into from the field
-            $folderId = $field->getFieldType()->resolveSourcePath();
-
             // We've successfully downloaded the image - now insert it into Craft
             $conflictResolution = $options['conflict'];
 
             // Look for an existing file
             $criteria = craft()->elements->getCriteria(ElementType::Asset);
-            $criteria->sourceId = null;
+            $criteria->folderId = $folderId;
             $criteria->limit = null;
             $criteria->filename = $filename;
             $targetFile = $criteria->find();
@@ -204,7 +172,7 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
                 // Wrap in a try/catch to ensure any errors with saving an asset are logged, but don't break the import process
                 try {
                     $response = craft()->assets->insertFileByLocalPath($saveLocation, $filename, $folderId, $conflictResolution);
-
+            
                     // Delete temporary file
                     IOHelper::deleteFile($saveLocation, true);
 
@@ -225,6 +193,38 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
         }
 
         return $fileIds;
+    }
+
+
+
+    // Private Methods
+    // =========================================================================
+
+    private function _populateElementFields($assetData, $fieldData)
+    {
+        foreach ($assetData as $i => $assetId) {
+            $asset = craft()->assets->getFileById($assetId);
+
+            // Prep each inner field
+            $preppedData = array();
+            foreach ($fieldData as $fieldHandle => $fieldContent) {
+                $data = craft()->feedMe_fields->prepForFieldType(null, $fieldContent, $fieldHandle, null);
+
+                if (is_array($data)) {
+                    $data = Hash::get($data, $i);
+                }
+
+                $preppedData[$fieldHandle] = $data;
+            }
+
+            $asset->setContentFromPost($preppedData);
+
+            if (!craft()->assets->storeFile($asset)) {
+                FeedMePlugin::log('Asset error: ' . json_encode($asset->getErrors()), LogLevel::Error, true);
+            } else {
+                FeedMePlugin::log('Updated Asset (ID ' . $assetId . ') inner-element with content: ' . json_encode($preppedData), LogLevel::Info, true);
+            }
+        }
     }
 
 }

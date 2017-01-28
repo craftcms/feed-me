@@ -65,7 +65,7 @@ class UserFeedMeElementType extends BaseFeedMeElementType
         foreach ($settings['fieldUnique'] as $handle => $value) {
             if (intval($value) == 1 && ($data != '__')) {
                 if (isset($data[$handle])) {
-                    $criteria->$handle = DbHelper::escapeParam($data[$handle]);
+                    $criteria->$handle = DbHelper::escapeParam($data[$handle]['data']);
                 } else {
                     throw new Exception(Craft::t('Unable to match against '.$handle.' - no data found.'));
                 }
@@ -102,10 +102,10 @@ class UserFeedMeElementType extends BaseFeedMeElementType
                 case 'prefLocale':
                 case 'password':
                 case 'photo':
-                    $element->$handle = $value;
+                    $element->$handle = $value['data'];
                     break;
                 case 'status':
-                    $this->_setUserStatus($element, $value);
+                    $this->_setUserStatus($element, $value['data']);
                     break;
                 default:
                     continue 2;

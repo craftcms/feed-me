@@ -56,7 +56,7 @@ class AssetFeedMeElementType extends BaseFeedMeElementType
         foreach ($settings['fieldUnique'] as $handle => $value) {
             if (intval($value) == 1 && ($data != '__')) {
                 if (isset($data[$handle])) {
-                    $criteria->$handle = DbHelper::escapeParam($data[$handle]);
+                    $criteria->$handle = DbHelper::escapeParam($data[$handle]['data']);
                 } else {
                     throw new Exception(Craft::t('Unable to match against '.$handle.' - no data found.'));
                 }
@@ -81,11 +81,13 @@ class AssetFeedMeElementType extends BaseFeedMeElementType
         foreach ($data as $handle => $value) {
             switch ($handle) {
                 case 'id';
+                    $element->$handle = $value['data'];
+                    break;
                 case 'filename';
                     $element->$handle = $value;
                     break;
                 case 'title':
-                    $element->getContent()->$handle = $value;
+                    $element->getContent()->$handle = $value['data'];
                     break;
                 default:
                     continue 2;
@@ -100,6 +102,21 @@ class AssetFeedMeElementType extends BaseFeedMeElementType
 
     public function save(BaseElementModel &$element, array $data, $settings)
     {
+        // Prep some variables
+        $fieldData = $data[array_keys($data)[0]];
+
+        // Check if we're dealing with uplading assets
+        if (isset($fieldData['options']['upload'])) {
+            $service = craft()->feedMe->getFieldTypeService('Assets');
+            $folder = craft()->assets->getRootFolderBySourceId($element->sourceId);
+            $urlData = $fieldData['data'];
+
+            $fileIds = $service->fetchRemoteImage($urlData, $folder->id, $fieldData['options']);
+        } else {
+            // There's no real case at the moment if we're not uploading. Why?
+            // Because theu're already in Craft. Leave for the moment
+        }
+
         return true;
     }
 

@@ -69,7 +69,7 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
                     $variantCriteria->limit = null;
                     $variantCriteria->localeEnabled = null;
 
-                    $variantCriteria->$attribute = DbHelper::escapeParam($data['variants'][$attribute]['data']);
+                    $variantCriteria->$attribute = DbHelper::escapeParam($data['variants']['data'][$attribute]['data']);
 
                     // Get the variants - interestingly, find()[0] is faster than first()
                     $variants = $variantCriteria->find();
@@ -112,22 +112,22 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
                 case 'id';
                 case 'taxCategoryId';
                 case 'shippingCategoryId';
-                    $element->$handle = $value;
+                    $element->$handle = $value['data'];
                     break;
                 case 'slug';
-                    $element->$handle = ElementHelper::createSlug($value);
+                    $element->$handle = ElementHelper::createSlug($value['data']);
                     break;
                 case 'postDate':
                 case 'expiryDate';
-                    $element->$handle = $this->_prepareDateForElement($value);
+                    $element->$handle = $this->_prepareDateForElement($value['data']);
                     break;
                 case 'enabled':
                 case 'freeShipping':
                 case 'promotable':
-                    $element->$handle = (bool)$value;
+                    $element->$handle = (bool)$value['data'];
                     break;
                 case 'title':
-                    $element->getContent()->$handle = $value;
+                    $element->getContent()->$handle = $value['data'];
                     break;
                 default:
                     continue 2;
@@ -177,7 +177,7 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
         $variants = [];
         $count = 1;
 
-        $variantData = Hash::get($data, 'variants');
+        $variantData = Hash::get($data, 'variants.data');
 
         if (!$variantData) {
             return false;
@@ -274,6 +274,15 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
         $tempVariants = array();
         foreach ($flatten as $keyedIndex => $value) {
             $tempArray = explode('.', $keyedIndex);
+
+            // Check for a value for this field...
+            if (!isset($value) || $value === '') {
+                continue;
+            }
+
+            if (is_array($value) && empty($value)) {
+                continue;
+            }
 
             // Save field options for later - they're a special case
             if (strstr($keyedIndex, '.options.')) {
