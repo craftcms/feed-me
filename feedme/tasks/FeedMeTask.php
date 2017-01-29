@@ -9,6 +9,7 @@ class FeedMeTask extends BaseTask
     private $_feed;
     private $_feedData;
     private $_feedSettings;
+    private $_errors;
 
     // Public Methods
     // =========================================================================
@@ -78,7 +79,17 @@ class FeedMeTask extends BaseTask
         } catch (\Exception $e) {
             FeedMePlugin::log($this->_feed->name . ': ' . $e->getMessage(), LogLevel::Error, true);
 
-            return false;
+            // Keep track of errors for the last - shown at final step
+            $this->_errors[] = $this->_feed->name . ': ' . $e->getMessage();
+
+            // Act cool for now - try to process other items
+            //return false;
+        }
+
+        if ($step == ($this->getTotalSteps() - 1)) {
+            if (count($this->_errors) > 0) {
+                return false;
+            }
         }
 
         return true;
