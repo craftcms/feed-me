@@ -1,6 +1,8 @@
 <?php
 namespace Craft;
 
+use Cake\Utility\Hash as Hash;
+
 class EntryFeedMeElementType extends BaseFeedMeElementType
 {
     // Templates
@@ -116,13 +118,8 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
                 case 'title':
                     $element->getContent()->$handle = $value['data'];
                     break;
-                case 'parentId':
-                    $element->$handle = $this->_prepareParentForElement($value['data'], $element->sectionId);
-                    break;
-                case 'ancestors':
-                    if ($checkAncestors) {
-                        $element->parentId = $this->_prepareAncestorsForElement($value['data'], $element->sectionId);
-                    }
+                case 'parent':
+                    $element->parentId = $this->_prepareParentForElement($value, $element->sectionId);
                     break;
                 default:
                     continue 2;
@@ -210,50 +207,19 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
         return $author;
     }
 
-    private function _prepareParentForElement($data, $sectionId)
+    private function _prepareParentForElement($fieldData, $sectionId)
     {
         $parentId = null;
 
-        // Don't connect empty fields
-        if (!empty($data)) {
+        $data = Hash::get($fieldData, 'data');
+        $attribute = Hash::get($fieldData, 'options.match', 'id');
 
-            // Find matching element
+        if (!empty($data)) {
             $criteria = craft()->elements->getCriteria(ElementType::Entry);
             $criteria->sectionId = $sectionId;
-
-            // Exact match
-            $criteria->search = '"'.$data.'"';
-
-            // Return the first found element for connecting
-            if ($criteria->total()) {
-                $parentId = $criteria->ids()[0];
-            }
-        }
-
-        return $parentId;
-    }
-
-    private function _prepareAncestorsForElement($data, $sectionId)
-    {
-        $parentId = null;
-
-        // Don't connect empty fields
-        if (!empty($data)) {
-
-            // Get section data
-            $section = new SectionModel();
-            $section->id = $sectionId;
-
-            // This we append before the slugified path
-            $sectionUrl = str_replace('{slug}', '', $section->getUrlFormat());
-
-            // Find matching element by URI (dirty, not all structures have URI's)
-            $criteria = craft()->elements->getCriteria(ElementType::Entry);
-            $criteria->sectionId = $sectionId;
-            $criteria->uri = $sectionUrl.craft()->import->slugify($data);
+            $criteria->$attribute = DbHelper::escapeParam($data);
             $criteria->limit = 1;
 
-            // Return the first found element for connecting
             if ($criteria->total()) {
                 $parentId = $criteria->ids()[0];
             }

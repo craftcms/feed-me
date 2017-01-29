@@ -1,6 +1,8 @@
 <?php
 namespace Craft;
 
+use Cake\Utility\Hash as Hash;
+
 class CategoryFeedMeElementType extends BaseFeedMeElementType
 {
     // Templates
@@ -86,6 +88,9 @@ class CategoryFeedMeElementType extends BaseFeedMeElementType
                 case 'slug':
                     $element->$handle = ElementHelper::createSlug($value['data']);
                     break;
+                //case 'parent':
+                    //$element->parent = $this->_findParent($value);
+                    //break;
                 case 'title':
                     $element->getContent()->$handle = $value['data'];
                     break;
@@ -133,8 +138,6 @@ class CategoryFeedMeElementType extends BaseFeedMeElementType
 
         if (isset($data['parent'])) {
             $parentCategory = $this->_prepareParentForElement($data['parent'], $element->groupId);
-        } elseif (isset($data['ancestors'])) {
-            $parentCategory = $this->_prepareAncestorsForElement($element, $data['ancestors']);
         }
 
         if ($parentCategory) {
@@ -148,41 +151,18 @@ class CategoryFeedMeElementType extends BaseFeedMeElementType
     // Private Methods
     // =========================================================================
 
-    private function _prepareParentForElement($data, $groupId)
+    private function _prepareParentForElement($fieldData, $groupId)
     {
         $parentCategory = null;
 
-        // Don't connect empty fields
-        if (!empty($data)) {
+        $data = Hash::get($fieldData, 'data');
+        $attribute = Hash::get($fieldData, 'options.match', 'id');
 
-            // Find matching element
+        if (!empty($data)) {
             $criteria = craft()->elements->getCriteria(ElementType::Category);
             $criteria->groupId = $groupId;
-
-            // Exact match
-            $criteria->search = '"'.$data.'"';
-            $parentCategory = $criteria->first();
-        }
-
-        return $parentCategory;
-    }
-
-    private function _prepareAncestorsForElement(BaseElementModel $element, $data)
-    {
-        $parentCategory = null;
-
-        // Don't connect empty fields
-        if (!empty($data)) {
-
-            // This we append before the slugified path
-            $categoryUrl = str_replace('{slug}', '', $element->getUrlFormat());
-
-            // Find matching element by URI (dirty, not all categories have URI's)
-            $criteria = craft()->elements->getCriteria(ElementType::Category);
-            $criteria->groupId = $element->groupId;
-            $criteria->uri = $categoryUrl . craft()->import->slugify($data);
+            $criteria->$attribute = DbHelper::escapeParam($data);
             $criteria->limit = 1;
-
             $parentCategory = $criteria->first();
         }
 

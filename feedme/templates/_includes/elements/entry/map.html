@@ -7,12 +7,16 @@
 {% endif %}
 
 {% set users = [{ label: 'Don\'t import', value: '' }] %}
-
 {% if CraftEdition >= CraftClient %}
     {% for user in craft.users.can('createEntries:' ~ sectionId) %}
         {% set users = users | merge([{ label: user, value: user.id }]) %}
     {% endfor %}
 {% endif %}
+
+{% set entries = [{ label: 'Don\'t import', value: '' }] %}
+{% for entry in craft.entries.limit(null) %}
+    {% set entries = entries | merge([{ label: entry, value: entry.id }]) %}
+{% endfor %}
 
 {% set fields = [{
     label: 'Title' | t,
@@ -30,6 +34,16 @@
     label: 'Entry ID' | t,
     handle: 'id',
     instructions: 'Specify the ID for this entry.' | t,
+}, {
+    label: 'Parent' | t,
+    handle: 'parent',
+    instructions: 'Select a parent entry to import these entries under.' | t,
+    default: forms.selectField({
+        id: 'fieldDefaults-parent',
+        name: 'fieldDefaults[parent]',
+        value: feed.fieldDefaults.parent ?? '',
+        options: entries,
+    }),    
 }, {
     label: 'Post Date' | t,
     handle: 'postDate',
@@ -84,7 +98,11 @@
     </thead>
     <tbody>
         {% for field in fields %}
-            {{ feedMeMacro.generateRow(_context, field) }}
+            {% if field.handle == 'parent' %}
+                {{ feedMeMacro.generateElementRow(_context, field) }}
+            {% else %}
+                {{ feedMeMacro.generateRow(_context, field) }}
+            {% endif %}
         {% endfor %}
     </tbody>
 </table>

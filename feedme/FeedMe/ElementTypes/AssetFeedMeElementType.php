@@ -1,6 +1,8 @@
 <?php
 namespace Craft;
 
+use Cake\Utility\Hash as Hash;
+
 class AssetFeedMeElementType extends BaseFeedMeElementType
 {
     // Templates

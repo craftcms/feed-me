@@ -4,6 +4,11 @@
     {% set group = craft.categoryGroups.getGroupById(groupId) %}
 {% endif %}
 
+{% set categories = [{ label: 'Don\'t import', value: '' }] %}
+{% for category in craft.categories.limit(null) %}
+    {% set categories = categories | merge([{ label: category, value: category.id }]) %}
+{% endfor %}
+
 {% set fields = [{
     label: 'Title' | t,
     handle: 'title',
@@ -20,6 +25,16 @@
     label: 'Category ID' | t,
     handle: 'id',
     instructions: 'Specify the ID for this category.' | t,
+}, {
+    label: 'Parent' | t,
+    handle: 'parent',
+    instructions: 'Select a parent category to import these categories under.' | t,
+    default: forms.selectField({
+        id: 'fieldDefaults-parent',
+        name: 'fieldDefaults[parent]',
+        value: feed.fieldDefaults.parent ?? '',
+        options: categories,
+    }),    
 }, {
     label: 'Status' | t,
     handle: 'enabled',
@@ -46,7 +61,11 @@
     </thead>
     <tbody>
         {% for field in fields %}
-            {{ feedMeMacro.generateRow(_context, field) }}
+            {% if field.handle == 'parent' %}
+                {{ feedMeMacro.generateElementRow(_context, field) }}
+            {% else %}
+                {{ feedMeMacro.generateRow(_context, field) }}
+            {% endif %}
         {% endfor %}
     </tbody>
 </table>
