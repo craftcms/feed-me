@@ -3,73 +3,21 @@ namespace Craft;
 
 class FeedMe_FeedModel extends BaseModel
 {
+    // Public Methods
+    // =========================================================================
+
     public function __toString()
     {
         return Craft::t($this->name);
     }
 
-    /*public function getElementGroupForType()
+    public function getDuplicateHandleFriendly()
     {
-        if ($this->elementType) {
-            if (isset($this->elementGroup[$this->elementType])) {
-                $group = $this->elementGroup[$this->elementType];
-
-                return craft()->sections->getSectionById($group);
-            }
-        }
+        return FeedMeDuplicate::getFrieldly($this->duplicateHandle);
     }
 
-    public function getElementTypeForFeed()
-    {
-        //if ($this->elementType) {
-            //return craft()->elements->getElementType($this->elementType);
-        //}
-    }
-
-    public function getSection()
-    {
-        if ($this->elementType == 'Entry') {
-            $section = $this->_getSectionEntryType();
-            return craft()->sections->getSectionById($section['section']);
-        }
-    }
-
-    public function getEntryType()
-    {
-        if ($this->elementType == 'Entry') {
-            $entryType = $this->_getSectionEntryType();
-            return craft()->sections->getEntryTypeById($entryType['entryType']);
-        }
-    }
-
-    public function getCategory()
-    {
-        if ($this->elementType == 'Category') {
-            return craft()->categories->getCategoryById($this->elementGroup['Category']);
-        }
-    }
-
-    public function getUser()
-    {
-        if ($this->elementType == 'User') {
-            return craft()->users->getUserById($this->elementGroup['User']);
-        }
-    }
-
-    public function getCommerceProduct()
-    {
-        if ($this->elementType == 'Commerce_Product') {
-            return craft()->commerce->getProductById($this->elementGroup['Commerce_Product']);
-        }
-    }
-
-    private function _getSectionEntryType()
-    {
-        if ($this->elementType == 'Entry') {
-            $sectionEntryType = explode(':', $this->elementGroup['Entry']);
-            return array('section' => $sectionEntryType[0], 'entryType' => $sectionEntryType[1]);
-        }
-    }*/
+    // Protected Methods
+    // =========================================================================
 
     protected function defineAttributes()
     {
@@ -87,11 +35,7 @@ class FeedMe_FeedModel extends BaseModel
             'elementType'       => AttributeType::String,
             'elementGroup'      => AttributeType::Mixed,
             'locale'            => AttributeType::String,
-            'duplicateHandle'   => array(AttributeType::Enum, 'values' => array(
-                FeedMe_Duplicate::Add,
-                FeedMe_Duplicate::Update,
-                FeedMe_Duplicate::Delete,
-            )),
+            'duplicateHandle'   => AttributeType::Mixed,
             'fieldMapping'          => AttributeType::Mixed,
             'fieldDefaults'         => AttributeType::Mixed,
             'fieldElementMapping'   => AttributeType::Mixed,

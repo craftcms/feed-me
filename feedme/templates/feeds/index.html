@@ -52,7 +52,7 @@
                         {% endif %}
                     </td>
 
-                    <td>{{ feed.duplicateHandle | capitalize }}</td>
+                    <td>{{ feed.duplicateHandleFriendly }}</td>
                     
                     <td><a href="{{ url('feedme/feeds/run/' ~ feed.id) }}">{{ 'Run Task' | t }}</a></td>
 

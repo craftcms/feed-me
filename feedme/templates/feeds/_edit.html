@@ -111,15 +111,35 @@
 
     <hr>
 
-    {{ forms.selectField({
-        label: "Import strategy <span class='info'><span style='display:inline-block;'><strong>Add Unique Only:</strong> Duplicate entries will be skipped, new entries however, will be added. <em>\"I want to keep existing entries untouched but add new ones.\"</em></span><span style='display:inline-block;'><strong>Add and Update existing:</strong> Select fields to compare duplicate entries with, updating all other fields.<em>\"I want to update existing entries and add new ones.\"</em></span><span style='display:inline-block;'><strong>Delete old and Update existing:</strong> Update any existing entries, and delete any entries not updated by this feed. Be careful.<em>\"I want only the entries from this feed in this section.\"</em></span></span>" | t,
-        instructions: 'Choose what happens when this feed is run again. Click tooltip above for explanation.',
-        id: 'duplicateHandle',
-        name: 'duplicateHandle',
-        options: {'add': 'Add Unique Only', 'update': 'Add and Update existing', 'delete': 'Delete old and Update existing'},
-        value: feed.duplicateHandle,
-        required: true,
-    }) }}
+    <div class="field">
+        <div class="heading">
+            <label class="required">Import strategy <span class="info">
+                <span style="display:inline-block;"><strong>Create new element:</strong> Adds new elements if they do not already exist.</span>
+                <span style="display:inline-block;"><strong>Update existing elements:</strong> Updates elements that match the Unique Identifier (next step).</span>
+                <span style="display:inline-block;"><strong>Delete old elements:</strong> Deletes elements that are not updated by this feed. Be careful.</span></span>
+            </label>
+
+            <div class="instructions">
+                <p>{{ "Choose what happens when this feed is run again. Click tooltip above for explanation." | t }}</p>
+            </div>
+        </div>
+
+        <div class="input ltr">
+            {{ forms.checkboxGroup({
+                label: "Import strategy" | t,
+                instructions: 'Choose what happens when this feed is run again.',
+                id: 'duplicateHandle',
+                name: 'duplicateHandle',
+                options: {
+                    'add': 'Create new elements' | t,
+                    'update': 'Update existing elements' | t,
+                    'delete': 'Delete old elements' | t
+                },
+                values: feed.duplicateHandle ?? ['add'],
+                required: true,
+            }) }}
+        </div>
+    </div>
 
     <hr>
 

@@ -53,7 +53,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         }
 
         // If our duplication handling is to delete - we delete all elements
-        if ($feed['duplicateHandle'] == FeedMe_Duplicate::Delete) {
+        if (FeedMeDuplicate::isDelete($feed)) {
             $criteria = $this->_service->setCriteria($feed);
 
             $return['existingElements'] = $criteria->ids();
@@ -108,15 +108,20 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         }
 
         // If there's an existing matching element
-        if ($existingElement && $feed['duplicateHandle']) {
+        if ($existingElement) {
 
             // If we're deleting or updating an existing element, we want to focus on that one
-            if ($feed['duplicateHandle'] == FeedMe_Duplicate::Delete || $feed['duplicateHandle'] == FeedMe_Duplicate::Update) {
+            if (FeedMeDuplicate::isUpdate($feed)) {
                 $element = $existingElement;
             }
 
-            // If we're adding, and there's an existing element - quit now
-            if ($feed['duplicateHandle'] == FeedMe_Duplicate::Add) {
+            // If we're adding only, and there's an existing element - quit now
+            if (FeedMeDuplicate::isAdd($feed, true)) {
+                return;
+            }
+        } else {
+            // Have we set to update-only? There are no existing elements, so skip
+            if (FeedMeDuplicate::isUpdate($feed, true)) {
                 return;
             }
         }
@@ -160,7 +165,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
 
     public function finalizeAfterProcess($settings, $feed)
     {
-        if ($feed['duplicateHandle'] == FeedMe_Duplicate::Delete) {
+        if (FeedMeDuplicate::isDelete($feed)) {
             $deleteIds = array_diff($settings['existingElements'], $this->_processedElements);
             $criteria = $this->_service->setCriteria($feed);
             $criteria->id = $deleteIds;

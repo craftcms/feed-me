@@ -23,11 +23,7 @@ class FeedMe_FeedRecord extends BaseRecord
             'elementType'       => array(AttributeType::String, 'required' => true),
             'elementGroup'      => array(AttributeType::Mixed),
             'locale'            => array(AttributeType::String),
-            'duplicateHandle'   => array(AttributeType::Enum, 'required' => true, 'values' => array(
-                FeedMe_Duplicate::Add,
-                FeedMe_Duplicate::Update,
-                FeedMe_Duplicate::Delete,
-            )),
+            'duplicateHandle'   => array(AttributeType::Mixed, 'required' => true),
             'fieldMapping'          => AttributeType::Mixed,
             'fieldDefaults'         => AttributeType::Mixed,
             'fieldElementMapping'   => AttributeType::Mixed,
