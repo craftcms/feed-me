@@ -31,7 +31,7 @@
             <th scope="col">{{ "Element Group" | t }}</th>
             <th scope="col">{{ "Strategy" | t }}</th>
             <th scope="col">{{ "Tasks" | t }}</th>
-            <th colspan="2">{{ "Actions" | t }}</th>
+            <th colspan="{{ craft.config.devMode ? '3' : '2' }}">{{ "Actions" | t }}</th>
         </thead>
         <tbody>
             {% for feed in feeds %}
@@ -55,6 +55,13 @@
                     <td>{{ feed.duplicateHandle | capitalize }}</td>
                     
                     <td><a href="{{ url('feedme/feeds/run/' ~ feed.id) }}">{{ 'Run Task' | t }}</a></td>
+
+                    {% if craft.config.devMode %}
+                        <td class="thin action">
+                            {% set debugUrl = actionUrl('feedMe/feeds/debug', { feedId: feed.id }) %}
+                            <a href="{{ debugUrl }}" target="_blank" class="debug fa-icon" title="{{ 'Debug' | t }}" role="button"><i class="fa fa-bug"></i></a>
+                        </td>
+                    {% endif %}
 
                     <td class="thin action">
                         {% set directUrl = actionUrl('/feedMe/feeds/runTask', { direct: true, feedId: feed.id, passkey: feed.passkey }) | replace(craft.config.cpTrigger ~ '/', '') %}

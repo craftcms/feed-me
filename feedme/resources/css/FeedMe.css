@@ -8,15 +8,21 @@
     vertical-align: middle;
 }
 
-.fa-icon.direct .fa-external-link {
+.fa-icon.direct .fa-external-link,
+.fa-icon.debug .fa-bug {
     color: rgba(0, 0, 0, 0.2);
 }
 
-.fa-icon.direct:hover .fa-external-link {
+.fa-icon.direct:hover .fa-external-link,
+.fa-icon.debug:hover .fa-bug {
     color: #0d78f2;
 }
 
-body.ltr #feeds td:last-child {
+.fa-icon.debug .fa-bug {
+
+}
+
+body.ltr #feeds .thin.action {
     padding-left: 10px;
 }
 
