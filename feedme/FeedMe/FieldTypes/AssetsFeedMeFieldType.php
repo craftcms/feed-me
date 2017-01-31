@@ -61,6 +61,9 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
                 $asset = UrlHelper::stripQueryString($asset);
             }
 
+            // Cleanup filenames to match Craft Assets
+            $asset = AssetsHelper::cleanAssetName($asset);
+
             $criteria = craft()->elements->getCriteria(ElementType::Asset);
             $criteria->folderId = $folderIds;
             $criteria->limit = $settings->limit;
@@ -138,11 +141,14 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
                 $filename = $filename . '.' . $extension;
             }
 
+            // Cleanup filenames for Curl specifically
+            $curlUrl = str_replace(' ', '%20', $url);
+
             // Download the file - ensuring we're not loading into memory for efficiency
             $defaultOptions = array(
                 CURLOPT_FILE => fopen($saveLocation, 'w'),
                 CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_URL => $url,
+                CURLOPT_URL => $curlUrl,
                 CURLOPT_FAILONERROR => true,
             );
 
