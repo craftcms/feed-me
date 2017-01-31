@@ -54,6 +54,7 @@ class EntriesFeedMeFieldType extends BaseFeedMeFieldType
         // Find existing
         foreach ($data as $entry) {
             $criteria = craft()->elements->getCriteria(ElementType::Entry);
+            $criteria->status = null;
             $criteria->sectionId = $sectionIds;
             $criteria->limit = $settings->limit;
 

@@ -28,14 +28,6 @@ class TableFeedMeFieldType extends BaseFeedMeFieldType
             return;
         }
 
-        
-
-        echo '<pre>';
-        //print_r(Hash::dimensions($data));
-        echo '</pre>';
-
-        //$next = reset($data);
-
         // When we import a non-repeatable node into a table, we must ensure its treated consistently
         // Because Table/Row/Column1 is not the same as Table/Row/.../Column1 - it should be the latter
         if (Hash::dimensions($data) == 2) {

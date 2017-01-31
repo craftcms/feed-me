@@ -41,6 +41,7 @@ class TagsFeedMeFieldType extends BaseFeedMeFieldType
         // Find existing
         foreach ($data as $tag) {
             $criteria = craft()->elements->getCriteria(ElementType::Tag);
+            $criteria->status = null;
             $criteria->groupId = $groupId;
             $criteria->title = DbHelper::escapeParam($tag);
             

@@ -66,6 +66,7 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
             $asset = str_replace(',', '\,', $asset);
 
             $criteria = craft()->elements->getCriteria(ElementType::Asset);
+            $criteria->status = null;
             $criteria->folderId = $folderIds;
             $criteria->limit = $settings->limit;
             $criteria->filename = $asset;

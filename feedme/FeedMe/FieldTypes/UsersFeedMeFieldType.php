@@ -47,6 +47,7 @@ class UsersFeedMeFieldType extends BaseFeedMeFieldType
         // Find existing
         foreach ($data as $user) {
             $criteria = craft()->elements->getCriteria(ElementType::User);
+            $criteria->status = null;
             $criteria->groupId = $groupIds;
             $criteria->limit = $settings->limit;
 
