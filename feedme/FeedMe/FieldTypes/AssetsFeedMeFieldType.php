@@ -63,6 +63,7 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
 
             // Cleanup filenames to match Craft Assets
             //$asset = AssetsHelper::cleanAssetName($asset);
+            $asset = str_replace(',', '\,', $asset);
 
             $criteria = craft()->elements->getCriteria(ElementType::Asset);
             $criteria->folderId = $folderIds;
