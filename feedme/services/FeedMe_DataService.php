@@ -116,6 +116,11 @@ class FeedMe_DataService extends BaseApplicationComponent
 
     public function getRawData($url)
     {
+        // Check for local URL
+        if (!UrlHelper::isAbsoluteUrl($url)) {
+            return file_get_contents($url);
+        }
+
         $curl = curl_init();
 
         $defaultOptions = array(
