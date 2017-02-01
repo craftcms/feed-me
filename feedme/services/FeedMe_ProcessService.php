@@ -138,6 +138,8 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         if (!$feed['locale']) {
             $element->setContentFromPost($fieldData);
         }
+
+        $this->_debugOutput($fieldData);
         
         // Save the element
         if ($this->_service->save($element, $fieldData, $feed)) {
@@ -159,8 +161,6 @@ class FeedMe_ProcessService extends BaseApplicationComponent
                 throw new Exception(Craft::t('Unknown Element saving error occurred.'));
             }
         }
-
-        $this->_debugOutput($fieldData);
     }
 
     public function finalizeAfterProcess($settings, $feed)
