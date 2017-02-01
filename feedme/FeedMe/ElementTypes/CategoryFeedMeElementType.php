@@ -57,7 +57,7 @@ class CategoryFeedMeElementType extends BaseFeedMeElementType
     {
         foreach ($settings['fieldUnique'] as $handle => $value) {
             if ((int)$value === 1) {
-                $feedValue = Hash::get($data, $handle . '.data', $handle);
+                $feedValue = Hash::get($data, $handle . '.data', $data[$handle]);
 
                 if ($feedValue) {
                     $criteria->$handle = DbHelper::escapeParam($feedValue);

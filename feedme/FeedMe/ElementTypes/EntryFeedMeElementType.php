@@ -72,7 +72,7 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
     {
         foreach ($settings['fieldUnique'] as $handle => $value) {
             if ((int)$value === 1) {
-                $feedValue = Hash::get($data, $handle . '.data', $handle);
+                $feedValue = Hash::get($data, $handle . '.data', $data[$handle]);
 
                 // Special-case for Title which can be dynamic
                 if ($handle == 'title') {
