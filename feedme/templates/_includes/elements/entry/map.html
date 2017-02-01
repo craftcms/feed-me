@@ -19,6 +19,10 @@
 {% endfor %}
 
 {% set fields = [{
+    label: 'Entry ID' | t,
+    handle: 'id',
+    instructions: '<strong>Warning: </strong>This should only be used for an existing Craft Entry ID.' | t,
+}, {
     label: 'Title' | t,
     handle: 'title',
     default: forms.textField({
@@ -30,10 +34,6 @@
     label: 'Slug' | t,
     handle: 'slug',
     instructions: 'If not set, the Slug will be automatically created from Title.' | t,
-}, {
-    label: 'Entry ID' | t,
-    handle: 'id',
-    instructions: 'Specify the ID for this entry.' | t,
 }, {
     label: 'Parent' | t,
     handle: 'parent',

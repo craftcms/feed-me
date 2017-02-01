@@ -5,6 +5,10 @@
 {% endif %}
 
 {% set fields = [{
+    label: 'Product ID' | t,
+    handle: 'id',
+    instructions: '<strong>Warning: </strong>This should only be used for an existing Craft Commerce Product ID.' | t,
+}, {
     label: 'Title',
     handle: 'title',
     default: forms.textField({
@@ -16,10 +20,6 @@
     label: 'Slug',
     handle: 'slug',
     instructions: 'If not set, the Slug will be automatically created from Title.' | t,
-}, {
-    label: 'Product ID' | t,
-    handle: 'id',
-    instructions: 'Specify the ID for this product.' | t,
 }, {
     label: 'Post Date',
     handle: 'postDate',

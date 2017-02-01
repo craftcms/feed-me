@@ -5,6 +5,10 @@
 {% endif %}
 
 {% set fields = [{
+    label: 'Asset ID' | t,
+    handle: 'id',
+    instructions: '<strong>Warning: </strong>This should only be used for an existing Craft Asset ID.' | t,
+}, {
     label: 'Title' | t,
     handle: 'title',
     default: forms.textField({
@@ -17,10 +21,6 @@
     handle: 'filename',
     instructions: 'The filename for this asset (not including the path).' | t,
     required: true,
-}, {
-    label: 'Asset ID' | t,
-    handle: 'id',
-    instructions: 'Specify the ID for this asset.' | t,
 }] %}
 
 <h2>{{ 'Asset Fields' | t }}</h2>
