@@ -139,6 +139,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             $element->setContentFromPost($fieldData);
         }
 
+        $this->_debugOutput($element->attributes);
         $this->_debugOutput($fieldData);
         
         // Save the element

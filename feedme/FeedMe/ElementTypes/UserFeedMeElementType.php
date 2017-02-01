@@ -68,7 +68,9 @@ class UserFeedMeElementType extends BaseFeedMeElementType
             if ((int)$value === 1) {
                 $feedValue = Hash::get($data, $handle . '.data', $handle);
 
-                $criteria->$handle = DbHelper::escapeParam($feedValue);
+                if ($feedValue) {
+                    $criteria->$handle = DbHelper::escapeParam($feedValue);
+                }
             }
         }
 

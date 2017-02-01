@@ -59,8 +59,8 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
         $criteria->localeEnabled = null;
 
         $criteria->sectionId = $settings['elementGroup']['Entry']['section'];
-        $criteria->typeId = $settings['elementGroup']['Entry']['entryType'];
-        
+        $criteria->type = $settings['elementGroup']['Entry']['entryType'];
+
         if ($settings['locale']) {
             $criteria->locale = $settings['locale'];
         }
@@ -85,7 +85,9 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
                     }
                 }
 
-                $criteria->$handle = DbHelper::escapeParam($feedValue);
+                if ($feedValue) {
+                    $criteria->$handle = DbHelper::escapeParam($feedValue);
+                }
             }
         }
 
