@@ -5,10 +5,6 @@
 {% endif %}
 
 {% set fields = [{
-    label: 'Product ID' | t,
-    handle: 'id',
-    instructions: '<strong>Warning: </strong>This should only be used for an existing Craft Commerce Product ID.' | t,
-}, {
     label: 'Title',
     handle: 'title',
     default: forms.textField({
@@ -86,6 +82,10 @@
         name: 'fieldDefaults[promotable]',
         checked: feed.fieldDefaults.promotable ?? '',
     })
+}, {
+    label: 'Product ID' | t,
+    handle: 'id',
+    instructions: '<strong>Warning: </strong>This should only be used for an existing Craft Commerce Product ID.' | t,
 }] %}
 
 

@@ -10,10 +10,6 @@
 {% endfor %}
 
 {% set fields = [{
-    label: 'Category ID' | t,
-    handle: 'id',
-    instructions: '<strong>Warning: </strong>This should only be used for an existing Craft Category ID.' | t,
-}, {
     label: 'Title' | t,
     handle: 'title',
     default: forms.textField({
@@ -49,6 +45,10 @@
             { label: 'Disabled', value: '0' },
         ],
     }),
+}, {
+    label: 'Category ID' | t,
+    handle: 'id',
+    instructions: '<strong>Warning: </strong>This should only be used for an existing Craft Category ID.' | t,
 }] %}
 
 <h2>{{ 'Category Fields' | t }}</h2>

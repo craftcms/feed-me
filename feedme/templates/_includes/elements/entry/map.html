@@ -19,10 +19,6 @@
 {% endfor %}
 
 {% set fields = [{
-    label: 'Entry ID' | t,
-    handle: 'id',
-    instructions: '<strong>Warning: </strong>This should only be used for an existing Craft Entry ID.' | t,
-}, {
     label: 'Title' | t,
     handle: 'title',
     default: forms.textField({
@@ -86,6 +82,10 @@
         value: feed.fieldDefaults.authorId ?? '',
         options: users,
     }),
+}, {
+    label: 'Entry ID' | t,
+    handle: 'id',
+    instructions: '<strong>Warning: </strong>This should only be used for an existing Craft Entry ID.' | t,
 }] %}
 
 <h2>{{ 'Entry Fields' | t }}</h2>
