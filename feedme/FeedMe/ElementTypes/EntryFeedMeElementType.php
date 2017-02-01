@@ -71,16 +71,21 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
     public function matchExistingElement(&$criteria, $data, $settings)
     {
         foreach ($settings['fieldUnique'] as $handle => $value) {
-            if (intval($value) == 1 && ($data != '__')) {
-                if (isset($data[$handle])) {
-                    if (isset($data[$handle]['data'])) {
-                        $criteria->$handle = DbHelper::escapeParam($data[$handle]['data']);
-                    } else {
-                        $criteria->$handle = DbHelper::escapeParam($data[$handle]);
+            if ((int)$value === 1) {
+                $feedValue = Hash::get($data, $handle . '.data', $handle);
+
+                // Special-case for Title which can be dynamic
+                if ($handle == 'title') {
+                    $entryTypeId = $settings['elementGroup']['Entry']['entryType'];
+                    $entryType = craft()->sections->getEntryTypeById($entryTypeId);
+
+                    // Its dynamically generated
+                    if (!$entryType->hasTitleField) {
+                        $feedValue = craft()->templates->renderObjectTemplate($entryType->titleFormat, $data);
                     }
-                } else {
-                    throw new Exception(Craft::t('Unable to match against '.$handle.' - no data found.'));
                 }
+
+                $criteria->$handle = DbHelper::escapeParam($feedValue);
             }
         }
 

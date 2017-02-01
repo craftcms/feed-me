@@ -156,7 +156,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             if ($element->getErrors()) {
                 throw new Exception(json_encode($element->getErrors()));
             } else {
-                throw new Exception(Craft::t('Unknown Element error occurred.'));
+                throw new Exception(Craft::t('Unknown Element saving error occurred.'));
             }
         }
 

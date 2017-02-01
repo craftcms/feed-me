@@ -65,16 +65,10 @@ class UserFeedMeElementType extends BaseFeedMeElementType
     public function matchExistingElement(&$criteria, $data, $settings)
     {
         foreach ($settings['fieldUnique'] as $handle => $value) {
-            if (intval($value) == 1 && ($data != '__')) {
-                if (isset($data[$handle])) {
-                    if (isset($data[$handle]['data'])) {
-                        $criteria->$handle = DbHelper::escapeParam($data[$handle]['data']);
-                    } else {
-                        $criteria->$handle = DbHelper::escapeParam($data[$handle]);
-                    }
-                } else {
-                    throw new Exception(Craft::t('Unable to match against '.$handle.' - no data found.'));
-                }
+            if ((int)$value === 1) {
+                $feedValue = Hash::get($data, $handle . '.data', $handle);
+
+                $criteria->$handle = DbHelper::escapeParam($feedValue);
             }
         }
 
