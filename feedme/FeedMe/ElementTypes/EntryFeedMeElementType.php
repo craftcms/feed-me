@@ -109,6 +109,14 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
         }
 
         foreach ($data as $handle => $value) {
+            if (is_null($value)) {
+                continue;
+            }
+
+            if (isset($value['data']) && $value['data'] == '') {
+                continue;
+            }
+
             switch ($handle) {
                 case 'id';
                     $element->$handle = $value['data'];
@@ -121,7 +129,13 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
                     break;
                 case 'postDate':
                 case 'expiryDate';
-                    $element->$handle = $this->_prepareDateForElement($value['data']);
+                    $dateValue = $this->_prepareDateForElement($value['data']);
+
+                    // Ensure there's a parsed data - null will auto-generate a new date
+                    if ($dateValue) {
+                        $element->$handle = $dateValue;
+                    }
+
                     break;
                 case 'enabled':
                     $element->$handle = (bool)$value['data'];
@@ -190,14 +204,16 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
 
     private function _prepareDateForElement($date)
     {
+        $craftDate = null;
+
         if (!is_array($date)) {
             $d = date_parse($date);
             $date_string = date('Y-m-d H:i:s', mktime($d['hour'], $d['minute'], $d['second'], $d['month'], $d['day'], $d['year']));
 
-            $date = DateTime::createFromString($date_string, craft()->timezone);
+            $craftDate = DateTime::createFromString($date_string, craft()->timezone);
         }
 
-        return $date;
+        return $craftDate;
     }
 
     private function _prepareAuthorForElement($author)
