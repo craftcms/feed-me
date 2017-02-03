@@ -61,6 +61,10 @@ class TableFeedMeFieldType extends BaseFeedMeFieldType
         }*/
 
         foreach ($data as $i => $row) {
+            if (!isset($row['data'])) {
+                continue;
+            }
+
             if (!is_array($row['data'])) {
                 $row['data'] = array($row['data']);
             }
