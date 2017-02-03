@@ -102,7 +102,7 @@ class UserFeedMeElementType extends BaseFeedMeElementType
                 case 'lastName':
                 case 'email':
                 case 'prefLocale':
-                case 'password':
+                case 'newPassword':
                 case 'photo':
                     $element->$handle = $value['data'];
                     break;
