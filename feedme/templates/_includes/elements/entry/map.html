@@ -15,7 +15,7 @@
 
 {% set entries = [{ label: 'Don\'t import', value: '' }] %}
 {% for entry in craft.entries.limit(null) %}
-    {% set entries = entries | merge([{ label: entry, value: entry.id }]) %}
+    {% set entries = entries | merge([{ label: entry.title | slice(0, 40), value: entry.id }]) %}
 {% endfor %}
 
 {% set fields = [{
