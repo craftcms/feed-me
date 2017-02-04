@@ -10,6 +10,7 @@ class FeedMeTask extends BaseTask
     private $_feedData;
     private $_feedSettings;
     private $_errors;
+    private $_totalSteps;
 
     // Public Methods
     // =========================================================================
@@ -34,26 +35,27 @@ class FeedMeTask extends BaseTask
             // There are also a few once-off things we can do for this feed to assist with processing.
             $this->_feedSettings = craft()->feedMe_process->setupForProcess($this->_feed, $this->_feedData);
 
+            // Store for performance
+            $this->_totalSteps = count($this->_feedData);
+
         } catch (\Exception $e) {
             FeedMePlugin::log($this->_feed->name . ': ' . $e->getMessage(), LogLevel::Error, true);
 
-            return 0;
+            $this->_totalSteps = 0;
         }
 
         // Take a step for every row
-        return count($this->_feedData);
+        return $this->_totalSteps;
     }
 
     public function runStep($step)
     {
         // Do we even have any data to process?
-        if (!$this->getTotalSteps()) {
+        if (!$this->_totalSteps) {
             return true;
         }
 
         try {
-            $settings = $this->getSettings();
-
             // On the first run of the feed
             if (!$step) {
                 // Fire an "onBeforeProcessFeed" event
@@ -69,7 +71,7 @@ class FeedMeTask extends BaseTask
             }
 
             // When finished
-            if ($step == ($this->getTotalSteps() - 1)) {
+            if ($step == ($this->_totalSteps - 1)) {
                 craft()->feedMe_process->finalizeAfterProcess($this->_feedSettings, $this->_feed);
 
                 // Fire an "onProcessFeed" event
@@ -86,7 +88,7 @@ class FeedMeTask extends BaseTask
             //return false;
         }
 
-        if ($step == ($this->getTotalSteps() - 1)) {
+        if ($step == ($this->_totalSteps - 1)) {
             if (count($this->_errors) > 0) {
                 return false;
             }
