@@ -248,6 +248,43 @@ body.rtl .indented { margin-right: 150px; }
 
 
 
+/* ==========================================================================
+// Welcome Screen
+// ========================================================================== */
+
+.feedme-welcome {
+    text-align: center;
+    margin: 0 auto;
+}
+
+.feedme-welcome h1 {
+    font-size: 28px;
+}
+
+.feedme-welcome img {
+    width: 120px;
+    margin: 20px 0 30px;
+}
+
+.feedme-welcome .btn-start {
+    font-size: 15px;
+    padding: 14px 28px;
+    height: auto;
+    margin-top: 20px;
+}
+
+.feedme-welcome .or {
+    display: block;
+    padding: 10px;
+    font-style: italic;
+}
+
+.feedme-welcome .btn .fa {
+    margin-left: 5px;
+}
+
+
+
 
 /* ==========================================================================
 // Plugin Footer
