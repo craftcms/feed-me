@@ -53,27 +53,29 @@
 </tr>
 
 {% if parentElementField is not defined %}
-    {% set elementFields = craft.feedMe.getCategoriesFieldLayout(field.settings.source).getFields() %}
+    {% set fieldLayout = craft.feedMe.getCategoriesFieldLayout(field.settings.source) %}
 
-    {% for fieldtype in elementFields %}
-        {% set innerField = fieldtype.getField() %}
+    {% if fieldLayout %}
+        {% for fieldtype in fieldLayout.getFields() %}
+            {% set innerField = fieldtype.getField() %}
 
-        {# Lets not allow a few fields at this time - itself for recursive reasons, and Matrix because :O #}
-        {% if innerField.type in supportedSubElementFields and elementType != 'Category' %}
-            {% set handleFieldPrefix = (handlePrefix is defined) ? handlePrefix : '' %}
-            
-            {% set variables = {
-                field: innerField,
-                feed: feed,
-                feedData: feedData,
-                handlePrefix: handleFieldPrefix ~ field.handle ~ '-fields-',
-                labelName: innerField.name,
-                labelHandle: innerField.handle,
-                isSubElementField: true,
-            } %}
-            
-            {% include 'feedme/_includes/field' with variables %}
-        {% endif %}
-    {% endfor %}
+            {# Lets not allow a few fields at this time - itself for recursive reasons, and Matrix because :O #}
+            {% if innerField.type in supportedSubElementFields and elementType != 'Category' %}
+                {% set handleFieldPrefix = (handlePrefix is defined) ? handlePrefix : '' %}
+                
+                {% set variables = {
+                    field: innerField,
+                    feed: feed,
+                    feedData: feedData,
+                    handlePrefix: handleFieldPrefix ~ field.handle ~ '-fields-',
+                    labelName: innerField.name,
+                    labelHandle: innerField.handle,
+                    isSubElementField: true,
+                } %}
+                
+                {% include 'feedme/_includes/field' with variables %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
 {% endif %}
 

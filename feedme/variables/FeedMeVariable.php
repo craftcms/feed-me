@@ -132,21 +132,48 @@ class FeedMeVariable
             $folderSourceId = $settings['singleUploadLocationSource'];
         }
 
-        $layoutId = craft()->assetSources->getSourceById($folderSourceId)->fieldLayoutId;
+        $source = craft()->assetSources->getSourceById($folderSourceId);
+
+        if (!$source) {
+            return false;
+        }
+
+        $layoutId = $source->fieldLayoutId;
         return craft()->fields->getLayoutById($layoutId);
     }
 
     public function getCategoriesFieldLayout($categoryGroup)
     {
+        // Craft throws an error if there are no Categories at all
+        if (!craft()->categories->getAllGroupIds()) {
+            return false;
+        }
+
+        // Get the Category Group ID
         $id = str_replace('group:', '', $categoryGroup);
-        $layoutId = craft()->categories->getGroupById($id)->fieldLayoutId;
+        $group = craft()->categories->getGroupById($id);
+
+        if (!$group) {
+            return false;
+        }
+
+        // Get the field layout for this Category Group
+        $layoutId = $group->fieldLayoutId;
         return craft()->fields->getLayoutById($layoutId);
     }
 
     public function getTagsFieldLayout($tagGroup)
     {
+        // Get the Tag Group ID
         $id = str_replace('taggroup:', '', $tagGroup);
-        $layoutId = craft()->tags->getTagGroupById($id)->fieldLayoutId;
+        $group = craft()->tags->getTagGroupById($id);
+
+        if (!$group) {
+            return false;
+        }
+
+        // Get the field layout for this Tag Group
+        $layoutId = $group->fieldLayoutId;
         return craft()->fields->getLayoutById($layoutId);
     }
 

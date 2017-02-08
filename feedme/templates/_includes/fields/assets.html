@@ -51,26 +51,28 @@
 </tr>
 
 {% if parentElementField is not defined %}
-    {% set elementFields = craft.feedMe.getAssetFieldLayout(field.settings).getFields() %}
+    {% set fieldLayout = craft.feedMe.getAssetFieldLayout(field.settings) %}
 
-    {% for fieldtype in elementFields %}
-        {% set innerField = fieldtype.getField() %}
+    {% if fieldLayout %}
+        {% for fieldtype in fieldLayout.getFields() %}
+            {% set innerField = fieldtype.getField() %}
 
-        {% if innerField.type in supportedSubElementFields and elementType != 'Asset' %}
-            {% set handleFieldPrefix = (handlePrefix is defined) ? handlePrefix : '' %}
-            
-            {% set variables = {
-                field: innerField,
-                feed: feed,
-                feedData: feedData,
-                handlePrefix: handleFieldPrefix ~ field.handle ~ '-fields-',
-                labelName: innerField.name,
-                labelHandle: innerField.handle,
-                isSubElementField: true,
-            } %}
-            
-            {% include 'feedme/_includes/field' with variables %}
-        {% endif %}
-    {% endfor %}
+            {% if innerField.type in supportedSubElementFields and elementType != 'Asset' %}
+                {% set handleFieldPrefix = (handlePrefix is defined) ? handlePrefix : '' %}
+                
+                {% set variables = {
+                    field: innerField,
+                    feed: feed,
+                    feedData: feedData,
+                    handlePrefix: handleFieldPrefix ~ field.handle ~ '-fields-',
+                    labelName: innerField.name,
+                    labelHandle: innerField.handle,
+                    isSubElementField: true,
+                } %}
+                
+                {% include 'feedme/_includes/field' with variables %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
 {% endif %}
 
