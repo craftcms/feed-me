@@ -113,7 +113,7 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
                 continue;
             }
 
-            if (isset($value['data']) && $value['data'] == '') {
+            if (isset($value['data']) && $value['data'] === '') {
                 continue;
             }
 
