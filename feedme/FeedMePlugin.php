@@ -102,6 +102,11 @@ class FeedMePlugin extends BasePlugin
         }
     }
 
+    public function onAfterInstall()
+    {
+        craft()->request->redirect(UrlHelper::getCpUrl('feedme/welcome'));
+    }
+
     public function init()
     {
         Craft::import('plugins.feedme.FeedMe.DataTypes.*');
