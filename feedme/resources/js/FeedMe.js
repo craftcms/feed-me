@@ -67,6 +67,20 @@ $(function() {
         }
     }
 
+    // For Assets, only show the upload options if we decide to upload
+    $('.assets-uploads input').on('change', function(e) {
+        var $options = $(this).parents('.field-extra-settings').find('.select');
+
+        if ($(this).prop('checked')) {
+            $options.css({ opacity: 1, visibility: 'visible' });
+        } else {
+            $options.css({ opacity: 0, visibility: 'hidden' });
+        }
+    });
+
+    // On-load, hide/show upload options
+    $('.assets-uploads input').trigger('change');
+
 
     // Allow multiple submit actions, that trigger different actions as required
     $(document).on('click', 'input[data-action]', function(e) {

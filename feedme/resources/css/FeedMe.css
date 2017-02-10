@@ -78,6 +78,11 @@ table#feeds .element-group-sub {
     z-index: 1;
 }
 
+.feedme-mapping .field-extra-settings .assets-uploads .select {
+    opacity: 0;
+    visibility: hidden;
+}
+
 .feedme-mapping .field-extra-settings .assets-uploads select {
     padding: 5px 22px 5px 10px !important;
     font-size: 11px;
