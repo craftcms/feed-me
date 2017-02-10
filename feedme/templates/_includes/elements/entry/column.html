@@ -6,6 +6,7 @@
     {% set entryType = craft.feedMe.getEntryTypeById(entryTypeId) %}
 
     {% if section and entryType %}
-        {{ section.name }} / {{ entryType.name }}
+        <span class="element-group">{{ section.name }}</span>
+        <span class="element-group-sub">{{ entryType.name }}</span>
     {% endif %}
 {% endif %}

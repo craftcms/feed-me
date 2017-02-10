@@ -26,6 +26,14 @@ body.ltr #feeds .thin.action {
     padding-left: 10px;
 }
 
+table#feeds .element-group-sub {
+    display: block;
+    font-size: 11px;
+    line-height: 1.2;
+    color: rgba(51, 63, 77, 0.5);
+    font-weight: bold;
+}
+
 
 
 
