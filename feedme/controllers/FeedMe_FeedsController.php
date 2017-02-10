@@ -57,6 +57,17 @@ class FeedMe_FeedsController extends BaseController
         $variables['task'] = $this->_runImportTask($feed->id);
 
         if (craft()->request->getParam('direct')) {
+            // If the user triggers this from the control panel (maybe for testing), triggering a task immediately will 
+            // lock up the browser session while it runs. In that case, we use JS to trigger the task (in _direct template)
+            //
+            // However, when triggering via Cron, run the task immediately, as Cron doesn't trigger JS (there's no browser)
+            // Best way to check if its being run from a non-browser, as each server is different, so can't be sure what they trigger with
+            $browser = $this->_getBrowserName(craft()->request->getUserAgent());
+
+            if ($browser == 'Other') {
+                craft()->tasks->runPendingTasks();
+            }
+
             $this->renderTemplate('feedme/feeds/_direct', $variables);
         } else {
             $this->renderTemplate('feedme/feeds/_run', $variables);
@@ -237,6 +248,18 @@ class FeedMe_FeedsController extends BaseController
         }
 
         return $feed;
+    }
+
+    private function _getBrowserName($user_agent)
+    {
+        if (strpos($user_agent, 'Opera') || strpos($user_agent, 'OPR/')) return 'Opera';
+        elseif (strpos($user_agent, 'Edge')) return 'Edge';
+        elseif (strpos($user_agent, 'Chrome')) return 'Chrome';
+        elseif (strpos($user_agent, 'Safari')) return 'Safari';
+        elseif (strpos($user_agent, 'Firefox')) return 'Firefox';
+        elseif (strpos($user_agent, 'MSIE') || strpos($user_agent, 'Trident/7')) return 'Internet Explorer';
+        
+        return 'Other';
     }
 
 }
