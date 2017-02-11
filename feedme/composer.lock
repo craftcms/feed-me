@@ -4,8 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "b350bb563ee8c2120106f5ec14e9c4c5",
-    "content-hash": "4a742aee8196909afe88974278430fdb",
+    "content-hash": "2a3d130b8e090cfcc809df51084181ba",
     "packages": [
         {
             "name": "cakephp/utility",
@@ -44,7 +43,7 @@
                 }
             ],
             "description": "CakePHP Utility classes such as Inflector, String, Hash, and Security",
-            "time": "2017-01-06 13:46:45"
+            "time": "2017-01-06T13:46:45+00:00"
         }
     ],
     "packages-dev": [],

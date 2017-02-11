@@ -47,7 +47,7 @@ class FeedMeArrayHelper
 
         // Store resulting array if key contains wildcard.
         $deepArray = array();
-        $keys = preg_split('/\./', $key);
+        $keys = preg_split('/\^|\./', $key);
 
         foreach ($keys as $n => $segment) {
             if ($segment == '*') {

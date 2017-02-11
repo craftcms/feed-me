@@ -1,6 +1,8 @@
 <?php
 namespace Craft;
 
+use Cake\Utility\Hash as Hash;
+
 class FeedMe_DataService extends BaseApplicationComponent
 {
     // Public Methods
@@ -36,8 +38,23 @@ class FeedMe_DataService extends BaseApplicationComponent
 
         if ($data_array) {
             foreach ($data_array as $data_array_item) {
-                $array = $array + $this->_getFormattedMapping($data_array_item);
+                $variable = Hash::flatten($data_array_item);
+
+                foreach ($variable as $key => $value) {
+                    // Assets.Asset.0.Img.0 = Assets/Asset/.../Img[]
+                    $string = str_replace('.', '/', $key);
+                    $string = preg_replace('/(\/\d\/)/', '/.../', $string);
+                    $string = preg_replace('/(\/\d)/', '[]', $string);
+
+                    if (!isset($array[$string])) {
+                        $array[$string] = $value;
+                    }
+                }
+
+                //$array = $array + $this->_getFormattedMapping($data_array_item);
             }
+
+            //exit();
 
             // Then - a little bit of post-processing to deal with inconsistent nodes
             // XML in particular doesn't allow you to specifically state if there are multiple nodes

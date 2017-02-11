@@ -280,7 +280,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             // but Extract needs them as '.' or '{*}', so we convert them here.
             // Turns 'my/repeating/.../field' into 'my.repeating.*.field'
             $extractFeedHandle = str_replace('/.../', '.*.', $feedHandle);
-            $extractFeedHandle = str_replace('[]', '', $extractFeedHandle);
+            $extractFeedHandle = str_replace('[]', '.*', $extractFeedHandle);
             $extractFeedHandle = str_replace('/', '.', $extractFeedHandle);
 
             // Have a default ready to go in case a value can't be found in the feed
@@ -377,7 +377,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         // but Extract needs them as '.' or '{*}', so we convert them here.
         // Turns 'my/repeating/.../field' into 'my.repeating.*.field'
         $extractFeedHandle = str_replace('/.../', '.*.', $feedHandle);
-        $extractFeedHandle = str_replace('[]', '', $extractFeedHandle);
+        $extractFeedHandle = str_replace('[]', '.*', $extractFeedHandle);
         $extractFeedHandle = str_replace('/', '.', $extractFeedHandle);
 
         // Use Extract to pull out our nested data. Super-cool!
@@ -392,6 +392,13 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             $testSingleFeedHandle = $this->str_lreplace('.*.', '.', $extractFeedHandle);
             $tempValue = FeedMeArrayHelper::arrayGet($feedData, $testSingleFeedHandle);
 
+            // Check for array of nulls
+            if (is_array($tempValue)) {
+                if (count(array_filter($tempValue)) === 0) {
+                    $tempValue = '';
+                }
+            }
+
             if (isset($tempValue) && $tempValue !== '') {
                 $value = $tempValue;
             }
@@ -403,11 +410,11 @@ class FeedMe_ProcessService extends BaseApplicationComponent
                 $value = Hash::filter($value);
             }
 
-            if (strstr($feedHandle, '[]')) {
-                $parsedData['data'] = array($value);
-            } else {
+            //if (strstr($feedHandle, '[]')) {
+                //$parsedData['data'] = array($value);
+            //} else {
                 $parsedData['data'] = $value;
-            }
+            //}
         }
 
         return $parsedData;
