@@ -77,6 +77,9 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         $fieldData = array();
         $uniqueMatches = array();
 
+        // We can opt-out of updating certain elements if a field is switched on
+        $skipUpdateFieldHandle = craft()->config->get('skipUpdateFieldHandle', 'feedMe');
+
         //
         // Lets get started!
         //
@@ -113,6 +116,16 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             // If we're deleting or updating an existing element, we want to focus on that one
             if (FeedMeDuplicate::isUpdate($feed)) {
                 $element = $existingElement;
+            }
+
+            // There's also a config settings for a field to opt-out of updating. Check against that
+            if ($skipUpdateFieldHandle) {
+                $updateField = $element->content->getAttribute($skipUpdateFieldHandle);
+
+                // We've got our special field on this element, and its switched on
+                if ($updateField === '1') {
+                    return;
+                }
             }
 
             // If we're adding only, and there's an existing element - quit now
