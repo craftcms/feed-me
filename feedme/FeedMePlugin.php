@@ -94,7 +94,7 @@ class FeedMePlugin extends BasePlugin
     public function onBeforeInstall()
     {   
         // Craft 2.3.2636 fixed an issue with BaseEnum::getConstants()
-        if (version_compare(craft()->getVersion() . '.' . craft()->getBuild(), '2.3.2636', '<')) {
+        if (version_compare(craft()->getVersion() . '.' . craft()->getVersion(), '2.3.2636', '<')) {
             throw new Exception($this->getName() . ' requires Craft CMS 2.3.2636+ in order to run.');
         }
     }
