@@ -115,7 +115,7 @@ Craft.FeedMeTaskProgress = Garnish.Base.extend({
             this.updateTasks();
         }, this), 1000);
 
-        Craft.cp.stopTrackingTaskProgress();
+        //Craft.cp.stopTrackingTaskProgress();
     },
 
     updateTasks: function() {
@@ -170,12 +170,12 @@ Craft.FeedMeTaskProgress = Garnish.Base.extend({
                 this.completed = true;
 
                 if (anyTasksFailed) {
-                    Craft.cp.setRunningTaskInfo({ status: 'error' });
+                    //Craft.cp.setRunningTaskInfo({ status: 'error' });
                 }
             }
         } else {
             this.completed = true;
-            Craft.cp.setRunningTaskInfo(null);
+            //Craft.cp.setRunningTaskInfo(null);
         }
     }
 });
@@ -230,7 +230,7 @@ Craft.FeedMeTaskProgress.Task = Garnish.Base.extend({
 
             if (this.level == 0) {
                 // Update the task icon
-                Craft.cp.setRunningTaskInfo(info, true);
+                //Craft.cp.setRunningTaskInfo(info, true);
             }
         }
     },
