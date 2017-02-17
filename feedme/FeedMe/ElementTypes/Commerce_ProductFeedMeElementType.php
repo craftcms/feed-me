@@ -276,7 +276,7 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
             $tempArray = explode('.', $keyedIndex);
 
             // Check for a value for this field...
-            if (!isset($value) || $value === '') {
+            if (!isset($value) || $value === null) {
                 continue;
             }
 

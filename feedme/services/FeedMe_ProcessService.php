@@ -290,14 +290,19 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             $value = FeedMeArrayHelper::arrayGet($feedData, $extractFeedHandle, $defaultValue);
 
             // Store it in our data array, with the Craft field handle we're mapping to
-            if (isset($value) && $value !== '') {
+            if (isset($value) && $value !== null) {
                 if (is_array($value)) {
                     // Our arrayGet() function keeps empty indexes, which is super-important
                     // for Matrix. Here, this filters them out, while keeping the indexes intact
                     $value = Hash::filter($value);
                 }
 
-                $parsedData[$fieldHandle]['data'] = $value;
+                // If its an empty string, and there's already a default value, use that
+                if ($value === '' && isset($parsedData[$fieldHandle]['data'])) {
+                    $parsedData[$fieldHandle]['data'] = $parsedData[$fieldHandle]['data'];
+                } else {
+                    $parsedData[$fieldHandle]['data'] = $value;
+                }
             }
 
             // An annoying check for inconsistent nodes - I'm looking at you XML
@@ -407,7 +412,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
                 }
             }
 
-            if (isset($tempValue) && $tempValue !== '') {
+            if (isset($tempValue) && $tempValue !== null) {
                 $value = $tempValue;
             }
         }
