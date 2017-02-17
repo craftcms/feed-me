@@ -322,7 +322,11 @@ class FeedMe_ProcessService extends BaseApplicationComponent
                     array_splice($fieldHandles, 1, 0, 'data');
                 }
 
-                FeedMeArrayHelper::arraySet($parsedData, $fieldHandles, $feedHandle);
+                // Check if we've got data for this field, otherwise its unnessesarry
+                if (isset($parsedData[$fieldHandles[0]]['data'])) {
+                    FeedMeArrayHelper::arraySet($parsedData, $fieldHandles, $feedHandle);
+                }
+
                 unset($parsedData[$fieldHandle]); // Remove un-needed original
 
             } else if (strstr($fieldHandle, '-fields-')) {
@@ -337,7 +341,11 @@ class FeedMe_ProcessService extends BaseApplicationComponent
 
                 $nestedData = $this->_getInnerFieldData($feedData, $feedHandle);
 
-                FeedMeArrayHelper::arraySet($parsedData, $fieldHandles, $nestedData);
+                // Check if we've got data for this field, otherwise its unnessesarry
+                if (isset($parsedData[$fieldHandles[0]]['data'])) {
+                    FeedMeArrayHelper::arraySet($parsedData, $fieldHandles, $nestedData);
+                }
+
                 unset($parsedData[$fieldHandle]); // Remove un-needed original
 
             } else if (strstr($fieldHandle, '--')) {
