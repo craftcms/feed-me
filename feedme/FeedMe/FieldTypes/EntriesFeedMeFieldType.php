@@ -68,7 +68,7 @@ class EntriesFeedMeFieldType extends BaseFeedMeFieldType
             // Create the elements if we require
             if (count($elements) == 0) {
                 if (isset($fieldData['options']['create'])) {
-                    $preppedData[] = $this->_createElement($entry, $sectionIds);
+                    $preppedData[] = $this->_createElement($entry, $sectionIds, $attribute);
                 }
             }
         }
@@ -121,11 +121,20 @@ class EntriesFeedMeFieldType extends BaseFeedMeFieldType
         }
     }
 
-    private function _createElement($entry, $sectionIds)
+    private function _createElement($entry, $sectionIds, $attribute)
     {
+        $fieldSections = array_values(Hash::filter($sectionIds));
+        $firstSectionId = $fieldSections[0];
+
         $element = new EntryModel();
-        $element->getContent()->title = $entry;
-        $element->sectionId = $sectionIds;
+
+        if ($attribute == 'title') {
+            $element->getContent()->title = DbHelper::escapeParam($entry);
+        } else {
+            $element->$attribute = DbHelper::escapeParam($entry);
+        }
+
+        $element->sectionId = $firstSectionId;
 
         // Save category
         if (craft()->entries->saveEntry($element)) {
