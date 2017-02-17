@@ -104,10 +104,6 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
     {
         $checkAncestors = !isset($data['parentId']);
 
-        if (isset($settings['locale'])) {
-            $element->localeEnabled = true;
-        }
-
         foreach ($data as $handle => $value) {
             if (is_null($value)) {
                 continue;

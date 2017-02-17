@@ -76,10 +76,6 @@ class CategoryFeedMeElementType extends BaseFeedMeElementType
     
     public function prepForElementModel(BaseElementModel $element, array &$data, $settings)
     {
-        if (isset($settings['locale'])) {
-            $element->localeEnabled = true;
-        }
-
         foreach ($data as $handle => $value) {
             switch ($handle) {
                 case 'id';
