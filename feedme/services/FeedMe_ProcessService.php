@@ -26,6 +26,13 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             throw new Exception(Craft::t('No data to import.'));
         }
 
+        // A simple license check
+        if ($feed['elementType'] != 'Entry') {
+            if (!craft()->feedMe_license->isProEdition()) {
+                throw new Exception(Craft::t('Feed Me is not licensed.'));
+            }
+        }
+
         $return = $feed->attributes;
 
         // Set our start time to track feed processing time

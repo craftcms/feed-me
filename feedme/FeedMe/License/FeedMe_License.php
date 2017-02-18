@@ -17,15 +17,13 @@ class FeedMe_License
     private $_model;
     private $_allowRedirects = true;
     private $_userAgent;
-    private $_connectTimeout = 2;
+    private $_connectTimeout = 30;
 
     // Public Methods
     // =========================================================================
 
     public function __construct($endpoint, $product, $productVersion, $licenseKey = '')
     {
-        $timeout = 30;
-        $connectTimeout = 2;
         $this->requestProduct = $product;
         $this->requestVersion = $productVersion;
 
@@ -158,7 +156,7 @@ class FeedMe_License
                     'allow_redirects' => $this->getAllowRedirects(),
                 );
 
-                $request = $client->post($this->_endpoint, null, null, $options);
+                $request = $client->post($this->_endpoint, $options);
                 $request->setBody($data, 'application/json');
 
                 // Potentially long-running request, so close session to prevent session blocking on subsequent requests.
