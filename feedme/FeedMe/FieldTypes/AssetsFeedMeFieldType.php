@@ -44,11 +44,14 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
 
                 // Get all sub-folders for this root folder
                 $folderModel = craft()->assets->getFolderById($id);
-                $subFolders = craft()->assets->getAllDescendantFolders($folderModel);
 
-                if (is_array($subFolders)) {
-                    foreach ($subFolders as $subFolder) {
-                        $folderIds[] = $subFolder->id;
+                if ($folderModel) {
+                    $subFolders = craft()->assets->getAllDescendantFolders($folderModel);
+
+                    if (is_array($subFolders)) {
+                        foreach ($subFolders as $subFolder) {
+                            $folderIds[] = $subFolder->id;
+                        }
                     }
                 }
             }
