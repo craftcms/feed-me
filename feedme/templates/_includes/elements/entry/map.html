@@ -13,10 +13,28 @@
     {% endfor %}
 {% endif %}
 
-{% set entries = [{ label: 'Don\'t import', value: '' }] %}
-{% for entry in craft.entries %}
-    {% set entries = entries | merge([{ label: entry.title | slice(0, 40), value: entry.id }]) %}
-{% endfor %}
+{# If a structure, provide the option for a parent #}
+{% if section.type == 'structure' %}
+    {% set entries = [{ label: 'Don\'t import', value: '' }] %}
+    {% for entry in craft.entries %}
+        {% set entries = entries | merge([{ label: entry.title | slice(0, 40), value: entry.id }]) %}
+    {% endfor %}
+
+    {% set parentField = {
+        label: 'Parent' | t,
+        handle: 'parent',
+        instructions: 'Select a parent entry to import these entries under.' | t,
+        default: forms.selectField({
+            id: 'fieldDefaults-parent',
+            name: 'fieldDefaults[parent]',
+            value: feed.fieldDefaults.parent ?? '',
+            options: entries,
+        }),    
+    } %}
+{% else %}
+    {% set parentField = {} %}
+{% endif %}
+
 
 {% set fields = [{
     label: 'Title' | t,
@@ -30,17 +48,7 @@
     label: 'Slug' | t,
     handle: 'slug',
     instructions: 'If not set, the Slug will be automatically created from Title.' | t,
-}, {
-    label: 'Parent' | t,
-    handle: 'parent',
-    instructions: 'Select a parent entry to import these entries under.' | t,
-    default: forms.selectField({
-        id: 'fieldDefaults-parent',
-        name: 'fieldDefaults[parent]',
-        value: feed.fieldDefaults.parent ?? '',
-        options: entries,
-    }),    
-}, {
+}, parentField, {
     label: 'Post Date' | t,
     handle: 'postDate',
     instructions: 'Accepts Unix timestamp, or just about any English textual datetime description.' | t,
@@ -97,7 +105,7 @@
         <th>{{ 'Default Value' | t }}</th>
     </thead>
     <tbody>
-        {% for field in fields %}
+        {% for field in fields if field %}
             {% if field.handle == 'parent' %}
                 {{ feedMeMacro.generateElementRow(_context, field) }}
             {% else %}
@@ -144,7 +152,7 @@
 {% endfor %}
 
 <div class="feedme-uniques">
-    {% for field in fields %}
+    {% for field in fields if field %}
         {{ forms.checkboxField({
             name: 'fieldUnique[' ~ field.handle ~ ']',
             label: field.label,
