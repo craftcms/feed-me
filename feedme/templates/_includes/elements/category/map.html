@@ -5,7 +5,7 @@
 {% endif %}
 
 {% set categories = [{ label: 'Don\'t import', value: '' }] %}
-{% for category in craft.categories.limit(null) %}
+{% for category in craft.categories %}
     {% set categories = categories | merge([{ label: category.title | slice(0, 40), value: category.id }]) %}
 {% endfor %}
 
