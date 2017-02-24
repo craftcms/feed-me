@@ -58,79 +58,41 @@ class FeedMe_License
         $this->_userAgent = 'Craft/' . $version;
     }
 
-    /**
-     * The maximum number of seconds to allow for an entire transfer to take place before timing out.  Set 0 to wait
-     * indefinitely.
-     *
-     * @return int
-     */
     public function getTimeout()
     {
         return $this->_timeout;
     }
 
-    /**
-     * The maximum number of seconds to wait while trying to connect. Set to 0 to wait indefinitely.
-     *
-     * @return int
-     */
     public function getConnectTimeout()
     {
         return $this->_connectTimeout;
     }
 
-    /**
-     * Whether or not to follow redirects on the request.  Defaults to true.
-     *
-     * @param $allowRedirects
-     *
-     * @return null
-     */
     public function setAllowRedirects($allowRedirects)
     {
         $this->_allowRedirects = $allowRedirects;
     }
 
-    /**
-     * @return bool
-     */
     public function getAllowRedirects()
     {
         return $this->_allowRedirects;
     }
 
-    /**
-     * @return EtModel
-     */
     public function getModel()
     {
         return $this->_model;
     }
 
-    /**
-     * Sets custom data on the EtModel.
-     *
-     * @param $data
-     *
-     * @return null
-     */
     public function setData($data)
     {
         $this->_model->data = $data;
     }
 
-    /**
-     * @param $handle
-     */
     public function setHandle($handle)
     {
         $this->_model->handle = $handle;
     }
 
-    /**
-     * @throws EtException|\Exception
-     * @return EtModel|null
-     */
     public function phoneHome($force = false)
     {
         if ($force) {

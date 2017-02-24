@@ -43,8 +43,8 @@ class FeedMe_DataService extends BaseApplicationComponent
                 foreach ($variable as $key => $value) {
                     // Assets.Asset.0.Img.0 = Assets/Asset/.../Img[]
                     $string = str_replace('.', '/', $key);
-                    $string = preg_replace('/(\/\d\/)/', '/.../', $string);
-                    $string = preg_replace('/(\/\d)/', '[]', $string);
+                    $string = preg_replace('/(\/\d+\/)/', '/.../', $string);
+                    $string = preg_replace('/(\/\d+)/', '[]', $string);
 
                     if (!isset($array[$string])) {
                         $array[$string] = $value;
@@ -53,8 +53,6 @@ class FeedMe_DataService extends BaseApplicationComponent
 
                 //$array = $array + $this->_getFormattedMapping($data_array_item);
             }
-
-            //exit();
 
             // Then - a little bit of post-processing to deal with inconsistent nodes
             // XML in particular doesn't allow you to specifically state if there are multiple nodes
