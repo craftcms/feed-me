@@ -38,7 +38,7 @@
                 <tr data-id="{{ feed.id }}" data-name="{{ feed.name | t }}">
                     <td>{{ feed.id }}</td>
                     <td><a href="{{ url('feedme/feeds/' ~ feed.id) }}">{{ feed.name | t }}</a></td>
-                    <td>{{ feed.feedType | upper }}</td>
+                    <td>{{ (feedTypes[feed.feedType] is defined) ? feedTypes[feed.feedType] : feed.feedType|upper }}</td>
                     <td>{{ feed.feedUrl }}</td>
                     <td>{{ feed.elementType }}</td>
 
