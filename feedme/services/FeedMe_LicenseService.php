@@ -11,7 +11,7 @@ class FeedMe_LicenseService extends BaseApplicationComponent
     const RegisterPlugin = 'https://sgroup.com.au/actions/licensor/edition/registerPlugin';
     const UnregisterPlugin = 'https://sgroup.com.au/actions/licensor/edition/unregisterPlugin';
     const TransferPlugin = 'https://sgroup.com.au/actions/licensor/edition/transferPlugin';
-
+    
     private $plugin;
     private $pingStateKey = 'feedMePhonedHome';
     private $pingCacheTime = 86400;
@@ -154,7 +154,6 @@ class FeedMe_LicenseService extends BaseApplicationComponent
         $et = new FeedMe_License(static::RegisterPlugin, $this->pluginHandle, $this->pluginVersion, $licenseKey);
         $etResponse = $et->phoneHome(true);
 
-        // Handle the response
         return $this->_handleEtResponse($etResponse);
     }
 
@@ -184,6 +183,8 @@ class FeedMe_LicenseService extends BaseApplicationComponent
                     default:
                         $this->setLicenseKeyStatus(LicenseKeyStatus::Unknown);
                 }
+
+                FeedMePlugin::log('License error: ' . $etResponse->errors[0], LogLevel::Error, true);
             } else {
                 return false;
             }

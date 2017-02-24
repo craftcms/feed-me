@@ -145,7 +145,7 @@ class FeedMe_License
         try {
 
             if (!craft()->cache->get($this->etConnectFailureKey)) {
-                $data = JsonHelper::encode($this->_model->getAttributes(null, true));
+                $data = $this->_model->getAttributes(null, true);
 
                 $client = new \Guzzle\Http\Client();
                 $client->setUserAgent($this->_userAgent, true);
@@ -156,8 +156,7 @@ class FeedMe_License
                     'allow_redirects' => $this->getAllowRedirects(),
                 );
 
-                $request = $client->post($this->_endpoint, $options);
-                $request->setBody($data, 'application/json');
+                $request = $client->post($this->_endpoint, null, $data, $options);
 
                 // Potentially long-running request, so close session to prevent session blocking on subsequent requests.
                 craft()->session->close();

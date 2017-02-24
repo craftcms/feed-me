@@ -32,6 +32,14 @@ class FeedMe_LicenseController extends BaseController
         return $this->_sendResponse(craft()->feedMe_license->unregisterLicenseKey());
     }
 
+    public function actionTransfer()
+    {
+        $this->requirePostRequest();
+        $this->requireAjaxRequest();
+
+        return $this->_sendResponse(craft()->feedMe_license->transferLicenseKey());
+    }
+
     public function actionUpdateLicenseKey()
     {
         $this->requirePostRequest();
@@ -45,7 +53,7 @@ class FeedMe_LicenseController extends BaseController
             try {
                 craft()->feedMe_license->setLicenseKey($licenseKey);
             } catch (InvalidLicenseKeyException $e) {
-                $this->returnErrorJson(Craft::t('That license key is invalid.'));
+                $this->returnErrorJson(Craft::t('The license key is invalid.'));
             }
 
             return $this->_sendResponse(craft()->feedMe_license->registerPlugin($licenseKey));
@@ -57,15 +65,6 @@ class FeedMe_LicenseController extends BaseController
 
         }
     }
-
-    public function actionTransfer()
-    {
-        $this->requirePostRequest();
-        $this->requireAjaxRequest();
-
-        return $this->_sendResponse(craft()->feedMe_license->transferLicenseKey());
-    }
-
 
 
     // Private Methods
