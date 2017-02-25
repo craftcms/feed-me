@@ -91,7 +91,10 @@ class FeedMe_HelpController extends BaseController
                 // Save the contents of the feed
                 //
                 if ($getHelpModel->attachFeed) {
-                    $feedData = craft()->feedMe_data->getRawData($feed->feedUrl);
+                    // Check for and environment variables in url
+                    $url = craft()->config->parseEnvironmentString($feed->feedUrl);
+
+                    $feedData = craft()->feedMe_data->getRawData($url);
 
                     $tempFile = $tempFolder.'feed.'.StringHelper::toLowerCase($feed->feedType);
 
