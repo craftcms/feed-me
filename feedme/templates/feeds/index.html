@@ -1,82 +1,82 @@
-{% extends "_layouts/cp" %}
-
-{% includeCssResource 'feedme/css/font-awesome.min.css' %}
-{% includeCssResource 'feedme/css/FeedMe.css' %}
+{% extends 'feedme/_layouts' %}
 
 {% set crumbs = [
     { label: craft.feedme.getPluginName | t, url: url('feedme') },
     { label: "Feeds" | t, url: url('feedme/feeds') },
 ] %}
 
-{% set title = craft.feedme.getPluginName | t %}
-{% set tabs = craft.feedme.getCpTabs %}
 {% set selectedTab = 'feeds' %}
+{% set fullPageForm = true %}
 
-{% set content %}
-    <div id="nofeeds"{% if feeds %} class="hidden"{% endif %}>
-        <p>{{ "No feeds exist yet." | t }}</p>
+{% block saveButton %}
+    <div class="buttons">
+        <a class="btn submit add icon" href="{{ url('feedme/feeds/new') }}">{{ 'New feed' | t }}</a>
     </div>
+{% endblock %}
 
-    {% if feeds | length %}
-        <table id="feeds" class="data fullwidth collapsible">
-            <thead>
-                <th scope="col">{{ "ID" | t }}</th>
-                <th scope="col">{{ "Name" | t }}</th>
-                <th scope="col">{{ "Type" | t }}</th>
-                <th scope="col">{{ "Feed URL" | t }}</th>
-                <th scope="col">{{ "Section" | t }}</th>
-                <th scope="col">{{ "Entry Type" | t }}</th>
-                <th scope="col">{{ "Duplicates" | t }}</th>
-                <th scope="col">{{ "Tasks" | t }}</th>
-                <th colspan="2">{{ "Actions" | t }}</th>
-            </thead>
-            <tbody>
-                {% for feed in feeds %}
-                    {% set section = craft.sections.getSectionById(feed.section) %}
+{% block blockContent %}
 
-                    <tr data-id="{{ feed.id }}" data-name="{{ feed.name | t }}">
-                        <td>{{ feed.id }}</td>
-                        <td><a href="{{ url('feedme/feeds/' ~ feed.id) }}">{{ feed.name | t }}</a></td>
-                        <td>{{ feed.feedType | upper }}</td>
-                        <td>{{ feed.feedUrl }}</td>
-                        <td>{{ (section | length > 0) ? section.name : '' }}</td>
-                        <td>
-                            {% if section | length > 0 %}
-                                {% set entryTypes = section.getEntryTypes('id') %}
-                                {{ (entryTypes[feed.entrytype] is defined) ? entryTypes[feed.entrytype].name }}
-                            {% endif %}
-                        </td>
-                        <td>{{ feed.duplicateHandle | capitalize }}</td>
-                        
-                        <td><a href="{{ url('feedme/runTask/' ~ feed.id) }}">{{ 'Run Task' | t }}</a></td>
+<div id="nofeeds"{% if feeds %} class="hidden"{% endif %}>
+    <p>{{ "No feeds exist yet." | t }}</p>
+</div>
 
+{% if feeds | length %}
+    <table id="feeds" class="data fullwidth collapsible">
+        <thead>
+            <th scope="col">{{ "ID" | t }}</th>
+            <th scope="col">{{ "Name" | t }}</th>
+            <th scope="col">{{ "Type" | t }}</th>
+            <th scope="col">{{ "Feed URL" | t }}</th>
+            <th scope="col">{{ "Element Type" | t }}</th>
+            <th scope="col">{{ "Element Group" | t }}</th>
+            <th scope="col">{{ "Strategy" | t }}</th>
+            <th scope="col">{{ "Tasks" | t }}</th>
+            <th colspan="{{ craft.config.devMode ? '3' : '2' }}">{{ "Actions" | t }}</th>
+        </thead>
+        <tbody>
+            {% for feed in feeds %}
+                <tr data-id="{{ feed.id }}" data-name="{{ feed.name | t }}">
+                    <td>{{ feed.id }}</td>
+                    <td><a href="{{ url('feedme/feeds/' ~ feed.id) }}">{{ feed.name | t }}</a></td>
+                    <td>{{ feed.feedType | upper }}</td>
+                    <td>{{ feed.feedUrl }}</td>
+                    <td>{{ feed.elementType }}</td>
+
+                    <td>
+                        {% set elementTypeColumn = craft.feedMe.getElementTypeColumnTemplate(feed.elementType) %}
+
+                        {% if elementTypeColumn %}
+                            {% include elementTypeColumn ignore missing with { elementType: feed.elementType } %}
+                        {% else %}
+                            <span class="error">{{ 'Element group not found' | t }}</span>
+                        {% endif %}
+                    </td>
+
+                    <td>{{ feed.duplicateHandleFriendly }}</td>
+                    
+                    <td><a href="{{ url('feedme/feeds/run/' ~ feed.id) }}">{{ 'Run Task' | t }}</a></td>
+
+                    {% if craft.config.devMode %}
                         <td class="thin action">
-                            {% set directUrl = actionUrl('/feedMe/feeds/runTask', { direct: true, feedId: feed.id, passkey: feed.passkey }) | replace(craft.config.cpTrigger ~ '/', '') %}
-                            <a href="{{ directUrl }}" target="_blank" class="direct fa-icon" title="{{ 'Direct feed link' | t }}" role="button"><i class="fa fa-external-link"></i></a>
+                            {% set debugUrl = actionUrl('feedMe/feeds/debug', { feedId: feed.id }) %}
+                            <a href="{{ debugUrl }}" target="_blank" class="debug fa-icon" title="{{ 'Debug' | t }}" role="button"><i class="fa fa-bug"></i></a>
                         </td>
-                        
-                        <td class="thin action"><a class="delete icon" title="{{ 'Delete' | t }}" role="button"></a></td>
-                    </tr>
-                   
-                {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}
+                    {% endif %}
 
-    <div id="plugin-footer">
-        <div class="footer-left">
-            <div class="buttons">
-                <a href="{{ url('feedme/feeds/new') }}" class="btn submit add icon">{{ "New feed" | t }}</a>
-            </div>
-        </div>
+                    <td class="thin action">
+                        {% set directUrl = actionUrl('/feedMe/feeds/runTask', { direct: true, feedId: feed.id, passkey: feed.passkey }) | replace(craft.config.cpTrigger ~ '/', '') %}
+                        <a href="{{ directUrl }}" target="_blank" class="direct fa-icon" title="{{ 'Direct feed link' | t }}" role="button"><i class="fa fa-external-link"></i></a>
+                    </td>
+                    
+                    <td class="thin action"><a class="delete icon" title="{{ 'Delete' | t }}" role="button"></a></td>
+                </tr>
+               
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
 
-        <div class="footer-right">
-            <div class="plugin-credit">
-                <p>{{ craft.feedme.getPluginName }} {{ craft.feedme.getPluginVersion }} &bull; <a href="{{ craft.feedme.getPluginUrl }}" target="_blank">GitHub</a></p>
-            </div>
-        </div>
-    </div>
-{% endset %}
+{% endblock %}
 
 {% set js %}
     var adminTable = new Craft.AdminTable({

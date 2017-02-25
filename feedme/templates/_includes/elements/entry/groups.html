@@ -1,0 +1,52 @@
+{% set sections = craft.feedMe.getElementTypeGroups(elementType) %}
+
+{% set sectionEntryTypes = [] %}
+
+{# Create a section-indexed array of element types #}
+{% set entryTypes = [] %}
+{% for section in sections %}
+    {% set options = craft.feedme.getSelectOptions(section.getEntryTypes()) %}
+
+    {# We have to prefix the index, otherwise Twig doesn't maintain numbered index correctly #}
+    {% set entryTypes = entryTypes | merge({ ('item_' ~ section.id): options }) %}
+{% endfor %}
+
+{# Load saved values for feed #}
+{% if feed.elementGroup %}
+    {% set sectionId = feed.elementGroup[elementType].section %}
+    {% set entryTypeId = feed.elementGroup[elementType].entryType %}
+{% endif %}
+
+{% if sectionId is defined and sectionId %}
+    {% set section = craft.sections.getSectionById(sectionId) %}
+
+    {% if section %}
+        {% set sectionEntryTypes = section.getEntryTypes() %}
+    {% endif %}
+{% else %}
+    {% set sectionEntryTypes = sections[0].getEntryTypes() %}
+{% endif %}
+
+<div class="element-sub-group" data-items="{{ entryTypes | json_encode }}">
+    {{ forms.selectField({
+        label: "Section" | t,
+        instructions: 'Choose the Section you want to save your feed data to.' | t,
+        class: 'element-parent-group',
+        id: 'elementGroup-' ~ elementType ~ '-section',
+        name: 'elementGroup[' ~ elementType ~ '][section]',
+        options: craft.feedme.getSelectOptions(sections),
+        value: sectionId ?? '',
+        required: true,
+    }) }}
+
+    {{ forms.selectField({
+        label: "Entry Type" | t,
+        instructions: 'Choose the Entry Type you want to save your feed data into.' | t,
+        class: 'element-child-group',
+        id: 'elementGroup-' ~ elementType ~ '-entryType',
+        name: 'elementGroup[' ~ elementType ~ '][entryType]',
+        options: craft.feedme.getSelectOptions(sectionEntryTypes),
+        value: entryTypeId ?? '',
+        required: true,
+    }) }}
+</div>

@@ -1,0 +1,17 @@
+{% for blocktype in craft.feedme.getMatrixBlocks(field.id) %}
+    {% for blocktypefield in blocktype.getFields() %}
+
+        {% set variables = {
+            field: blocktypefield,
+            fieldtype: blocktypefield,
+            feed: feed,
+            feedData: feedData,
+            handlePrefix: field.handle ~ '--' ~ blocktype.handle ~ '--',
+            labelName: field.name ~ ' - ' ~ blocktype.name ~ ': ' ~ blocktypefield.name,
+            labelHandle: field.handle ~ '[' ~ blocktype.handle ~ '][' ~ blocktypefield.handle ~ ']',
+        } %}
+        
+        {% include 'feedme/_includes/field' with variables %}
+
+    {% endfor %}
+{% endfor %}

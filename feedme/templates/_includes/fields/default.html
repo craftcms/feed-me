@@ -1,0 +1,36 @@
+<tr class="{{ (isSubElementField is defined) ? 'element-sub-field' }}">
+    <td class="col-field">
+        <div class="field">
+            <div class="heading">
+                <label {% if fieldtype.required %}class="required"{% endif %}>{{ labelName }}</label>
+
+                <div class="instructions">
+                    <code>{{ labelHandle }}</code>
+                </div>
+            </div>
+        </div>
+    </td>
+
+    <td class="col-map">
+        {% namespace 'fieldMapping' %}
+            {{ forms.selectField({
+                id: fieldHandle,
+                name: fieldHandle,
+                value: feed.fieldMapping[fieldHandle] ?? '',
+                options: feedData,
+            }) }}
+        {% endnamespace %}
+    </td>
+
+    <td class="col-default">
+        <div class="default-fields">
+            {% namespace 'fieldDefaults' %}
+                {{ forms.textField({
+                    id: fieldHandle,
+                    name: fieldHandle,
+                    value: feed.fieldDefaults[fieldHandle] ?? '',
+                }) }}
+            {% endnamespace %}
+        </div>
+    </td>
+</tr>

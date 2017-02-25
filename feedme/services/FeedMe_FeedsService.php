@@ -20,48 +20,7 @@ class FeedMe_FeedsService extends BaseApplicationComponent
     public function getFeedById($feedId)
     {
         $feedRecord = FeedMe_FeedRecord::model()->findById($feedId);
-        if ($feedRecord) {
-            return FeedMe_FeedModel::populateModel($feedRecord);
-        }
-        return null;
-    }
-
-    public function getFeedForTemplate($options = array())
-    {
-        $plugin = craft()->plugins->getPlugin('feedMe');
-        $settings = $plugin->getSettings();
-
-        $url = (array_key_exists('url', $options) ? $options['url'] : null);
-        $type = (array_key_exists('type', $options) ? $options['type'] : FeedMe_FeedType::XML);
-        $element = (array_key_exists('element', $options) ? $options['element'] : '');
-        $cache = (array_key_exists('cache', $options) ? $options['cache'] : true);
-        $cacheId = $url . '#' . $element; // cache for this URL and Element Node
-
-        // URL = required
-        if (!$url) {
-            return array();
-        }
-
-        // If cache explicitly set to false, always return latest data
-        if ($cache === false) {
-            return craft()->feedMe_feed->getFeed($type, $url, $element, true);
-        }
-
-        // We want some caching action!
-        if (is_numeric($cache) || $cache === true) {
-            $cache = (is_numeric($cache)) ? $cache : $settings->cache;
-
-            $cachedRequest = craft()->feedMe_cache->get($cacheId);
-
-            if ($cachedRequest) {
-                return $cachedRequest;
-            } else {
-                $data = craft()->feedMe_feed->getFeed($type, $url, $element, true);
-                craft()->feedMe_cache->set($cacheId, $data, $cache);
-
-                return $data;
-            }
-        }
+        return FeedMe_FeedModel::populateModel($feedRecord);
     }
 
     public function saveFeed(FeedMe_FeedModel $feed)
@@ -81,15 +40,30 @@ class FeedMe_FeedsService extends BaseApplicationComponent
         $feedRecord->feedUrl            = $feed->feedUrl;
         $feedRecord->feedType           = $feed->feedType;
         $feedRecord->primaryElement     = $feed->primaryElement;
-        $feedRecord->section            = $feed->section;
-        $feedRecord->entrytype          = $feed->entrytype;
+        $feedRecord->elementType        = $feed->elementType;
         $feedRecord->locale             = $feed->locale;
         $feedRecord->duplicateHandle    = $feed->duplicateHandle;
         $feedRecord->passkey            = $feed->passkey;
         $feedRecord->backup             = $feed->backup;
 
+        if ($feed->elementGroup) {
+            $feedRecord->setAttribute('elementGroup', json_encode($feed->elementGroup));
+        }
+
         if ($feed->fieldMapping) {
             $feedRecord->setAttribute('fieldMapping', json_encode($feed->fieldMapping));
+        }
+
+        if ($feed->fieldDefaults) {
+            $feedRecord->setAttribute('fieldDefaults', json_encode($feed->fieldDefaults));
+        }
+
+        if ($feed->fieldElementMapping) {
+            $feedRecord->setAttribute('fieldElementMapping', json_encode($feed->fieldElementMapping));
+        }
+
+        if ($feed->fieldElementDefaults) {
+            $feedRecord->setAttribute('fieldElementDefaults', json_encode($feed->fieldElementDefaults));
         }
 
         if ($feed->fieldUnique) {
@@ -105,17 +79,18 @@ class FeedMe_FeedsService extends BaseApplicationComponent
             if ($feedRecord->save()) {
 
                 // Update Model with ID from Database
-                $feed->setAttribute('id', $feedRecord->getAttribute('id'));
-                $feed->setAttribute('fieldMapping', $feedRecord->getAttribute('fieldMapping'));
-                $feed->setAttribute('fieldUnique', $feedRecord->getAttribute('fieldUnique'));
+                $feed->id = $feedRecord->id;
+                $feed->fieldMapping = $feedRecord->fieldMapping;
+                $feed->fieldDefaults = $feedRecord->fieldDefaults;
+                $feed->fieldElementMapping = $feedRecord->fieldElementMapping;
+                $feed->fieldElementDefaults = $feedRecord->fieldElementDefaults;
+                $feed->fieldUnique = $feedRecord->fieldUnique;
 
                 return true;
             } else {
                 $feed->addErrors($feedRecord->getErrors());
                 return false;
             }
-        } else {
-            //die(print_r($feed->getErrors()));
         }
 
         return false;

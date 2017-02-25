@@ -20,18 +20,17 @@ class FeedMe_FeedRecord extends BaseRecord
                 FeedMe_FeedType::JSON,
             )),
             'primaryElement'    => array(AttributeType::String),
-            'section'           => array(AttributeType::String, 'required' => true),
-            'entrytype'         => array(AttributeType::String, 'required' => true),
+            'elementType'       => array(AttributeType::String, 'required' => true),
+            'elementGroup'      => array(AttributeType::Mixed),
             'locale'            => array(AttributeType::String),
-            'duplicateHandle'   => array(AttributeType::Enum, 'required' => true, 'values' => array(
-                FeedMe_Duplicate::Add,
-                FeedMe_Duplicate::Update,
-                FeedMe_Duplicate::Delete,
-            )),
-            'fieldMapping'      => array(AttributeType::Mixed),
-            'fieldUnique'       => array(AttributeType::Mixed),
-            'passkey'           => array(AttributeType::String, 'required' => true),
-            'backup'            => AttributeType::Bool,
+            'duplicateHandle'   => array(AttributeType::Mixed, 'required' => true),
+            'fieldMapping'          => AttributeType::Mixed,
+            'fieldDefaults'         => AttributeType::Mixed,
+            'fieldElementMapping'   => AttributeType::Mixed,
+            'fieldElementDefaults'  => AttributeType::Mixed,
+            'fieldUnique'           => AttributeType::Mixed,
+            'passkey'               => array(AttributeType::String, 'required' => true),
+            'backup'                => AttributeType::Bool,
         );
     }
 

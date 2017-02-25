@@ -1,0 +1,53 @@
+{% extends 'feedme/_layouts/settings' %}
+
+{% set fullPageForm = true %}
+
+{% block blockContent %}
+
+<input type="hidden" name="action" value="plugins/savePluginSettings">
+<input type="hidden" name="pluginClass" value="feedMe">
+
+{% namespace 'settings' %}
+
+{{ forms.textField({
+    id: 'pluginNameOverride',
+    name: 'pluginNameOverride',
+    label: 'Plugin Name' | t,
+    value: settings.pluginNameOverride,
+    first: true,
+    autofocus: true,
+    instructions: 'Plugin name for the end user.' | t
+}) }}
+
+{{ forms.textField({
+    id: 'cache',
+    name: 'cache',
+    label: 'Cache Duration' | t,
+    value: settings.cache,
+    instructions: 'Cache duration (in seconds) to cache requests. Note: this only effects calls using the template tag - requests are never cached when triggering directly via the CP.' | t
+}) }}
+
+<hr>
+
+{{ forms.checkboxSelectField({
+    id: 'enabledTabs',
+    name: 'enabledTabs',
+    label: 'Enabled Tabs' | t,
+    options: {
+        '*': 'All' | t,
+        'feeds': 'Feeds' | t,
+        'logs': 'Logs' | t,
+        'help': 'Help' | t,
+        'settings': 'Settings' | t,
+    },
+    values: settings.enabledTabs,
+    instructions: 'Choose which tabs you would like to be shown.' | t
+}) }}
+
+<hr>
+
+<a class="btn" href="{{ actionUrl('feedMe/clearTasks') }}">{{ "Clear pending tasks" | t }}</a>
+
+{% endnamespace %}
+
+{% endblock %}

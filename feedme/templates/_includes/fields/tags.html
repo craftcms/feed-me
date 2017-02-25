@@ -1,0 +1,67 @@
+<tr class="{{ (isSubElementField is defined) ? 'element-sub-field' }}">
+    <td class="col-field">
+        <div class="field">
+            <div class="heading">
+                <label {% if fieldtype.required %}class="required"{% endif %}>{{ labelName }}</label>
+
+                <div class="instructions">
+                    <code>{{ labelHandle }}</code>
+                </div>
+            </div>
+        </div>
+    </td>
+
+    <td class="col-map">
+        {% namespace 'fieldMapping' %}
+            {{ forms.selectField({
+                id: fieldHandle,
+                name: fieldHandle,
+                value: feed.fieldMapping[fieldHandle] ?? '',
+                options: feedData,
+            }) }}
+
+            <div class="field-extra-settings">
+                {{ feedMeMacro.checkbox({
+                    label: 'Create tags if they do not exist' | t,
+                    name: fieldHandle ~ '-options-create',
+                    value: 1,
+                    checked: feed.fieldMapping[fieldHandle ~ '-options-create'] ?? '',
+                }) }}
+            </div>
+        {% endnamespace %}
+    </td>
+
+    <td class="col-default">
+        <div class="default-fields">
+            
+        </div>
+    </td>
+</tr>
+
+{% if parentElementField is not defined %}
+    {% set fieldLayout = craft.feedMe.getTagsFieldLayout(field.settings.source) %}
+
+    {% if fieldLayout %}
+        {% for fieldtype in fieldLayout.getFields() %}
+            {% set innerField = fieldtype.getField() %}
+
+            {# Lets not allow a few fields at this time - itself for recursive reasons, and Matrix because :O #}
+            {% if innerField.type in supportedSubElementFields and elementType != 'Tag' %}
+                {% set handleFieldPrefix = (handlePrefix is defined) ? handlePrefix : '' %}
+                
+                {% set variables = {
+                    field: innerField,
+                    feed: feed,
+                    feedData: feedData,
+                    handlePrefix: handleFieldPrefix ~ field.handle ~ '-fields-',
+                    labelName: innerField.name,
+                    labelHandle: innerField.handle,
+                    isSubElementField: true,
+                } %}
+                
+                {% include 'feedme/_includes/field' with variables %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endif %}
+

@@ -3,23 +3,27 @@ namespace Craft;
 
 class FeedMeController extends BaseController
 {
+    protected $allowAnonymous = array('actionClearTasks');
+
     // Public Methods
     // =========================================================================
 
-    public function actionGetEntryTypes()
+    public function actionSettings()
     {
-        // Only ajax post requests
-        $this->requirePostRequest();
-        $this->requireAjaxRequest();
+        $settings = craft()->feedMe->getSettings();
 
-        // Get section
-        $section = craft()->request->getPost('section');
-        $section = craft()->sections->getSectionById($section);
-
-        // Get entry types
-        $entrytypes = $section->getEntryTypes();
-
-        // Return JSON
-        $this->returnJson($entrytypes);
+        $this->renderTemplate('feedme/settings/general', array(
+            'settings' => $settings,
+        ));
     }
+
+    public function actionClearTasks()
+    {
+        // Function to clear (delete) all stuck tasks.
+        craft()->db->createCommand()->delete('tasks');
+
+        $this->redirect(craft()->request->getUrlReferrer());
+    }
+
+    
 }

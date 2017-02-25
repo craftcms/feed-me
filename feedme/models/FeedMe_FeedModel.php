@@ -3,10 +3,21 @@ namespace Craft;
 
 class FeedMe_FeedModel extends BaseModel
 {
-    function __toString()
+    // Public Methods
+    // =========================================================================
+
+    public function __toString()
     {
         return Craft::t($this->name);
     }
+
+    public function getDuplicateHandleFriendly()
+    {
+        return FeedMeDuplicate::getFrieldly($this->duplicateHandle);
+    }
+
+    // Protected Methods
+    // =========================================================================
 
     protected function defineAttributes()
     {
@@ -21,18 +32,17 @@ class FeedMe_FeedModel extends BaseModel
                 FeedMe_FeedType::JSON,
             )),
             'primaryElement'    => AttributeType::String,
-            'section'           => AttributeType::String,
-            'entrytype'         => AttributeType::String,
+            'elementType'       => AttributeType::String,
+            'elementGroup'      => AttributeType::Mixed,
             'locale'            => AttributeType::String,
-            'duplicateHandle'   => array(AttributeType::Enum, 'values' => array(
-                FeedMe_Duplicate::Add,
-                FeedMe_Duplicate::Update,
-                FeedMe_Duplicate::Delete,
-            )),
-            'fieldMapping'      => AttributeType::Mixed,
-            'fieldUnique'       => AttributeType::Mixed,
-            'passkey'           => AttributeType::String,
-            'backup'            => AttributeType::Bool,
+            'duplicateHandle'   => AttributeType::Mixed,
+            'fieldMapping'          => AttributeType::Mixed,
+            'fieldDefaults'         => AttributeType::Mixed,
+            'fieldElementMapping'   => AttributeType::Mixed,
+            'fieldElementDefaults'  => AttributeType::Mixed,
+            'fieldUnique'           => AttributeType::Mixed,
+            'passkey'               => AttributeType::String,
+            'backup'                => AttributeType::Bool,
         );
     }
 }
