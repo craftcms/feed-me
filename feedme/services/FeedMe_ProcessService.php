@@ -36,7 +36,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         $return = $feed->attributes;
 
         // Set our start time to track feed processing time
-        $this->_time_start = microtime(true); 
+        $this->_time_start = microtime(true);
 
         // Add some additional information to our FeedModel - for ease of use in processing
         $return['fields'] = array();
@@ -94,8 +94,9 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         // Set up a model for this Element Type
         $element = $this->_service->setModel($feed);
 
-        // Set criteria according to Element Type 
-        $criteria = $this->_criteria;
+        // Set criteria according to Element Type
+        // Note: base criteria must be refreshed to ensure it's not dirty from the previous step.
+        $criteria = clone $this->_criteria;
 
         // From the raw data in our feed, process it ready for mapping (more to do below)
         $data = $this->_data[$step];
@@ -161,7 +162,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
 
         $this->_debugOutput($element->attributes);
         $this->_debugOutput($fieldData);
-        
+
         // Save the element
         if ($this->_service->save($element, $fieldData, $feed)) {
             // Give elements a chance to perform actions after save
@@ -238,7 +239,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
 
         craft()->feedMe_process->finalizeAfterProcess($feedSettings, $feed);
     }
-    
+
 
 
     // Event Handlers

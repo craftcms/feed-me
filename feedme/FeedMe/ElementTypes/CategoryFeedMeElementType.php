@@ -47,7 +47,7 @@ class CategoryFeedMeElementType extends BaseFeedMeElementType
         $criteria->status = null;
         $criteria->limit = null;
         $criteria->localeEnabled = null;
-        
+
         $criteria->groupId = $settings['elementGroup']['Category'];
 
         return $criteria;
@@ -60,7 +60,17 @@ class CategoryFeedMeElementType extends BaseFeedMeElementType
                 $feedValue = Hash::get($data, $handle . '.data', $data[$handle]);
 
                 if ($feedValue) {
-                    $criteria->$handle = DbHelper::escapeParam($feedValue);
+                    if (is_array($feedValue)) {
+                        // Value must be the ids of related elements.
+                        if (empty($criteria->relatedTo)) {
+                            $criteria->relatedTo = ['and'];
+                        }
+
+                        $criteria->relatedTo = array_merge($criteria->relatedTo, $feedValue);
+                    }
+                    else {
+                        $criteria->$handle = DbHelper::escapeParam($feedValue);
+                    }
                 }
             }
         }
@@ -73,7 +83,7 @@ class CategoryFeedMeElementType extends BaseFeedMeElementType
     {
         return craft()->categories->deleteCategory($elements);
     }
-    
+
     public function prepForElementModel(BaseElementModel $element, array &$data, $settings)
     {
         foreach ($data as $handle => $value) {

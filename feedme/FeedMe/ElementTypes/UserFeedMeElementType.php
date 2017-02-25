@@ -54,7 +54,7 @@ class UserFeedMeElementType extends BaseFeedMeElementType
         $criteria->limit = null;
         //$criteria->group = null;
         $criteria->localeEnabled = null;
-        
+
         if ($settings['locale']) {
             $criteria->locale = $settings['locale'];
         }
@@ -69,7 +69,17 @@ class UserFeedMeElementType extends BaseFeedMeElementType
                 $feedValue = Hash::get($data, $handle . '.data', $data[$handle]);
 
                 if ($feedValue) {
-                    $criteria->$handle = DbHelper::escapeParam($feedValue);
+                    if (is_array($feedValue)) {
+                        // Value must be the ids of related elements.
+                        if (empty($criteria->relatedTo)) {
+                            $criteria->relatedTo = ['and'];
+                        }
+
+                        $criteria->relatedTo = array_merge($criteria->relatedTo, $feedValue);
+                    }
+                    else {
+                        $criteria->$handle = DbHelper::escapeParam($feedValue);
+                    }
                 }
             }
         }
@@ -137,7 +147,7 @@ class UserFeedMeElementType extends BaseFeedMeElementType
 
     public function afterSave(BaseElementModel $element, array $data, $settings)
     {
-        
+
     }
 
 

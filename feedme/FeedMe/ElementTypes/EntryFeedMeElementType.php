@@ -86,7 +86,17 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
                 }
 
                 if ($feedValue) {
-                    $criteria->$handle = DbHelper::escapeParam($feedValue);
+                    if (is_array($feedValue)) {
+                        // Value must be the ids of related elements.
+                        if (empty($criteria->relatedTo)) {
+                            $criteria->relatedTo = ['and'];
+                        }
+
+                        $criteria->relatedTo = array_merge($criteria->relatedTo, $feedValue);
+                    }
+                    else {
+                        $criteria->$handle = DbHelper::escapeParam($feedValue);
+                    }
                 }
             }
         }
@@ -218,7 +228,7 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
             $criteria = craft()->elements->getCriteria(ElementType::User);
             $criteria->search = $author;
             $authorUser = $criteria->first();
-            
+
             if ($authorUser) {
                 $author = $authorUser->id;
             } else {
