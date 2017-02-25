@@ -2,7 +2,7 @@
 
 Feed Me is a Craft plugin for super-simple importing of content, either once-off or at regular intervals. With support for XML, RSS, ATOM or JSON feeds, you'll be able to import your content as Entries, Categories, Craft Commerce Products (and variants), and more.
 
-<img src="http://sgroup.com.au/uploads/general/plugins/feedme-overview.png">
+<img src="https://sgroup.com.au/uploads/general/plugins/feedme-overview.png">
 
 ## Features
 
@@ -20,7 +20,7 @@ Feed Me is a Craft plugin for super-simple importing of content, either once-off
 
 ## Documentation
 
-Visit our [Plugin page](http://sgroup.com.au/plugins/feedme) for all documentation, a getting started guide, template tags, and developer resources.
+Visit our [Plugin page](https://sgroup.com.au/plugins/feedme) for all documentation, a getting started guide, template tags, and developer resources.
 
 ## Thanks / Contributions
 

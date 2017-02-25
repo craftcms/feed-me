@@ -2,33 +2,50 @@
     {
         "version": "2.0.0",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/2.0.0.zip",
-        "date": "2016-11-01 00:00:00",
+        "date": "2017-02-25T00:00:00+10:00",
         "notes": [
+            "# Feed Me 2.0 is a major update",
+            "Before updating, please read the [upgrade notes](https://sgroup.com.au/plugins/feedme/guides/updating-from-1-x-x). This version contains several potentially breaking changes.",
+
             "# Major features",
             "[Added] Added support for Categories, Users, Entries, Commerce Products",
             "[Added] Support for third-party element types",
             "[Added] Auto-upload Assets when mapping",
             "[Added] Support to map content to element's inner fields (think fields for assets)",
+            "[Added] Added Assets ElementType - easily upload assets into Craft.",
             "[Improved] Matrix smart-checking for existing content",
             "[Improved] New parsing method for XML feeds, includes attribute-mapping",
             "[Improved] New mapping interface allows setting defaults for most fields",
+            "[Improved] Re-written field-mapping functionality (again) to be more robust and future-proof.",
+            "[Improved] Import Strategy is now no longer a single choice. Choose any combination of Add/Update or Delete.",
+            "[Improved] Locale-specific importing. Previously imported the same content across locales.",
 
             "# Feeds",
             "[Added] Direct access to mapping screen",
             "[Added] Support attribute-mapping for XML feeds",
             "[Added] Added Debug controller action to help debug those tricky feeds, and see whats going on",
             "[Added] Support for third-party data-types, in addition to the native JSON/XML processing. Useful for custom data handling",
+            "[Added] Added debug icon to Feeds index.",
+            "[Added] Added Element ID mapping. <strong>A word of warning - </strong> do not use this for importing new data. [Read more](https://sgroup.com.au/plugins/feedme/feature-tour/field-mapping#element-iDs).",
+            "[Added] Added parent-mapping for Entry and Category.",
             "[Improved] Support for save shortcut, and stays on the same screen, rather than redirecting back to index",
             "[Improved] Better feedback screen when unable to parse/find feed",
             "[Improved] Feed mapping now looks at entire feed structure for nodes, rather than just the first node",
             "[Improved] Feed mapping is no longer case-insensitive",
             "[Improved] Proper confirmation screen when importing, with progress bar",
+            "[Improved] Feeds no longer die when an error occurs. It'll try to complete the rest of the feed, notifying you of errors at the end of processing.",
+            "[Improved] Sub-folders are now searched for existing assets.",
+            "[Improved] Improved handling of inconsistent, repeatable nodes (I'm looking at you XML).",
+            "[Improved] Asterisks are now shown during mapping for required fields - a handy reminder.",
+            "[Improved] User importing no longer requires a User Group set.",
             "[Fixed] Remove database logging (no longer used)",
             "[Fixed] Fix support for local feeds",
             "[Fixed] Feed no longer lags when processing from the control panel",
             "[Fixed] Fix issue where task wouldn't fire asynchronously, locking up the CP",
             "[Fixed] Fixed issue where pending/disabled existing entries weren't being matched for updating/deleting",
             "[Fixed] Prevent feed from processing if there are no nodes to process. Fixes deletion when elements shouldn't be",
+            "[Fixed] Treat boolean-like values with the respect they deserve.",
+            "[Fixed] Added Shipping Category for Commerce Products.",
 
             "# Fieldtypes",
             "[Added] Elements can be created if they don't exist",
@@ -69,9 +86,28 @@
         ]
     },
     {
+        "version": "1.4.12",
+        "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.12.zip",
+        "date": "2016-07-06T01:00:00+10:00",
+        "notes": [
+            "[Improved] Altered terminology around Duplication Handling to hopefully be more clearer.",
+            "[Fixed] Protect against errors on Feed Me index page when sections/entry types no longer exist.",
+            "[Fixed] Fixed mapping issues with Table field inside Matrix blocks.",
+            "[Fixed] Fixed Dropdown field matching via Label, not Value."
+        ]
+    },
+    {
+        "version": "1.4.11",
+        "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.11.zip",
+        "date": "2016-04-25T19:30:00+10:00",
+        "notes": [
+            "[Fixed] Fixed issue with XML parsing and special characters encoding incorrectly."
+        ]
+    },
+    {
         "version": "1.4.10",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.10.zip",
-        "date": "2016-04-14 06:30:00",
+        "date": "2016-04-14T06:30:00+10:00",
         "notes": [
             "[Fixed] Fixed issue for repeatable fields containing empty values (table fields).",
             "[Improved] FeedUrl attribute stored as `TEXT` column type to allow for longer URLs.",
@@ -81,7 +117,7 @@
     {
         "version": "1.4.9",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.9.zip",
-        "date": "2016-03-15 22:25:00",
+        "date": "2016-03-15T22:25:00+10:00",
         "notes": [
             "[Fixed] Fixed issue with utf8 encoding for feeds.",
             "[Improved] Improvements to matrix processing."
@@ -90,7 +126,7 @@
     {
         "version": "1.4.8",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.8.zip",
-        "date": "2016-03-03 10:00:00",
+        "date": "2016-03-03T10:00:00+10:00",
         "notes": [
             "[Added] Fix for json parsing when special characters in feed content.",
             "[Improved] Better logging when a feed cannot be parsed."
@@ -99,7 +135,7 @@
     {
         "version": "1.4.7",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.7.zip",
-        "date": "2016-02-29 01:00:00",
+        "date": "2016-02-29T01:00:00+10:00",
         "notes": [
             "[Added] Added support for locales - set which locale you want your feed to go to.",
             "[Added] Added support for non-http protocols for feeds (ftp://, file://, etc) [#29](https://github.com/engram-design/FeedMe/issues/29)"
@@ -108,7 +144,7 @@
     {
         "version": "1.4.6",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.6.zip",
-        "date": "2016-01-20 13:00:00",
+        "date": "2016-01-20T13:00:00+10:00",
         "notes": [
             "[Fixed] Fixed an issue where an error would be incorrectly thrown when Add duplication handling is used."
         ]
@@ -116,7 +152,7 @@
     {
         "version": "1.4.5",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.5.zip",
-        "date": "2016-01-13 18:15:00",
+        "date": "2016-01-13T18:15:00+10:00",
         "notes": [
             "[Fixed] Fixed issue with plugin release feed url."
         ]
@@ -124,7 +160,7 @@
     {
         "version": "1.4.4",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.4.zip",
-        "date": "2015-12-28 13:10:00",
+        "date": "2015-12-28T13:10:00+10:00",
         "notes": [
             "[Fixed] Fixed issue with irregular nested elements. See [#24](https://github.com/engram-design/FeedMe/issues/24#issuecomment-167106972)."
         ]
@@ -132,7 +168,7 @@
     {
         "version": "1.4.3",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.3.zip",
-        "date": "2015-12-01 19:35:00",
+        "date": "2015-12-01T19:35:00+10:00",
         "notes": [
             "[Fixed] Check for both numeric and string single-string arrays. Particularly an issue for JSON feeds."
         ]
@@ -140,7 +176,7 @@
     {
         "version": "1.4.2",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.2.zip",
-        "date": "2015-11-28 00:35:00",
+        "date": "2015-11-28T00:35:00+10:00",
         "notes": [
             "[Improved] Minor improvements for plugin icons."
         ]
@@ -148,7 +184,7 @@
     {
         "version": "1.4.1",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.1.zip",
-        "date": "2015-11-27 09:45:00",
+        "date": "2015-11-27T09:45:00+10:00",
         "notes": [
             "[Fixed] Fix css/js resources filename, which did not commit properly."
         ]
@@ -156,7 +192,7 @@
     {
         "version": "1.4.0",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.4.0.zip",
-        "date": "2015-11-26 00:00:00",
+        "date": "2015-11-26T00:00:00+10:00",
         "notes": [
             "[Added] Craft 2.5 support, including release feed and icons.",
             "[Improved] Code cleanup and refactoring field-mapping logic for performance and sanity.",
@@ -178,7 +214,7 @@
     {
         "version": "1.3.6",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.3.6.zip",
-        "date": "2015-11-26 00:00:00",
+        "date": "2015-11-26T00:00:00+10:00",
         "notes": [
         "Removed `file_get_contents` as default method of fetching feed data in favour of Curl.",
         "Better error logging when trying to consume feed data.",
@@ -190,7 +226,7 @@
     {
         "version": "1.3.5",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.3.5.zip",
-        "date": "2015-11-26 00:00:00",
+        "date": "2015-11-26T00:00:00+10:00",
         "notes": [
         "Minor fix for logging. When Delete duplication option was set, import success was never recorded in the logs."
         ]
@@ -198,7 +234,7 @@
     {
         "version": "1.3.4",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.3.4.zip",
-        "date": "2015-11-26 00:00:00",
+        "date": "2015-11-26T00:00:00+10:00",
         "notes": [
         "Minor fix for template mapping. Caused an issue when using a JSON feed and came across a empty nested array."
         ]
@@ -206,7 +242,7 @@
     {
         "version": "1.3.3",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.3.3.zip",
-        "date": "2015-11-26 00:00:00",
+        "date": "2015-11-26T00:00:00+10:00",
         "notes": [
         "Minor fix for log reporting which wasn't displaying errors in a useful way."
         ]
@@ -214,7 +250,7 @@
     {
         "version": "1.3.2",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.3.2.zip",
-        "date": "2015-11-26 00:00:00",
+        "date": "2015-11-26T00:00:00+10:00",
         "notes": [
         "Alterations to logging information to provide better feedback. Thanks to [@russback](https://github.com/russback)."
         ]
@@ -222,7 +258,7 @@
     {
         "version": "1.3.1",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.3.1.zip",
-        "date": "2015-11-26 00:00:00",
+        "date": "2015-11-26T00:00:00+10:00",
         "notes": [
         "Fix for info/notice log messages not saving when `devMode` is off."
         ]
@@ -230,7 +266,7 @@
     {
         "version": "1.3.0",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.3.0.zip",
-        "date": "2015-11-26 00:00:00",
+        "date": "2015-11-26T00:00:00+10:00",
         "notes": [
         "Refactored direct processing to utalize Craft's tasks service, rather than using pure PHP processing. This greatly improves performance as PHP processing would run out of memory extremely quickly."
         ]
@@ -238,7 +274,7 @@
     {
         "version": "1.2.9",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.2.9.zip",
-        "date": "2015-11-26 00:00:00",
+        "date": "2015-11-26T00:00:00+10:00",
         "notes": [
         "Added support for [SuperTable](https://github.com/engram-design/SuperTable).",
         "Added log tab to read in `craft/storage/runtime/logs/feedme.log`.",
@@ -252,7 +288,7 @@
     {
         "version": "1.2.8",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.2.8.zip",
-        "date": "2015-11-26 00:00:00",
+        "date": "2015-11-26T00:00:00+10:00",
         "notes": [
         "Move changelog - so much change!",
         "Add support for attribute values for XML feeds (template tags only).",
@@ -262,7 +298,7 @@
     {
         "version": "1.2.7",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.2.7.zip",
-        "date": "2015-11-26 00:00:00",
+        "date": "2015-11-26T00:00:00+10:00",
         "notes": [
         "Fix where entries would not import if mapping element fields had more values that their field limit.",
         "Fix for multiple matches found on existing categories, where only one should match.",
@@ -273,7 +309,7 @@
     {
         "version": "1.2.6",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.2.6.zip",
-        "date": "2015-11-26 00:00:00",
+        "date": "2015-11-26T00:00:00+10:00",
         "notes": [
         "Fix for matching fields containing special characters.",
         "Fix for tags and category mapping, mapping all available if supplied empty value.",
@@ -284,7 +320,7 @@
     {
         "version": "1.2.5",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.2.5.zip",
-        "date": "2015-11-26 00:00:00",
+        "date": "2015-11-26T00:00:00+10:00",
         "notes": [
         "Refactoring for performance improvements.",
         "Remove database logging until a better performing option is figured out. Logging still occurs to the file system under `craft/storage/runtime/logs/`.",
@@ -295,7 +331,7 @@
     {
         "version": "1.2.4",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.2.4.zip",
-        "date": "2015-11-26 00:00:00",
+        "date": "2015-11-26T00:00:00+10:00",
         "notes": [
         "Added support to fallback on cURL when `file_get_contents()` is not available. Can occur on some hosts where `allow_url_fopen = 0`."
         ]
@@ -303,7 +339,7 @@
     {
         "version": "1.2.3",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.2.3.zip",
-        "date": "2015-11-26 00:00:00",
+        "date": "2015-11-26T00:00:00+10:00",
         "notes": [
         "Primary Element is no longer required - important for JSON feeds.",
         "Fixes for when no primary element specified. It's pretty much optional now.",
@@ -314,7 +350,7 @@
     {
         "version": "1.2.2",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.2.2.zip",
-        "date": "2015-11-26 00:00:00",
+        "date": "2015-11-26T00:00:00+10:00",
         "notes": [
         "JSON feed support."
         ]
@@ -322,7 +358,7 @@
     {
         "version": "1.2.1",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.2.1.zip",
-        "date": "2015-11-26 00:00:00",
+        "date": "2015-11-26T00:00:00+10:00",
         "notes": [
         "Matrix support.",
         "Table support.",
@@ -334,7 +370,7 @@
     {
         "version": "1.2",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.2.zip",
-        "date": "2015-11-26 00:00:00",
+        "date": "2015-11-26T00:00:00+10:00",
         "notes": [
         "Lots of fixes and improvements for direct-processing. Includes URL parameter, passkey and non-Task processing.",
         "Fixes with logging - now more informative!",
@@ -347,7 +383,7 @@
     {
         "version": "1.1",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.1.zip",
-        "date": "2015-11-26 00:00:00",
+        "date": "2015-11-26T00:00:00+10:00",
         "notes": [
         "Prep for Table/Matrix mapping.",
         "Better depth-mapping for feed data (was limited to depth-2).",
@@ -358,7 +394,7 @@
     {
         "version": "1.0",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/1.0.zip",
-        "date": "2015-11-26 00:00:00",
+        "date": "2015-11-26T00:00:00+10:00",
         "notes": [
         "Initial release."
         ]
