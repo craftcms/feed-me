@@ -12,7 +12,7 @@ class UsersFeedMeFieldType extends BaseFeedMeFieldType
     {
         return 'feedme/_includes/fields/users';
     }
-    
+
 
 
     // Public Methods
@@ -54,6 +54,14 @@ class UsersFeedMeFieldType extends BaseFeedMeFieldType
             // Check if we've specified which attribute we're trying to match against
             $attribute = Hash::get($fieldData, 'options.match', 'email');
             $criteria->$attribute = DbHelper::escapeParam($user);
+
+            // Check for additional attributes being matched against.
+            $extraAttributes = Hash::get($fieldData, 'options.matchExtra', []);
+
+            foreach ($extraAttributes as $attribute => $value) {
+                $criteria->$attribute = DbHelper::escapeParam($value);
+            }
+
             $elements = $criteria->ids();
 
             $preppedData = array_merge($preppedData, $elements);
@@ -127,5 +135,5 @@ class UsersFeedMeFieldType extends BaseFeedMeFieldType
             throw new Exception(json_encode($element->getErrors()));
         }
     }
-    
+
 }
