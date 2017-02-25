@@ -42,7 +42,8 @@ class FeedMe_HelpController extends BaseController
             $message = $getHelpModel->message . "\n\n" .
                 "------------------------------\n\n" .
                 'Craft '.craft()->getEditionName().' '.$version . "\n\n" .
-                'Feed Me '.$plugin->getVersion();
+                'Feed Me '.$plugin->getVersion() . "\n\n" .
+                'License Key: '.craft()->feedMe_license->getLicenseKey();
 
             try {
                 $zipFile = $this->_createZip();
@@ -133,8 +134,6 @@ class FeedMe_HelpController extends BaseController
                     }
                 }
 
-                craft()->end();
-
 
                 //
                 // Add in any additional attachments 
@@ -154,7 +153,7 @@ class FeedMe_HelpController extends BaseController
 
             $email = new EmailModel();
             $email->fromEmail = $getHelpModel->fromEmail;
-            $email->toEmail = "web@sgroup.com.au";
+            $email->toEmail = "support@sgroup.com.au";
             $email->subject = "Feed Me Support";
             $email->body = $message;
 

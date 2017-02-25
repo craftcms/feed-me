@@ -113,10 +113,18 @@
 
     <div class="field">
         <div class="heading">
-            <label class="required">Import strategy <span class="info">
-                <span style="display:inline-block;"><strong>Create new element:</strong> Adds new elements if they do not already exist.</span>
-                <span style="display:inline-block;"><strong>Update existing elements:</strong> Updates elements that match the Unique Identifier (next step).</span>
-                <span style="display:inline-block;"><strong>Delete old elements:</strong> Deletes elements that are not updated by this feed. Be careful.</span></span>
+            <label class="required">{{ "Import strategy" | t }}
+                <span class="info">
+                    <span style="display:inline-block;">
+                        <strong>{{ "Create new element:" | t }}</strong> {{ "Adds new elements if they do not already exist." | t }}
+                    </span>
+                    <span style="display:inline-block;">
+                        <strong>{{ "Update existing elements:" | t }}</strong> {{ "Updates elements that match the Unique Identifier (next step)." | t }}
+                    </span>
+                    <span style="display:inline-block;">
+                        <strong>{{ "Delete old elements:" | t }}</strong> {{ "Deletes elements that are not updated by this feed. Be careful." | t }}
+                    </span>
+                </span>
             </label>
 
             <div class="instructions">
@@ -127,7 +135,7 @@
         <div class="input ltr">
             {{ forms.checkboxGroup({
                 label: "Import strategy" | t,
-                instructions: 'Choose what happens when this feed is run again.',
+                instructions: 'Choose what happens when this feed is run again.' | t,
                 id: 'duplicateHandle',
                 name: 'duplicateHandle',
                 options: {
@@ -156,7 +164,7 @@
 
     {{ forms.lightswitchField({
         first: true,
-        label: 'Backup',
+        label: 'Backup' | t,
         instructions: 'Perform a full backup each time this feed is processed.' | t,
         name: 'backup',
         on: (feed.id) ? feed.backup : true,

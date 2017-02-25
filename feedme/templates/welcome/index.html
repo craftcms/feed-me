@@ -2,7 +2,7 @@
 
 {% set noTabs = true %}
 
-{% set title = 'Welcome to ' ~ craft.feedMe.getPluginName() ~ '!' %}
+{% set title = 'Welcome to {name}!' | t({ name: craft.feedMe.getPluginName() }) %}
 
 {% block blockContent %}
     <div class="feedme-welcome">
@@ -10,7 +10,7 @@
 
         <h1>{{ "Thanks for using {name}!" | t({ name: craft.feedMe.getPluginName() }) }}</h1>
 
-        <p>{{ "Thanks for installing Feed Me. Get started by creating your first feed." }}</p>
+        <p>{{ "Thanks for installing {name}. Get started by creating your first feed." | t({ name: craft.feedMe.getPluginName() }) }}</p>
         
         <a class="btn submit btn-start" href="{{ url('feedme/feeds') }}">{{ "Get Started" | t }}</a>
         <span class="or">{{ "or" | t }}</span>
