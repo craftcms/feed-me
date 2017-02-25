@@ -107,12 +107,16 @@ class FeedMe_HelpController extends BaseController
                 if ($getHelpModel->attachFields) {
                     $fieldInfo = array();
 
-                    foreach ($feed->fieldMapping as $feedHandle => $fieldHandle) {
+                    foreach ($feed->fieldMapping as $fieldHandle => $feedHandle) {
                         if ($fieldHandle && !is_array($fieldHandle)) {
+                            // Check for sub-fields and options
+                            $fieldHandleInfo = explode('-', $fieldHandle);
+                            $fieldHandle = $fieldHandleInfo[0];
+
                             $field = craft()->fields->getFieldByHandle($fieldHandle);
 
-                            if ($field) {
-                                $fieldInfo[] = $this->_prepareExportField($field);
+                            if ($field && !isset($fieldInfo[$field->handle])) {
+                                $fieldInfo[$field->handle] = $this->_prepareExportField($field);
                             }
                         }
                     }
@@ -128,6 +132,8 @@ class FeedMe_HelpController extends BaseController
                         Zip::add($zipFile, $tempFile, $tempFolder);
                     }
                 }
+
+                craft()->end();
 
 
                 //
@@ -229,9 +235,7 @@ class FeedMe_HelpController extends BaseController
 
     private function _prepareExportField($field)
     {
-        $fieldDefs = array();
-
-        $fieldDefs[$field->handle] = array(
+        $fieldDefs = array(
             'name'         => $field->name,
             'context'      => $field->context,
             'instructions' => $field->instructions,
@@ -263,7 +267,7 @@ class FeedMe_HelpController extends BaseController
                 );
             }
 
-            $fieldDefs[$field->handle]['blockTypes'] = $blockTypeDefs;
+            $fieldDefs['blockTypes'] = $blockTypeDefs;
         }
 
         if ($field->type == 'SuperTable') {
@@ -288,7 +292,7 @@ class FeedMe_HelpController extends BaseController
                 );
             }
 
-            $fieldDefs[$field->handle]['blockTypes'] = $blockTypeDefs;
+            $fieldDefs['blockTypes'] = $blockTypeDefs;
         }
 
         return $fieldDefs;
