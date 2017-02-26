@@ -26,7 +26,7 @@
             "[Added] Added Debug controller action to help debug those tricky feeds, and see whats going on",
             "[Added] Support for third-party data-types, in addition to the native JSON/XML processing. Useful for custom data handling",
             "[Added] Added debug icon to Feeds index.",
-            "[Added] Added Element ID mapping. <strong>A word of warning - </strong> do not use this for importing new data. [Read more](https://sgroup.com.au/plugins/feedme/feature-tour/field-mapping#element-iDs).",
+            "[Added] Added Element ID mapping. *A word of warning - * do not use this for importing new data. [Read more](https://sgroup.com.au/plugins/feedme/feature-tour/field-mapping#element-iDs).",
             "[Added] Added parent-mapping for Entry and Category.",
             "[Improved] Support for save shortcut, and stays on the same screen, rather than redirecting back to index",
             "[Improved] Better feedback screen when unable to parse/find feed",
