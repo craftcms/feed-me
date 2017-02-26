@@ -131,7 +131,7 @@ class FeedMe_LicenseService extends BaseApplicationComponent
         $this->setLicenseKeyStatus(LicenseKeyStatus::Unknown);
         $this->setEdition('0');
 
-        return $etResponse;
+        return $this->_handleEtResponse($etResponse);
     }
 
     public function transferLicenseKey()
@@ -139,7 +139,7 @@ class FeedMe_LicenseService extends BaseApplicationComponent
         $et = new FeedMe_License(static::TransferPlugin, $this->pluginHandle, $this->pluginVersion, $this->licenseKey);
         $etResponse = $et->phoneHome(true);
 
-        return $etResponse;
+        return $this->_handleEtResponse($etResponse);
     }
 
     public function registerPlugin($licenseKey)
