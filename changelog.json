@@ -1,5 +1,16 @@
 [
     {
+        "version": "2.0.1",
+        "downloadUrl": "https://github.com/engram-design/FeedMe/archive/2.0.1.zip",
+        "date": "2017-03-01T00:00:00+10:00",
+        "notes": [
+            "[Fixed] Products - Fix existing element-matching on core attributes (matching against title, etc)",
+            "[Fixed] Products - Ensure content is set correctly for multi-locales",
+            "[Fixed] Users - Fix profile fields not importing when multi-locales were setup.",
+            "[Fixed] Fix data-parsing when using via templates. Particular if an error occurs, an error would be thrown, preventing logging of the error.",
+            "[Fixed] Ensure `unregisterLicenseKey` and `transferLicenseKey` properly decode server response."
+        ]
+    }, {
         "version": "2.0.0",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/2.0.0.zip",
         "date": "2017-02-25T00:00:00+10:00",
