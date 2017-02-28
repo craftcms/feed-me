@@ -127,35 +127,17 @@ class UserFeedMeElementType extends BaseFeedMeElementType
 
     public function save(BaseElementModel &$element, array $data, $settings)
     {
-        // Are we targeting a specific locale here? If so, we create an essentially blank element
-        // for the primary locale, and instead create a locale for the targeted locale
-        if (isset($settings['locale'])) {
-            // Save the default locale element empty
-            if (craft()->users->saveUser($element)) {
-                // Now get the successfully saved (empty) element, and set content on that instead
-                $elementLocale = craft()->users->getUserById($element->id, $settings['locale']);
-                $elementLocale->setContentFromPost($data);
-
-                // Save the locale entry
-                if (craft()->users->saveUser($elementLocale)) {
-                    craft()->userGroups->assignUserToGroups($elementLocale->id, $settings['elementGroup']['User']);
-                    return true;
-                }
-            } else {
-                if ($element->getErrors()) {
-                    throw new Exception(json_encode($element->getErrors()));
-                } else {
-                    throw new Exception(Craft::t('Unknown Element error occurred.'));
-                }
-            }
-
-            return false;
-        } else {
-            if (craft()->users->saveUser($element)) {
-                craft()->userGroups->assignUserToGroups($element->id, $settings['elementGroup']['User']);
-                return true;
-            }
+        // Because our main processing function checks for locale-only content, the content field won't be
+        // prepped with data. However - user profile fields aren't multi-locale, and often validation will fail.
+        // So pretty much ignore local-targeting (because there's only one), and put back the content
+        $element->setContentFromPost($data);
+        
+        if (craft()->users->saveUser($element)) {
+            craft()->userGroups->assignUserToGroups($element->id, $settings['elementGroup']['User']);
+            return true;
         }
+
+        return false;
     }
 
     public function afterSave(BaseElementModel $element, array $data, $settings)
