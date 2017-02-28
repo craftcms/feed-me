@@ -18,6 +18,11 @@ class CategoryFeedMeElementType extends BaseFeedMeElementType
         return 'feedme/_includes/elements/category/column';
     }
 
+    public function getMappingTemplate()
+    {
+        return 'feedme/_includes/elements/category/map';
+    }
+
 
     // Public Methods
     // =========================================================================

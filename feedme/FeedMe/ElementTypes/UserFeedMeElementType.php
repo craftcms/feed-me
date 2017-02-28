@@ -18,6 +18,11 @@ class UserFeedMeElementType extends BaseFeedMeElementType
         return 'feedme/_includes/elements/user/column';
     }
 
+    public function getMappingTemplate()
+    {
+        return 'feedme/_includes/elements/user/map';
+    }
+
 
     // Public Methods
     // =========================================================================

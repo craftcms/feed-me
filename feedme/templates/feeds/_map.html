@@ -40,7 +40,8 @@
             <input type="hidden" name="passkey" value="{{ feed.passkey }}">
         {% endif %}
 
-        {% include 'feedme/_includes/elements/' ~ feed.elementType | lower ~ '/map' with { elementType: feed.elementType } %}
+        {% set elementTemplate = craft.feedMe.getElementTypeMapping(feed.elementType) %}
+        {% include elementTemplate with { elementType: feed.elementType } %}
 
     {% else %}
         <div class="feedme-fullpage fullpage-error">

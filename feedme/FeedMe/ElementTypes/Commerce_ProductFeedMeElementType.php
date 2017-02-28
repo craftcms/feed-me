@@ -18,6 +18,11 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
         return 'feedme/_includes/elements/commerce_product/column';
     }
 
+    public function getMappingTemplate()
+    {
+        return 'feedme/_includes/elements/commerce_product/map';
+    }
+
 
     // Public Methods
     // =========================================================================

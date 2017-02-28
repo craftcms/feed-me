@@ -20,6 +20,8 @@ abstract class BaseFeedMeElementType
     abstract public function getGroupsTemplate();
     
     abstract public function getColumnTemplate();
+    
+    abstract public function getMappingTemplate();
 
     abstract public function setModel($settings);
 

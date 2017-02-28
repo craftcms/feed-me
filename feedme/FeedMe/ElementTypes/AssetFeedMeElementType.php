@@ -18,6 +18,11 @@ class AssetFeedMeElementType extends BaseFeedMeElementType
         return 'feedme/_includes/elements/asset/column';
     }
 
+    public function getMappingTemplate()
+    {
+        return 'feedme/_includes/elements/asset/map';
+    }
+
 
     // Public Methods
     // =========================================================================

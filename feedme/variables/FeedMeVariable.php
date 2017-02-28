@@ -39,6 +39,11 @@ class FeedMeVariable
         return $values;
     }
 
+    public function getElementTypeMapping($elementType)
+    {
+        return craft()->feedMe_elementTypes->getElementTypeMapping($elementType);
+    }
+
     public function getElementTypeGroups($elementType)
     {
         if ($service = craft()->feedMe->getElementTypeService($elementType)) {
