@@ -140,13 +140,33 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
 
     public function save(BaseElementModel &$element, array $data, $settings)
     {
-        $result = craft()->commerce_products->saveProduct($element);
+        // Are we targeting a specific locale here? If so, we create an essentially blank element
+        // for the primary locale, and instead create a locale for the targeted locale
+        if (isset($settings['locale'])) {
+            // Save the default locale element empty
+            $result = craft()->commerce_products->saveProduct($element);
+
+            if ($result) {
+                // Now get the successfully saved (empty) element, and set content on that instead
+                $elementLocale = craft()->commerce_products->getProductById($element->id, $settings['locale']);
+                $elementLocale->setContentFromPost($data);
+
+                // Save the locale entry
+                $result = craft()->commerce_products->saveProduct($elementLocale);
+            }
+        } else {
+            $result = craft()->commerce_products->saveProduct($element);
+        }
 
         // Because we can have product and variant error, make sure we show them
         if (!$result) {
-            foreach ($element->getVariants() as $variant) {
-                if ($variant->getErrors()) {
-                    throw new Exception(json_encode($variant->getErrors()));
+            if ($element->getErrors()) {
+                throw new Exception(json_encode($element->getErrors()));
+            } else {
+                foreach ($element->getVariants() as $variant) {
+                    if ($variant->getErrors()) {
+                        throw new Exception(json_encode($variant->getErrors()));
+                    }
                 }
             }
         }
