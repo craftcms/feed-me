@@ -79,7 +79,8 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
                         $criteria->id = $variants[0]->productId;
                     }
                 } else {
-                    $criteria->$handle = DbHelper::escapeParam($data[$handle]);
+                    $feedValue = Hash::get($data, $handle . '.data', $data[$handle]);
+                    $criteria->$handle = DbHelper::escapeParam($feedValue);
                 }
             }
         }
