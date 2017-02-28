@@ -18,6 +18,12 @@ Feed Me is a Craft plugin for super-simple importing of content, either once-off
 - Craft 2.5+ compatible.
 
 
+## Third-party ElementTypes and FieldTypes
+
+We're compiling a list of supported third-party ElementTypes and FieldTypes via https://github.com/engram-design/FeedMe-Helpers. Theses are meant to be reference-only, and should be forwarded on to plugin developers to integrate. Of course, if you have development know-how, you can implement them yourselves.
+
+Please create issues on this repository if you'd like support for a particular ElementType or FieldType.
+
 ## Documentation
 
 Visit our [Plugin page](https://sgroup.com.au/plugins/feedme) for all documentation, a getting started guide, template tags, and developer resources.
