@@ -7,9 +7,12 @@ class JsonFeedMeDataType extends BaseFeedMeDataType
     // =========================================================================
 
     public function getFeed($url, $primaryElement, $settings)
-    {
+    {   
+        // Check for when calling via templates (there's no feed model)
+        $name = ($settings) ? $settings->name . ': ' : '';
+
         if (false === ($raw_content = craft()->feedMe_data->getRawData($url))) {
-            FeedMePlugin::log($settings->name . ': Unable to reach ' . $url . '. Check this is the correct URL.', LogLevel::Error, true);
+            FeedMePlugin::log($name . 'Unable to reach ' . $url . '. Check this is the correct URL.', LogLevel::Error, true);
 
             return false;
         }
@@ -18,7 +21,7 @@ class JsonFeedMeDataType extends BaseFeedMeDataType
         try {
             $json_array = JsonHelper::decode($raw_content, true);
         } catch (Exception $e) {
-            FeedMePlugin::log($settings->name . ': Invalid JSON - ' . $e->getMessage(), LogLevel::Error, true);
+            FeedMePlugin::log($name . 'Invalid JSON - ' . $e->getMessage(), LogLevel::Error, true);
 
             return false;
         }
@@ -29,7 +32,7 @@ class JsonFeedMeDataType extends BaseFeedMeDataType
         }
 
         if (!is_array($json_array)) {
-            FeedMePlugin::log($settings->name . ': Invalid JSON. - ' . json_last_error_msg(), LogLevel::Error, true);
+            FeedMePlugin::log($name . 'Invalid JSON. - ' . json_last_error_msg(), LogLevel::Error, true);
             
             return false;
         }

@@ -10,8 +10,11 @@ class XmlFeedMeDataType extends BaseFeedMeDataType
 
     public function getFeed($url, $primaryElement, $settings)
     {
+        // Check for when calling via templates (there's no feed model)
+        $name = ($settings) ? $settings->name . ': ' : '';
+
         if (false === ($raw_content = craft()->feedMe_data->getRawData($url))) {
-            FeedMePlugin::log($settings->name . ': Unable to reach ' . $url . '. Check this is the correct URL.', LogLevel::Error, true);
+            FeedMePlugin::log($name . 'Unable to reach ' . $url . '. Check this is the correct URL.', LogLevel::Error, true);
 
             return false;
         }
@@ -21,7 +24,7 @@ class XmlFeedMeDataType extends BaseFeedMeDataType
             $xml_array = Xml::build($raw_content);
             $xml_array = Xml::toArray($xml_array);
         } catch (Exception $e) {
-            FeedMePlugin::log($settings->name . ': Invalid XML - ' . $e->getMessage(), LogLevel::Error, true);
+            FeedMePlugin::log($name . 'Invalid XML - ' . $e->getMessage(), LogLevel::Error, true);
 
             return false;
         }
@@ -32,7 +35,7 @@ class XmlFeedMeDataType extends BaseFeedMeDataType
         }
 
         if (!is_array($xml_array)) {
-            FeedMePlugin::log($settings->name . ': Invalid XML - ' . print_r($xml_array, true), LogLevel::Error, true);
+            FeedMePlugin::log($name . 'Invalid XML - ' . print_r($xml_array, true), LogLevel::Error, true);
 
             return false;
         }
