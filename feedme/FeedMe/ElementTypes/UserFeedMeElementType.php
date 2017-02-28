@@ -127,12 +127,35 @@ class UserFeedMeElementType extends BaseFeedMeElementType
 
     public function save(BaseElementModel &$element, array $data, $settings)
     {
-        if (craft()->users->saveUser($element)) {
-            craft()->userGroups->assignUserToGroups($element->id, $settings['elementGroup']['User']);
-            return true;
-        }
+        // Are we targeting a specific locale here? If so, we create an essentially blank element
+        // for the primary locale, and instead create a locale for the targeted locale
+        if (isset($settings['locale'])) {
+            // Save the default locale element empty
+            if (craft()->users->saveUser($element)) {
+                // Now get the successfully saved (empty) element, and set content on that instead
+                $elementLocale = craft()->users->getUserById($element->id, $settings['locale']);
+                $elementLocale->setContentFromPost($data);
 
-        return false;
+                // Save the locale entry
+                if (craft()->users->saveUser($elementLocale)) {
+                    craft()->userGroups->assignUserToGroups($elementLocale->id, $settings['elementGroup']['User']);
+                    return true;
+                }
+            } else {
+                if ($element->getErrors()) {
+                    throw new Exception(json_encode($element->getErrors()));
+                } else {
+                    throw new Exception(Craft::t('Unknown Element error occurred.'));
+                }
+            }
+
+            return false;
+        } else {
+            if (craft()->users->saveUser($element)) {
+                craft()->userGroups->assignUserToGroups($element->id, $settings['elementGroup']['User']);
+                return true;
+            }
+        }
     }
 
     public function afterSave(BaseElementModel $element, array $data, $settings)
