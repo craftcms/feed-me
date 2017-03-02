@@ -53,7 +53,7 @@ class AssetFeedMeElementType extends BaseFeedMeElementType
         $criteria->limit = null;
         $criteria->localeEnabled = null;
         
-        $criteria->groupId = $settings['elementGroup']['Asset'];
+        $criteria->sourceId = $settings['elementGroup']['Asset'];
 
         return $criteria;
     }
@@ -81,23 +81,36 @@ class AssetFeedMeElementType extends BaseFeedMeElementType
     
     public function prepForElementModel(BaseElementModel $element, array &$data, $settings)
     {
-        foreach ($data as $handle => $value) {
-            switch ($handle) {
-                case 'id';
-                    $element->$handle = $value['data'];
-                    break;
-                case 'filename';
-                    $element->$handle = $value;
-                    break;
-                case 'title':
-                    $element->getContent()->$handle = $value['data'];
-                    break;
-                default:
-                    continue 2;
-            }
+        $fieldData = Hash::get($data, 'filename', array());
 
-            // Update the original data in our feed - for clarity in debugging
-            $data[$handle] = $element->$handle;
+        // Are we uploading a new asset? If so, the element gets created so return that
+        if (isset($fieldData['options']['upload'])) {
+            $service = craft()->feedMe->getFieldTypeService('Assets');
+            $folder = craft()->assets->getRootFolderBySourceId($element->sourceId);
+            $urlData = $fieldData['data'];
+
+            $fileId = $service->fetchRemoteImage($urlData, $folder->id, $fieldData['options']);
+
+            $element = craft()->assets->getFileById($fileId);
+        } else {
+            foreach ($data as $handle => $value) {
+                switch ($handle) {
+                    case 'id';
+                        $element->$handle = $value['data'];
+                        break;
+                    case 'filename';
+                        $element->$handle = $value['data'];
+                        break;
+                    case 'title':
+                        $element->getContent()->$handle = $value['data'];
+                        break;
+                    default:
+                        continue 2;
+                }
+
+                // Update the original data in our feed - for clarity in debugging
+                $data[$handle] = $element->$handle;
+            }
         }
 
         return $element;
@@ -105,22 +118,29 @@ class AssetFeedMeElementType extends BaseFeedMeElementType
 
     public function save(BaseElementModel &$element, array $data, $settings)
     {
-        // Prep some variables
-        $fieldData = Hash::get($data, 'filename', array());
+        // Are we targeting a specific locale here? If so, we create an essentially blank element
+        // for the primary locale, and instead create a locale for the targeted locale
+        if (isset($settings['locale'])) {
+            // Save the default locale element empty
+            if (craft()->assets->storeFile($element)) {
+                // Now get the successfully saved (empty) element, and set content on that instead
+                $elementLocale = craft()->assets->getFileById($element->id, $settings['locale']);
+                $elementLocale->setContentFromPost($data);
 
-        // Check if we're dealing with uplading assets
-        if (isset($fieldData['options']['upload'])) {
-            $service = craft()->feedMe->getFieldTypeService('Assets');
-            $folder = craft()->assets->getRootFolderBySourceId($element->sourceId);
-            $urlData = $fieldData['data'];
+                // Save the locale entry
+                return craft()->assets->storeFile($elementLocale);
+            } else {
+                if ($element->getErrors()) {
+                    throw new Exception(json_encode($element->getErrors()));
+                } else {
+                    throw new Exception(Craft::t('Unknown Element error occurred.'));
+                }
+            }
 
-            $fileIds = $service->fetchRemoteImage($urlData, $folder->id, $fieldData['options']);
+            return false;
         } else {
-            // There's no real case at the moment if we're not uploading. Why?
-            // Because theu're already in Craft. Leave for the moment
+            return craft()->assets->storeFile($element);
         }
-
-        return true;
     }
 
     public function afterSave(BaseElementModel $element, array $data, $settings)
