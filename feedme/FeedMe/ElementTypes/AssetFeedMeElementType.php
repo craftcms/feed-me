@@ -106,7 +106,7 @@ class AssetFeedMeElementType extends BaseFeedMeElementType
     public function save(BaseElementModel &$element, array $data, $settings)
     {
         // Prep some variables
-        $fieldData = $data[array_keys($data)[0]];
+        $fieldData = Hash::get($data, 'filename', array());
 
         // Check if we're dealing with uplading assets
         if (isset($fieldData['options']['upload'])) {
