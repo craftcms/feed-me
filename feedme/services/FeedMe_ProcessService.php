@@ -412,6 +412,11 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             $testSingleFeedHandle = $this->str_lreplace('.*.', '.', $extractFeedHandle);
             $tempValue = FeedMeArrayHelper::arrayGet($feedData, $testSingleFeedHandle);
 
+            // If we have two '.*.', we don't check for single data, its all good
+            if (substr_count($extractFeedHandle, '.*.') == 2) {
+                $tempValue = $value;
+            }
+
             // Check for array of nulls
             if (is_array($tempValue)) {
                 if (count(array_filter($tempValue)) === 0) {

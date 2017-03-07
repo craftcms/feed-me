@@ -94,7 +94,6 @@ class MatrixFeedMeFieldType extends BaseFeedMeFieldType
             }
         }
 
-
         // Sort by the new ordering we've set
         ksort($sortedData);
 
@@ -125,12 +124,17 @@ class MatrixFeedMeFieldType extends BaseFeedMeFieldType
                         'field' => $subField,
                     );
 
+                    // Special-case for Table - this is not great...
+                    if ($subField->type == 'Table') {
+                        $blockFieldContent['data'] = $blockFieldContent;
+                    }
+
                     // Parse this inner-field's data, just like a regular field
                     $parsedData = craft()->feedMe_fields->prepForFieldType(null, $blockFieldContent, $blockFieldHandle, $fieldOptions);
 
                     if ($parsedData) {
                         // Special-case for inner table - not a great solution at the moment, needs to be more flexible
-                        if ($subField->type == 'Table') {
+                        /*if ($subField->type == 'Table') {
                             foreach ($parsedData as $i => $tableFieldRow) {
                                 $next = reset($tableFieldRow);
 
@@ -144,9 +148,9 @@ class MatrixFeedMeFieldType extends BaseFeedMeFieldType
                                     }
                                 }
                             }
-                        } else {
+                        } else {*/
                             $allPreppedFieldData[$sortKey][$blockHandle][$blockFieldHandle] = $parsedData;
-                        }
+                        //}
                     }
                 }
             }
