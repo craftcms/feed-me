@@ -187,6 +187,14 @@ class FeedMeVariable
         return craft()->assetSources->getSourceById($id);
     }
 
+    public function getClientUsers()
+    {
+        $criteria = craft()->elements->getCriteria(ElementType::User);
+        $criteria->status = null;
+        
+        return $criteria->find();
+    }
+
 
 
 

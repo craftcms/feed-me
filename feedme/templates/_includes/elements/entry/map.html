@@ -7,7 +7,13 @@
 {% endif %}
 
 {% set users = [{ label: 'Don\'t import', value: '' }] %}
-{% if CraftEdition >= CraftClient %}
+{% if CraftEdition == CraftClient %}
+    {% for user in craft.feedMe.getClientUsers() %}
+        {% set users = users | merge([{ label: user, value: user.id }]) %}
+    {% endfor %}
+{% endif %}
+
+{% if CraftEdition == CraftPro %}
     {% for user in craft.users.can('createEntries:' ~ sectionId) %}
         {% set users = users | merge([{ label: user, value: user.id }]) %}
     {% endfor %}
