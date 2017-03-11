@@ -19,7 +19,11 @@ class DateFeedMeFieldType extends BaseFeedMeFieldType
     {
         $data = Hash::get($fieldData, 'data');
 
-        return DateTimeHelper::formatTimeForDb(DateTimeHelper::fromString($data, craft()->timezone));
+        if ($data) {
+            return DateTimeHelper::formatTimeForDb(DateTimeHelper::fromString($data, craft()->timezone));
+        } else {
+            return "";
+        }
     }
     
 }
