@@ -17,7 +17,7 @@ class RadioButtonsFeedMeFieldType extends BaseFeedMeFieldType
 
     public function prepFieldData($element, $field, $fieldData, $handle, $options)
     {
-        $preppedData = array();
+        $preppedData = null;
 
         $data = Hash::get($fieldData, 'data');
 
@@ -28,7 +28,6 @@ class RadioButtonsFeedMeFieldType extends BaseFeedMeFieldType
         $settings = $field->getFieldType()->getSettings();
         $options = $settings->getAttribute('options');
 
-        // find matching option label
         foreach ($options as $option) {
             if ($data == $option['value']) {
                 $preppedData = $option['value'];
