@@ -118,7 +118,15 @@ class CategoryFeedMeElementType extends BaseFeedMeElementType
                 $elementLocale->setContentFromPost($data);
 
                 // Save the locale entry
-                return craft()->categories->saveCategory($elementLocale);
+                if (craft()->categories->saveCategory($elementLocale)) {
+                    return true;
+                } else {
+                    if ($elementLocale->getErrors()) {
+                        throw new Exception(json_encode($elementLocale->getErrors()));
+                    } else {
+                        throw new Exception(Craft::t('Unknown Element error occurred.'));
+                    }
+                }
             } else {
                 if ($element->getErrors()) {
                     throw new Exception(json_encode($element->getErrors()));
