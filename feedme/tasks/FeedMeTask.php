@@ -66,6 +66,10 @@ class FeedMeTask extends BaseTask
             // Process each feed node
             if (isset($this->_feedData[$step])) {
                 craft()->feedMe_process->processFeed($step, $this->_feedSettings);
+
+                // Fire an "onStepProcessFeed" event
+                $event = new Event($this, array('settings' => $this->_feedSettings));
+                craft()->feedMe_process->onStepProcessFeed($event);
             } else {
                 FeedMePlugin::log($this->_feed->name . ': FeedMeError', LogLevel::Error, true);
             }

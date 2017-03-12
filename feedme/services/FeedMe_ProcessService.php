@@ -222,6 +222,10 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         $feedData = craft()->feedMe_data->getFeed($feed->feedType, $feed->feedUrl, $feed->primaryElement, $feed);
         $feedSettings = craft()->feedMe_process->setupForProcess($feed, $feedData);
 
+        // Fire an "onBeforeProcessFeed" event
+        $event = new Event($this, array('settings' => $feedSettings));
+        craft()->feedMe_process->onBeforeProcessFeed($event);
+
         // Do we even have any data to process?
         if (!count($feedData)) {
             $this->_debugOutput('No feed items to process.');
@@ -231,12 +235,20 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         foreach ($feedData as $key => $data) {
             craft()->feedMe_process->processFeed($key, $feedSettings);
 
+            // Fire an "onStepProcessFeed" event
+            $event = new Event($this, array('settings' => $feedSettings));
+            craft()->feedMe_process->onStepProcessFeed($event);
+
             if ($key === ($limit - 1)) {
                 break;
             }
         }
 
         craft()->feedMe_process->finalizeAfterProcess($feedSettings, $feed);
+
+        // Fire an "onProcessFeed" event
+        $event = new Event($this, array('settings' => $feedSettings));
+        craft()->feedMe_process->onProcessFeed($event);
     }
     
 
