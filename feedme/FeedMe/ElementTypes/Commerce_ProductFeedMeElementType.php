@@ -359,13 +359,17 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
 
     private function _prepareDateForElement($date)
     {
+        $craftDate = null;
+
         if (!is_array($date)) {
             $d = date_parse($date);
             $date_string = date('Y-m-d H:i:s', mktime($d['hour'], $d['minute'], $d['second'], $d['month'], $d['day'], $d['year']));
 
-            $date = DateTime::createFromString($date_string, craft()->timezone);
+            $craftDate = DateTime::createFromString($date_string, craft()->timezone);
+        } else {
+            $craftDate = $date;
         }
 
-        return $date;
+        return $craftDate;
     }
 }
