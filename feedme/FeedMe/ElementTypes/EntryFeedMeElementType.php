@@ -171,7 +171,7 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
     {
         // Are we targeting a specific locale here? If so, we create an essentially blank element
         // for the primary locale, and instead create a locale for the targeted locale
-        if (isset($settings['locale'])) {
+        if (isset($settings['locale']) && $settings['locale']) {
             // Save the default locale element empty
             if (craft()->entries->saveEntry($element)) {
                 // Now get the successfully saved (empty) element, and set content on that instead

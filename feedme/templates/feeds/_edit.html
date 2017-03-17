@@ -93,7 +93,7 @@
     {% endfor %}
 
     {% if craft.isLocalized() %}
-        {% set locales = [] %}
+        {% set locales = [{ label: 'All Locales' | t, value: '' }] %}
 
         {% for locale in craft.i18n.getSiteLocales() %}
             {% set locales = locales | merge([{ label: locale.name ~ ' (' ~ locale.id ~ ')', value: locale.id }]) %}
