@@ -100,6 +100,20 @@ class UserFeedMeElementType extends BaseFeedMeElementType
     public function prepForElementModel(BaseElementModel $element, array &$data, $settings)
     {
         foreach ($data as $handle => $value) {
+            if (is_null($value)) {
+                continue;
+            }
+
+            if (isset($value['data']) && $value['data'] === null) {
+                continue;
+            }
+
+            if (is_array($value)) {
+                $dataValue = Hash::get($value, 'data', $value);
+            } else {
+                $dataValue = $value;
+            }
+            
             switch ($handle) {
                 case 'id':
                 case 'username':
@@ -109,10 +123,10 @@ class UserFeedMeElementType extends BaseFeedMeElementType
                 case 'prefLocale':
                 case 'newPassword':
                 case 'photo':
-                    $element->$handle = $value['data'];
+                    $element->$handle = $dataValue;
                     break;
                 case 'status':
-                    $this->_setUserStatus($element, $value['data']);
+                    $this->_setUserStatus($element, $dataValue);
                     break;
                 default:
                     continue 2;

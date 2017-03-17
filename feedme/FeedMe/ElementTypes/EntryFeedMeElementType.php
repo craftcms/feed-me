@@ -5,6 +5,12 @@ use Cake\Utility\Hash as Hash;
 
 class EntryFeedMeElementType extends BaseFeedMeElementType
 {
+    // Properties
+    // =========================================================================
+
+    private $_requiredFields = array();
+
+
     // Templates
     // =========================================================================
 
@@ -52,6 +58,17 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
         if ($settings['locale']) {
             $element->locale = $settings['locale'];
         }
+
+        // While we're at it - save a list of required fields for later. We only want to do this once
+        // per import, and its vital when importing into specific locales
+        /*$entryType = craft()->sections->getEntryTypeById($element->typeId);
+
+        $this->_requiredFields = craft()->db->createCommand()
+            ->from('fieldlayoutfields flf')
+            ->join('fields f', 'flf.fieldId = f.id')
+            ->where('flf.layoutId = :layoutId', array(':layoutId' => $entryType->fieldLayoutId))
+            ->andWhere('flf.required = 1')
+            ->queryAll();*/
 
         return $element;
     }
@@ -118,19 +135,25 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
                 continue;
             }
 
+            if (is_array($value)) {
+                $dataValue = Hash::get($value, 'data', $value);
+            } else {
+                $dataValue = $value;
+            }
+
             switch ($handle) {
                 case 'id';
-                    $element->$handle = $value['data'];
+                    $element->$handle = $dataValue;
                     break;
                 case 'authorId';
-                    $element->$handle = $this->_prepareAuthorForElement($value['data']);
+                    $element->$handle = $this->_prepareAuthorForElement($dataValue);
                     break;
                 case 'slug';
-                    $element->$handle = ElementHelper::createSlug($value['data']);
+                    $element->$handle = ElementHelper::createSlug($dataValue);
                     break;
                 case 'postDate':
                 case 'expiryDate';
-                    $dateValue = $this->_prepareDateForElement($value['data']);
+                    $dateValue = $this->_prepareDateForElement($dataValue);
 
                     // Ensure there's a parsed data - null will auto-generate a new date
                     if ($dateValue) {
@@ -139,10 +162,10 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
 
                     break;
                 case 'enabled':
-                    $element->$handle = (bool)$value['data'];
+                    $element->$handle = (bool)$dataValue;
                     break;
                 case 'title':
-                    $element->getContent()->$handle = $value['data'];
+                    $element->getContent()->$handle = $dataValue;
                     break;
                 case 'parent':
                     $element->parentId = $this->_prepareParentForElement($value, $element->sectionId);
@@ -172,6 +195,9 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
         // Are we targeting a specific locale here? If so, we create an essentially blank element
         // for the primary locale, and instead create a locale for the targeted locale
         if (isset($settings['locale']) && $settings['locale']) {
+            // While we want to create a blank primary locale, we need to check for required fields..
+            //$this->_populateRequiredFields($element, $data);
+
             // Save the default locale element empty
             if (craft()->entries->saveEntry($element)) {
                 // Now get the successfully saved (empty) element, and set content on that instead
@@ -210,6 +236,26 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
 
     // Private Methods
     // =========================================================================
+
+    private function _populateRequiredFields($element, $data)
+    {
+        $requiredContent = array();
+
+        // This is called when importing into a specific locale. We first save the primary element - but, we need to
+        // populate any required fields for the original locale, otherwise it'll fail to save at all...
+        foreach ($this->_requiredFields as $row) {
+            $handle = $row['handle'];
+
+            // Check if this element already has content for this field - no need to add otherwise
+            if (is_null($element->$handle)) {
+                $requiredContent[$handle] = $data[$handle];
+            }
+        }
+
+        if (count($requiredContent)) {
+            $element->setContentFromPost($requiredContent);
+        }
+    }
 
     private function _prepareDateForElement($date)
     {

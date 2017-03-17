@@ -82,18 +82,29 @@ class CategoryFeedMeElementType extends BaseFeedMeElementType
     public function prepForElementModel(BaseElementModel $element, array &$data, $settings)
     {
         foreach ($data as $handle => $value) {
+            if (is_null($value)) {
+                continue;
+            }
+
+            if (isset($value['data']) && $value['data'] === null) {
+                continue;
+            }
+
+            if (is_array($value)) {
+                $dataValue = Hash::get($value, 'data', $value);
+            } else {
+                $dataValue = $value;
+            }
+
             switch ($handle) {
                 case 'id';
-                    $element->$handle = $value['data'];
+                    $element->$handle = $dataValue;
                     break;
                 case 'slug':
-                    $element->$handle = ElementHelper::createSlug($value['data']);
+                    $element->$handle = ElementHelper::createSlug($dataValue);
                     break;
-                //case 'parent':
-                    //$element->parent = $this->_findParent($value);
-                    //break;
                 case 'title':
-                    $element->getContent()->$handle = $value['data'];
+                    $element->getContent()->$handle = $dataValue;
                     break;
                 default:
                     continue 2;

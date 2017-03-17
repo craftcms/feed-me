@@ -102,15 +102,29 @@ class AssetFeedMeElementType extends BaseFeedMeElementType
             $element = craft()->assets->getFileById($fileId);
         } else {
             foreach ($data as $handle => $value) {
+                if (is_null($value)) {
+                    continue;
+                }
+
+                if (isset($value['data']) && $value['data'] === null) {
+                    continue;
+                }
+
+                if (is_array($value)) {
+                    $dataValue = Hash::get($value, 'data', $value);
+                } else {
+                    $dataValue = $value;
+                }
+                
                 switch ($handle) {
                     case 'id';
-                        $element->$handle = $value['data'];
+                        $element->$handle = $dataValue;
                         break;
                     case 'filename';
-                        $element->$handle = $value['data'];
+                        $element->$handle = $dataValue;
                         break;
                     case 'title':
-                        $element->getContent()->$handle = $value['data'];
+                        $element->getContent()->$handle = $dataValue;
                         break;
                     default:
                         continue 2;
