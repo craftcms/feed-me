@@ -49,7 +49,7 @@
         instructions: 'Choose what type of feed you\'re retrieving.' | t,
         id: 'feedType',
         name: 'feedType',
-        options: {'xml': 'XML Feed', 'rss': 'RSS Feed', 'atom': 'ATOM Feed', 'json': 'JSON Feed'},
+        options: feedTypes,
         value: feed.feedType,
         errors: feed.getErrors('feedType'),
         required: true,

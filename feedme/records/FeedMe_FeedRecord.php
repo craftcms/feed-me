@@ -13,12 +13,7 @@ class FeedMe_FeedRecord extends BaseRecord
         return array(
             'name'              => array(AttributeType::String, 'required' => true),
             'feedUrl'           => array(AttributeType::Uri, 'required' => true, 'column' => ColumnType::Text),
-            'feedType'          => array(AttributeType::Enum, 'required' => true, 'values' => array(
-                FeedMe_FeedType::XML,
-                FeedMe_FeedType::RSS,
-                FeedMe_FeedType::ATOM,
-                FeedMe_FeedType::JSON,
-            )),
+            'feedType'          => array(AttributeType::String, 'required' => true),
             'primaryElement'    => array(AttributeType::String),
             'elementType'       => array(AttributeType::String, 'required' => true),
             'elementGroup'      => array(AttributeType::Mixed),

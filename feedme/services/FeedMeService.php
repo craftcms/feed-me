@@ -43,20 +43,10 @@ class FeedMeService extends BaseApplicationComponent
 
     public function getDataTypeService($dataType)
     {
-        // RSS/Atom use XML
-        $dataType = ($dataType == 'rss' || $dataType == 'atom') ? 'xml' : $dataType;
+        $dataTypes = $this->getRegisteredDataTypes();
 
-        // Check for third-party data type support
-        $dataToLoad = craft()->plugins->call('registerFeedMeDataTypes');
-
-        foreach ($dataToLoad as $plugin => $dataClasses) {
-            foreach ($dataClasses as $dataClass) {
-                if ($dataClass && $dataClass instanceof BaseFeedMeDataType) {
-                    if (StringHelper::toLowercase($dataClass->getDataType()) == $dataType) {
-                        return $dataClass;
-                    }
-                }
-            }
+        if (isset($dataTypes[$dataType])) {
+            return $dataTypes[$dataType];
         }
 
         return false;
@@ -80,6 +70,46 @@ class FeedMeService extends BaseApplicationComponent
         // Return default handling for a field
         return new DefaultFeedMeFieldType();
     }
-    
+
+    /**
+     * @return BaseFeedMeDataType[]
+     */
+    public function getRegisteredDataTypes()
+    {
+        $dataTypes = [];
+
+        // Check for third-party data type support
+        $dataToLoad = craft()->plugins->call('registerFeedMeDataTypes');
+
+        foreach ($dataToLoad as $plugin => $dataClasses) {
+            foreach ($dataClasses as $dataClass) {
+                if ($dataClass && $dataClass instanceof BaseFeedMeDataType) {
+                    $dataType = $dataClass->getDataType();
+
+                    $dataTypes[StringHelper::toLowerCase($dataType)] = $dataClass;
+                }
+            }
+        }
+
+        return $dataTypes;
+    }
+
+    /**
+     * @param string $suffix Optional suffix for each display name.
+	 *
+     * @return array
+     */
+    public function getRegisteredDataTypesDisplayNames($suffix = '')
+    {
+        $displayNames = [];
+
+        $dataTypes = craft()->feedMe->getRegisteredDataTypes();
+
+        foreach ($dataTypes as $dataType => $dataTypeClass) {
+            $displayNames[$dataType] = $dataTypeClass->getDisplayName() . $suffix;
+        }
+
+        return $displayNames;
+    }
 
 }

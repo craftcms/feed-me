@@ -15,6 +15,7 @@ class FeedMe_FeedsController extends BaseController
     public function actionFeedsIndex()
     {
         $variables['feeds'] = craft()->feedMe_feeds->getFeeds();
+        $variables['feedTypes'] = craft()->feedMe->getRegisteredDataTypesDisplayNames();
 
         $this->renderTemplate('feedme/feeds/index', $variables);
     }
@@ -29,6 +30,8 @@ class FeedMe_FeedsController extends BaseController
                 $variables['feed']->passkey = StringHelper::randomString(10);
             }
         }
+
+        $variables['feedTypes'] = craft()->feedMe->getRegisteredDataTypesDisplayNames(' Feed');
 
         $this->renderTemplate('feedme/feeds/_edit', $variables);
     }
@@ -57,7 +60,7 @@ class FeedMe_FeedsController extends BaseController
         $variables['task'] = $this->_runImportTask($feed->id);
 
         if (craft()->request->getParam('direct')) {
-            // If the user triggers this from the control panel (maybe for testing), triggering a task immediately will 
+            // If the user triggers this from the control panel (maybe for testing), triggering a task immediately will
             // lock up the browser session while it runs. In that case, we use JS to trigger the task (in _direct template)
             //
             // However, when triggering via Cron, run the task immediately, as Cron doesn't trigger JS (there's no browser)
@@ -123,7 +126,7 @@ class FeedMe_FeedsController extends BaseController
         craft()->end();
     }
 
-    
+
 
 
 
@@ -148,7 +151,7 @@ class FeedMe_FeedsController extends BaseController
             // Create the import task
             craft()->tasks->createTask('FeedMe', $feed->name, $settings);
 
-            // if not using the direct param for this request, do UI stuff 
+            // if not using the direct param for this request, do UI stuff
             craft()->userSession->setNotice(Craft::t('Feed processing started.'));
         }
 
@@ -207,19 +210,19 @@ class FeedMe_FeedsController extends BaseController
         if (craft()->request->getPost('fieldMapping')) {
             $feed->fieldMapping = craft()->request->getPost('fieldMapping');
         }
-        
+
         if (craft()->request->getPost('fieldDefaults')) {
             $feed->fieldDefaults = craft()->request->getPost('fieldDefaults');
         }
-        
+
         if (craft()->request->getPost('fieldElementMapping')) {
             $feed->fieldElementMapping = craft()->request->getPost('fieldElementMapping');
         }
-        
+
         if (craft()->request->getPost('fieldElementDefaults')) {
             $feed->fieldElementDefaults = craft()->request->getPost('fieldElementDefaults');
         }
-        
+
         if (craft()->request->getPost('fieldUnique')) {
             $feed->fieldUnique = craft()->request->getPost('fieldUnique');
         }
@@ -258,7 +261,7 @@ class FeedMe_FeedsController extends BaseController
         elseif (strpos($user_agent, 'Safari')) return 'Safari';
         elseif (strpos($user_agent, 'Firefox')) return 'Firefox';
         elseif (strpos($user_agent, 'MSIE') || strpos($user_agent, 'Trident/7')) return 'Internet Explorer';
-        
+
         return 'Other';
     }
 

@@ -129,7 +129,9 @@ class FeedMePlugin extends BasePlugin
     public function registerFeedMeDataTypes()
     {
         return array(
+            new AtomFeedMeDataType(),
             new JsonFeedMeDataType(),
+            new RssFeedMeDataType(),
             new XmlFeedMeDataType(),
         );
     }
@@ -173,5 +175,5 @@ class FeedMePlugin extends BasePlugin
             new UsersFeedMeFieldType(),
         );
     }
- 
+
 }
