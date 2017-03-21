@@ -19,7 +19,7 @@ class LightswitchFeedMeFieldType extends BaseFeedMeFieldType
     {
         $data = Hash::get($fieldData, 'data');
 
-        if ($data == Craft::t('Yes') || (bool)$data) {
+        if ($data === Craft::t('Yes') || (bool)$data) {
             return true;
         } else {
             return false;
