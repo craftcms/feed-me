@@ -39,7 +39,13 @@
                     <td>{{ feed.id }}</td>
                     <td><a href="{{ url('feedme/feeds/' ~ feed.id) }}">{{ feed.name | t }}</a></td>
                     <td>{{ feed.feedType | upper }}</td>
-                    <td>{{ feed.feedUrl }}</td>
+
+                    {% if feed.feedUrl | length > 50 %}
+                        <td>{{ feed.feedUrl | slice(0, 50) }}&hellip;</td>
+                    {% else %}
+                        <td>{{ feed.feedUrl }}</td>
+                    {% endif %}
+
                     <td>{{ feed.elementType }}</td>
 
                     <td>
