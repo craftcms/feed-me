@@ -122,8 +122,10 @@ class UserFeedMeElementType extends BaseFeedMeElementType
                 case 'email':
                 case 'prefLocale':
                 case 'newPassword':
-                case 'photo':
                     $element->$handle = $dataValue;
+                    break;
+                case 'photo':
+                    $this->_handleUserPhoto($element, $dataValue);
                     break;
                 case 'status':
                     $this->_setUserStatus($element, $dataValue);
@@ -167,6 +169,26 @@ class UserFeedMeElementType extends BaseFeedMeElementType
 
     // Private Methods
     // =========================================================================
+
+    private function _handleUserPhoto(UserModel $user, $filename)
+    {
+        $photo = craft()->path->getUserPhotosPath() . $filename;
+
+        if (!IOHelper::fileExists($photo)) {
+            return false;
+        }
+
+        $image = craft()->images->loadImage($photo);
+        $imageWidth = $image->getWidth();
+        $imageHeight = $image->getHeight();
+
+        $dimension = min($imageWidth, $imageHeight);
+        $horizontalMargin = ($imageWidth - $dimension) / 2;
+        $verticalMargin = ($imageHeight - $dimension) / 2;
+        $image->crop($horizontalMargin, $imageWidth - $horizontalMargin, $verticalMargin, $imageHeight - $verticalMargin);
+
+        craft()->users->saveUserPhoto($filename, $image, $user);
+    }
 
     private function _setUserStatus(UserModel $user, $status)
     {
