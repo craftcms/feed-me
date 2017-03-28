@@ -90,9 +90,7 @@ class AssetFeedMeElementType extends BaseFeedMeElementType
             $urlData = $fieldData['data'];
 
             // Check config settings if we need to clean url
-            if (craft()->config->get('cleanAssetUrls', 'feedMe')) {
-                $urlData = UrlHelper::stripQueryString($urlData);
-            }
+            $urlData = UrlHelper::stripQueryString($urlData);
 
             // Cleanup filenames to match Craft Assets
             $urlData = str_replace(',', '\,', $urlData);

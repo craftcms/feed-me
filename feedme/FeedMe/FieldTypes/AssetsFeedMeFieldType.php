@@ -59,10 +59,8 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
 
         // Find existing asset
         foreach ($data as $asset) {
-            // Check config settings if we need to clean url
-            if (craft()->config->get('cleanAssetUrls', 'feedMe')) {
-                $asset = UrlHelper::stripQueryString($asset);
-            }
+            // Clean the URL
+            $asset = UrlHelper::stripQueryString($asset);
 
             // Cleanup filenames to match Craft Assets
             //$asset = AssetsHelper::cleanAssetName($asset);
@@ -127,19 +125,17 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
                 continue;
             }
 
-            // Check config settings if we need to clean url
-            if (craft()->config->get('cleanAssetUrls', 'feedMe')) {
-                $url = UrlHelper::stripQueryString($url);
-            }
+            // Clean the URL for filename when saving as an Asset
+            $cleanUrl = UrlHelper::stripQueryString($url);
 
-            $filename = basename($url);
+            $filename = basename($cleanUrl);
             $saveLocation = $tempPath . $filename;
 
             // Check if this URL has has a file extension - grab it if not...
             $extension = IOHelper::getExtension($saveLocation);
 
             if (!$extension) {
-                $image = getimagesize($url);
+                $image = getimagesize($cleanUrl);
                 $extension = FileHelper::getExtensionByMimeType($image['mime']);
 
                 $saveLocation = $saveLocation . '.' . $extension;
