@@ -128,19 +128,29 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
             // Clean the URL for filename when saving as an Asset
             $cleanUrl = UrlHelper::stripQueryString($url);
 
-            $filename = basename($cleanUrl);
-            $saveLocation = $tempPath . $filename;
-
-            // Check if this URL has has a file extension - grab it if not...
-            $extension = IOHelper::getExtension($saveLocation);
+            // Check if this URL has a file extension - sometimes its a dynamic URL without
+            // a filename and extension, so we generate one.
+            $extension = IOHelper::getExtension($cleanUrl);
 
             if (!$extension) {
-                $image = getimagesize($cleanUrl);
-                $extension = FileHelper::getExtensionByMimeType($image['mime']);
+                // Generate a hash of the URL - this constitutes our ID
+                $filename = AssetsHelper::cleanAssetName(md5($url));
 
-                $saveLocation = $saveLocation . '.' . $extension;
-                $filename = $filename . '.' . $extension;
+                // Detect the mime type from url content
+                $finfo = new \finfo(FILEINFO_MIME_TYPE);
+                $type = $finfo->buffer(file_get_contents($url));
+                $extension = FileHelper::getExtensionByMimeType($type);
+
+                if (!ImageHelper::isImageManipulatable($extension)) {
+                    $extension = 'jpg';
+                }
+
+                $filename = $filename . $extension;
+            } else {
+                $filename = basename($cleanUrl);
             }
+
+            $saveLocation = $tempPath . $filename;
 
             // Cleanup filenames for Curl specifically
             $curlUrl = str_replace(' ', '%20', $url);
@@ -189,7 +199,7 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
                 // Wrap in a try/catch to ensure any errors with saving an asset are logged, but don't break the import process
                 try {
                     $response = craft()->assets->insertFileByLocalPath($saveLocation, $filename, $folderId, $conflictResolution);
-            
+
                     // Delete temporary file
                     IOHelper::deleteFile($saveLocation, true);
 
