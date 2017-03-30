@@ -19,12 +19,12 @@ class FeedMePlugin extends BasePlugin
 
     public function getVersion()
     {
-        return '2.0.1';
+        return '2.0.2';
     }
 
     public function getSchemaVersion()
     {
-        return '2.0.0';
+        return '2.0.2';
     }
 
     public function getDeveloper()
@@ -129,7 +129,9 @@ class FeedMePlugin extends BasePlugin
     public function registerFeedMeDataTypes()
     {
         return array(
+            new AtomFeedMeDataType(),
             new JsonFeedMeDataType(),
+            new RssFeedMeDataType(),
             new XmlFeedMeDataType(),
         );
     }

@@ -1,5 +1,31 @@
 [
     {
+        "version": "2.0.2",
+        "downloadUrl": "https://github.com/engram-design/FeedMe/archive/2.0.2.zip",
+        "date": "2017-03-30T00:00:00+10:00",
+        "notes": [
+            "[Added] Provide `all` locale option instead of always requiring one.",
+            "[Improved] Refactored Asset element type importing, include locale content.",
+            "[Improved] Better support for Craft Client default author for elements.",
+            "[Improved] Empty date/time can now be set for date fields.",
+            "[Improved] Improved Checkbox/Radio/Multiselect data parsing.",
+            "[Improved] Plugin events are now triggered when calling the debug action.",
+            "[Improved] Long URLs are now truncated on feeds index in the CP.",
+            "[Improved] Improved assets-uploading without extension.",
+            "[Fixed] Properly support third-party element types.",
+            "[Fixed] Properly support third-party data types (thanks to [@timeverts](https://github.com/engram-design/FeedMe/pull/172)).",
+            "[Fixed] Fixed default value for dropdown field (when no value matches).",
+            "[Fixed] Better error-handling when importing into specific locale.",
+            "[Fixed] Ensure default start/date are correctly parsed entries/commerce.",
+            "[Fixed] Ensure checks for element attributes include fallback. Can cause issues with fields with handles the same as element attributes.",
+            "[Fixed] Lightswitch field now properly check for boolean values.",
+            "[Fixed] Fixed User Photos not being mapped.",
+            "[Fixed] Fixed `preferredLocale` not being mapped to users.",
+            "[Fixed] Fixed logging license response on ping. This caused an error to be raised during feed processing at times.",
+            "[Fixed] Fixed for Asset Element not matching against filename data.",
+            "[Fixed] Fixes for Matrix/Table importing."
+        ]
+    }, {
         "version": "2.0.1",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/2.0.1.zip",
         "date": "2017-03-01T00:00:00+10:00",
