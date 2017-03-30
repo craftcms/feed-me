@@ -15,6 +15,7 @@ class FeedMe_FeedsController extends BaseController
     public function actionFeedsIndex()
     {
         $variables['feeds'] = craft()->feedMe_feeds->getFeeds();
+        $variables['feedTypes'] = craft()->feedMe->getRegisteredDataTypesDisplayNames();
 
         $this->renderTemplate('feedme/feeds/index', $variables);
     }
@@ -29,6 +30,8 @@ class FeedMe_FeedsController extends BaseController
                 $variables['feed']->passkey = StringHelper::randomString(10);
             }
         }
+
+        $variables['feedTypes'] = craft()->feedMe->getRegisteredDataTypesDisplayNames(' Feed');
 
         $this->renderTemplate('feedme/feeds/_edit', $variables);
     }

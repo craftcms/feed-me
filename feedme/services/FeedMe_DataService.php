@@ -183,7 +183,7 @@ class FeedMe_DataService extends BaseApplicationComponent
         $settings = $plugin->getSettings();
 
         $url = (array_key_exists('url', $options) ? $options['url'] : null);
-        $type = (array_key_exists('type', $options) ? $options['type'] : FeedMe_FeedType::XML);
+        $type = (array_key_exists('type', $options) ? $options['type'] : 'xml');
         $element = (array_key_exists('element', $options) ? $options['element'] : '');
         $cache = (array_key_exists('cache', $options) ? $options['cache'] : true);
         $cacheId = $url . '#' . $element; // cache for this URL and Element Node

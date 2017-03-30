@@ -25,12 +25,7 @@ class FeedMe_FeedModel extends BaseModel
             'id'                => AttributeType::Number,
             'name'              => AttributeType::String,
             'feedUrl'           => AttributeType::Uri,
-            'feedType'          => array(AttributeType::Enum, 'values' => array(
-                FeedMe_FeedType::XML,
-                FeedMe_FeedType::RSS,
-                FeedMe_FeedType::ATOM,
-                FeedMe_FeedType::JSON,
-            )),
+            'feedType'          => AttributeType::String,
             'primaryElement'    => AttributeType::String,
             'elementType'       => AttributeType::String,
             'elementGroup'      => AttributeType::Mixed,
