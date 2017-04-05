@@ -5,6 +5,12 @@ use Cake\Utility\Hash as Hash;
 
 class AssetsFeedMeFieldType extends BaseFeedMeFieldType
 {
+    // Properties
+    // =========================================================================
+
+    private $_uploadData = array();
+
+
     // Templates
     // =========================================================================
 
@@ -75,14 +81,10 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
             $preppedData = array_merge($preppedData, $criteria->ids());
         }
 
-        // Check to see if we should be uploading these assets
+        // Check to see if we should be uploading these assets - but save for later, to be
+        // processed in `postFieldData`, once our owner element have been populated
         if (isset($fieldData['options']['upload'])) {
-            // Get the folder we should upload into from the field
-            $folderId = $field->getFieldType()->resolveSourcePath();
-
-            $ids = $this->fetchRemoteImage($data, $folderId, $fieldData['options']);
-
-            $preppedData = array_merge($preppedData, $ids);
+            $this->_uploadData = $fieldData;
         }
 
         // Check for field limit - only return the specified amount
@@ -101,8 +103,39 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
         return $preppedData;
     }
 
+
+    // Check if we want to upload our asset. This is done after the above 'regular' parsing so we
+    // have a chance to setup our owner element with attributes - particularly useful for folder locations
+    // that use the element owners attributes, which are now set.
+    public function postFieldData($element, $field, &$fieldData, $handle)
+    {
+        // Check for our saved data from the main parsing function above. We've already destroyed the
+        // initial feed data with 'real' information, but in this case, we still need it!
+        $data = Hash::get($this->_uploadData, 'data');
+
+        if (empty($data)) {
+            return;
+        }
+
+        if (!is_array($data)) {
+            $data = array($data);
+        }
+
+        if (isset($this->_uploadData['options']['upload'])) {
+            // Get the folder we should upload into from the field
+            $folderId = $field->getFieldType()->resolveSourcePath();
+
+            $ids = $this->fetchRemoteImage($data, $folderId, $this->_uploadData['options']);
+
+            $fieldData[$handle] = $ids;
+        }
+    }
+
+
     public function fetchRemoteImage($urls, $folderId, $options)
     {
+        $conflictResolution = $options['conflict'];
+
         if (!is_array($urls)) {
             $urls = array($urls);
         }
@@ -152,6 +185,19 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
 
             $saveLocation = $tempPath . $filename;
 
+            // Check to see if there are any matching existing assets
+            $criteria = craft()->elements->getCriteria(ElementType::Asset);
+            $criteria->status = null;
+            $criteria->folderId = $folderId;
+            $criteria->filename = $filename;
+            $existing = $criteria->find();
+
+            // If there's an existing file, but we want to keep the existing one, exit before trying to download - much faster!
+            if ($conflictResolution == AssetConflictResolution::Cancel && isset($existing[0])) {
+                $fileIds[] = $existing[0]->id;
+                continue;
+            }
+
             // Cleanup filenames for Curl specifically
             $curlUrl = str_replace(' ', '%20', $url);
 
@@ -176,46 +222,29 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
             $result = curl_exec($ch);
 
             if ($result === false) {
-                //throw new Exception(curl_error($ch));
                 FeedMePlugin::log('Asset error: ' . $url . ' - ' . curl_error($ch), LogLevel::Error, true);
                 continue;
             }
 
-            // We've successfully downloaded the image - now insert it into Craft
-            $conflictResolution = $options['conflict'];
+            // Wrap in a try/catch to ensure any errors with saving an asset are logged, but don't break the import process
+            try {
+                $response = craft()->assets->insertFileByLocalPath($saveLocation, $filename, $folderId, $conflictResolution);
 
-            // Look for an existing file
-            $criteria = craft()->elements->getCriteria(ElementType::Asset);
-            $criteria->folderId = $folderId;
-            $criteria->limit = null;
-            $criteria->filename = $filename;
-            $targetFile = $criteria->find();
+                // Delete temporary file
+                IOHelper::deleteFile($saveLocation, true);
 
-            // It seems that even when 'cancel' is set for a conflict resolution, a new element is created
-            // that seems unnecessary, and could easily cause element bloat...
-            if ($conflictResolution == AssetConflictResolution::Cancel && isset($targetFile[0])) {
-                $fileIds[] = $targetFile[0]->id;
-            } else {
-                // Wrap in a try/catch to ensure any errors with saving an asset are logged, but don't break the import process
-                try {
-                    $response = craft()->assets->insertFileByLocalPath($saveLocation, $filename, $folderId, $conflictResolution);
+                if ($response->isSuccess()) {
+                    $fileId = $response->getDataItem('fileId');
 
-                    // Delete temporary file
-                    IOHelper::deleteFile($saveLocation, true);
-
-                    if ($response->isSuccess()) {
-                        $fileId = $response->getDataItem('fileId');
-
-                        if ($fileId) {
-                            $fileIds[] = $fileId;
-                        }
-                    } else {
-                        FeedMePlugin::log('Asset error: ' . $url . ' - ' . $response->errorMessage, LogLevel::Error, true);
-                        continue;
+                    if ($fileId) {
+                        $fileIds[] = $fileId;
                     }
-                } catch (Exception $e) {
-                    FeedMePlugin::log('Asset error: ' . $url . ' - ' . $e->getMessage(), LogLevel::Error, true);
+                } else {
+                    FeedMePlugin::log('Asset error: ' . $url . ' - ' . $response->errorMessage, LogLevel::Error, true);
+                    continue;
                 }
+            } catch (Exception $e) {
+                FeedMePlugin::log('Asset error: ' . $url . ' - ' . $e->getMessage(), LogLevel::Error, true);
             }
         }
 

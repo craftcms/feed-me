@@ -36,6 +36,9 @@ class FeedMe_FieldsService extends BaseApplicationComponent
         if ($field) {
             $service = $this->_getService($field->type);
 
+            // Give the field some context of the owning element
+            $field->getFieldType()->element = $element;
+
             // Get data for the field we're mapping to - can be all sorts of logic here
             return $service->prepFieldData($element, $field, $data, $handle, $options);
         }
@@ -53,6 +56,9 @@ class FeedMe_FieldsService extends BaseApplicationComponent
 
         if ($field) {
             $service = $this->_getService($field->type);
+
+            // Give the field some context of the owning element
+            $field->getFieldType()->element = $element;
 
             // Get data for the field we're mapping to - can be all sorts of logic here
             if (method_exists($service, 'postFieldData')) {
