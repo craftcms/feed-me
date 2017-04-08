@@ -167,6 +167,40 @@ class FeedMeVariable
         return craft()->fields->getLayoutById($layoutId);
     }
 
+    public function getEntriesFieldLayout($sources)
+    {
+        $sectionIds = array();
+
+        // Because an Entry field can have multiple sources selected, we need to filter a bit
+        if (is_array($sources)) {
+            foreach ($sources as $source) {
+                // When singles is selected as the only option to search in, it doesn't contain any ids...
+                if ($source == 'singles') {
+                    foreach (craft()->sections->getAllSections() as $section) {
+                        if ($section->type == 'single') {
+                            $sectionIds[] = $section->id;
+                        }
+                    }
+                } else {
+                    list($type, $id) = explode(':', $source);
+                    $sectionIds[] = $id;
+                }
+            }
+        }
+
+        if (count($sectionIds)) {
+            $entryType = craft()->sections->getEntryTypesBySectionId($sectionIds[0]);
+
+            if (!$entryType) {
+                return false;
+            }
+
+            // Get the field layout of the first entry type for this section
+            $layoutId = $entryType[0]->fieldLayoutId;
+            return craft()->fields->getLayoutById($layoutId);
+        }
+    }
+
     public function getTagsFieldLayout($tagGroup)
     {
         // Get the Tag Group ID
