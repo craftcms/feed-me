@@ -129,6 +129,14 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
 
             $fieldData[$handle] = $ids;
         }
+
+        // Check for field limit - only return the specified amount
+        if ($fieldData[$handle]) {
+            if ($field->settings['limit']) {
+                $assetChunks = array_chunk($fieldData[$handle], $field->settings['limit']);
+                $fieldData[$handle] = $assetChunks[0];
+            }
+        }
     }
 
 
