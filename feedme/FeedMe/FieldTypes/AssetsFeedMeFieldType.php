@@ -84,7 +84,7 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
         // Check to see if we should be uploading these assets - but save for later, to be
         // processed in `postFieldData`, once our owner element have been populated
         if (isset($fieldData['options']['upload'])) {
-            $this->_uploadData = $fieldData;
+            $this->_uploadData[$field->handle] = $fieldData;
         }
 
         // Check for field limit - only return the specified amount
@@ -111,7 +111,9 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
     {
         // Check for our saved data from the main parsing function above. We've already destroyed the
         // initial feed data with 'real' information, but in this case, we still need it!
-        $data = Hash::get($this->_uploadData, 'data');
+        $uploadData = $this->_uploadData[$field->handle];
+
+        $data = Hash::get($uploadData, 'data');
 
         if (empty($data)) {
             return;
@@ -121,11 +123,11 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
             $data = array($data);
         }
 
-        if (isset($this->_uploadData['options']['upload'])) {
+        if (isset($uploadData['options']['upload'])) {
             // Get the folder we should upload into from the field
             $folderId = $field->getFieldType()->resolveSourcePath();
 
-            $ids = $this->fetchRemoteImage($data, $folderId, $this->_uploadData['options']);
+            $ids = $this->fetchRemoteImage($data, $folderId, $uploadData['options']);
 
             $fieldData[$handle] = $ids;
         }
