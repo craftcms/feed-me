@@ -122,6 +122,9 @@
                         <strong>{{ "Update existing elements:" | t }}</strong> {{ "Updates elements that match the Unique Identifier (next step)." | t }}
                     </span>
                     <span style="display:inline-block;">
+                        <strong>{{ "Unpublish missing elements:" | t }}</strong> {{ "Unpublishes (disables) any elements that are missing from the feed." | t }}
+                    </span>
+                    <span style="display:inline-block;">
                         <strong>{{ "Delete old elements:" | t }}</strong> {{ "Deletes elements that are not updated by this feed. Be careful." | t }}
                     </span>
                 </span>
@@ -141,6 +144,7 @@
                 options: {
                     'add': 'Create new elements' | t,
                     'update': 'Update existing elements' | t,
+                    'unpublish': 'Unpublish missing elements' | t,
                     'delete': 'Delete old elements' | t
                 },
                 values: feed.duplicateHandle ?? ['add'],

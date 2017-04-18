@@ -7,6 +7,7 @@ class FeedMeDuplicate
 {
     const Add       = 'add';
     const Update    = 'update';
+    const Unpublish = 'unpublish';
     const Delete    = 'delete';
 
     // Public Methods
@@ -45,6 +46,11 @@ class FeedMeDuplicate
     public static function isUpdate($feedData, $only = false)
     {
         return FeedMeDuplicate::contains($feedData['duplicateHandle'], FeedMeDuplicate::Update, $only);
+    }
+
+    public static function isUnpublish($feedData, $only = false)
+    {
+        return FeedMeDuplicate::contains($feedData['duplicateHandle'], FeedMeDuplicate::Unpublish, $only);
     }
 
     public static function isDelete($feedData, $only = false)

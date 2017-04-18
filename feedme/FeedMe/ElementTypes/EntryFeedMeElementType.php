@@ -121,6 +121,19 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
     {
         return craft()->entries->deleteEntry($elements);
     }
+        public function unpublish(array $elements)
+        {
+            // Mark all as false
+            $elementIds = [];
+            foreach ($elements as $key => $element) {
+                $elementIds[] = $element->id;
+            }
+            return craft()->db->createCommand()
+                ->update(
+                    'elements',
+                    ['enabled' => false],
+                    ['in', 'id', $elementIds]);
+        }
 
     public function prepForElementModel(BaseElementModel $element, array &$data, $settings)
     {
