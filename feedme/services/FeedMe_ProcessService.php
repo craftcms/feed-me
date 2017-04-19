@@ -175,6 +175,8 @@ class FeedMe_ProcessService extends BaseApplicationComponent
 
             // Store our successfully processed element for feedback in logs, but also in case we're deleting
             $this->_processedElements[] = $element->id;
+
+            return $element;
         } else {
             if ($element->getErrors()) {
                 throw new Exception(json_encode($element->getErrors()));
@@ -233,10 +235,10 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         }
 
         foreach ($feedData as $key => $data) {
-            craft()->feedMe_process->processFeed($key, $feedSettings);
+            $element = craft()->feedMe_process->processFeed($key, $feedSettings);
 
             // Fire an "onStepProcessFeed" event
-            $event = new Event($this, array('settings' => $feedSettings));
+            $event = new Event($this, array('settings' => $feedSettings, 'element' => $element));
             craft()->feedMe_process->onStepProcessFeed($event);
 
             if ($key === ($limit - 1)) {
