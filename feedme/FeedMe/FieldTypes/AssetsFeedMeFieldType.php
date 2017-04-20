@@ -111,7 +111,11 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
     {
         // Check for our saved data from the main parsing function above. We've already destroyed the
         // initial feed data with 'real' information, but in this case, we still need it!
-        $uploadData = $this->_uploadData[$field->handle];
+        $uploadData = Hash::get($this->_uploadData, $field->handle);
+
+        if (!$uploadData) {
+            return;
+        }
 
         $data = Hash::get($uploadData, 'data');
 
