@@ -151,7 +151,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
 
         // Allow field types to modify content once an element has been properly setup and identified
         foreach ($data as $handle => $preppedData) {
-            craft()->feedMe_fields->postForFieldType($element, $fieldData, $handle, $handle);
+            craft()->feedMe_fields->postForFieldType($element, $fieldData, $handle);
         }
 
         // Set the Element Type's fields data - but only if we're not targeting a locale

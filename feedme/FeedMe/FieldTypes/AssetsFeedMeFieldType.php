@@ -143,6 +143,8 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
                 $fieldData[$handle] = $assetChunks[0];
             }
         }
+
+        return true;
     }
 
 

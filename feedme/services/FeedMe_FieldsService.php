@@ -46,10 +46,8 @@ class FeedMe_FieldsService extends BaseApplicationComponent
         return $data;
     }
 
-    public function postForFieldType($element, &$data, $handle)
+    public function postForFieldType($element, &$data, $handle, $field = null)
     {
-        $field = null;
-
         if (isset($this->_fields[$handle])) {
             $field = $this->_fields[$handle];
         }

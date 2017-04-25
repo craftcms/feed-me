@@ -132,6 +132,13 @@ class MatrixFeedMeFieldType extends BaseFeedMeFieldType
                     // Parse this inner-field's data, just like a regular field
                     $parsedData = craft()->feedMe_fields->prepForFieldType(null, $blockFieldContent, $blockFieldHandle, $fieldOptions);
 
+                    // Fire any post-processing for the field type
+                    $posted = craft()->feedMe_fields->postForFieldType(null, $parsedData, $blockFieldHandle, $subField);
+
+                    if ($posted) {
+                        $parsedData = $parsedData[$blockFieldHandle];
+                    }
+
                     if ($parsedData) {
                         // Special-case for inner table - not a great solution at the moment, needs to be more flexible
                         /*if ($subField->type == 'Table') {
