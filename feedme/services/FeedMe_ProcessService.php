@@ -60,7 +60,8 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         }
 
         // If our duplication handling is to delete - we delete all elements
-        if (FeedMeDuplicate::isDelete($feed)) {
+        // If our duplication handling is to unpublish - we unpublish all elements
+        if (FeedMeDuplicate::isDelete($feed) || FeedMeDuplicate::isUnpublish($feed)) {
             $criteria = $this->_service->setCriteria($feed);
 
             $return['existingElements'] = $criteria->ids();
@@ -188,7 +189,34 @@ class FeedMe_ProcessService extends BaseApplicationComponent
 
     public function finalizeAfterProcess($settings, $feed)
     {
+
+        if (FeedMeDuplicate::isUnpublish($feed)) {
+            $UnpublishIds = array_diff($settings['existingElements'], $this->_processedElements);
+            $criteria = $this->_service->setCriteria($feed);
+            $criteria->id = $UnpublishIds;
+            $criteria->status = true;
+            $elementsToUnpublish = $criteria->find();
+
+            if ($elementsToUnpublish) {
+                if ($this->_service->unpublish($elementsToUnpublish)) {
+                    FeedMePlugin::log($feed->name . ': The following elements have been unpublished: ' . print_r($UnpublishIds, true) . '.', LogLevel::Info, true);
+                } else {
+                    if ($element->getErrors()) {
+                        throw new Exception(json_encode($element->getErrors()));
+                    } else {
+                        throw new Exception(Craft::t('Something went wrong while updating elements.'));
+                    }
+                }
+            }
+        }
+
         if (FeedMeDuplicate::isDelete($feed)) {
+
+            if (FeedMeDuplicate::isUnpublish($feed)) {
+                FeedMePlugin::log($feed->name . ":  You can't have Delete and Unpublished enabled at the same time as an Import Strategy.", LogLevel::Info, true);
+                return;
+            }
+
             $deleteIds = array_diff($settings['existingElements'], $this->_processedElements);
             $criteria = $this->_service->setCriteria($feed);
             $criteria->id = $deleteIds;
@@ -452,7 +480,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             //if (strstr($feedHandle, '[]')) {
                 //$parsedData['data'] = array($value);
             //} else {
-                $parsedData['data'] = $value;
+            $parsedData['data'] = $value;
             //}
         }
 
