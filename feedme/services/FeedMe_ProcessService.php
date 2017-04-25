@@ -60,8 +60,8 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         }
 
         // If our duplication handling is to delete - we delete all elements
-        // If our duplication handling is to unpublish - we unpublish all elements
-        if (FeedMeDuplicate::isDelete($feed) || FeedMeDuplicate::isUnpublish($feed)) {
+        // If our duplication handling is to disable - we disable all elements
+        if (FeedMeDuplicate::isDelete($feed) || FeedMeDuplicate::isDisable($feed)) {
             $criteria = $this->_service->setCriteria($feed);
 
             $return['existingElements'] = $criteria->ids();
@@ -189,17 +189,16 @@ class FeedMe_ProcessService extends BaseApplicationComponent
 
     public function finalizeAfterProcess($settings, $feed)
     {
-
-        if (FeedMeDuplicate::isUnpublish($feed)) {
-            $UnpublishIds = array_diff($settings['existingElements'], $this->_processedElements);
+        if (FeedMeDuplicate::isDisable($feed)) {
+            $disableIds = array_diff($settings['existingElements'], $this->_processedElements);
             $criteria = $this->_service->setCriteria($feed);
-            $criteria->id = $UnpublishIds;
+            $criteria->id = $disableIds;
             $criteria->status = true;
-            $elementsToUnpublish = $criteria->find();
+            $elementsToDisable = $criteria->find();
 
-            if ($elementsToUnpublish) {
-                if ($this->_service->unpublish($elementsToUnpublish)) {
-                    FeedMePlugin::log($feed->name . ': The following elements have been unpublished: ' . print_r($UnpublishIds, true) . '.', LogLevel::Info, true);
+            if ($elementsToDisable) {
+                if ($this->_service->disable($elementsToDisable)) {
+                    FeedMePlugin::log($feed->name . ': The following elements have been disableed: ' . print_r($disableIds, true) . '.', LogLevel::Info, true);
                 } else {
                     if ($element->getErrors()) {
                         throw new Exception(json_encode($element->getErrors()));
@@ -211,9 +210,8 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         }
 
         if (FeedMeDuplicate::isDelete($feed)) {
-
-            if (FeedMeDuplicate::isUnpublish($feed)) {
-                FeedMePlugin::log($feed->name . ":  You can't have Delete and Unpublished enabled at the same time as an Import Strategy.", LogLevel::Info, true);
+            if (FeedMeDuplicate::isDisable($feed)) {
+                FeedMePlugin::log($feed->name . ":  You can't have Delete and Disableed enabled at the same time as an Import Strategy.", LogLevel::Info, true);
                 return;
             }
 
