@@ -83,6 +83,10 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
                     if (isset($variants[0])) {
                         $criteria->id = $variants[0]->productId;
                     }
+                    else {
+                        // otherwise we haven't found a variant but we're looking for one, so let's an empty array
+                        return array();
+                    }
                 } else {
                     $feedValue = Hash::get($data, $handle . '.data', $data[$handle]);
                     $criteria->$handle = DbHelper::escapeParam($feedValue);
