@@ -284,7 +284,10 @@
     {# Special-case for a few attributes - we need to select the default #}
     {% set handle = field.handle | replace('variant-', '') %}
 
-    {% set uniqueFields = uniqueFields | merge([{ label: 'Variant ' ~ field.label, handle: field.name }]) %}
+    {# Only the Variant SKU is supported as an element criteria attribute for a Variant element #}
+    {% if field.handle == 'variant-sku' %}
+        {% set uniqueFields = uniqueFields | merge([{ label: 'Variant ' ~ field.label, handle: field.name }]) %}
+    {% endif %}
 {% endfor %}
 
 {% for tab in craft.fields.getLayoutById(productType.fieldLayoutId).getTabs() %}
