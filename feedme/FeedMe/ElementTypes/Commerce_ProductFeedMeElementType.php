@@ -74,24 +74,53 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
                     $variantCriteria->limit = null;
                     $variantCriteria->localeEnabled = null;
 
-                    $variantCriteria->$attribute = DbHelper::escapeParam($data['variants']['data'][$attribute]['data']);
+                    $feedValue = Hash::get($data, 'variants.data.' . $attribute);
+                    $feedValue = Hash::get($data, 'variants.data.' . $attribute . '.data', $feedValue);
+
+                    if (!$feedValue) {
+                        FeedMePlugin::log('Commerce Variants: no data for `' . $attribute . '` to match an existing element on. Is data present for this in your feed?', LogLevel::Error, true);
+                        return null;
+                    }
+
+                    // Because a single product can have multiple attached variants - therefore multiple data,
+                    // we only really need to first variant value to find the parent product ID
+                    if (is_array($feedValue)) {
+                        $feedValue = $feedValue[0];
+                    }
+
+                    $variantCriteria->$attribute = DbHelper::escapeParam($feedValue);
 
                     // Get the variants - interestingly, find()[0] is faster than first()
                     $variants = $variantCriteria->find();
 
                     // Set the Product ID for the criteria from our found variant - thats what we need to update
-                    if (isset($variants[0])) {
+                    if (count($variants)) {
                         $criteria->id = $variants[0]->productId;
+                    } else {
+                        return null;
                     }
                 } else {
-                    $feedValue = Hash::get($data, $handle . '.data', $data[$handle]);
-                    $criteria->$handle = DbHelper::escapeParam($feedValue);
+                    $feedValue = Hash::get($data, $handle);
+                    $feedValue = Hash::get($data, $handle . '.data', $feedValue);
+
+                    if ($feedValue) {
+                        $criteria->$handle = DbHelper::escapeParam($feedValue);
+                    } else {
+                        FeedMePlugin::log('Commerce Products: no data for `' . $handle . '` to match an existing element on. Is data present for this in your feed?', LogLevel::Error, true);
+                        return null;
+                    }
                 }
             }
         }
 
         // Check to see if an element already exists - interestingly, find()[0] is faster than first()
-        return $criteria->find();
+        $elements = $criteria->find();
+
+        if (count($elements)) {
+            return $elements[0];
+        }
+
+        return null;
     }
 
     public function delete(array $elements)

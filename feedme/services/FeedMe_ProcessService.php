@@ -10,6 +10,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
 
     private $_debug = false;
     private $_processedElements = array();
+    private $_processedElementIds = array();
     private $_service = null;
     private $_time_start = null;
 
@@ -112,11 +113,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         //
 
         // Check to see if an element already exists
-        $existingElements = $this->_service->matchExistingElement($criteria, $fieldData, $feed);
-
-        if (isset($existingElements[0])) {
-            $existingElement = $existingElements[0];
-        }
+        $existingElement = $this->_service->matchExistingElement($criteria, $fieldData, $feed);
 
         // If there's an existing matching element
         if ($existingElement) {
@@ -147,6 +144,10 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             }
         }
 
+        //echo "<pre>";
+        //print_r($existingElement->title);
+        //echo "</pre>";
+
         // Prepare Element Type model - this sets all Element Type attributes (Title, slug, etc).
         $element = $this->_service->prepForElementModel($element, $fieldData, $feed);
 
@@ -175,7 +176,20 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             }
 
             // Store our successfully processed element for feedback in logs, but also in case we're deleting
-            $this->_processedElements[] = $element->id;
+            $this->_processedElementIds[] = $element->id;
+
+            // Also store our element in-memory to prevent garbage collection of the variable. This is due to an odd error,
+            // specific to Assets where incorrect content will be fetched from a content cache.
+            //
+            // This is to do with spl_object_hash, which an asset field uses for cached content.
+            // It relies on the owner element (this element) being hashed as a key to a private variable
+            // The hash doesn't look at content for the ElementModel, and instead looks at its in-memory pointer.
+            // As such, if the ElementModel is no longer referenced anywhere, it'll be garbage collected, and the hash
+            // function will generate the same hash for a new object. 
+            //
+            // This causes the asset field to think it already has data, but its incorrect.
+            //
+            //$this->_processedElements[] = $element;
 
             return $element;
         } else {
@@ -190,7 +204,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
     public function finalizeAfterProcess($settings, $feed)
     {
         if (FeedMeDuplicate::isDisable($feed)) {
-            $disableIds = array_diff($settings['existingElements'], $this->_processedElements);
+            $disableIds = array_diff($settings['existingElements'], $this->_processedElementIds);
             $criteria = $this->_service->setCriteria($feed);
             $criteria->id = $disableIds;
             $criteria->status = true;
@@ -215,7 +229,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
                 return;
             }
 
-            $deleteIds = array_diff($settings['existingElements'], $this->_processedElements);
+            $deleteIds = array_diff($settings['existingElements'], $this->_processedElementIds);
             $criteria = $this->_service->setCriteria($feed);
             $criteria->id = $deleteIds;
             $elementsToDelete = $criteria->find();
@@ -236,9 +250,9 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         // Log the total time taken to process the feed
         $time_end = microtime(true);
         $execution_time = number_format(($time_end - $this->_time_start), 2);
-        FeedMePlugin::log($feed->name . ': Processing ' . count($this->_processedElements) . ' elements finished in ' . $execution_time . 's', LogLevel::Info, true);
+        FeedMePlugin::log($feed->name . ': Processing ' . count($this->_processedElementIds) . ' elements finished in ' . $execution_time . 's', LogLevel::Info, true);
 
-        $this->_debugOutput('Processing ' . count($this->_processedElements) . ' elements finished in ' . $execution_time . 's.');
+        $this->_debugOutput('Processing ' . count($this->_processedElementIds) . ' elements finished in ' . $execution_time . 's.');
     }
 
     public function debugFeed($feedId, $limit)
