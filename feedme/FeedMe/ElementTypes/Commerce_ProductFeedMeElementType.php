@@ -83,7 +83,7 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
                     }
 
                     // Because a single product can have multiple attached variants - therefore multiple data,
-                    // we only really need to first variant value to find the parent product ID
+                    // we only really need to first variant value to find the parent product ID.
                     if (is_array($feedValue)) {
                         $feedValue = $feedValue[0];
                     }

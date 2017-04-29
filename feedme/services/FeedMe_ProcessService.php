@@ -144,10 +144,6 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             }
         }
 
-        //echo "<pre>";
-        //print_r($existingElement->title);
-        //echo "</pre>";
-
         // Prepare Element Type model - this sets all Element Type attributes (Title, slug, etc).
         $element = $this->_service->prepForElementModel($element, $fieldData, $feed);
 
