@@ -142,6 +142,13 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             if (FeedMeDuplicate::isUpdate($feed, true)) {
                 return;
             }
+
+            // If this variable is explicitly false, this means there's no data in the feed for mapping
+            // existing elements - thats a problem no matter which option is selected, so don't proceed.
+            // Even if Add is selected, we'll end up with duplicates because it can't find existing elements to skip over
+            if ($existingElement === false) {
+                return;
+            }
         }
 
         // Prepare Element Type model - this sets all Element Type attributes (Title, slug, etc).

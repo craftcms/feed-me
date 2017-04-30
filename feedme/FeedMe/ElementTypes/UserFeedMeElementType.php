@@ -78,7 +78,7 @@ class UserFeedMeElementType extends BaseFeedMeElementType
                     $criteria->$handle = DbHelper::escapeParam($feedValue);
                 } else {
                     FeedMePlugin::log('User: no data for `' . $handle . '` to match an existing element on. Is data present for this in your feed?', LogLevel::Error, true);
-                    return null;
+                    return false;
                 }
             }
         }

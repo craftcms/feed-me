@@ -79,7 +79,7 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
 
                     if (!$feedValue) {
                         FeedMePlugin::log('Commerce Variants: no data for `' . $attribute . '` to match an existing element on. Is data present for this in your feed?', LogLevel::Error, true);
-                        return null;
+                        return false;
                     }
 
                     // Because a single product can have multiple attached variants - therefore multiple data,
@@ -107,7 +107,7 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
                         $criteria->$handle = DbHelper::escapeParam($feedValue);
                     } else {
                         FeedMePlugin::log('Commerce Products: no data for `' . $handle . '` to match an existing element on. Is data present for this in your feed?', LogLevel::Error, true);
-                        return null;
+                        return false;
                     }
                 }
             }
