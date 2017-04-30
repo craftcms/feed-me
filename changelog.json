@@ -16,7 +16,7 @@
             "[Improved] Refactor `matchExistingElement` to return a single element, as opposed to a collection.",
             "[Improved] Improve checking for unique identifier for all element types.",
             "[Fixed] Remote assets - Ensure field limits are respected.",
-            "[Fixed] Remote assets - Ensure multi remote assset fields work correctly in the same feed.",
+            "[Fixed] Remote assets - Ensure multi remote asset fields work correctly in the same feed.",
             "[Fixed] Fix for entry field not showing correct sub-element fields.",
             "[Fixed] Fix for Matrix and remote asset field uploading."
         ]
