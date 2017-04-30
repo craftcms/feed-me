@@ -29,5 +29,19 @@ class BaseFeedMeFieldType
         
         return $data;
     }
+
+    public function postFieldData($element, $field, &$fieldData, $handle)
+    {
+        // Parse all field content for Twig shorthand variables
+        foreach ($fieldData as $attribute => $data) {
+            // Only check for string content at this stage
+            if (!is_array($data)) {
+                // Don't process the data unless we detect a Twig tag - also performance
+                if (strpos($data, '{') !== false) {
+                    $fieldData[$attribute] = craft()->templates->renderObjectTemplate($data, $element);
+                }
+            }
+        }
+    }
     
 }
