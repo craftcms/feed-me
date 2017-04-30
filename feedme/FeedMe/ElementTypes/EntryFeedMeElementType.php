@@ -94,7 +94,8 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
     {
         foreach ($settings['fieldUnique'] as $handle => $value) {
             if ((int)$value === 1) {
-                $feedValue = Hash::get($data, $handle . '.data', $data[$handle]);
+                $feedValue = Hash::get($data, $handle);
+                $feedValue = Hash::get($data, $handle . '.data', $feedValue);
 
                 // Special-case for Title which can be dynamic
                 if ($handle == 'title') {
@@ -109,6 +110,9 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
 
                 if ($feedValue) {
                     $criteria->$handle = DbHelper::escapeParam($feedValue);
+                } else {
+                    FeedMePlugin::log('Entry: no data for `' . $handle . '` to match an existing element on. Is data present for this in your feed?', LogLevel::Error, true);
+                    return null;
                 }
             }
         }
