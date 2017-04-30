@@ -54,6 +54,11 @@
     label: 'Slug' | t,
     handle: 'slug',
     instructions: 'If not set, the Slug will be automatically created from Title.' | t,
+    default: forms.textField({
+        id: 'fieldDefaults-slug',
+        name: 'fieldDefaults[slug]',
+        value: feed.fieldDefaults.slug ?? '',
+    }),
 }, parentField, {
     label: 'Post Date' | t,
     handle: 'postDate',

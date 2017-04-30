@@ -27,6 +27,16 @@
             {% endnamespace %}
         </td>
 
-        <td class="col-default"></td>
+        <td class="col-default">
+            <div class="default-fields">
+                {% namespace 'fieldDefaults' %}
+                    {{ forms.textField({
+                        id: table_fieldHandle,
+                        name: table_fieldHandle,
+                        value: feed.fieldDefaults[table_fieldHandle] ?? '',
+                    }) }}
+                {% endnamespace %}
+            </div>
+        </td>
     </tr>
 {% endfor %}

@@ -39,12 +39,27 @@
 }, {
     label: 'Photo',
     handle: 'photo',
+    default: forms.textField({
+        id: 'fieldDefaults-photo',
+        name: 'fieldDefaults[photo]',
+        value: feed.fieldDefaults.photo ?? '',
+    }),
 }, {
     label: 'Preferred Locale',
     handle: 'preferredLocale',
+    default: forms.textField({
+        id: 'fieldDefaults-preferredLocale',
+        name: 'fieldDefaults[preferredLocale]',
+        value: feed.fieldDefaults.preferredLocale ?? '',
+    }),
 }, {
     label: 'Password',
     handle: 'newPassword',
+    default: forms.textField({
+        id: 'fieldDefaults-newPassword',
+        name: 'fieldDefaults[newPassword]',
+        value: feed.fieldDefaults.newPassword ?? '',
+    }),
 }, {
     label: 'Status',
     handle: 'status',
