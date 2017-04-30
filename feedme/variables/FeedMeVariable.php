@@ -39,6 +39,11 @@ class FeedMeVariable
         return $values;
     }
 
+    public function getElementTypes()
+    {
+        return craft()->feedMe->getRegisteredElementTypes();
+    }
+
     public function getElementTypeMapping($elementType)
     {
         return craft()->feedMe_elementTypes->getElementTypeMapping($elementType);
@@ -125,6 +130,11 @@ class FeedMeVariable
     public function getProductTypeById($productTypeId)
     {
         return craft()->commerce_productTypes->getProductTypeById($productTypeId);
+    }
+
+    public function getOrderSettings()
+    {
+        return craft()->commerce_orderSettings->getOrderSettingByHandle('order');
     }
 
 

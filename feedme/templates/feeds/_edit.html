@@ -67,9 +67,11 @@
 
     <hr>
 
+    {% set feedMeElementTypes = craft.feedMe.getElementTypes() %}
+
     {% set elementTypes = [] %}
     {% for elementType in craft.elements.getAllElementTypes %}
-        {% if craft.feedMe.getElementTypeGroups(elementType.classHandle) %}
+        {% if feedMeElementTypes[elementType.classHandle] is defined %}
             {% set elementTypes = elementTypes | merge({ (elementType.classHandle): elementType.name }) %}
         {% endif %}
     {% endfor %}

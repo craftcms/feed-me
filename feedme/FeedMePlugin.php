@@ -143,6 +143,7 @@ class FeedMePlugin extends BasePlugin
             return array(
                 new AssetFeedMeElementType(),
                 new CategoryFeedMeElementType(),
+                new Commerce_OrderFeedMeElementType(),
                 new Commerce_ProductFeedMeElementType(),
                 new EntryFeedMeElementType(),
                 new UserFeedMeElementType(),
