@@ -1,5 +1,26 @@
 [
     {
+        "version": "2.0.3",
+        "downloadUrl": "https://github.com/engram-design/FeedMe/archive/2.0.3.zip",
+        "date": "2017-05-01T00:00:00+10:00",
+        "notes": [
+            "[Added] Added Locale Status to entries, to properly control individual locale status.",
+            "[Added] Added `element` parameter to `onStepProcessFeed` event.",
+            "[Added] Added Import Strategy to `Disable missing elements`. Thanks [@ryansnowden](https://github.com/ryansnowden).",
+            "[Improved] Refactor remote asset uploading/handling.",
+            "[Improved] Remote assets - Better support for dynamic paths set in asset fields (ie `{slug}`).",
+            "[Improved] Remote assets - When set to `Keep Original`, don't download it and then check if it exists in Craft - it can be skipped.",
+            "[Improved] Ensure all fields are bootstrapped with the owner element being imported.",
+            "[Improved] Improve Commerce Products matching on existing elements (including better variant-field support).",
+            "[Improved] Remove certain unique identifier options for Product Variants - the element criteria doesn’t support them anyway.",
+            "[Improved] Refactor `matchExistingElement` to return a single element, as opposed to a collection.",
+            "[Improved] Improve checking for unique identifier for all element types.",
+            "[Fixed] Remote assets - Ensure field limits are respected.",
+            "[Fixed] Remote assets - Ensure multi remote assset fields work correctly in the same feed.",
+            "[Fixed] Fix for entry field not showing correct sub-element fields.",
+            "[Fixed] Fix for Matrix and remote asset field uploading.",
+        ]
+    }, {
         "version": "2.0.2",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/2.0.2.zip",
         "date": "2017-03-30T00:00:00+10:00",
