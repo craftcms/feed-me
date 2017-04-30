@@ -18,7 +18,7 @@
             "[Fixed] Remote assets - Ensure field limits are respected.",
             "[Fixed] Remote assets - Ensure multi remote assset fields work correctly in the same feed.",
             "[Fixed] Fix for entry field not showing correct sub-element fields.",
-            "[Fixed] Fix for Matrix and remote asset field uploading.",
+            "[Fixed] Fix for Matrix and remote asset field uploading."
         ]
     }, {
         "version": "2.0.2",
