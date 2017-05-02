@@ -32,6 +32,10 @@ class BaseFeedMeFieldType
 
     public function postFieldData($element, $field, &$fieldData, $handle)
     {
+        if (!is_array($fieldData)) {
+            return;
+        }
+
         // Parse all field content for Twig shorthand variables
         foreach ($fieldData as $attribute => $data) {
             // Only check for string content at this stage
