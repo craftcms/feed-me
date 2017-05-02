@@ -273,16 +273,16 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
 
             $variantModel->enabled = Hash::get($variant, 'enabled.data', 1);
             $variantModel->isDefault = Hash::get($variant, 'isDefault.data', 0);
-            $variantModel->sku = Hash::get($variant, 'sku.data');
-            $variantModel->price = Hash::get($variant, 'price.data');
-            $variantModel->width = LocalizationHelper::normalizeNumber(Hash::get($variant, 'width.data'));
-            $variantModel->height = LocalizationHelper::normalizeNumber(Hash::get($variant, 'height.data'));
-            $variantModel->length = LocalizationHelper::normalizeNumber(Hash::get($variant, 'length.data'));
-            $variantModel->weight = LocalizationHelper::normalizeNumber(Hash::get($variant, 'weight.data'));
-            $variantModel->stock = LocalizationHelper::normalizeNumber(Hash::get($variant, 'stock.data'));
-            $variantModel->unlimitedStock = LocalizationHelper::normalizeNumber(Hash::get($variant, 'unlimitedStock.data'));
-            $variantModel->minQty = LocalizationHelper::normalizeNumber(Hash::get($variant, 'minQty.data'));
-            $variantModel->maxQty = LocalizationHelper::normalizeNumber(Hash::get($variant, 'maxQty.data'));
+            $variantModel->sku = Hash::get($variant, 'sku.data', $variantModel->sku);
+            $variantModel->price = Hash::get($variant, 'price.data', $variantModel->price);
+            $variantModel->width = LocalizationHelper::normalizeNumber(Hash::get($variant, 'width.data', $variantModel->width));
+            $variantModel->height = LocalizationHelper::normalizeNumber(Hash::get($variant, 'height.data', $variantModel->height));
+            $variantModel->length = LocalizationHelper::normalizeNumber(Hash::get($variant, 'length.data', $variantModel->length));
+            $variantModel->weight = LocalizationHelper::normalizeNumber(Hash::get($variant, 'weight.data', $variantModel->weight));
+            $variantModel->stock = LocalizationHelper::normalizeNumber(Hash::get($variant, 'stock.data', $variantModel->stock));
+            $variantModel->unlimitedStock = LocalizationHelper::normalizeNumber(Hash::get($variant, 'unlimitedStock.data', $variantModel->unlimitedStock));
+            $variantModel->minQty = LocalizationHelper::normalizeNumber(Hash::get($variant, 'minQty.data', $variantModel->minQty));
+            $variantModel->maxQty = LocalizationHelper::normalizeNumber(Hash::get($variant, 'maxQty.data', $variantModel->maxQty));
 
             $variantModel->sortOrder = $count++;
 
