@@ -8,6 +8,7 @@ class ComposerStaticInit93f828fc4ab5549a64496e06451965cd
 {
     public static $files = array (
         '948ad5488880985ff1c06721a4e447fe' => __DIR__ . '/..' . '/cakephp/utility/bootstrap.php',
+        'b45b351e6b6f7487d819961fef2fda77' => __DIR__ . '/..' . '/jakeasmith/http_build_url/src/http_build_url.php',
     );
 
     public static $prefixLengthsPsr4 = array (

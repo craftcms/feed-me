@@ -174,12 +174,15 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
                 continue;
             }
 
-            // Clean the URL for filename when saving as an Asset
-            $cleanUrl = UrlHelper::stripQueryString($url);
+            // Extract the filename from the URL. This is through our own function to determine this due to the wide variety
+            // of URLs that can be provided in a feed. Most importantly, factoring in query string information
+            $filename = $this->_getPathFilename($url);
 
-            // Check if this URL has a file extension - sometimes its a dynamic URL without
-            // a filename and extension, so we generate one.
-            $extension = IOHelper::getExtension($cleanUrl);
+            // Get the extension
+            $extension = IOHelper::getExtension($filename);
+
+            // Check if this URL has a file extension - sometimes its a dynamic URL without a filename and extension
+            // so when we get to saving the asset in Craft, it doesn't have a (useful) filename, so we generate one.
 
             if (!$extension) {
                 // Generate a hash of the URL - this constitutes our ID
@@ -195,8 +198,6 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
                 }
 
                 $filename = $filename . $extension;
-            } else {
-                $filename = basename($cleanUrl);
             }
 
             $saveLocation = $tempPath . $filename;
@@ -297,6 +298,67 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
                 FeedMePlugin::log('Updated Asset (ID ' . $assetId . ') inner-element with content: ' . json_encode($preppedData), LogLevel::Info, true);
             }
         }
+    }
+
+    private function _getPathFilename($url)
+    {
+        // Function to extract a filename from a URL path. It does not query the actual URL however.
+        // There are some tricky cases being tested again, and mostly revolves around query strings. We do our best to figure it out!
+        // http://example.com/test.php
+        // http://example.com/test.php?pubid=image.jpg
+        // http://example.com/image.jpg?width=1280&cid=5049
+        // http://example.com/image.jpg?width=1280&cid=5049&un=support%40gdomain.com
+        // http://example.com/test
+        // http://example.com/test?width=1280&cid=5049
+        // http://example.com/test?width=1280&cid=5049&un=support%40gdomain.com
+
+        // First, lets check the query string values. We essentially convert to an array, check each
+        // item in the array, then put the URL back together again.
+        $parts = parse_url($url);
+
+        // Get some query string - if there's any for this URL
+        if (isset($parts['query'])) {
+            parse_str($parts['query'], $queryParams);
+        } else {
+            $queryParams = array();
+        }
+
+        foreach ($queryParams as $key => $param) {
+            // A special case for emails, which contain a '.com', which can be thought of as a extension - wrong!
+            if (filter_var($param, FILTER_VALIDATE_EMAIL)) {
+                unset($queryParams[$key]);
+            }
+        }
+
+        // Put the URL back together again with the parsed query string
+        $parts['query'] = http_build_query($queryParams);
+        $url = http_build_url($parts);
+
+        // Now we have a reasonably clean URL - SPLFileInfo does the best at getting the extension from
+        // either the regular path of a URL, or even if it exists as a query string in the URL
+        $info = new \SplFileInfo($url);
+
+        // Check the extension
+        $extension = $info->getExtension();
+
+        // SplFileInfo can sometimes keep the query string info - strip it out (we no longer need it)
+        $extension = UrlHelper::stripQueryString($extension);
+
+        // Now finally, we actually want to return the filename of the image. This is tricky, because you could have:
+        // http://example.com/image.jpg
+        // http://example.com/generate.php?pubid=image.jpg
+        // And we only want media files to put in an asset field (presumably), rather than .php or other dynamic script names
+        // But - with our known extension, we can grab them with some Regex
+
+        if ($extension) {
+            preg_match('/[a-zA-Z0-9-_]+\.'.$extension.'/', $url, $matches);
+
+            $filename = count($matches) ? $matches[0] : '';
+        } else {
+            $filename = '';
+        }
+
+        return $filename;
     }
 
 }

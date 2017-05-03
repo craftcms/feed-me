@@ -1,5 +1,6 @@
 {
     "require": {
-        "cakephp/utility": "3.3.12"
+        "cakephp/utility": "3.3.12",
+        "jakeasmith/http_build_url": "^1.0"
     }
 }
