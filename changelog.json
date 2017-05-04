@@ -1,5 +1,18 @@
 [
     {
+        "version": "2.0.4",
+        "downloadUrl": "https://github.com/engram-design/FeedMe/archive/2.0.4.zip",
+        "date": "2017-05-04T00:00:00+10:00",
+        "notes": [
+            "[Added] Allow Twig shorthand variables to be used in default fields. This allows you to reference other fields or element attributes in the feed.",
+            "[Added] Add `nesbot/carbon` for proper date parsing. Now properly supports Unix timestamps for date data.",
+            "[Added] Smart extension/filename checking for remote asset URLs. This smartly grabs the correct URL from the base path, or query string.",
+            "[Improved] Commerce Variants - pre-fill existing attribute values if they aren’t mapped in the feed.",
+            "[Improved] Include more default fields for element types.",
+            "[Fixed] Fixed issue with setting Category status.",
+            "[Fixed] Fixed data issue in `BaseFeedMeFieldType:postFieldData()`."
+        ]
+    }, {
         "version": "2.0.3",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/2.0.3.zip",
         "date": "2017-05-01T00:00:00+10:00",
