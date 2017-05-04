@@ -116,6 +116,10 @@ class CategoryFeedMeElementType extends BaseFeedMeElementType
                 case 'title':
                     $element->getContent()->$handle = $dataValue;
                     break;
+                case 'enabled':
+                case 'localeEnabled':
+                    $element->$handle = (bool)$dataValue;
+                    break;
                 default:
                     continue 2;
             }
