@@ -148,7 +148,13 @@ class Commerce_OrderFeedMeElementType extends BaseFeedMeElementType
                     break;
                 case 'dateOrdered':
                 case 'datePaid';
-                    $element->$handle = $this->_prepareDateForElement($dataValue);
+                    $dateValue = FeedMeDateHelper::parseString($dataValue);
+
+                    // Ensure there's a parsed data - null will auto-generate a new date
+                    if ($dateValue) {
+                        $element->$handle = $dateValue;
+                    }
+
                     break;
                 case 'isCompleted':
                     $element->$handle = (bool)$dataValue;
@@ -216,22 +222,6 @@ class Commerce_OrderFeedMeElementType extends BaseFeedMeElementType
 
     // Private Methods
     // =========================================================================
-
-    private function _prepareDateForElement($date)
-    {
-        $craftDate = null;
-
-        if (!is_array($date)) {
-            $d = date_parse($date);
-            $date_string = date('Y-m-d H:i:s', mktime($d['hour'], $d['minute'], $d['second'], $d['month'], $d['day'], $d['year']));
-
-            $craftDate = DateTime::createFromString($date_string, craft()->timezone);
-        } else {
-            $craftDate = $date;
-        }
-
-        return $craftDate;
-    }
 
     private function _generateCartNumber()
     {

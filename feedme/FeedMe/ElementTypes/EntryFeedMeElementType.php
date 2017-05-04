@@ -175,7 +175,7 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
                     break;
                 case 'postDate':
                 case 'expiryDate';
-                    $dateValue = $this->_prepareDateForElement($dataValue);
+                    $dateValue = FeedMeDateHelper::parseString($dataValue);
 
                     // Ensure there's a parsed data - null will auto-generate a new date
                     if ($dateValue) {
@@ -278,22 +278,6 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
         if (count($requiredContent)) {
             $element->setContentFromPost($requiredContent);
         }
-    }
-
-    private function _prepareDateForElement($date)
-    {
-        $craftDate = null;
-
-        if (!is_array($date)) {
-            $d = date_parse($date);
-            $date_string = date('Y-m-d H:i:s', mktime($d['hour'], $d['minute'], $d['second'], $d['month'], $d['day'], $d['year']));
-
-            $craftDate = DateTime::createFromString($date_string, craft()->timezone);
-        } else {
-            $craftDate = $date;
-        }
-
-        return $craftDate;
     }
 
     private function _prepareAuthorForElement($author)
