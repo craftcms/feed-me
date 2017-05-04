@@ -42,8 +42,6 @@ class FeedMeDateHelper
         try {
             new DateTime('@' . $string);
         } catch(\Exception $e) {
-            FeedMePlugin::log('Date parse error: ' . $string . ' - ' . $e->getMessage(), LogLevel::Error, true);
-
             return false;
         }
 
