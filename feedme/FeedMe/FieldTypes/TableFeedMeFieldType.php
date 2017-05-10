@@ -25,7 +25,7 @@ class TableFeedMeFieldType extends BaseFeedMeFieldType
         $data = Hash::get($fieldData, 'data');
 
         if (empty($data)) {
-            return;
+            return array();
         }
 
         // When we import a non-repeatable node into a table, we must ensure its treated consistently

@@ -25,7 +25,7 @@ class CategoriesFeedMeFieldType extends BaseFeedMeFieldType
         $data = Hash::get($fieldData, 'data');
 
         if (empty($data)) {
-            return;
+            return array();
         }
 
         if (!is_array($data)) {

@@ -367,6 +367,8 @@ class FeedMe_ProcessService extends BaseApplicationComponent
                 } else {
                     $parsedData[$fieldHandle]['data'] = $value;
                 }
+            } else {
+                $parsedData[$fieldHandle]['data'] = null;
             }
 
             // An annoying check for inconsistent nodes - I'm looking at you XML
