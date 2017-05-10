@@ -25,7 +25,7 @@ class MatrixFeedMeFieldType extends BaseFeedMeFieldType
         $data = Hash::get($fieldData, 'data');
 
         if (empty($data)) {
-            return;
+            return array();
         }
 
         // Store the fields for this Matrix - can't use the fields service due to context

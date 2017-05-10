@@ -25,7 +25,7 @@ class TableFeedMeFieldType extends BaseFeedMeFieldType
         $data = Hash::get($fieldData, 'data');
 
         if (empty($data)) {
-            return;
+            return array();
         }
 
         /*foreach (Hash::flatten($data) as $key => $value) {

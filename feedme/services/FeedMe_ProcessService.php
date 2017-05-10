@@ -167,7 +167,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             $element->setContentFromPost($fieldData);
         }
 
-        $this->_debugOutput($element->attributes);
+        //$this->_debugOutput($element->attributes);
         $this->_debugOutput($fieldData);
         
         // Save the element
@@ -358,7 +358,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             // Get the correct Craft field handle the user has chosen for this feed element
             $fieldHandle = FeedMeArrayHelper::findKeyByValue($fieldMapping, $feedPath);
 
-            if ($fieldHandle && $value) {
+            if ($fieldHandle) {
                 if (strstr($fieldHandle, '--')) {
                     $split = explode('--', $fieldHandle);
 
