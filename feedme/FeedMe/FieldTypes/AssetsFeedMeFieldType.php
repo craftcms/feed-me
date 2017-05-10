@@ -351,7 +351,7 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
         // But - with our known extension, we can grab them with some Regex
 
         if ($extension) {
-            preg_match('/[a-zA-Z0-9-_]+\.'.$extension.'/', $url, $matches);
+            preg_match('/[^\/\\&\?]+\.'.$extension.'(?=[\?&].*$|$)/', $url, $matches);
 
             $filename = count($matches) ? $matches[0] : '';
         } else {
