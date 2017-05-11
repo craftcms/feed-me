@@ -2,6 +2,7 @@
 namespace Craft;
 
 use Carbon\Carbon;
+use Cake\Utility\Hash as Hash;
 
 class FeedMeDateHelper
 {
@@ -13,7 +14,13 @@ class FeedMeDateHelper
         $parsedDate = null;
 
         if (is_array($date)) {
-            return $date;
+            $dateString = Hash::get($date, 'date');
+
+            if ($dateString) {
+                return $date;
+            } else {
+                return $parsedDate;
+            }
         }
 
         try {
