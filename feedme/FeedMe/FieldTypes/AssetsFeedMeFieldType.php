@@ -117,7 +117,7 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
             return;
         }
 
-        $data = Hash::get($uploadData, 'data');
+        $data = Hash::get($uploadData, $field->handle . '.data');
 
         if (empty($data)) {
             return;
