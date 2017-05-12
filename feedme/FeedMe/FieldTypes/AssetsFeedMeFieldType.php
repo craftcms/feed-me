@@ -28,6 +28,9 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
     {
         $preppedData = array();
 
+        // Clear out upload data from any previous imports
+        $this->_uploadData[$field->handle] = array();
+
         $data = Hash::get($fieldData, 'data');
 
         if (empty($data)) {
@@ -117,7 +120,7 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
             return;
         }
 
-        $data = Hash::get($uploadData, $field->handle . '.data');
+        $data = Hash::get($uploadData, 'data');
 
         if (empty($data)) {
             return;
