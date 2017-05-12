@@ -147,6 +147,11 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
             }
         }
 
+        // Check if we've got any data for the fields in this element
+        if (isset($uploadData['fields']) && is_array($ids)) {
+            $this->_populateElementFields($ids, $uploadData['fields']);
+        }
+
         return true;
     }
 
@@ -354,7 +359,7 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
         // But - with our known extension, we can grab them with some Regex
 
         if ($extension) {
-            preg_match('/[^\/\\&\?]+\.'.$extension.'(?=[\?&].*$|$)/', $url, $matches);
+            preg_match('/[^\/=\\&\?]+\.'.$extension.'(?=[\?&].*$|$)/', $url, $matches);
 
             $filename = count($matches) ? $matches[0] : '';
         } else {
