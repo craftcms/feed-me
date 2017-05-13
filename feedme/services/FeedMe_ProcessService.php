@@ -392,7 +392,11 @@ class FeedMe_ProcessService extends BaseApplicationComponent
 
 
                     // Create a dot-notation path for our values, rather than iterating, merging, etc.
-                    $parsedData[$keyPath . '.data'] = $value;
+                    // But be careful not to do this for field options which may very well match a field/element handle
+                    // for example - category-options-match = 'title' would grab the data for 'title' in the feed.
+                    if (!strstr($keyPath, '-options')) {
+                        $parsedData[$keyPath . '.data'] = $value;
+                    }
 
 
                     // Check if this field has any related data? Commonly Element fields have this.
