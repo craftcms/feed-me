@@ -356,51 +356,53 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             $value = Hash::get($feedData, $nodePath);
 
             // Get the correct Craft field handle the user has chosen for this feed element
-            $fieldHandle = FeedMeArrayHelper::findKeyByValue($fieldMapping, $feedPath);
+            $fieldHandles = FeedMeArrayHelper::findKeyByValue($fieldMapping, $feedPath);
 
-            if ($fieldHandle) {
-                if (strstr($fieldHandle, '--')) {
-                    $split = explode('--', $fieldHandle);
+            if ($fieldHandles) {
+                foreach ($fieldHandles as $fieldHandle => $feedHandle) {
+                    if (strstr($fieldHandle, '--')) {
+                        $split = explode('--', $fieldHandle);
 
-                    // Handle multiple nested content (Matrix, Table, etx)
-                    preg_match_all('/\.(\d+)\./', $nodePath, $matches);
+                        // Handle multiple nested content (Matrix, Table, etx)
+                        preg_match_all('/\.(\d+)\./', $nodePath, $matches);
 
-                    if (isset($matches[1][0]) && $matches[1][0] != '') {
-                        array_splice($split, 1, 0, $matches[1][0]);
+                        if (isset($matches[1][0]) && $matches[1][0] != '') {
+                            array_splice($split, 1, 0, $matches[1][0]);
+                        }
+
+                        if (isset($matches[1][1]) && $matches[1][1] != '') {
+                            array_splice($split, 4, 0, $matches[1][1]);
+                        }
+
+                        array_splice($split, 1, 0, 'data');
+
+                        $keyPath = implode('.', $split);
+                    } else {
+                        $keyPath = $fieldHandle;
                     }
 
-                    if (isset($matches[1][1]) && $matches[1][1] != '') {
-                        array_splice($split, 4, 0, $matches[1][1]);
+                    // Parse nested fields' data
+                    if (strstr($fieldHandle, '-fields-')) {
+                        $keyPath = str_replace('-', '.', $keyPath);
                     }
 
-                    array_splice($split, 1, 0, 'data');
 
-                    $keyPath = implode('.', $split);
-                } else {
-                    $keyPath = $fieldHandle;
-                }
-
-                // Parse nested fields' data
-                if (strstr($fieldHandle, '-fields-')) {
-                    $keyPath = str_replace('-', '.', $keyPath);
-                }
+                    // Create a dot-notation path for our values, rather than iterating, merging, etc.
+                    $parsedData[$keyPath . '.data'] = $value;
 
 
-                // Create a dot-notation path for our values, rather than iterating, merging, etc.
-                $parsedData[$keyPath . '.data'] = $value;
+                    // Check if this field has any related data? Commonly Element fields have this.
+                    // Attach any options to the same node as the Craft Field, so its nicely organised.
+                    $options = FeedMeArrayHelper::findByPartialKey($fieldMapping, $fieldHandle . '-options');
 
+                    if ($options) {
+                        foreach ($options as $optionKey => $optionValue) {
+                            $optionKeyOption = preg_replace('/.+?(?<=-options-)/', '', $optionKey);
+                            $optionKeyPath = $keyPath . '.options.' . $optionKeyOption;
 
-                // Check if this field has any related data? Commonly Element fields have this.
-                // Attach any options to the same node as the Craft Field, so its nicely organised.
-                $options = FeedMeArrayHelper::findByPartialKey($fieldMapping, $fieldHandle . '-options');
-
-                if ($options) {
-                    foreach ($options as $optionKey => $optionValue) {
-                        $optionKeyOption = preg_replace('/.+?(?<=-options-)/', '', $optionKey);
-                        $optionKeyPath = $keyPath . '.options.' . $optionKeyOption;
-
-                        // Make sure we look at the correct path - it'll be the same as where `data` sits
-                        $parsedData[$optionKeyPath] = $optionValue;
+                            // Make sure we look at the correct path - it'll be the same as where `data` sits
+                            $parsedData[$optionKeyPath] = $optionValue;
+                        }
                     }
                 }
             }

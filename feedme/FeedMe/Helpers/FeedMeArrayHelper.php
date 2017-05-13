@@ -114,12 +114,14 @@ class FeedMeArrayHelper
 
     public static function findKeyByValue($array, $findValue)
     {
+        $results = array();
+        
         foreach ($array as $key => $value) {
             if ($findValue == $value) {
-                return $key;
+                $results[$key] = $value;
             }
         }
 
-        return null;
+        return $results;
     }
 }
