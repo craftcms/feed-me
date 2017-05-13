@@ -1,5 +1,19 @@
 [
     {
+        "version": "2.0.5",
+        "downloadUrl": "https://github.com/engram-design/FeedMe/archive/2.0.5.zip",
+        "date": "2017-05-13T00:00:00+10:00",
+        "notes": [
+            "[Added] Added `checkExistingFieldData` for all fields to first check an existing element (if any) has content matching exactly what is to be imported. It will be skipped if it matches. Controlled by config setting, and off by default.",
+            "[Improved] Provide better checking for set DateTime object for all date fields.",
+            "[Improved] Better support for null data in feed.",
+            "[Improved] Refactoring feed data parsing (for the last time!) for more reliable results with inconsistent feeds/nodes/data. Much better handling of order of data, nested content, and repeatable nodes.",
+            "[Fixed] Fix asset inner-element fields when remote-uploading.",
+            "[Fixed] Fix asset `postFieldData` fetching incorrect field data.",
+            "[Fixed] Fix asset filename guessing to handle more robust filenames.",
+            "[Fixed] Remove unnecessary log when testing for timestamp."
+        ]
+    }, {
         "version": "2.0.4",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/2.0.4.zip",
         "date": "2017-05-04T00:00:00+10:00",
