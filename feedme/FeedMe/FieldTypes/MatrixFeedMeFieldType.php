@@ -31,6 +31,11 @@ class MatrixFeedMeFieldType extends BaseFeedMeFieldType
         // Store the fields for this Matrix - can't use the fields service due to context
         $blockTypes = craft()->matrix->getBlockTypesByFieldId($field->id, 'handle');
 
+        // Ensure when importing only one block thats its treated correctly.
+        if (!isset($data[0])) {
+            $data = array($data);
+        }
+
         foreach ($data as $sortKey => $sortData) {
             $preppedFieldData = array();
 
@@ -75,8 +80,11 @@ class MatrixFeedMeFieldType extends BaseFeedMeFieldType
                 }
             }
 
-            $preppedData['new'.($sortKey+1)] = array(
+            $order = $sortKey + 1;
+
+            $preppedData['new' . $order] = array(
                 'type' => $blockHandle,
+                'order' => $order,
                 'enabled' => true,
                 'fields' => $preppedFieldData,
             );
@@ -87,10 +95,10 @@ class MatrixFeedMeFieldType extends BaseFeedMeFieldType
 
     // Allows us to smartly-check to look at existing Matrix fields for an element, and whether data has changed or not.
     // No need to update Matrix blocks unless content has changed, which causes needless new elements to be created.
-    public function postFieldData($element, $field, &$data, $handle)
+    public function checkExistingFieldData($element, $field, &$feedData, $handle)
     {
-        /*$existingFieldData = array();
-        $fieldData = $data[$handle];
+        $existingFieldData = array();
+        $fieldData = Hash::get($feedData, $handle);
 
         // Get our Matrix blocks from the existing element
         $blocks = $element->getFieldValue($field->handle);
@@ -124,14 +132,13 @@ class MatrixFeedMeFieldType extends BaseFeedMeFieldType
             );
         }
 
-
         // Now, we should have identically formatted existing content to how we're about to import.
         // Simply see if the arrays match exactly - size and attributes must be identical
         if ($existingFieldData == $fieldData) {
             // If they do equal, then nothing has changed from existing content. Se, we want to remove our mapped
             // data from the feed entirely, so the element doesn't get updated (because it doesn't need to),
-            unset($data[$handle]);
-        }*/
+            unset($feedData[$handle]);
+        }
     }
     
 }
