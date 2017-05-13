@@ -98,4 +98,30 @@ class FeedMeArrayHelper
 
         return $array;
     }
+
+    public static function findByPartialKey($array, $partialKey)
+    {
+        $results = array();
+
+        foreach ($array as $key => $value) {
+            if (strstr($key, $partialKey)) {
+                $results[$key] = $value;
+            }
+        }
+
+        return $results;
+    }
+
+    public static function findKeyByValue($array, $findValue)
+    {
+        $results = array();
+        
+        foreach ($array as $key => $value) {
+            if ($findValue == $value) {
+                $results[$key] = $value;
+            }
+        }
+
+        return $results;
+    }
 }

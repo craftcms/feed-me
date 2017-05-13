@@ -8,7 +8,8 @@ class FeedMe_DataService extends BaseApplicationComponent
     // Public Methods
     // =========================================================================
 
-    public function getFeed($type, $url, $element, $settings) {
+    public function getFeed($type, $url, $element, $settings)
+    {
         // Check for and environment variables in url
         $url = craft()->config->parseEnvironmentString($url);
 
@@ -29,73 +30,61 @@ class FeedMe_DataService extends BaseApplicationComponent
         }
     }
 
-    public function getFeedMapping($type, $url, $element, $settings) {
-        $data_array = $this->getFeed($type, $url, $element, $settings);
+    public function getFeedMapping($dataArray)
+    {
+        $mappingPaths = array();
+
+        if (!is_array($dataArray)) {
+            return array();
+        }
 
         // Go through entire feed and grab all nodes - that way, its normalised across the entire feed
         // as some nodes don't exist on the first primary element, but do throughout the feed.
-        $array = array();
+        foreach (Hash::flatten($dataArray, '/') as $nodePath => $value) {
+            $feedPath = preg_replace('/(\/\d+\/)/', '/', $nodePath);
+            $feedPath = preg_replace('/(\d+\/)|(\/\d+)/', '', $feedPath);
 
-        if ($data_array) {
-            foreach ($data_array as $data_array_item) {
-                $variable = Hash::flatten($data_array_item);
+            // The above is used to normalise repeatable nodes. Paths to nodes will look similar to:
+            // 0.Assets.Asset.0.Img.0 - we want to change this to Assets/Asset/Img, This is mostly
+            // for user-friendliness, we don't need to keep specific details on what is repeatable
+            // or not. Thats for the feed-parsing stage (and is greatly improved from our first iteration!)
 
-                foreach ($variable as $key => $value) {
-                    // Assets.Asset.0.Img.0 = Assets/Asset/.../Img[]
-                    $string = str_replace('.', '/', $key);
-                    $string = preg_replace('/(\/\d+\/)/', '/.../', $string);
-                    $string = preg_replace('/(\/\d+)/', '[]', $string);
-
-                    if (!isset($array[$string])) {
-                        $array[$string] = $value;
-                    }
-                }
-
-                //$array = $array + $this->_getFormattedMapping($data_array_item);
-            }
-
-            // Then - a little bit of post-processing to deal with inconsistent nodes
-            // XML in particular doesn't allow you to specifically state if there are multiple nodes
-            // For example, we have no way of detecting this sort of data:
-            // <Assets>
-            //     <Asset>
-            //         <Img>image_1.jpg</Img>
-            //     </Asset>
-            //     <Asset>
-            //         <Img>image_2.jpg</Img>
-            //     </Asset>
-            // </Assets>
-            // <Assets>
-            //     <Asset>
-            //         <Img>image_3.jpg</Img>
-            //     </Asset>
-            // </Assets>
-            // This ends up producing:
-            // [Assets/Asset/.../Img] => image_1.jpg
-            // [Assets/Asset/Img] => image_3.jpg
-            foreach ($array as $key => $value) {
-                $keys = explode('/', $key);
-
-                // Loop through each element, adding a '/.../' at various positions.
-                // We simply can't rely on it being in a specific condition, due to each field being different
-                if (count($keys) > 1) {
-                    for ($i = 0; $i < count($keys); $i++) {
-                        $temp = explode('/', $key);
-                        array_splice($temp, $i, 0, '...');
-                        $potentialKey = implode('/', $temp);
-
-                        if (isset($array[$potentialKey])) {
-                            unset($array[$key]);
-                        }
-                    }
-                }
+            if (!isset($mappingPaths[$feedPath])) {
+                $mappingPaths[$feedPath] = $value;
             }
         }
 
-        return $array;
+        return $mappingPaths;
     }
 
-    public function findPrimaryElement($element, $parsed) {
+    public function getContentMapping($dataArray)
+    {
+        $contentNodes = array();
+
+        foreach (Hash::flatten($dataArray) as $nodePath => $value) {
+            $nodePath = preg_replace('/(\.\d+)$/', '', $nodePath);
+
+            preg_match('/^(\d+)\./', $nodePath, $matches);
+
+            if (isset($matches[1]) && $matches[1] != '') {
+                $index = $matches[1];
+            } else {
+                $index = 0;
+                $nodePath = $nodePath;
+            }
+
+            $contentNodes[$index][] = $nodePath;
+        }
+
+        foreach ($contentNodes as $key => $value) {
+            $contentNodes[$key] = array_unique($value);
+        }
+
+        return $contentNodes;
+    }
+
+    public function findPrimaryElement($element, $parsed)
+    {
         if (empty($parsed)) {
             return false;
         }
@@ -219,42 +208,6 @@ class FeedMe_DataService extends BaseApplicationComponent
 
     // Private Methods
     // =========================================================================
-
-    private function _getFormattedMapping($data, $sep = '') {
-        $return = array();
-
-        if ($sep != '') {
-            $sep .= '/';
-        }
-
-        if (!is_array($data)) {
-            return $data;
-        }
-
-        foreach ($data as $key => $value) {
-            if (!is_array($value)) {
-                $return[$sep . $key] = $value;
-            } elseif (count($value) == 0) {
-                $return[$sep . $key . '/...'] = array();
-            } elseif (isset($value[0])) {
-                if (is_string($value[0]) || is_numeric($value[0])) {
-                    $return[$sep . $key . '[]'] = $value[0];
-                } else {
-                    foreach ($value as $v) {
-                        $nested = $this->_getFormattedMapping($v, $sep . $key . '/...');
-
-                        if (is_array($nested)) {
-                            $return = array_merge($return, $nested);
-                        }
-                    }
-                }
-            } else {
-                $return = array_merge($return, $this->_getFormattedMapping($value, $sep . $key));
-            }
-        }
-
-        return $return;
-    }
 
     private function _set($url, $value, $duration)
     {

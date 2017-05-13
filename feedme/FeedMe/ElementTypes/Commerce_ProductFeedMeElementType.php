@@ -148,7 +148,7 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
             }
 
             if (is_array($value)) {
-                $dataValue = Hash::get($value, 'data', $value);
+                $dataValue = Hash::get($value, 'data', null);
             } else {
                 $dataValue = $value;
             }

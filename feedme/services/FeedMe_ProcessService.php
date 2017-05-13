@@ -72,9 +72,12 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         // rather than on each step. This is done for max performance - even a little
         $this->_criteria = $this->_service->setCriteria($feed);
 
+        $mappingPaths = craft()->feedMe_data->getFeedMapping($feedData);
+        $contentNodes = craft()->feedMe_data->getContentMapping($feedData);
+
         // Our main data-parsing function. Handles the actual data values, defaults and field options
-        foreach ($feedData as $key => $nodeData) {
-            $this->_data[$key] = $this->_prepFieldData($return['fields'], $nodeData, $feed['fieldDefaults']);
+        foreach ($contentNodes as $key => $nodeData) {
+            $this->_data[$key] = $this->_prepFieldData($return['fields'], $nodeData, $feedData, $feed['fieldDefaults']);
         }
 
         return $return;
@@ -157,6 +160,10 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         // Allow field types to modify content once an element has been properly setup and identified
         foreach ($data as $handle => $preppedData) {
             craft()->feedMe_fields->postForFieldType($element, $fieldData, $handle);
+
+            if (craft()->config->get('checkExistingFieldData', 'feedMe')) {
+                craft()->feedMe_fields->checkExistingFieldData($element, $fieldData, $handle);
+            }
         }
 
         // Set the Element Type's fields data - but only if we're not targeting a locale
@@ -321,13 +328,13 @@ class FeedMe_ProcessService extends BaseApplicationComponent
     // Private Methods
     // =========================================================================
 
-    private function _prepFieldData($fieldMapping, $feedData, $fieldDefaults)
+    private function _prepFieldData($fieldMapping, $contentNode, $feedData, $fieldDefaults)
     {
         $parsedData = array();
 
         // First, loop through all the field defaults. Important to do first, as if we set a default
         // but aren't actually mapping it to anything, we'll never enter the below loop
-        if (is_array($fieldDefaults)){
+        if (is_array($fieldDefaults)) {
             foreach ($fieldDefaults as $fieldHandle => $feedHandle) {
                 if (isset($feedHandle) && $feedHandle !== '') {
                     $parsedData[$fieldHandle]['data'] = $feedHandle;
@@ -335,184 +342,82 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             }
         }
 
-        foreach ($fieldMapping as $fieldHandle => $feedHandle) {
-            if ($feedHandle == 'noimport') {
-                continue;
-            }
+        // Now, onto grabbing out content from the feed. This is done by first looking at all the nodes
+        // in the feed, and looping through them. This importantly keep their order in the feed (important
+        // for Matrix), and ensures we don't miss data. This has the added benefit of abstracting complex
+        // querying based on what the user maps, and the overall structure of the feed. Typically, XML
+        // is difficult to determine repeatable content consistently, without its array-specifying syntax.
+        //
+        // We might have something like Assets/Asset/Img store in our field mapping, but this is useless
+        // and ambiguous to look up nodes. Instead, look each node directly like 0.Assets.Asset.0.Img.0
 
-            // We display and store field mapping with '/' and '/.../', for the users benefit,
-            // but Extract needs them as '.' or '{*}', so we convert them here.
-            // Turns 'my/repeating/.../field' into 'my.repeating.*.field'
-            $extractFeedHandle = str_replace('/.../', '.*.', $feedHandle);
-            $extractFeedHandle = str_replace('[]', '.*', $extractFeedHandle);
-            $extractFeedHandle = str_replace('/', '.', $extractFeedHandle);
+        foreach ($contentNode as $j => $nodePath) {
+            $feedPath = str_replace('.', '/', $nodePath);
+            $feedPath = preg_replace('/(\/\d+\/)/', '/', $feedPath);
+            $feedPath = preg_replace('/(\/\d+)|(\d+\/)/', '', $feedPath);
 
-            // Have a default ready to go in case a value can't be found in the feed
-            $defaultValue = isset($fieldDefaults[$fieldHandle]) ? $fieldDefaults[$fieldHandle] : null;
+            // Get the feed value using dot-notation (but specifically for a node)
+            $value = Hash::get($feedData, $nodePath);
 
-            // Get our value from the feed
-            $value = FeedMeArrayHelper::arrayGet($feedData, $extractFeedHandle, $defaultValue);
+            // Get the correct Craft field handle the user has chosen for this feed element
+            $fieldHandles = FeedMeArrayHelper::findKeyByValue($fieldMapping, $feedPath);
 
-            // Store it in our data array, with the Craft field handle we're mapping to
-            if (isset($value) && $value !== null) {
-                if (is_array($value)) {
-                    // Our arrayGet() function keeps empty indexes, which is super-important
-                    // for Matrix. Here, this filters them out, while keeping the indexes intact
-                    $value = Hash::filter($value);
+            if ($fieldHandles) {
+                foreach ($fieldHandles as $fieldHandle => $feedHandle) {
+                    if (strstr($fieldHandle, '--')) {
+                        $split = explode('--', $fieldHandle);
+
+                        // Handle multiple nested content (Matrix, Table, etx)
+                        preg_match_all('/\.(\d+)\./', $nodePath, $matches);
+
+                        if (isset($matches[1][0]) && $matches[1][0] != '') {
+                            array_splice($split, 1, 0, $matches[1][0]);
+                        }
+
+                        if (isset($matches[1][1]) && $matches[1][1] != '') {
+                            array_splice($split, 4, 0, $matches[1][1]);
+                        }
+
+                        array_splice($split, 1, 0, 'data');
+
+                        $keyPath = implode('.', $split);
+                    } else {
+                        $keyPath = $fieldHandle;
+                    }
+
+                    // Parse nested fields' data
+                    if (strstr($fieldHandle, '-fields-')) {
+                        $keyPath = str_replace('-', '.', $keyPath);
+                    }
+
+
+                    // Create a dot-notation path for our values, rather than iterating, merging, etc.
+                    $parsedData[$keyPath . '.data'] = $value;
+
+
+                    // Check if this field has any related data? Commonly Element fields have this.
+                    // Attach any options to the same node as the Craft Field, so its nicely organised.
+                    $options = FeedMeArrayHelper::findByPartialKey($fieldMapping, $fieldHandle . '-options');
+
+                    if ($options) {
+                        foreach ($options as $optionKey => $optionValue) {
+                            $optionKeyOption = preg_replace('/.+?(?<=-options-)/', '', $optionKey);
+                            $optionKeyPath = $keyPath . '.options.' . $optionKeyOption;
+
+                            // Make sure we look at the correct path - it'll be the same as where `data` sits
+                            $parsedData[$optionKeyPath] = $optionValue;
+                        }
+                    }
                 }
-
-                // If its an empty string, and there's already a default value, use that
-                if ($value === '' && isset($parsedData[$fieldHandle]['data'])) {
-                    $parsedData[$fieldHandle]['data'] = $parsedData[$fieldHandle]['data'];
-                } else {
-                    $parsedData[$fieldHandle]['data'] = $value;
-                }
-            } else {
-                $parsedData[$fieldHandle]['data'] = null;
-            }
-
-            // An annoying check for inconsistent nodes - I'm looking at you XML
-            if (strstr($extractFeedHandle, '.*.')) {
-                // Check for any single data. While we expect something like: [Assets/Asset/.../Img] => image_1.jpg
-                // We often get data that can be mapped as: [Assets/Asset/Img] => image_3.jpg
-                // So we check for both...
-                $testSingleFeedHandle = str_replace('.*.', '.', $extractFeedHandle);
-                $value = FeedMeArrayHelper::arrayGet($feedData, $testSingleFeedHandle, $defaultValue);
-
-                if (isset($value) && $value !== '') {
-                    $parsedData[$fieldHandle]['data'] = $value;
-                }
-            }
-
-            // If this field has any options, add those to the above node, rather than separate
-            if (strstr($fieldHandle, '-options-')) {
-
-                $fieldHandles = FeedMeArrayHelper::multiExplode(array('--', '-'), $fieldHandle);
-
-                if (strstr($fieldHandle, '--')) {
-                    array_splice($fieldHandles, 1, 0, 'data');
-                }
-
-                // Check if we've got data for this field, otherwise its unnessesarry
-                if (isset($parsedData[$fieldHandles[0]]['data'])) {
-                    FeedMeArrayHelper::arraySet($parsedData, $fieldHandles, $feedHandle);
-                }
-
-                unset($parsedData[$fieldHandle]); // Remove un-needed original
-
-            } else if (strstr($fieldHandle, '-fields-')) {
-
-                // If this field has any nested fields, add those to the above node, rather than separate
-                // Note this has to be recursive as there is field-mapping for these inner fields.
-                $fieldHandles = FeedMeArrayHelper::multiExplode(array('--', '-'), $fieldHandle);
-
-                if (strstr($fieldHandle, '--')) {
-                    array_splice($fieldHandles, 1, 0, 'data');
-                }
-
-                $nestedData = $this->_getInnerFieldData($feedData, $feedHandle);
-
-                // Check if we've got data for this field, otherwise its unnessesarry
-                if (isset($parsedData[$fieldHandles[0]]['data'])) {
-                    FeedMeArrayHelper::arraySet($parsedData, $fieldHandles, $nestedData);
-                }
-
-                unset($parsedData[$fieldHandle]); // Remove un-needed original
-
-            } else if (strstr($fieldHandle, '--')) {
-                // Some fields like a Table contain multiple blocks of data, each needing to be mapped individually
-                // which means feed-mapping will give us something like below. We need to re-jig things.
-                // [table--col1] => Array (
-                //     [0] => Option1
-                //     [1] => Option3
-                // )
-                // [table--col2] => Array (
-                //     [0] => Option2
-                //     [1] => Option4
-                // )
-
-                $split = explode('--', $fieldHandle);
-                array_splice($split, 1, 0, 'data');
-
-                $nestedData = $this->_getInnerFieldData($feedData, $feedHandle);
-
-                FeedMeArrayHelper::arraySet($parsedData, $split, $nestedData);
-                unset($parsedData[$fieldHandle]); // Remove un-needed original
             }
         }
+
+        // Handy magic function to expand dot-notation keys to multi-dimensions array
+        $parsedData = Hash::expand($parsedData);
 
         //$this->_debugOutput($parsedData);
 
         return $parsedData;
-    }
-
-    // A more lightweight version of our main feed-data-getting function
-    // I suppose this could be recursive, but lets not make life harder than it already is...
-    private function _getInnerFieldData($feedData, $feedHandle)
-    {
-        $parsedData = array();
-
-        // We display and store field mapping with '/' and '/.../', for the users benefit,
-        // but Extract needs them as '.' or '{*}', so we convert them here.
-        // Turns 'my/repeating/.../field' into 'my.repeating.*.field'
-        $extractFeedHandle = str_replace('/.../', '.*.', $feedHandle);
-        $extractFeedHandle = str_replace('[]', '.*', $extractFeedHandle);
-        $extractFeedHandle = str_replace('/', '.', $extractFeedHandle);
-
-        // Use Extract to pull out our nested data. Super-cool!
-        $value = FeedMeArrayHelper::arrayGet($feedData, $extractFeedHandle);
-
-        // An annoying check for inconsistent nodes - I'm looking at you XML
-        if (strstr($extractFeedHandle, '.*.')) {
-            // Check for any single data. While we expect something like: [Assets/Asset/.../Img] => image_1.jpg
-            // We often get data that can be mapped as: [Assets/Asset/Img] => image_3.jpg
-            // So we check for both...
-            //$testSingleFeedHandle = $this->str_lreplace('.*.', '.', $extractFeedHandle);
-            $testSingleFeedHandle = $this->str_lreplace('.*.', '.', $extractFeedHandle);
-            $tempValue = FeedMeArrayHelper::arrayGet($feedData, $testSingleFeedHandle);
-
-            // If we have two '.*.', we don't check for single data, its all good
-            if (substr_count($extractFeedHandle, '.*.') == 2) {
-                $tempValue = $value;
-            }
-
-            // Check for array of nulls
-            if (is_array($tempValue)) {
-                if (count(array_filter($tempValue)) === 0) {
-                    $tempValue = '';
-                }
-            }
-
-            if (isset($tempValue) && $tempValue !== null) {
-                $value = $tempValue;
-            }
-        }
-
-        // Store it in our data array, with the Craft field handle we're mapping to
-        if (isset($value) && $value !== '') {
-            if (is_array($value)) {
-                $value = Hash::filter($value);
-            }
-
-            //if (strstr($feedHandle, '[]')) {
-                //$parsedData['data'] = array($value);
-            //} else {
-            $parsedData['data'] = $value;
-            //}
-        }
-
-        return $parsedData;
-    }
-
-    private function str_lreplace($search, $replace, $subject)
-    {
-        $pos = strrpos($subject, $search);
-
-        if ($pos !== false) {
-            $subject = substr_replace($subject, $replace, $pos, strlen($search));
-        }
-
-        return $subject;
     }
 
     private function _debugOutput($data)

@@ -30,21 +30,39 @@ class BaseFeedMeFieldType
         return $data;
     }
 
-    public function postFieldData($element, $field, &$fieldData, $handle)
+    public function postFieldData($element, $field, &$feedData, $handle)
     {
-        if (!is_array($fieldData)) {
+        if (!is_array($feedData)) {
             return;
         }
 
         // Parse all field content for Twig shorthand variables
-        foreach ($fieldData as $attribute => $data) {
+        foreach ($feedData as $attribute => $data) {
             // Only check for string content at this stage
             if (!is_array($data)) {
                 // Don't process the data unless we detect a Twig tag - also performance
                 if (strpos($data, '{') !== false) {
-                    $fieldData[$attribute] = craft()->templates->renderObjectTemplate($data, $element);
+                    $feedData[$attribute] = craft()->templates->renderObjectTemplate($data, $element);
                 }
             }
+        }
+    }
+
+    public function checkExistingFieldData($element, $field, &$feedData, $handle)
+    {
+        // Check against existing and to-be-inserted content for each field. If it matches exactly
+        // then we're wasting time updating the content. For performance, take it out of the elements'
+        // field content.
+        $existingData = $element->getFieldValue($field->handle);
+        $fieldData = Hash::get($feedData, $handle);
+
+        if ($existingData instanceof ElementCriteriaModel) {
+            $existingData = $existingData->ids();
+        }
+
+        // Remove from the feed if there's a match of data
+        if ($existingData == $fieldData) {
+            unset($feedData[$handle]);
         }
     }
     

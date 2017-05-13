@@ -65,6 +65,25 @@ class FeedMe_FieldsService extends BaseApplicationComponent
         }
     }
 
+    public function checkExistingFieldData($element, &$data, $handle, $field = null)
+    {
+        if (isset($this->_fields[$handle])) {
+            $field = $this->_fields[$handle];
+        }
+
+        if ($field) {
+            $service = $this->_getService($field->type);
+
+            // Give the field some context of the owning element
+            $field->getFieldType()->element = $element;
+
+            // Get data for the field we're mapping to - can be all sorts of logic here
+            if (method_exists($service, 'checkExistingFieldData')) {
+                return $service->checkExistingFieldData($element, $field, $data, $handle);
+            }
+        }
+    }
+
     // Function for third-party plugins to provide custom mapping options for fieldtypes
     public function getFieldMapping($fieldType)
     {
