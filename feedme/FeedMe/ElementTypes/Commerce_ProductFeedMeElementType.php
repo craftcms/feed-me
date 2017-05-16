@@ -74,18 +74,14 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
                     $variantCriteria->limit = null;
                     $variantCriteria->localeEnabled = null;
 
-                    $feedValue = Hash::get($data, 'variants.data.' . $attribute);
-                    $feedValue = Hash::get($data, 'variants.data.' . $attribute . '.data', $feedValue);
+                    // Because a single product can have multiple attached variants - therefore multiple data,
+                    // we only really need the first variant value to find the parent product ID.
+                    $feedValue = Hash::get($data, 'variants.data.0.' . $attribute);
+                    $feedValue = Hash::get($data, 'variants.data.0.' . $attribute . '.data', $feedValue);
 
                     if (!$feedValue) {
                         FeedMePlugin::log('Commerce Variants: no data for `' . $attribute . '` to match an existing element on. Is data present for this in your feed?', LogLevel::Error, true);
                         return false;
-                    }
-
-                    // Because a single product can have multiple attached variants - therefore multiple data,
-                    // we only really need to first variant value to find the parent product ID.
-                    if (is_array($feedValue)) {
-                        $feedValue = $feedValue[0];
                     }
 
                     $variantCriteria->$attribute = DbHelper::escapeParam($feedValue);
@@ -254,8 +250,6 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
             return false;
         }
 
-        $variantData = $this->_prepProductData($variantData);
-
         // Update original data
         $data['variants'] = $variantData;
 
@@ -313,92 +307,6 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
         }
 
         $product->setVariants($variants);
-    }
-
-    private function _prepProductData($variantData) {
-        $variants = array();
-
-        // Check for single Variant - thats easy
-        if (Hash::dimensions($variantData) == 2) {
-            return array($variantData);
-        }
-
-        // We need to parse our variant data, because they're stored in a specific way from field-mapping
-        // [title] => Array (
-        //     [data] => Array (
-        //         [0] => Product 1
-        //         [1] => Product 2
-        // )
-        // Into:
-        // [0] => Array (
-        //     [data] => Array (
-        //          [title] => Product 1
-        // )
-        // [1] => Array (
-        //     [data] => Array (
-        //          [title] => Product 2
-        // )
-
-        $flatten = Hash::flatten($variantData);
-
-        $optionsArray = array();
-        $tempVariants = array();
-        foreach ($flatten as $keyedIndex => $value) {
-            $tempArray = explode('.', $keyedIndex);
-
-            // Check for a value for this field...
-            if (!isset($value) || $value === null) {
-                continue;
-            }
-
-            if (is_array($value) && empty($value)) {
-                continue;
-            }
-
-            // Save field options for later - they're a special case
-            if (strstr($keyedIndex, '.options.')) {
-                FeedMeArrayHelper::arraySet($optionsArray, $tempArray, $value);
-            } else {
-                // Extract 'data.[number]' - we need the number for which variant we're talking about
-                preg_match_all('/data.(\d*)/', $keyedIndex, $variantKeys);
-                $fieldHandle = $tempArray[0];
-                $variantKey = $variantKeys[1];
-
-                // Remove the index from inside [data], to the front
-                array_splice($tempArray, 0, 0, $variantKey);
-
-                // Check for nested data (elements, table)
-                if (preg_match('/data.(\d*\.\d*)/', $keyedIndex)) {
-                    //array_pop($tempArray);
-
-                    unset($tempArray[count($tempArray) - 2]);
-                } else {
-                    array_pop($tempArray);
-                }
-
-                // Special case for Table field. This will be refactored once again with field-aware-parsing
-                $field = craft()->fields->getFieldByHandle($fieldHandle);
-
-                if ($field && $field->type == 'Table') {
-                    array_splice($tempArray, 2, 0, 'data');
-                }
-
-                FeedMeArrayHelper::arraySet($variants, $tempArray, $value);
-            }
-        }
-
-        // Put the variants back in place where they should be
-        foreach ($variants as $blockOrder => $blockData) {
-            foreach ($blockData as $blockHandle => $innerData) {
-                $optionData = Hash::get($optionsArray, $blockHandle);
-
-                if ($optionData) {
-                    $variants[$blockOrder][$blockHandle] = Hash::merge($innerData, $optionData);
-                }
-            }
-        }
-
-        return $variants;
     }
 
     private function _getVariantBySku($sku, $localeId = null)
