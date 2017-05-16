@@ -61,14 +61,15 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
 
         // While we're at it - save a list of required fields for later. We only want to do this once
         // per import, and its vital when importing into specific locales
-        /*$entryType = craft()->sections->getEntryTypeById($element->typeId);
+        $entryType = craft()->sections->getEntryTypeById($element->typeId);
 
         $this->_requiredFields = craft()->db->createCommand()
+            ->select('f.id, f.handle')
             ->from('fieldlayoutfields flf')
             ->join('fields f', 'flf.fieldId = f.id')
             ->where('flf.layoutId = :layoutId', array(':layoutId' => $entryType->fieldLayoutId))
             ->andWhere('flf.required = 1')
-            ->queryAll();*/
+            ->queryAll();
 
         return $element;
     }
@@ -219,7 +220,7 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
         // for the primary locale, and instead create a locale for the targeted locale
         if (isset($settings['locale']) && $settings['locale']) {
             // While we want to create a blank primary locale, we need to check for required fields..
-            //$this->_populateRequiredFields($element, $data);
+            $this->_populateRequiredFields($element, $data);
 
             // Save the default locale element empty
             if (craft()->entries->saveEntry($element)) {
@@ -260,7 +261,7 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
     // Private Methods
     // =========================================================================
 
-    private function _populateRequiredFields($element, $data)
+    private function _populateRequiredFields($element, $feedData)
     {
         $requiredContent = array();
 
@@ -269,9 +270,21 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
         foreach ($this->_requiredFields as $row) {
             $handle = $row['handle'];
 
+            $data = Hash::get($feedData, $handle);
+
             // Check if this element already has content for this field - no need to add otherwise
-            if (is_null($element->$handle)) {
-                $requiredContent[$handle] = $data[$handle];
+            $existingData = $element->getFieldValue($handle);
+
+            // Some special cases for element fields
+            if ($existingData instanceof ElementCriteriaModel) {
+                $existingData = $existingData->ids();
+            }
+
+            // If there's existing data, don't overwrite from our feed, priority is existing content
+            if (is_null($existingData) || count($existingData) == 0) {
+                $requiredContent[$handle] = $data;
+            } else {
+                $requiredContent[$handle] = $existingData;
             }
         }
 
