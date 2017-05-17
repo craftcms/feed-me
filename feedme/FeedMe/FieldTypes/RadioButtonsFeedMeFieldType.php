@@ -8,7 +8,10 @@ class RadioButtonsFeedMeFieldType extends BaseFeedMeFieldType
     // Templates
     // =========================================================================
 
-
+    public function getMappingTemplate()
+    {
+        return 'feedme/_includes/fields/option-select';
+    }
     
 
 
@@ -28,8 +31,10 @@ class RadioButtonsFeedMeFieldType extends BaseFeedMeFieldType
         $settings = $field->getFieldType()->getSettings();
         $options = $settings->getAttribute('options');
 
+        $attribute = Hash::get($fieldData, 'options.match', 'value');
+
         foreach ($options as $option) {
-            if ($data == $option['value']) {
+            if ($data == $option[$attribute]) {
                 $preppedData = $option['value'];
                 break;
             }

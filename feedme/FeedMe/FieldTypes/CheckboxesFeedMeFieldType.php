@@ -8,7 +8,10 @@ class CheckboxesFeedMeFieldType extends BaseFeedMeFieldType
     // Templates
     // =========================================================================
 
-
+    public function getMappingTemplate()
+    {
+        return 'feedme/_includes/fields/option-select';
+    }
     
 
 
@@ -32,9 +35,11 @@ class CheckboxesFeedMeFieldType extends BaseFeedMeFieldType
         $settings = $field->getFieldType()->getSettings();
         $options = $settings->getAttribute('options');
 
+        $attribute = Hash::get($fieldData, 'options.match', 'value');
+
         foreach ($options as $option) {
             foreach ($data as $dataValue) {
-                if ($dataValue == $option['value']) {
+                if ($dataValue == $option[$attribute]) {
                     $preppedData[] = $option['value'];
                 }
             }
