@@ -42,7 +42,15 @@ class BaseFeedMeFieldType
             if (!is_array($data)) {
                 // Don't process the data unless we detect a Twig tag - also performance
                 if (strpos($data, '{') !== false) {
-                    $feedData[$attribute] = craft()->templates->renderObjectTemplate($data, $element);
+
+                    $variable = preg_replace('/(?<![\{\%])\{(?![\{\%])/', '', $data);
+                    $variable = preg_replace('/(?<![\}\%])\}(?![\}\%])/', '', $variable);
+
+                    // Check that this element has an attribute or content for this provided variable
+                    // But also allow traditional Twig - '{{ now }}' for instance
+                    if (isset($element->$variable) || strstr($variable, '{{')) {
+                        $feedData[$attribute] = craft()->templates->renderObjectTemplate($data, $element);
+                    }
                 }
             }
         }
