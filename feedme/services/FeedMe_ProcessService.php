@@ -395,7 +395,19 @@ class FeedMe_ProcessService extends BaseApplicationComponent
                     // But be careful not to do this for field options which may very well match a field/element handle
                     // for example - category-options-match = 'title' would grab the data for 'title' in the feed.
                     if (!strstr($keyPath, '-options')) {
-                        $parsedData[$keyPath . '.data'] = $value;
+                        // Check if we need to merge with existing data already processed in the feed
+                        if (isset($parsedData[$keyPath . '.data'])) {
+                            $valueArray = $parsedData[$keyPath . '.data'];
+
+                            if (!is_array($valueArray)) {
+                                $valueArray = array($valueArray);
+                            }
+
+                            $valueArray[] = $value;
+                            $parsedData[$keyPath . '.data'] = $valueArray;
+                        } else {
+                            $parsedData[$keyPath . '.data'] = $value;
+                        }
                     }
 
 
