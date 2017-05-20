@@ -342,13 +342,13 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             }
         }
 
-        // Now, onto grabbing out content from the feed. This is done by first looking at all the nodes
-        // in the feed, and looping through them. This importantly keep their order in the feed (important
+        // Now, onto grabbing our content from the feed. This is done by first looking at all the nodes
+        // in the feed, and looping through them. This importantly keeps their order in the feed (important
         // for Matrix), and ensures we don't miss data. This has the added benefit of abstracting complex
         // querying based on what the user maps, and the overall structure of the feed. Typically, XML
         // is difficult to determine repeatable content consistently, without its array-specifying syntax.
         //
-        // We might have something like Assets/Asset/Img store in our field mapping, but this is useless
+        // We might have something like Assets/Asset/Img stored in our field mapping, but this is useless
         // and ambiguous to look up nodes. Instead, look each node directly like 0.Assets.Asset.0.Img.0
 
         foreach ($contentNode as $j => $nodePath) {
@@ -365,7 +365,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             if ($fieldHandles) {
                 foreach ($fieldHandles as $fieldHandle => $feedHandle) {
                     if (strstr($fieldHandle, '--')) {
-                        $split = explode('--', $fieldHandle);
+                        $split = FeedMeArrayHelper::multiExplode(array('--', '-'), $fieldHandle);
 
                         // Handle multiple nested content (Matrix, Table, etx)
                         preg_match_all('/\.(\d+)\./', $nodePath, $matches);
@@ -427,6 +427,32 @@ class FeedMe_ProcessService extends BaseApplicationComponent
                 }
             }
         }
+
+        // A little extra work here for nested field content, specifically for dealing with
+        // Matrix and other complex data types. They can fetch fields not necessarily on the same node
+        // which means they loose the same block order for their main data. For instance:
+        // matrixAssets.data.block1.assets1.fields.plainText.data whereas data will be on an indexed node like
+        // matrixAssets.data.0.block1.assets1.fields.plainText.data, so we need to check for all that
+        /*foreach ($parsedData as $fieldHandle => $value) {
+            $nodePath = preg_replace('/(\.data)$/', '', $fieldHandle);
+            $tempHandle = preg_replace('/(\.\d+\.)/', '.', $nodePath);
+
+            $fields = FeedMeArrayHelper::findByPartialKey($parsedData, $tempHandle . '.fields');
+
+            // If we've found some related, nested field data, make sure we shift it to the correct key
+            if ($fields) {
+                foreach ($fields as $fieldKey => $fieldValue) {
+                    $fieldKeyField = preg_replace('/.+?(?<=\.fields\.)/', '', $fieldKey);
+                    $newKeyPath = $nodePath . '.fields.' . $fieldKeyField;
+
+                    // Add the value under the correct key path
+                    $parsedData[$newKeyPath] = $fieldValue;
+
+                    // Remove the old data from the array, as its been shifted
+                    unset($parsedData[$fieldKey]);
+                }
+            }     
+        }*/
 
         // Handy magic function to expand dot-notation keys to multi-dimensions array
         $parsedData = Hash::expand($parsedData);
