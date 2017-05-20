@@ -1,5 +1,19 @@
 [
     {
+        "version": "2.0.6",
+        "downloadUrl": "https://github.com/engram-design/FeedMe/archive/2.0.6.zip",
+        "date": "2017-05-20T00:00:00+10:00",
+        "notes": [
+            "[Added] Allow option-select fields (Dropdown, Checkboxes, etc) to specify whether data is provided as its value or label",
+            "[Improved] Prevent against specifying incorrect handles for fields or attributes for default field values (using twig)",
+            "[Improved] Check categories (and other fields) have correct settings before fetching custom fields",
+            "[Improved] Ensure required fields get their data populated when targeting a specific locale. Otherwise, will cause the feed to fail due to validation.",
+            "[Fixed] Users - fixed replacing current user group assignments",
+            "[Fixed] Minor fix for complex/uneven Matrix fields",
+            "[Fixed] Fix to check for existing parsed data and merge, rather than overwrite",
+            "[Fixed] Fix Product/Variant imports not working correctly"
+        ]
+    }, {
         "version": "2.0.5",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/2.0.5.zip",
         "date": "2017-05-13T00:00:00+10:00",
