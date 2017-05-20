@@ -164,7 +164,23 @@ class UserFeedMeElementType extends BaseFeedMeElementType
         $element->setContentFromPost($data);
         
         if (craft()->users->saveUser($element)) {
-            craft()->userGroups->assignUserToGroups($element->id, $settings['elementGroup']['User']);
+            // Check for any existing groups this user exists on
+            $groups = array();
+
+            if ($element->groups) {
+                foreach ($element->groups as $group) {
+                    $groups[] = $group->id;
+                }
+            }
+
+            $newGroupId = $settings['elementGroup']['User'];
+
+            if (!in_array($newGroupId, $groups)) {
+                $groups[] = $newGroupId;
+            }
+
+            craft()->userGroups->assignUserToGroups($element->id, $groups);
+            
             return true;
         }
 
