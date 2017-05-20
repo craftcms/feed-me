@@ -32,7 +32,9 @@ class MatrixFeedMeFieldType extends BaseFeedMeFieldType
         $blockTypes = craft()->matrix->getBlockTypesByFieldId($field->id, 'handle');
 
         // Ensure when importing only one block thats its treated correctly.
-        if (!isset($data[0])) {
+        $keys = array_keys($data);
+
+        if (!is_numeric($keys[0])) {
             $data = array($data);
         }
 
