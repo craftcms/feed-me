@@ -79,6 +79,12 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
                     $feedValue = Hash::get($data, 'variants.data.0.' . $attribute);
                     $feedValue = Hash::get($data, 'variants.data.0.' . $attribute . '.data', $feedValue);
 
+                    // Check for single-variant
+                    if (!$feedValue) {
+                        $feedValue = Hash::get($data, 'variants.data.' . $attribute);
+                        $feedValue = Hash::get($data, 'variants.data.' . $attribute . '.data', $feedValue);
+                    }
+
                     if (!$feedValue) {
                         FeedMePlugin::log('Commerce Variants: no data for `' . $attribute . '` to match an existing element on. Is data present for this in your feed?', LogLevel::Error, true);
                         return false;
@@ -248,6 +254,13 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
 
         if (!$variantData) {
             return false;
+        }
+
+        // Ensure we handle single-variants correctly
+        $keys = array_keys($variantData);
+
+        if (!is_numeric($keys[0])) {
+            $variantData = array($variantData);
         }
 
         // Update original data
