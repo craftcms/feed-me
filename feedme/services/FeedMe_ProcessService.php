@@ -222,7 +222,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
 
             if ($elementsToDisable) {
                 if ($this->_service->disable($elementsToDisable)) {
-                    FeedMePlugin::log($feed->name . ': The following elements have been disableed: ' . print_r($disableIds, true) . '.', LogLevel::Info, true);
+                    FeedMePlugin::log($feed->name . ': The following elements have been disabled: ' . print_r($disableIds, true) . '.', LogLevel::Info, true);
                 } else {
                     if ($element->getErrors()) {
                         throw new Exception(json_encode($element->getErrors()));
@@ -235,7 +235,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
 
         if (FeedMeDuplicate::isDelete($feed)) {
             if (FeedMeDuplicate::isDisable($feed)) {
-                FeedMePlugin::log($feed->name . ":  You can't have Delete and Disableed enabled at the same time as an Import Strategy.", LogLevel::Info, true);
+                FeedMePlugin::log($feed->name . ":  You can't have Delete and Disabled enabled at the same time as an Import Strategy.", LogLevel::Info, true);
                 return;
             }
 
