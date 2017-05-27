@@ -61,6 +61,118 @@ table#feeds .element-group-sub {
     margin: 10px 0;
 }
 
+
+/* Selectize */
+/*.feedme-mapping .select:before {
+    content: '';
+    background: url(/cpresources/images/spinner_element.gif) no-repeat;
+    background-size: contain;
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    top: calc(50% - 8px);
+    right: 5px;
+}*/
+
+.feedme-mapping .select:after {
+    display: none;
+}
+
+.feedme-mapping .select select {
+    opacity: 0;
+    display: block !important;
+}
+
+.feedme-mapping .select select.selectized {
+    position: absolute;
+    z-index: -1;
+}
+
+.feedme-mapping .selectize-input {
+    padding: 6px 22px 5px 10px;
+    border: 1px solid #e3e5e8;
+    border-radius: 3px;
+    overflow: visible;
+
+    background-image: -webkit-linear-gradient(#fff, #fafafa);
+    background-image: -moz-linear-gradient(#fff, #fafafa);
+    background-image: -ms-linear-gradient(#fff, #fafafa);
+    background-image: -o-linear-gradient(#fff, #fafafa);
+    background-image: linear-gradient(#fff, #fafafa);
+
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+
+.feedme-mapping .selectize-input.focus {
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+
+.feedme-mapping .selectize-input input {
+    position: relative !important;
+}
+
+.feedme-mapping .selectize-control.single .selectize-input:after {
+    font-family: 'Craft';
+    speak: none;
+    -webkit-font-feature-settings: "liga", "dlig";
+    -moz-font-feature-settings: "liga=1, dlig=1";
+    -moz-font-feature-settings: "liga", "dlig";
+    -ms-font-feature-settings: "liga", "dlig";
+    -o-font-feature-settings: "liga", "dlig";
+    font-feature-settings: "liga", "dlig";
+    text-rendering: optimizeLegibility;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    direction: ltr;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    display: inline-block;
+    text-align: center;
+    font-style: normal;
+    vertical-align: middle;
+    word-wrap: normal !important;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    position: absolute;
+    z-index: 1;
+    top: calc(50% - 5px);
+    font-size: 10px;
+    content: '▼';
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    pointer-events: none;
+
+    margin: 0 !important;
+    border: none;
+}
+
+.feedme-mapping .selectize-input div[data-value="noimport"] {
+    color: #b9bfc6;
+}
+
+.feedme-mapping .selectize-dropdown [data-selectable],
+.feedme-mapping .selectize-dropdown .optgroup-header {
+    padding: 3px 10px;
+    font-size: 12px;
+}
+
+.feedme-mapping .selectize-dropdown-content {
+    max-height: 600px;
+}
+
+.feedme-mapping td.col-map > .field .input .select {
+    display: block;
+}
+
+
 .feedme-mapping .field-extra-settings {
     font-size: 11px;
 }
@@ -83,10 +195,17 @@ table#feeds .element-group-sub {
     visibility: hidden;
 }
 
-.feedme-mapping .field-extra-settings .assets-uploads select {
+.feedme-mapping .field-extra-settings .assets-uploads .selectize-input {
     padding: 5px 22px 5px 10px !important;
     font-size: 11px;
     line-height: 11px;
+    display: inline !important;
+}
+
+.feedme-mapping .field-extra-settings .assets-uploads .selectize-dropdown [data-selectable],
+.feedme-mapping .field-extra-settings .assets-uploads .selectize-dropdown .optgroup-header {
+    padding: 3px 8px;
+    font-size: 11px;
 }
 
 .feedme-mapping .field-extra-settings .element-match span {
@@ -97,10 +216,17 @@ table#feeds .element-group-sub {
     z-index: 1;
 }
 
-.feedme-mapping .field-extra-settings .element-match select {
+.feedme-mapping .field-extra-settings .element-match .selectize-input {
     padding: 5px 22px 5px 10px !important;
     font-size: 11px;
     line-height: 11px;
+    display: inline !important;
+}
+
+.feedme-mapping .field-extra-settings .element-match .selectize-dropdown [data-selectable],
+.feedme-mapping .field-extra-settings .element-match .selectize-dropdown .optgroup-header {
+    padding: 3px 8px;
+    font-size: 11px;
 }
 
 .feedme-mapping .element-sub-field td {
@@ -114,6 +240,9 @@ table#feeds .element-group-sub {
 .feedme-mapping .element-sub-field .col-default {
     padding-right: 10px;
 }
+
+
+
 
 
 

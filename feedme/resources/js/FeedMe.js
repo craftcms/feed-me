@@ -67,6 +67,7 @@ $(function() {
         }
     }
 
+
     // For Assets, only show the upload options if we decide to upload
     $('.assets-uploads input').on('change', function(e) {
         var $options = $(this).parents('.field-extra-settings').find('.select');
@@ -80,6 +81,9 @@ $(function() {
 
     // On-load, hide/show upload options
     $('.assets-uploads input').trigger('change');
+
+    // Selectize inputs
+    $('.feedme-mapping select').selectize();
 
 
     // Allow multiple submit actions, that trigger different actions as required
