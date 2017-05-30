@@ -164,12 +164,18 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
                 $dataValue = $value;
             }
 
+            // Check for any Twig shorthand used
+            if (is_string($dataValue)) {
+                $objectModel = $this->getObjectModel($data);
+                $dataValue = craft()->templates->renderObjectTemplate($dataValue, $objectModel);
+            }
+
             switch ($handle) {
                 case 'id';
                     $element->$handle = $dataValue;
                     break;
                 case 'authorId';
-                    $element->$handle = $this->_prepareAuthorForElement($dataValue);
+                    $element->$handle = $this->prepareAuthorForElement($dataValue);
                     break;
                 case 'slug';
                     $element->$handle = ElementHelper::createSlug($dataValue);
@@ -291,25 +297,7 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
         if (count($requiredContent)) {
             $element->setContentFromPost($requiredContent);
         }
-    }
-
-    private function _prepareAuthorForElement($author)
-    {
-        if (!is_numeric($author)) {
-            $criteria = craft()->elements->getCriteria(ElementType::User);
-            $criteria->search = $author;
-            $authorUser = $criteria->first();
-            
-            if ($authorUser) {
-                $author = $authorUser->id;
-            } else {
-                $user = craft()->users->getUserByUsernameOrEmail($author);
-                $author = $user ? $user->id : 1;
-            }
-        }
-
-        return $author;
-    }
+    }    
 
     private function _prepareParentForElement($fieldData, $sectionId)
     {

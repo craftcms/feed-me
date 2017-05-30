@@ -154,6 +154,12 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
             } else {
                 $dataValue = $value;
             }
+
+            // Check for any Twig shorthand used
+            if (is_string($dataValue)) {
+                $objectModel = $this->getObjectModel($data);
+                $dataValue = craft()->templates->renderObjectTemplate($dataValue, $objectModel);
+            }
             
             switch ($handle) {
                 case 'id';
