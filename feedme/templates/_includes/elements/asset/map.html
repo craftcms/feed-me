@@ -21,6 +21,11 @@
     label: 'Asset ID' | t,
     handle: 'id',
     instructions: '<strong class="error">Warning: </strong>This should only be used for an existing Craft Asset ID.' | t,
+    default: forms.textField({
+        id: 'fieldDefaults-id',
+        name: 'fieldDefaults[id]',
+        value: feed.fieldDefaults.id ?? '',
+    }),
 }] %}
 
 <h2>{{ 'Asset Fields' | t }}</h2>

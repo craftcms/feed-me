@@ -81,6 +81,11 @@
     label: 'User ID' | t,
     handle: 'id',
     instructions: '<strong class="error">Warning: </strong>This should only be used for an existing Craft User ID.' | t,
+    default: forms.textField({
+        id: 'fieldDefaults-id',
+        name: 'fieldDefaults[id]',
+        value: feed.fieldDefaults.id ?? '',
+    }),
 }] %}
 
 <h2>{{ 'User Fields' | t }}</h2>

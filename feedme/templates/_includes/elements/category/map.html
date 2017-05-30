@@ -54,6 +54,11 @@
     label: 'Category ID' | t,
     handle: 'id',
     instructions: '<strong class="error">Warning: </strong>This should only be used for an existing Craft Category ID.' | t,
+    default: forms.textField({
+        id: 'fieldDefaults-id',
+        name: 'fieldDefaults[id]',
+        value: feed.fieldDefaults.id ?? '',
+    }),
 }] %}
 
 <h2>{{ 'Category Fields' | t }}</h2>

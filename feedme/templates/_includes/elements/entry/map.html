@@ -125,6 +125,11 @@
     label: 'Entry ID' | t,
     handle: 'id',
     instructions: '<strong class="error">Warning: </strong>This should only be used for an existing Craft Entry ID.' | t,
+    default: forms.textField({
+        id: 'fieldDefaults-id',
+        name: 'fieldDefaults[id]',
+        value: feed.fieldDefaults.id ?? '',
+    }),
 }]) %}
 
 <h2>{{ 'Entry Fields' | t }}</h2>
