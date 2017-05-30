@@ -45,7 +45,15 @@ class TableFeedMeFieldType extends BaseFeedMeFieldType
         }
     
         foreach ($data as $i => $row) {
+            if (isset($row['data'])) {
+                $row = $row['data'];
+            }
+
             foreach ($row as $j => $column) {
+                if (!isset($column['data'])) {
+                    $column = array('data' => $column);
+                }
+
                 // Check for false for checkbox
                 if ($column['data'] === 'false') {
                     $column['data'] = null;
