@@ -142,7 +142,7 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
             $elementIds[] = $element->id;
         }
 
-        return craft()->db->createCommand()->update('elements', array('enabled' => false), array('in', 'id', $elementIds));
+        return craft()->db->createCommand()->update('elements', array('enabled' => 0), array('in', 'id', $elementIds));
     }
 
     public function prepForElementModel(BaseElementModel $element, array &$data, $settings)
