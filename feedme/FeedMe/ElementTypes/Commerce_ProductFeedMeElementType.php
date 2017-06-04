@@ -101,6 +101,10 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
                     } else {
                         return null;
                     }
+                    else {
+                        // otherwise we haven't found a variant but we're looking for one, so let's an empty array
+                        return array();
+                    }
                 } else {
                     $feedValue = Hash::get($data, $handle);
                     $feedValue = Hash::get($data, $handle . '.data', $feedValue);
