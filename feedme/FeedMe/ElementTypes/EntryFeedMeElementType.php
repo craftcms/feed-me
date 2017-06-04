@@ -109,6 +109,10 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
                     }
                 }
 
+                if ($handle == 'postDate' || $handle == 'expiryDate') {
+                    $feedValue = FeedMeDateHelper::getDateTimeString($feedValue);
+                }
+
                 if ($feedValue) {
                     $criteria->$handle = DbHelper::escapeParam($feedValue);
                 } else {

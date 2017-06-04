@@ -75,6 +75,10 @@ class Commerce_OrderFeedMeElementType extends BaseFeedMeElementType
                     }
                 }
 
+                if ($handle == 'dateOrdered' || $handle == 'datePaid') {
+                    $feedValue = FeedMeDateHelper::getDateTimeString($feedValue);
+                }
+
                 if ($feedValue) {
                     $criteria->$handle = DbHelper::escapeParam($feedValue);
                 } else {

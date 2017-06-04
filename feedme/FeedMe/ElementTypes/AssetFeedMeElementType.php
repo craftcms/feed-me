@@ -65,6 +65,10 @@ class AssetFeedMeElementType extends BaseFeedMeElementType
                 $feedValue = Hash::get($data, $handle);
                 $feedValue = Hash::get($data, $handle . '.data', $feedValue);
 
+                if ($handle == 'dateModified') {
+                    $feedValue = FeedMeDateHelper::getDateTimeString($feedValue);
+                }
+
                 if ($feedValue) {
                     $criteria->$handle = DbHelper::escapeParam($feedValue);
                 } else {

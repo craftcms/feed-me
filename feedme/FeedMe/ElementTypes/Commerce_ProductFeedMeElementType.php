@@ -105,6 +105,10 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
                     $feedValue = Hash::get($data, $handle);
                     $feedValue = Hash::get($data, $handle . '.data', $feedValue);
 
+                    if ($handle == 'postDate' || $handle == 'expiryDate') {
+                        $feedValue = FeedMeDateHelper::getDateTimeString($feedValue);
+                    }
+
                     if ($feedValue) {
                         $criteria->$handle = DbHelper::escapeParam($feedValue);
                     } else {

@@ -44,6 +44,17 @@ class FeedMeDateHelper
         return $parsedDate;
     }
 
+    public static function getDateTimeString($date)
+    {
+        if (is_array($date) && (isset($date['date']) || isset($date['time']))) {
+            $dateObject = DateTime::createFromString($date);
+        } else {
+            $dateObject = DateTime::createFromString($date, craft()->timezone);
+        }
+
+        return $dateObject->format('Y-m-d H:i:s');
+    }
+
     public static function isTimestamp($string)
     {
         try {
