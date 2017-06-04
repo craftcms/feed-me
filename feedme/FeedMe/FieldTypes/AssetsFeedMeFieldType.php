@@ -296,14 +296,22 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
                 }
 
                 $preppedData[$fieldHandle] = $data;
+
+                if (craft()->config->get('checkExistingFieldData', 'feedMe')) {
+                    $field = craft()->fields->getFieldByHandle($fieldHandle);
+
+                    craft()->feedMe_fields->checkExistingFieldData($asset, $preppedData, $fieldHandle, $field);
+                }
             }
 
-            $asset->setContentFromPost($preppedData);
+            if ($preppedData) {
+                $asset->setContentFromPost($preppedData);
 
-            if (!craft()->assets->storeFile($asset)) {
-                FeedMePlugin::log('Asset error: ' . json_encode($asset->getErrors()), LogLevel::Error, true);
-            } else {
-                FeedMePlugin::log('Updated Asset (ID ' . $assetId . ') inner-element with content: ' . json_encode($preppedData), LogLevel::Info, true);
+                if (!craft()->assets->storeFile($asset)) {
+                    FeedMePlugin::log('Asset error: ' . json_encode($asset->getErrors()), LogLevel::Error, true);
+                } else {
+                    FeedMePlugin::log('Updated Asset (ID ' . $assetId . ') inner-element with content: ' . json_encode($preppedData), LogLevel::Info, true);
+                }
             }
         }
     }

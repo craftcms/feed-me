@@ -102,14 +102,22 @@ class UsersFeedMeFieldType extends BaseFeedMeFieldType
                 }
 
                 $preppedData[$fieldHandle] = $data;
+
+                if (craft()->config->get('checkExistingFieldData', 'feedMe')) {
+                    $field = craft()->fields->getFieldByHandle($fieldHandle);
+
+                    craft()->feedMe_fields->checkExistingFieldData($user, $preppedData, $fieldHandle, $field);
+                }
             }
 
-            $user->setContentFromPost($preppedData);
+            if ($preppedData) {
+                $user->setContentFromPost($preppedData);
 
-            if (!craft()->users->saveUser($user)) {
-                FeedMePlugin::log('User error: ' . json_encode($user->getErrors()), LogLevel::Error, true);
-            } else {
-                FeedMePlugin::log('Updated User (ID ' . $userId . ') inner-element with content: ' . json_encode($preppedData), LogLevel::Info, true);
+                if (!craft()->users->saveUser($user)) {
+                    FeedMePlugin::log('User error: ' . json_encode($user->getErrors()), LogLevel::Error, true);
+                } else {
+                    FeedMePlugin::log('Updated User (ID ' . $userId . ') inner-element with content: ' . json_encode($preppedData), LogLevel::Info, true);
+                }
             }
         }
     }

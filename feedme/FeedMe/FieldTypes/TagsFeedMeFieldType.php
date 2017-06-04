@@ -84,14 +84,22 @@ class TagsFeedMeFieldType extends BaseFeedMeFieldType
                 }
 
                 $preppedData[$fieldHandle] = $data;
+
+                if (craft()->config->get('checkExistingFieldData', 'feedMe')) {
+                    $field = craft()->fields->getFieldByHandle($fieldHandle);
+
+                    craft()->feedMe_fields->checkExistingFieldData($tag, $preppedData, $fieldHandle, $field);
+                }
             }
 
-            $tag->setContentFromPost($preppedData);
+            if ($preppedData) {
+                $tag->setContentFromPost($preppedData);
 
-            if (!craft()->tags->saveTag($tag)) {
-                FeedMePlugin::log('Tag error: ' . json_encode($tag->getErrors()), LogLevel::Error, true);
-            } else {
-                FeedMePlugin::log('Updated Tag (ID ' . $tagId . ') inner-element with content: ' . json_encode($preppedData), LogLevel::Info, true);
+                if (!craft()->tags->saveTag($tag)) {
+                    FeedMePlugin::log('Tag error: ' . json_encode($tag->getErrors()), LogLevel::Error, true);
+                } else {
+                    FeedMePlugin::log('Updated Tag (ID ' . $tagId . ') inner-element with content: ' . json_encode($preppedData), LogLevel::Info, true);
+                }
             }
         }
     }
