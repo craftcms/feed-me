@@ -19,6 +19,11 @@ class DateFeedMeFieldType extends BaseFeedMeFieldType
     {
         $data = Hash::get($fieldData, 'data');
 
+        // Allow twig processing at this early stage
+        if (strstr($data, '{{')) {
+            $data = craft()->templates->renderObjectTemplate($data, $element);
+        }
+
         $dateValue = FeedMeDateHelper::parseString($data);
 
         if ($dateValue) {
