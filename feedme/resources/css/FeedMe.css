@@ -275,6 +275,14 @@ table#feeds .element-group-sub {
     margin-top: 15px;
 }
 
+.feedme-success-btns {
+    margin-top: 2em;
+}
+
+.feedme-success-btns a:first-child {
+    margin-right: 1em;
+}
+
 
 
 /* ==========================================================================

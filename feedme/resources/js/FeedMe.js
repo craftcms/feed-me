@@ -103,6 +103,14 @@ $(function() {
 
 (function() {
 
+var feedMeSuccessHtml = '<div><span data-icon="check"></span> ' +
+        Craft.t('Processing complete!') +
+    '</div>' + 
+    '<div class="feedme-success-btns">' +
+        '<a class="btn submit" href="' + Craft.getUrl('feedme/feeds') + '">Back to Feeds</a>' + 
+        '<a class="btn" href="' + Craft.getUrl('feedme/logs') + '">View logs</a>' + 
+    '</div>';
+
 Craft.FeedMeTaskProgress = Garnish.Base.extend({
     tasksById: null,
     completedTasks: null,
@@ -140,7 +148,7 @@ Craft.FeedMeTaskProgress = Garnish.Base.extend({
             newTaskIds.push(taskInfo.id);
         } else {
             // Likely too fast for Craft to register this was even a task!
-            $('.progress-container').html('<div><span data-icon="check"></span> ' + Craft.t('Processing complete!') + '</div>');
+            $('.progress-container').html(feedMeSuccessHtml);
         }
 
         for (var id in this.tasksById) {
@@ -242,7 +250,7 @@ Craft.FeedMeTaskProgress.Task = Garnish.Base.extend({
     complete: function()
     {
         this.$statusContainer.empty();
-        $('<div><span data-icon="check"></span> ' + Craft.t('Processing complete!') + '</div>').appendTo(this.$statusContainer);
+        $(feedMeSuccessHtml).appendTo(this.$statusContainer);
     },
 
     destroy: function() {
