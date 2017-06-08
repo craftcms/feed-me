@@ -13,6 +13,11 @@ class FeedMeDateHelper
     {
         $parsedDate = null;
 
+        // Check for empty-string dates
+        if ($date === '') {
+            return $parsedDate;
+        }
+
         if (is_array($date)) {
             $dateString = Hash::get($date, 'date');
 
