@@ -103,12 +103,6 @@ class AssetFeedMeElementType extends BaseFeedMeElementType
             $folder = craft()->assets->getRootFolderBySourceId($element->sourceId);
             $urlData = $fieldData['data'];
 
-            // Check config settings if we need to clean url
-            $urlData = UrlHelper::stripQueryString($urlData);
-
-            // Cleanup filenames to match Craft Assets
-            $urlData = str_replace(',', '\,', $urlData);
-
             $fileId = $service->fetchRemoteImage($urlData, $folder->id, $fieldData['options']);
 
             $element = craft()->assets->getFileById($fileId);
