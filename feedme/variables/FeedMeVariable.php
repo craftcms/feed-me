@@ -1,6 +1,8 @@
 <?php
 namespace Craft;
 
+use Cake\Utility\Hash as Hash;
+
 class FeedMeVariable
 {
     public function getPlugin()
@@ -141,10 +143,20 @@ class FeedMeVariable
     // Helper functions for element fields in getting their inner-element field layouts
     public function getAssetFieldLayout($settings)
     {
+        $folderSourceId = null;
+
+        if (!$settings) {
+            return false;
+        }
+
         if (empty($settings['useSingleFolder'])) {
-            $folderSourceId = $settings['defaultUploadLocationSource'];
+            $folderSourceId = Hash::get($settings, 'defaultUploadLocationSource');
         } else {
-            $folderSourceId = $settings['singleUploadLocationSource'];
+            $folderSourceId = Hash::get($settings, 'singleUploadLocationSource');
+        }
+
+        if (!$folderSourceId) {
+            return false;
         }
 
         $source = craft()->assetSources->getSourceById($folderSourceId);
