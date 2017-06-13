@@ -125,13 +125,13 @@ class FeedMe_LicenseService extends BaseApplicationComponent
     public function unregisterLicenseKey()
     {
         $et = new FeedMe_License(static::UnregisterPlugin, $this->pluginHandle, $this->pluginVersion, $this->licenseKey);
-        $etResponse = $et->phoneHome(true);
+        $et->phoneHome(true);
 
         $this->setLicenseKey(null);
         $this->setLicenseKeyStatus(LicenseKeyStatus::Unknown);
         $this->setEdition('0');
 
-        return $this->_handleEtResponse($etResponse);
+        return true;
     }
 
     public function transferLicenseKey()

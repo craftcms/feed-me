@@ -49,6 +49,8 @@ class EntriesFeedMeFieldType extends BaseFeedMeFieldType
                     $sectionIds[] = $id;
                 }
             }
+        } else if ($sources === '*') {
+            $sectionIds = array($element->sectionId);
         }
 
         // Find existing
@@ -137,7 +139,7 @@ class EntriesFeedMeFieldType extends BaseFeedMeFieldType
         $element = new EntryModel();
 
         if ($attribute == 'title') {
-            $element->getContent()->title = DbHelper::escapeParam($entry);
+            $element->getContent()->title = $entry;
         } else {
             $element->$attribute = DbHelper::escapeParam($entry);
         }
