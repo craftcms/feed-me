@@ -38,6 +38,42 @@ class MatrixFeedMeFieldType extends BaseFeedMeFieldType
             $data = array($data);
         }
 
+        // If we've got Matrix data like 0.0.blockHandle.fieldHandle - then we've got a problem.
+        // Commonly, this will be due to a field being referenced outside of inner-repeatable Matrix data.
+        $hasOrphanedData = false;
+
+        foreach (Hash::flatten($data) as $key => $value) {
+            if (preg_match('/^\d+\.\d+/', $key)) {
+                $hasOrphanedData = true;
+                break;
+            }
+        }
+
+        if ($hasOrphanedData) {
+            $seperateBlockData = array();
+
+            foreach ($data as $sortKey => $sortData) {
+                foreach ($sortData as $blockHandle => $blockFieldData) {
+                    if (!is_numeric($blockHandle)) {
+                        $seperateBlockData[$blockHandle] = $blockFieldData;
+
+                        unset($data[$sortKey][$blockHandle]);
+                    }
+                }
+            }
+
+            // Now, append this content to each block that we're importing, so it gets sorted out properly
+            if ($seperateBlockData) {
+                foreach ($data as $sortKey => $sortData) {
+                    foreach ($sortData as $blockHandle => $blockFieldData) {
+                        $data[$sortKey][$blockHandle] = array_merge_recursive($blockFieldData, $seperateBlockData);
+                    }
+                }
+
+                $data = $data[0];
+            }
+        }
+
         foreach ($data as $sortKey => $sortData) {
             $preppedFieldData = array();
 
