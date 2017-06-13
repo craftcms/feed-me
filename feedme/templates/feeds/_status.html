@@ -12,7 +12,7 @@
 
 {% block blockContent %}
 
-{% if craft.session.getFlash('runFeed', '', false) %}
+{% if craft.session.getFlash('runFeed', '', false) or craft.tasks.getTotalTasks() %}
     <div class="feedme-fullpage fullpage-running fullpage-running-cp">
         <img src="{{ resourceUrl('feedme/icon-success.svg') }}">
         
