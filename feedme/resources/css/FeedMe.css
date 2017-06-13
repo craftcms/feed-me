@@ -180,11 +180,16 @@ table#feeds .element-group-sub {
     top: 0;
 }
 
+
+.feedme-mapping .field-extra-settings .assets-uploads .asset-label-hide {
+    visibility: hidden;
+}
+
 .feedme-mapping .field-extra-settings .assets-uploads .checkboxfield {
     float: left;
     margin-right: 10px;
-    padding-top: 2px;
-    margin-bottom: 0;
+    padding-top: 0;
+    margin-bottom: 3px;
     z-index: 1;
 }
 

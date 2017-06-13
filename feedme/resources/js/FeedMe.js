@@ -71,10 +71,13 @@ $(function() {
     // For Assets, only show the upload options if we decide to upload
     $('.assets-uploads input').on('change', function(e) {
         var $options = $(this).parents('.field-extra-settings').find('.select');
+        var $label = $(this).parents('.field-extra-settings').find('.asset-label-hide');
 
         if ($(this).prop('checked')) {
+            $label.css({ opacity: 1, visibility: 'visible' });
             $options.css({ opacity: 1, visibility: 'visible' });
         } else {
+            $label.css({ opacity: 0, visibility: 'hidden' });
             $options.css({ opacity: 0, visibility: 'hidden' });
         }
     });
