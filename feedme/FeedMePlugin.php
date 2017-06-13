@@ -71,6 +71,7 @@ class FeedMePlugin extends BasePlugin
             'feedme/feeds/(?P<feedId>\d+)' => array('action' => 'feedMe/feeds/editFeed'),
             'feedme/feeds/map/(?P<feedId>\d+)' => array('action' => 'feedMe/feeds/mapFeed'),
             'feedme/feeds/run/(?P<feedId>\d+)' => array('action' => 'feedMe/feeds/runFeed'),
+            'feedme/feeds/status/(?P<feedId>\d+)' => array('action' => 'feedMe/feeds/statusFeed'),
             'feedme/logs' => array('action' => 'feedMe/logs/logs'),
             'feedme/settings/general' => array('action' => 'feedMe/settings'),
             'feedme/settings/license' => array('action' => 'feedMe/license/edit'),

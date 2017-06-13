@@ -1,0 +1,37 @@
+{% extends 'feedme/_layouts' %}
+
+{% set crumbs = [
+    { label: craft.feedme.getPluginName | t, url: url('feedme') },
+    { label: feed.name | t, url: url('feedme/feeds/' ~ feed.id) },
+] %}
+
+{% set title = feed.name %}
+
+{% set title = (feed.id) ? feed.name : 'Create a new feed' | t %}
+{% set noTabs = true %}
+
+{% block blockContent %}
+
+{% if craft.session.getFlash('runFeed', '', false) %}
+    <div class="feedme-fullpage fullpage-running fullpage-running-cp">
+        <img src="{{ resourceUrl('feedme/icon-success.svg') }}">
+        
+        <h2>{{ '{name} has started processing' | t({ name: feed.name }) }}</h2>
+        <p>{{ 'Data is now being imported from your feed. You can navigate away from this page without disrupting your feed processing.' | t }}</p>
+
+        <div class="progress-container">
+            <div class="spinner"></div>
+        </div>
+    </div>
+{% else %}
+    <div class="feedme-fullpage fullpage-waiting">
+        <img src="{{ resourceUrl('feedme/icon-info.svg') }}">
+        
+        <h2>{{ '{name} is ready to run' | t({ name: feed.name }) }}</h2>
+        <p>{{ 'Click the button below to run your feed. This page will reload showing progress.' | t }}</p>
+
+        <a class="btn submit" href="{{ url('feedme/feeds/run/' ~ feed.id) }}">{{ 'Start Feed Processing' | t }}</a>
+    </div>
+{% endif %}
+
+{% endblock %}

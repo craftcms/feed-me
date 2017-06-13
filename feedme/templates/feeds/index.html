@@ -70,8 +70,7 @@
                     {% endif %}
 
                     <td class="thin action">
-                        {% set directUrl = actionUrl('/feedMe/feeds/runTask', { direct: true, feedId: feed.id, passkey: feed.passkey }) | replace(craft.config.cpTrigger ~ '/', '') %}
-                        <a href="{{ directUrl }}" target="_blank" class="direct fa-icon" title="{{ 'Direct feed link' | t }}" role="button"><i class="fa fa-external-link"></i></a>
+                        <a href="{{ url('feedme/feeds/status/' ~ feed.id) }}" class="fa-icon" title="{{ 'Feed Status' | t }}" role="button"><i class="fa fa-info-circle"></i></a>
                     </td>
                     
                     <td class="thin action"><a class="delete icon" title="{{ 'Delete' | t }}" role="button"></a></td>

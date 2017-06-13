@@ -101,11 +101,11 @@ class FeedMe_FeedsController extends BaseController
         $this->_saveAndRedirect($feed, 'feedme/feeds/map/', true);
     }
 
-    public function actionSaveAndImportFeed()
+    public function actionSaveAndReviewFeed()
     {
         $feed = $this->_getModelFromPost();
 
-        $this->_saveAndRedirect($feed, 'feedme/feeds/run/', true);
+        $this->_saveAndRedirect($feed, 'feedme/feeds/status/', true);
     }
 
     public function actionSaveAndDuplicateFeed()
