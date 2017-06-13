@@ -74,8 +74,17 @@ class FeedMe_FeedsController extends BaseController
 
             $this->renderTemplate('feedme/feeds/_direct', $variables);
         } else {
-            $this->renderTemplate('feedme/feeds/_run', $variables);
+            $this->redirect(craft()->request->urlReferrer);
         }
+    }
+
+    public function actionStatusFeed(array $variables = array())
+    {
+        $feed = craft()->feedMe_feeds->getFeedById($variables['feedId']);
+
+        $variables['feed'] = $feed;
+
+        $this->renderTemplate('feedme/feeds/_status', $variables);
     }
 
     public function actionSaveFeed()
@@ -97,6 +106,19 @@ class FeedMe_FeedsController extends BaseController
         $feed = $this->_getModelFromPost();
 
         $this->_saveAndRedirect($feed, 'feedme/feeds/run/', true);
+    }
+
+    public function actionSaveAndDuplicateFeed()
+    {
+        $feed = $this->_getModelFromPost();
+
+        if (craft()->feedMe_feeds->saveFeed($feed)) {
+            craft()->feedMe_feeds->duplicateFeed($feed);
+        }
+
+        craft()->userSession->setNotice(Craft::t('Feed duplicated.'));
+
+        $this->redirect('feedme/feeds');
     }
 
     public function actionDeleteFeed()
@@ -154,6 +176,8 @@ class FeedMe_FeedsController extends BaseController
 
             // if not using the direct param for this request, do UI stuff 
             craft()->userSession->setNotice(Craft::t('Feed processing started.'));
+
+            craft()->userSession->setFlash('runFeed', true);
         }
 
         // If not, are we running directly?

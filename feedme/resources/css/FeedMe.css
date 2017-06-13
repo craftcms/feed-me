@@ -9,17 +9,15 @@
 }
 
 .fa-icon.direct .fa-external-link,
+.fa-icon .fa-info-circle,
 .fa-icon.debug .fa-bug {
     color: rgba(0, 0, 0, 0.2);
 }
 
 .fa-icon.direct:hover .fa-external-link,
+.fa-icon:hover .fa-info-circle,
 .fa-icon.debug:hover .fa-bug {
     color: #0d78f2;
-}
-
-.fa-icon.debug .fa-bug {
-
 }
 
 body.ltr #feeds .thin.action {

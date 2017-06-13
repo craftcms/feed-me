@@ -101,4 +101,11 @@ class FeedMe_FeedsService extends BaseApplicationComponent
         return craft()->db->createCommand()->delete('feedme_feeds', array('id' => $feedId));
     }
 
+    public function duplicateFeed(FeedMe_FeedModel $feed)
+    {
+        $feed->id = null;
+
+        return $this->saveFeed($feed);
+    }
+
 }

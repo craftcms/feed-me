@@ -176,6 +176,30 @@
         on: (feed.id) ? feed.backup : true,
     }) }}
 
+    <hr>
+
+    {% set directUrl = actionUrl('/feedMe/feeds/runTask', { direct: true, feedId: feed.id, passkey: feed.passkey }) | replace(craft.config.cpTrigger ~ '/', '') %}
+
+    {{ forms.textField({
+        label: 'Direct Feed URL' | t,
+        instructions: 'Copy and paste this URL for direct-access to processing this feed. Commonly used when triggering via a Cron Job.' | t,
+        readonly: true,
+        value: directUrl,
+    }) }}
+
+    <div class="field">
+        <div class="heading">
+            <label>{{ 'Duplicate Feed' | t }}</label>
+            <div class="instructions">
+                <p>{{ 'Quickly duplicate this feed, including all settings and field mappings.' | t }}</p>
+            </div>
+        </div>
+
+        <div class="input ltr">
+            <input type="button" data-action="feedMe/feeds/saveAndDuplicateFeed" class="btn" value="{{ 'Duplicate Feed' | t }}">
+        </div>
+    </div>
+
 {% endblock %}
 
 {% block footerButton %}
