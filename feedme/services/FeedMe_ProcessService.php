@@ -355,6 +355,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             $feedPath = str_replace('.', '/', $nodePath);
             $feedPath = preg_replace('/(\/\d+\/)/', '/', $feedPath);
             $feedPath = preg_replace('/(\/\d+)|(\d+\/)/', '', $feedPath);
+            $feedPath = preg_replace('/(\/\d+)|^(\d+\/)/', '', $feedPath);
 
             // Get the feed value using dot-notation (but specifically for a node)
             $value = Hash::get($feedData, $nodePath);

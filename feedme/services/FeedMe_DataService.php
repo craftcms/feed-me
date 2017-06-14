@@ -42,7 +42,7 @@ class FeedMe_DataService extends BaseApplicationComponent
         // as some nodes don't exist on the first primary element, but do throughout the feed.
         foreach (Hash::flatten($dataArray, '/') as $nodePath => $value) {
             $feedPath = preg_replace('/(\/\d+\/)/', '/', $nodePath);
-            $feedPath = preg_replace('/(\d+\/)|(\/\d+)/', '', $feedPath);
+            $feedPath = preg_replace('/^(\d+\/)|(\/\d+)/', '', $feedPath);
 
             // The above is used to normalise repeatable nodes. Paths to nodes will look similar to:
             // 0.Assets.Asset.0.Img.0 - we want to change this to Assets/Asset/Img, This is mostly
