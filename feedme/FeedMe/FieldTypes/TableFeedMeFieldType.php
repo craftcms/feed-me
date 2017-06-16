@@ -43,6 +43,23 @@ class TableFeedMeFieldType extends BaseFeedMeFieldType
         if (Hash::dimensions($data) == 2) {
             $data = array($data);
         }
+
+        // Normalise some data
+        $parsedData = array();
+
+        foreach (Hash::flatten($data) as $key => $value) {
+            preg_match('/^(col\d+).*(\d+)$/', $key, $matches);
+
+            if (isset($matches[1]) && $matches[1] != '') {
+                $index = $matches[2] . '.data.' . $matches[1];
+
+                $parsedData[$index] = $value;
+            } else {
+                $parsedData[$key] = $value;
+            }
+        }
+
+        $data = Hash::expand($parsedData);
     
         foreach ($data as $i => $row) {
             if (isset($row['data'])) {
