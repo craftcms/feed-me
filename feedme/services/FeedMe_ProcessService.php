@@ -265,7 +265,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         $this->_debugOutput('Processing ' . count($this->_processedElementIds) . ' elements finished in ' . $execution_time . 's.');
     }
 
-    public function debugFeed($feedId, $limit)
+    public function debugFeed($feedId, $limit, $offset)
     {
         $this->_debug = true;
 
@@ -282,6 +282,10 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         if (!count($feedData)) {
             $this->_debugOutput('No feed items to process.');
             return true;
+        }
+
+        if ($offset) {
+            $feedData = array_slice($feedData, $offset);
         }
 
         foreach ($feedData as $key => $data) {

@@ -144,8 +144,9 @@ class FeedMe_FeedsController extends BaseController
     {
         $feedId = craft()->request->getParam('feedId');
         $limit = craft()->request->getParam('limit');
+        $offset = craft()->request->getParam('offset');
 
-        craft()->feedMe_process->debugFeed($feedId, $limit);
+        craft()->feedMe_process->debugFeed($feedId, $limit, $offset);
         craft()->end();
     }
 
