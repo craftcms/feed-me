@@ -61,7 +61,22 @@ class BaseFeedMeFieldType
         // Check against existing and to-be-inserted content for each field. If it matches exactly
         // then we're wasting time updating the content. For performance, take it out of the elements'
         // field content.
-        $existingData = $element->getFieldValue($field->handle);
+        $fieldHandle = $field->handle;
+
+        if (isset($element->content->$fieldHandle)) {
+            $existingData = $element->content->$fieldHandle;
+        } else {
+            $existingData = null;
+        }
+
+        // Give the field type a chance to prep the existing data for use
+        $fieldType = $field->getFieldType();
+
+        if ($fieldType) {
+            $fieldType->element = $element;
+            $existingData = $fieldType->prepValue($existingData);
+        }
+
         $fieldData = Hash::get($feedData, $handle);
 
         if ($existingData instanceof ElementCriteriaModel) {
