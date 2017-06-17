@@ -272,6 +272,11 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         $feed = craft()->feedMe_feeds->getFeedById($feedId);
 
         $feedData = craft()->feedMe_data->getFeed($feed->feedType, $feed->feedUrl, $feed->primaryElement, $feed);
+
+        if ($offset) {
+            $feedData = array_slice($feedData, $offset);
+        }
+
         $feedSettings = craft()->feedMe_process->setupForProcess($feed, $feedData);
 
         // Fire an "onBeforeProcessFeed" event
@@ -282,10 +287,6 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         if (!count($feedData)) {
             $this->_debugOutput('No feed items to process.');
             return true;
-        }
-
-        if ($offset) {
-            $feedData = array_slice($feedData, $offset);
         }
 
         foreach ($feedData as $key => $data) {
