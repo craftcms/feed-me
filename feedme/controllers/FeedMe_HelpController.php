@@ -125,6 +125,9 @@ class FeedMe_HelpController extends BaseController
                         }
                     }
 
+                    // Strip field handles in array - we don't need them an easier to import into FM
+                    $fieldInfo = array_values($fieldInfo);
+
                     // Support PHP <5.4, JSON_PRETTY_PRINT = 128, JSON_NUMERIC_CHECK = 32
                     $json = json_encode($fieldInfo, 128 | 32);
 
@@ -237,66 +240,129 @@ class FeedMe_HelpController extends BaseController
 
     private function _prepareExportField($field)
     {
-        $fieldDefs = array(
-            'name'         => $field->name,
-            'context'      => $field->context,
+        $newField = array(
+            'name' => $field->name,
+            'handle' => $field->handle,
             'instructions' => $field->instructions,
+            'required' => $field->required,
             'translatable' => $field->translatable,
-            'type'         => $field->type,
-            'settings'     => $field->settings
+            'type' => $field->type,
+            'settings' => $field->settings,
         );
 
         if ($field->type == 'Matrix') {
-            $blockTypeDefs = array();
-            $blockTypes = craft()->matrix->getBlockTypesByFieldId($field->id);
-
-            foreach ($blockTypes as $blockType) {
-                $blockTypeFieldDefs = array();
-
-                foreach ($blockType->getFields() as $blockTypeField) {
-                    $blockTypeFieldDefs[$blockTypeField->handle] = array(
-                        'name'         => $blockTypeField->name,
-                        'required'     => $blockTypeField->required,
-                        'translatable' => $blockTypeField->translatable,
-                        'type'         => $blockTypeField->type,
-                        'settings'     => $blockTypeField->settings
-                    );
-                }
-
-                $blockTypeDefs[$blockType->handle] = array(
-                    'name'   => $blockType->name,
-                    'fields' => $blockTypeFieldDefs
-                );
-            }
-
-            $fieldDefs['blockTypes'] = $blockTypeDefs;
+            $newField['settings'] = $this->_prepareExportMatrixField($field);
         }
 
         if ($field->type == 'SuperTable') {
-            $blockTypeDefs = array();
-            $blockTypes = craft()->superTable->getBlockTypesByFieldId($field->id);
-
-            foreach ($blockTypes as $blockType) {
-                $blockTypeFieldDefs = array();
-
-                foreach ($blockType->getFields() as $blockTypeField) {
-                    $blockTypeFieldDefs[$blockTypeField->handle] = array(
-                        'name'         => $blockTypeField->name,
-                        'required'     => $blockTypeField->required,
-                        'translatable' => $blockTypeField->translatable,
-                        'type'         => $blockTypeField->type,
-                        'settings'     => $blockTypeField->settings
-                    );
-                }
-
-                $blockTypeDefs = array(
-                    'fields' => $blockTypeFieldDefs
-                );
-            }
-
-            $fieldDefs['blockTypes'] = $blockTypeDefs;
+            $newField['settings'] = $this->_prepareExportSuperTableField($field);
         }
 
-        return $fieldDefs;
+        // Position Select - you sly dog!
+        if ($field->type == 'PositionSelect') {
+            $newField['settings'] = $this->_prepareExportPositionSelectField($field);
+        }
+
+        return $newField;
+    }
+
+    public function _prepareExportMatrixField($field)
+    {
+        $fieldSettings = $field->settings;
+
+        $blockTypes = craft()->matrix->getBlockTypesByFieldId($field->id);
+
+        $blockCount = 1;
+        foreach ($blockTypes as $blockType) {
+            $fieldSettings['blockTypes']['new' . $blockCount] = array(
+                'name' => $blockType->name,
+                'handle' => $blockType->handle,
+                'fields' => array(),
+            );
+
+            $fieldCount = 1;
+            foreach ($blockType->fields as $blockField) {
+                // Case for nested Super Table
+                if ($blockField->type == 'SuperTable') {
+                    $settings = $this->processSuperTable($blockField);
+                } else if ($blockField->type == 'PositionSelect') {
+                    $settings = $this->processPositionSelect($blockField);
+                } else {
+                    $settings = $blockField->settings;
+                }
+
+                $fieldSettings['blockTypes']['new' . $blockCount]['fields']['new' . $fieldCount] = array(
+                    'name' => $blockField->name,
+                    'handle' => $blockField->handle,
+                    'required' => $blockField->required,
+                    'instructions' => $blockField->instructions,
+                    'translatable' => $blockField->translatable,
+                    'type' => $blockField->type,
+                    'typesettings' => $settings,
+                );
+
+                $fieldCount++;
+            }
+
+            $blockCount++;
+        }
+
+        return $fieldSettings;
+    }
+
+    public function _prepareExportSuperTableField($field)
+    {
+        $fieldSettings = $field->settings;
+
+        $blockTypes = craft()->superTable->getBlockTypesByFieldId($field->id);
+
+        $blockCount = 1;
+        foreach ($blockTypes as $blockType) {
+            $fieldSettings['blockTypes']['new' . $blockCount] = array(
+                'fields' => array(),
+            );
+
+            $fieldCount = 1;
+            foreach ($blockType->fields as $blockField) {
+                // Case for nested Matrix
+                if ($blockField->type == 'Matrix') {
+                    $settings = $this->processMatrix($blockField);
+                } else if ($blockField->type == 'PositionSelect') {
+                    $settings = $this->processPositionSelect($blockField);
+                } else {
+                    $settings = $blockField->settings;
+                }
+
+                $fieldSettings['blockTypes']['new' . $blockCount]['fields']['new' . $fieldCount] = array(
+                    'name' => $blockField->name,
+                    'handle' => $blockField->handle,
+                    'required' => $blockField->required,
+                    'instructions' => $blockField->instructions,
+                    'translatable' => $blockField->translatable,
+                    'type' => $blockField->type,
+                    'typesettings' => $settings,
+                );
+
+                $fieldCount++;
+            }
+
+            $blockCount++;
+        }
+
+        return $fieldSettings;
+    }
+
+    public function _prepareExportPositionSelectField($field)
+    {
+        $fieldSettings = $field->settings;
+        $options = array();
+        
+        foreach ($fieldSettings['options'] as $value) {
+            $options[$value] = true;
+        }
+
+        $fieldSettings['options'] = $options;
+
+        return $fieldSettings;
     }
 }
