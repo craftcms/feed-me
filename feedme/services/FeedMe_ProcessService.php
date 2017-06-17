@@ -39,6 +39,8 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         // Set our start time to track feed processing time
         $this->_time_start = microtime(true); 
 
+        craft()->config->maxPowerCaptain();
+
         // Add some additional information to our FeedModel - for ease of use in processing
         $return['fields'] = array();
         $return['existingElements'] = array();
@@ -171,7 +173,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             $element->setContentFromPost($fieldData);
         }
 
-        $this->_debugOutput($element->attributes);
+        //$this->_debugOutput($element->attributes);
         $this->_debugOutput($fieldData);
         
         // Save the element
