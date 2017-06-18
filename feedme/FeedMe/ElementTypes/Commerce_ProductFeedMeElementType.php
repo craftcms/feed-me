@@ -318,7 +318,19 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
                 $fieldData = Hash::get($variant, $handle);
 
                 if ($fieldData) {
-                    $variantContent[$handle] = craft()->feedMe_fields->prepForFieldType($variantModel, $fieldData, $handle);
+                    // Parse this inner-field's data, just like a regular field
+                    $parsedData = craft()->feedMe_fields->prepForFieldType($variantModel, $fieldData, $handle);
+
+                    // Fire any post-processing for the field type
+                    $posted = craft()->feedMe_fields->postForFieldType($variantModel, $parsedData, $handle, $field);
+
+                    if ($posted) {
+                        $parsedData = $parsedData[$handle];
+                    }
+
+                    if ($parsedData) {
+                        $variantContent[$handle] = $parsedData;
+                    }
                 }
             }
 
