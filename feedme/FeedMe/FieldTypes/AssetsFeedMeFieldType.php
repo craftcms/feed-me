@@ -210,6 +210,15 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
 
             $saveLocation = $tempPath . $filename;
 
+            // If we have a dynamic folder set, use that
+            if (isset($options['folderPath'])) {
+                $rootFolder = craft()->assets->getFolderById($folderId);
+
+                if ($options['folderPath'] != 'root') {
+                    $folderId = $this->_createSubFolder($rootFolder, $options['folderPath']);
+                }
+            }
+
             // Check to see if there are any matching existing assets
             $criteria = craft()->elements->getCriteria(ElementType::Asset);
             $criteria->status = null;
@@ -313,6 +322,33 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
                     FeedMePlugin::log('Updated Asset (ID ' . $assetId . ') inner-element with content: ' . json_encode($preppedData), LogLevel::Info, true);
                 }
             }
+        }
+    }
+
+    private function _createSubFolder($currentFolder, $folderName)
+    {
+        $response = craft()->assets->createFolder($currentFolder->id, $folderName);
+
+        if ($response->isError() || $response->isConflict())
+        {
+            // If folder doesn't exist in DB, but we can't create it, it probably exists on the server.
+            $newFolder = new AssetFolderModel(
+                array(
+                    'parentId' => $currentFolder->id,
+                    'name' => $folderName,
+                    'sourceId' => $currentFolder->sourceId,
+                    'path' => ($currentFolder->parentId ? $currentFolder->path.$folderName : $folderName).'/'
+                )
+            );
+            $folderId = craft()->assets->storeFolder($newFolder);
+
+            return $folderId;
+        }
+        else
+        {
+            $folderId = $response->getDataItem('folderId');
+
+            return $folderId;
         }
     }
 

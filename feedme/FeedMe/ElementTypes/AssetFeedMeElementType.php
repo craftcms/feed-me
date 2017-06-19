@@ -103,6 +103,10 @@ class AssetFeedMeElementType extends BaseFeedMeElementType
             $folder = craft()->assets->getRootFolderBySourceId($element->sourceId);
             $urlData = $fieldData['data'];
 
+            if (isset($data['folderName'])) {
+                $fieldData['options']['folderPath'] = $data['folderName']['data'];
+            }
+
             $fileId = $service->fetchRemoteImage($urlData, $folder->id, $fieldData['options']);
 
             $element = craft()->assets->getFileById($fileId);

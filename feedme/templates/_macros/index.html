@@ -102,9 +102,9 @@
                         {{ forms.selectField({
                             name: fieldHandle ~ '-options-conflict',
                             options: [
-                                { value: 'cancel', label: 'Keep original' },
-                                { value: 'replace', label: 'Replace existing' },
-                                { value: 'keepBoth', label: 'Keep both' },
+                                { value: 'cancel', label: 'Use existing (skip feed data)' },
+                                { value: 'replace', label: 'Replace existing (use feed data)' },
+                                { value: 'keepBoth', label: 'Keep both (rename feed data)' },
                             ],
                             value: global.feed.fieldMapping[fieldHandle ~ '-options-conflict'] ?? '',
                         }) }}

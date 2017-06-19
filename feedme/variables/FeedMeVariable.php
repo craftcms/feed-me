@@ -243,6 +243,37 @@ class FeedMeVariable
         return craft()->assetSources->getSourceById($id);
     }
 
+    public function getAssetFolderBySourceId($id)
+    {
+        $folders = craft()->assets->getFolderTreeBySourceIds(array($id));
+
+        $return = array();
+
+        $return[''] = 'Don\'t Import';
+
+        if (is_array($folders)) {
+            foreach ($folders as $folder) {
+                $return[] = array(
+                    'value' => 'root',
+                    'label' => Craft::t('Root Folder'),
+                );
+
+                $children = $folder->getChildren();
+
+                if ($children) {
+                    foreach ($children as $childFolder) {
+                        $return[] = array(
+                            'value' => $childFolder['name'],
+                            'label' => $childFolder['name'],
+                        );
+                    }
+                }
+            }
+        }
+
+        return $return;
+    }
+
     public function getClientUsers()
     {
         $criteria = craft()->elements->getCriteria(ElementType::User);
