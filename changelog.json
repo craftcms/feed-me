@@ -1,5 +1,37 @@
 [
     {
+        "version": "2.0.7",
+        "downloadUrl": "https://github.com/engram-design/FeedMe/archive/2.0.7.zip",
+        "date": "2017-06-23T00:00:00+10:00",
+        "notes": [
+            "[Added] Assets - Added folder option for dynamic sub-folders (via feed), or by selecting specific default folders within selected source.",
+            "[Added] Add default field for element IDs",
+            "[Added] Allow elements to use date attributes as unique identifier.",
+            "[Added] Add backup logging.",
+            "[Added] Add duplicate feed option, and move into first screen.",
+            "[Added] New Status screen - start feed processing from here, or come back to view the process of a running one.",
+            "[Added] Add `limit` and `offset` params to debug.",
+            "[Improved] Use selectize for mapping dropdowns. Allows for quick-searching of data.",
+            "[Improved] Ensure elements can handle Twig shortcode.",
+            "[Improved] Link to logs/home on import success page.",
+            "[Improved] Better text on asset-uploading options fields - hopefully explains better.",
+            "[Fixed] Products - Fix single variant handling.",
+            "[Fixed] Fix a typo for `Disableed`.",
+            "[Fixed] Fix for Table field in Matrix.",
+            "[Fixed] Fix potential SQL error when setting entries to disabled. Thanks @lindseydiloreto.",
+            "[Fixed] Products - Fix single variant handling.",
+            "[Fixed] Ensure inner-element fields check for existing content.",
+            "[Fixed] Fix date fields not parsing twig variables early.",
+            "[Fixed] Minor fix for asset importing not expecting array of urls.",
+            "[Fixed] Fix to check empty string passed in as date.",
+            "[Fixed] Minor fixes for `defaultUploadLocationSource` checks.",
+            "[Fixed] Improve Matrix-handling when referencing data outside of repeatable Matrix-ready content (you’re correct that sounds complex).",
+            "[Fixed] Fix related entries escaping title.",
+            "[Fixed] Fix regex to handle node names that end in digit. Thanks @antcooper.",
+            "[Fixed] Minor fix for Table fields and normalising data.",
+            "[Fixed] Fix Commerce Variants not calling `postForFieldType`."
+        ]
+    }, {
         "version": "2.0.6",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/2.0.6.zip",
         "date": "2017-05-20T00:00:00+10:00",
