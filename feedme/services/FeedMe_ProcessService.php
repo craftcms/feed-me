@@ -344,7 +344,19 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         if (is_array($fieldDefaults)) {
             foreach ($fieldDefaults as $fieldHandle => $feedHandle) {
                 if (isset($feedHandle) && $feedHandle !== '') {
-                    $parsedData[$fieldHandle]['data'] = $feedHandle;
+                    if (strstr($fieldHandle, '--')) {
+                        $split = FeedMeArrayHelper::multiExplode(array('--', '-'), $fieldHandle);
+
+                        array_splice($split, 1, 0, 'data');
+
+                        $keyPath = implode('.', $split);
+
+                        $parsedData[$keyPath]['data'] = $feedHandle;
+
+                        $parsedData = Hash::expand($parsedData);
+                    } else {
+                        $parsedData[$fieldHandle]['data'] = $feedHandle;
+                    }
                 }
             }
         }
