@@ -118,14 +118,16 @@ class MatrixFeedMeFieldType extends BaseFeedMeFieldType
                 }
             }
 
-            $order = $sortKey + 1;
+            if ($preppedFieldData) {
+                $order = $sortKey + 1;
 
-            $preppedData['new' . $order] = array(
-                'type' => $blockHandle,
-                'order' => $order,
-                'enabled' => true,
-                'fields' => $preppedFieldData,
-            );
+                $preppedData['new' . $order] = array(
+                    'type' => $blockHandle,
+                    'order' => $order,
+                    'enabled' => true,
+                    'fields' => $preppedFieldData,
+                );
+            }
         }
 
         return $preppedData;
