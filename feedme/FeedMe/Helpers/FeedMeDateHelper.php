@@ -40,7 +40,7 @@ class FeedMeDateHelper
             if ($dt) {
                 $dateTimeString = $dt->toDateTimeString();
 
-                $parsedDate = DateTime::createFromString($dateTimeString, craft()->timezone);
+                $parsedDate = DateTime::createFromString($dateTimeString, null, true);
             }
         } catch (\Exception $e) {
             FeedMePlugin::log('Date parse error: ' . $date . ' - ' . $e->getMessage(), LogLevel::Error, true);
