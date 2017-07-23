@@ -168,8 +168,22 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
             switch ($handle) {
                 case 'id';
                 case 'taxCategoryId';
+                    // Support getting category by ID, Name or Handle
+                    $taxCategory = $this->_getTaxCategory($dataValue);
+
+                    if ($taxCategory) {
+                        $element->$handle = $taxCategory->id;
+                    }
+
+                    break;
                 case 'shippingCategoryId';
-                    $element->$handle = $dataValue;
+                    // Support getting category by ID, Name or Handle
+                    $shippingCategory = $this->_getShippingCategory($dataValue);
+
+                    if ($shippingCategory) {
+                        $element->$handle = $shippingCategory->id;
+                    }
+
                     break;
                 case 'slug';
                     $element->$handle = ElementHelper::createSlug($dataValue);
@@ -347,5 +361,49 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
     private function _getVariantBySku($sku, $localeId = null)
     {
         return craft()->elements->getCriteria('Commerce_Variant', array('sku' => $sku, 'status' => null, 'locale' => $localeId))->first();
+    }
+
+    private function _getTaxCategory($value)
+    {
+        // Find by ID
+        $result = Commerce_TaxCategoryRecord::model()->findById($value);
+
+        // Find by Name
+        if (!$result) {
+            $result = Commerce_TaxCategoryRecord::model()->findByAttributes(array('name' => $value));
+        }
+
+        // Find by Handle
+        if (!$result) {
+            $result = Commerce_TaxCategoryRecord::model()->findByAttributes(array('handle' => $value));
+        }
+
+        if ($result) {
+            return Commerce_TaxCategoryModel::populateModel($result);
+        }
+
+        return false;
+    }
+
+    private function _getShippingCategory($value)
+    {
+        // Find by ID
+        $result = Commerce_ShippingCategoryRecord::model()->findById($value);
+
+        // Find by Name
+        if (!$result) {
+            $result = Commerce_ShippingCategoryRecord::model()->findByAttributes(array('name' => $value));
+        }
+
+        // Find by Handle
+        if (!$result) {
+            $result = Commerce_ShippingCategoryRecord::model()->findByAttributes(array('handle' => $value));
+        }
+
+        if ($result) {
+            return Commerce_ShippingCategoryModel::populateModel($result);
+        }
+
+        return false;
     }
 }
