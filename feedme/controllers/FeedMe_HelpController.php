@@ -284,9 +284,9 @@ class FeedMe_HelpController extends BaseController
             foreach ($blockType->fields as $blockField) {
                 // Case for nested Super Table
                 if ($blockField->type == 'SuperTable') {
-                    $settings = $this->processSuperTable($blockField);
+                    $settings = $this->_prepareExportSuperTableField($blockField);
                 } else if ($blockField->type == 'PositionSelect') {
-                    $settings = $this->processPositionSelect($blockField);
+                    $settings = $this->_prepareExportPositionSelectField($blockField);
                 } else {
                     $settings = $blockField->settings;
                 }
@@ -326,9 +326,9 @@ class FeedMe_HelpController extends BaseController
             foreach ($blockType->fields as $blockField) {
                 // Case for nested Matrix
                 if ($blockField->type == 'Matrix') {
-                    $settings = $this->processMatrix($blockField);
+                    $settings = $this->_prepareExportMatrixField($blockField);
                 } else if ($blockField->type == 'PositionSelect') {
-                    $settings = $this->processPositionSelect($blockField);
+                    $settings = $this->_prepareExportPositionSelectField($blockField);
                 } else {
                     $settings = $blockField->settings;
                 }
