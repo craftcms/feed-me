@@ -373,7 +373,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         foreach ($contentNode as $j => $nodePath) {
             $feedPath = str_replace('.', '/', $nodePath);
             $feedPath = preg_replace('/(\/\d+\/)/', '/', $feedPath);
-            $feedPath = preg_replace('/(\/\d+)|(\d+\/)/', '', $feedPath);
+            $feedPath = preg_replace('/(\/\d+)|(\/\d+\/)/', '', $feedPath);
             $feedPath = preg_replace('/(\/\d+)|^(\d+\/)/', '', $feedPath);
 
             // Get the feed value using dot-notation (but specifically for a node)
