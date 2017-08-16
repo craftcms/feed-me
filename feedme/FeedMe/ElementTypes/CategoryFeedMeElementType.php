@@ -124,7 +124,7 @@ class CategoryFeedMeElementType extends BaseFeedMeElementType
                     break;
                 case 'enabled':
                 case 'localeEnabled':
-                    $element->$handle = (bool)$dataValue;
+                    $element->$handle = FeedMeHelper::parseBoolean($dataValue);
                     break;
                 default:
                     continue 2;

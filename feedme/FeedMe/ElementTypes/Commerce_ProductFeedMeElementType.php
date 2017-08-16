@@ -201,7 +201,7 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
                 case 'enabled':
                 case 'freeShipping':
                 case 'promotable':
-                    $element->$handle = (bool)$dataValue;
+                    $element->$handle = FeedMeHelper::parseBoolean($dataValue);
                     break;
                 case 'title':
                     $element->getContent()->$handle = $dataValue;

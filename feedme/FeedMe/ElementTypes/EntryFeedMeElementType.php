@@ -196,7 +196,7 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
                     break;
                 case 'enabled':
                 case 'localeEnabled':
-                    $element->$handle = (bool)$dataValue;
+                    $element->$handle = FeedMeHelper::parseBoolean($dataValue);
                     break;
                 case 'title':
                     $element->getContent()->$handle = $dataValue;

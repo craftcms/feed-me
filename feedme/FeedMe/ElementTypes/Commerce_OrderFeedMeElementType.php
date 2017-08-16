@@ -167,7 +167,7 @@ class Commerce_OrderFeedMeElementType extends BaseFeedMeElementType
 
                     break;
                 case 'isCompleted':
-                    $element->$handle = (bool)$dataValue;
+                    $element->$handle = FeedMeHelper::parseBoolean($dataValue);
                     break;
                 default:
                     continue 2;
