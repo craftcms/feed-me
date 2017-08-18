@@ -350,7 +350,7 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
 
             $variantModel->setContentFromPost($variantContent);
 
-            $variantModel->getContent()->title = Hash::get($variant, 'title.data');
+            $variantModel->getContent()->title = Hash::get($variant, 'title.data', $variantModel->getContent()->title);
 
             $variants[] = $variantModel;
         }
