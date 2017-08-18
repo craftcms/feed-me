@@ -59,6 +59,13 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
             $element->locale = $settings['locale'];
         }
 
+        $section = craft()->sections->getSectionById($element->sectionId);
+        $locale = craft()->i18n->getPrimarySiteLocale();
+
+        if (isset($section->locales[$locale->id])) {
+            $element->localeEnabled = $section->locales[$locale->id]->enabledByDefault;
+        }
+
         // While we're at it - save a list of required fields for later. We only want to do this once
         // per import, and its vital when importing into specific locales
         $entryType = craft()->sections->getEntryTypeById($element->typeId);
