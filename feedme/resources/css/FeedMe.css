@@ -286,6 +286,12 @@ table#feeds .element-group-sub {
     margin-right: 1em;
 }
 
+.feedme-status-spinner {
+    text-align: center;
+    padding: 6rem;
+}
+
+
 
 
 /* ==========================================================================

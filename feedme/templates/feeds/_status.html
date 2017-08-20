@@ -12,26 +12,35 @@
 
 {% block blockContent %}
 
-{% if craft.session.getFlash('runFeed', '', false) or craft.tasks.getTotalTasks() %}
-    <div class="feedme-fullpage fullpage-running fullpage-running-cp">
-        <img src="{{ resourceUrl('feedme/icon-success.svg') }}">
-        
-        <h2>{{ '{name} has started processing' | t({ name: feed.name }) }}</h2>
-        <p>{{ 'Data is now being imported from your feed. You can navigate away from this page without disrupting your feed processing.' | t }}</p>
+{% set triggerClass = '' %}
+{% if craft.session.getFlash('runFeed', '', false) %}
+    {% set triggerClass = 'cp-triggered' %}
+{% endif %}
 
-        <div class="progress-container">
-            <div class="spinner"></div>
+<div class="feedme-status-spinner">
+    <div class="spinner big"></div>
+</div>
+
+<div class="feedme-fullpage fullpage-running fullpage-running-cp hidden {{ triggerClass }}">
+    <img src="{{ resourceUrl('feedme/icon-success.svg') }}">
+    
+    <h2>{{ '{name} has started processing' | t({ name: feed.name }) }}</h2>
+    <p>{{ 'Data is now being imported from your feed. You can navigate away from this page without disrupting your feed processing.' | t }}</p>
+
+    <div class="progress-container">
+        <div class="progressbar pending">
+            <div class="progressbar-inner" style="width: 100%;"></div>
         </div>
     </div>
-{% else %}
-    <div class="feedme-fullpage fullpage-waiting">
-        <img src="{{ resourceUrl('feedme/icon-info.svg') }}">
-        
-        <h2>{{ '{name} is ready to run' | t({ name: feed.name }) }}</h2>
-        <p>{{ 'Click the button below to run your feed. This page will reload showing progress.' | t }}</p>
+</div>
 
-        <a class="btn submit" href="{{ url('feedme/feeds/run/' ~ feed.id) }}">{{ 'Start Feed Processing' | t }}</a>
-    </div>
-{% endif %}
+<div class="feedme-fullpage fullpage-waiting hidden {{ triggerClass }}">
+    <img src="{{ resourceUrl('feedme/icon-info.svg') }}">
+    
+    <h2>{{ '{name} is ready to run' | t({ name: feed.name }) }}</h2>
+    <p>{{ 'Click the button below to run your feed. This page will reload showing progress.' | t }}</p>
+
+    <a class="btn submit" href="{{ url('feedme/feeds/run/' ~ feed.id) }}">{{ 'Start Feed Processing' | t }}</a>
+</div>
 
 {% endblock %}

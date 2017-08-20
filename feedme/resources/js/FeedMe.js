@@ -115,27 +115,21 @@ var feedMeSuccessHtml = '<div><span data-icon="check"></span> ' +
     '</div>';
 
 Craft.FeedMeTaskProgress = Garnish.Base.extend({
-    tasksById: null,
-    completedTasks: null,
-    updateTasksTimeout: null,
+    runningTask: null,
 
-    completed: false,
+    $spinnerScreen: null,
+    $pendingScreen: null,
+    $runningScreen: null,
 
     init: function() {
-        this.tasksById = {};
-        this.completedTasks = [];
+        this.$spinnerScreen = $('.feedme-status-spinner');
+        this.$pendingScreen = $('.feedme-fullpage.fullpage-waiting');
+        this.$runningScreen = $('.feedme-fullpage.fullpage-running');
 
-        // Force the tasks icon to run
-        setTimeout($.proxy(function() {
-            this.updateTasks();
-        }, this), 1000);
-
-        //Craft.cp.stopTrackingTaskProgress();
+        this.updateTasks();
     },
 
     updateTasks: function() {
-        this.completed = false;
-
         Craft.postActionRequest('tasks/getTaskInfo', $.proxy(function(taskInfo, textStatus) {
             if (textStatus == 'success') {
                 this.showTaskInfo(taskInfo[0]);
@@ -144,122 +138,76 @@ Craft.FeedMeTaskProgress = Garnish.Base.extend({
     },
 
     showTaskInfo: function(taskInfo) {
-        // First remove any tasks that have completed
-        var newTaskIds = [];
+        this.$spinnerScreen.addClass('hidden');
 
         if (taskInfo) {
-            newTaskIds.push(taskInfo.id);
-        } else {
-            // Likely too fast for Craft to register this was even a task!
-            $('.progress-container').html(feedMeSuccessHtml);
-        }
+            this.$runningScreen.removeClass('hidden');
 
-        for (var id in this.tasksById) {
-            if (!Craft.inArray(id, newTaskIds)) {
-                this.tasksById[id].complete();
-                this.completedTasks.push(this.tasksById[id]);
-                delete this.tasksById[id];
-            }
-        }
-
-        // Now display the tasks that are still around
-        if (taskInfo) {
-            var anyTasksRunning = false,
-                anyTasksFailed = false;
-
-            if (!anyTasksRunning && taskInfo.status == 'running') {
-                anyTasksRunning = true;
-            } else if (!anyTasksFailed && taskInfo.status == 'error') {
-                anyTasksFailed = true;
-            }
-
-            if (this.tasksById[taskInfo.id]) {
-                this.tasksById[taskInfo.id].updateStatus(taskInfo);
+            if (this.runningTask) {
+                this.runningTask.updateStatus(taskInfo);
             } else {
-                this.tasksById[taskInfo.id] = new Craft.FeedMeTaskProgress.Task(taskInfo);
+                this.runningTask = new Craft.FeedMeTaskProgress.Task(taskInfo);
             }
 
-            if (anyTasksRunning) {
-                this.updateTasksTimeout = setTimeout($.proxy(this, 'updateTasks'), 500);
-            } else {
-                this.completed = true;
-
-                if (anyTasksFailed) {
-                    //Craft.cp.setRunningTaskInfo({ status: 'error' });
-                }
+            if (taskInfo.status != 'error') {
+                // Keep checking for the task status every 500ms
+                setTimeout($.proxy(this, 'updateTasks'), 500);
             }
         } else {
-            this.completed = true;
-            //Craft.cp.setRunningTaskInfo(null);
+            if (this.runningTask) {
+                // Task has now completed, show the UI
+                this.runningTask.complete();
+            } else if (this.$pendingScreen.hasClass('cp-triggered')) {
+                // If this case has happened, its often the task has finished so quickly before an Ajax request
+                // to the tasks controller has a chance to fire. But, we track when the user submits the 'run' action
+                // through a flash variable. Technically, its finished - otherwise we end up showing the 'pending'
+                // screen, which is a little confusing to the user. Simply show its completed
+                this.$runningScreen.removeClass('hidden');
+
+                this.$runningScreen.find('.progress-container').html(feedMeSuccessHtml);
+            } else {
+                // Show the pending screen, there are no tasks in queue, and a task isn't currently running
+                this.$pendingScreen.removeClass('hidden');
+            }
         }
+
     }
 });
 
 Craft.FeedMeTaskProgress.Task = Garnish.Base.extend({
-    id: null,
-    level: null,
-    description: null,
-
-    status: null,
-    progress: null,
-
-    $container: null,
-    $statusContainer: null,
-    $descriptionContainer: null,
-
-    _progressBar: null,
+    progressBar: null,
 
     init: function(info) {
-        this.id = info.id;
-        this.level = info.level;
-        this.description = info.description;
+        this.$statusContainer = $('.feedme-fullpage.fullpage-running .progress-container');
+        this.$statusContainer.empty();
 
-        this.$container = $('.progress-container').html($('<div class="task"/>'));
-        this.$statusContainer = $('<div class="task-status"/>').appendTo(this.$container);
-
-        this.$container.data('task', this);
+        this.progressBar = new Craft.ProgressBar(this.$statusContainer);
+        this.progressBar.showProgressBar();
 
         this.updateStatus(info);
     },
 
     updateStatus: function(info) {
-        if (this.status != info.status) {
-            this.$statusContainer.empty();
-            this.status = info.status;
+        this.progressBar.setProgressPercentage(info.progress * 100);
 
-            switch (this.status) {
-                case 'running': {
-                    this._progressBar = new Craft.ProgressBar(this.$statusContainer);
-                    this._progressBar.showProgressBar();
-                    break;
-                }
-                case 'error': {
-                    $('<div class="error">' + Craft.t('Processing failed. <a class="go" href="' + Craft.getUrl('feedme/logs') + '">View logs</a>') + '</div>').appendTo(this.$statusContainer);
-                    break;
-                }
-            }
-        }
-
-        if (this.status == 'running') {
-            this._progressBar.setProgressPercentage(info.progress*100);
-
-            if (this.level == 0) {
-                // Update the task icon
-                //Craft.cp.setRunningTaskInfo(info, true);
-            }
+        if (info.status == 'error') {
+            this.fail();
         }
     },
 
-    complete: function()
-    {
-        this.$statusContainer.empty();
-        $(feedMeSuccessHtml).appendTo(this.$statusContainer);
+    complete: function() {
+        this.progressBar.setProgressPercentage(100);
+        setTimeout($.proxy(this, 'success'), 300);
     },
 
-    destroy: function() {
-        this.$container.remove();
-        this.base();
-    }
+    success: function() {
+        this.$statusContainer.html(feedMeSuccessHtml);
+    },
+
+    fail: function() {
+        this.$statusContainer.html('<div class="error">' + Craft.t('Processing failed. <a class="go" href="' + Craft.getUrl('feedme/logs') + '">View logs</a>') + '</div>');
+    },
+
 });
 
 })();
