@@ -236,12 +236,56 @@ class UserFeedMeElementType extends BaseFeedMeElementType
         return $user;
     }
 
-    private function _handleUserPhoto(UserModel $user, $filename)
+    private function _handleUserPhoto(UserModel $user, $dataValue)
     {
-        $photo = craft()->path->getUserPhotosPath() . $filename;
+        $photoPath = craft()->path->getUserPhotosPath();
 
-        if (!IOHelper::fileExists($photo)) {
-            return false;
+        // Support for remote-download of image for profile
+        if (UrlHelper::isAbsoluteUrl($dataValue)) {
+            $filename = basename($dataValue);
+
+            $tempPath = craft()->path->getTempPath();
+
+            // Check if the temp path exists first
+            if (!IOHelper::getRealPath($tempPath)) {
+                IOHelper::createFolder($tempPath, craft()->config->get('defaultFolderPermissions'), true);
+
+                if (!IOHelper::getRealPath($tempPath)) {
+                    throw new Exception(Craft::t('Temp folder “{tempPath}” does not exist and could not be created', array('tempPath' => $tempPath)));
+                }
+            }
+
+            $photo = $tempPath . $filename;
+
+            $defaultOptions = array(
+                CURLOPT_FILE => fopen($photo, 'w'),
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_URL => $dataValue,
+                CURLOPT_FAILONERROR => true,
+            );
+
+            $configOptions = craft()->config->get('curlOptions', 'feedMe');
+
+            if ($configOptions) {
+                $opts = $configOptions + $defaultOptions;
+            } else {
+                $opts = $defaultOptions;
+            }
+
+            $ch = curl_init();
+            curl_setopt_array($ch, $opts);
+            $result = curl_exec($ch);
+
+            if (!$result) {
+                return false;
+            }
+        } else {
+            $filename = $dataValue;
+            $photo = $photoPath . $dataValue;
+
+            if (!IOHelper::fileExists($photo)) {
+                return false;
+            }
         }
 
         $image = craft()->images->loadImage($photo);
@@ -254,6 +298,11 @@ class UserFeedMeElementType extends BaseFeedMeElementType
         $image->crop($horizontalMargin, $imageWidth - $horizontalMargin, $verticalMargin, $imageHeight - $verticalMargin);
 
         craft()->users->saveUserPhoto($filename, $image, $user);
+
+        // Cleanup any leftover temp image from remote upload
+        if (UrlHelper::isAbsoluteUrl($dataValue)) {
+            IOHelper::deleteFile($photo, true);
+        }
     }
 
     private function _setUserStatus(UserModel $user, $status)
