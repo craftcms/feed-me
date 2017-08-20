@@ -1,9 +1,3 @@
-{% if feed.elementGroup %}
-    {% set groupId = feed.elementGroup[elementType] %}
-
-    {% set group = craft.userGroups.getGroupById(groupId) %}
-{% endif %}
-
 {% set fields = [{
     label: 'Username',
     handle: 'username',
@@ -98,6 +92,35 @@
     </thead>
     <tbody>
         {% for field in fields %}
+            {{ feedMeMacro.generateRow(_context, field) }}
+        {% endfor %}
+    </tbody>
+</table>
+
+{% set groups = craft.feedMe.getElementTypeGroups(elementType) %}
+
+{% set groupFields = [{
+    label: 'User Groups',
+    handle: 'groups',
+    instructions: 'Select the groups this user should be assigned to.' | t,
+    default: forms.checkboxGroup({
+        id: 'fieldDefaults-groups',
+        name: 'fieldDefaults[groups]',
+        options: craft.feedme.getSelectOptions(groups, 'name', 'id', false),
+        values: feed.fieldDefaults.groups ?? '',
+    })
+}] %}
+
+<h2>{{ 'User Groups' | t }}</h2>
+
+<table class="feedme-mapping data fullwidth collapsible">
+    <thead>
+        <th>{{ 'Field' | t }}</th>
+        <th>{{ 'Feed Element' | t }}</th>
+        <th>{{ 'Default Value' | t }}</th>
+    </thead>
+    <tbody>
+        {% for field in groupFields %}
             {{ feedMeMacro.generateRow(_context, field) }}
         {% endfor %}
     </tbody>

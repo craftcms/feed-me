@@ -140,6 +140,9 @@ class UserFeedMeElementType extends BaseFeedMeElementType
                 case 'newPassword':
                     $element->$handle = $dataValue;
                     break;
+                case 'groups':
+                    $this->_handleUserGroups($element, $dataValue);
+                    break;
                 case 'photo':
                     $this->_handleUserPhoto($element, $dataValue);
                     break;
@@ -170,22 +173,12 @@ class UserFeedMeElementType extends BaseFeedMeElementType
         $element->setContentFromPost($data);
         
         if (craft()->users->saveUser($element)) {
-            // Check for any existing groups this user exists on
-            $groups = array();
-
+            // Set user groups, but careful to check if we're actually mapping or using existing ones
             if ($element->groups) {
-                foreach ($element->groups as $group) {
-                    $groups[] = $group->id;
+                if (is_numeric($element->groups[0])) {
+                    craft()->userGroups->assignUserToGroups($element->id, $element->groups);
                 }
             }
-
-            $newGroupId = $settings['elementGroup']['User'];
-
-            if (!in_array($newGroupId, $groups)) {
-                $groups[] = $newGroupId;
-            }
-
-            craft()->userGroups->assignUserToGroups($element->id, $groups);
             
             return true;
         }
@@ -201,6 +194,47 @@ class UserFeedMeElementType extends BaseFeedMeElementType
 
     // Private Methods
     // =========================================================================
+
+    private function _handleUserGroups(UserModel $user, $dataValue)
+    {
+        $groups = array();
+
+        // Get any existing groups for this user
+        if ($user->groups) {
+            foreach ($user->groups as $group) {
+                $groups[] = $group->id;
+            }
+        }
+
+        if (!is_array($dataValue)) {
+            $dataValue = array($dataValue);
+        }
+
+        foreach ($dataValue as $value) {
+            if (!is_numeric($value)) {
+                $result = UserGroupRecord::model()->findByAttributes(array('name' => $value));
+
+                if (!$result) {
+                    $result = UserGroupRecord::model()->findByAttributes(array('handle' => $value));
+                }
+
+                if (!$result) {
+                    continue;
+                }
+
+                $group = UserGroupModel::populateModel($result);
+                $value = $group->id;
+            }
+
+            if (!in_array($value, $groups)) {
+                $groups[] = $value;
+            }
+        }
+
+        $user->groups = $groups;
+
+        return $user;
+    }
 
     private function _handleUserPhoto(UserModel $user, $filename)
     {
