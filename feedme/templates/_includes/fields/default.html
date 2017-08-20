@@ -1,6 +1,10 @@
 <tr class="{{ (isSubElementField is defined) ? 'element-sub-field' }}">
     <td class="col-field">
         <div class="field">
+            {% if isSubElementField is defined %}
+                <i class="fa fa-level-up" aria-hidden="true"></i>
+            {% endif %}
+            
             <div class="heading">
                 <label {% if fieldtype.required %}class="required"{% endif %}>{{ labelName }}</label>
 

@@ -59,6 +59,11 @@ table#feeds .element-group-sub {
     margin: 10px 0;
 }
 
+.feedme-mapping td.col-field .field > .heading {
+    font-size: 12px;
+    margin-bottom: 0;
+}
+
 
 /* Selectize */
 /*.feedme-mapping .select:before {
@@ -233,18 +238,38 @@ table#feeds .element-group-sub {
 }
 
 .feedme-mapping .element-sub-field td {
-    background: #F7F7F8;
+    background: #fafafa;
 }
 
 .feedme-mapping .element-sub-field .col-field {
-    padding-left: 10px;
+    padding-left: 30px;
 }
 
 .feedme-mapping .element-sub-field .col-default {
-    padding-right: 10px;
+    padding-right: 30px;
 }
 
+.feedme-mapping .element-sub-field td.col-field .field > .heading {
+    font-size: 11px;
+    margin-bottom: 0;
+}
 
+.feedme-mapping .element-sub-field td.col-field .field > .heading > .instructions {
+    margin-top: -2px;
+}
+
+.feedme-mapping .element-sub-field .fa-level-up {
+    float: left;
+    display: block;
+    height: 100%;
+    color: #cacaca;
+    margin-left: -18px;
+    margin-top: 3px;
+
+    -ms-transform: rotate(90deg);
+    -webkit-transform: rotate(90deg);
+    transform: rotate(90deg);
+}
 
 
 
