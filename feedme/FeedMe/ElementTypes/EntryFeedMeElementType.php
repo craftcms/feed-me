@@ -189,6 +189,10 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
                     $element->$handle = $this->prepareAuthorForElement($dataValue);
                     break;
                 case 'slug';
+                    if (craft()->config->get('limitAutoSlugsToAscii')) {
+                        $dataValue = StringHelper::asciiString($dataValue);
+                    }
+
                     $element->$handle = ElementHelper::createSlug($dataValue);
                     break;
                 case 'postDate':
