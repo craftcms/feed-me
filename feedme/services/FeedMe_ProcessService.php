@@ -41,6 +41,10 @@ class FeedMe_ProcessService extends BaseApplicationComponent
 
         craft()->config->maxPowerCaptain();
 
+        // Reset properties to allow an instance of this service to be reused
+        $this->_processedElements = array();
+        $this->_processedElementIds = array();
+
         // Add some additional information to our FeedModel - for ease of use in processing
         $return['fields'] = array();
         $return['existingElements'] = array();
