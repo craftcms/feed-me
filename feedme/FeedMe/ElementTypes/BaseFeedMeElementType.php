@@ -28,6 +28,22 @@ abstract class BaseFeedMeElementType
         return Hash::expand($objectModel);
     }
 
+    protected function parseInlineTwig($data, &$dataValue)
+    {
+        if (is_string($dataValue)) {
+            if (strpos($dataValue, '{') !== false) {
+
+                // Check to make sure this is a variable, not just some '{' characters
+                preg_match_all('/\{\S+\}/', $dataValue, $matches);
+
+                if (isset($matches[0][0])) {
+                    $objectModel = $this->getObjectModel($data);
+                    $dataValue = craft()->templates->renderObjectTemplate($dataValue, $objectModel);
+                }
+            }
+        }
+    }
+
     protected function prepareAuthorForElement($author)
     {
         if (!is_numeric($author)) {
