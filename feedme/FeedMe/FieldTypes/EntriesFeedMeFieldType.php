@@ -37,6 +37,7 @@ class EntriesFeedMeFieldType extends BaseFeedMeFieldType
         // Get source id's for connecting
         $sectionIds = array();
         $sources = $settings->sources;
+
         if (is_array($sources)) {
             foreach ($sources as $source) {
                 // When singles is selected as the only option to search in, it doesn't contain any ids...
@@ -50,7 +51,7 @@ class EntriesFeedMeFieldType extends BaseFeedMeFieldType
                 }
             }
         } else if ($sources === '*') {
-            $sectionIds = array($element->sectionId);
+            $sectionIds = '*';
         }
 
         // Find existing
