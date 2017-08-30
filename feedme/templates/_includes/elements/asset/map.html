@@ -19,13 +19,13 @@
     instructions: 'The filename for this asset (not including the path).' | t,
     required: true,
 }, {
-    label: 'Folder Name' | t,
-    handle: 'folderName',
+    label: 'Folder' | t,
+    handle: 'folderId',
     instructions: 'Select the folder name this asset will be uploaded into.' | t,
     default: forms.selectField({
-        id: 'fieldDefaults-folderName',
-        name: 'fieldDefaults[folderName]',
-        value: feed.fieldDefaults.folderName ?? '',
+        id: 'fieldDefaults-folderId',
+        name: 'fieldDefaults[folderId]',
+        value: feed.fieldDefaults.folderId ?? '',
         options: folders,
     }),
 }, {

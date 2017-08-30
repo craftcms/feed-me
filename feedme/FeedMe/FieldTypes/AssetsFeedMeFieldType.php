@@ -210,12 +210,19 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
 
             $saveLocation = $tempPath . $filename;
 
-            // If we have a dynamic folder set, use that
-            if (isset($options['folderPath'])) {
-                $rootFolder = craft()->assets->getFolderById($folderId);
+            // If the folder ID is not numeric, we're likely setting the name of the folder, not the ID
+            // So either get the existing folder by name, or create a new one.
+            if (!is_numeric($folderId)) {
+                $existingFolder = craft()->assets->findFolder(array(
+                    'parentId' => $options['rootFolderId'],
+                    'name' => $folderId,
+                ));
 
-                if ($options['folderPath'] != 'root') {
-                    $folderId = $this->_createSubFolder($rootFolder, $options['folderPath']);
+                if ($existingFolder) {
+                    $folderId = $existingFolder->id;
+                } else {
+                    $rootFolder = craft()->assets->getFolderById($options['rootFolderId']);
+                    $folderId = $this->_createSubFolder($rootFolder, $folderId);
                 }
             }
 

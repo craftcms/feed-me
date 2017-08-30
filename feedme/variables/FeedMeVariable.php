@@ -263,7 +263,7 @@ class FeedMeVariable
                 if ($children) {
                     foreach ($children as $childFolder) {
                         $return[] = array(
-                            'value' => $childFolder['name'],
+                            'value' => $childFolder['id'],
                             'label' => $childFolder['name'],
                         );
                     }
