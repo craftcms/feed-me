@@ -5,6 +5,12 @@ use Cake\Utility\Hash as Hash;
 
 class FeedMe_DataService extends BaseApplicationComponent
 {
+    // Properties
+    // =========================================================================
+
+    private $_headers = array();
+
+
     // Public Methods
     // =========================================================================
 
@@ -133,6 +139,7 @@ class FeedMe_DataService extends BaseApplicationComponent
             CURLOPT_FOLLOWLOCATION => 1,
             CURLOPT_SSL_VERIFYPEER => 0,
             CURLOPT_USERAGENT => craft()->plugins->getPlugin('feedMe')->getName(),
+            CURLOPT_HEADERFUNCTION => array($this, '_handleFeedMeDataHeader'),
         );
 
         $configOptions = craft()->config->get('curlOptions', 'feedMe');
@@ -184,7 +191,12 @@ class FeedMe_DataService extends BaseApplicationComponent
 
         // If cache explicitly set to false, always return latest data
         if ($cache === false) {
-            return craft()->feedMe_data->getFeed($type, $url, $element, null);
+            $data = craft()->feedMe_data->getFeed($type, $url, $element, null);
+
+            // Add headers captured from the feed request
+            $data['_headers'] = $this->_headers;
+
+            return $data;
         }
 
         // We want some caching action!
@@ -197,6 +209,10 @@ class FeedMe_DataService extends BaseApplicationComponent
                 return $cachedRequest;
             } else {
                 $data = craft()->feedMe_data->getFeed($type, $url, $element, null);
+                
+                // Add headers captured from the feed request
+                $data['_headers'] = $this->_headers;
+
                 $this->_set($cacheId, $data, $cache);
 
                 return $data;
@@ -217,6 +233,26 @@ class FeedMe_DataService extends BaseApplicationComponent
     private function _get($url)
     {
         return craft()->cache->get(base64_encode(urlencode($url)));
+    }
+
+    private function _handleFeedMeDataHeader($curl, $header)
+    {
+        $len = strlen($header);
+        $header = explode(':', $header, 2);
+
+        if (count($header) < 2) {
+            return $len;
+        }
+
+        $name = strtolower(trim($header[0]));
+        
+        if (!array_key_exists($name, $this->_headers)) {
+            $this->_headers[$name] = [trim($header[1])];
+        } else {
+            $this->_headers[$name][] = trim($header[1]);
+        }
+
+        return $len;
     }
 
 }
