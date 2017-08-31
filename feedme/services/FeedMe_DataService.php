@@ -175,7 +175,38 @@ class FeedMe_DataService extends BaseApplicationComponent
 
     public function getFeedHeadersForTemplate($options = array())
     {
-        return $this->_headers;;
+        $plugin = craft()->plugins->getPlugin('feedMe');
+        $settings = $plugin->getSettings();
+
+        $url = (array_key_exists('url', $options) ? $options['url'] : null);
+        $element = (array_key_exists('element', $options) ? $options['element'] : '');
+        $cache = (array_key_exists('cache', $options) ? $options['cache'] : true);
+        $cacheId = $url . '#headers-' . $element; // cache for this URL and Element Node
+
+        // URL = required
+        if (!$url) {
+            return array();
+        }
+
+        // If cache explicitly set to false, always return latest data
+        if ($cache === false) {
+            return $this->_headers;
+        }
+
+        // We want some caching action!
+        if (is_numeric($cache) || $cache === true) {
+            $cache = (is_numeric($cache)) ? $cache : $settings->cache;
+
+            $cachedRequest = $this->_get($cacheId);
+
+            if ($cachedRequest) {
+                return $cachedRequest;
+            } else {
+                $data = $this->_headers;
+                $this->_set($cacheId, $data, $cache);
+                return $data;
+            }
+        }
     }
 
     public function getFeedForTemplate($options = array())
