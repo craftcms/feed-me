@@ -173,6 +173,11 @@ class FeedMe_DataService extends BaseApplicationComponent
         return $response;
     }
 
+    public function getFeedHeadersForTemplate($options = array())
+    {
+        return $this->_headers;;
+    }
+
     public function getFeedForTemplate($options = array())
     {
         $plugin = craft()->plugins->getPlugin('feedMe');
@@ -191,12 +196,7 @@ class FeedMe_DataService extends BaseApplicationComponent
 
         // If cache explicitly set to false, always return latest data
         if ($cache === false) {
-            $data = craft()->feedMe_data->getFeed($type, $url, $element, null);
-
-            // Add headers captured from the feed request
-            $data['_headers'] = $this->_headers;
-
-            return $data;
+            return craft()->feedMe_data->getFeed($type, $url, $element, null);
         }
 
         // We want some caching action!
@@ -209,12 +209,7 @@ class FeedMe_DataService extends BaseApplicationComponent
                 return $cachedRequest;
             } else {
                 $data = craft()->feedMe_data->getFeed($type, $url, $element, null);
-                
-                // Add headers captured from the feed request
-                $data['_headers'] = $this->_headers;
-
                 $this->_set($cacheId, $data, $cache);
-
                 return $data;
             }
         }
