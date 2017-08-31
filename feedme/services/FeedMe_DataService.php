@@ -240,12 +240,7 @@ class FeedMe_DataService extends BaseApplicationComponent
         }
 
         $name = strtolower(trim($header[0]));
-        
-        if (!array_key_exists($name, $this->_headers)) {
-            $this->_headers[$name] = [trim($header[1])];
-        } else {
-            $this->_headers[$name][] = trim($header[1]);
-        }
+        $this->_headers[$name] = trim($header[1]);
 
         return $len;
     }
