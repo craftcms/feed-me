@@ -48,11 +48,14 @@ class TableFeedMeFieldType extends BaseFeedMeFieldType
         $parsedData = array();
 
         foreach (Hash::flatten($data) as $key => $value) {
-            preg_match('/^(col\d+).*(\d+)$/', $key, $matches);
+            preg_match('/^(col\d+)/', $key, $colMatches);
+            preg_match('/(\d+)$/', $key, $rowMatches);
 
-            if (isset($matches[1]) && $matches[1] != '') {
-                $index = $matches[2] . '.data.' . $matches[1];
+            $colIndex = Hash::get($colMatches, '1');
+            $rowIndex = Hash::get($rowMatches, '1');
 
+            if (!is_null($colIndex) && !is_null($rowIndex)) {
+                $index = $rowIndex . '.data.' . $colIndex;
                 $parsedData[$index] = $value;
             } else {
                 $parsedData[$key] = $value;
