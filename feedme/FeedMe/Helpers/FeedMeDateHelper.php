@@ -9,7 +9,7 @@ class FeedMeDateHelper
     // Public Methods
     // =========================================================================
 
-    public static function parseString($date)
+    public static function parseString($date, $formatting = 'auto')
     {
         $parsedDate = null;
 
@@ -29,13 +29,33 @@ class FeedMeDateHelper
         }
 
         try {
+            $dt = null;
             $timestamp = FeedMeDateHelper::isTimestamp($date);
 
             if ($timestamp) {
                 $date = '@' . $date;
             }
 
-            $dt = Carbon::parse($date);
+            // Because US-based dates can be unpredictable, we need to be able to handle them
+            // Typically Carboh will see dates formatted with slashes are American, but thats often not the case
+            if ($formatting === 'auto') {
+                $dt = Carbon::parse($date);
+            } else {
+                $date = str_replace(array('/', '.'), '-', $date);
+
+                if ($formatting === 'america') {
+                    preg_match('/([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})/', $date, $matches);
+
+                    $month = Hash::get($matches, '1');
+                    $day = Hash::get($matches, '2');
+                    $year = Hash::get($matches, '3');
+                    $time = explode(' ', $date);
+
+                    $date = $year . '-' . $month . '-' . $day . ' ' . Hash::get($time, '1');
+                }
+
+                $dt = Carbon::parse($date);
+            }
 
             if ($dt) {
                 $dateTimeString = $dt->toDateTimeString();

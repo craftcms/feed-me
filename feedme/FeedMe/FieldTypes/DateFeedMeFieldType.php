@@ -8,6 +8,10 @@ class DateFeedMeFieldType extends BaseFeedMeFieldType
     // Templates
     // =========================================================================
 
+    public function getMappingTemplate()
+    {
+        return 'feedme/_includes/fields/date';
+    }
 
     
 
@@ -18,13 +22,14 @@ class DateFeedMeFieldType extends BaseFeedMeFieldType
     public function prepFieldData($element, $field, $fieldData, $handle, $options)
     {
         $data = Hash::get($fieldData, 'data');
+        $formatting = Hash::get($fieldData, 'options.match', 'auto');
 
         // Allow twig processing at this early stage
         if (strstr($data, '{{')) {
             $data = craft()->templates->renderObjectTemplate($data, $element);
         }
 
-        $dateValue = FeedMeDateHelper::parseString($data);
+        $dateValue = FeedMeDateHelper::parseString($data, $formatting);
 
         if ($dateValue) {
             return DateTimeHelper::formatTimeForDb($dateValue);

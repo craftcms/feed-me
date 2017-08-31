@@ -58,16 +58,20 @@ class FeedMe_FeedsService extends BaseApplicationComponent
                 if (strstr($key, '-options-')) {
                     $parts = explode('-options-', $key);
 
-                    if ($fieldMapping[$parts[0]] === 'noimport') {
-                        unset($fieldMapping[$key]);
+                    if (isset($fieldMapping[$parts[0]])) {
+                        if ($fieldMapping[$parts[0]] === 'noimport') {
+                            unset($fieldMapping[$key]);
+                        }
                     }
                 }
 
                 if (strstr($key, '-fields-')) {
                     $parts = explode('-fields-', $key);
 
-                    if ($fieldMapping[$parts[0]] === 'noimport') {
-                        unset($fieldMapping[$key]);
+                    if (isset($fieldMapping[$parts[0]])) {
+                        if ($fieldMapping[$parts[0]] === 'noimport') {
+                            unset($fieldMapping[$key]);
+                        }
                     }
                 }
             }
