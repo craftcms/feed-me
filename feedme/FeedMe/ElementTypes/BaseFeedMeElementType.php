@@ -34,7 +34,7 @@ abstract class BaseFeedMeElementType
             if (strpos($dataValue, '{') !== false) {
 
                 // Check to make sure this is a variable, not just some '{' characters
-                preg_match_all('/\{\S+\}/', $dataValue, $matches);
+                preg_match_all('/\{\w+\}/', $dataValue, $matches);
 
                 if (isset($matches[0][0])) {
                     $objectModel = $this->getObjectModel($data);
