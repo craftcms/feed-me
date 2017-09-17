@@ -163,6 +163,7 @@ class FeedMePlugin extends BasePlugin
             new AssetsFeedMeFieldType(),
             new CategoriesFeedMeFieldType(),
             new CheckboxesFeedMeFieldType(),
+            new Commerce_ProductsFeedMeFieldType(),
             new DateFeedMeFieldType(),
             new DefaultFeedMeFieldType(),
             new DropdownFeedMeFieldType(),
