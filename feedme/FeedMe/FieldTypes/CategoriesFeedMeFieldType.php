@@ -49,8 +49,6 @@ class CategoriesFeedMeFieldType extends BaseFeedMeFieldType
             $attribute = Hash::get($fieldData, 'options.match', 'title');
             $criteria->$attribute = DbHelper::escapeParam($category);
             $elements = $criteria->ids();
-            
-            $elements = $criteria->ids();
 
             $preppedData = array_merge($preppedData, $elements);
 
