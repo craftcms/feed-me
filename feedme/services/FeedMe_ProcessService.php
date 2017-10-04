@@ -106,7 +106,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         $element = $this->_service->setModel($feed);
 
         // Set criteria according to Element Type 
-        $criteria = $this->_criteria;
+        $criteria = $this->_service->setCriteria($feed);
 
         // From the raw data in our feed, process it ready for mapping (more to do below)
         $data = $this->_data[$step];
