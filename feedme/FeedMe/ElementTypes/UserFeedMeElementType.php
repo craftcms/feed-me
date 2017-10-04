@@ -199,7 +199,11 @@ class UserFeedMeElementType extends BaseFeedMeElementType
         // Get any existing groups for this user
         if ($user->groups) {
             foreach ($user->groups as $group) {
-                $groups[] = $group->id;
+                if (is_numeric($group)) {
+                    $groups[] = $group;
+                } else {
+                    $groups[] = $group->id;
+                }
             }
         }
 
