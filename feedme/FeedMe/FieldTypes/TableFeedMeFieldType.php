@@ -40,6 +40,10 @@ class TableFeedMeFieldType extends BaseFeedMeFieldType
             $parsedData[$index][] = $value;
         }*/
 
+        if (isset($data[0])) {
+            $data = $data[0];
+        }
+
         if (Hash::dimensions($data) == 2) {
             $data = array($data);
         }
