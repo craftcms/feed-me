@@ -107,7 +107,7 @@ class MatrixFeedMeFieldType extends BaseFeedMeFieldType
                     );
 
                     // Special-case for table!
-                    if ($subField->type == 'Table') {
+                    if ($subField->type == 'Table' || $subField->type == 'SuperTable') {
                         $blockFieldContent = array('data' => $blockFieldContent);
                     }
 
