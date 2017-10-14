@@ -31,7 +31,7 @@
                     {{ forms.selectField({
                         id: enabledId,
                         name: enabledId,
-                        value: feed.fieldDefaults[enabledId] ?? '1',
+                        value: feed.fieldDefaults[enabledId] ?? '',
                         options: [
                             { label: 'Don\'t import', value: '' },
                             { label: 'Enabled', value: '1' },
