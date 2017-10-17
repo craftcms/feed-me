@@ -22,6 +22,14 @@ class FeedMeHelper
         if (strtolower($value) === Craft::t('open')) {
             $result = true;
         }
+        
+        if (strtolower($value) === Craft::t('enabled')) {
+            $result = true;
+        }
+        
+        if (strtolower($value) === Craft::t('live')) {
+            $result = true;
+        }
 
 
         if (strtolower($value) === Craft::t('no')) {
@@ -33,6 +41,10 @@ class FeedMeHelper
         }
 
         if (strtolower($value) === Craft::t('closed')) {
+            $result = false;
+        }
+
+        if (strtolower($value) === Craft::t('disabled')) {
             $result = false;
         }
 
