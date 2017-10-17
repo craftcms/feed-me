@@ -19,7 +19,7 @@ class FeedMePlugin extends BasePlugin
 
     public function getVersion()
     {
-        return '2.0.7';
+        return '2.0.8';
     }
 
     public function getSchemaVersion()
@@ -29,17 +29,17 @@ class FeedMePlugin extends BasePlugin
 
     public function getDeveloper()
     {
-        return 'S. Group';
+        return 'Verbb';
     }
 
     public function getDeveloperUrl()
     {
-        return 'http://sgroup.com.au';
+        return 'https://verbb.io';
     }
 
     public function getPluginUrl()
     {
-        return 'https://github.com/engram-design/FeedMe';
+        return 'https://github.com/verbb/feed-me';
     }
 
     public function getDocumentationUrl()
@@ -49,7 +49,7 @@ class FeedMePlugin extends BasePlugin
 
     public function getReleaseFeedUrl()
     {
-        return 'https://raw.githubusercontent.com/engram-design/FeedMe/master/changelog.json';
+        return 'https://raw.githubusercontent.com/verbb/feed-me/master/changelog.json';
     }
 
     public function hasCpSection()

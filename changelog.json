@@ -1,5 +1,13 @@
 [
     {
+        "version": "2.0.8",
+        "downloadUrl": "https://github.com/engram-design/FeedMe/archive/2.0.8.zip",
+        "date": "2017-10-18T00:00:00+10:00",
+        "notes": [
+            "[Added] Verbb marketing (new plugin icon, readme, etc)."
+        ]
+    },
+    {
         "version": "2.0.7",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/2.0.7.zip",
         "date": "2017-06-23T00:00:00+10:00",
