@@ -42,7 +42,7 @@
             "[Fixed] Fix bug that causes datetimes not to be adjusted for timezones on import.",
             "[Fixed] Clean field-mapping options and fields when saving, and the field isn’t being mapped.",
             "[Fixed] Check Matrix field data if it has any field content - otherwise will create empty blocks.",
-            "[Fixed] Allow complex fields to have their defaults set correctly.",
+            "[Fixed] Allow complex fields to have their defaults set correctly."
         ]
     },
     {
