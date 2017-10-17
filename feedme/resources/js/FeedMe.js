@@ -86,7 +86,11 @@ $(function() {
     $('.assets-uploads input').trigger('change');
 
     // Selectize inputs
-    $('.feedme-mapping select').selectize();
+    $('.feedme-mapping select').selectize({
+        allowEmptyOption: true,
+    });
+
+
 
 
     // Allow multiple submit actions, that trigger different actions as required
