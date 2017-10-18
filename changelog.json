@@ -1,5 +1,14 @@
 [
     {
+        "version": "2.0.9",
+        "downloadUrl": "https://github.com/engram-design/FeedMe/archive/2.0.9.zip",
+        "date": "2017-10-19T00:00:00+10:00",
+        "notes": [
+            "[Fixed] Fixed icon mask.",
+            "[Fixed] Fixed incorrect license servers for new licenses."
+        ]
+    },
+    {
         "version": "2.0.8",
         "downloadUrl": "https://github.com/engram-design/FeedMe/archive/2.0.8.zip",
         "date": "2017-10-18T00:00:00+10:00",
