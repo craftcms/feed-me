@@ -6,11 +6,11 @@ class FeedMe_LicenseService extends BaseApplicationComponent
     // Properties
     // =========================================================================
 
-    const Ping = 'https://sgroup.com.au/actions/licensor/edition/ping';
-    const GetLicenseInfo = 'https://sgroup.com.au/actions/licensor/edition/getLicenseInfo';
-    const RegisterPlugin = 'https://sgroup.com.au/actions/licensor/edition/registerPlugin';
-    const UnregisterPlugin = 'https://sgroup.com.au/actions/licensor/edition/unregisterPlugin';
-    const TransferPlugin = 'https://sgroup.com.au/actions/licensor/edition/transferPlugin';
+    const Ping = 'https://verbb.io/actions/licensor/edition/ping';
+    const GetLicenseInfo = 'https://verbb.io/actions/licensor/edition/getLicenseInfo';
+    const RegisterPlugin = 'https://verbb.io/actions/licensor/edition/registerPlugin';
+    const UnregisterPlugin = 'https://verbb.io/actions/licensor/edition/unregisterPlugin';
+    const TransferPlugin = 'https://verbb.io/actions/licensor/edition/transferPlugin';
 
     private $plugin;
     private $pingStateKey = 'feedMePhonedHome';
