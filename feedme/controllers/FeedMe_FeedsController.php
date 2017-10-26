@@ -68,8 +68,8 @@ class FeedMe_FeedsController extends BaseController
             // Best way to check if its being run from a non-browser, as each server is different, so can't be sure what they trigger with
             $browser = $this->_getBrowserName(craft()->request->getUserAgent());
 
-            if ($browser == 'Other') {
-                craft()->tasks->runPendingTasks();
+            if ($browser === 'Other') {
+                $this->_runTasksAndClose();
             }
 
             $this->renderTemplate('feedme/feeds/_direct', $variables);
@@ -291,6 +291,35 @@ class FeedMe_FeedsController extends BaseController
         elseif (strpos($user_agent, 'MSIE') || strpos($user_agent, 'Trident/7')) return 'Internet Explorer';
         
         return 'Other';
+    }
+
+    /**
+     * Runs any pending tasks then ends the request.
+     *
+     * @see TasksController::actionRunPendingTasks()
+     */
+    private function _runTasksAndClose()
+    {
+        // Make sure tasks aren't already running
+        if (!craft()->tasks->isTaskRunning())
+        {
+            // Is there a pending task?
+            $task = craft()->tasks->getNextPendingTask();
+
+            if ($task)
+            {
+                // Attempt to close the connection if this is an Ajax request
+                if (craft()->request->isAjaxRequest())
+                {
+                    craft()->request->close('1');
+                }
+
+                // Start running tasks
+                craft()->tasks->runPendingTasks();
+            }
+        }
+
+        craft()->end();
     }
 
 }
