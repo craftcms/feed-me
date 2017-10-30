@@ -220,6 +220,11 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
             $data[$handle] = $element->$handle;
         }
 
+        // Update the locale enabled if setting enabled (but not locale enabled)
+        if (isset($data['enabled']) && !isset($data['localeEnabled'])) {
+            $element->localeEnabled = $element->enabled;
+        }
+
         // Set default author if not set
         if (!$element->authorId) {
             $user = craft()->userSession->getUser();
