@@ -159,7 +159,7 @@ class FeedMe_HelpController extends BaseController
 
             $email = new EmailModel();
             $email->fromEmail = $getHelpModel->fromEmail;
-            $email->toEmail = "support@sgroup.com.au";
+            $email->toEmail = "support@verbb.io";
             $email->subject = "Feed Me Support";
             $email->body = $message;
 
