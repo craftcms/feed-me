@@ -95,16 +95,21 @@ class UserFeedMeElementType extends BaseFeedMeElementType
 
     public function delete(array $elements)
     {
-        $return = true;
+        $success = true;
 
-        // Delete users
         foreach ($elements as $element) {
             if (!craft()->users->deleteUser($element)) {
-                $return = false;
+                if ($element->getErrors()) {
+                    throw new Exception(json_encode($element->getErrors()));
+                } else {
+                    throw new Exception(Craft::t('Something went wrong while updating elements.'));
+                }
+
+                $success = false;
             }
         }
 
-        return $return;
+        return $success;
     }
 
     public function prepForElementModel(BaseElementModel $element, array &$data, $settings)

@@ -100,15 +100,21 @@ class Commerce_OrderFeedMeElementType extends BaseFeedMeElementType
 
     public function delete(array $elements)
     {
-        $return = true;
+        $success = true;
 
         foreach ($elements as $element) {
             if (!craft()->commerce_orders->deleteOrder($element)) {
-                $return = false;
+                if ($element->getErrors()) {
+                    throw new Exception(json_encode($element->getErrors()));
+                } else {
+                    throw new Exception(Craft::t('Something went wrong while updating elements.'));
+                }
+
+                $success = false;
             }
         }
 
-        return $return;
+        return $success;
     }
     
     public function prepForElementModel(BaseElementModel $element, array &$data, $settings)

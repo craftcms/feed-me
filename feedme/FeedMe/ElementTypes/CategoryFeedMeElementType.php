@@ -86,7 +86,21 @@ class CategoryFeedMeElementType extends BaseFeedMeElementType
 
     public function delete(array $elements)
     {
-        return craft()->categories->deleteCategory($elements);
+        $success = true;
+
+        foreach ($elements as $element) {
+            if (!craft()->categories->deleteCategory($element)) {
+                if ($element->getErrors()) {
+                    throw new Exception(json_encode($element->getErrors()));
+                } else {
+                    throw new Exception(Craft::t('Something went wrong while updating elements.'));
+                }
+
+                $success = false;
+            }
+        }
+
+        return $success;
     }
     
     public function prepForElementModel(BaseElementModel $element, array &$data, $settings)

@@ -229,12 +229,6 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             if ($elementsToDisable) {
                 if ($this->_service->disable($elementsToDisable)) {
                     FeedMePlugin::log($feed->name . ': The following elements have been disabled: ' . print_r($disableIds, true) . '.', LogLevel::Info, true);
-                } else {
-                    if ($element->getErrors()) {
-                        throw new Exception(json_encode($element->getErrors()));
-                    } else {
-                        throw new Exception(Craft::t('Something went wrong while updating elements.'));
-                    }
                 }
             }
         }
@@ -253,12 +247,6 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             if ($elementsToDelete) {
                 if ($this->_service->delete($elementsToDelete)) {
                     FeedMePlugin::log($feed->name . ': The following elements have been deleted: ' . print_r($deleteIds, true) . '.', LogLevel::Info, true);
-                } else {
-                    if ($element->getErrors()) {
-                        throw new Exception(json_encode($element->getErrors()));
-                    } else {
-                        throw new Exception(Craft::t('Something went wrong while deleting elements.'));
-                    }
                 }
             }
         }

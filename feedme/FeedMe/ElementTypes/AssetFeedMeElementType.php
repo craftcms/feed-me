@@ -90,7 +90,21 @@ class AssetFeedMeElementType extends BaseFeedMeElementType
 
     public function delete(array $elements)
     {
-        return craft()->assets->deleteFiles($elements);
+        $success = true;
+
+        foreach ($elements as $element) {
+            if (!craft()->assets->deleteFiles($element)) {
+                if ($element->getErrors()) {
+                    throw new Exception(json_encode($element->getErrors()));
+                } else {
+                    throw new Exception(Craft::t('Something went wrong while updating elements.'));
+                }
+
+                $success = false;
+            }
+        }
+
+        return $success;
     }
     
     public function prepForElementModel(BaseElementModel $element, array &$data, $settings)

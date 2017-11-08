@@ -141,7 +141,21 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
 
     public function delete(array $elements)
     {
-        return craft()->entries->deleteEntry($elements);
+        $success = true;
+
+        foreach ($elements as $element) {
+            if (!craft()->entries->deleteEntry($element)) {
+                if ($element->getErrors()) {
+                    throw new Exception(json_encode($element->getErrors()));
+                } else {
+                    throw new Exception(Craft::t('Something went wrong while updating elements.'));
+                }
+
+                $success = false;
+            }
+        }
+
+        return $success;
     }
 
     public function disable(array $elements)
