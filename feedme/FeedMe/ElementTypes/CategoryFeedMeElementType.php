@@ -149,11 +149,6 @@ class CategoryFeedMeElementType extends BaseFeedMeElementType
             $data[$handle] = $element->$handle;
         }
 
-        // Update the locale enabled if setting enabled (but not locale enabled)
-        if (isset($data['enabled']) && !isset($data['localeEnabled'])) {
-            $element->localeEnabled = $element->enabled;
-        }
-
         return $element;
     }
 

@@ -55,15 +55,15 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
         $element->sectionId = $settings['elementGroup']['Entry']['section'];
         $element->typeId = $settings['elementGroup']['Entry']['entryType'];
 
-        if ($settings['locale']) {
-            $element->locale = $settings['locale'];
-        }
-
         $section = craft()->sections->getSectionById($element->sectionId);
         $locale = craft()->i18n->getPrimarySiteLocale();
 
-        if (isset($section->locales[$locale->id])) {
-            $element->localeEnabled = $section->locales[$locale->id]->enabledByDefault;
+        if ($settings['locale']) {
+            $element->locale = $settings['locale'];
+
+            if (isset($section->locales[$locale->id])) {
+                $element->localeEnabled = $section->locales[$locale->id]->enabledByDefault;
+            }
         }
 
         // While we're at it - save a list of required fields for later. We only want to do this once
@@ -232,11 +232,6 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
 
             // Update the original data in our feed - for clarity in debugging
             $data[$handle] = $element->$handle;
-        }
-
-        // Update the locale enabled if setting enabled (but not locale enabled)
-        if (isset($data['enabled']) && !isset($data['localeEnabled'])) {
-            $element->localeEnabled = $element->enabled;
         }
 
         // Set default author if not set
