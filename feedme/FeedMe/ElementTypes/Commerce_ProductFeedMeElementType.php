@@ -278,6 +278,7 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
 
     private function _populateProductVariantModels(Commerce_ProductModel $product, &$data, $settings)
     {
+        $orphanedValues = [];
         $variants = [];
         $count = 1;
 
@@ -290,14 +291,24 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
         // Ensure we handle single-variants correctly
         $keys = array_keys($variantData);
 
-        if (!is_numeric($keys[0])) {
-            $variantData = array($variantData);
+        foreach ($keys as $index => $key) {
+            if (!is_numeric($key)) {
+                // Save for later
+                $orphanedValues[$key] = $variantData[$key];
+
+                // Remove from original data
+                unset($variantData[$key]);
+            }
         }
 
         // Update original data
         $data['variants'] = $variantData;
 
         foreach ($variantData as $key => $variant) {
+            // Check each to add our orphaned data in (if any), which is usually dropped in through
+            // defaults - this is pretty nasty, and will be much better in future Feed Me versions
+            $variant = array_merge($variant, $orphanedValues);
+
             $variantModel = $this->_getVariantBySku($variant['sku']['data']);
 
             if (!$variantModel) {
