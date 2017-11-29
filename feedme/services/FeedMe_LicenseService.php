@@ -1,4 +1,5 @@
 <?php
+
 namespace Craft;
 
 class FeedMe_LicenseService extends BaseApplicationComponent
@@ -35,14 +36,12 @@ class FeedMe_LicenseService extends BaseApplicationComponent
 
     public function ping()
     {
-        if (craft()->request->isCpRequest()) {
-            if (!craft()->cache->get($this->pingStateKey)) {
-                $et = new FeedMe_License(static::Ping, $this->pluginHandle, $this->pluginVersion, $this->licenseKey);
-                $etResponse = $et->phoneHome();
-                craft()->cache->set($this->pingStateKey, true, $this->pingCacheTime);
+        if (craft()->request->isCpRequest() && !craft()->cache->get($this->pingStateKey)) {
+            $et = new FeedMe_License(static::Ping, $this->pluginHandle, $this->pluginVersion, $this->licenseKey);
+            $etResponse = $et->phoneHome();
+            craft()->cache->set($this->pingStateKey, true, $this->pingCacheTime);
 
-                return $this->_handleEtResponse($etResponse, false);
-            }
+            return $this->_handleEtResponse($etResponse, false);
         }
 
         return null;
@@ -50,28 +49,17 @@ class FeedMe_LicenseService extends BaseApplicationComponent
 
     public function isProEdition()
     {
-        if ($this->getEdition() == 1) {
-            return true;
-        }
-
-        return false;
+        return ($this->getEdition() == 1);
     }
 
     public function getEdition()
     {
-        $edition = 0;
-        if ($this->edition !== null) {
-            if ($this->edition == 1) {
-                $edition = 1;
-            }
-        }
-
-        return $edition;
+        return craft()->plugins->getPlugin('feedMe')->getSettings()->edition;
     }
 
     public function setEdition($edition)
     {
-        $settings = array('edition' => $edition);
+        $settings = ['edition' => $edition];
         craft()->plugins->savePluginSettings($this->plugin, $settings);
         $this->edition = $edition;
     }
@@ -119,17 +107,26 @@ class FeedMe_LicenseService extends BaseApplicationComponent
                 }
             }
         }
+
         return null;
     }
 
     public function unregisterLicenseKey()
     {
         $et = new FeedMe_License(static::UnregisterPlugin, $this->pluginHandle, $this->pluginVersion, $this->licenseKey);
-        $et->phoneHome(true);
+        $etResponse = $et->phoneHome(true);
 
         $this->setLicenseKey(null);
         $this->setLicenseKeyStatus(LicenseKeyStatus::Unknown);
         $this->setEdition('0');
+
+        // Check for local install
+        if ($etResponse && !empty($etResponse->errors)) {
+            if ($etResponse->errors[0] == 'local_install') {
+                $this->setEdition('-1');
+                $this->setLicenseKeyStatus(LicenseKeyStatus::Valid);
+            }
+        }
 
         return true;
     }
@@ -161,7 +158,6 @@ class FeedMe_LicenseService extends BaseApplicationComponent
             // Set the local details
             $this->setEdition('1');
             $this->setLicenseKeyStatus(LicenseKeyStatus::Valid);
-            return true;
         } else {
             $this->setEdition('0');
 
@@ -173,6 +169,10 @@ class FeedMe_LicenseService extends BaseApplicationComponent
                     case 'plugin_license_in_use':
                         $this->setLicenseKeyStatus(LicenseKeyStatus::Mismatched);
                         break;
+                    case 'local_install':
+                        $this->setEdition('-1');
+                        $this->setLicenseKeyStatus(LicenseKeyStatus::Valid);
+                        break;
                     default:
                         $this->setLicenseKeyStatus(LicenseKeyStatus::Unknown);
                 }
@@ -183,8 +183,8 @@ class FeedMe_LicenseService extends BaseApplicationComponent
             } else {
                 return false;
             }
-
-            return true;
         }
+
+        return true;
     }
 }
