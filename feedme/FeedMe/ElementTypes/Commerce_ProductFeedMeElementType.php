@@ -301,6 +301,12 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
             }
         }
 
+        // If we've actually just got a single variant, we've messed with things above, so put all attributes
+        // back to their first variant. This should also move in the defaults as well.
+        if (empty($variantData)) {
+            $variantData = array($orphanedValues);
+        }
+
         // Update original data
         $data['variants'] = $variantData;
 
