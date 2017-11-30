@@ -54,7 +54,7 @@ class FeedMe_LicenseService extends BaseApplicationComponent
 
     public function getEdition()
     {
-        return craft()->plugins->getPlugin('feedMe')->getSettings()->edition;
+        return $this->edition;
     }
 
     public function setEdition($edition)
