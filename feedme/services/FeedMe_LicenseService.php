@@ -49,7 +49,7 @@ class FeedMe_LicenseService extends BaseApplicationComponent
 
     public function isProEdition()
     {
-        return ($this->getEdition() == 1);
+        return ($this->getEdition() != 0);
     }
 
     public function getEdition()
