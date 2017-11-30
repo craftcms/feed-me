@@ -111,6 +111,11 @@ class FeedMeVariable
         return craft()->feedMe_license->isProEdition();
     }
 
+    public function getEdition()
+    {
+        return craft()->feedMe_license->getEdition();
+    }
+
     //
     // Fields + Field Mapping
     //

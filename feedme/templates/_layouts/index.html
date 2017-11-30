@@ -39,7 +39,14 @@
 
         <div class="footer-right">
             <div class="plugin-credit">
-                {% set edition = (craft.feedMe.isProEdition) ? '(Pro)' : '' %}
+                {% switch craft.feedMe.getEdition() %}
+                    {% case -1 %}
+                        {% set edition = '(Trial)' %}
+                    {% case 1 %}
+                        {% set edition = '(Pro)' %}
+                    {% default %}
+                        {% set edition = '' %}
+                {% endswitch %}
 
                 <p>{{ craft.feedMe.getPluginName }} {{ craft.feedMe.getPluginVersion }} {{ edition }} &bull; <a href="{{ craft.feedMe.getPluginUrl }}" target="_blank">GitHub</a></p>
             </div>
