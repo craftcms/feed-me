@@ -301,18 +301,13 @@ class FeedMe_FeedsController extends BaseController
     private function _runTasksAndClose()
     {
         // Make sure tasks aren't already running
-        if (!craft()->tasks->isTaskRunning())
-        {
+        if (!craft()->tasks->isTaskRunning()) {
             // Is there a pending task?
             $task = craft()->tasks->getNextPendingTask();
 
-            if ($task)
-            {
-                // Attempt to close the connection if this is an Ajax request
-                if (craft()->request->isAjaxRequest())
-                {
-                    craft()->request->close('1');
-                }
+            if ($task) {
+                // End the connection
+                craft()->request->close('1');
 
                 // Start running tasks
                 craft()->tasks->runPendingTasks();
