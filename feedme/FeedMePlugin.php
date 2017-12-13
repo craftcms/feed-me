@@ -44,12 +44,12 @@ class FeedMePlugin extends BasePlugin
 
     public function getDocumentationUrl()
     {
-        return $this->getPluginUrl() . '/blob/master/README.md';
+        return 'https://verbb.io/craft-plugins/feed-me/docs';
     }
 
     public function getReleaseFeedUrl()
     {
-        return 'https://raw.githubusercontent.com/verbb/feed-me/master/changelog.json';
+        return 'https://raw.githubusercontent.com/verbb/feed-me/craft-2/changelog.json';
     }
 
     public function hasCpSection()
