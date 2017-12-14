@@ -179,8 +179,6 @@ class FeedMe_FeedsController extends BaseController
             craft()->userSession->setNotice(Craft::t('Feed processing started.'));
 
             craft()->userSession->setFlash('runFeed', true);
-
-            craft()->tasks->runPendingTasks();
         }
 
         // If not, are we running directly?

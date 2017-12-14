@@ -107,6 +107,9 @@ class FeedMeTask extends BaseTask
             }
         }
 
+        // End the session after each step - this helps the CP against locking up
+        craft()->session->close();
+
         return true;
     }
 
