@@ -14,7 +14,7 @@ class FeedMeDateHelper
         $parsedDate = null;
 
         // Check for empty-string dates
-        if ($date === '') {
+        if ($date === '' || !$date) {
             return $parsedDate;
         }
 
