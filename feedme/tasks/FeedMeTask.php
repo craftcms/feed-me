@@ -64,11 +64,7 @@ class FeedMeTask extends BaseTask
 
                 // Check for backup
                 if ($this->_feed->backup) {
-                    FeedMePlugin::log($this->_feed->name . ': Starting database backup', LogLevel::Info, true);
-
-                    $backup = craft()->db->backup();
-
-                    FeedMePlugin::log($this->_feed->name . ': Finished database backup', LogLevel::Info, true);
+                    craft()->feedMe_process->backupBeforeFeed($feed);
                 }
             }
 

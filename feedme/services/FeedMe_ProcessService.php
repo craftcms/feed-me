@@ -283,6 +283,11 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             return true;
         }
 
+        // Check for backup
+        if ($feed->backup) {
+            craft()->feedMe_process->backupBeforeFeed($feed);
+        }
+
         foreach ($feedData as $key => $data) {
             $element = craft()->feedMe_process->processFeed($key, $feedSettings);
 
@@ -300,6 +305,38 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         // Fire an "onProcessFeed" event
         $event = new Event($this, array('settings' => $feedSettings));
         craft()->feedMe_process->onProcessFeed($event);
+    }
+
+    public function backupBeforeFeed($feed)
+    {
+        $limit = craft()->config->get('backupLimit', 'feedMe') ? craft()->config->get('backupLimit', 'feedMe') : 100;
+
+        $limit = 2;
+
+        // Check for any existing backups, if more than our limit, we need to kill some off...
+        $currentBackups = glob(craft()->path->getDbBackupPath() . 'feedme-*.sql');
+
+        // Remove all the previous backups, except the amount we want to limit
+        $backupsToDelete = array();
+
+        if (is_array($currentBackups)) {
+            if (count($currentBackups) > $limit) {
+                $backupsToDelete = array_splice($currentBackups, 0, (count($currentBackups) - $limit));
+            }
+        }
+
+        // If we have any to remove, lets delete them
+        if (count($backupsToDelete)) {
+            foreach ($backupsToDelete as $file) {
+                IOHelper::deleteFile($file, true);
+            }
+        }
+
+        FeedMePlugin::log($feed->name . ': Starting database backup', LogLevel::Info, true);
+
+        $backup = craft()->db->backup();
+
+        FeedMePlugin::log($feed->name . ': Finished database backup', LogLevel::Info, true);
     }
     
 
