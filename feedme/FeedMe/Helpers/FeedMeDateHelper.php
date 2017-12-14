@@ -33,28 +33,36 @@ class FeedMeDateHelper
             $timestamp = FeedMeDateHelper::isTimestamp($date);
 
             if ($timestamp) {
-                $date = '@' . $date;
-            }
+                $timestampInt = (int)$date;
 
-            // Because US-based dates can be unpredictable, we need to be able to handle them
-            // Typically Carboh will see dates formatted with slashes are American, but thats often not the case
-            if ($formatting === 'auto') {
-                $dt = Carbon::parse($date);
-            } else {
-                $date = str_replace(array('/', '.'), '-', $date);
-
-                if ($formatting === 'america') {
-                    preg_match('/([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})/', $date, $matches);
-
-                    $month = Hash::get($matches, '1');
-                    $day = Hash::get($matches, '2');
-                    $year = Hash::get($matches, '3');
-                    $time = explode(' ', $date);
-
-                    $date = $year . '-' . $month . '-' . $day . ' ' . Hash::get($time, '1');
+                // Check for millisecond timestamp - Carbon doesn't really support these, and the above will fail
+                if (strlen($date) >= 13) {
+                    $timestampInt = $timestampInt / 1000;
                 }
 
-                $dt = Carbon::parse($date);
+                $dt = Carbon::createFromTimestamp($timestampInt);
+
+            } else {
+                // Because US-based dates can be unpredictable, we need to be able to handle them
+                // Typically Carbon will see dates formatted with slashes are American, but thats often not the case
+                if ($formatting === 'auto') {
+                    $dt = Carbon::parse($date);
+                } else {
+                    $date = str_replace(array('/', '.'), '-', $date);
+
+                    if ($formatting === 'america') {
+                        preg_match('/([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})/', $date, $matches);
+
+                        $month = Hash::get($matches, '1');
+                        $day = Hash::get($matches, '2');
+                        $year = Hash::get($matches, '3');
+                        $time = explode(' ', $date);
+
+                        $date = $year . '-' . $month . '-' . $day . ' ' . Hash::get($time, '1');
+                    }
+
+                    $dt = Carbon::parse($date);
+                }
             }
 
             if ($dt) {
