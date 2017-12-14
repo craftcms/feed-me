@@ -1,5 +1,14 @@
 [
     {
+        "version": "2.0.11",
+        "downloadUrl": "https://github.com/verbb/feed-me/archive/2.0.11.zip",
+        "date": "2017-12-15T00:00:00+10:00",
+        "notes": [
+            "[Fixed] Fixed incorrectly setting `localeEnabled` behaviour for entries.",
+            "[Fixed] Fixed issue related to backups, causing feeds to fail when triggered via the control panel."
+        ]
+    },
+    {
         "version": "2.0.10",
         "downloadUrl": "https://github.com/verbb/feed-me/archive/2.0.10.zip",
         "date": "2017-12-14T00:00:00+10:00",
