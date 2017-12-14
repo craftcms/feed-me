@@ -63,7 +63,7 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
 
         foreach ($element->getLocales() as $localeId => $locale) {
             if (isset($section->locales[$localeId])) {
-                $element->localeEnabled = $locale['enabledByDefault'];
+                // $element->localeEnabled = $locale['enabledByDefault'];
                 $element->enabled = $locale['enabledByDefault'];
             }
         }
@@ -237,7 +237,7 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
         }
 
         // Locale status should always reference the entry status
-        $element->localeEnabled = $element->enabled;
+        // $element->localeEnabled = $element->enabled;
 
         // Set default author if not set
         if (!$element->authorId) {
