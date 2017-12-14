@@ -56,13 +56,15 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
         $element->typeId = $settings['elementGroup']['Entry']['entryType'];
 
         $section = craft()->sections->getSectionById($element->sectionId);
-        $locale = craft()->i18n->getPrimarySiteLocale();
 
         if ($settings['locale']) {
             $element->locale = $settings['locale'];
+        }
 
-            if (isset($section->locales[$locale->id])) {
-                $element->localeEnabled = $section->locales[$locale->id]->enabledByDefault;
+        foreach ($element->getLocales() as $localeId => $locale) {
+            if (isset($section->locales[$localeId])) {
+                $element->localeEnabled = $locale['enabledByDefault'];
+                $element->enabled = $locale['enabledByDefault'];
             }
         }
 
@@ -233,6 +235,9 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
             // Update the original data in our feed - for clarity in debugging
             $data[$handle] = $element->$handle;
         }
+
+        // Locale status should always reference the entry status
+        $element->localeEnabled = $element->enabled;
 
         // Set default author if not set
         if (!$element->authorId) {
