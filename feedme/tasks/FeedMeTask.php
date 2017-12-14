@@ -64,7 +64,7 @@ class FeedMeTask extends BaseTask
 
                 // Check for backup
                 if ($this->_feed->backup) {
-                    craft()->feedMe_process->backupBeforeFeed($feed);
+                    craft()->feedMe_process->backupBeforeFeed($this->_feed);
                 }
             }
 
