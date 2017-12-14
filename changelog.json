@@ -1,5 +1,24 @@
 [
     {
+        "version": "2.0.10",
+        "downloadUrl": "https://github.com/verbb/feed-me/archive/2.0.10.zip",
+        "date": "2017-12-14T00:00:00+10:00",
+        "notes": [
+            "[Added] Add `backupLimit` config option to control the number of backups to retain (when backups are in use).",
+            "[Added] Products can now have their sub-element fields mapped to.",
+            "[Improved] Improve response when triggered via cron to not return the full page response.",
+            "[Improved] Better support for timestamps provided with milliseconds.",
+            "[Fixed] Fix a bug that occured when disable/delete elements is your import strategy.",
+            "[Fixed] Update entries to only apply localeEnabled when dealing with locales.",
+            "[Fixed] Fix for CP becoming unresponsive when running a feed from the control panel directly.",
+            "[Fixed] Fix to ensure local-testing works as expected without a license.",
+            "[Fixed] Fix for Commerce Products default values not being properly sorted into variant data.",
+            "[Fixed] Fixed an issue when triggering feeds from CLI. Thanks to [@joshangell](https://github.com/verbb/feed-me/pull/262).",
+            "[Fixed] Fix for date attributes not checking for falsey values before returning current date.",
+            "[Fixed] Fix for locale entries not having their status set as per the default section status."
+        ]
+    },
+    {
         "version": "2.0.9",
         "downloadUrl": "https://github.com/verbb/feed-me/archive/2.0.9.zip",
         "date": "2017-10-19T00:00:00+10:00",
