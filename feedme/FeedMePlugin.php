@@ -1,7 +1,7 @@
 <?php
 namespace Craft;
 
-require 'vendor/autoload.php';
+require __DIR__ . '/vendor/autoload.php';
 
 class FeedMePlugin extends BasePlugin
 {
