@@ -161,13 +161,7 @@ class Commerce_OrderFeedMeElementType extends BaseFeedMeElementType
                     break;
                 case 'dateOrdered':
                 case 'datePaid';
-                    $dateValue = FeedMeDateHelper::parseString($dataValue);
-
-                    // Ensure there's a parsed data - null will auto-generate a new date
-                    if ($dateValue) {
-                        $element->$handle = $dateValue;
-                    }
-
+                    $element->$handle = FeedMeDateHelper::parseString($dataValue);
                     break;
                 case 'isCompleted':
                     $element->$handle = FeedMeHelper::parseBoolean($dataValue);

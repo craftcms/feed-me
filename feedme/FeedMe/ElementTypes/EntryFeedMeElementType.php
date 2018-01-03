@@ -210,13 +210,7 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
                     break;
                 case 'postDate':
                 case 'expiryDate';
-                    $dateValue = FeedMeDateHelper::parseString($dataValue);
-
-                    // Ensure there's a parsed data - null will auto-generate a new date
-                    if ($dateValue) {
-                        $element->$handle = $dateValue;
-                    }
-
+                    $element->$handle = FeedMeDateHelper::parseString($dataValue);
                     break;
                 case 'enabled':
                 case 'localeEnabled':
