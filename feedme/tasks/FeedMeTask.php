@@ -103,6 +103,10 @@ class FeedMeTask extends BaseTask
             }
         }
 
+        // Set logger to automatically flush out of memory each step. For larger feeds memory issues can cause
+        // the logs to never be written to disk, proving them to be pretty useless...
+        Craft::getLogger()->flush(true);
+
         // End the session after each step - this helps the CP against locking up
         craft()->session->close();
 

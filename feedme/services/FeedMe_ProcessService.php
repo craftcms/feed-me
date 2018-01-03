@@ -41,10 +41,6 @@ class FeedMe_ProcessService extends BaseApplicationComponent
 
         craft()->config->maxPowerCaptain();
 
-        // Set logger to automatically flush out of memory each step. For larger feeds memory issues can cause
-        // the logs to never be written to disk, proving them to be pretty useless...
-        Craft::getLogger()->autoFlush = 1;
-
         // Reset properties to allow an instance of this service to be reused
         $this->_processedElements = array();
         $this->_processedElementIds = array();
@@ -298,6 +294,10 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             // Fire an "onStepProcessFeed" event
             $event = new Event($this, array('settings' => $feedSettings, 'element' => $element));
             craft()->feedMe_process->onStepProcessFeed($event);
+
+            // Set logger to automatically flush out of memory each step. For larger feeds memory issues can cause
+            // the logs to never be written to disk, proving them to be pretty useless...
+            Craft::getLogger()->flush(true);
 
             if ($key === ($limit - 1)) {
                 break;
