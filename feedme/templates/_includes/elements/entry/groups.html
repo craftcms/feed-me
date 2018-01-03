@@ -17,14 +17,16 @@
     {% set entryTypeId = feed.elementGroup[elementType].entryType %}
 {% endif %}
 
-{% if sectionId is defined and sectionId %}
-    {% set section = craft.sections.getSectionById(sectionId) %}
+{% if sections %}
+    {% if sectionId is defined and sectionId %}
+        {% set section = craft.sections.getSectionById(sectionId) %}
 
-    {% if section %}
-        {% set sectionEntryTypes = section.getEntryTypes() %}
+        {% if section %}
+            {% set sectionEntryTypes = section.getEntryTypes() %}
+        {% endif %}
+    {% else %}
+        {% set sectionEntryTypes = sections[0].getEntryTypes() %}
     {% endif %}
-{% else %}
-    {% set sectionEntryTypes = sections[0].getEntryTypes() %}
 {% endif %}
 
 <div class="element-sub-group" data-items="{{ entryTypes | json_encode }}">
