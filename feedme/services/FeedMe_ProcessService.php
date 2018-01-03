@@ -228,7 +228,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
 
             if ($elementsToDisable) {
                 if ($this->_service->disable($elementsToDisable)) {
-                    FeedMePlugin::log($feed->name . ': The following elements have been disabled: ' . print_r($disableIds, true) . '.', LogLevel::Info, true);
+                    FeedMePlugin::log($feed->name . ': The following elements have been disabled: ' . implode(', ', $disableIds) . '.', LogLevel::Info, true);
                 }
             }
         }
@@ -246,7 +246,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
 
             if ($elementsToDelete) {
                 if ($this->_service->delete($elementsToDelete)) {
-                    FeedMePlugin::log($feed->name . ': The following elements have been deleted: ' . print_r($deleteIds, true) . '.', LogLevel::Info, true);
+                    FeedMePlugin::log($feed->name . ': The following elements have been deleted: ' . implode(', ', $deleteIds) . '.', LogLevel::Info, true);
                 }
             }
         }
