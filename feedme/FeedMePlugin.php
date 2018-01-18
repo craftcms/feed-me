@@ -84,7 +84,7 @@ class FeedMePlugin extends BasePlugin
             'pluginNameOverride' => AttributeType::String,
             'cache' => array(AttributeType::Number, 'default' => 60),
             'enabledTabs' => array(AttributeType::Mixed, 'default' => true),
-            'edition' => array(AttributeType::Mixed),
+            'edition' => array(AttributeType::Mixed, 'default' => -1),
         );
     }
 

@@ -125,7 +125,7 @@ class CategoriesFeedMeFieldType extends BaseFeedMeFieldType
         $element->getContent()->title = $category;
         $element->groupId = $groupId;
 
-        // // Save category
+        // Save category
         if (craft()->categories->saveCategory($element)) {
             return $element->id;
         } else {
