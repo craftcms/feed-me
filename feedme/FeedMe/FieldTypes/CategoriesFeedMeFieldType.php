@@ -55,7 +55,7 @@ class CategoriesFeedMeFieldType extends BaseFeedMeFieldType
             // Create the elements if we require
             if (count($elements) == 0) {
                 if (isset($fieldData['options']['create'])) {
-                    $preppedData[] = $this->_createElement($category, $groupId);
+                    $preppedData[] = $this->_createElement($category, $groupId, $fieldData);
                 }
             }
         }
@@ -116,17 +116,58 @@ class CategoriesFeedMeFieldType extends BaseFeedMeFieldType
         }
     }
 
-    private function _createElement($category, $groupId)
+    private function _createElement($category, $groupId, $fieldData)
     {
+        $content = [];
+        $error = null;
+
         $element = new CategoryModel();
         $element->getContent()->title = $category;
         $element->groupId = $groupId;
 
-        // Save category
+        // // Save category
         if (craft()->categories->saveCategory($element)) {
             return $element->id;
         } else {
-            throw new Exception(json_encode($element->getErrors()));
+            $error = true;
+        }
+
+        // Its important to check if we have any required fields on the element we're trying to create
+        // if we do, we need to populate those. This is only ever checked if there's an error when saving the
+        // element normally, which just saves us having to do a query each run through for non-required groups
+        if ($error) {
+            $group = craft()->categories->getGroupById($groupId);
+
+            $requiredFields = craft()->db->createCommand()
+                ->select('f.id, f.handle')
+                ->from('fieldlayoutfields flf')
+                ->join('fields f', 'flf.fieldId = f.id')
+                ->where('flf.layoutId = :layoutId', array(':layoutId' => $group->fieldLayoutId))
+                ->andWhere('flf.required = 1')
+                ->queryAll();
+
+            if ($requiredFields) {
+                foreach ($requiredFields as $requiredField) {
+                    $handle = $requiredField['handle'];
+
+                    // Get the content for this inner field from our overall feed data
+                    $innerFieldContent = Hash::get($fieldData, 'fields.' . $handle);
+
+                    // Parse this inner-field's data, just like a regular field
+                    $parsedData = craft()->feedMe_fields->prepForFieldType(null, $innerFieldContent, $handle, null);
+
+                    // Set the required content on the element
+                    $element->setContentFromPost(array($handle => $parsedData));
+                }
+            }
+
+            // Try to save the element again - it failed above
+            // // Save category
+            if (craft()->categories->saveCategory($element)) {
+                return $element->id;
+            } else {
+                throw new Exception(json_encode($element->getErrors()));
+            }
         }
     }
 
