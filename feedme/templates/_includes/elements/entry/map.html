@@ -26,7 +26,7 @@
         {% set entries = entries | merge([{ label: entry.title | slice(0, 40), value: entry.id }]) %}
     {% endfor %}
 
-    {% set parentField = {
+    {% set parentEntryField = {
         label: 'Parent' | t,
         handle: 'parent',
         instructions: 'Select a parent entry to import these entries under.' | t,
@@ -38,7 +38,7 @@
         }),    
     } %}
 {% else %}
-    {% set parentField = {} %}
+    {% set parentEntryField = {} %}
 {% endif %}
 
 
@@ -59,7 +59,7 @@
         name: 'fieldDefaults[slug]',
         value: feed.fieldDefaults.slug ?? '',
     }),
-}, parentField, {
+}, parentEntryField, {
     label: 'Post Date' | t,
     handle: 'postDate',
     instructions: 'Accepts Unix timestamp, or just about any English textual datetime description.' | t,
