@@ -363,6 +363,16 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         $this->raiseEvent('onProcessFeed', $event);
     }
 
+    public function onBeforeFetchFeed(\CEvent $event)
+    {
+        $this->raiseEvent('onBeforeFetchFeed', $event);
+    }
+
+    public function onFetchFeed(\CEvent $event)
+    {
+        $this->raiseEvent('onFetchFeed', $event);
+    }
+
 
 
     // Private Methods

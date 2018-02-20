@@ -23,7 +23,15 @@ class FeedMe_DataService extends BaseApplicationComponent
             throw new Exception(Craft::t('Unknown Data Type Service called.'));
         }
 
+        // Fire an "onBeforeFetchFeed" event
+        $event = new Event($this, array('url' => &$url, 'element' => $element, 'settings' => $settings));
+        craft()->feedMe_process->onBeforeFetchFeed($event);
+
         $data = $service->getFeed($url, $element, $settings);
+
+        // Fire an "onFetchFeed" event
+        $event = new Event($this, array('data' => $data));
+        craft()->feedMe_process->onFetchFeed($event);
 
         if (!isset($data[0])) {
             $data = array($data);
