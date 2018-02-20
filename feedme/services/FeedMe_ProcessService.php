@@ -160,6 +160,16 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             }
         }
 
+        // If we're deleting or disabling only - we don't want to proceed with saving
+        if (FeedMeDuplicate::isDisable($feed, true) || FeedMeDuplicate::isDelete($feed, true)) {
+            // If we've found an existing element however, store that
+            if ($existingElement) {
+                $this->_processedElementIds[] = $existingElement->id;
+            }
+
+            return;
+        }
+
         // Prepare Element Type model - this sets all Element Type attributes (Title, slug, etc).
         $element = $this->_service->prepForElementModel($element, $fieldData, $feed);
 
