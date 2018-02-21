@@ -74,7 +74,7 @@ class FeedMe_FeedsController extends BaseController
 
             $this->renderTemplate('feedme/feeds/_direct', $variables);
         } else {
-            $this->redirect(craft()->request->urlReferrer);
+            $this->redirect('feedme/feeds');
         }
     }
 
