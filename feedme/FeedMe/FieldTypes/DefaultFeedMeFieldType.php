@@ -22,6 +22,11 @@ class DefaultFeedMeFieldType extends BaseFeedMeFieldType
     {
         $data = Hash::get($fieldData, 'data');
 
+        // The default field handler is for simple field content, ditch array content.
+        if (is_array($data)) {
+            return;
+        }
+
         return $data;
     }
     
