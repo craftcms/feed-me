@@ -197,7 +197,12 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
                     break;
                 case 'postDate':
                 case 'expiryDate';
-                    $element->$handle = FeedMeDateHelper::parseString($dataValue);
+                    $date = FeedMeDateHelper::parseString($dataValue);
+
+                    if ($date) {
+                        $element->$handle = $date;
+                    }
+
                     break;
                 case 'enabled':
                 case 'freeShipping':
@@ -215,6 +220,7 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
             $data[$handle] = $element->$handle;
         }
 
+        $this->_populateProductModel($element, $data, $settings);
         $this->_populateProductVariantModels($element, $data, $settings);
 
         return $element;
@@ -265,12 +271,32 @@ class Commerce_ProductFeedMeElementType extends BaseFeedMeElementType
     // Private Methods
     // =========================================================================
 
-    private function _populateProductModel(Commerce_ProductModel &$product, $data)
+    private function _populateProductModel(Commerce_ProductModel &$product, &$data, $settings)
     {
-        
+        if (isset($data['typeId'])) {
+            $product->typeId = $data['typeId'];
+        }
+
+        if (isset($data['enabled'])) {
+            $product->enabled = $data['enabled'];
+        }
+
+        $product->postDate = (($postDate = $data['postDate']) ? DateTime::createFromString($postDate, craft()->timezone) : $product->postDate);
+
+        if (!$product->postDate) {
+            $product->postDate = new DateTime();
+        }
+
+        $product->expiryDate = (($expiryDate = $data['expiryDate']) ? DateTime::createFromString($expiryDate, craft()->timezone) : null);
+
+        $product->promotable = isset($data['promotable']) ? $data['promotable'] : $product->promotable;
+        $product->freeShipping = isset($data['freeShipping']) ? $data['freeShipping'] : $product->freeShipping;
+        $product->taxCategoryId = isset($data['taxCategoryId']) ? $data['taxCategoryId'] : $product->taxCategoryId;
+        $product->shippingCategoryId = isset($data['shippingCategoryId']) ? $data['shippingCategoryId'] : $product->shippingCategoryId;
+        $product->slug = isset($data['slug']) ? $data['slug'] : $product->slug;
     }
 
-    private function _populateProductVariantModels(Commerce_ProductModel $product, &$data, $settings)
+    private function _populateProductVariantModels(Commerce_ProductModel &$product, &$data, $settings)
     {
         $orphanedValues = [];
         $variants = [];
