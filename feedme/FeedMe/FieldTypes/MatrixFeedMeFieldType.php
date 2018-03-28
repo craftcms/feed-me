@@ -74,6 +74,8 @@ class MatrixFeedMeFieldType extends BaseFeedMeFieldType
             }
         }
 
+        $order = 0;
+
         foreach ($data as $sortKey => $sortData) {
             $blockData = array();
 
@@ -127,7 +129,7 @@ class MatrixFeedMeFieldType extends BaseFeedMeFieldType
                 }
 
                 if ($preppedFieldData) {
-                    $order = $sortKey + 1;
+                    $order = $order + 1;
                     $enabled = true;
 
                     if (isset($blockData[$blockHandle]['enabled'])) {
