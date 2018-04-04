@@ -73,6 +73,11 @@ class Assets extends Field implements FieldInterface
         $urlsToUpload = [];
 
         foreach ($value as $key => $dataValue) {
+            // Prevent empty or blank values (string or array), which match all elements
+            if (empty($dataValue)) {
+                continue;
+            }
+            
             $query = AssetElement::find();
 
             // If we're uploading files, this will need to be an absolute URL. If it is, save until later.

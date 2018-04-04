@@ -56,6 +56,11 @@ class Users extends Field implements FieldInterface
         $foundElements = [];
 
         foreach ($value as $dataValue) {
+            // Prevent empty or blank values (string or array), which match all elements
+            if (empty($dataValue)) {
+                continue;
+            }
+            
             $query = UserElement::find();
 
             $criteria['groupId'] = $groupIds;

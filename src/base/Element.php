@@ -136,8 +136,6 @@ abstract class Element extends Component
     {
         $this->element->fieldLayoutId;
 
-        FeedMe::debug($settings, $this->element->attributes);
-
         if (!Craft::$app->getElements()->saveElement($this->element)) {
             return false;
         }

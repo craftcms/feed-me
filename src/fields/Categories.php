@@ -47,6 +47,11 @@ class Categories extends Field implements FieldInterface
         $foundElements = [];
 
         foreach ($value as $dataValue) {
+            // Prevent empty or blank values (string or array), which match all elements
+            if (empty($dataValue)) {
+                continue;
+            }
+
             $query = CategoryElement::find();
 
             $criteria['groupId'] = $groupId;
