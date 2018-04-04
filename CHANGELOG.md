@@ -28,7 +28,7 @@
 - When a feed fails or contains errors it will no longer show the red error symbol for the queue job. Errors are recorded in the logs, but it won't cause other queue jobs to prevent being run, and notifying clients of an error.
 - Logs now capture additional information of line/file when exceptions occur.
 - utilise Guzzle for all HTTP requests, rather than new instances of Curl.
-- Improved Help widget to utalise API for sending emails, not relying on local relay. Caused immeasurable amount of issues for people try to get support!
+- Improved Help widget to utilise API for sending emails, not relying on local relay. Caused immeasurable amount of issues for people try to get support!
 
 ## 2.0.11 - 2017-12-14
 
