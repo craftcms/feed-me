@@ -105,7 +105,6 @@ class Feeds extends Component
         if (!$model->id) {
             $model->id = $record->id;
             $model->fieldMapping = $record->fieldMapping;
-            $model->fieldElementMapping = $record->fieldElementMapping;
             $model->fieldUnique = $record->fieldUnique;
         }
 
