@@ -10,11 +10,11 @@
 {% endif %}
 
 {% set users = [{ label: 'Don\'t import', value: '' }] %}
-{% if CraftEdition == CraftClient %}
+{#{% if CraftEdition == CraftClient %}
     {% for user in craft.users({ client: 1 }).one() %}
         {% set users = users | merge([{ label: user, value: user.id }]) %}
     {% endfor %}
-{% endif %}
+{% endif %}#}
 
 {% if CraftEdition == CraftPro %}
     {% for user in craft.users.can('createEntries:' ~ sectionId).all() %}
