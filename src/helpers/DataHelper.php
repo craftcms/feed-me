@@ -51,7 +51,11 @@ class DataHelper
 
                 // Allow pipes '|' to denote multiple items, but even if it doesn't contain one, explode will create
                 // an array, so ensure to merge with the current results.
-                $value = array_merge($value, explode('|', $nodeValue));
+                if (is_string($nodeValue) && strpos($nodeValue, '|') !== false) {
+                    $value = array_merge($value, explode('|', $nodeValue));
+                } else {
+                    $value[] = $nodeValue;
+                }
             }
         }
 
