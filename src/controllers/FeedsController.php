@@ -298,7 +298,7 @@ class FeedsController extends Controller
         $feed->siteId = $request->getBodyParam('siteId', $feed->siteId);
         $feed->duplicateHandle = $request->getBodyParam('duplicateHandle', $feed->duplicateHandle);
         $feed->passkey = $request->getBodyParam('passkey', $feed->passkey);
-        $feed->backup = $request->getBodyParam('backup', $feed->backup);
+        $feed->backup = (bool)$request->getBodyParam('backup', $feed->backup);
 
         // Don't overwrite mappings when saving from first screen
         if ($request->getBodyParam('fieldMapping')) {

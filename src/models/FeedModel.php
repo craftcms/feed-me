@@ -90,6 +90,7 @@ class FeedModel extends Model
     {
         return [
             [['name', 'feedUrl', 'feedType', 'elementType', 'duplicateHandle', 'passkey'], 'required'],
+            [['backup'], 'boolean'],
         ];
     }
 
