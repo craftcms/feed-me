@@ -1,0 +1,179 @@
+{% import '_includes/forms' as forms %}
+
+{% extends 'feed-me/_layouts' %}
+
+{% set crumbs = [
+    { label: craft.feedme.getPluginName | t('feed-me'), url: url('feed-me') },
+] %}
+
+{% if feed.id %}
+    {% set crumbs = crumbs | merge([
+        { label: feed.name | t('feed-me'), url: url('feed-me/feeds/' ~ feed.id) },
+    ]) %}
+{% endif %}
+
+{% set title = (feed.id) ? feed.name : 'Create a new feed' | t('feed-me') %}
+{% set noTabs = true %}
+{% set fullPageForm = true %}
+
+{% set buttons %}
+    <div class="buttons">
+        <input type="button" data-action="feed-me/feeds/save-feed" class="btn submit" value="{{ 'Save' | t('feed-me') }}">
+        <input type="button" data-action="feed-me/feeds/save-and-element-feed" class="btn submit" value="{{ 'Save & Continue' | t('feed-me') }}">
+    </div>
+{% endset %}
+
+{% block actionButton %}
+    {{ buttons }}
+{% endblock %}
+
+{% block blockContent %}
+    <input type="hidden" name="action" value="feed-me/feeds/save-feed">
+
+    {% if feed.id %}<input type="hidden" name="feedId" value="{{ feed.id }}">{% endif %}
+
+    {{ forms.textField({
+        first: true,
+        label: "Name" | t('feed-me'),
+        instructions: "What this feed will be called in the CP." | t('feed-me'),
+        id: 'name',
+        name: 'name',
+        value: feed.name,
+        errors: feed.getErrors('name'),
+        autofocus: true,
+        required: true,
+    }) }}
+
+    {{ forms.textField({
+        label: "Feed URL" | t('feed-me'),
+        instructions: "Can be a file on the local file system or from a website url (http://...)." | t('feed-me'),
+        id: 'feedUrl',
+        name: 'feedUrl',
+        value: feed.feedUrl,
+        errors: feed.getErrors('feedUrl'),
+        required: true,
+    }) }}
+
+    {{ forms.selectField({
+        label: "Feed Type" | t('feed-me'),
+        instructions: 'Choose what type of feed you\'re retrieving.' | t('feed-me'),
+        id: 'feedType',
+        name: 'feedType',
+        options: dataTypes,
+        value: feed.feedType,
+        errors: feed.getErrors('feedType'),
+        required: true,
+    }) }}
+
+    <hr>
+
+    {% set elementsList = [] %}
+    {% for elementClass, element in elements %}
+        {% set elementsList = elementsList | merge({ (elementClass): element.name }) %}
+    {% endfor %}
+
+    {{ forms.selectField({
+        label: "Element Type" | t('feed-me'),
+        instructions: 'Choose what element you want to save your feed data to.' | t('feed-me'),
+        id: 'elementType',
+        name: 'elementType',
+        options: [{ label: 'Select', value: '' }] | merge(elementsList),
+        value: feed.elementType,
+        errors: feed.getErrors('elementType'),
+        required: true,
+    }) }}
+
+    {% for elementClass, element in elements %}
+        <div class="element-select" data-type="{{ elementClass | replace('\\', '-') }}">
+            {% set elementType = elementClass %}
+
+            {% include element.groupsTemplate ignore missing %}
+        </div>
+    {% endfor %}
+
+    {% if craft.app.isMultiSite() %}
+        {% set sites = [{ label: 'All Sites' | t('feed-me'), value: '' }] %}
+
+        {% for site in craft.app.sites.getAllSites() %}
+            {% set sites = sites | merge([{ label: site.name, value: site.id }]) %}
+        {% endfor %}
+
+        {{ forms.selectField({
+            label: "Sites" | t('feed-me'),
+            instructions: 'Choose which site you want to save your feed data to.' | t('feed-me'),
+            id: 'siteId',
+            name: 'siteId',
+            options: sites,
+            value: feed.siteId,
+        }) }}
+    {% endif %}
+
+    <hr>
+
+    <div class="field">
+        <div class="heading">
+            <label class="required">{{ "Import strategy" | t('feed-me') }}
+                <span class="info">
+                    <span style="display:inline-block;">
+                        <strong>{{ "Create new element:" | t('feed-me') }}</strong> {{ "Adds new elements if they do not already exist." | t('feed-me') }}
+                    </span>
+                    <span style="display:inline-block;">
+                        <strong>{{ "Update existing elements:" | t('feed-me') }}</strong> {{ "Updates elements that match the Unique Identifier (next step)." | t('feed-me') }}
+                    </span>
+                    <span style="display:inline-block;">
+                        <strong>{{ "Disable missing elements:" | t('feed-me') }}</strong> {{ "Disables any elements that are missing from the feed." | t('feed-me') }}
+                    </span>
+                    <span style="display:inline-block;">
+                        <strong>{{ "Delete missing elements:" | t('feed-me') }}</strong> {{ "Deletes any elements that are missing from the feed. Be careful." | t('feed-me') }}
+                    </span>
+                </span>
+            </label>
+
+            <div class="instructions">
+                <p>{{ "Choose what happens when this feed is run again. Click tooltip above for explanation." | t('feed-me') }}</p>
+            </div>
+        </div>
+
+        <div class="input ltr">
+            {{ forms.checkboxGroup({
+                label: "Import strategy" | t('feed-me'),
+                instructions: 'Choose what happens when this feed is run again.' | t('feed-me'),
+                id: 'duplicateHandle',
+                name: 'duplicateHandle',
+                options: {
+                    'add': 'Create new elements' | t('feed-me'),
+                    'update': 'Update existing elements' | t('feed-me'),
+                    'disable': 'Disable missing elements' | t('feed-me'),
+                    'delete': 'Delete missing elements' | t('feed-me')
+                },
+                values: feed.duplicateHandle ?? ['add'],
+                required: true,
+            }) }}
+        </div>
+    </div>
+
+    <hr>
+
+    {{ forms.textField({
+        label: "Passkey" | t('feed-me'),
+        instructions: "A generated, unique string to increase security against imports being run inadvertently. No need to change this." | t('feed-me'),
+        id: 'passkey',
+        name: 'passkey',
+        value: (feed.passkey) ? feed.passkey : '',
+        errors: feed.getErrors('passkey'),
+        required: true,
+    }) }}
+
+    {{ forms.lightswitchField({
+        first: true,
+        label: 'Backup' | t('feed-me'),
+        instructions: 'Perform a full backup each time this feed is processed.' | t('feed-me'),
+        name: 'backup',
+        on: (feed.id) ? feed.backup : true,
+    }) }}
+
+{% endblock %}
+
+{% block footerButton %}
+    {{ buttons }}
+{% endblock %}

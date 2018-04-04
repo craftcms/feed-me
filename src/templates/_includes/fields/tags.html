@@ -1,0 +1,35 @@
+{# ------------------------ #}
+{# Available Variables #}
+{# ------------------------ #}
+{# Attributes: #}
+{# type, name, handle, instructions, attribute, default, feed, feedData #}
+{# ------------------------ #}
+{# Fields: #}
+{# name, handle, instructions, feed, feedData, field, fieldClass #}
+{# ------------------------ #}
+
+{% import 'feed-me/_macros' as feedMeMacro %}
+{% import '_includes/forms' as forms %}
+
+{# Get any sub-fields for the element. Also check to go only one level deep #}
+{% if field is defined and isSubElementField is not defined %}
+    {% set elementFields = [] %}
+
+    {# Prevent infinite loop by only allow elements that are not the same as this #}
+    {% for elementField in craft.feedme.getTagLayoutByField(field) %}
+        {% if className(elementField) != className(field) %}
+            {% set elementFields = elementFields | merge([ elementField ]) %}
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+{% extends 'feed-me/_includes/fields/_base' %}
+
+{% block extraSettings %}
+    {{ feedMeMacro.checkbox({
+        label: 'Create tags if they do not exist' | t('feed-me'),
+        name: 'options[create]',
+        value: 1,
+        checked: feed.fieldMapping[handle].options.create ?? '',
+    }) }}
+{% endblock %}

@@ -1,0 +1,19 @@
+{% macro checkbox(config) %}
+    {%- spaceless %}
+
+    {% set value = (config.value is defined ? config.value : 1) %}
+    {% set id = (config.id is defined and config.id ? config.id : 'checkbox' ~ random()) %}
+    {% set label = (config.label is defined ? config.label) %}
+
+    <div class="field checkboxfield">
+        <input type="checkbox" value="{{ value }}"
+            {%- if id %} id="{{ id }}"{% endif %}
+            class="checkbox"
+            {%- if config.name is defined %} name="{{ config.name }}"{% endif %}
+            {%- if config.checked is defined and config.checked %} checked{% endif %}>
+
+        <label for="{{ id }}">{{ label | raw }}</label>
+    </div>
+
+    {% endspaceless -%}
+{% endmacro %}

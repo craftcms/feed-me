@@ -1,0 +1,36 @@
+{% do view.registerAssetBundle('verbb\\feedme\\web\\assets\\feedme\\FeedMeAsset') %}
+{% set baseAssetsUrl = view.getAssetManager().getPublishedUrl('@verbb/feedme/web/assets/feedme/dist', true) %}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Responsive-ness -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ 'Feed Me - {name} has started processing' | t('feed-me', { name: feed.name }) }}</title>
+
+    <!-- CSS -->
+</head>
+<body class="message feedme-message">
+
+<div class="message-container">
+    <div id="message" class="pane">
+        {% if task %}
+            <div class="feedme-fullpage fullpage-running">
+                <img src="{{ baseAssetsUrl ~ '/img/icon-success.svg' }}">
+                
+                <h2>{{ '{name} has started processing' | t('feed-me', { name: feed.name }) }}</h2>
+                <p>{{ 'Data is now being imported from your feed. You can navigate away from this page without disrupting your feed processing.' | t('feed-me') }}</p>
+            </div>
+        {% else %}
+            <div class="feedme-fullpage fullpage-error">
+                <img src="{{ baseAssetsUrl ~ '/img/icon-error.svg' }}">
+                
+                <h2>{{ 'Unable to start feed' | t('feed-me') }}</h2>
+                <p>{{ 'Please check your passkey, and verify the URL is correct.' | t('feed-me') }}</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+</body>
+</html>

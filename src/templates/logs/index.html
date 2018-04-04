@@ -1,0 +1,48 @@
+{% extends 'feed-me/_layouts' %}
+
+{% set crumbs = [
+    { label: craft.feedme.getPluginName | t('feed-me'), url: url('feed-me') },
+    { label: "Logs" | t('feed-me'), url: url('feed-me/logs') }
+] %}
+
+{% set selectedTab = 'logs' %}
+
+{% block blockContent %}
+
+{% if logEntries | length %}
+    <a class="btn right" href="{{ actionUrl('feed-me/logs/clear') }}">{{ "Clear logs" | t('feed-me') }}</a>
+
+    <table class="data fullwidth collapsible feed-me-logs-table">
+        <thead>
+            <tr>
+                <th scope="col">{{ "Type" | t('feed-me') }}</th>
+                <th scope="col">{{ "Message" | t('feed-me') }}</th>
+                <th scope="col">{{ "Timestamp" | t('feed-me') }}</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for logEntry in logEntries %}
+                <tr>
+                    <td class="col-label" data-title="{{ 'Result' | t('feed-me') }}">
+                        <span class="log-result type-{{ logEntry.type }}">{{ logEntry.type }}</span>
+                    </td>
+
+                    <td class="col-label" data-title="{{ 'Message' | t('feed-me') }}">
+                        <span class="">{{ logEntry.message }}</span>
+                    </td>
+
+                    <td data-title="{{ 'Timestamp' | t('feed-me') }}" style="width: 140px;">
+                        <code>
+                            {{ logEntry.date | date('short') ~ ' ' ~ logEntry.date | time('short') }}
+                        </code>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>{{ 'No logs recorded yet.' | t('feed-me') }}</p>
+{% endif %}
+
+{% endblock %}

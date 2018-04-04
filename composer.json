@@ -1,0 +1,67 @@
+{
+    "name": "verbb/feed-me",
+    "description": "Import content from XML, RSS, CSV or JSON feeds into Entries, Categories, Craft Commerce Products (and variants), and more.",
+    "type": "craft-plugin",
+    "version": "3.0.0-beta.1",
+    "keywords": [
+        "craft",
+        "cms",
+        "craftcms",
+        "craft-plugin",
+        "feed me"
+    ],
+    "support": {
+        "email": "support@verbb.io",
+        "issues": "https://github.com/verbb/feed-me/issues?state=open",
+        "source": "https://github.com/verbb/feed-me",
+        "docs": "https://github.com/verbb/feed-me",
+        "rss": "https://github.com/verbb/feed-me/commits/v2.atom"
+    },
+    "license": "Craft",
+    "authors": [
+        {
+            "name": "Verbb",
+            "homepage": "https://verbb.io"
+        }
+    ],
+    "require": {
+        "craftcms/cms": "^3.0.0-RC15",
+        "cakephp/core": "^3.5",
+        "cakephp/utility": "^3.3.12",
+        "jakeasmith/http_build_url": "^1.0",
+        "nesbot/carbon": "^1.22",
+        "league/csv": "^8.2",
+        "guzzlehttp/guzzle": "~6.3.0",
+        "vlucas/phpdotenv": "^2.4",
+        "ralouphie/mimey": "^1.0"
+    },
+    "require-dev": {
+        "codeception/codeception": "~2.3.3"
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+          "verbb\\feedme\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "verbb\\feedme\\tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "name": "Feed Me",
+        "handle": "feed-me",
+        "description": "Import content from XML, RSS, CSV or JSON feeds into Entries, Categories, Craft Commerce Products (and variants), and more.",
+        "schemaVersion": "1.0.0",
+        "hasCpSettings": true,
+        "hasCpSection": true,
+        "changelogUrl": "https://raw.githubusercontent.com/verbb/feed-me/craft-3/CHANGELOG.md",
+        "class": "verbb\\feedme\\FeedMe"
+    }
+}

@@ -1,0 +1,36 @@
+{# ------------------------ #}
+{# Available Variables #}
+{# ------------------------ #}
+{# Attributes: #}
+{# type, name, handle, instructions, attribute, default, feed, feedData #}
+{# ------------------------ #}
+{# Fields: #}
+{# name, handle, instructions, feed, feedData, field, fieldClass #}
+{# ------------------------ #}
+
+{% import 'feed-me/_macros' as feedMeMacro %}
+{% import '_includes/forms' as forms %}
+
+{% set default = default ?? {
+    type: 'dateTime',
+} %}
+
+{% extends 'feed-me/_includes/fields/_base' %}
+
+{% block extraSettings %}
+    <div class="element-match">
+        <span>{{ 'Data provided for this field is formatted as:' | t('feed-me') }}</span>
+
+        {{ forms.selectField({
+            name: 'options[match]',
+            class: '',
+            value: feed.fieldMapping[handle].options.match ?? '',
+            options: [
+                { value: 'auto', label: 'Auto' | t('feed-me') },
+                { value: 'america', label: 'mm/dd/yyyy' | t('feed-me') },
+                { value: 'asia', label: 'yyyy/mm/dd' | t('feed-me') },
+                { value: 'world', label: 'dd/mm/yyyy' | t('feed-me') },
+            ],
+        }) }}
+    </div>
+{% endblock %}

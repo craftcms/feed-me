@@ -1,7 +1,0 @@
-{
-    "require": {
-        "cakephp/utility": "3.3.12",
-        "jakeasmith/http_build_url": "^1.0",
-        "nesbot/carbon": "^1.22"
-    }
-}
