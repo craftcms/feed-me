@@ -40,7 +40,7 @@ class Install extends Migration
             'fieldMapping'         => $this->text(),
             'fieldUnique'          => $this->text(),
             'passkey'              => $this->string()->notNull(),
-            'backup'               => $this->boolean()->notNull()->defaultValue(0),
+            'backup'               => $this->boolean()->notNull()->defaultValue(false),
 
             'dateCreated' => $this->dateTime()->notNull(),
             'dateUpdated' => $this->dateTime()->notNull(),
