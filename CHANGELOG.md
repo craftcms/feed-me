@@ -1,5 +1,23 @@
 # Changelog
 
+## 3.0.0.beta-3 - 2018-04-10
+
+### Fixed
+
+- Fix database column type for backup option causing issues
+- Update league/csv dependancy
+- Prevent element fields matching all existing elements when not provided a value
+- Fix compatibility with Craft Client/Solo
+- Check before trying to split pipe characters in values
+- Fix backup option being switched off
+
+## 3.0.0.beta-2 - 2018-04-04
+
+### Fixed
+
+- Fix leftover `fieldElementMapping` references
+
+
 ## 3.0.0.beta-1 - 2018-04-03
 
 > {warning} Feed Me 3.0.0 is a major release with significant, breaking changes. Be sure to back up your existing Feed Me 2.x.x settings. In most cases, you'll be required to re-map fields to your feed data, as this has been heavily changed and improved.
