@@ -1,11 +1,17 @@
 # Changelog
 
+## 3.0.0.beta-4 - 2018-04-11
+
+### Fixed
+
+- Revert update `league/csv` dependancy
+
 ## 3.0.0.beta-3 - 2018-04-10
 
 ### Fixed
 
 - Fix database column type for backup option causing issues
-- Update league/csv dependancy
+- Update `league/csv` dependancy
 - Prevent element fields matching all existing elements when not provided a value
 - Fix compatibility with Craft Client/Solo
 - Check before trying to split pipe characters in values
