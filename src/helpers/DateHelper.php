@@ -35,6 +35,8 @@ class DateHelper
 
         // Check if provided as a timestamp
         if (DateTimeHelper::isValidTimeStamp($value)) {
+            $date = null;
+
             // Check if provided as milliseconds first
             if (strlen((int)$value) === 13) {
                 $date = Carbon::createFromTimestampMs($value);
@@ -45,9 +47,11 @@ class DateHelper
                 $date = Carbon::createFromTimestamp($value);
             }
 
-            $dateTimeString = $date->toDateTimeString();
+            if ($date) {
+                $dateTimeString = $date->toDateTimeString();
 
-            return DateTimeHelper::toDateTime($dateTimeString, true, false);
+                return DateTimeHelper::toDateTime($dateTimeString, true, false);
+            }
         }
 
         try {
@@ -66,6 +70,28 @@ class DateHelper
                     $month = Hash::get($matches, '1');
                     $day = Hash::get($matches, '2');
                     $year = Hash::get($matches, '3');
+                    $time = explode(' ', $value);
+
+                    $value = $year . '-' . $month . '-' . $day . ' ' . Hash::get($time, '1');
+                }
+
+                if ($formatting === 'yyyymmdd') {
+                    preg_match('/([0-9]{4})([0-9]{2})([0-9]{2})/', $value, $matches);
+
+                    $month = Hash::get($matches, '2');
+                    $day = Hash::get($matches, '3');
+                    $year = Hash::get($matches, '1');
+                    $time = explode(' ', $value);
+
+                    $value = $year . '-' . $month . '-' . $day . ' ' . Hash::get($time, '1');
+                }
+
+                if ($formatting === 'yyyyddmm') {
+                    preg_match('/([0-9]{4})([0-9]{2})([0-9]{2})/', $value, $matches);
+
+                    $month = Hash::get($matches, '3');
+                    $day = Hash::get($matches, '2');
+                    $year = Hash::get($matches, '1');
                     $time = explode(' ', $value);
 
                     $value = $year . '-' . $month . '-' . $day . ' ' . Hash::get($time, '1');
