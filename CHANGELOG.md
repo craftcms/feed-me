@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.0.0.beta-5 - 2018-04-22
+## 3.0.0-beta.5 - 2018-04-22
 
 ### Added
 
@@ -14,13 +14,13 @@
 - Fix error thrown by fields that have `default` attributes
 - Fixed sub-element sources throwing errors
 
-## 3.0.0.beta-4 - 2018-04-11
+## 3.0.0-beta.4 - 2018-04-11
 
 ### Fixed
 
 - Revert update `league/csv` dependancy
 
-## 3.0.0.beta-3 - 2018-04-10
+## 3.0.0-beta.3 - 2018-04-10
 
 ### Fixed
 
@@ -31,14 +31,14 @@
 - Check before trying to split pipe characters in values
 - Fix backup option being switched off
 
-## 3.0.0.beta-2 - 2018-04-04
+## 3.0.0-beta.2 - 2018-04-04
 
 ### Fixed
 
 - Fix leftover `fieldElementMapping` references
 
 
-## 3.0.0.beta-1 - 2018-04-03
+## 3.0.0-beta.1 - 2018-04-03
 
 > {warning} Feed Me 3.0.0 is a major release with significant, breaking changes. Be sure to back up your existing Feed Me 2.x.x settings. In most cases, you'll be required to re-map fields to your feed data, as this has been heavily changed and improved.
 
