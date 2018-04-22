@@ -1,5 +1,19 @@
 # Changelog
 
+## 3.0.0.beta-5 - 2018-04-22
+
+### Added
+
+- Added support for `yyyymmdd` and `yyyyddmm` date formats
+- Added options to select section/type for entry fields when creating new entries
+
+### Fixed
+
+- Fix user status not being set for users
+- Fix incorrect author being set on entries
+- Fix error thrown by fields that have `default` attributes
+- Fixed sub-element sources throwing errors
+
 ## 3.0.0.beta-4 - 2018-04-11
 
 ### Fixed
