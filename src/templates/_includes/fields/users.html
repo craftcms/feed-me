@@ -42,10 +42,12 @@
         }) }}
     </div>
 
-    {{ feedMeMacro.checkbox({
-        label: 'Create users if they do not exist' | t('feed-me'),
-        name: 'options[create]',
-        value: 1,
-        checked: feed.fieldMapping[handle].options.create ?? '',
-    }) }}
+    <div class="element-create">
+        {{ feedMeMacro.checkbox({
+            label: 'Create users if they do not exist' | t('feed-me'),
+            name: 'options[create]',
+            value: 1,
+            checked: feed.fieldMapping[handle].options.create ?? '',
+        }) }}
+    </div>
 {% endblock %}

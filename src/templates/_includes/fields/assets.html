@@ -16,7 +16,7 @@
     {% set elementFields = [] %}
 
     {# Prevent infinite loop by only allow elements that are not the same as this #}
-    {% for elementField in craft.feedme.getAssetLayoutByField(field) %}
+    {% for elementField in craft.feedme.getElementLayoutByField(className(field), field) %}
         {% if className(elementField) != className(field) %}
             {% set elementFields = elementFields | merge([ elementField ]) %}
         {% endif %}

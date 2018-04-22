@@ -303,6 +303,35 @@ body.ltr #feeds .thin.action {
 }
 
 
+//
+// Creating Elements
+//
+
+.feedme-mapping .field-extra-settings .element-create {
+    margin-top: 5px;
+}
+
+
+//
+// Element Groups
+//
+
+.feedme-mapping .field-extra-settings .element-groups {
+    margin-top: 5px;
+    display: inline-flex;
+}
+
+.feedme-mapping .field-extra-settings .element-group {
+    display: inline-flex;
+    margin-right: 10px;
+    align-items: center;
+
+    span {
+        margin: 4px 5px 0 0;
+    }
+}
+
+
 
 //
 // Sub-Element fields

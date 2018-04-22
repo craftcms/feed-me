@@ -73,84 +73,93 @@ class FeedMeVariable extends ServiceLocator
 
 
     //
+    // Helper functions for element fields to get their first source. This is tricky as some elements
+    // support multiple sources (Entries, Users), whilst others can only have one (Tags, Categories)
+    //
+
+    public function getAssetSourcesByField($field)
+    {
+        $sources = [];
+
+        if (!$field) {
+            return;
+        }
+
+        if (is_array($field->sources)) {
+            foreach ($field->sources as $source) {
+                list($type, $id) = explode(':', $source);
+
+                $sources[] = Craft::$app->volumes->getVolumeById($id);
+            }
+        } else if ($field->sources === '*') {
+            $sources = Craft::$app->volumes->getAllVolumes();
+        }
+        
+        return $sources;
+    }
+
+    public function getCategorySourcesByField($field)
+    {
+        if (!$field) {
+            return;
+        }
+
+        list($type, $id) = explode(':', $field->source);
+
+        return Craft::$app->categories->getGroupById($id);
+    }
+
+    public function getEntrySourcesByField($field)
+    {
+        $sources = [];
+
+        if (!$field) {
+            return;
+        }
+
+        if (is_array($field->sources)) {
+            foreach ($field->sources as $source) {
+                list($type, $id) = explode(':', $source);
+
+                $sources[] = Craft::$app->sections->getSectionById($id);
+            }
+        } else if ($field->sources === '*') {
+            $sources = Craft::$app->sections->getAllSections();
+        }
+
+        return $sources;
+    }
+
+    public function getTagSourcesByField($field)
+    {
+        if (!$field) {
+            return;
+        }
+
+        list($type, $id) = explode(':', $field->source);
+
+        return Craft::$app->tags->getTagGroupById($id);
+    }
+
+
+    //
     // Helper functions for element fields in getting their inner-element field layouts
     //
-    public function getAssetLayoutByField($field)
+
+    public function getElementLayoutByField($type, $field)
     {
-        if (!$field) {
-            return;
+        $source = null;
+
+        if ($type === 'craft\fields\Assets') {
+            $source = $this->getAssetSourcesByField($field)[0] ?? null;
+        } else if ($type === 'craft\fields\Categories') {
+            $source = $this->getCategorySourcesByField($field) ?? null;
+        } else if ($type === 'craft\fields\Entries') {
+            $section = $this->getEntrySourcesByField($field)[0] ?? null;
+            $source = Craft::$app->sections->getEntryTypeById($section->id);
+        } else if ($type === 'craft\fields\Tags') {
+            $source = $this->getCategorySourcesByField($field) ?? null;
         }
-
-        if (is_array($field->sources)) {
-            $sourceId = str_replace('folder:', '', $field->sources[0]);
-        } else if ($field->sources == '*') {
-            $sourceId = Craft::$app->volumes->getAllVolumeIds()[0] ?? null;
-        }
-
-        $source = Craft::$app->volumes->getVolumeById($sourceId);
-
-        if (!$source) {
-            return;
-        }
-
-        return Craft::$app->fields->getFieldsByLayoutId($source->fieldLayoutId);
-    }
-
-    public function getCategoryLayoutByField($field)
-    {
-        if (!$field) {
-            return;
-        }
-
-        if (is_array($field->sources)) {
-            $sourceId = str_replace('group:', '', $field->sources[0]);
-        } else if ($field->sources == '*') {
-            $sourceId = Craft::$app->categories->getAllGroupIds()[0] ?? null;
-        }
-
-        $source = Craft::$app->categories->getGroupById($sourceId);
-
-        if (!$source) {
-            return;
-        }
-
-        return Craft::$app->fields->getFieldsByLayoutId($source->fieldLayoutId);
-    }
-
-    public function getEntryLayoutByField($field)
-    {
-        if (!$field) {
-            return;
-        }
-
-        if (is_array($field->sources)) {
-            $sourceId = str_replace('section:', '', $field->sources[0]);
-        } else if ($field->sources == '*') {
-            $sourceId = Craft::$app->sections->getAllSectionIds()[0] ?? null;
-        }
-
-        $source = Craft::$app->sections->getEntryTypeById($sourceId);
-
-        if (!$source) {
-            return;
-        }
-
-        return Craft::$app->fields->getFieldsByLayoutId($source->fieldLayoutId);
-    }
-
-    public function getTagLayoutByField($field)
-    {
-        if (!$field) {
-            return;
-        }
-
-        if (is_array($field->sources)) {
-            $sourceId = str_replace('group:', '', $field->sources[0]);
-        } else if ($field->sources == '*') {
-            $sourceId = Craft::$app->sections->getAllSectionIds()[0] ?? null;
-        }
-
-        $source = Craft::$app->sections->getEntryTypeById($sourceId);
 
         if (!$source) {
             return;
