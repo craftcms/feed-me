@@ -194,8 +194,10 @@ class User extends Element implements ElementInterface
         }
     }
 
-    protected function parseStatus($value, $fieldInfo)
+    protected function parseStatus($feedData, $fieldInfo)
     {
+        $value = $this->fetchSimpleValue($feedData, $fieldInfo);
+
         switch ($value) {
             case 'locked';
                 $this->element->locked = true;
