@@ -141,8 +141,9 @@ class Entry extends Element implements ElementInterface
         return null;
     }
 
-    protected function parseAuthorId($value, $fieldInfo)
+    protected function parseAuthorId($feedData, $fieldInfo)
     {
+        $value = $this->fetchSimpleValue($feedData, $fieldInfo);
         $match = Hash::get($fieldInfo, 'options.match');
 
         // Element lookups must have a value to match against
