@@ -105,7 +105,7 @@
             <div class="default-fields">
                 {% block defaultSettings %}
 
-                    {% if default %}
+                    {% if default.type is defined %}
                         {% if default.type == 'text' %}
 
                             {{ forms.textField({
