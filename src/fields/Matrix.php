@@ -79,7 +79,7 @@ class Matrix extends Field implements FieldInterface
 
                     if (in_array($feedPath, $fieldFieldHandles)) {
                         $complexFields[$subFieldHandle . '_' . $blockIndex]['info'] = $subFieldInfo;
-                        // $complexFields[$subFieldHandle . '_' . $blockIndex]['data'][$nodePath] = $value;
+                        $complexFields[$subFieldHandle . '_' . $blockIndex]['data'][$nodePath] = $value;
                         continue;
                     }
 
@@ -89,7 +89,7 @@ class Matrix extends Field implements FieldInterface
                         // it'll be generic MatrixBlock/Images not MatrixBlock/0/Images/0 like we need
                         $subFieldInfo['node'] = $nodePath;
 
-                        $fieldData = $this->_parseSubField($subFieldHandle, $subFieldInfo, $blockIndex, $blockHandle, $fieldData);
+                        $fieldData = $this->_parseSubField($this->feedData, $subFieldHandle, $subFieldInfo, $blockIndex, $blockHandle, $fieldData);
                     }
                 }
             }
@@ -105,9 +105,9 @@ class Matrix extends Field implements FieldInterface
             $blockIndex = $parts[1];
 
             $subFieldInfo = Hash::get($complexInfo, 'info');
-            // $nodePaths = Hash::get($complexInfo, 'data');
+            $nodePaths = Hash::get($complexInfo, 'data');
 
-            $fieldData = $this->_parseSubField($subFieldHandle, $subFieldInfo, $blockIndex, $blockHandle, $fieldData);
+            $fieldData = $this->_parseSubField($nodePaths, $subFieldHandle, $subFieldInfo, $blockIndex, $blockHandle, $fieldData);
         }
 
         ksort($fieldData, SORT_NUMERIC);
@@ -142,14 +142,14 @@ class Matrix extends Field implements FieldInterface
     // Private Methods
     // =========================================================================
 
-    private function _parseSubField($subFieldHandle, $subFieldInfo, $blockIndex, $blockHandle, $fieldData)
+    private function _parseSubField($feedData, $subFieldHandle, $subFieldInfo, $blockIndex, $blockHandle, $fieldData)
     {
         $subFieldClassHandle = Hash::get($subFieldInfo, 'field');
 
         $subField = Hash::extract($this->field->getBlockTypeFields(), '{n}[handle=' . $subFieldHandle . ']')[0];
 
         $class = FeedMe::$plugin->fields->getRegisteredField($subFieldClassHandle);
-        $class->feedData = $this->feedData;
+        $class->feedData = $feedData;
         $class->fieldHandle = $subFieldHandle;
         $class->fieldInfo = $subFieldInfo;
         $class->field = $subField;
