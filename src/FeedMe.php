@@ -9,12 +9,12 @@ use verbb\feedme\web\twig\variables\FeedMeVariable;
 
 use Craft;
 use craft\base\Plugin;
-use craft\helpers\UrlHelper;
-use craft\web\UrlManager;
 use craft\events\PluginEvent;
 use craft\events\RegisterUrlRulesEvent;
+use craft\helpers\UrlHelper;
 use craft\services\Plugins;
 use craft\web\twig\variables\CraftVariable;
+use craft\web\UrlManager;
 
 use yii\base\Event;
 
