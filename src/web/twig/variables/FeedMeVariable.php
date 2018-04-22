@@ -87,9 +87,13 @@ class FeedMeVariable extends ServiceLocator
             $sourceId = Craft::$app->volumes->getAllVolumeIds()[0] ?? null;
         }
 
-        $layoutId = Craft::$app->volumes->getVolumeById($sourceId)->fieldLayoutId;
+        $source = Craft::$app->volumes->getVolumeById($sourceId);
 
-        return Craft::$app->fields->getFieldsByLayoutId($layoutId);
+        if (!$source) {
+            return;
+        }
+
+        return Craft::$app->fields->getFieldsByLayoutId($source->fieldLayoutId);
     }
 
     public function getCategoryLayoutByField($field)
@@ -104,9 +108,13 @@ class FeedMeVariable extends ServiceLocator
             $sourceId = Craft::$app->categories->getAllGroupIds()[0] ?? null;
         }
 
-        $layoutId = Craft::$app->categories->getGroupById($sourceId)->fieldLayoutId;
+        $source = Craft::$app->categories->getGroupById($sourceId);
 
-        return Craft::$app->fields->getFieldsByLayoutId($layoutId);
+        if (!$source) {
+            return;
+        }
+
+        return Craft::$app->fields->getFieldsByLayoutId($source->fieldLayoutId);
     }
 
     public function getEntryLayoutByField($field)
@@ -121,9 +129,13 @@ class FeedMeVariable extends ServiceLocator
             $sourceId = Craft::$app->sections->getAllSectionIds()[0] ?? null;
         }
 
-        $layoutId = Craft::$app->sections->getEntryTypeById($sourceId)->fieldLayoutId;
+        $source = Craft::$app->sections->getEntryTypeById($sourceId);
 
-        return Craft::$app->fields->getFieldsByLayoutId($layoutId);
+        if (!$source) {
+            return;
+        }
+
+        return Craft::$app->fields->getFieldsByLayoutId($source->fieldLayoutId);
     }
 
     public function getTagLayoutByField($field)
@@ -138,9 +150,13 @@ class FeedMeVariable extends ServiceLocator
             $sourceId = Craft::$app->sections->getAllSectionIds()[0] ?? null;
         }
 
-        $layoutId = Craft::$app->sections->getEntryTypeById($sourceId)->fieldLayoutId;
+        $source = Craft::$app->sections->getEntryTypeById($sourceId);
 
-        return Craft::$app->fields->getFieldsByLayoutId($layoutId);
+        if (!$source) {
+            return;
+        }
+
+        return Craft::$app->fields->getFieldsByLayoutId($source->fieldLayoutId);
     }
 
     public function getUserLayoutByField($field)
