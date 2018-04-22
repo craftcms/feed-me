@@ -41,10 +41,47 @@
         }) }}
     </div>
 
-    {{ feedMeMacro.checkbox({
-        label: 'Create entries if they do not exist' | t('feed-me'),
-        name: 'options[create]',
-        value: 1,
-        checked: feed.fieldMapping[handle].options.create ?? '',
-    }) }}
+    <div class="element-create">
+        {{ feedMeMacro.checkbox({
+            label: 'Create entries if they do not exist' | t('feed-me'),
+            name: 'options[create]',
+            value: 1,
+            checked: feed.fieldMapping[handle].options.create ?? '',
+        }) }}
+    </div>
+
+    <div class="element-groups">
+        <div class="element-group element-group-section">
+            <span>{{ 'Section:' | t('feed-me') }}</span>
+
+            {% set sources = craft.feedme.getEntrySourcesByField(field) %}
+            {% set sections = craft.feedme.getSelectOptions(sources, 'name', 'id', false) %}
+
+            {{ forms.selectField({
+                name: 'options[group][sectionId]',
+                class: '',
+                value: feed.fieldMapping[handle].options.group.sectionId ?? '',
+                options: sections,
+            }) }}
+        </div>
+
+        {% set entryTypes = [] %}
+        {% for section in sources %}
+            {% set options = craft.feedme.getSelectOptions(section.getEntryTypes(), 'name', 'id', false) %}
+
+            {# We have to prefix the index, otherwise Twig doesn't maintain numbered index correctly #}
+            {% set entryTypes = entryTypes | merge({ ('item_' ~ section.id): options }) %}
+        {% endfor %}
+
+        <div class="element-group element-group-entrytype" data-items="{{ entryTypes | json_encode }}">
+            <span>{{ 'Type:' | t('feed-me') }}</span>
+
+            {{ forms.selectField({
+                name: 'options[group][typeId]',
+                class: '',
+                value: feed.fieldMapping[handle].options.group.typeId ?? '',
+                options: entryTypes['item_' ~ sources[0].id] ?? [],
+            }) }}
+        </div>
+    </div>
 {% endblock %}

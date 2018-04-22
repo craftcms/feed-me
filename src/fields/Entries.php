@@ -104,11 +104,24 @@ class Entries extends Field implements FieldInterface
     // Private Methods
     // =========================================================================
 
-    private function _createElement($dataValue, $sectionIds)
+    private function _createElement($dataValue, $sources)
     {
+        $sectionId = Hash::get($this->fieldInfo, 'options.group.sectionId');
+        $typeId = Hash::get($this->fieldInfo, 'options.group.typeId');
+
+        // Bit of backwards-compatibility here, if not explicitly set, grab the first globally
+        if (!$sectionId) {
+            $sectionId = Craft::$app->sections->getAllSectionIds()[0];
+        }
+
+        if (!$typeId) {
+            $typeId = Craft::$app->sections->getEntryTypesBySectionId($sectionId)[0]->id;
+        }
+
         $element = new EntryElement();
         $element->title = $dataValue;
-        $element->groupId = $groupId;
+        $element->sectionId = $sectionId;
+        $element->typeId = $typeId;
 
         if (!Craft::$app->getElements()->saveElement($element)) {
             throw new \Exception(json_encode($element->getErrors()));

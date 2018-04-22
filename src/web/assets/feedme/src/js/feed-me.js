@@ -30,7 +30,7 @@ $(function() {
 
         var value = $(this).val().replace(/\\/g, '-');
         $('.element-select[data-type="' + value + '"]').show();
-    })
+    });
 
     $('#elementType').trigger('change');
 
@@ -87,6 +87,36 @@ $(function() {
             $label.css({ opacity: 0, visibility: 'hidden' });
             $options.css({ opacity: 0, visibility: 'hidden' });
         }
+    });
+
+    // For elements, show the grouping select(s)
+    $('.field-extra-settings .element-create input').on('change', function(e) {
+        var $container = $(this).parents('.field-extra-settings').find('.element-groups');
+
+        if ($(this).prop('checked')) {
+            $container.show();
+        } else {
+            $container.hide();
+        }
+    });
+
+    // Toggle various field when changing element type
+    $('.field-extra-settings .element-group-section select').on('change', function(e) {
+        var $container = $(this).parents('.field-extra-settings').find('.element-group-entrytype');
+        var sections = $container.data('items');
+
+        // var sections = $(this).parents('.element-sub-group').data('items');
+        var entryType = 'item_' + $(this).val();
+        var entryTypes = sections[entryType];
+
+        var newOptions = '';
+        $.each(entryTypes, function(index, value) {
+            if (index) {
+                newOptions += '<option value="' + index + '">' + value + '</option>';
+            }
+        });
+
+        $container.find('select').html(newOptions);
     });
 
     // On-load, hide/show upload options
