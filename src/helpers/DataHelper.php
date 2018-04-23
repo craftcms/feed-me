@@ -100,7 +100,13 @@ class DataHelper
     public static function parseFieldDataForElement($value, $element)
     {
         if (is_string($value) && strpos($value, '{') !== false) {
-            $value = Craft::$app->getView()->renderObjectTemplate($value, $element);
+            // Make sure to wrap in try/catch, as if this is a literal '{' in content somewhere
+            // it won't be a field handle tag, causing the Twig Lexer to freak out. We ignore those errors
+            try {
+                $value = Craft::$app->getView()->renderObjectTemplate($value, $element);
+            } catch (\Throwable $e) {
+                
+            }
         }
 
         return $value;
