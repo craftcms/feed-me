@@ -215,14 +215,14 @@ class CommerceOrder extends Element implements ElementInterface
     //                 if ($elementLocale->getErrors()) {
     //                     throw new Exception(json_encode($elementLocale->getErrors()));
     //                 } else {
-    //                     throw new Exception(Craft::t('Unknown Element error occurred.'));
+    //                     throw new Exception(Craft::t('feed-me', 'Unknown Element error occurred.'));
     //                 }
     //             }
     //         } else {
     //             if ($element->getErrors()) {
     //                 throw new Exception(json_encode($element->getErrors()));
     //             } else {
-    //                 throw new Exception(Craft::t('Unknown Element error occurred.'));
+    //                 throw new Exception(Craft::t('feed-me', 'Unknown Element error occurred.'));
     //             }
     //         }
 

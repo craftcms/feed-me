@@ -88,7 +88,7 @@ class Process extends Component
         $return['fieldUnique'] = [];
 
         if (!$return['fieldMapping']) {
-            throw new \Exception(Craft::t('Field mapping not setup.'));
+            throw new \Exception(Craft::t('feed-me', 'Field mapping not setup.'));
         }
 
         // Ditch all fields we aren't checking for uniques on. Just simplifies each run (we don't have to check)
@@ -99,12 +99,12 @@ class Process extends Component
         }
 
         if (!$return['fieldUnique']) {
-            throw new \Exception(Craft::t('No unique fields checked.'));
+            throw new \Exception(Craft::t('feed-me', 'No unique fields checked.'));
         }
 
         // Get the service for the Element Type we're dealing with
         if (!$feed->element) {
-            throw new \Exception(Craft::t('Unknown Element Type Service called.'));
+            throw new \Exception(Craft::t('feed-me', 'Unknown Element Type Service called.'));
         }
 
         // If our duplication handling is to delete - we delete all elements
@@ -298,7 +298,7 @@ class Process extends Component
             if ($element->getErrors()) {
                 throw new \Exception(json_encode($element->getErrors()));
             } else {
-                throw new \Exception(Craft::t('Unknown Element saving error occurred.'));
+                throw new \Exception(Craft::t('feed-me', 'Unknown Element saving error occurred.'));
             }
         }
     }
