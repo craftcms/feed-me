@@ -1,5 +1,20 @@
 # Changelog
 
+## 3.0.0-beta.6 - 2018-04-24
+
+### Changed
+
+- Tighten restrictions on allowed sub-element fields
+
+### Fixed
+
+- Fix complex data not respecting `usedefault`
+- Matrix - fix for complex fields not processing just their subset of data.
+- Fix a few missing translation namespaces
+- Fix processing of `{` in content, where Feed Me thinks this is a Twig short tag
+- Fix missing collapsed option for Matrix fields
+- Fix entries section/type not being hidden initially
+
 ## 3.0.0-beta.5 - 2018-04-22
 
 ### Added
