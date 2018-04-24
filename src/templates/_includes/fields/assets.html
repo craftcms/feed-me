@@ -17,7 +17,7 @@
 
     {# Prevent infinite loop by only allow elements that are not the same as this #}
     {% for elementField in craft.feedme.getElementLayoutByField(className(field), field) %}
-        {% if className(elementField) != className(field) %}
+        {% if craft.feedme.supportedSubField(className(elementField)) %}
             {% set elementFields = elementFields | merge([ elementField ]) %}
         {% endif %}
     {% endfor %}

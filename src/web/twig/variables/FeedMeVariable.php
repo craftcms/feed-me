@@ -210,4 +210,23 @@ class FeedMeVariable extends ServiceLocator
         return $return;
     }
 
+    public function supportedSubField($class)
+    {
+        $supportedSubFields = [
+            'craft\fields\Checkboxes',
+            'craft\fields\Color',
+            'craft\fields\Date',
+            'craft\fields\Dropdown',
+            'craft\fields\Lightswitch',
+            'craft\fields\Multiselect',
+            'craft\fields\Number',
+            'craft\fields\PlainText',
+            'craft\fields\PositionSelect',
+            'craft\fields\Radio',
+            'craft\fields\Redactor',
+        ];
+
+        return in_array($class, $supportedSubFields);
+    }
+
 }
