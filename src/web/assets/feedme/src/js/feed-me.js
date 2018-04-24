@@ -89,6 +89,9 @@ $(function() {
         }
     });
 
+    // On-load, hide/show upload options
+    $('.assets-uploads input').trigger('change');
+
     // For elements, show the grouping select(s)
     $('.field-extra-settings .element-create input').on('change', function(e) {
         var $container = $(this).parents('.field-extra-settings').find('.element-groups');
@@ -99,6 +102,8 @@ $(function() {
             $container.hide();
         }
     });
+
+    $('.field-extra-settings .element-create input').trigger('change');
 
     // Toggle various field when changing element type
     $('.field-extra-settings .element-group-section select').on('change', function(e) {
@@ -118,9 +123,6 @@ $(function() {
 
         $container.find('select').html(newOptions);
     });
-
-    // On-load, hide/show upload options
-    $('.assets-uploads input').trigger('change');
 
     // Selectize inputs
     $('.feedme-mapping .selectize select').selectize({
