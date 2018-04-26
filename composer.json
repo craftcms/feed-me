@@ -38,12 +38,6 @@
     "require-dev": {
         "codeception/codeception": "~2.3.3"
     },
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https://asset-packagist.org"
-        }
-    ],
     "autoload": {
         "psr-4": {
           "verbb\\feedme\\": "src/"
@@ -57,7 +51,6 @@
     "extra": {
         "name": "Feed Me",
         "handle": "feed-me",
-        "description": "Import content from XML, RSS, CSV or JSON feeds into Entries, Categories, Craft Commerce Products (and variants), and more.",
         "schemaVersion": "1.0.0",
         "hasCpSettings": true,
         "hasCpSection": true,

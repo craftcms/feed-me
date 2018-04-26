@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.0.0-beta.7 - 2018-04-27
+
+### Fixed
+
+- Add better support for Matrix fields in Help requests
+- Add conditional around entry field section/types
+
 ## 3.0.0-beta.6 - 2018-04-24
 
 ### Changed
