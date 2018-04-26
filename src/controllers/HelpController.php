@@ -183,6 +183,17 @@ class HelpController extends Controller
                             $attributes = $field->attributes;
                             $attributes['type'] = get_class($field);
 
+                            if ($attributes['type'] == 'craft\fields\Matrix') {
+                                foreach ($field->blocktypes as $key => $blocktype) {
+                                    $attributes['blocktypes'][$key] = $blocktype->attributes;
+
+                                    foreach ($blocktype->fields as $key2 => $blocktypeField) {
+                                        $attributes['blocktypes'][$key]['fields'][$key2] = $blocktypeField->attributes;
+                                        $attributes['blocktypes'][$key]['fields'][$key2]['type'] = get_class($blocktypeField);
+                                    }
+                                }
+                            }
+
                             $fieldInfo[$fieldHandle] = $attributes;
                         }
                     }
