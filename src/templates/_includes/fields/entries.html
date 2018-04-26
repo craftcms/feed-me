@@ -73,15 +73,17 @@
             {% set entryTypes = entryTypes | merge({ ('item_' ~ section.id): options }) %}
         {% endfor %}
 
-        <div class="element-group element-group-entrytype" data-items="{{ entryTypes | json_encode }}">
-            <span>{{ 'Type:' | t('feed-me') }}</span>
+        {% if sources %}
+            <div class="element-group element-group-entrytype" data-items="{{ entryTypes | json_encode }}">
+                <span>{{ 'Type:' | t('feed-me') }}</span>
 
-            {{ forms.selectField({
-                name: 'options[group][typeId]',
-                class: '',
-                value: feed.fieldMapping[handle].options.group.typeId ?? '',
-                options: entryTypes['item_' ~ sources[0].id] ?? [],
-            }) }}
-        </div>
+                {{ forms.selectField({
+                    name: 'options[group][typeId]',
+                    class: '',
+                    value: feed.fieldMapping[handle].options.group.typeId ?? '',
+                    options: entryTypes['item_' ~ sources[0].id] ?? [],
+                }) }}
+            </div>
+        {% endif %}
     </div>
 {% endblock %}
