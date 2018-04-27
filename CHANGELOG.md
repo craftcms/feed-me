@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.0.0-beta.9 - 2018-04-28
+
+### Fixed
+
+- Fix errors for help form causing zip file not to send
+- Fix additional options not working for Matrix fields
+
 ## 3.0.0-beta.8 - 2018-04-27
 
 ### Fixed
