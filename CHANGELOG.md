@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.0-beta.8 - 2018-04-27
+
+### Fixed
+
+- Missing version number (sigh)
+
 ## 3.0.0-beta.7 - 2018-04-27
 
 ### Fixed
