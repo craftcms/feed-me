@@ -32,7 +32,7 @@
         {{ forms.selectField({
             name: 'options[match]',
             class: '',
-            value: feed.fieldMapping[handle].options.match ?? '',
+            value: hash_get(feed.fieldMapping, optionsPath ~ '.match') ?: '',
             options: [
                 { value: 'title', label: 'Title' | t('feed-me') },
                 { value: 'id', label: 'ID' | t('feed-me') },
@@ -46,7 +46,7 @@
             label: 'Create entries if they do not exist' | t('feed-me'),
             name: 'options[create]',
             value: 1,
-            checked: feed.fieldMapping[handle].options.create ?? '',
+            checked: hash_get(feed.fieldMapping, optionsPath ~ '.create') ?: '',
         }) }}
     </div>
 
@@ -60,7 +60,7 @@
             {{ forms.selectField({
                 name: 'options[group][sectionId]',
                 class: '',
-                value: feed.fieldMapping[handle].options.group.sectionId ?? '',
+                value: hash_get(feed.fieldMapping, optionsPath ~ '.group.sectionId') ?: '',
                 options: sections,
             }) }}
         </div>
@@ -80,7 +80,7 @@
                 {{ forms.selectField({
                     name: 'options[group][typeId]',
                     class: '',
-                    value: feed.fieldMapping[handle].options.group.typeId ?? '',
+                    value: hash_get(feed.fieldMapping, optionsPath ~ '.group.typeId') ?: '',
                     options: entryTypes['item_' ~ sources[0].id] ?? [],
                 }) }}
             </div>

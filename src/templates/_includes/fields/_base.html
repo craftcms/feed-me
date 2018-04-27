@@ -18,6 +18,7 @@
 {% set namespacePath = path | join('][') %}
 {% set nodePath = path | join('.') ~ '.node' %}
 {% set defaultPath = path | join('.') ~ '.default' %}
+{% set optionsPath = path | join('.') ~ '.options' %}
 
 {% set namespace = 'fieldMapping[' ~ namespacePath ~ ']' %}
 {% set value = hash_get(feed.fieldMapping, nodePath) ?: null %}

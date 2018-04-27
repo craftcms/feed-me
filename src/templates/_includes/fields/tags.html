@@ -31,7 +31,7 @@
             label: 'Create tags if they do not exist' | t('feed-me'),
             name: 'options[create]',
             value: 1,
-            checked: feed.fieldMapping[handle].options.create ?? '',
+            checked: hash_get(feed.fieldMapping, optionsPath ~ '.create') ?: '',
         }) }}
     </div>
 {% endblock %}

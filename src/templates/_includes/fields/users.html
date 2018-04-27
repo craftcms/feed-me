@@ -32,7 +32,7 @@
         {{ forms.selectField({
             name: 'options[match]',
             class: '',
-            value: feed.fieldMapping[handle].options.match ?? '',
+            value: hash_get(feed.fieldMapping, optionsPath ~ '.match') ?: '',
             options: [
                 { value: 'email', label: 'Email' | t('feed-me') },
                 { value: 'id', label: 'ID' | t('feed-me') },
@@ -47,7 +47,7 @@
             label: 'Create users if they do not exist' | t('feed-me'),
             name: 'options[create]',
             value: 1,
-            checked: feed.fieldMapping[handle].options.create ?? '',
+            checked: hash_get(feed.fieldMapping, optionsPath ~ '.create') ?: '',
         }) }}
     </div>
 {% endblock %}

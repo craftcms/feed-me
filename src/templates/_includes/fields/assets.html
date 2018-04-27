@@ -26,12 +26,13 @@
 {% extends 'feed-me/_includes/fields/_base' %}
 
 {% block extraSettings %}
+
     <div class="assets-uploads">
         {{ feedMeMacro.checkbox({
             label: 'Create asset from URL<span class="asset-label-hide">, if exists:</span>' | t('feed-me') | raw,
             name: 'options[upload]',
             value: 1,
-            checked: feed.fieldMapping[handle].options.upload ?? '',
+            checked: hash_get(feed.fieldMapping, optionsPath ~ '.upload') ?: '',
         }) }}
 
         {{ forms.selectField({
@@ -42,7 +43,7 @@
                 { value: 'replace', label: 'Replace existing asset' },
                 { value: 'create', label: 'Keep both (rename feed data)' },
             ],
-            value: feed.fieldMapping[handle].options.conflict ?? '',
+            value: hash_get(feed.fieldMapping, optionsPath ~ '.conflict') ?: '',
         }) }}
     </div>
 {% endblock %}
