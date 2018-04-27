@@ -229,9 +229,17 @@ class HelpController extends Controller
             $requestParams['fileBody'] = base64_encode(file_get_contents($zipPath));
 
             // Remove the temp files we've created
-            FileHelper::unlink($tempFileSettings);
-            FileHelper::unlink($tempFileFeed);
-            FileHelper::unlink($tempFileFields);
+            if ($tempFileSettings) {
+                FileHelper::unlink($tempFileSettings);
+            }
+
+            if ($tempFileFeed) {
+                FileHelper::unlink($tempFileFeed);
+            }
+
+            if ($tempFileFields) {
+                FileHelper::unlink($tempFileFields);
+            }
 
         } catch (\Throwable $e) {
             FeedMe::info(null, 'Tried to attach debug logs to a support request and something went horribly wrong: '.$e->getMessage());
