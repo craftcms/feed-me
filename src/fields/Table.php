@@ -4,6 +4,7 @@ namespace verbb\feedme\fields;
 use verbb\feedme\base\Field;
 use verbb\feedme\base\FieldInterface;
 use verbb\feedme\helpers\BaseHelper;
+use verbb\feedme\helpers\DateHelper;
 
 use Craft;
 use craft\helpers\Localization;
@@ -78,7 +79,7 @@ class Table extends Field implements FieldInterface
         } else if ($type == 'color') {
 
         } else if ($type == 'date') {
-
+            return DateHelper::parseString($value);
         } else if ($type == 'lightswitch') {
             return BaseHelper::parseBoolean($value);
         } else if ($type == 'multiline') {
