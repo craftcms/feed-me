@@ -17,7 +17,7 @@ class DateHelper
     public static function parseString($value, $formatting = 'auto')
     {
         // Check for null or empty strings
-        if ($value === null || $value === '') {
+        if ($value === null || $value === '' || $value === '0') {
             return null;
         }
 
