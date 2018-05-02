@@ -97,6 +97,10 @@ class HelpController extends Controller
         $zipPath = $tempFolder.'/'.StringHelper::UUID().'.zip';
         
         try {
+            $tempFileSettings = null;
+            $tempFileFeed = null;
+            $tempFileFields = null;
+
             // Create the zip
             $zip = new ZipArchive();
 
@@ -229,17 +233,9 @@ class HelpController extends Controller
             $requestParams['fileBody'] = base64_encode(file_get_contents($zipPath));
 
             // Remove the temp files we've created
-            if ($tempFileSettings) {
-                FileHelper::unlink($tempFileSettings);
-            }
-
-            if ($tempFileFeed) {
-                FileHelper::unlink($tempFileFeed);
-            }
-
-            if ($tempFileFields) {
-                FileHelper::unlink($tempFileFields);
-            }
+            FileHelper::unlink($tempFileSettings);
+            FileHelper::unlink($tempFileFeed);
+            FileHelper::unlink($tempFileFields);
 
         } catch (\Throwable $e) {
             FeedMe::info(null, 'Tried to attach debug logs to a support request and something went horribly wrong: '.$e->getMessage());
