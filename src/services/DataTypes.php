@@ -30,7 +30,7 @@ class DataTypes extends Component
 
     const EVENT_REGISTER_FEED_ME_DATA_TYPES = 'registerFeedMeDataTypes';
     const EVENT_BEFORE_FETCH_FEED = 'onBeforeFetchFeed';
-    const EVENT_AFTER_FETCH_FEED = 'onBeforeFetchFeed';    
+    const EVENT_AFTER_FETCH_FEED = 'onAfterFetchFeed';    
 
 
     // Properties

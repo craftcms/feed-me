@@ -25,7 +25,7 @@ class Process extends Component
     const EVENT_STEP_BEFORE_ELEMENT_MATCH = 'onStepBeforeElementMatch';
     const EVENT_STEP_BEFORE_ELEMENT_SAVE = 'onStepBeforeElementSave';
     const EVENT_STEP_AFTER_ELEMENT_SAVE = 'onStepElementSave';
-    const EVENT_AFTER_PROCESS_FEED = 'onProcessFeed';
+    const EVENT_AFTER_PROCESS_FEED = 'onAfterProcessFeed';
 
 
     // Properties

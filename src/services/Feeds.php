@@ -19,7 +19,7 @@ class Feeds extends Component
     // =========================================================================
 
     const EVENT_BEFORE_SAVE_FEED = 'onBeforeSaveFeed';
-    const EVENT_AFTER_SAVE_FEED = 'onSaveFeed';
+    const EVENT_AFTER_SAVE_FEED = 'onAfterSaveFeed';
 
 
     // Public Methods
