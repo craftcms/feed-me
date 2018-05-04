@@ -169,12 +169,26 @@ class AssetHelper
         // If we can't easily determine the extension of the url, fetch it
         if (!$extension) {
             $client = FeedMe::$plugin->service->createGuzzleClient();
-            $response = $client->head($url);
-            $contentType = $response->getHeader('Content-Type');
+            $response = null;
 
-            if (isset($contentType[0])) {
-                // Convert MIME type to extension
-                $extension = $mimes->getExtension($contentType[0]);
+            // Try using HEAD requests (for performance), if it fails use GET
+            try {
+                $response = $client->head($url);
+            } catch (\Throwable $e) {}
+
+            try {
+                if (!$response) {
+                    $response = $client->get($url);
+                }
+            } catch (\Throwable $e) {}
+            
+            if ($response) {
+                $contentType = $response->getHeader('Content-Type');
+
+                if (isset($contentType[0])) {
+                    // Convert MIME type to extension
+                    $extension = $mimes->getExtension($contentType[0]);
+                }
             }
         }
 
