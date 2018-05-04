@@ -139,6 +139,8 @@ class DataTypes extends Component
             } else {
                 $response = ['success' => true, 'data' => $data];
             }
+
+            return $response;
         }
 
         try {
