@@ -126,6 +126,8 @@ class DataTypes extends Component
             ]));
         }
 
+        $url = Craft::getAlias($url);
+
         // Check for local or relative URL
         if (!UrlHelper::isAbsoluteUrl($url)) {
             $data = @file_get_contents($url);
