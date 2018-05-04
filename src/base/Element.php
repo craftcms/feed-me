@@ -105,7 +105,7 @@ abstract class Element extends Component
         // Make sure we have data to match on, otherwise it'll just grab the first found entry
         // without matching against anything. Not what we want at all!
         if (count($criteria) === 0) {
-            throw new \Exception('Unable to match an existing element. Have you set a unique identifier for ' . json_encode(array_keys($settings['fieldUnique'])) . ' and does this have a value?');
+            throw new \Exception('Unable to match an existing element. Have you set a unique identifier for ' . json_encode(array_keys($settings['fieldUnique'])) . '? Make sure you are also mapping this in your feed and it has a value.');
         }
 
         return $this->getQuery($settings, $criteria)->one();
