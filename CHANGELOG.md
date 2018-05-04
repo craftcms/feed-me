@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.0-beta.11 - 2018-05-05
+
+### Fixed
+
+- Fixed error thrown by unique identifier (caused in beta.10)
+
 ## 3.0.0-beta.10 - 2018-05-04
 
 ### Added
