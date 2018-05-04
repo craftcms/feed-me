@@ -1,5 +1,21 @@
 # Changelog
 
+## 3.0.0-beta.10 - 2018-05-04
+
+### Added
+
+- Support aliases in feed URL
+- Support date as unique identifier
+
+### Fixed
+
+- Fix relative paths not working
+- Fix matching existing elements with special characters
+- Improve handling of remote asset handling when `HEAD` requests fail
+- Fix help widget
+- Improve date-helper to handle ‘0’
+- Table - ensure dates are parsed
+
 ## 3.0.0-beta.9 - 2018-04-28
 
 ### Fixed
