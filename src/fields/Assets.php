@@ -9,6 +9,7 @@ use verbb\feedme\helpers\DataHelper;
 
 use Craft;
 use craft\elements\Asset as AssetElement;
+use craft\helpers\Db;
 use craft\helpers\UrlHelper;
 
 use Cake\Utility\Hash;
@@ -94,7 +95,7 @@ class Assets extends Field implements FieldInterface
             $criteria['folderId'] = $folderIds;
             $criteria['kind'] = $settings['allowedKinds'];
             $criteria['limit'] = $limit;
-            $criteria['filename'] = $dataValue;
+            $criteria['filename'] = Db::escapeParam($dataValue);
 
             Craft::configure($query, $criteria);
 

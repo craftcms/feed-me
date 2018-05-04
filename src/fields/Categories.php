@@ -6,6 +6,7 @@ use verbb\feedme\base\FieldInterface;
 
 use Craft;
 use craft\elements\Category as CategoryElement;
+use craft\helpers\Db;
 
 use Cake\Utility\Hash;
 
@@ -56,7 +57,7 @@ class Categories extends Field implements FieldInterface
 
             $criteria['groupId'] = $groupId;
             $criteria['limit'] = $limit;
-            $criteria[$match] = $dataValue;
+            $criteria[$match] = Db::escapeParam($dataValue);
 
             Craft::configure($query, $criteria);
 

@@ -6,6 +6,7 @@ use verbb\feedme\base\FieldInterface;
 
 use Craft;
 use craft\elements\User as UserElement;
+use craft\helpers\Db;
 
 use Cake\Utility\Hash;
 
@@ -65,7 +66,7 @@ class Users extends Field implements FieldInterface
 
             $criteria['groupId'] = $groupIds;
             $criteria['limit'] = $limit;
-            $criteria[$match] = $dataValue;
+            $criteria[$match] = Db::escapeParam($dataValue);
 
             Craft::configure($query, $criteria);
 

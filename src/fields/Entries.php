@@ -6,6 +6,7 @@ use verbb\feedme\base\FieldInterface;
 
 use Craft;
 use craft\elements\Entry as EntryElement;
+use craft\helpers\Db;
 
 use Cake\Utility\Hash;
 
@@ -71,7 +72,7 @@ class Entries extends Field implements FieldInterface
 
             $criteria['sectionId'] = $sectionIds;
             $criteria['limit'] = $limit;
-            $criteria[$match] = $dataValue;
+            $criteria[$match] = Db::escapeParam($dataValue);
 
             Craft::configure($query, $criteria);
 
