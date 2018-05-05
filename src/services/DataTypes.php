@@ -319,13 +319,11 @@ class DataTypes extends Component
 
     private function _parseNodeTree(&$tree, $array, $index = '') {
         foreach ($array as $key => $val) {
-            $index .= '/' . $key;
-
             if (!is_numeric($key)) {
-                $tree[$index] = count($val);
+                $tree[$index . '/' . $key] = count($val);
 
                 if (is_array($val)) {
-                    $this->_parseNodeTree($tree, $val, $index);
+                    $this->_parseNodeTree($tree, $val, $index . '/' . $key);
                 }
             }
         }
