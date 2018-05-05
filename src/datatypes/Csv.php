@@ -5,6 +5,8 @@ use verbb\feedme\FeedMe;
 use verbb\feedme\base\DataType;
 use verbb\feedme\base\DataTypeInterface;
 
+use craft\helpers\StringHelper;
+
 use Cake\Utility\Hash;
 use League\Csv\Reader;
 
@@ -35,6 +37,14 @@ class Csv extends DataType implements DataTypeInterface
 
         // Parse the CSV string - using the PHPLeague CSV package
         try {
+            // Special-handling for Mac's (just in case)
+            if (!ini_get('auto_detect_line_endings')) {
+                ini_set('auto_detect_line_endings', '1');
+            }
+
+            // Check particularly for Windows where encoding can be off
+            $data = StringHelper::convertToUtf8($data);
+
             $reader = Reader::createFromString($data);
 
             $array = [];
