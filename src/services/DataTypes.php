@@ -320,9 +320,9 @@ class DataTypes extends Component
     private function _parseNodeTree(&$tree, $array, $index = '') {
         foreach ($array as $key => $val) {
             if (!is_numeric($key)) {
-                $tree[$index . '/' . $key] = count($val);
-
                 if (is_array($val)) {
+                    $tree[$index . '/' . $key] = count($val);
+
                     $this->_parseNodeTree($tree, $val, $index . '/' . $key);
                 }
             }
