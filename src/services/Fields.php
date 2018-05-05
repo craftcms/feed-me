@@ -16,6 +16,7 @@ use verbb\feedme\fields\Matrix;
 use verbb\feedme\fields\MultiSelect;
 use verbb\feedme\fields\Number;
 use verbb\feedme\fields\RadioButtons;
+use verbb\feedme\fields\SmartMap;
 use verbb\feedme\fields\Table;
 use verbb\feedme\fields\Tags;
 use verbb\feedme\fields\Users;
@@ -112,6 +113,7 @@ class Fields extends Component
                 MultiSelect::class,
                 Number::class,
                 RadioButtons::class,
+                SmartMap::class,
                 Table::class,
                 Tags::class,
                 Users::class,
