@@ -93,11 +93,11 @@ abstract class Element extends Component
         foreach ($settings['fieldUnique'] as $handle => $value) {
             $feedValue = Hash::get($data, $handle);
 
-            if (is_object($feedValue) && get_class($feedValue) === 'DateTime') {
-                $feedValue = $feedValue->format('Y-m-d H:i:s');
-            }
-
             if ($feedValue) {
+                if (is_object($feedValue) && get_class($feedValue) === 'DateTime') {
+                    $feedValue = $feedValue->format('Y-m-d H:i:s');
+                }
+
                 $criteria[$handle] = $feedValue;
             }
         }

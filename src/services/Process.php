@@ -154,32 +154,29 @@ class Process extends Component
         // From the raw data in our feed, we need to fix it up so its Craft-ready for the element and fields
         $feedData = $this->_data[$step];
 
-        // Parse the just the element attributes first. We use these in our field contexts, and need a fully-prepped element
-        foreach ($feed['fieldMapping'] as $fieldHandle => $fieldInfo) {
-            if (Hash::get($fieldInfo, 'attribute')) {
-                $attributeData[$fieldHandle] = $this->_service->parseAttribute($feedData, $fieldHandle, $fieldInfo);
+        // We need to first find a potentially existing element, and to do that, we need to prep just the fields
+        // that are selected as the unique identifier. We prep everything else later on.
+        $matchExistingElementData = [];
+
+        foreach ($feed['fieldUnique'] as $fieldHandle => $value) {
+            $mappingInfo = Hash::get($feed['fieldMapping'], $fieldHandle);
+
+            if (!$mappingInfo) {
+                continue;
             }
-        }
 
-        // Set the attributes for the element
-        $element->setAttributes($attributeData);
+            if (Hash::get($mappingInfo, 'attribute')) {
+                $matchExistingElementData[$fieldHandle] = $this->_service->parseAttribute($feedData, $fieldHandle, $mappingInfo);
+            }
 
-        // Then, do the same for custom fields. Again, this should be done after populating the element attributes
-        foreach ($feed['fieldMapping'] as $fieldHandle => $fieldInfo) {
-            if (Hash::get($fieldInfo, 'field')) {
-                $fieldValue = FeedMe::$plugin->fields->parseField($feed, $element, $feedData, $fieldHandle, $fieldInfo);;
+            if (Hash::get($mappingInfo, 'field')) {
+                $fieldValue = FeedMe::$plugin->fields->parseField($feed, $element, $feedData, $fieldHandle, $mappingInfo);
 
                 if ($fieldValue !== null) {
-                    $fieldData[$fieldHandle] = $fieldValue;
+                    $matchExistingElementData[$fieldHandle] = $fieldValue;
                 }
             }
         }
-
-        // Do the same with our custom field data
-        $element->setFieldValues($fieldData);
-
-        // We need to keep these separate to apply to the element but required when matching against existing elements
-        $contentData = $attributeData + $fieldData;
 
 
         //
@@ -190,11 +187,11 @@ class Process extends Component
         $this->_triggerEvent(self::EVENT_STEP_BEFORE_ELEMENT_MATCH, [
             'feed' => $feed,
             'feedData' => $feedData,
-            'contentData' => $contentData,
+            'contentData' => $matchExistingElementData,
         ]);
 
         // Check to see if an element already exists
-        $existingElement = $this->_service->matchExistingElement($contentData, $feed);
+        $existingElement = $this->_service->matchExistingElement($matchExistingElementData, $feed);
 
         // If there's an existing matching element
         if ($existingElement) {
@@ -245,16 +242,37 @@ class Process extends Component
             return;
         }
 
-        // If we've just fetched an existing element, we need to re-apply our changed field data. The reason this is done
-        // twice is we need to have the element attributes and custom fields populated before we try to find an existing element
-        // but then we need to update that element once matched. It's the chicken and the egg!
-        if ($existingElement) {
-            // Do the same with our custom field data
-            $element->setFieldValues($fieldData);
 
-            // We need to keep these separate to apply to the element but required when matching against existing elements
-            $contentData = $attributeData + $fieldData;
+        // 
+        // Now, parse all element attributes and custom fields
+        //
+
+        // Parse the just the element attributes first. We use these in our field contexts, and need a fully-prepped element
+        foreach ($feed['fieldMapping'] as $fieldHandle => $fieldInfo) {
+            if (Hash::get($fieldInfo, 'attribute')) {
+                $attributeData[$fieldHandle] = $this->_service->parseAttribute($feedData, $fieldHandle, $fieldInfo);
+            }
         }
+
+        // Set the attributes for the element
+        $element->setAttributes($attributeData);
+
+        // Then, do the same for custom fields. Again, this should be done after populating the element attributes
+        foreach ($feed['fieldMapping'] as $fieldHandle => $fieldInfo) {
+            if (Hash::get($fieldInfo, 'field')) {
+                $fieldValue = FeedMe::$plugin->fields->parseField($feed, $element, $feedData, $fieldHandle, $fieldInfo);;
+
+                if ($fieldValue !== null) {
+                    $fieldData[$fieldHandle] = $fieldValue;
+                }
+            }
+        }
+
+        // Do the same with our custom field data
+        $element->setFieldValues($fieldData);
+
+        // We need to keep these separate to apply to the element but required when matching against existing elements
+        $contentData = $attributeData + $fieldData;
 
         FeedMe::debug($feed, $contentData);
 
