@@ -45,13 +45,21 @@ class FeedImport extends BaseJob
             $feedSettings = FeedMe::$plugin->process->beforeProcessFeed($this->feed, $feedData);
 
             foreach ($feedData as $key => $data) {
-                $element = FeedMe::$plugin->process->processFeed($key, $feedSettings);
+                try {
+                    $element = FeedMe::$plugin->process->processFeed($key, $feedSettings);
+                } catch (\Throwable $e) {
+                    // We want to catch any issues in each iteration of the loop (and log them), but this allows the
+                    // rest of the feed to continue processing.
+                    FeedMe::error($this->feed, $e->getMessage() . ' - ' . basename($e->getFile()) . ':' . $e->getLine());
+                }
 
                 $this->setProgress($queue, $key++ / $totalSteps);
             }
 
             FeedMe::$plugin->process->afterProcessFeed($feedSettings, $this->feed);
         } catch (\Throwable $e) {
+            // Even though we catch errors on each step of the loop, make sure to catch errors that can be anywhere
+            // else in this function, just to be super-safe and not cause the queue job to die.
             FeedMe::error($this->feed, $e->getMessage() . ' - ' . basename($e->getFile()) . ':' . $e->getLine());
         }
     }
