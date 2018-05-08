@@ -1,5 +1,18 @@
 # Changelog
 
+## 3.0.0-beta.12 - 2018-05-08
+
+### Added
+
+- Add support for [Smart Map](https://github.com/doublesecretagency/craft-smartmap)
+
+### Fixed
+
+- Improve CSV handling, particular for Windows-generated files which can have encoding issues
+- Fix bug with not being able to select all primary elements
+- Fix PHP 7.2 warnings
+- Improve performance of content parsing for attributes and custom fields
+
 ## 3.0.0-beta.11 - 2018-05-05
 
 ### Fixed
