@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.0-beta.13 - 2018-05-08
+
+### Fixed
+
+- Fix for feed items not continuing after encountering a processing error
+
 ## 3.0.0-beta.12 - 2018-05-08
 
 ### Added
