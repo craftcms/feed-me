@@ -1,6 +1,7 @@
 <?php
 namespace verbb\feedme\elements;
 
+use verbb\feedme\FeedMe;
 use verbb\feedme\base\Element;
 use verbb\feedme\base\ElementInterface;
 
@@ -126,6 +127,8 @@ class Category extends Element implements ElementInterface
             if (!Craft::$app->getElements()->saveElement($element)) {
                 throw new \Exception(json_encode($element->getErrors()));
             }
+
+            FeedMe::info(null, 'Category ' . $element->id . ' added.');
 
             return $element->id;
         }

@@ -1,6 +1,7 @@
 <?php
 namespace verbb\feedme\fields;
 
+use verbb\feedme\FeedMe;
 use verbb\feedme\base\Field;
 use verbb\feedme\base\FieldInterface;
 
@@ -99,6 +100,8 @@ class Categories extends Field implements FieldInterface
         if (!Craft::$app->getElements()->saveElement($element)) {
             throw new \Exception(json_encode($element->getErrors()));
         }
+
+        FeedMe::info(null, 'Category ' . $element->id . ' added.');
 
         return $element->id;
     }
