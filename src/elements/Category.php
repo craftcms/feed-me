@@ -100,6 +100,7 @@ class Category extends Element implements ElementInterface
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
 
         $match = Hash::get($fieldInfo, 'options.match');
+        $create = Hash::get($fieldInfo, 'options.create');
 
         // Element lookups must have a value to match against
         if ($value === null || $value === '') {
@@ -113,6 +114,19 @@ class Category extends Element implements ElementInterface
         $element = CategoryElement::findOne([$match => $value]);
 
         if ($element) {
+            return $element->id;
+        }
+
+        // Check if we should create the element. But only if title is provided (for the moment)
+        if ($create && $match === 'title') {
+            $element = new CategoryElement();
+            $element->title = $value;
+            $element->groupId = $this->element->groupId;
+
+            if (!Craft::$app->getElements()->saveElement($element)) {
+                throw new \Exception(json_encode($element->getErrors()));
+            }
+
             return $element->id;
         }
 
