@@ -119,9 +119,17 @@ class FeedMeVariable extends ServiceLocator
 
         if (is_array($field->sources)) {
             foreach ($field->sources as $source) {
-                list($type, $id) = explode(':', $source);
+                if ($source == 'singles') {
+                    foreach (Craft::$app->sections->getAllSections() as $section) {
+                        if ($section->type == 'single') {
+                            $sources[] = $section;
+                        }
+                    }
+                } else {
+                    list($type, $id) = explode(':', $source);
 
-                $sources[] = Craft::$app->sections->getSectionById($id);
+                    $sources[] = Craft::$app->sections->getSectionById($id);
+                }
             }
         } else if ($field->sources === '*') {
             $sources = Craft::$app->sections->getAllSections();
