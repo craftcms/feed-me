@@ -65,6 +65,11 @@ class Table extends Field implements FieldInterface
             }
         }
 
+        // Fix keys for columns to be in correct order
+        foreach ($preppedData as $key => &$columnData) {
+            ksort($columnData, SORT_NATURAL);
+        }
+
         return $preppedData;
     }
 
