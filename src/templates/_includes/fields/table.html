@@ -36,11 +36,11 @@
     </td>
 </tr>
 
-{% for col in field.settings.columns %}
+{% for index, col in field.settings.columns %}
     {% set nameLabel = col.heading %}
     {% set instructionsHandle = handle ~ '[' ~ col.handle ~ ']' %}
 
-    {% set path = prefixPath | merge ([ 'fields', 'col' ~ loop.index ]) %}
+    {% set path = prefixPath | merge ([ 'fields', index ]) %}
 
     {% embed 'feed-me/_includes/fields/_base' %}
         {% block additionalFieldSettings %}
