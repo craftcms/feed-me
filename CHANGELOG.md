@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.0.0-beta.14 - 2018-05-23
+
+### Fixed
+
+- Minor fix for table column ordering
+- Fix lack of parent category-creation
+- Add logging for category creation
+- Fix handling of entries fields when limited to singles
+- Fix table mapping not using the correct column handle
+
 ## 3.0.0-beta.13 - 2018-05-08
 
 ### Fixed
