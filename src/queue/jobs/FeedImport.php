@@ -34,13 +34,13 @@ class FeedImport extends BaseJob
                 $feedData = array_slice($feedData, 0, $this->limit);
             }
 
-            $totalSteps = count($feedData);
-
             // Do we even have any data to process?
-            if (!$totalSteps) {
+            if (!$feedData) {
                 FeedMe::info($this->feed, 'No feed items to process.');
                 return;
             }
+
+            $totalSteps = count($feedData);
 
             $feedSettings = FeedMe::$plugin->process->beforeProcessFeed($this->feed, $feedData);
 

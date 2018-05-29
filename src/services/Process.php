@@ -373,13 +373,13 @@ class Process extends Component
             $feedData = array_slice($feedData, 0, $limit);
         }
 
-        $totalSteps = count($feedData);
-
         // Do we even have any data to process?
-        if (!$totalSteps) {
+        if (!$feedData) {
             FeedMe::debug($feed, 'No feed items to process.');
             return;
         }
+
+        $totalSteps = count($feedData);
 
         $feedSettings = $this->beforeProcessFeed($feed, $feedData);
 
