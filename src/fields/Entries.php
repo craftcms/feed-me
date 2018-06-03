@@ -70,6 +70,12 @@ class Entries extends Field implements FieldInterface
             
             $query = EntryElement::find();
 
+            // In multi-site, there's currently no way to query across all sites - we use the current site
+            // See https://github.com/craftcms/cms/issues/2854
+            if (Craft::$app->getIsMultiSite() && $this->feed['siteId']) {
+                $criteria['siteId'] = $this->feed['siteId'];
+            }
+
             $criteria['sectionId'] = $sectionIds;
             $criteria['limit'] = $limit;
             $criteria[$match] = Db::escapeParam($dataValue);
