@@ -1,6 +1,7 @@
 <?php
 namespace verbb\feedme\elements;
 
+use verbb\feedme\FeedMe;
 use verbb\feedme\base\Element;
 use verbb\feedme\base\ElementInterface;
 use verbb\feedme\helpers\DateHelper;
@@ -120,6 +121,7 @@ class Entry extends Element implements ElementInterface
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
 
         $match = Hash::get($fieldInfo, 'options.match');
+        $create = Hash::get($fieldInfo, 'options.create');
 
         // Element lookups must have a value to match against
         if ($value === null || $value === '') {
@@ -134,6 +136,22 @@ class Entry extends Element implements ElementInterface
 
         if ($element) {
             $this->element->newParentId = $element->id;
+
+            return $element->id;
+        }
+
+        // Check if we should create the element. But only if title is provided (for the moment)
+        if ($create && $match === 'title') {
+            $element = new EntryElement();
+            $element->title = $value;
+            $element->sectionId = $this->element->sectionId;
+            $element->typeId = $this->element->typeId;
+
+            if (!Craft::$app->getElements()->saveElement($element)) {
+                throw new \Exception(json_encode($element->getErrors()));
+            }
+
+            FeedMe::info(null, 'Entry ' . $element->id . ' added.');
 
             return $element->id;
         }
