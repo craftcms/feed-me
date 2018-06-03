@@ -108,7 +108,7 @@ abstract class Element extends Component
             throw new \Exception('Unable to match an existing element. Have you set a unique identifier for ' . json_encode(array_keys($settings['fieldUnique'])) . '? Make sure you are also mapping this in your feed and it has a value.');
         }
 
-        return $this->getQuery($settings, $criteria)->one();
+        return $this->getQuery($settings, $criteria)->enabledForSite(false)->one();
     }
 
     public function delete($elementIds)
