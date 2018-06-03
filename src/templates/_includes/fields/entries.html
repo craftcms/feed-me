@@ -50,40 +50,42 @@
         }) }}
     </div>
 
-    <div class="element-groups">
-        <div class="element-group element-group-section">
-            <span>{{ 'Section:' | t('feed-me') }}</span>
+    {% if field %}
+        <div class="element-groups">
+            <div class="element-group element-group-section">
+                <span>{{ 'Section:' | t('feed-me') }}</span>
 
-            {% set sources = craft.feedme.getEntrySourcesByField(field) %}
-            {% set sections = craft.feedme.getSelectOptions(sources, 'name', 'id', false) %}
-
-            {{ forms.selectField({
-                name: 'options[group][sectionId]',
-                class: '',
-                value: hash_get(feed.fieldMapping, optionsPath ~ '.group.sectionId') ?: '',
-                options: sections,
-            }) }}
-        </div>
-
-        {% set entryTypes = [] %}
-        {% for section in sources %}
-            {% set options = craft.feedme.getSelectOptions(section.getEntryTypes(), 'name', 'id', false) %}
-
-            {# We have to prefix the index, otherwise Twig doesn't maintain numbered index correctly #}
-            {% set entryTypes = entryTypes | merge({ ('item_' ~ section.id): options }) %}
-        {% endfor %}
-
-        {% if sources %}
-            <div class="element-group element-group-entrytype" data-items="{{ entryTypes | json_encode }}">
-                <span>{{ 'Type:' | t('feed-me') }}</span>
+                {% set sources = craft.feedme.getEntrySourcesByField(field) %}
+                {% set sections = craft.feedme.getSelectOptions(sources, 'name', 'id', false) %}
 
                 {{ forms.selectField({
-                    name: 'options[group][typeId]',
+                    name: 'options[group][sectionId]',
                     class: '',
-                    value: hash_get(feed.fieldMapping, optionsPath ~ '.group.typeId') ?: '',
-                    options: entryTypes['item_' ~ sources[0].id] ?? [],
+                    value: hash_get(feed.fieldMapping, optionsPath ~ '.group.sectionId') ?: '',
+                    options: sections,
                 }) }}
             </div>
-        {% endif %}
-    </div>
+
+            {% set entryTypes = [] %}
+            {% for section in sources %}
+                {% set options = craft.feedme.getSelectOptions(section.getEntryTypes(), 'name', 'id', false) %}
+
+                {# We have to prefix the index, otherwise Twig doesn't maintain numbered index correctly #}
+                {% set entryTypes = entryTypes | merge({ ('item_' ~ section.id): options }) %}
+            {% endfor %}
+
+            {% if sources %}
+                <div class="element-group element-group-entrytype" data-items="{{ entryTypes | json_encode }}">
+                    <span>{{ 'Type:' | t('feed-me') }}</span>
+
+                    {{ forms.selectField({
+                        name: 'options[group][typeId]',
+                        class: '',
+                        value: hash_get(feed.fieldMapping, optionsPath ~ '.group.typeId') ?: '',
+                        options: entryTypes['item_' ~ sources[0].id] ?? [],
+                    }) }}
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
 {% endblock %}
