@@ -92,6 +92,7 @@ class Assets extends Field implements FieldInterface
                 }
             }
 
+            $criteria['status'] = null;
             $criteria['folderId'] = $folderIds;
             $criteria['kind'] = $settings['allowedKinds'];
             $criteria['limit'] = $limit;

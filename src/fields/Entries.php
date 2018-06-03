@@ -76,6 +76,7 @@ class Entries extends Field implements FieldInterface
                 $criteria['siteId'] = $this->feed['siteId'];
             }
 
+            $criteria['status'] = null;
             $criteria['sectionId'] = $sectionIds;
             $criteria['limit'] = $limit;
             $criteria[$match] = Db::escapeParam($dataValue);

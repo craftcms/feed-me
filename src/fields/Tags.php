@@ -55,6 +55,7 @@ class Tags extends Field implements FieldInterface
             
             $query = TagElement::find();
 
+            $criteria['status'] = null;
             $criteria['groupId'] = $groupId;
             $criteria['limit'] = $limit;
             $criteria[$match] = Db::escapeParam($dataValue);

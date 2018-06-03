@@ -64,6 +64,7 @@ class Users extends Field implements FieldInterface
             
             $query = UserElement::find();
 
+            $criteria['status'] = null;
             $criteria['groupId'] = $groupIds;
             $criteria['limit'] = $limit;
             $criteria[$match] = Db::escapeParam($dataValue);

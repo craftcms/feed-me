@@ -62,6 +62,7 @@ class Categories extends Field implements FieldInterface
                 $criteria['siteId'] = $this->feed['siteId'];
             }
 
+            $criteria['status'] = null;
             $criteria['groupId'] = $groupId;
             $criteria['limit'] = $limit;
             $criteria[$match] = Db::escapeParam($dataValue);
