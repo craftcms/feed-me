@@ -39,6 +39,7 @@ class Categories extends Field implements FieldInterface
         $settings = Hash::get($this->field, 'settings');
         $source = Hash::get($this->field, 'settings.source');
         $limit = Hash::get($this->field, 'settings.limit');
+        $targetSiteId = Hash::get($this->field, 'settings.targetSiteId');
         $match = Hash::get($this->fieldInfo, 'options.match', 'title');
         $create = Hash::get($this->fieldInfo, 'options.create');
         $fields = Hash::get($this->fieldInfo, 'fields');
@@ -58,8 +59,12 @@ class Categories extends Field implements FieldInterface
 
             // In multi-site, there's currently no way to query across all sites - we use the current site
             // See https://github.com/craftcms/cms/issues/2854
-            if (Craft::$app->getIsMultiSite() && $this->feed['siteId']) {
-                $criteria['siteId'] = $this->feed['siteId'];
+            if (Craft::$app->getIsMultiSite()) {
+                if ($targetSiteId) {
+                    $criteria['siteId'] = $targetSiteId;
+                } else {
+                    $criteria['siteId'] = Craft::$app->getSites()->getCurrentSite()->id;
+                }
             }
 
             $criteria['status'] = null;
