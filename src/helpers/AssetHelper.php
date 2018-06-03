@@ -146,6 +146,13 @@ class AssetHelper
         // Can we easily get the extension for this URL?
         $filename = pathinfo($filename, PATHINFO_FILENAME);
 
+        // If there was a query string, append a hash of it so this asset remains unique
+        $query = parse_url($url, PHP_URL_QUERY);
+
+        if ($query) {
+            $filename = $filename . '-' . static::queryHash($query);
+        }
+
         return $filename . '.' . $extension;
     }
 
@@ -193,6 +200,11 @@ class AssetHelper
         }
 
         return $extension;
+    }
+
+    public static function queryHash($string)
+    {
+        return base_convert($string, 10, 36);
     }
 
 }
