@@ -1,5 +1,28 @@
 # Changelog
 
+## 3.0.0-beta.15 - 2018-06-12
+
+### Added
+- Commerce Element support
+- Commerce Products field support
+- Commerce Variants field support
+- Added more default options for fields
+
+### Changed
+- Improve process service by allowing events to modify variables
+
+### Fixed
+- Fixed handling of lightswitch fields
+- Fix element-matching not throwing an error when it should
+- Entry - Fix parent not being created when checked
+- Entry - Don’t show section options for parent
+- Entry/Category - Support `targetSiteId` setting
+- Element fields should match existing elements regardless of (site) status
+- Allow multi-site entry/category fields to match correctly (for the same site)
+- Minor visual fix for mapping checkboxes
+- Assets - Fix for asset-upload filename. Did not take into account query string when creating a filename from a dynamically generated URL
+- Minor fix for PHP 7.2 when no items are available to process in the feed
+
 ## 3.0.0-beta.14 - 2018-05-23
 
 ### Fixed
