@@ -10,6 +10,7 @@ use Craft;
 use craft\base\Component;
 use craft\elements\User as UserElement;
 use craft\helpers\ElementHelper;
+use craft\helpers\StringHelper;
 
 use Cake\Utility\Hash;
 
@@ -88,9 +89,7 @@ abstract class Element extends Component
 
     public function matchExistingElement($data, $settings)
     {
-        $criteria = [
-            'enabledForSite' => false,
-        ];
+        $criteria = [];
 
         foreach ($settings['fieldUnique'] as $handle => $value) {
             $feedValue = Hash::get($data, $handle);
@@ -110,6 +109,9 @@ abstract class Element extends Component
             throw new \Exception('Unable to match an existing element. Have you set a unique identifier for ' . json_encode(array_keys($settings['fieldUnique'])) . '? Make sure you are also mapping this in your feed and it has a value.');
         }
 
+        // Check against elements that may be disabled for site
+        $criteria['enabledForSite'] = false;
+        
         return $this->getQuery($settings, $criteria)->one();
     }
 
