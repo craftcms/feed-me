@@ -1,14 +1,22 @@
 <?php
 namespace verbb\feedme\elements;
 
+use verbb\feedme\FeedMe;
 use verbb\feedme\base\Element;
 use verbb\feedme\base\ElementInterface;
+use verbb\feedme\events\FeedProcessEvent;
+use verbb\feedme\helpers\DataHelper;
+use verbb\feedme\services\Process;
 
 use Craft;
+use craft\db\Query;
 
 use craft\commerce\Plugin as Commerce;
 use craft\commerce\elements\Product as ProductElement;
+use craft\commerce\elements\Variant as VariantElement;
+use craft\commerce\services\Variants;
 
+use yii\base\Event;
 use Cake\Utility\Hash;
 
 class CommerceProduct extends Element implements ElementInterface
@@ -43,6 +51,23 @@ class CommerceProduct extends Element implements ElementInterface
 
     // Public Methods
     // =========================================================================
+
+    public function init()
+    {
+        // Hook into the process service on each step - we need to re-arrange the feed mapping
+        Event::on(Process::class, Process::EVENT_STEP_BEFORE_PARSE_CONTENT, function(FeedProcessEvent $event) {
+            $this->_preParseVariants($event);
+        });
+
+        Event::on(Process::class, Process::EVENT_STEP_BEFORE_ELEMENT_MATCH, function(FeedProcessEvent $event) {
+            $this->_checkForVariantMatches($event);
+        });
+
+        // Hook into the before element save event, because we need to do lots to prepare variant data
+        Event::on(Process::class, Process::EVENT_STEP_BEFORE_ELEMENT_SAVE, function(FeedProcessEvent $event) {
+            $this->_parseVariants($event);
+        });
+    }
 
     public function getGroups()
     {
@@ -83,345 +108,306 @@ class CommerceProduct extends Element implements ElementInterface
         return $this->element;
     }
 
+    public function save($data, $settings)
+    {
+        $this->element->fieldLayoutId;
+
+        if (!Craft::$app->getElements()->saveElement($this->element)) {
+            $errors = [$this->element->getErrors()];
+
+            if ($this->element->getErrors()) {
+                foreach ($this->element->getVariants() as $variant) {
+                    if ($variant->getErrors()) {
+                        $errors[] = $variant->getErrors();
+                    }
+                }
+
+                throw new \Exception(json_encode($errors));
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+
+
+    // Private Methods
+    // =========================================================================
+    
+    private function _preParseVariants($event)
+    {
+        $feed = $event->feed;
+
+        // We need to re-arrange the feed-mapping from using variant-* to putting all these in a
+        // variants[] array for easy management later. If we don't do this, it'll start processing
+        // attributes and fields based on the top-level product, which is incorrect..
+        foreach ($feed['fieldMapping'] as $fieldHandle => $fieldInfo) {
+            if (strpos($fieldHandle, 'variant-') !== false) {
+                // Add it to variants[]
+                $attribute = str_replace('variant-', '', $fieldHandle);
+                $feed['fieldMapping']['variants'][$attribute] = $fieldInfo;
+
+                // Remove it from top-level mapping
+                unset($feed['fieldMapping'][$fieldHandle]);
+            }
+        }
+
+        // Save all our changes back to the event model
+        $event->feed = $feed;
+    }
+
+    private function _checkForVariantMatches($event)
+    {
+        $feed = $event->feed;
+        $feedData = $event->feedData;
+        $contentData = $event->contentData;
+
+        // If we're trying to match an existing product element on a variant's content, we're not going to have much
+        // luck. So instead, in here, we look up the parent product (if any), and return that. We directly modify the 
+        // unique content array $contentData so we don't have to deal with any other shenanigans in core code.
+        foreach ($contentData as $handle => $value) {
+            if (strpos($handle, 'variant-') !== false) {
+                $sku = null;
+
+                $attribute = str_replace('variant-', '', $handle);
+
+                $fieldInfo = Hash::get($feed, 'fieldMapping.variant-sku');
+                $node = Hash::get($fieldInfo, 'node');
+
+                // Because we're trying to find the parent product from a child variant, we just need to get the first
+                // match - then we've got an SKU for a variant that belongs to the product we want.
+                foreach ($feedData as $nodePath => $value) {
+                    $feedPath = preg_replace('/(\/\d+\/)/', '/', $nodePath);
+                    $feedPath = preg_replace('/^(\d+\/)|(\/\d+)/', '', $feedPath);
+
+                    if ($feedPath === $node) {
+                        $sku = $value;
+                        break;
+                    }
+                }
+
+                if (!$sku) {
+                    continue;
+                }
+
+                $variant = $this->_getVariantBySku($sku);
+
+                // Now, we want to directly modify the unique fields to instead of using the variant SKU, use the 
+                // product id. Note that we want to force this, even if we haven't found a variant, because trying to import
+                // using variant-sku as the unique identifier won't go down so well - it won't create the products like it should
+                $feed['fieldUnique']['id'] = '1';
+                $contentData['id'] = $variant->productId ?? 'placeholder';
+
+                // Cleanup
+                unset($feed['fieldUnique'][$handle]);
+                unset($contentData[$handle]);
+            }
+        }
+
+        // Save all our changes back to the event model
+        $event->feed = $feed;
+        $event->feedData = $feedData;
+        $event->contentData = $contentData;
+    }
+
+    private function _parseVariants($event)
+    {
+        $feed = $event->feed;
+        $feedData = $event->feedData;
+        $contentData = $event->contentData;
+        $element = $event->element;
+
+        $variantMapping = Hash::get($feed, 'fieldMapping.variants');
+
+        // Check to see if there are any variants at all (there really should be...)
+        if (!$variantMapping) {
+            return;
+        }
 
-    // public function matchExistingElement(&$criteria, $data, $settings)
-    // {
-    //     foreach ($settings['fieldUnique'] as $handle => $value) {
-    //         if (intval($value) == 1 && ($data != '__')) {
-    //             if (strstr($handle, 'variants--')) {
-    //                 $attribute = str_replace('variants--', '', $handle);
-
-    //                 // If we're matching existing elements via a Variant property, we don't want to use the 
-    //                 // Commerce_Product element criteria
-    //                 $variantCriteria = Craft::$app->elements->getCriteria('Commerce_Variant');
-    //                 $variantCriteria->status = null;
-    //                 $variantCriteria->limit = null;
-    //                 $variantCriteria->localeEnabled = null;
-
-    //                 // Because a single product can have multiple attached variants - therefore multiple data,
-    //                 // we only really need the first variant value to find the parent product ID.
-    //                 $feedValue = Hash::get($data, 'variants.data.0.' . $attribute);
-    //                 $feedValue = Hash::get($data, 'variants.data.0.' . $attribute . '.data', $feedValue);
-
-    //                 // Check for single-variant
-    //                 if (!$feedValue) {
-    //                     $feedValue = Hash::get($data, 'variants.data.' . $attribute);
-    //                     $feedValue = Hash::get($data, 'variants.data.' . $attribute . '.data', $feedValue);
-    //                 }
-
-    //                 if (!$feedValue) {
-    //                     FeedMePlugin::log('Commerce Variants: no data for `' . $attribute . '` to match an existing element on. Is data present for this in your feed?', LogLevel::Error, true);
-
-    //                     return false;
-    //                 }
-
-    //                 $variantCriteria->$attribute = DbHelper::escapeParam($feedValue);
-
-    //                 // Get the variants - interestingly, find()[0] is faster than first()
-    //                 $variants = $variantCriteria->find();
-
-    //                 // Set the Product ID for the criteria from our found variant - thats what we need to update
-    //                 if (count($variants)) {
-    //                     $criteria->id = $variants[0]->productId;
-    //                 } else {
-    //                     return null;
-    //                 }
-    //             } else {
-    //                 $feedValue = Hash::get($data, $handle);
-    //                 $feedValue = Hash::get($data, $handle . '.data', $feedValue);
-
-    //                 if ($handle == 'postDate' || $handle == 'expiryDate') {
-    //                     $feedValue = FeedMeDateHelper::getDateTimeString($feedValue);
-    //                 }
-
-    //                 if ($feedValue) {
-    //                     $criteria->$handle = DbHelper::escapeParam($feedValue);
-    //                 } else {
-    //                     FeedMePlugin::log('Commerce Products: no data for `' . $handle . '` to match an existing element on. Is data present for this in your feed?', LogLevel::Error, true);
-
-    //                     return false;
-    //                 }
-    //             }
-    //         }
-    //     }
-
-    //     // Check to see if an element already exists - interestingly, find()[0] is faster than first()
-    //     $elements = $criteria->find();
-
-    //     if (count($elements)) {
-    //         return $elements[0];
-    //     }
-
-    //     return null;
-    // }
-
-    // public function delete(array $elements)
-    // {
-    //     $return = true;
-
-    //     foreach ($elements as $element) {
-    //         if (!Craft::$app->commerce_products->deleteProduct($element)) {
-    //             $return = false;
-    //         }
-    //     }
-
-    //     return $return;
-    // }
-
-    // public function prepForElementModel(BaseElementModel $element, array &$data, $settings)
-    // {
-    //     foreach ($data as $handle => $value) {
-    //         if (is_null($value)) {
-    //             continue;
-    //         }
-
-    //         if (isset($value['data']) && $value['data'] === null) {
-    //             continue;
-    //         }
-
-    //         if (is_array($value)) {
-    //             $dataValue = Hash::get($value, 'data', null);
-    //         } else {
-    //             $dataValue = $value;
-    //         }
-
-    //         // Check for any Twig shorthand used
-    //         $this->parseInlineTwig($data, $dataValue);
-
-    //         switch ($handle) {
-    //             case 'id';
-    //             case 'taxCategoryId';
-    //                 // Support getting category by ID, Name or Handle
-    //                 $taxCategory = $this->_getTaxCategory($dataValue);
-
-    //                 if ($taxCategory) {
-    //                     $element->$handle = $taxCategory->id;
-    //                 }
-
-    //                 break;
-    //             case 'shippingCategoryId';
-    //                 // Support getting category by ID, Name or Handle
-    //                 $shippingCategory = $this->_getShippingCategory($dataValue);
-
-    //                 if ($shippingCategory) {
-    //                     $element->$handle = $shippingCategory->id;
-    //                 }
-
-    //                 break;
-    //             case 'slug';
-    //                 if (Craft::$app->config->get('limitAutoSlugsToAscii')) {
-    //                     $dataValue = StringHelper::asciiString($dataValue);
-    //                 }
-
-    //                 $element->$handle = ElementHelper::createSlug($dataValue);
-    //                 break;
-    //             case 'postDate':
-    //             case 'expiryDate';
-    //                 $dateValue = FeedMeDateHelper::parseString($dataValue);
-
-    //                 // Ensure there's a parsed data - null will auto-generate a new date
-    //                 if ($dateValue) {
-    //                     $element->$handle = $dateValue;
-    //                 }
-
-    //                 break;
-    //             case 'enabled':
-    //             case 'freeShipping':
-    //             case 'promotable':
-    //                 $element->$handle = FeedMeHelper::parseBoolean($dataValue);
-    //                 break;
-    //             case 'title':
-    //                 $element->getContent()->$handle = $dataValue;
-    //                 break;
-    //             default:
-    //                 continue 2;
-    //         }
-
-    //         // Update the original data in our feed - for clarity in debugging
-    //         $data[$handle] = $element->$handle;
-    //     }
-
-    //     $this->_populateProductVariantModels($element, $data, $settings);
-
-    //     return $element;
-    // }
-
-    // public function save(BaseElementModel &$element, array $data, $settings)
-    // {
-    //     // Are we targeting a specific locale here? If so, we create an essentially blank element
-    //     // for the primary locale, and instead create a locale for the targeted locale
-    //     if (isset($settings['locale']) && $settings['locale']) {
-    //         // Save the default locale element empty
-    //         $result = Craft::$app->commerce_products->saveProduct($element);
-
-    //         if ($result) {
-    //             // Now get the successfully saved (empty) element, and set content on that instead
-    //             $elementLocale = Craft::$app->commerce_products->getProductById($element->id, $settings['locale']);
-    //             $elementLocale->setContentFromPost($data);
-
-    //             // Save the locale entry
-    //             $result = Craft::$app->commerce_products->saveProduct($elementLocale);
-    //         }
-    //     } else {
-    //         $result = Craft::$app->commerce_products->saveProduct($element);
-    //     }
-
-    //     // Because we can have product and variant error, make sure we show them
-    //     if (!$result) {
-    //         if ($element->getErrors()) {
-    //             throw new Exception(json_encode($element->getErrors()));
-    //         } else {
-    //             foreach ($element->getVariants() as $variant) {
-    //                 if ($variant->getErrors()) {
-    //                     throw new Exception(json_encode($variant->getErrors()));
-    //                 }
-    //             }
-    //         }
-    //     }
-
-    //     return $result;
-    // }
-
-    // public function afterSave(BaseElementModel $element, array $data, $settings)
-    // {
-
-    // }
-
-
-    // // Private Methods
-    // // =========================================================================
-
-    // private function _populateProductModel(Commerce_ProductModel &$product, $data)
-    // {
-
-    // }
-
-    // private function _populateProductVariantModels(Commerce_ProductModel $product, &$data, $settings)
-    // {
-    //     $variants = [];
-    //     $count = 1;
-
-    //     $variantData = Hash::get($data, 'variants.data');
-
-    //     if (!$variantData) {
-    //         return false;
-    //     }
-
-    //     // Ensure we handle single-variants correctly
-    //     $keys = array_keys($variantData);
-
-    //     if (!is_numeric($keys[0])) {
-    //         $variantData = [$variantData];
-    //     }
-
-    //     // Update original data
-    //     $data['variants'] = $variantData;
-
-    //     foreach ($variantData as $key => $variant) {
-    //         $variantModel = $this->_getVariantBySku($variant['sku']['data']);
-
-    //         if (!$variantModel) {
-    //             $variantModel = new Commerce_VariantModel();
-    //         }
-
-    //         $variantModel->setProduct($product);
-
-    //         $variantModel->enabled = Hash::get($variant, 'enabled.data', 1);
-    //         $variantModel->isDefault = Hash::get($variant, 'isDefault.data', 0);
-    //         $variantModel->sku = Hash::get($variant, 'sku.data', $variantModel->sku);
-    //         $variantModel->price = Hash::get($variant, 'price.data', $variantModel->price);
-    //         $variantModel->width = LocalizationHelper::normalizeNumber(Hash::get($variant, 'width.data', $variantModel->width));
-    //         $variantModel->height = LocalizationHelper::normalizeNumber(Hash::get($variant, 'height.data', $variantModel->height));
-    //         $variantModel->length = LocalizationHelper::normalizeNumber(Hash::get($variant, 'length.data', $variantModel->length));
-    //         $variantModel->weight = LocalizationHelper::normalizeNumber(Hash::get($variant, 'weight.data', $variantModel->weight));
-    //         $variantModel->stock = LocalizationHelper::normalizeNumber(Hash::get($variant, 'stock.data', $variantModel->stock));
-    //         $variantModel->unlimitedStock = LocalizationHelper::normalizeNumber(Hash::get($variant, 'unlimitedStock.data', $variantModel->unlimitedStock));
-    //         $variantModel->minQty = LocalizationHelper::normalizeNumber(Hash::get($variant, 'minQty.data', $variantModel->minQty));
-    //         $variantModel->maxQty = LocalizationHelper::normalizeNumber(Hash::get($variant, 'maxQty.data', $variantModel->maxQty));
-
-    //         $variantModel->sortOrder = $count++;
-
-    //         // Loop through each field for this Variant model - see if we have data
-    //         $variantContent = [];
-    //         foreach ($variantModel->getFieldLayout()->getFields() as $fieldLayout) {
-    //             $field = $fieldLayout->getField();
-    //             $handle = $field->handle;
-
-    //             $fieldData = Hash::get($variant, $handle);
-
-    //             if ($fieldData) {
-    //                 // Parse this inner-field's data, just like a regular field
-    //                 $parsedData = Craft::$app->feedMe_fields->prepForFieldType($variantModel, $fieldData, $handle);
-
-    //                 // Fire any post-processing for the field type
-    //                 $posted = Craft::$app->feedMe_fields->postForFieldType($variantModel, $parsedData, $handle, $field);
-
-    //                 if ($posted) {
-    //                     $parsedData = $parsedData[$handle];
-    //                 }
-
-    //                 if ($parsedData) {
-    //                     $variantContent[$handle] = $parsedData;
-    //                 }
-    //             }
-    //         }
-
-    //         $variantModel->setContentFromPost($variantContent);
-
-    //         $variantModel->getContent()->title = Hash::get($variant, 'title.data', $variantModel->getContent()->title);
-
-    //         $variants[] = $variantModel;
-    //     }
-
-    //     $product->setVariants($variants);
-    // }
-
-    // private function _getVariantBySku($sku, $localeId = null)
-    // {
-    //     return Craft::$app->elements->getCriteria('Commerce_Variant', ['sku' => $sku, 'status' => null, 'locale' => $localeId])->first();
-    // }
-
-    // private function _getTaxCategory($value)
-    // {
-    //     // Find by ID
-    //     $result = Commerce_TaxCategoryRecord::model()->findById($value);
-
-    //     // Find by Name
-    //     if (!$result) {
-    //         $result = Commerce_TaxCategoryRecord::model()->findByAttributes(['name' => $value]);
-    //     }
-
-    //     // Find by Handle
-    //     if (!$result) {
-    //         $result = Commerce_TaxCategoryRecord::model()->findByAttributes(['handle' => $value]);
-    //     }
-
-    //     if ($result) {
-    //         return Commerce_TaxCategoryModel::populateModel($result);
-    //     }
-
-    //     return false;
-    // }
-
-    // private function _getShippingCategory($value)
-    // {
-    //     // Find by ID
-    //     $result = Commerce_ShippingCategoryRecord::model()->findById($value);
-
-    //     // Find by Name
-    //     if (!$result) {
-    //         $result = Commerce_ShippingCategoryRecord::model()->findByAttributes(['name' => $value]);
-    //     }
-
-    //     // Find by Handle
-    //     if (!$result) {
-    //         $result = Commerce_ShippingCategoryRecord::model()->findByAttributes(['handle' => $value]);
-    //     }
-
-    //     if ($result) {
-    //         return Commerce_ShippingCategoryModel::populateModel($result);
-    //     }
-
-    //     return false;
-    // }
+        $variantData = [];
+
+        // Now we need to find out how many variants we're importing - can even be one, and its all a little tricky...
+        foreach ($feedData as $nodePath => $value) {
+            foreach ($variantMapping as $fieldHandle => $fieldInfo) {
+                $node = Hash::get($fieldInfo, 'node');
+
+                $feedPath = preg_replace('/(\/\d+\/)/', '/', $nodePath);
+                $feedPath = preg_replace('/^(\d+\/)|(\/\d+)/', '', $feedPath);
+
+                // Find the node in the feed (stripped of indexes) that matches what's stored in field mapping
+                if ($feedPath === $node) {
+                    // Try and determine the index. We need to always be dealing with an array of variant data
+                    preg_match('/\/(\d+)\//', $nodePath, $matches);
+                    $count = Hash::get($matches, '1', '0');
+
+                    // Store this information so we can parse the field data later
+                    if (!isset($variantData[$count][$fieldHandle])) {
+                        $variantData[$count][$fieldHandle] = $fieldInfo;
+                    }
+
+                    $variantData[$count][$fieldHandle]['data'][$nodePath] = $value;
+                }
+            }
+        }
+
+        foreach ($variantData as $variantNumber => $variantContent) {
+            $attributeData = [];
+            $fieldData = [];
+
+            // Parse the just the element attributes first. We use these in our field contexts, and need a fully-prepped element
+            foreach ($variantContent as $fieldHandle => $fieldInfo) {
+                if (Hash::get($fieldInfo, 'attribute')) {
+                    $attributeValue = DataHelper::fetchValue(Hash::get($fieldInfo, 'data'), $fieldInfo);
+
+                    $attributeData[$fieldHandle] = $attributeValue;
+                }
+            }
+
+            // If there's no SKU in the feed to process, we can't go any further, because we can very likely produce
+            // errors if we try to import a variant that already has an SKU - instead we need to grab and edit it
+            $sku = Hash::get($attributeData, 'sku');
+
+            if (!$sku) {
+                continue;
+            }
+
+            // Create a new variant, or find an existing one to edit
+            $variant = $this->_getVariantBySku($sku);
+            $variant->product = $element;
+
+            // Set the attributes for the element
+            $variant->setAttributes($attributeData);
+
+            // Then, do the same for custom fields. Again, this should be done after populating the element attributes
+            foreach ($variantContent as $fieldHandle => $fieldInfo) {
+                if (Hash::get($fieldInfo, 'field')) {
+                    $data = Hash::get($fieldInfo, 'data');
+
+                    $fieldValue = FeedMe::$plugin->fields->parseField($feed, $element, $data, $fieldHandle, $fieldInfo);;
+
+                    if ($fieldValue !== null) {
+                        $fieldData[$fieldHandle] = $fieldValue;
+                    }
+                }
+            }
+
+            $variants[] = $variant;
+        }
+
+        // Set the products variants
+        $element->setVariants($variants);
+
+        // Save all our changes back to the event model
+        $event->feed = $feed;
+        $event->feedData = $feedData;
+        $event->contentData = $contentData;
+        $event->element = $element;
+    }
+
+    private function _getVariantBySku($sku, $siteId = null)
+    {
+        $variant = VariantElement::find()->sku($sku)->status(null)->limit(null)->siteId($siteId)->one();
+
+        if ($variant) {
+            return $variant;
+        }
+
+        return new VariantElement();
+    }
+
+
+    // Protected Methods
+    // =========================================================================
+
+    protected function parsePostDate($feedData, $fieldInfo)
+    {
+        $value = $this->fetchSimpleValue($feedData, $fieldInfo);
+
+        return $this->parseDateAttribute($value);
+    }
+
+    protected function parseExpiryDate($feedData, $fieldInfo)
+    {
+        $value = $this->fetchSimpleValue($feedData, $fieldInfo);
+
+        return $this->parseDateAttribute($value);
+    }
+
+    protected function parseAvailableForPurchase($feedData, $fieldInfo)
+    {
+        $value = $this->fetchSimpleValue($feedData, $fieldInfo);
+
+        return BaseHelper::parseBoolean($value);
+    }
+
+    protected function parseFreeShipping($feedData, $fieldInfo)
+    {
+        $value = $this->fetchSimpleValue($feedData, $fieldInfo);
+
+        return BaseHelper::parseBoolean($value);
+    }
+
+    protected function parsePromotable($feedData, $fieldInfo)
+    {
+        $value = $this->fetchSimpleValue($feedData, $fieldInfo);
+
+        return BaseHelper::parseBoolean($value);
+    }
+
+    protected function parseTaxCategoryId($feedData, $fieldInfo)
+    {
+        $value = $this->fetchSimpleValue($feedData, $fieldInfo);
+
+        $query = (new Query())
+            ->select(['*'])
+            ->from(['{{%commerce_taxcategories}}']);
+
+        // Find by ID
+        $result = $query->where(['id' => $value])->one();
+
+        // Find by Name
+        if (!$result) {
+            $result = $query->where(['name' => $value])->one();
+        }
+
+        // Find by Handle
+        if (!$result) {
+            $result = $query->where(['handle' => $value])->one();
+        }
+
+        if ($result) {
+            return $result['id'];
+        }
+
+        return false;
+    }
+
+    protected function parseShippingCategoryId($feedData, $fieldInfo)
+    {
+        $value = $this->fetchSimpleValue($feedData, $fieldInfo);
+
+        $query = (new Query())
+            ->select(['*'])
+            ->from(['{{%commerce_shippingcategories}}']);
+
+        // Find by ID
+        $result = $query->where(['id' => $value])->one();
+
+        // Find by Name
+        if (!$result) {
+            $result = $query->where(['name' => $value])->one();
+        }
+
+        // Find by Handle
+        if (!$result) {
+            $result = $query->where(['handle' => $value])->one();
+        }
+
+        if ($result) {
+            return $result['id'];
+        }
+
+        return false;
+    }
 }

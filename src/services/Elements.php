@@ -81,7 +81,7 @@ class Elements extends Component
                 Asset::class,
                 Category::class,
                 // CommerceOrder::class,
-                // CommerceProduct::class,
+                CommerceProduct::class,
                 Entry::class,
                 User::class,
             ];

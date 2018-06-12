@@ -7,9 +7,20 @@
     {% set productType = craft.commerce.productTypes.getProductTypeById(productTypeId) %}
 {% endif %}
 
+{% set taxCategories = [] %}
+{% for item in productType.taxCategories %}
+    {% set taxCategories = taxCategories | merge([{ value: item.id, label: item.name }]) %}
+{% endfor %}
+
+{% set shippingCategories = [] %}
+{% for item in productType.shippingCategories %}
+    {% set shippingCategories = shippingCategories | merge([{ value: item.id, label: item.name }]) %}
+{% endfor %}
+
 {% set fields = [{
     name: 'Title',
     handle: 'title',
+    required: true,
     default: {
         type: 'text',
     },
@@ -49,16 +60,24 @@
 }, {
     name: 'Tax Category',
     handle: 'taxCategoryId',
+    required: true,
     default: {
         type: 'select',
-        options: craft.commerce.getTaxCategories(true),
+        options: taxCategories,
     },
 }, {
     name: 'Shipping Category',
     handle: 'shippingCategoryId',
+    required: true,
     default: {
         type: 'select',
-        options: craft.commerce.getShippingCategories(true),
+        options: shippingCategories,
+    },
+}, {
+    name: 'Available for Purchase',
+    handle: 'availableForPurchase',
+    default: {
+        type: 'checkbox',
     },
 }, {
     name: 'Free Shipping',
@@ -85,96 +104,77 @@
 {% set fieldsVariants = [{
     name: 'Title',
     handle: 'variant-title',
-    name: 'variants--title',
-    value: feed.fieldMapping['variants--title'] ?? '',
+    required: true,
     default: {
         type: 'text',
     },
 }, {
     name: 'SKU',
     handle: 'variant-sku',
-    name: 'variants--sku',
-    value: feed.fieldMapping['variants--sku'] ?? '',
+    required: true,
     default: {
         type: 'text',
     },
 }, {
     name: 'Price',
     handle: 'variant-price',
-    name: 'variants--price',
-    value: feed.fieldMapping['variants--price'] ?? '',
+    required: true,
     default: {
         type: 'text',
     },
 }, {
     name: 'Stock',
     handle: 'variant-stock',
-    name: 'variants--stock',
-    value: feed.fieldMapping['variants--stock'] ?? '',
+    required: true,
     default: {
         type: 'text',
     },
 }, {
     name: 'Unlimited Stock',
-    handle: 'variant-unlimitedStock',
-    name: 'variants--unlimitedStock',
-    value: feed.fieldMapping['variants--unlimitedStock'] ?? '',
+    handle: 'variant-hasUnlimitedStock',
+    required: true,
     default: {
         type: 'checkbox',
     },
 }, {
     name: 'Is Default',
     handle: 'variant-isDefault',
-    name: 'variants--isDefault',
-    value: feed.fieldMapping['variants--isDefault'] ?? '',
     default: {
         type: 'checkbox',
     },
 }, {
     name: 'Minimum allowed quantity',
     handle: 'variant-minQty',
-    name: 'variants--minQty',
-    value: feed.fieldMapping['variants--minQty'] ?? '',
     default: {
         type: 'text',
     },
 }, { 
     name: 'Maximum allowed quantity',
     handle: 'variant-maxQty',
-    name: 'variants--maxQty',
-    value: feed.fieldMapping['variants--maxQty'] ?? '',
     default: {
         type: 'text',
     },
 }, {
     name: 'Dimensions - Length',
     handle: 'variant-length',
-    name: 'variants--length',
-    value: feed.fieldMapping['variants--length'] ?? '',
     default: {
         type: 'text',
     },
 }, {
     name: 'Dimensions - Width',
     handle: 'variant-width',
-    name: 'variants--width',
-    value: feed.fieldMapping['variants--width'] ?? '',
     default: {
         type: 'text',
     },
 }, {
     name: 'Dimensions - Height',
     handle: 'variant-height',
-    name: 'variants--height',
-    value: feed.fieldMapping['variants--height'] ?? '',
     default: {
         type: 'text',
     },
 }, {
     name: 'Weight',
     handle: 'variant-weight',
-    name: 'variants--weight',
-    value: feed.fieldMapping['variants--weight'] ?? '',
     default: {
         type: 'text',
     },
@@ -260,8 +260,9 @@
             {% for field in tab.getFields() %}
                 {% set fieldClass = craft.feedme.fields.getRegisteredField(className(field)) %}
                 {% set template = fieldClass.getMappingTemplate() %}
+                {% set handle = 'variant-' ~ field.handle %}
 
-                {% set variables = field | merge({ feed: feed, feedData: feedData, field: field, fieldClass: fieldClass }) %}
+                {% set variables = field | merge({ handle: handle, feed: feed, feedData: feedData, field: field, fieldClass: fieldClass }) %}
                 
                 {% include template ignore missing with variables only %}
             {% endfor %}
@@ -278,12 +279,9 @@
 {% set uniqueFields = fields %}
 
 {% for field in fieldsVariants %}
-    {# Special-case for a few attributes - we need to select the default #}
-    {% set handle = field.handle | replace('variant-', '') %}
-
     {# Only the Variant SKU is supported as an element criteria attribute for a Variant element #}
     {% if field.handle == 'variant-sku' %}
-        {% set uniqueFields = uniqueFields | merge([{ name: 'Variant ' ~ field.name, handle: field.name }]) %}
+        {% set uniqueFields = uniqueFields | merge([{ name: 'Variant ' ~ field.name, handle: field.handle }]) %}
     {% endif %}
 {% endfor %}
 
@@ -295,7 +293,7 @@
 
 {% for tab in variantTabs %}
     {% for field in tab.getFields() %}
-        {% set uniqueFields = uniqueFields | merge([{ name: field.name, handle: 'variants--' ~ field.handle }]) %}
+        {% set uniqueFields = uniqueFields | merge([{ name: field.name, handle: 'variant-' ~ field.handle }]) %}
     {% endfor %}
 {% endfor %}
 
