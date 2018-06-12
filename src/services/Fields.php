@@ -7,6 +7,7 @@ use verbb\feedme\fields\Assets;
 use verbb\feedme\fields\Categories;
 use verbb\feedme\fields\Checkboxes;
 use verbb\feedme\fields\CommerceProducts;
+use verbb\feedme\fields\CommerceVariants;
 use verbb\feedme\fields\Date;
 use verbb\feedme\fields\DefaultField;
 use verbb\feedme\fields\Dropdown;
@@ -104,7 +105,8 @@ class Fields extends Component
                 Assets::class,
                 Categories::class,
                 Checkboxes::class,
-                // CommerceProducts::class,
+                CommerceProducts::class,
+                CommerceVariants::class,
                 Date::class,
                 Dropdown::class,
                 Entries::class,

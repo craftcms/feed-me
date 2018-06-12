@@ -5,18 +5,18 @@ use verbb\feedme\base\Field;
 use verbb\feedme\base\FieldInterface;
 
 use Craft;
-use craft\commerce\elements\Product as ProductElement;
+use craft\commerce\elements\Variant as VariantElement;
 use craft\helpers\Db;
 
 use Cake\Utility\Hash;
 
-class CommerceProducts extends Field implements FieldInterface
+class CommerceVariants extends Field implements FieldInterface
 {
     // Properties
     // =========================================================================
 
-    public static $name = 'CommerceProducts';
-    public static $class = 'craft\commerce\fields\Products';
+    public static $name = 'CommerceVariants';
+    public static $class = 'craft\commerce\fields\Variants';
 
 
     // Templates
@@ -24,7 +24,7 @@ class CommerceProducts extends Field implements FieldInterface
 
     public function getMappingTemplate()
     {
-        return 'feed-me/_includes/fields/commerce_products';
+        return 'feed-me/_includes/fields/commerce_variants';
     }
 
 
@@ -58,7 +58,7 @@ class CommerceProducts extends Field implements FieldInterface
                 continue;
             }
             
-            $query = ProductElement::find();
+            $query = VariantElement::find();
 
             $criteria['status'] = null;
             $criteria['typeId'] = $typeIds;
