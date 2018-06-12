@@ -157,7 +157,7 @@
                 {% set fieldClass = craft.feedme.fields.getRegisteredField(className(field)) %}
                 {% set template = fieldClass.getMappingTemplate() %}
 
-                {% set variables = field | merge({ feed: feed, feedData: feedData, field: field, fieldClass: fieldClass }) %}
+                {% set variables = { name: field.name, handle: field.handle, feed: feed, feedData: feedData, field: field, fieldClass: fieldClass } %}
                 
                 {% include template ignore missing with variables only %}
             {% endfor %}

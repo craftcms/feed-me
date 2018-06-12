@@ -23,7 +23,7 @@ class Lightswitch extends Field implements FieldInterface
 
     public function getMappingTemplate()
     {
-        return 'feed-me/_includes/fields/default';
+        return 'feed-me/_includes/fields/lightswitch';
     }
 
 

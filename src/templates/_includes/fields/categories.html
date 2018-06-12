@@ -11,6 +11,16 @@
 {% import 'feed-me/_macros' as feedMeMacro %}
 {% import '_includes/forms' as forms %}
 
+{% if field is defined %}
+    {% set group = field.settings.source | replace('group:', '') %}
+    {% set options = craft.feedme.getSelectOptions(craft.categories.groupId(group).all(), 'title') %}
+
+    {% set default = default ?? {
+        type: 'select',
+        options: options,
+    } %}
+{% endif %}
+
 {# Get any sub-fields for the element. Also check to go only one level deep #}
 {% if field is defined and isSubElementField is not defined %}
     {% set elementFields = [] %}

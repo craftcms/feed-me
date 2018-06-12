@@ -11,6 +11,13 @@
 {% import 'feed-me/_macros' as feedMeMacro %}
 {% import '_includes/forms' as forms %}
 
+{% if field is defined %}
+    {% set default = default ?? {
+        type: 'select',
+        options: craft.feedme.getSelectOptions(field.settings.options, 'label', 'value'),
+    } %}
+{% endif %}
+
 {% extends 'feed-me/_includes/fields/_base' %}
 
 {% block extraSettings %}
