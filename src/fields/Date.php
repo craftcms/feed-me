@@ -32,7 +32,7 @@ class Date extends Field implements FieldInterface
 
     public function parseField()
     {
-        $value = $this->fetchSimpleValue();
+        $value = $this->fetchValue();
         
         $formatting = Hash::get($this->fieldInfo, 'options.match');
 

@@ -35,7 +35,7 @@ class SmartMap extends Field implements FieldInterface
         $fields = Hash::get($this->fieldInfo, 'fields');
 
         foreach ($fields as $subFieldHandle => $subFieldInfo) {
-            $preppedData[$subFieldHandle] = DataHelper::fetchSimpleValue($this->feedData, $subFieldInfo);
+            $preppedData[$subFieldHandle] = DataHelper::fetchValue($this->feedData, $subFieldInfo);
         }
 
         return $preppedData;

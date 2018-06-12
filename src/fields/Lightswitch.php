@@ -32,7 +32,7 @@ class Lightswitch extends Field implements FieldInterface
 
     public function parseField()
     {
-        $value = $this->fetchSimpleValue();
+        $value = $this->fetchValue();
         
         return BaseHelper::parseBoolean($value);
     }

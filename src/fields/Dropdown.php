@@ -31,7 +31,7 @@ class Dropdown extends Field implements FieldInterface
 
     public function parseField()
     {
-        $value = $this->fetchSimpleValue();
+        $value = $this->fetchValue();
 
         $options = Hash::get($this->field, 'settings.options');
         $match = Hash::get($this->fieldInfo, 'options.match', 'value');

@@ -31,6 +31,6 @@ class DefaultField extends Field implements FieldInterface
 
     public function parseField()
     {
-        return $this->fetchSimpleValue();
+        return $this->fetchValue();
     }
 }
