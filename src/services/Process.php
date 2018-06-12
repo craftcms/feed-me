@@ -23,6 +23,7 @@ class Process extends Component
 
     const EVENT_BEFORE_PROCESS_FEED = 'onBeforeProcessFeed';
     const EVENT_STEP_BEFORE_ELEMENT_MATCH = 'onStepBeforeElementMatch';
+    const EVENT_STEP_BEFORE_PARSE_CONTENT = 'onStepBeforeParseContent';
     const EVENT_STEP_BEFORE_ELEMENT_SAVE = 'onStepBeforeElementSave';
     const EVENT_STEP_AFTER_ELEMENT_SAVE = 'onStepElementSave';
     const EVENT_AFTER_PROCESS_FEED = 'onAfterProcessFeed';
@@ -184,11 +185,20 @@ class Process extends Component
         //
 
         // Fire an 'onStepBeforeElementMatch' event
-        $this->_triggerEvent(self::EVENT_STEP_BEFORE_ELEMENT_MATCH, [
-            'feed' => $feed,
-            'feedData' => $feedData,
-            'contentData' => $matchExistingElementData,
-        ]);
+        if ($this->hasEventHandlers(self::EVENT_STEP_BEFORE_ELEMENT_MATCH)) {
+            $event = new FeedProcessEvent([
+                'feed' => $feed,
+                'feedData' => $feedData,
+                'contentData' => $matchExistingElementData,
+            ]);
+
+            $this->trigger(self::EVENT_STEP_BEFORE_ELEMENT_MATCH, $event);
+
+            // Allow event to modify variables
+            $feed = $event->feed;
+            $feedData = $event->feedData;
+            $matchExistingElementData = $event->contentData;
+        }
 
         // Check to see if an element already exists
         $existingElement = $this->_service->matchExistingElement($matchExistingElementData, $feed);
@@ -247,6 +257,22 @@ class Process extends Component
         // Now, parse all element attributes and custom fields
         //
 
+        // Fire an 'onStepBeforeParseContent' event
+        if ($this->hasEventHandlers(self::EVENT_STEP_BEFORE_PARSE_CONTENT)) {
+            $event = new FeedProcessEvent([
+                'feed' => $feed,
+                'feedData' => $feedData,
+                'element' => $element,
+            ]);
+
+            $this->trigger(self::EVENT_STEP_BEFORE_PARSE_CONTENT, $event);
+
+            // Allow event to modify variables
+            $feed = $event->feed;
+            $feedData = $event->feedData;
+            $element = $event->element;
+        }
+
         // Parse the just the element attributes first. We use these in our field contexts, and need a fully-prepped element
         foreach ($feed['fieldMapping'] as $fieldHandle => $fieldInfo) {
             if (Hash::get($fieldInfo, 'attribute')) {
@@ -274,20 +300,30 @@ class Process extends Component
         // We need to keep these separate to apply to the element but required when matching against existing elements
         $contentData = $attributeData + $fieldData;
 
-        FeedMe::debug($feed, $contentData);
-
 
         //
         // It's time to actually save the element!
         //
 
         // Fire an 'onStepBeforeElementSave' event
-        $this->_triggerEvent(self::EVENT_STEP_BEFORE_ELEMENT_SAVE, [
-            'feed' => $feed,
-            'feedData' => $feedData,
-            'contentData' => $contentData,
-            'element' => $element,
-        ]);
+        if ($this->hasEventHandlers(self::EVENT_STEP_BEFORE_ELEMENT_SAVE)) {
+            $event = new FeedProcessEvent([
+                'feed' => $feed,
+                'feedData' => $feedData,
+                'contentData' => $contentData,
+                'element' => $element,
+            ]);
+
+            $this->trigger(self::EVENT_STEP_BEFORE_ELEMENT_SAVE, $event);
+
+            // Allow event to modify variables
+            $feed = $event->feed;
+            $feedData = $event->feedData;
+            $contentData = $event->contentData;
+            $element = $event->element;
+        }
+
+        FeedMe::debug($feed, $contentData);
 
         // Save the element
         if ($this->_service->save($contentData, $feed)) {
