@@ -94,6 +94,12 @@ class DataHelper
             }
         }
 
+        // Help to normalise things if an array with only one item. Probably a better idea to offload this to each
+        // attribute of field definition, as its quite an assumption at this point...
+        if (count($value) === 1) {
+            $value = $value[0];
+        }
+
         return $value;
     }
 
