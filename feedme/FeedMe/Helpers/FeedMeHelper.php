@@ -31,7 +31,6 @@ class FeedMeHelper
             $result = true;
         }
 
-
         if (strtolower($value) === Craft::t('no')) {
             $result = false;
         }
@@ -45,6 +44,14 @@ class FeedMeHelper
         }
 
         if (strtolower($value) === Craft::t('disabled')) {
+            $result = false;
+        }
+
+        if (strtolower($value) === Craft::t('active')) {
+            $result = true;
+        }
+
+        if (strtolower($value) === Craft::t('inactive')) {
             $result = false;
         }
 
