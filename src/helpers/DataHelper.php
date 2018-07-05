@@ -100,6 +100,11 @@ class DataHelper
             $value = $value[0];
         }
 
+        // Check if not importing, just using default
+        if ($node === 'usedefault' && !$value) {
+            $value = $default;
+        }
+
         return $value;
     }
 
