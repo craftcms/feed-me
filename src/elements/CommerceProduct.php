@@ -5,6 +5,7 @@ use verbb\feedme\FeedMe;
 use verbb\feedme\base\Element;
 use verbb\feedme\base\ElementInterface;
 use verbb\feedme\events\FeedProcessEvent;
+use verbb\feedme\helpers\BaseHelper;
 use verbb\feedme\helpers\DataHelper;
 use verbb\feedme\services\Process;
 
