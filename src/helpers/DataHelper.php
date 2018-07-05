@@ -3,6 +3,8 @@ namespace verbb\feedme\helpers;
 
 use Craft;
 
+use verbb\feedme\FeedMe;
+
 use Cake\Utility\Hash;
 
 class DataHelper
@@ -33,6 +35,8 @@ class DataHelper
         $node = Hash::get($fieldInfo, 'node');
         $default = Hash::get($fieldInfo, 'default');
 
+        $dataDelimeter = FeedMe::$plugin->service->getConfig('dataDelimeter') ?? '|';
+
         // Some fields require array, or multiple values like Elements, Checkboxes, etc, and we need to parse them differently.
         // Firstly, field mapping is setup like `MatrixBlock/Images` but actual feed is structured like `MatrixBlock/0/Images/0`.
         // We strip out the numbers to first find the node we've mapped to, then iterate over possible multiple values in the feed.
@@ -51,8 +55,8 @@ class DataHelper
 
                 // Allow pipes '|' to denote multiple items, but even if it doesn't contain one, explode will create
                 // an array, so ensure to merge with the current results.
-                if (is_string($nodeValue) && strpos($nodeValue, '|') !== false) {
-                    $value = array_merge($value, explode('|', $nodeValue));
+                if (is_string($nodeValue) && strpos($nodeValue, $dataDelimeter) !== false) {
+                    $value = array_merge($value, explode($dataDelimeter, $nodeValue));
                 } else {
                     $value[] = $nodeValue;
                 }
@@ -74,6 +78,8 @@ class DataHelper
         $node = Hash::get($fieldInfo, 'node');
         $default = Hash::get($fieldInfo, 'default');
 
+        $dataDelimeter = FeedMe::$plugin->service->getConfig('dataDelimeter') ?? '|';
+
         // Some fields require array, or multiple values like Elements, Checkboxes, etc, and we need to parse them differently.
         // Firstly, field mapping is setup like `MatrixBlock/Images` but actual feed is structured like `MatrixBlock/0/Images/0`.
         // We strip out the numbers to first find the node we've mapped to, then iterate over possible multiple values in the feed.
@@ -90,7 +96,13 @@ class DataHelper
 
                 $nodeValue = DataHelper::parseFieldDataForElement($nodeValue, $element);
 
-                $value[] = $nodeValue;
+                // Allow pipes '|' to denote multiple items, but even if it doesn't contain one, explode will create
+                // an array, so ensure to merge with the current results.
+                if (is_string($nodeValue) && strpos($nodeValue, $dataDelimeter) !== false) {
+                    $value = array_merge($value, explode($dataDelimeter, $nodeValue));
+                } else {
+                    $value[] = $nodeValue;
+                }
             }
         }
 
