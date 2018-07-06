@@ -7,6 +7,8 @@ class FieldEvent extends Event
 {
     // Properties
     // =========================================================================
+    
+    public $feed;
 
     public $feedData;
 
