@@ -18,6 +18,7 @@ class Categories extends Field implements FieldInterface
 
     public static $name = 'Categories';
     public static $class = 'craft\fields\Categories';
+    public static $elementType = 'craft\elements\Category';
 
 
     // Templates
@@ -43,6 +44,7 @@ class Categories extends Field implements FieldInterface
         $match = Hash::get($this->fieldInfo, 'options.match', 'title');
         $create = Hash::get($this->fieldInfo, 'options.create');
         $fields = Hash::get($this->fieldInfo, 'fields');
+        $node = Hash::get($this->fieldInfo, 'node');
 
         // Get source id's for connecting
         list($type, $groupId) = explode(':', $source);
@@ -53,6 +55,12 @@ class Categories extends Field implements FieldInterface
             // Prevent empty or blank values (string or array), which match all elements
             if (empty($dataValue)) {
                 continue;
+            }
+
+            // If we're using the default value - skip, we've already got an id array
+            if ($node === 'usedefault') {
+                $foundElements = $value;
+                break;
             }
 
             $query = CategoryElement::find();

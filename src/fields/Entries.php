@@ -17,6 +17,7 @@ class Entries extends Field implements FieldInterface
 
     public static $name = 'Entries';
     public static $class = 'craft\fields\Entries';
+    public static $elementType = 'craft\elements\Entry';
 
 
     // Templates
@@ -42,6 +43,7 @@ class Entries extends Field implements FieldInterface
         $match = Hash::get($this->fieldInfo, 'options.match', 'title');
         $create = Hash::get($this->fieldInfo, 'options.create');
         $fields = Hash::get($this->fieldInfo, 'fields');
+        $node = Hash::get($this->fieldInfo, 'node');
 
         $sectionIds = [];
 
@@ -67,6 +69,12 @@ class Entries extends Field implements FieldInterface
             // Prevent empty or blank values (string or array), which match all elements
             if (empty($dataValue)) {
                 continue;
+            }
+
+            // If we're using the default value - skip, we've already got an id array
+            if ($node === 'usedefault') {
+                $foundElements = $value;
+                break;
             }
             
             $query = EntryElement::find();

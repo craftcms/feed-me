@@ -17,6 +17,7 @@ class CommerceProducts extends Field implements FieldInterface
 
     public static $name = 'CommerceProducts';
     public static $class = 'craft\commerce\fields\Products';
+    public static $elementType = 'craft\commerce\elements\Product';
 
 
     // Templates
@@ -39,6 +40,7 @@ class CommerceProducts extends Field implements FieldInterface
         $sources = Hash::get($this->field, 'settings.sources');
         $limit = Hash::get($this->field, 'settings.limit');
         $match = Hash::get($this->fieldInfo, 'options.match', 'title');
+        $node = Hash::get($this->fieldInfo, 'node');
 
         $typeIds = [];
 
@@ -56,6 +58,12 @@ class CommerceProducts extends Field implements FieldInterface
             // Prevent empty or blank values (string or array), which match all elements
             if (empty($dataValue)) {
                 continue;
+            }
+
+            // If we're using the default value - skip, we've already got an id array
+            if ($node === 'usedefault') {
+                $foundElements = $value;
+                break;
             }
             
             $query = ProductElement::find();

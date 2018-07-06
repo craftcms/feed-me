@@ -17,6 +17,7 @@ class Users extends Field implements FieldInterface
 
     public static $name = 'Users';
     public static $class = 'craft\fields\Users';
+    public static $elementType = 'craft\elements\User';
 
 
     // Templates
@@ -41,6 +42,7 @@ class Users extends Field implements FieldInterface
         $match = Hash::get($this->fieldInfo, 'options.match', 'email');
         $create = Hash::get($this->fieldInfo, 'options.create');
         $fields = Hash::get($this->fieldInfo, 'fields');
+        $node = Hash::get($this->fieldInfo, 'node');
 
         // Get source id's for connecting
         $groupIds = [];
@@ -60,6 +62,12 @@ class Users extends Field implements FieldInterface
             // Prevent empty or blank values (string or array), which match all elements
             if (empty($dataValue)) {
                 continue;
+            }
+
+            // If we're using the default value - skip, we've already got an id array
+            if ($node === 'usedefault') {
+                $foundElements = $value;
+                break;
             }
             
             $query = UserElement::find();

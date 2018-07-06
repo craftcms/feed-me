@@ -40,6 +40,11 @@ abstract class Field extends Component
         return $this::$class;
     }
 
+    public function getElementType()
+    {
+        return $this::$elementType;
+    }
+
 
     // Templates
     // =========================================================================

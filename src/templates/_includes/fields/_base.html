@@ -152,6 +152,22 @@
                                 checked: defaultValue,
                             }) }}
 
+                        {% elseif default.type == 'elementselect' %}
+
+                            {% set elements = [] %}
+
+                            {% for elementId in defaultValue %}
+                                {% set elements = elements | merge([ craft.app.elements.getElementById(elementId) ]) %}
+                            {% endfor %}
+
+                            {{ forms.elementSelectField({
+                                id: 'default',
+                                name: 'default',
+                                elementType: default.options.elementType,
+                                selectionLabel: default.options.selectionLabel,
+                                elements: elements,
+                            }) }}
+
                         {% endif %}
                     {% endif %}
 

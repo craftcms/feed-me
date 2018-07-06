@@ -12,12 +12,12 @@
 {% import '_includes/forms' as forms %}
 
 {% if field is defined %}
-    {% set group = field.settings.source | replace('taggroup:', '') %}
-    {% set options = craft.feedme.getSelectOptions(craft.tags.groupId(group).all(), 'title') %}
-
     {% set default = default ?? {
-        type: 'select',
-        options: options,
+        type: 'elementselect',
+        options: {
+            elementType: fieldClass.elementType,
+            selectionLabel: "Default Tag" | t('feed-me'),
+        },
     } %}
 {% endif %}
 

@@ -11,6 +11,16 @@
 {% import 'feed-me/_macros' as feedMeMacro %}
 {% import '_includes/forms' as forms %}
 
+{% if field is defined %}
+    {% set default = default ?? {
+        type: 'elementselect',
+        options: {
+            elementType: fieldClass.elementType,
+            selectionLabel: "Default Asset" | t('feed-me'),
+        },
+    } %}
+{% endif %}
+
 {# Get any sub-fields for the element. Also check to go only one level deep #}
 {% if field is defined and isSubElementField is not defined %}
     {% set elementFields = [] %}

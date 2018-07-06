@@ -21,6 +21,7 @@ class Assets extends Field implements FieldInterface
 
     public static $name = 'Assets';
     public static $class = 'craft\fields\Assets';
+    public static $elementType = 'craft\elements\Asset';
     private $_uploadData = [];
 
 
@@ -46,6 +47,7 @@ class Assets extends Field implements FieldInterface
         $upload = Hash::get($this->fieldInfo, 'options.upload');
         $conflict = Hash::get($this->fieldInfo, 'options.conflict');
         $fields = Hash::get($this->fieldInfo, 'fields');
+        $node = Hash::get($this->fieldInfo, 'node');
 
         // Get folder id's for connecting
         $folderIds = [];
@@ -77,6 +79,12 @@ class Assets extends Field implements FieldInterface
             // Prevent empty or blank values (string or array), which match all elements
             if (empty($dataValue)) {
                 continue;
+            }
+
+            // If we're using the default value - skip, we've already got an id array
+            if ($node === 'usedefault') {
+                $foundElements = $value;
+                break;
             }
             
             $query = AssetElement::find();

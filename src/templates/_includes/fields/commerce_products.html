@@ -11,6 +11,16 @@
 {% import 'feed-me/_macros' as feedMeMacro %}
 {% import '_includes/forms' as forms %}
 
+{% if field is defined %}
+    {% set default = default ?? {
+        type: 'elementselect',
+        options: {
+            elementType: fieldClass.elementType,
+            selectionLabel: "Default Product" | t('feed-me'),
+        },
+    } %}
+{% endif %}
+
 {% extends 'feed-me/_includes/fields/_base' %}
 
 {% block extraSettings %}
