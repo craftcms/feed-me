@@ -252,6 +252,20 @@ class CommerceProduct extends Element implements ElementInterface
             }
         }
 
+        // A separate loop to sort out any defaults we might have (they need to be applied to each variant)
+        // even though the data supplied for them is only provided once.
+        foreach ($variantMapping as $fieldHandle => $fieldInfo) {
+            foreach ($variantData as $variantNumber => $variantContent) {
+                $node = Hash::get($fieldInfo, 'node');
+                $default = Hash::get($fieldInfo, 'default');
+
+                if ($node === 'usedefault') {
+                    $variantData[$variantNumber][$fieldHandle] = $fieldInfo;
+                    $variantData[$variantNumber][$fieldHandle]['data'][$fieldHandle] = $default;
+                }
+            }
+        }
+
         foreach ($variantData as $variantNumber => $variantContent) {
             $attributeData = [];
             $fieldData = [];
