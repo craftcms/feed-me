@@ -280,6 +280,9 @@ class CommerceProduct extends Element implements ElementInterface
             // Set the attributes for the element
             $variant->setAttributes($attributeData);
 
+            // Add to our contentData variable for debugging
+            $contentData['variants'][] = $attributeData;
+
             // Then, do the same for custom fields. Again, this should be done after populating the element attributes
             foreach ($variantContent as $fieldHandle => $fieldInfo) {
                 if (Hash::get($fieldInfo, 'field')) {
