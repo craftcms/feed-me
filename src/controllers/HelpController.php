@@ -158,10 +158,10 @@ class HelpController extends Controller
 
             if ($getHelpModel->attachFeed) {
                 try {
-                    $feedData = FeedMe::$plugin->data->getRawData($feed->feedUrl)['data'];
+                    $feedData = FeedMe::$plugin->data->getRawData($feed->feedUrl);
                     $tempFileFeed = $tempFolder . '/feed.' . StringHelper::toLowerCase($feed->feedType);
 
-                    FileHelper::writeToFile($tempFileFeed, $feedData . PHP_EOL);
+                    FileHelper::writeToFile($tempFileFeed, print_r($feedData, true) . PHP_EOL);
 
                     $zip->addFile($tempFileFeed, 'feed/'.pathinfo($tempFileFeed, PATHINFO_BASENAME));
                 } catch (\Throwable $e) {
@@ -181,34 +181,36 @@ class HelpController extends Controller
                 try {
                     $fieldInfo = [];
 
-                    foreach ($feed->fieldMapping as $fieldHandle => $feedHandle) {
-                        if (isset($feedHandle['field'])) {
-                            $field = Craft::$app->fields->getFieldByHandle($fieldHandle);
-                            $attributes = $field->attributes;
-                            $attributes['type'] = get_class($field);
+                    if (is_array($feed->fieldMapping)) {
+                        foreach ($feed->fieldMapping as $fieldHandle => $feedHandle) {
+                            if (isset($feedHandle['field'])) {
+                                $field = Craft::$app->fields->getFieldByHandle($fieldHandle);
+                                $attributes = $field->attributes;
+                                $attributes['type'] = get_class($field);
 
-                            if ($attributes['type'] == 'craft\fields\Matrix') {
-                                foreach ($field->blocktypes as $key => $blocktype) {
-                                    $attributes['blocktypes'][$key] = $blocktype->attributes;
+                                if ($attributes['type'] == 'craft\fields\Matrix') {
+                                    foreach ($field->blocktypes as $key => $blocktype) {
+                                        $attributes['blocktypes'][$key] = $blocktype->attributes;
 
-                                    foreach ($blocktype->fields as $key2 => $blocktypeField) {
-                                        $attributes['blocktypes'][$key]['fields'][$key2] = $blocktypeField->attributes;
-                                        $attributes['blocktypes'][$key]['fields'][$key2]['type'] = get_class($blocktypeField);
+                                        foreach ($blocktype->fields as $key2 => $blocktypeField) {
+                                            $attributes['blocktypes'][$key]['fields'][$key2] = $blocktypeField->attributes;
+                                            $attributes['blocktypes'][$key]['fields'][$key2]['type'] = get_class($blocktypeField);
+                                        }
                                     }
                                 }
+
+                                $fieldInfo[$fieldHandle] = $attributes;
                             }
-
-                            $fieldInfo[$fieldHandle] = $attributes;
                         }
+
+                        $json = json_encode($fieldInfo, JSON_PRETTY_PRINT);
+
+                        $tempFileFields = $tempFolder . '/fields.json';
+
+                        FileHelper::writeToFile($tempFileFields, $json . PHP_EOL);
+
+                        $zip->addFile($tempFileFields, 'fields/'.pathinfo($tempFileFields, PATHINFO_BASENAME));
                     }
-
-                    $json = json_encode($fieldInfo, JSON_PRETTY_PRINT);
-
-                    $tempFileFields = $tempFolder . '/fields.json';
-
-                    FileHelper::writeToFile($tempFileFields, $json . PHP_EOL);
-
-                    $zip->addFile($tempFileFields, 'fields/'.pathinfo($tempFileFields, PATHINFO_BASENAME));
                 } catch (\Throwable $e) {
                     $noteError = "\n\nError adding field into to help request: ".$e->getMessage();
                     $requestParamDefaults['note'] .= $noteError;
@@ -233,10 +235,17 @@ class HelpController extends Controller
             $requestParams['fileBody'] = base64_encode(file_get_contents($zipPath));
 
             // Remove the temp files we've created
-            FileHelper::unlink($tempFileSettings);
-            FileHelper::unlink($tempFileFeed);
-            FileHelper::unlink($tempFileFields);
+            if (is_file($tempFileSettings)) {
+                FileHelper::unlink($tempFileSettings);
+            }
+            
+            if (is_file($tempFileFeed)) {
+                FileHelper::unlink($tempFileFeed);
+            }
 
+            if (is_file($tempFileFields)) {
+                FileHelper::unlink($tempFileFields);
+            }
         } catch (\Throwable $e) {
             FeedMe::info(null, 'Tried to attach debug logs to a support request and something went horribly wrong: '.$e->getMessage());
 
