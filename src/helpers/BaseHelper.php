@@ -12,6 +12,11 @@ class BaseHelper
     {
         $result = filter_var($value, FILTER_VALIDATE_BOOLEAN);
 
+        // Additional checks
+        if (is_array($value)) {
+            return;
+        }
+
         // Also check for translated values of boolean-like terms
         if (strtolower($value) === Craft::t('app', 'yes')) {
             $result = true;
