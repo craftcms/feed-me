@@ -40,15 +40,33 @@
     <div class="element-match">
         <span>{{ 'Data provided for this entry is:' | t('feed-me') }}</span>
 
+        {% set matchAttributes = [
+            { value: 'title', label: 'Title' | t('feed-me') },
+            { value: 'id', label: 'ID' | t('feed-me') },
+            { value: 'slug', label: 'Slug' | t('feed-me') },
+        ] %}
+
+        {% set supportedFieldTypes = [
+            'craft\\fields\\Color',
+            'craft\\fields\\Dropdown',
+            'craft\\fields\\Email',
+            'craft\\fields\\Lightswitch',
+            'craft\\fields\\Number',
+            'craft\\fields\\PlainText',
+            'craft\\fields\\Url',
+        ] %}
+
+        {% for field in craft.app.fields.getAllFields() %}
+            {% if className(field) in supportedFieldTypes %}
+                {% set matchAttributes = matchAttributes | merge({ (field.handle): field.name }) %}
+            {% endif %}
+        {% endfor %}
+
         {{ forms.selectField({
             name: 'options[match]',
             class: '',
             value: hash_get(feed.fieldMapping, optionsPath ~ '.match') ?: '',
-            options: [
-                { value: 'title', label: 'Title' | t('feed-me') },
-                { value: 'id', label: 'ID' | t('feed-me') },
-                { value: 'slug', label: 'Slug' | t('feed-me') },
-            ],
+            options: matchAttributes,
         }) }}
     </div>
 
