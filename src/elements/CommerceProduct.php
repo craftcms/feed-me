@@ -341,15 +341,17 @@ class CommerceProduct extends Element implements ElementInterface
     protected function parsePostDate($feedData, $fieldInfo)
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
+        $formatting = Hash::get($fieldInfo, 'options.match');
 
-        return $this->parseDateAttribute($value);
+        return $this->parseDateAttribute($value, $formatting);
     }
 
     protected function parseExpiryDate($feedData, $fieldInfo)
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
+        $formatting = Hash::get($fieldInfo, 'options.match');
 
-        return $this->parseDateAttribute($value);
+        return $this->parseDateAttribute($value, $formatting);
     }
 
     protected function parseAvailableForPurchase($feedData, $fieldInfo)

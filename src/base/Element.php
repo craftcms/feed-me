@@ -178,9 +178,9 @@ abstract class Element extends Component
         return BaseHelper::parseBoolean($value);
     }
 
-    protected function parseDateAttribute($value)
+    protected function parseDateAttribute($value, $formatting)
     {
-        $dateValue = DateHelper::parseString($value);
+        $dateValue = DateHelper::parseString($value, $formatting);
 
         if ($dateValue) {
             return $dateValue;
