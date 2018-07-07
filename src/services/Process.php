@@ -281,7 +281,7 @@ class Process extends Component
         }
 
         // Set the attributes for the element
-        $element->setAttributes($attributeData, true);
+        $element->setAttributes($attributeData, false);
 
         // Then, do the same for custom fields. Again, this should be done after populating the element attributes
         foreach ($feed['fieldMapping'] as $fieldHandle => $fieldInfo) {
