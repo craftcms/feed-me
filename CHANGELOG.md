@@ -1,5 +1,28 @@
 # Changelog
 
+## 3.0.0-beta.16 - 2018-07-07
+
+### Added
+- Add support for element fields to match on simple custom fields
+- Allow element fields to select default elements
+- Add config option for data delimeter (`dataDelimeter`)
+
+### Changed
+- Add `prepareAssetName` to asset handler to handle filenames better
+
+### Fixed
+- Fix help errors ocurring in some cases
+- Fix date format parsing
+- Fix date fields not passing formatting options to helper
+- Add safety checks for boolean values needing to be a string
+- Fix some element attributes not being set correctly
+- Fix default value and values not respecting falsey values in field mapping
+- Fix product variants not using the default value
+- Fix product variant data not showing in debug
+- Fix `services/Fields.php::parseField()` unknown property `$feed` is set.
+- Fix dropdown field (and others) not respecting the default value
+- Commerce - fix missing `BaseHelper`
+
 ## 3.0.0-beta.15 - 2018-06-12
 
 ### Added
