@@ -8,6 +8,7 @@ use verbb\feedme\helpers\AssetHelper;
 
 use Craft;
 use craft\elements\Asset as AssetElement;
+use craft\helpers\Assets as AssetsHelper;
 use craft\helpers\FileHelper;
 use craft\helpers\UrlHelper;
 
@@ -152,6 +153,9 @@ class AssetHelper
         if ($query) {
             $filename = $filename . '-' . static::queryHash($query);
         }
+
+        // Clean up the filename
+        $filename = AssetsHelper::prepareAssetName($filename, false);
 
         return $filename . '.' . $extension;
     }
