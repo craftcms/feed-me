@@ -65,10 +65,32 @@ class DateHelper
                 $date = str_replace(['/', '.'], '-', $value);
 
                 if ($formatting === 'america') {
-                    preg_match('/([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})/', $value, $matches);
+                    preg_match('/([0-9]{1,2})\/([0-9]{1,2})\/([0-9]{4})/', $value, $matches);
 
                     $month = Hash::get($matches, '1');
                     $day = Hash::get($matches, '2');
+                    $year = Hash::get($matches, '3');
+                    $time = explode(' ', $value);
+
+                    $value = $year . '-' . $month . '-' . $day . ' ' . Hash::get($time, '1');
+                }
+
+                if ($formatting === 'asia') {
+                    preg_match('/([0-9]{4})\/([0-9]{1,2})\/([0-9]{1,2})/', $value, $matches);
+
+                    $month = Hash::get($matches, '2');
+                    $day = Hash::get($matches, '3');
+                    $year = Hash::get($matches, '1');
+                    $time = explode(' ', $value);
+
+                    $value = $year . '-' . $month . '-' . $day . ' ' . Hash::get($time, '1');
+                }
+
+                if ($formatting === 'world') {
+                    preg_match('/([0-9]{1,2})\/([0-9]{1,2})\/([0-9]{4})/', $value, $matches);
+
+                    $month = Hash::get($matches, '2');
+                    $day = Hash::get($matches, '1');
                     $year = Hash::get($matches, '3');
                     $time = explode(' ', $value);
 
