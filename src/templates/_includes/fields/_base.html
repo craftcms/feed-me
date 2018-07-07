@@ -21,8 +21,8 @@
 {% set optionsPath = path | join('.') ~ '.options' %}
 
 {% set namespace = 'fieldMapping[' ~ namespacePath ~ ']' %}
-{% set value = hash_get(feed.fieldMapping, nodePath) ?: null %}
-{% set defaultValue = hash_get(feed.fieldMapping, defaultPath) ?: null %}
+{% set value = hash_get(feed.fieldMapping, nodePath) %}
+{% set defaultValue = hash_get(feed.fieldMapping, defaultPath) %}
 
 {% set classes = classes ?? [] %}
 {% set elementFields = elementFields ?? null %}
