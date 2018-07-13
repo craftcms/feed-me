@@ -11,6 +11,7 @@ use craft\elements\Asset as AssetElement;
 use craft\elements\User as UserElement;
 use craft\helpers\FileHelper;
 use craft\helpers\UrlHelper;
+use craft\records\User as UserRecord;
 
 use Cake\Utility\Hash;
 
@@ -23,6 +24,7 @@ class User extends Element implements ElementInterface
     public static $class = 'craft\elements\User';
 
     public $element;
+    public $status;
 
 
     // Templates
@@ -84,6 +86,8 @@ class User extends Element implements ElementInterface
     {
         $this->element = new UserElement();
 
+        $this->status = null;
+
         $siteId = Hash::get($settings, 'siteId');
 
         if ($siteId) {
@@ -97,6 +101,39 @@ class User extends Element implements ElementInterface
     {
         $newGroupsIds = Hash::get($data, 'groups');
         $profilePhoto = Hash::get($data, 'photo');
+
+        // User status can't be set on the element anymore, only directly on the record.
+        if ($this->status) {
+            $record = UserRecord::findOne($this->element->id);
+
+            switch ($this->status) {
+                case 'locked';
+                    $record->locked = true;
+                    break;
+                case 'suspended';
+                    $record->locked = false;
+                    $record->suspended = true;
+                    break;
+                case 'archived':
+                    $record->locked = false;
+                    $record->suspended = false;
+                    $record->archived = true;
+                    break;
+                case 'pending':
+                    $record->locked = false;
+                    $record->suspended = false;
+                    $record->archived = false;
+                    $record->pending = true;
+                    break;
+                case 'active':
+                    $record->suspended = false;
+                    $record->locked = false;
+                    $record->setActive();
+                    break;
+            }
+
+            $record->save(false);
+        }
 
         if ($newGroupsIds) {
             $existingGroupsIds = Hash::extract($this->element->groups, '{n}.id');
@@ -198,31 +235,9 @@ class User extends Element implements ElementInterface
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
 
-        switch ($value) {
-            case 'locked';
-                $this->element->locked = true;
-                break;
-            case 'suspended';
-                $this->element->locked = false;
-                $this->element->suspended = true;
-                break;
-            case 'archived':
-                $this->element->locked = false;
-                $this->element->suspended = false;
-                $this->element->archived = true;
-                break;
-            case 'pending':
-                $this->element->locked = false;
-                $this->element->suspended = false;
-                $this->element->archived = false;
-                $this->element->pending = true;
-                break;
-            case 'active':
-                $this->element->suspended = false;
-                $this->element->locked = false;
-                $this->element->setActive();
-                break;
-        }
+        $this->status = $value;
+
+        return null;
     }
 
 
