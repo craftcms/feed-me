@@ -167,7 +167,11 @@ class Process extends Component
             }
 
             if (Hash::get($mappingInfo, 'attribute')) {
-                $matchExistingElementData[$fieldHandle] = $this->_service->parseAttribute($feedData, $fieldHandle, $mappingInfo);
+                $attributeValue = $this->_service->parseAttribute($feedData, $fieldHandle, $mappingInfo);
+
+                if ($attributeValue !== null) {
+                    $matchExistingElementData[$fieldHandle] = $attributeValue;
+                }
             }
 
             if (Hash::get($mappingInfo, 'field')) {
@@ -276,7 +280,11 @@ class Process extends Component
         // Parse the just the element attributes first. We use these in our field contexts, and need a fully-prepped element
         foreach ($feed['fieldMapping'] as $fieldHandle => $fieldInfo) {
             if (Hash::get($fieldInfo, 'attribute')) {
-                $attributeData[$fieldHandle] = $this->_service->parseAttribute($feedData, $fieldHandle, $fieldInfo);
+                $attributeValue = $this->_service->parseAttribute($feedData, $fieldHandle, $fieldInfo);
+
+                if ($attributeValue !== null) {
+                    $attributeData[$fieldHandle] = $attributeValue;
+                }
             }
         }
 
@@ -286,7 +294,7 @@ class Process extends Component
         // Then, do the same for custom fields. Again, this should be done after populating the element attributes
         foreach ($feed['fieldMapping'] as $fieldHandle => $fieldInfo) {
             if (Hash::get($fieldInfo, 'field')) {
-                $fieldValue = FeedMe::$plugin->fields->parseField($feed, $element, $feedData, $fieldHandle, $fieldInfo);;
+                $fieldValue = FeedMe::$plugin->fields->parseField($feed, $element, $feedData, $fieldHandle, $fieldInfo);
 
                 if ($fieldValue !== null) {
                     $fieldData[$fieldHandle] = $fieldValue;
