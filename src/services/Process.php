@@ -358,7 +358,7 @@ class Process extends Component
             return $element;
         } else {
             if ($element->getErrors()) {
-                throw new \Exception(json_encode($element->getErrors()));
+                throw new \Exception('Item #' . $step . ' - ' . json_encode($element->getErrors()));
             } else {
                 throw new \Exception(Craft::t('feed-me', 'Unknown Element saving error occurred.'));
             }
