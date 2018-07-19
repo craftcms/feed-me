@@ -1,11 +1,28 @@
 # Changelog
 
+## 3.0.0-beta.17 - 2018-07-19
+
+### Changed
+- Replace `getReferrer()` which redirects inconsistently.
+- Add item/row number into log message.
+
+### Fixed
+- Fix edge-case for importing a single item (and only one).
+- Ensure values are escaped when comparing existing elements.
+- Products - ensure attributes are set properly in all instances.
+- Products - fix custom fields not being set on variants.
+- Fix `Undefined variable: variants`.
+- Fix miss-spelling of `dataDelimiter`.
+- Fix invalid reference to TagElement in Users element class.
+- Fix user status not being able to bet set via the element anymore.
+- Protect against setting element attributes when null.
+
 ## 3.0.0-beta.16 - 2018-07-07
 
 ### Added
 - Add support for element fields to match on simple custom fields
 - Allow element fields to select default elements
-- Add config option for data delimeter (`dataDelimeter`)
+- Add config option for data delimeter (`dataDelimiter`)
 
 ### Changed
 - Add `prepareAssetName` to asset handler to handle filenames better
