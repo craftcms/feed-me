@@ -111,7 +111,7 @@ class Users extends Field implements FieldInterface
 
     private function _createElement($dataValue, $groupId)
     {
-        $element = new TagElement();
+        $element = new UserElement();
         $element->email = $dataValue;
         $element->groupId = $groupId;
 
