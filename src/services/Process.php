@@ -118,6 +118,10 @@ class Process extends Component
 
         // Our main data-parsing function. Handles the actual data values, defaults and field options
         foreach ($feedData as $key => $nodeData) {
+            if (!is_array($nodeData)) {
+                $nodeData = [$nodeData];
+            }
+
             $this->_data[$key] = Hash::flatten($nodeData, '/');
         }
 
