@@ -4,7 +4,7 @@
         "downloadUrl": "https://github.com/verbb/feed-me/archive/2.0.12.zip",
         "date": "2018-07-19T00:00:00+10:00",
         "notes": [
-            "[Added] Add `licenseKey` config setting."
+            "[Added] Add `licenseKey` config setting.",
             "[Added] Add `onBeforeFetchFeed` and `onFetchFeed`.",
             "[Added] Add active/inactive values as parseBoolean helpers.",
             "[Improved] Improved logging on each processing step, better logging at each step.",
