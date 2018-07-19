@@ -227,6 +227,7 @@ class CommerceProduct extends Element implements ElementInterface
         }
 
         $variantData = [];
+        $variants = [];
 
         // Now we need to find out how many variants we're importing - can even be one, and its all a little tricky...
         foreach ($feedData as $nodePath => $value) {
