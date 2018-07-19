@@ -1,5 +1,31 @@
 [
     {
+        "version": "2.0.12",
+        "downloadUrl": "https://github.com/verbb/feed-me/archive/2.0.12.zip",
+        "date": "2018-07-19T00:00:00+10:00",
+        "notes": [
+            "[Added] Add `licenseKey` config setting."
+            "[Added] Add `onBeforeFetchFeed` and `onFetchFeed`.",
+            "[Added] Add active/inactive values as parseBoolean helpers.",
+            "[Improved] Improved logging on each processing step, better logging at each step.",
+            "[Improved] Improve disabled/deleted logging ids.",
+            "[Improved] Set default edition to trial.",
+            "[Improved] Allow custom entry fields to be used in entry mapping.",
+            "[Improved] Better handling of backup logging.",
+            "[Improved] Implement Commerce ProductHelper.",
+            "[Improved] Check for a valid license when starting a feed for the first time",
+            "[Fixed] Minor fix for autoload path.",
+            "[Fixed] Revert null-handling for element attribute dates.",
+            "[Fixed] Fix template error for entry sections when there are none.",
+            "[Fixed] Fix for category fields not creating categories when it has required fields (even if they are mapped).",
+            "[Fixed] Fix for `parentField` interfering with Super Table and Matrix fields.",
+            "[Fixed] Fix handling of disable or delete-only feeds.",
+            "[Fixed] Remove urlReferrer for redirecting controller actions (not working on some platforms).",
+            "[Fixed] Protect default field type from accepting array data.",
+            "[Fixed] Fix ordering issue with Matrix."
+        ]
+    },
+    {
         "version": "2.0.11",
         "downloadUrl": "https://github.com/verbb/feed-me/archive/2.0.11.zip",
         "date": "2017-12-15T00:00:00+10:00",
