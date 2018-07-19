@@ -1,6 +1,7 @@
 <?php
 namespace verbb\feedme\fields;
 
+use verbb\feedme\FeedMe;
 use verbb\feedme\base\Field;
 use verbb\feedme\base\FieldInterface;
 use verbb\feedme\helpers\BaseHelper;
@@ -34,6 +35,7 @@ class Table extends Field implements FieldInterface
 
     public function parseField()
     {
+        $parsedData = [];
         $preppedData = [];
         $rowCounter = [];
 
@@ -60,7 +62,19 @@ class Table extends Field implements FieldInterface
 
                     $parsedValue = $this->_handleSubField($type, $value);
 
-                    $preppedData[$rowCounter[$columnHandle]][$columnHandle] = $parsedValue;
+                    $parsedData[$rowCounter[$columnHandle]][$columnHandle] = $parsedValue;
+                }
+            }
+        }
+
+        $dataDelimiter = FeedMe::$plugin->service->getConfig('dataDelimiter') ?? '|';
+
+        foreach ($parsedData as $rowKey => $row) {
+            foreach ($row as $columnKey => $column) {
+                $columnValues = explode($dataDelimiter, $column);
+
+                foreach ($columnValues as $splitRowKey => $columnValue) {
+                    $preppedData[$splitRowKey][$columnKey] = $columnValue;
                 }
             }
         }
