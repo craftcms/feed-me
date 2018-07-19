@@ -293,7 +293,7 @@ class CommerceProduct extends Element implements ElementInterface
             $variant->product = $element;
 
             // Set the attributes for the element
-            $variant->setAttributes($attributeData);
+            $variant->setAttributes($attributeData, false);
 
             // Then, do the same for custom fields. Again, this should be done after populating the element attributes
             foreach ($variantContent as $fieldHandle => $fieldInfo) {
