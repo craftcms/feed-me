@@ -9,6 +9,7 @@ use verbb\feedme\helpers\DateHelper;
 use Craft;
 use craft\base\Component;
 use craft\elements\User as UserElement;
+use craft\helpers\Db;
 use craft\helpers\ElementHelper;
 use craft\helpers\StringHelper;
 
@@ -99,7 +100,7 @@ abstract class Element extends Component
                     $feedValue = $feedValue->format('Y-m-d H:i:s');
                 }
 
-                $criteria[$handle] = $feedValue;
+                $criteria[$handle] = Db::escapeParam($feedValue);
             }
         }
 
