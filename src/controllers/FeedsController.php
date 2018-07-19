@@ -89,6 +89,8 @@ class FeedsController extends Controller
 
         $feed = FeedMe::$plugin->feeds->getFeedById($feedId);
 
+        $return = $request->getParam('return') ?: 'feed-me';
+
         $variables['feed'] = $feed;
         $variables['task'] = $this->_runImportTask($feed);
 
@@ -110,7 +112,7 @@ class FeedsController extends Controller
 
             return $this->renderTemplate('feed-me/feeds/_direct', $variables);
         } else {
-            return $this->redirect($request->getReferrer());
+            return $this->redirect($return);
         }
     }
 

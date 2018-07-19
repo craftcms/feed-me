@@ -30,7 +30,7 @@ class BaseController extends Controller
             ->delete('{{%queue}}')
             ->execute();
 
-        return $this->redirect(Craft::$app->getRequest()->getReferrer());
+        return $this->redirect('feed-me/settings/general');
     }
 
 }

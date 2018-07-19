@@ -24,6 +24,6 @@ class LogsController extends Controller
     {
         $logEntries = FeedMe::$plugin->logs->clear();
 
-        return $this->redirect(Craft::$app->getRequest()->getReferrer());
+        return $this->redirect('feed-me/logs');
     }
 }

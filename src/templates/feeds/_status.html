@@ -44,7 +44,7 @@
     <h2>{{ '{name} is ready to run' | t('feed-me', { name: feed.name }) }}</h2>
     <p>{{ 'Click the button below to run your feed. This page will reload showing progress.' | t('feed-me') }}</p>
 
-    <a class="btn submit" href="{{ url('feed-me/feeds/run/' ~ feed.id) }}">{{ 'Start Feed Processing' | t('feed-me') }}</a>
+    <a class="btn submit" href="{{ url('feed-me/feeds/run/' ~ feed.id, { return: craft.app.request.url }) }}">{{ 'Start Feed Processing' | t('feed-me') }}</a>
 </div>
 
 {% endblock %}
