@@ -29,6 +29,9 @@ class FeedMe_ProcessService extends BaseApplicationComponent
 
         // A simple license check
         if ($feed['elementType'] != 'Entry') {
+            // Check for license
+            craft()->feedMe_license->getLicenseInfo();
+
             if (!craft()->feedMe_license->isProEdition()) {
                 throw new Exception(Craft::t('Feed Me is not licensed.'));
             }
