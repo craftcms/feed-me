@@ -35,7 +35,7 @@ class DataHelper
         $node = Hash::get($fieldInfo, 'node');
         $default = Hash::get($fieldInfo, 'default');
 
-        $dataDelimeter = FeedMe::$plugin->service->getConfig('dataDelimeter') ?? '|';
+        $dataDelimiter = FeedMe::$plugin->service->getConfig('dataDelimiter') ?? '|';
 
         // Some fields require array, or multiple values like Elements, Checkboxes, etc, and we need to parse them differently.
         // Firstly, field mapping is setup like `MatrixBlock/Images` but actual feed is structured like `MatrixBlock/0/Images/0`.
@@ -55,8 +55,8 @@ class DataHelper
 
                 // Allow pipes '|' to denote multiple items, but even if it doesn't contain one, explode will create
                 // an array, so ensure to merge with the current results.
-                if (is_string($nodeValue) && strpos($nodeValue, $dataDelimeter) !== false) {
-                    $value = array_merge($value, explode($dataDelimeter, $nodeValue));
+                if (is_string($nodeValue) && strpos($nodeValue, $dataDelimiter) !== false) {
+                    $value = array_merge($value, explode($dataDelimiter, $nodeValue));
                 } else {
                     $value[] = $nodeValue;
                 }
@@ -78,7 +78,7 @@ class DataHelper
         $node = Hash::get($fieldInfo, 'node');
         $default = Hash::get($fieldInfo, 'default');
 
-        $dataDelimeter = FeedMe::$plugin->service->getConfig('dataDelimeter') ?? '|';
+        $dataDelimiter = FeedMe::$plugin->service->getConfig('dataDelimiter') ?? '|';
 
         // Some fields require array, or multiple values like Elements, Checkboxes, etc, and we need to parse them differently.
         // Firstly, field mapping is setup like `MatrixBlock/Images` but actual feed is structured like `MatrixBlock/0/Images/0`.
@@ -98,8 +98,8 @@ class DataHelper
 
                 // Allow pipes '|' to denote multiple items, but even if it doesn't contain one, explode will create
                 // an array, so ensure to merge with the current results.
-                if (is_string($nodeValue) && strpos($nodeValue, $dataDelimeter) !== false) {
-                    $value = array_merge($value, explode($dataDelimeter, $nodeValue));
+                if (is_string($nodeValue) && strpos($nodeValue, $dataDelimiter) !== false) {
+                    $value = array_merge($value, explode($dataDelimiter, $nodeValue));
                 } else {
                     $value[] = $nodeValue;
                 }
