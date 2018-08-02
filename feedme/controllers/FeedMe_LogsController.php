@@ -72,6 +72,6 @@ class FeedMe_LogsController extends BaseController
         $currentFullPath = craft()->path->getLogPath() . $this->_currentLogFileName;
         IOHelper::deleteFile($currentFullPath, true);
 
-        craft()->request->redirect('feedme/logs');
+        $this->redirect('feedme/logs');
     }
 }
