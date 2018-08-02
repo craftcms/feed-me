@@ -60,6 +60,7 @@ class EntriesFeedMeFieldType extends BaseFeedMeFieldType
             $criteria->status = null;
             $criteria->sectionId = $sectionIds;
             $criteria->limit = $settings->limit;
+            $criteria->locale = $settings->targetLocale;
 
             // Check if we've specified which attribute we're trying to match against
             $attribute = Hash::get($fieldData, 'options.match', 'title');
