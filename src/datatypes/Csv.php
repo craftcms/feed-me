@@ -25,11 +25,13 @@ class Csv extends DataType implements DataTypeInterface
     {
         $response = FeedMe::$plugin->data->getRawData($url);
 
+        $csvColumnDelimiter = FeedMe::$plugin->service->getConfig('csvColumnDelimiter') ?? ',';
+
         if (!$response['success']) {
             $error = 'Unable to reach ' . $url . '. Message: ' . $response['error'];
-            
+
             FeedMe::error($settings, $error);
-            
+
             return ['success' => false, 'error' => $error];
         }
 
@@ -46,6 +48,8 @@ class Csv extends DataType implements DataTypeInterface
             $data = StringHelper::convertToUtf8($data);
 
             $reader = Reader::createFromString($data);
+
+            $reader->setDelimiter($csvColumnDelimiter);
 
             $array = [];
 
@@ -72,7 +76,7 @@ class Csv extends DataType implements DataTypeInterface
 
         // Look for and return only the items for primary element
         $primaryElement = Hash::get($settings, 'primaryElement');
-        
+
         if ($primaryElement && $usePrimaryElement) {
             $array = FeedMe::$plugin->data->findPrimaryElement($primaryElement, $array);
         }
