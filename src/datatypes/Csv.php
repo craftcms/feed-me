@@ -55,7 +55,15 @@ class Csv extends DataType implements DataTypeInterface
 
             // Create associative array with Row 1 header as keys
             foreach($reader->fetchAssoc(0) as $row) {
-                $array[] = $row;
+                $filteredRow = [];
+
+                // Additional work here to handle line-breaks in keys (CSV header) - they're not allowed
+                foreach ($row as $key => $value) {
+                    $newKey = preg_replace('#\r\n?#', " ", $key);
+                    $filteredRow[$newKey] = $value;
+                }
+
+                $array[] = $filteredRow;
             }
         } catch (\Exception $e) {
             $error = 'Invalid CSV: ' . $e->getMessage();
