@@ -229,6 +229,13 @@ class CommerceProduct extends Element implements ElementInterface
         $variantData = [];
         $variants = [];
 
+        // Fetch any existing variants on the product, indexes by their SKU
+        if (isset($element->variants[0]['sku'])) {
+            foreach ($element->variants as $key => $value) {
+                $variants[$value['sku']] = $value;
+            }
+        }
+
         // Now we need to find out how many variants we're importing - can even be one, and its all a little tricky...
         foreach ($feedData as $nodePath => $value) {
             foreach ($variantMapping as $fieldHandle => $fieldInfo) {
@@ -289,18 +296,21 @@ class CommerceProduct extends Element implements ElementInterface
             }
 
             // Create a new variant, or find an existing one to edit
-            $variant = $this->_getVariantBySku($sku);
-            $variant->product = $element;
+            if (!isset($variants[$sku])) {
+                $variants[$sku] = new VariantElement();
+            }
+
+            $variants[$sku]->product = $element;
 
             // Set the attributes for the element
-            $variant->setAttributes($attributeData, false);
+            $variants[$sku]->setAttributes($attributeData, false);
 
             // Then, do the same for custom fields. Again, this should be done after populating the element attributes
             foreach ($variantContent as $fieldHandle => $fieldInfo) {
                 if (Hash::get($fieldInfo, 'field')) {
                     $data = Hash::get($fieldInfo, 'data');
 
-                    $fieldValue = FeedMe::$plugin->fields->parseField($feed, $element, $data, $fieldHandle, $fieldInfo);;
+                    $fieldValue = FeedMe::$plugin->fields->parseField($feed, $element, $data, $fieldHandle, $fieldInfo);
 
                     if ($fieldValue !== null) {
                         $fieldData[$fieldHandle] = $fieldValue;
@@ -309,12 +319,10 @@ class CommerceProduct extends Element implements ElementInterface
             }
 
             // Do the same with our custom field data
-            $variant->setFieldValues($fieldData);
+            $variants[$sku]->setFieldValues($fieldData);
 
             // Add to our contentData variable for debugging
             $contentData['variants'][] = $attributeData + $fieldData;
-
-            $variants[] = $variant;
         }
 
         // Set the products variants
