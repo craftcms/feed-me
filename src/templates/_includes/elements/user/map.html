@@ -92,6 +92,7 @@
     name: 'User Groups',
     handle: 'groups',
     instructions: 'Select the groups this user should be assigned to.' | t('feed-me'),
+    type: 'userGroups',
     default: {
         type: 'checkboxGroup',
         options: craft.feedme.getSelectOptions(groups, 'name', 'id', false),

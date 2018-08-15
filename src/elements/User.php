@@ -99,7 +99,7 @@ class User extends Element implements ElementInterface
 
     public function afterSave($data, $settings)
     {
-        $newGroupsIds = Hash::get($data, 'groups');
+        $groupsIds = Hash::get($data, 'groups');
         $profilePhoto = Hash::get($data, 'photo');
 
         // User status can't be set on the element anymore, only directly on the record.
@@ -135,12 +135,8 @@ class User extends Element implements ElementInterface
             $record->save(false);
         }
 
-        if ($newGroupsIds) {
-            $existingGroupsIds = Hash::extract($this->element->groups, '{n}.id');
-
-            $groupIds = array_unique(array_merge($newGroupsIds, $existingGroupsIds));
-
-            Craft::$app->users->assignUserToGroups($this->element->id, $groupIds);
+        if ($groupsIds) {
+            Craft::$app->users->assignUserToGroups($this->element->id, $groupsIds);
         }
 
         if ($profilePhoto) {
@@ -158,11 +154,12 @@ class User extends Element implements ElementInterface
     {
         $value = $this->fetchArrayValue($feedData, $fieldInfo);
 
-        $groups = [];
+        $newGroupsIds = [];
+        $groupIds = [];
 
         foreach ($value as $key => $dataValue) {
             if (is_numeric($dataValue)) {
-                $groups[] = $dataValue;
+                $newGroupsIds[] = $dataValue;
 
                 continue;
             }
@@ -179,11 +176,20 @@ class User extends Element implements ElementInterface
                 continue;
             }
 
-            $groups[] = $result['id'];
+            $newGroupsIds[] = $result['id'];
+        }
+
+        $removeFromExisting = Hash::get($fieldInfo, 'options.removeFromExisting');
+        $existingGroupsIds = Hash::extract($this->element->groups, '{n}.id');
+
+        if ($removeFromExisting) {
+            $groupIds = $newGroupsIds;
+        } else {
+            $groupIds = array_unique(array_merge($newGroupsIds, $existingGroupsIds));
         }
 
         // Dealt with in `afterSave` as we need to combine permissions
-        return $groups;
+        return $groupIds;
     }
 
     protected function parsePhoto($feedData, $fieldInfo)
