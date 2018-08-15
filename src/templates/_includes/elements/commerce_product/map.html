@@ -102,6 +102,17 @@
 
 
 {% set fieldsVariants = [{
+    name: 'Enabled',
+    handle: 'variant-enabled',
+    default: {
+        type: 'select',
+        options: [
+            { label: 'Don\'t import', value: '' },
+            { label: 'Enabled', value: '1' },
+            { label: 'Disabled', value: '0' },
+        ],
+    },
+}, {
     name: 'Title',
     handle: 'variant-title',
     required: true,
