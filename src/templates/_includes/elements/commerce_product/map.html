@@ -273,7 +273,7 @@
                 {% set template = fieldClass.getMappingTemplate() %}
                 {% set handle = 'variant-' ~ field.handle %}
 
-                {% set variables = { name: field.name, handle: field.handle, feed: feed, feedData: feedData, field: field, fieldClass: fieldClass } %}
+                {% set variables = { name: field.name, handle: handle, feed: feed, feedData: feedData, field: field, fieldClass: fieldClass } %}
                 
                 {% include template ignore missing with variables only %}
             {% endfor %}
