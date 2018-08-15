@@ -145,7 +145,9 @@ abstract class Element extends Component
     {
         $this->element->fieldLayoutId;
 
-        if (!Craft::$app->getElements()->saveElement($this->element)) {
+        $propogate = isset($settings['siteId']) && $settings['siteId'] ? false : true;
+
+        if (!Craft::$app->getElements()->saveElement($this->element, true, $propogate)) {
             return false;
         }
 
