@@ -11,6 +11,7 @@ use craft\elements\Asset as AssetElement;
 use craft\helpers\Assets as AssetsHelper;
 use craft\helpers\FileHelper;
 use craft\helpers\UrlHelper;
+use craft\helpers\StringHelper;
 
 use Cake\Utility\Hash;
 use Mimey\MimeTypes;
@@ -26,20 +27,20 @@ class AssetHelper
         $bytesCount = 0;
         $handle = fopen($srcName, 'rb');
         $fp = fopen($dstName, 'w');
-        
+
         if ($handle === false) {
             return false;
         }
-        
+
         while (!feof($handle)) {
             $data = fread($handle, $chunksize);
             fwrite($fp, $data, strlen($data));
-            
+
             if ($returnbytes) {
                 $bytesCount += strlen($data);
             }
         }
-        
+
         $status = fclose($handle);
 
         fclose($fp);
@@ -58,14 +59,9 @@ class AssetHelper
         $upload = Hash::get($fieldInfo, 'options.upload');
         $conflict = Hash::get($fieldInfo, 'options.conflict');
 
-        $assets = Craft::$app->getAssets();
-        $tempFeedMePath = Craft::$app->getPath()->getTempPath() . '/feedme/';
+        $tempFeedMePath = self::createTempFeedMePath();
 
-        if (!is_dir($tempFeedMePath)) {
-            FileHelper::createDirectory($tempFeedMePath);
-        }
-
-        // Download each image. Note we've already checked if there's an existing asset and if the 
+        // Download each image. Note we've already checked if there's an existing asset and if the
         // user has set to use that instead so we're good to proceed.
         foreach ($urls as $url) {
             try {
@@ -85,37 +81,9 @@ class AssetHelper
                     $fetchedImage = $cachedImage[0];
                 }
 
-                if (!$folderId) {
-                    $folderId = $field->resolveDynamicPathToFolderId($element);
-                }
-
-                $folder = $assets->findFolder(['id' => $folderId]);
-
-                // Create the new asset (even if we're setting it to replace)
-                $asset = new AssetElement();
-                $asset->tempFilePath = $fetchedImage;
-                $asset->filename = $filename;
-                $asset->newFolderId = $folder->id;
-                $asset->volumeId = $folder->volumeId;
-                $asset->avoidFilenameConflicts = true;
-                $asset->setScenario(AssetElement::SCENARIO_CREATE);
-
-                $result = Craft::$app->getElements()->saveElement($asset);
-
+                $result = self::createAsset($fetchedImage, $filename, $folderId, $field, $element, $conflict);
                 if ($result) {
-                    // Annoyingly, you have to create the asset field, then move it to the temp directly, then replace the conflicting
-                    // asset, so there's a bit more work here than I would've thought...
-                    if ($asset->conflictingFilename !== null && $conflict === AssetElement::SCENARIO_REPLACE) {
-                        $conflictingAsset = AssetElement::findOne(['folderId' => $folder->id, 'filename' => $asset->conflictingFilename]);
-
-                        $tempPath = $asset->getCopyOfFile();
-                        $assets->replaceAssetFile($conflictingAsset, $tempPath, $conflictingAsset->filename);
-                        Craft::$app->getElements()->deleteElement($asset);
-
-                        $uploadedAssets[] = $conflictingAsset->id;
-                    } else {
-                        $uploadedAssets[] = $asset->id;
-                    }
+                    $uploadedAssets[] = $result;
                 }
             } catch (\Throwable $e) {
                 FeedMe::error(null, 'Asset error: ' . $url . ' - ' . $e->getMessage());
@@ -124,6 +92,110 @@ class AssetHelper
         }
 
         return $uploadedAssets;
+    }
+
+    public static function createBase64Image($base64, $fieldInfo, $field = null, $element = null, $folderId = null)
+    {
+        $uploadedAssets = [];
+
+        $upload = Hash::get($fieldInfo, 'options.upload');
+        $conflict = Hash::get($fieldInfo, 'options.conflict');
+
+        $tempFeedMePath = self::createTempFeedMePath();
+
+        // Download each image. Note we've already checked if there's an existing asset and if the
+        // user has set to use that instead so we're good to proceed.
+        foreach ($base64 as $dataString) {
+            try {
+                // Remove leading "data:mime/type;base64," string.
+                list(, $encodedString) = explode(',', $dataString);
+
+                $filename = md5($encodedString);
+                $fetchedImage = $tempFeedMePath . $filename;
+
+                // Decode string and write to file.
+                $decodedImage = base64_decode($encodedString);
+                $result = FileHelper::writeToFile($fetchedImage, $decodedImage);
+
+                // Get mime type and create file with proper file extension.
+                $mimeType = FileHelper::getMimeType($fetchedImage, null, false);
+                $extensions = FileHelper::getExtensionsByMimeType($mimeType);
+                $filename = $filename . '.' . $extensions[0];
+                $fetchedImageWithExtension = $tempFeedMePath . $filename;
+                FileHelper::writeToFile($fetchedImageWithExtension, $decodedImage);
+
+                $result = self::createAsset($fetchedImageWithExtension, $filename, $folderId, $field, $element, $conflict);
+                if ($result) {
+                    $uploadedAssets[] = $result;
+                }
+            } catch (\Throwable $e) {
+                FeedMe::error(null, 'Base64 error: ' . $fetchedImageWithExtension . ' - ' . $e->getMessage());
+                echo $e->getMessage();
+            }
+        }
+
+        return $uploadedAssets;
+    }
+
+    /**
+     * @param string $tempFilePath
+     * @param string $filename
+     * @param int    $folderId
+     * @param string $field
+     * @param string $element
+     * @param string $conflict
+     *
+     * @return int
+     */
+    private static function createAsset($tempFilePath, $filename, $folderId, $field, $element, $conflict)
+    {
+        $assets = Craft::$app->getAssets();
+
+        if (!$folderId) {
+            $folderId = $field->resolveDynamicPathToFolderId($element);
+        }
+
+        $folder = $assets->findFolder(['id' => $folderId]);
+
+        // Create the new asset (even if we're setting it to replace)
+        $asset = new AssetElement();
+        $asset->tempFilePath = $tempFilePath;
+        $asset->filename = $filename;
+        $asset->newFolderId = $folder->id;
+        $asset->volumeId = $folder->volumeId;
+        $asset->avoidFilenameConflicts = true;
+        $asset->setScenario(AssetElement::SCENARIO_CREATE);
+
+        $result = Craft::$app->getElements()->saveElement($asset);
+
+        if ($result) {
+            // Annoyingly, you have to create the asset field, then move it to the temp directly, then replace the conflicting
+            // asset, so there's a bit more work here than I would've thought...
+            if ($asset->conflictingFilename !== null && $conflict === AssetElement::SCENARIO_REPLACE) {
+                $conflictingAsset = AssetElement::findOne(['folderId' => $folder->id, 'filename' => $asset->conflictingFilename]);
+
+                $tempPath = $asset->getCopyOfFile();
+                $assets->replaceAssetFile($conflictingAsset, $tempPath, $conflictingAsset->filename);
+                Craft::$app->getElements()->deleteElement($asset);
+
+                return $conflictingAsset->id;
+            } else {
+                return  $asset->id;
+            }
+        }
+    }
+
+    /**
+     * @return string
+     */
+    private static function createTempFeedMePath()
+    {
+        $tempFeedMePath = Craft::$app->getPath()->getTempPath() . '/feedme/';
+
+        if (!is_dir($tempFeedMePath)) {
+            FileHelper::createDirectory($tempFeedMePath);
+        }
+        return $tempFeedMePath;
     }
 
     public static function getRemoteUrlFilename($url)
@@ -192,7 +264,7 @@ class AssetHelper
                     $response = $client->get($url);
                 }
             } catch (\Throwable $e) {}
-            
+
             if ($response) {
                 $contentType = $response->getHeader('Content-Type');
 
