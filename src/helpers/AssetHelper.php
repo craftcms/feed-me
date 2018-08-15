@@ -82,6 +82,7 @@ class AssetHelper
                 }
 
                 $result = self::createAsset($fetchedImage, $filename, $folderId, $field, $element, $conflict);
+
                 if ($result) {
                     $uploadedAssets[] = $result;
                 }
@@ -125,6 +126,7 @@ class AssetHelper
                 FileHelper::writeToFile($fetchedImageWithExtension, $decodedImage);
 
                 $result = self::createAsset($fetchedImageWithExtension, $filename, $folderId, $field, $element, $conflict);
+                
                 if ($result) {
                     $uploadedAssets[] = $result;
                 }
@@ -195,6 +197,7 @@ class AssetHelper
         if (!is_dir($tempFeedMePath)) {
             FileHelper::createDirectory($tempFeedMePath);
         }
+        
         return $tempFeedMePath;
     }
 
