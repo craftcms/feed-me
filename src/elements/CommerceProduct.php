@@ -329,7 +329,13 @@ class CommerceProduct extends Element implements ElementInterface
 
     private function _getVariantBySku($sku, $siteId = null)
     {
-        $variant = VariantElement::find()->sku($sku)->status(null)->limit(null)->siteId($siteId)->one();
+        $variant = VariantElement::find()
+            ->sku($sku)
+            ->status(null)
+            ->limit(null)
+            ->typeId($this->element->typeId)
+            ->siteId($siteId)
+            ->one();
 
         if ($variant) {
             return $variant;
