@@ -31,6 +31,14 @@ class FeedMeHelper
             $result = true;
         }
 
+        if (strtolower($value) === Craft::t('active')) {
+            $result = true;
+        }
+
+        if (strtolower($value) === Craft::t('y')) {
+            $result = true;
+        }
+
         if (strtolower($value) === Craft::t('no')) {
             $result = false;
         }
@@ -47,11 +55,11 @@ class FeedMeHelper
             $result = false;
         }
 
-        if (strtolower($value) === Craft::t('active')) {
-            $result = true;
+        if (strtolower($value) === Craft::t('inactive')) {
+            $result = false;
         }
 
-        if (strtolower($value) === Craft::t('inactive')) {
+        if (strtolower($value) === Craft::t('n')) {
             $result = false;
         }
 
