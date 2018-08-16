@@ -165,6 +165,7 @@ class Entry extends Element implements ElementInterface
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
         $match = Hash::get($fieldInfo, 'options.match');
+        $create = Hash::get($fieldInfo, 'options.create');
 
         // Element lookups must have a value to match against
         if ($value === null || $value === '') {
@@ -176,13 +177,28 @@ class Entry extends Element implements ElementInterface
         }
 
         if ($match === 'fullName') {
-            $user = UserElement::findOne(['search' => $value]);
+            $element = UserElement::findOne(['search' => $value]);
         } else {
-            $user = UserElement::findOne([$match => $value]);
+            $element = UserElement::findOne([$match => $value]);
         }
 
-        if ($user) {
-            return $user->id;
+        if ($element) {
+            return $element->id;
+        }
+
+        // Check if we should create the element. But only if email is provided (for the moment)
+        if ($create && $match === 'email') {
+            $element = new UserElement();
+            $element->username = $value;
+            $element->email = $value;
+
+            if (!Craft::$app->getElements()->saveElement($element)) {
+                throw new \Exception(json_encode($element->getErrors()));
+            }
+
+            FeedMe::info(null, 'Author ' . $element->id . ' added.');
+
+            return $element->id;
         }
 
         return null;
