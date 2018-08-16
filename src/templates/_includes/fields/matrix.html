@@ -33,15 +33,15 @@
             <div class="field-extra-settings">
                 {% set blockPath = [ handle, 'blocks', blocktype.handle ] %}
 
-                {% set enabled = hash_get(feed.fieldMapping, blockPath | join('.') ~ '.enabled') ?: 'checked' %}
+                {% set disabled = hash_get(feed.fieldMapping, blockPath | join('.') ~ '.disabled') ?: '' %}
                 {% set collapsed = hash_get(feed.fieldMapping, blockPath | join('.') ~ '.collapsed') ?: '' %}
 
                 {% namespace 'fieldMapping[' ~ blockPath | join('][') ~ ']' %}
                     {{ feedMeMacro.checkbox({
-                        label: 'Enabled' | t('feed-me'),
-                        name: 'enabled',
+                        label: 'Disabled' | t('feed-me'),
+                        name: 'disabled',
                         value: 1,
-                        checked: enabled,
+                        checked: disabled,
                     }) }}
 
                     {{ feedMeMacro.checkbox({
