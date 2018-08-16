@@ -118,7 +118,7 @@ class Categories extends Field implements FieldInterface
         $element->groupId = $groupId;
 
         if (!Craft::$app->getElements()->saveElement($element)) {
-            throw new \Exception(json_encode($element->getErrors()));
+            FeedMe::error(null, 'Category error: Could not create - ' . json_encode($element->getErrors()));
         }
 
         FeedMe::info(null, 'Category ' . $element->id . ' added.');

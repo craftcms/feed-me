@@ -150,7 +150,7 @@ class Entry extends Element implements ElementInterface
             $element->typeId = $this->element->typeId;
 
             if (!Craft::$app->getElements()->saveElement($element)) {
-                throw new \Exception(json_encode($element->getErrors()));
+                FeedMe::error(null, 'Entry error: Could not create parent entry - ' . json_encode($element->getErrors()));
             }
 
             FeedMe::info(null, 'Entry ' . $element->id . ' added.');
@@ -186,6 +186,8 @@ class Entry extends Element implements ElementInterface
             return $element->id;
         }
 
+        // throw new \Exception('test');
+
         // Check if we should create the element. But only if email is provided (for the moment)
         if ($create && $match === 'email') {
             $element = new UserElement();
@@ -193,7 +195,7 @@ class Entry extends Element implements ElementInterface
             $element->email = $value;
 
             if (!Craft::$app->getElements()->saveElement($element)) {
-                throw new \Exception(json_encode($element->getErrors()));
+                FeedMe::error(null, 'Entry error: Could not create author - ' . json_encode($element->getErrors()));
             }
 
             FeedMe::info(null, 'Author ' . $element->id . ' added.');

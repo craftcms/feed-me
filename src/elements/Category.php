@@ -125,7 +125,7 @@ class Category extends Element implements ElementInterface
             $element->groupId = $this->element->groupId;
 
             if (!Craft::$app->getElements()->saveElement($element)) {
-                throw new \Exception(json_encode($element->getErrors()));
+                FeedMe::error(null, 'Category error: Could not create parent - ' . json_encode($element->getErrors()));
             }
 
             FeedMe::info(null, 'Category ' . $element->id . ' added.');

@@ -120,7 +120,7 @@ class Users extends Field implements FieldInterface
         }
 
         if (!Craft::$app->getElements()->saveElement($element)) {
-            throw new \Exception(json_encode($element->getErrors()));
+            FeedMe::error(null, 'User error: Could not create - ' . json_encode($element->getErrors()));
         }
 
         return $element->id;
