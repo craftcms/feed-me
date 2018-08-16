@@ -1,5 +1,30 @@
 # Changelog
 
+## 3.0.0-beta.18 - 2018-08-16
+
+### Added
+- Add support for Table fields and `dataDelimiter` for multiple rows.
+- Allow commerce variants to set their enabled state.
+- Add ability to store base64 encoded assets in addition to URLs (thanks @urbantrout).
+- Added config option for csv delimiter `csvColumnDelimiter` (thanks @crollalowis)
+
+### Changed
+- Improve user-creation handling for user fields.
+- Matrix - Refactor parsing logic to be (hopefully) better.
+- Matrix - swap enabled with disabled checkbox for blocks.
+- Improve product variants, preventing orphans in some cases.
+- Provide field option for handling existing user groups. Either fully replace existing user groups, or append.
+- Prevent elements from propagating when targeting a site.
+
+### Fixed
+- Assets - fix incorrect skipping of existing assets when there aren’t necesarily any found.
+- Table - Fix processing changes when no delimiter (not required).
+- Use registerTwigExtension(), otherwise may cause Twig to be loaded before it should be (thanks @brandonkelly)
+- Entry - Fix authors not being created when they should be.
+- CSV - fix for line breaks in headings causing issues.
+- Fix for variants in that they can potentially move to another product type, or otherwise plucked from a product other than the one you're importing.
+- Fix incorrect variant custom field namespace.
+
 ## 3.0.0-beta.17 - 2018-07-19
 
 ### Changed
