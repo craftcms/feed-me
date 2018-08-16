@@ -117,10 +117,11 @@ class Assets extends Field implements FieldInterface
 
             Craft::configure($query, $criteria);
 
-            $foundElements = array_merge($foundElements, $query->ids());
+            $ids = $query->ids();
+            $foundElements = array_merge($foundElements, $ids);
 
             // Are we uploading, and did we find existing assets? No need to process
-            if ($upload && $foundElements && $conflict === AssetElement::SCENARIO_INDEX) {
+            if ($upload && $ids && $conflict === AssetElement::SCENARIO_INDEX) {
                 unset($urlsToUpload[$key]);
             }
         }
