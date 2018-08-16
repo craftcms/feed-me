@@ -112,8 +112,12 @@ class Users extends Field implements FieldInterface
     private function _createElement($dataValue, $groupId)
     {
         $element = new UserElement();
+        $element->username = $dataValue;
         $element->email = $dataValue;
-        $element->groupId = $groupId;
+
+        if ($groupId) {
+            $element->groupId = $groupId;
+        }
 
         if (!Craft::$app->getElements()->saveElement($element)) {
             throw new \Exception(json_encode($element->getErrors()));
