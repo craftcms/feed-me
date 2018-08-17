@@ -6,6 +6,7 @@ use verbb\feedme\FeedMe;
 use Craft;
 use craft\elements\User;
 use craft\helpers\DateTimeHelper;
+use craft\helpers\UrlHelper;
 
 use yii\di\ServiceLocator;
 
@@ -25,6 +26,35 @@ class FeedMeVariable extends ServiceLocator
     public function getPluginName()
     {
         return FeedMe::$plugin->getPluginName();
+    }
+
+    public function getTabs()
+    {
+        $settings = FeedMe::$plugin->getSettings();
+        $enabledTabs = $settings->enabledTabs;
+
+        $tabs = [
+            'feeds' => [ 'label' => Craft::t('feed-me', 'Feeds'), 'url' => UrlHelper::cpUrl('feedme/feeds') ],
+            'logs' => [ 'label' => Craft::t('feed-me', 'Logs'), 'url' => UrlHelper::cpUrl('feedme/logs') ],
+            'help' => [ 'label' => Craft::t('feed-me', 'Help'), 'url' => UrlHelper::cpUrl('feedme/help') ],
+            'settings' => [ 'label' => Craft::t('feed-me', 'Settings'), 'url' => UrlHelper::cpUrl('feedme/settings') ],
+        ];
+
+        if ($enabledTabs === '*') {
+            return $tabs;
+        }
+
+        if (!$enabledTabs) {
+            return [];
+        }
+
+        $selectedTabs = [];
+
+        foreach ($enabledTabs as $enabledTab) {
+            $selectedTabs[$enabledTab] = $tabs[$enabledTab];
+        }
+
+        return $selectedTabs;
     }
 
     public function getSelectOptions($options, $label = 'name', $index = 'id', $includeNone = true)

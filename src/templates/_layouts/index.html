@@ -4,12 +4,7 @@
 {% set baseAssetsUrl = view.getAssetManager().getPublishedUrl('@verbb/feedme/web/assets/feedme/dist', true) %}
 
 {% if noTabs is not defined %}
-    {% set tabs = {
-        feeds: { label: "Feeds" | t('feed-me'), url: url('feed-me/feeds') },
-        logs: { label: "Logs" | t('feed-me'), url: url('feed-me/logs') },
-        help: { label: "Help" | t('feed-me'), url: url('feed-me/help') },
-        settings: { label: "Settings" | t('feed-me'), url: url('feed-me/settings') },
-    } %}
+    {% set tabs = craft.feedme.getTabs() %}
 {% endif %}
 
 {% if title is not defined %}
