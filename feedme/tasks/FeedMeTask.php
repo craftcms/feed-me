@@ -98,7 +98,7 @@ class FeedMeTask extends BaseTask
         }
 
         if ($step == ($this->_totalSteps - 1)) {
-            if (count($this->_errors) > 0) {
+            if ($this->_errors && count($this->_errors) > 0) {
                 return false;
             }
         }
