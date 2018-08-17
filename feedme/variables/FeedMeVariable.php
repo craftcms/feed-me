@@ -31,10 +31,10 @@ class FeedMeVariable
         $enabledTabs = $settings->enabledTabs;
 
         $tabs = array(
-            'feeds' => array( 'label' => Craft::t("Feeds"), 'url' => UrlHelper::getUrl('feedme/feeds') ),
-            'logs' => array( 'label' => Craft::t("Logs"), 'url' => UrlHelper::getUrl('feedme/logs') ),
-            'help' => array( 'label' => Craft::t("Help"), 'url' => UrlHelper::getUrl('feedme/help') ),
-            'settings' => array( 'label' => Craft::t("Settings"), 'url' => UrlHelper::getUrl('feedme/settings') ),
+            'feeds' => array( 'label' => Craft::t('Feeds'), 'url' => UrlHelper::getUrl('feedme/feeds') ),
+            'logs' => array( 'label' => Craft::t('Logs'), 'url' => UrlHelper::getUrl('feedme/logs') ),
+            'help' => array( 'label' => Craft::t('Help'), 'url' => UrlHelper::getUrl('feedme/help') ),
+            'settings' => array( 'label' => Craft::t('Settings'), 'url' => UrlHelper::getUrl('feedme/settings') ),
         );
 
         if ($enabledTabs === '*') {
