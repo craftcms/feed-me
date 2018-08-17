@@ -1,5 +1,18 @@
 [
     {
+        "version": "2.0.13",
+        "downloadUrl": "https://github.com/verbb/feed-me/archive/2.0.13.zip",
+        "date": "2018-08-17T00:00:00+10:00",
+        "notes": [
+            "[Added] Add additional boolean helpers for y/n values. (thanks @nottinghamcollege).",
+            "[Added] Add `feed.directUrl`",
+            "[Fixed] Use target locale when finding existing entries. (thanks @joshangell).",
+            "[Fixed] Fixed 404 error when clearing logs. (thanks @Nathanw).",
+            "[Fixed] Fix PHP 7.2 compatibility",
+            "[Fixed] Fix enabled tabs not working"
+        ]
+    },
+    {
         "version": "2.0.12",
         "downloadUrl": "https://github.com/verbb/feed-me/archive/2.0.12.zip",
         "date": "2018-07-19T00:00:00+10:00",
