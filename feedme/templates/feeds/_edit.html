@@ -178,13 +178,11 @@
 
     <hr>
 
-    {% set directUrl = actionUrl('/feedMe/feeds/runTask', { direct: true, feedId: feed.id, passkey: feed.passkey }) | replace(craft.config.cpTrigger ~ '/', '') %}
-
     {{ forms.textField({
         label: 'Direct Feed URL' | t,
         instructions: 'Copy and paste this URL for direct-access to processing this feed. Commonly used when triggering via a Cron Job.' | t,
         readonly: true,
-        value: directUrl,
+        value: feed.directUrl,
     }) }}
 
     <div class="field">

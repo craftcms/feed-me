@@ -16,6 +16,19 @@ class FeedMe_FeedModel extends BaseModel
         return FeedMeDuplicate::getFrieldly($this->duplicateHandle);
     }
 
+    public function directUrl()
+    {
+        $directUrl = UrlHelper::getActionUrl('/feedMe/feeds/runTask', array(
+            'direct' => true,
+            'feedId' => $this->id,
+            'passkey' => $this->passkey,
+        ));
+
+        $directUrl = str_replace(craft()->config->get('cpTrigger') . '/', '', $directUrl);
+
+        return $directUrl;
+    }
+
     // Protected Methods
     // =========================================================================
 
