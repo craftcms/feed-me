@@ -41,6 +41,10 @@ class FeedMeVariable
             return $tabs;
         }
 
+        if (!$enabledTabs) {
+            return array();
+        }
+
         $selectedTabs = [];
 
         foreach ($enabledTabs as $enabledTab) {
