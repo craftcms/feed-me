@@ -25,6 +25,31 @@ class FeedMeVariable
         return $this->getPlugin()->getVersion();
     }
 
+    public function getTabs()
+    {
+        $settings = $this->getPlugin()->getSettings();
+        $enabledTabs = $settings->enabledTabs;
+
+        $tabs = array(
+            'feeds' => array( 'label' => Craft::t("Feeds"), 'url' => UrlHelper::getUrl('feedme/feeds') ),
+            'logs' => array( 'label' => Craft::t("Logs"), 'url' => UrlHelper::getUrl('feedme/logs') ),
+            'help' => array( 'label' => Craft::t("Help"), 'url' => UrlHelper::getUrl('feedme/help') ),
+            'settings' => array( 'label' => Craft::t("Settings"), 'url' => UrlHelper::getUrl('feedme/settings') ),
+        );
+
+        if ($enabledTabs === '*') {
+            return $tabs;
+        }
+
+        $selectedTabs = [];
+
+        foreach ($enabledTabs as $enabledTab) {
+            $selectedTabs[$enabledTab] = $tabs[$enabledTab];
+        }
+
+        return $selectedTabs;
+    }
+
     public function getSelectOptions($options, $label = 'name', $index = 'id', $includeNone = true) {
         $values = array();
 

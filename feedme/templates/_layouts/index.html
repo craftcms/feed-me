@@ -11,16 +11,11 @@
 {% includeJsResource 'feedme/js/FeedMeHelp.js' %}
 
 {% if noTabs is not defined %}
-    {% set tabs = {
-        feeds: { label: "Feeds" | t, url: url('feedme/feeds') },
-        logs: { label: "Logs" | t, url: url('feedme/logs') },
-        help: { label: "Help" | t, url: url('feedme/help') },
-        settings: { label: "Settings" | t, url: url('feedme/settings') },
-    } %}
+    {% set tabs = craft.feedMe.getTabs() %}
 {% endif %}
 
 {% if title is not defined %}
-    {% set title = craft.feedme.getPluginName ~ ' ' ~ tabs[selectedTab].label %}
+    {% set title = craft.feedme.getPluginName ~ ' ' ~ tabs[selectedTab].label ?? '' %}
 {% endif %}
 
 {% set content %}
