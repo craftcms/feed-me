@@ -9,6 +9,7 @@ use verbb\feedme\helpers\DateHelper;
 use Craft;
 use craft\elements\Entry as EntryElement;
 use craft\elements\User as UserElement;
+use craft\helpers\Db;
 use craft\models\Section;
 
 use Cake\Utility\Hash;
@@ -134,7 +135,9 @@ class Entry extends Element implements ElementInterface
             $match = 'id';
         }
 
-        $element = EntryElement::findOne([$match => $value]);
+        $element = EntryElement::find()
+            ->andWhere(['=', $match, Db::escapeParam($value)])
+            ->one();
 
         if ($element) {
             $this->element->newParentId = $element->id;
@@ -179,7 +182,9 @@ class Entry extends Element implements ElementInterface
         if ($match === 'fullName') {
             $element = UserElement::findOne(['search' => $value]);
         } else {
-            $element = UserElement::findOne([$match => $value]);
+            $element = UserElement::find()
+            ->andWhere(['=', $match, Db::escapeParam($value)])
+            ->one();
         }
 
         if ($element) {

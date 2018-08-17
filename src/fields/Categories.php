@@ -78,7 +78,7 @@ class Categories extends Field implements FieldInterface
             $criteria['status'] = null;
             $criteria['groupId'] = $groupId;
             $criteria['limit'] = $limit;
-            $criteria[$match] = Db::escapeParam($dataValue);
+            $criteria['where'] = ['=', $match, Db::escapeParam($dataValue)];
 
             Craft::configure($query, $criteria);
 

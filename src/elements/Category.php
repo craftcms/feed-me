@@ -7,6 +7,7 @@ use verbb\feedme\base\ElementInterface;
 
 use Craft;
 use craft\elements\Category as CategoryElement;
+use craft\helpers\Db;
 
 use Cake\Utility\Hash;
 
@@ -112,7 +113,9 @@ class Category extends Element implements ElementInterface
             $match = 'id';
         }
 
-        $element = CategoryElement::findOne([$match => $value]);
+        $element = CategoryElement::find()
+            ->andWhere(['=', $match, Db::escapeParam($value)])
+            ->one();
 
         if ($element) {
             return $element->id;
