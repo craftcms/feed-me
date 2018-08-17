@@ -321,7 +321,13 @@ class DataTypes extends Component
         foreach ($array as $key => $val) {
             if (!is_numeric($key)) {
                 if (is_array($val)) {
-                    $tree[$index . '/' . $key] = count($val);
+                    $count = count($val);
+
+                    if (Hash::dimensions($val) == 1) {
+                        $count = 1;
+                    }
+                    
+                    $tree[$index . '/' . $key] = $count;
 
                     $this->_parseNodeTree($tree, $val, $index . '/' . $key);
                 }
