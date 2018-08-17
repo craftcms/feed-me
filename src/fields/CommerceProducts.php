@@ -71,7 +71,7 @@ class CommerceProducts extends Field implements FieldInterface
             $criteria['status'] = null;
             $criteria['typeId'] = $typeIds;
             $criteria['limit'] = $limit;
-            $criteria['where'] = ['=', $match, Db::escapeParam($dataValue)];
+            $criteria[$match] = ['=', Db::escapeParam($dataValue)];
 
             Craft::configure($query, $criteria);
 
