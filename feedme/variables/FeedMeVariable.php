@@ -47,8 +47,10 @@ class FeedMeVariable
 
         $selectedTabs = [];
 
-        foreach ($enabledTabs as $enabledTab) {
-            $selectedTabs[$enabledTab] = $tabs[$enabledTab];
+        if (is_array($enabledTabs)) {
+            foreach ($enabledTabs as $enabledTab) {
+                $selectedTabs[$enabledTab] = $tabs[$enabledTab];
+            }
         }
 
         return $selectedTabs;
