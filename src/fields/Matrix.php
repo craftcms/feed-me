@@ -46,9 +46,9 @@ class Matrix extends Field implements FieldInterface
         // reflected in the field - phew!
         //
         // So, in order to keep data in the order provided in our feed, we start there (as opposed to looping through blocks)
-        $blockCount = 0;
-        $previousBlockHandle = '';
-    
+        $previousBlockCount = 0;
+        $currentBlockCount = 0;
+
         foreach ($this->feedData as $nodePath => $value) {
             // Get the field mapping info for this node in the feed
             $fieldInfo = $this->_getFieldMappingInfoForNodePath($nodePath, $blocks);
@@ -60,14 +60,16 @@ class Matrix extends Field implements FieldInterface
                 $subFieldInfo = $fieldInfo['subFieldInfo'];
                 $isComplexField = $fieldInfo['isComplexField'];
 
-                // Keep track of the previous block handle that we've got data for and matched. This helps to group items
-                // correctly that are grouped in the feed's structure, but would otherwise be tricky to ascertain
-                if ($previousBlockHandle !== $blockHandle) {
-                    $previousBlockHandle = $blockHandle;
-                    $blockCount++;
+                preg_match_all('/\/(\d+)/', $nodePath, $matches);
+                $blockIndex = Hash::get($matches, '1.0');
+
+                if ($previousBlockCount != $blockIndex) {
+                    $currentBlockCount++;
                 }
 
-                $key = $blockCount . '.' . $blockHandle . '.' . $subFieldHandle;
+                $previousBlockCount = $blockIndex;
+
+                $key = $currentBlockCount . '.' . $blockHandle . '.' . $subFieldHandle;
 
                 // Check for complex fields (think Table, Super Table, etc), essentially anything that has
                 // sub-fields, and doesn't have data directly mapped to the field itself. It needs to be
@@ -88,7 +90,11 @@ class Matrix extends Field implements FieldInterface
 
                 // Finish up with the content, also sort out cases where there's array content
                 if (isset($fieldData[$key])) {
-                    $fieldData[$key] = array_merge_recursive($fieldData[$key], $parsedValue);
+                    if (is_array($fieldData[$key])) {
+                        $fieldData[$key] = array_merge_recursive($fieldData[$key], $parsedValue);
+                    } else {
+                        $fieldData[$key] = $parsedValue;
+                    }
                 } else {
                     $fieldData[$key] = $parsedValue;
                 }
@@ -125,7 +131,7 @@ class Matrix extends Field implements FieldInterface
         // sub-field data that could be arrays or single values. Lets build our Matrix-ready data
         foreach ($fieldData as $blockSubFieldHandle => $value) {
             $handles = explode('.', $blockSubFieldHandle);
-            $blockIndex = 'new' . $handles[0];
+            $blockIndex = 'new' . ($handles[0] + 1);
             $blockHandle = $handles[1];
             $subFieldHandle = $handles[2];
 
