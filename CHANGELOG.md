@@ -1,5 +1,19 @@
 # Changelog
 
+## 3.0.0-beta.19 - 2018-08-18
+
+### Changed
+- Ensure element fields don’t throw fatal errors when unable to save - allowing owner element to continue.
+- Products - remove required attribute on unlimited stock.
+- Change element field matching existing elements querying. Fixes the case where trying to match elements with the keyword 'not' in the value.
+
+### Fixed
+- Fix primary element iterator when only one item in feed (in some cases).
+- Fix enabled tabs in CP not working.
+- Fix error thrown for table field when no delimiter defined.
+- Fix for inner-element fields for entries throwing an error.
+- Fix Matrix blocks not being sorted correctly in cases where they’re paired with element fields.
+
 ## 3.0.0-beta.18 - 2018-08-16
 
 ### Added
