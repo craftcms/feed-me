@@ -191,8 +191,6 @@ class Entry extends Element implements ElementInterface
             return $element->id;
         }
 
-        // throw new \Exception('test');
-
         // Check if we should create the element. But only if email is provided (for the moment)
         if ($create && $match === 'email') {
             $element = new UserElement();
