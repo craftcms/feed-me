@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.0-beta.21 - 2018-08-21
+
+### Fixed
+- Fix typos in element classes
+
 ## 3.0.0-beta.20 - 2018-08-21
 
 ### Changed
