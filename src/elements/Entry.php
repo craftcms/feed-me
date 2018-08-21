@@ -136,7 +136,7 @@ class Entry extends Element implements ElementInterface
         }
 
         $element = EntryElement::find()
-            ->status(null),
+            ->status(null)
             ->andWhere(['=', $match, Db::escapeParam($value)])
             ->one();
 
@@ -184,7 +184,7 @@ class Entry extends Element implements ElementInterface
             $element = UserElement::findOne(['search' => $value, 'status' => null]);
         } else {
             $element = UserElement::find()
-                ->status(null),
+                ->status(null)
                 ->andWhere(['=', $match, Db::escapeParam($value)])
                 ->one();
         }
