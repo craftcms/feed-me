@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.0.0-beta.20 - 2018-08-21
+
+### Changed
+- Drop support for email fields for users (potentially causing conflicts)
+
+### Fixed
+- Fix incorrect tab URLs
+- Error checking entry section
+- Fix entries field error when trying to access a section has been deleted
+- Fix element-creation not finding existing elements of any status
+
 ## 3.0.0-beta.19 - 2018-08-18
 
 ### Changed
