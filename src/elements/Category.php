@@ -110,7 +110,7 @@ class Category extends Element implements ElementInterface
         }
 
         if (is_numeric($value)) {
-            $match = 'id';
+            $match = 'elements.id';
         }
 
         $element = CategoryElement::find()
