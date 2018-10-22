@@ -166,7 +166,14 @@ class Matrix extends Field implements FieldInterface
 
                 $isComplexField = Hash::extract($subFieldInfo, 'fields.{*}.node');
 
-                if (in_array($feedPath, $isComplexField)) {
+                // Remove any un-mapped items
+                foreach ($isComplexField as $key => $complexInfo) {
+                    if ($complexInfo === 'noimport') {
+                        unset($isComplexField[$key]);
+                    }
+                }
+
+                if ($isComplexField) {
                     return [
                         'blockHandle' => $blockHandle,
                         'subFieldHandle' => $subFieldHandle,
