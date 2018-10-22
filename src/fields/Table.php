@@ -119,6 +119,11 @@ class Table extends Field implements FieldInterface
 
         }
 
+        // Protect against array values
+        if (is_array($value)) {
+            $value = '';
+        }
+
         return $value;
     }
 
