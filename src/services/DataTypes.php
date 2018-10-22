@@ -266,6 +266,9 @@ class DataTypes extends Component
         $element = Hash::get($options, 'element');
         $cache = Hash::get($options, 'cache', true);
 
+        $limit = Hash::get($options, 'limit');
+        $offset = Hash::get($options, 'offset');
+
         // We can additionally fetch just the headers for the request if required
         $headers = Hash::get($options, 'headers');
 
@@ -286,10 +289,20 @@ class DataTypes extends Component
         // If cache explicitly set to false, always return latest data
         if ($cache === false) {
             if ($headers) {
-                return $this->_headers;
+                $data = $this->_headers;
             } else {
-                return Hash::get($dataType->getFeed($url, $settings), 'data');
+                $data = Hash::get($dataType->getFeed($url, $settings), 'data');
             }
+
+            if ($offset) {
+                $data = array_slice($data, $offset);
+            }
+
+            if ($limit) {
+                $data = array_slice($data, 0, $limit);
+            }
+
+            return $data;
         }
 
         // We want some caching action!
@@ -305,6 +318,14 @@ class DataTypes extends Component
                     $data = $this->_headers;
                 } else {
                     $data = Hash::get($dataType->getFeed($url, $settings), 'data');
+                }
+
+                if ($offset) {
+                    $data = array_slice($data, $offset);
+                }
+
+                if ($limit) {
+                    $data = array_slice($data, 0, $limit);
                 }
 
                 $this->_setCache($cacheId, $data, $cache);
