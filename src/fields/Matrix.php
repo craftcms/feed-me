@@ -46,8 +46,6 @@ class Matrix extends Field implements FieldInterface
         // reflected in the field - phew!
         //
         // So, in order to keep data in the order provided in our feed, we start there (as opposed to looping through blocks)
-        $previousBlockCount = 0;
-        $currentBlockCount = 0;
 
         foreach ($this->feedData as $nodePath => $value) {
             // Get the field mapping info for this node in the feed
@@ -60,16 +58,14 @@ class Matrix extends Field implements FieldInterface
                 $subFieldInfo = $fieldInfo['subFieldInfo'];
                 $isComplexField = $fieldInfo['isComplexField'];
 
-                preg_match_all('/\/(\d+)/', $nodePath, $matches);
-                $blockIndex = Hash::get($matches, '1.0');
+                $nodePathSegments = explode('/', $nodePath);
+                $blockIndex = Hash::get($nodePathSegments, 2);
 
-                if ($previousBlockCount != $blockIndex) {
-                    $currentBlockCount++;
+                if (!is_numeric($blockIndex)) {
+                    $blockIndex = 0;
                 }
 
-                $previousBlockCount = $blockIndex;
-
-                $key = $currentBlockCount . '.' . $blockHandle . '.' . $subFieldHandle;
+                $key = $blockIndex . '.' . $blockHandle . '.' . $subFieldHandle;
 
                 // Check for complex fields (think Table, Super Table, etc), essentially anything that has
                 // sub-fields, and doesn't have data directly mapped to the field itself. It needs to be
