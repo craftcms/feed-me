@@ -198,7 +198,7 @@ class CommerceProduct extends Element implements ElementInterface
                 // product id. Note that we want to force this, even if we haven't found a variant, because trying to import
                 // using variant-sku as the unique identifier won't go down so well - it won't create the products like it should
                 $feed['fieldUnique']['id'] = '1';
-                $contentData['id'] = $variant->productId ?? 'placeholder';
+                $contentData['id'] = $variant->productId ?? 0;
 
                 // Cleanup
                 unset($feed['fieldUnique'][$handle]);
