@@ -57,6 +57,7 @@ class Asset extends Element implements ElementInterface
         $criteria = array_merge([
             'status' => null,
             'volumeId' => $settings['elementGroup'][AssetElement::class],
+            'includeSubfolders' => true,
         ], $params);
 
         $siteId = Hash::get($settings, 'siteId');
@@ -115,6 +116,7 @@ class Asset extends Element implements ElementInterface
 
         $criteria['folderId'] = $folderId;
         $criteria['filename'] = $value;
+        $criteria['includeSubfolders'] = true;
 
         Craft::configure($query, $criteria);
 

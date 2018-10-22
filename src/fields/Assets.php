@@ -114,6 +114,7 @@ class Assets extends Field implements FieldInterface
             $criteria['kind'] = $settings['allowedKinds'];
             $criteria['limit'] = $limit;
             $criteria['filename'] = Db::escapeParam($dataValue);
+            $criteria['includeSubfolders'] = true;
 
             Craft::configure($query, $criteria);
 
