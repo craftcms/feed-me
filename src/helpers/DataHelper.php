@@ -23,8 +23,6 @@ class DataHelper
             $value = $default;
         }
 
-        $value = DataHelper::parseFieldDataForElement($value, $element);
-
         return $value;
     }
 
@@ -50,8 +48,6 @@ class DataHelper
                 if ($nodeValue === null || $nodeValue === '') {
                     $nodeValue = $default;
                 }
-
-                $nodeValue = DataHelper::parseFieldDataForElement($nodeValue, $element);
 
                 // Allow pipes '|' to denote multiple items, but even if it doesn't contain one, explode will create
                 // an array, so ensure to merge with the current results.
@@ -93,8 +89,6 @@ class DataHelper
                 if ($nodeValue === null || $nodeValue === '') {
                     $nodeValue = $default;
                 }
-
-                $nodeValue = DataHelper::parseFieldDataForElement($nodeValue, $element);
 
                 // Allow pipes '|' to denote multiple items, but even if it doesn't contain one, explode will create
                 // an array, so ensure to merge with the current results.

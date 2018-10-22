@@ -3,6 +3,7 @@ namespace verbb\feedme\services;
 
 use verbb\feedme\FeedMe;
 use verbb\feedme\events\FeedProcessEvent;
+use verbb\feedme\helpers\DataHelper;
 use verbb\feedme\helpers\DuplicateHelper;
 
 use Craft;
@@ -307,6 +308,20 @@ class Process extends Component
         }
 
         // Do the same with our custom field data
+        $element->setFieldValues($fieldData);
+
+        // Now we've fully prepped our element, one last final check each attribute and field for Twig shorthand to parse
+        // We have to do this at the end, separately so we've got full access to the prepped element content
+        foreach ($attributeData as $key => $value) {
+            $attributeData[$key] = DataHelper::parseFieldDataForElement($value, $element);
+        }
+
+        foreach ($fieldData as $key => $value) {
+            $fieldData[$key] = DataHelper::parseFieldDataForElement($value, $element);
+        }
+
+        // Set the attributes and fields again
+        $element->setAttributes($attributeData, false);
         $element->setFieldValues($fieldData);
 
         // We need to keep these separate to apply to the element but required when matching against existing elements
