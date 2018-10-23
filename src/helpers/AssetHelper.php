@@ -230,6 +230,8 @@ class AssetHelper
         }
 
         // Clean up the filename
+        $filename = str_replace('%20', '_', $filename);
+        $filename = str_replace('_-_', '-', $filename);
         $filename = AssetsHelper::prepareAssetName($filename, false);
 
         return $filename . '.' . $extension;
