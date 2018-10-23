@@ -9,6 +9,7 @@ use verbb\feedme\elements\Category;
 use verbb\feedme\elements\Comment;
 use verbb\feedme\elements\CommerceOrder;
 use verbb\feedme\elements\CommerceProduct;
+use verbb\feedme\elements\DigitalProduct;
 use verbb\feedme\elements\Entry;
 use verbb\feedme\elements\User;
 use verbb\feedme\events\RegisterFeedMeElementsEvent;
@@ -90,6 +91,7 @@ class Elements extends Component
                 // Third-party
                 CalenderEvent::class,
                 Comment::class,
+                DigitalProduct::class,
             ];
         } else {
             $elements = [

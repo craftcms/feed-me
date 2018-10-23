@@ -1,0 +1,3 @@
+{% set group = craft.digitalProducts.getPlugin().getProductTypes().getProductTypeById(feed.elementGroup[elementType]) %}
+
+{{ group.name ?? '' }}
