@@ -44,11 +44,6 @@ class Linkit extends Field implements FieldInterface
 
         $preppedData['type'] = 'fruitstudios\linkit\models\Url';
 
-        // if (isset($preppedData['custom'])) {
-        //     $preppedData['values']['fruitstudios\linkit\models\Url'] = $preppedData['custom'];
-        //     unset($preppedData['custom']);
-        // }
-
         return $preppedData;
     }
 

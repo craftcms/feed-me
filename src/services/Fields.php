@@ -22,6 +22,7 @@ use verbb\feedme\fields\Number;
 use verbb\feedme\fields\RadioButtons;
 use verbb\feedme\fields\SimpleMap;
 use verbb\feedme\fields\SmartMap;
+use verbb\feedme\fields\SuperTable;
 use verbb\feedme\fields\Table;
 use verbb\feedme\fields\Tags;
 use verbb\feedme\fields\TypedLink;
@@ -130,6 +131,7 @@ class Fields extends Component
                 Linkit::class,
                 SimpleMap::class,
                 SmartMap::class,
+                SuperTable::class,
                 TypedLink::class,
             ],
         ]);

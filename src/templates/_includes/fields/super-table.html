@@ -1,0 +1,57 @@
+{# ------------------------ #}
+{# Available Variables #}
+{# ------------------------ #}
+{# Attributes: #}
+{# type, name, handle, instructions, attribute, default, feed, feedData #}
+{# ------------------------ #}
+{# Fields: #}
+{# name, handle, instructions, feed, feedData, field, fieldClass #}
+{# ------------------------ #}
+
+{% import 'feed-me/_macros' as feedMeMacro %}
+{% import '_includes/forms' as forms %}
+
+{% set classes = ['complex-field'] %}
+
+<div class="additional-mapping-fields">
+    {% namespace 'fieldMapping[' ~ handle ~ ']' %}
+        <input type="text" name="field" value="{{ className(field) }}">
+        <input type="text" name="blockTypeId" value="{{ field.getBlockTypes()[0] ?? '' }}">
+    {% endnamespace %}
+</div>
+
+{% for blocktype in field.blocktypes %}
+    {% if blocktype.fields | length %}
+        <tr class="complex-field complex-field-header">
+            <td class="col-field">
+                <div class="field">
+                    <div class="heading">
+                        <label class="">{{ name }}</label>
+                    </div>
+                </div>
+            </td>
+
+            <td class="col-map" colspan="2">
+                <div class="field-extra-settings">
+
+                </div>
+            </td>
+        </tr>
+
+        {% for blocktypefield in blocktype.fields %}
+            {% set nameLabel = blocktypefield.name %}
+            {% set instructionsHandle = handle ~ '[' ~ blocktypefield.handle ~ ']' %}
+
+            {% set parentPath = [ handle, 'fields', blocktypefield.handle ] %}
+
+            {% set fieldClass = craft.feedme.fields.getRegisteredField(className(blocktypefield)) %}
+            {% set template = fieldClass.getMappingTemplate() %}
+
+            {% include template ignore missing with {
+                field: blocktypefield,
+                handle: blocktypefield.handle,
+                path: parentPath,
+            } %}
+        {% endfor %}
+    {% endif %}
+{% endfor %}
