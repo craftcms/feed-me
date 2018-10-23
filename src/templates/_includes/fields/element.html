@@ -1,0 +1,33 @@
+{# ------------------------ #}
+{# Available Variables #}
+{# ------------------------ #}
+{# Attributes: #}
+{# type, name, handle, instructions, attribute, default, feed, feedData #}
+{# ------------------------ #}
+{# Fields: #}
+{# name, handle, instructions, feed, feedData, field, fieldClass #}
+{# ------------------------ #}
+
+{% import 'feed-me/_macros' as feedMeMacro %}
+{% import '_includes/forms' as forms %}
+
+{% extends 'feed-me/_includes/fields/_base' %}
+
+{% block extraSettings %}
+    <div class="element-match">
+        <span>{{ 'Data provided for this element is:' | t('feed-me') }}</span>
+
+        {% set matchAttributes = [
+            { value: 'title', label: 'Title' | t('feed-me') },
+            { value: 'id', label: 'ID' | t('feed-me') },
+            { value: 'slug', label: 'Slug' | t('feed-me') },
+        ] %}
+
+        {{ forms.selectField({
+            name: 'options[match]',
+            class: '',
+            value: hash_get(feed.fieldMapping, optionsPath ~ '.match') ?: '',
+            options: matchAttributes,
+        }) }}
+    </div>
+{% endblock %}

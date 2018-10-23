@@ -6,6 +6,7 @@ use verbb\feedme\base\ElementInterface;
 use verbb\feedme\elements\Asset;
 use verbb\feedme\elements\CalenderEvent;
 use verbb\feedme\elements\Category;
+use verbb\feedme\elements\Comment;
 use verbb\feedme\elements\CommerceOrder;
 use verbb\feedme\elements\CommerceProduct;
 use verbb\feedme\elements\Entry;
@@ -88,6 +89,7 @@ class Elements extends Component
 
                 // Third-party
                 CalenderEvent::class,
+                Comment::class,
             ];
         } else {
             $elements = [
