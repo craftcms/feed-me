@@ -36,55 +36,24 @@ class FeedMe extends Plugin
         self::$plugin = $this;
 
         $this->_setPluginComponents();
-        $this->_addTwigExtensions();
-
-        // Register CP routes
-        Event::on(UrlManager::class, UrlManager::EVENT_REGISTER_CP_URL_RULES, [$this, 'registerCpUrlRules']);
-
-        // Plugin Install event
-        Event::on(Plugins::class, Plugins::EVENT_AFTER_INSTALL_PLUGIN, [$this, 'afterInstallPlugin']);
-
-        // Setup Variables class (for backwards compatibility)
-        Event::on(CraftVariable::class, CraftVariable::EVENT_INIT, function(Event $event) {
-            $variable = $event->sender;
-            $variable->set('feedme', FeedMeVariable::class);
-        });
+        $this->_registerCpRoutes();
+        $this->_registerTwigExtensions();
+        $this->_registerVariables();
     }
 
-    public function getPluginName()
+    public function afterInstall()
     {
-        return Craft::t('feed-me', $this->getSettings()->pluginName);
-    }
-
-    public function registerCpUrlRules(RegisterUrlRulesEvent $event)
-    {
-        $rules = [
-            'feed-me/feeds'                     => 'feed-me/feeds/feeds-index',
-            'feed-me/feeds/new'                 => 'feed-me/feeds/edit-feed',
-            'feed-me/feeds/<feedId:\d+>'        => 'feed-me/feeds/edit-feed',
-            'feed-me/feeds/element/<feedId:\d+>'=> 'feed-me/feeds/element-feed',
-            'feed-me/feeds/map/<feedId:\d+>'    => 'feed-me/feeds/map-feed',
-            'feed-me/feeds/run/<feedId:\d+>'    => 'feed-me/feeds/run-feed',
-            'feed-me/feeds/status/<feedId:\d+>' => 'feed-me/feeds/status-feed',
-            'feed-me/logs'                      => 'feed-me/logs/logs',
-            'feed-me/settings/general'          => 'feed-me/base/settings',
-        ];
-
-        $event->rules = array_merge($event->rules, $rules);
-    }
-
-    public function afterInstallPlugin(PluginEvent $event)
-    {
-        $isCpRequest = Craft::$app->getRequest()->isCpRequest;
-
-        if ($event->plugin === $this && $isCpRequest) {
-            Craft::$app->controller->redirect(UrlHelper::cpUrl('feed-me/welcome'))->send();
-        }
+        Craft::$app->controller->redirect(UrlHelper::cpUrl('feed-me/welcome'))->send();
     }
 
     public function getSettingsResponse()
     {
         Craft::$app->controller->redirect(UrlHelper::cpUrl('feed-me/settings'));
+    }
+
+    public function getPluginName()
+    {
+        return Craft::t('feed-me', $this->getSettings()->pluginName);
     }
 
     public function getCpNavItem()
@@ -99,7 +68,7 @@ class FeedMe extends Plugin
     // Protected Methods
     // =========================================================================
 
-    protected function createSettingsModel()
+    protected function createSettingsModel(): Settings
     {
         return new Settings();
     }
@@ -108,8 +77,33 @@ class FeedMe extends Plugin
     // Private Methods
     // =========================================================================
 
-    private function _addTwigExtensions()
+    private function _registerTwigExtensions()
     {
         Craft::$app->view->registerTwigExtension(new Extension);
     }
+
+    private function _registerCpRoutes()
+    {
+        Event::on(UrlManager::class, UrlManager::EVENT_REGISTER_CP_URL_RULES, function(RegisterUrlRulesEvent $event) {
+            $event->rules = array_merge($event->rules, [
+                'feed-me/feeds' => 'feed-me/feeds/feeds-index',
+                'feed-me/feeds/new' => 'feed-me/feeds/edit-feed',
+                'feed-me/feeds/<feedId:\d+>' => 'feed-me/feeds/edit-feed',
+                'feed-me/feeds/element/<feedId:\d+>'=> 'feed-me/feeds/element-feed',
+                'feed-me/feeds/map/<feedId:\d+>' => 'feed-me/feeds/map-feed',
+                'feed-me/feeds/run/<feedId:\d+>' => 'feed-me/feeds/run-feed',
+                'feed-me/feeds/status/<feedId:\d+>' => 'feed-me/feeds/status-feed',
+                'feed-me/logs' => 'feed-me/logs/logs',
+                'feed-me/settings/general' => 'feed-me/base/settings',
+            ]);
+        });
+    }
+
+    private function _registerVariables()
+    {
+        Event::on(CraftVariable::class, CraftVariable::EVENT_INIT, function(Event $event) {
+            $event->sender->set('feedme', FeedMeVariable::class);
+        });
+    }
+    
 }
