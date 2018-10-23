@@ -15,6 +15,7 @@ use verbb\feedme\fields\DefaultField;
 use verbb\feedme\fields\Dropdown;
 use verbb\feedme\fields\Entries;
 use verbb\feedme\fields\Lightswitch;
+use verbb\feedme\fields\Linkit;
 use verbb\feedme\fields\Matrix;
 use verbb\feedme\fields\MultiSelect;
 use verbb\feedme\fields\Number;
@@ -23,6 +24,7 @@ use verbb\feedme\fields\SimpleMap;
 use verbb\feedme\fields\SmartMap;
 use verbb\feedme\fields\Table;
 use verbb\feedme\fields\Tags;
+use verbb\feedme\fields\TypedLink;
 use verbb\feedme\fields\Users;
 use verbb\feedme\events\RegisterFeedMeFieldsEvent;
 use verbb\feedme\events\FieldEvent;
@@ -125,8 +127,10 @@ class Fields extends Component
                 // Third-Party
                 CalendarEvents::class,
                 DigitalProducts::class,
+                Linkit::class,
                 SimpleMap::class,
                 SmartMap::class,
+                TypedLink::class,
             ],
         ]);
 
