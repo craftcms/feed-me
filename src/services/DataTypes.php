@@ -130,7 +130,15 @@ class DataTypes extends Component
 
         // Check for local or relative URL
         if (!UrlHelper::isAbsoluteUrl($url)) {
-            $data = @file_get_contents($url);
+            error_clear_last();
+
+            $filepath = realpath($url);
+
+            if (!$filepath) {
+                return ['success' => false, 'error' => 'File path cannot be found.'];
+            }
+
+            $data = @file_get_contents($filepath);
 
             $error = error_get_last();
 
