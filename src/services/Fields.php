@@ -6,9 +6,11 @@ use verbb\feedme\base\FieldInterface;
 use verbb\feedme\fields\Assets;
 use verbb\feedme\fields\Categories;
 use verbb\feedme\fields\Checkboxes;
+use verbb\feedme\fields\CalendarEvents;
 use verbb\feedme\fields\CommerceProducts;
 use verbb\feedme\fields\CommerceVariants;
 use verbb\feedme\fields\Date;
+use verbb\feedme\fields\DigitalProducts;
 use verbb\feedme\fields\DefaultField;
 use verbb\feedme\fields\Dropdown;
 use verbb\feedme\fields\Entries;
@@ -17,6 +19,7 @@ use verbb\feedme\fields\Matrix;
 use verbb\feedme\fields\MultiSelect;
 use verbb\feedme\fields\Number;
 use verbb\feedme\fields\RadioButtons;
+use verbb\feedme\fields\SimpleMap;
 use verbb\feedme\fields\SmartMap;
 use verbb\feedme\fields\Table;
 use verbb\feedme\fields\Tags;
@@ -115,10 +118,15 @@ class Fields extends Component
                 MultiSelect::class,
                 Number::class,
                 RadioButtons::class,
-                SmartMap::class,
                 Table::class,
                 Tags::class,
                 Users::class,
+
+                // Third-Party
+                CalendarEvents::class,
+                DigitalProducts::class,
+                SimpleMap::class,
+                SmartMap::class,
             ],
         ]);
 
