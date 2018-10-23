@@ -40,7 +40,7 @@ class FeedMeVariable extends ServiceLocator
             'settings' => [ 'label' => Craft::t('feed-me', 'Settings'), 'url' => UrlHelper::cpUrl('feed-me/settings') ],
         ];
 
-        if ($enabledTabs === '*') {
+        if ($enabledTabs === '*' || $enabledTabs === 1) {
             return $tabs;
         }
 
