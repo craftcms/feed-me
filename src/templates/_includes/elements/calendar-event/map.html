@@ -1,0 +1,237 @@
+{% import '_includes/forms' as forms %}
+{% import 'feed-me/_macros' as feedMeMacro %}
+
+{% if feed.elementGroup %}
+    {% set calendarId = feed.elementGroup[feed.elementType] %}
+
+    {% set calendar = craft.calendar.calendar({ id: calendarId }) %}
+{% endif %}
+
+{% set users = [{ label: 'Don\'t import', value: '' }] %}
+{% if CraftEdition == CraftSolo %}
+    {% set user = craft.users().one() %}
+    {% set users = users | merge([{ label: user, value: user.id }]) %}
+{% endif %}
+
+{% if CraftEdition == CraftPro %}
+    {% for user in craft.users.can('manageEventsFor:' ~ calendarId).all() %}
+        {% set users = users | merge([{ label: user, value: user.id }]) %}
+    {% endfor %}
+{% endif %}
+
+{% set fields = [{
+    name: 'Title',
+    handle: 'title',
+    default: {
+        type: 'text',
+    },
+}, {
+    name: 'Slug',
+    handle: 'slug',
+    instructions: 'If not set, the Slug will be automatically created from Title.' | t('feed-me'),
+    default: {
+        type: 'text',
+    },
+}, {
+    type: 'date',
+    name: 'Start Date',
+    handle: 'startDate',
+    instructions: 'Accepts Unix timestamp, or just about any English textual datetime description.' | t('feed-me'),
+    default: {
+        type: 'dateTime',
+    },
+}, {
+    type: 'date',
+    name: 'End Date',
+    handle: 'endDate',
+    instructions: 'Accepts Unix timestamp, or just about any English textual datetime description.' | t('feed-me'),
+    default: {
+        type: 'dateTime',
+    },
+}, {
+    name: 'All Day',
+    handle: 'allDay',
+    instructions: 'Whether this event is all day or not.' | t('feed-me'),
+    default: {
+        type: 'select',
+        options: [
+            { label: 'Don\'t import', value: '' },
+            { label: 'Yes', value: '1' },
+            { label: 'No', value: '0' },
+        ],
+    },
+}, {
+    name: 'Enabled',
+    handle: 'enabled',
+    instructions: 'Choose either a default status from the list or the imported field that will contain the status.' | t('feed-me'),
+    default: {
+        type: 'select',
+        options: [
+            { label: 'Don\'t import', value: '' },
+            { label: 'Enabled', value: '1' },
+            { label: 'Disabled', value: '0' },
+        ],
+    },
+}, {
+    type: 'users',
+    name: 'Author',
+    handle: 'authorId',
+    instructions: 'Entries will be assigned to the user in this field. If the field does not match any existing member, the default author will be assigned.' | t('feed-me'),
+    default: {
+        type: 'select',
+        options: users,
+    },
+}, {
+    name: 'Event ID',
+    handle: 'id',
+    instructions: '<strong class="error">Warning: </strong>This should only be used for an existing Solspace Event ID.' | t('feed-me'),
+    default: {
+        type: 'text',
+    },
+}] %}
+
+<h2>{{ 'Event Fields' | t('feed-me') }}</h2>
+
+<table class="feedme-mapping data fullwidth collapsible">
+    <thead>
+        <th>{{ 'Field' | t('feed-me') }}</th>
+        <th>{{ 'Feed Element' | t('feed-me') }}</th>
+        <th>{{ 'Default Value' | t('feed-me') }}</th>
+    </thead>
+    <tbody>
+        {% for field in fields %}
+            {% set template = field.type ?? 'default' %}
+            {% set variables = field | merge({ feed: feed, feedData: feedData, attribute: true }) %}
+
+            {% include 'feed-me/_includes/fields/' ~ template ignore missing with variables only %}
+        {% endfor %}
+    </tbody>
+</table>
+
+{% set recurrenceFields = [{
+    name: 'Repeat Rule',
+    handle: 'rrule',
+    default: {
+        type: 'text',
+    },
+}, {
+    name: 'Repeat Interval' | t,
+    handle: 'interval',
+    default: {
+        type: 'text',
+    },
+}, {
+    name: 'Repeat Frequency' | t,
+    handle: 'freq',
+    default: {
+        type: 'text',
+    },
+}, {
+    name: 'Repeat Count' | t,
+    handle: 'count',
+    default: {
+        type: 'text',
+    },
+}, {
+    name: 'Until' | t,
+    handle: 'until',    
+    default: {
+        type: 'text',
+    },
+}, {
+    name: 'By Month' | t,
+    handle: 'byMonth',    
+    default: {
+        type: 'text',
+    },
+}, {
+    name: 'By Year Day' | t,
+    handle: 'byYearDay',    
+    default: {
+        type: 'text',
+    },
+}, {
+    name: 'By Month Day' | t,
+    handle: 'byMonthDay',    
+    default: {
+        type: 'text',
+    },
+}, {
+    name: 'By Day' | t,
+    handle: 'byDay',    
+    default: {
+        type: 'text',
+    },
+}] %}
+
+<h2>{{ 'Recurrence Fields' | t('feed-me') }}</h2>
+
+<table class="feedme-mapping data fullwidth collapsible">
+    <thead>
+        <th>{{ 'Field' | t('feed-me') }}</th>
+        <th>{{ 'Feed Element' | t('feed-me') }}</th>
+        <th>{{ 'Default Value' | t('feed-me') }}</th>
+    </thead>
+    <tbody>
+        {% for field in recurrenceFields %}
+            {% set template = field.type ?? 'default' %}
+            {% set variables = field | merge({ feed: feed, feedData: feedData, attribute: true }) %}
+
+            {% include 'feed-me/_includes/fields/' ~ template ignore missing with variables only %}
+        {% endfor %}
+    </tbody>
+</table>
+
+{% set tabs = craft.app.fields.getLayoutById(calendar.fieldLayoutId).getTabs() %}
+
+{% for tab in tabs %}
+    <hr>
+
+    <h2>{{ tab.name }} Fields</h2>
+
+    <table class="feedme-mapping data fullwidth collapsible">
+        <thead>
+            <th>{{ 'Field' | t('feed-me') }}</th>
+            <th>{{ 'Feed Element' | t('feed-me') }}</th>
+            <th>{{ 'Default Value' | t('feed-me') }}</th>
+        </thead>
+        <tbody>
+            {% for field in tab.getFields() %}
+                {% set fieldClass = craft.feedme.fields.getRegisteredField(className(field)) %}
+                {% set template = fieldClass.getMappingTemplate() %}
+
+                {% set variables = { name: field.name, handle: field.handle, feed: feed, feedData: feedData, field: field, fieldClass: fieldClass } %}
+                
+                {% include template ignore missing with variables only %}
+            {% endfor %}
+        </tbody>
+    </table>
+{% endfor %}
+
+<hr>
+
+<h2>{{ "Set a unique identifier for existing elements" | t('feed-me') }}</h2>
+
+<p>{{ "Select the fields you want to use to check for existing elements. When selected, Feed Me will look for existing elements that match the fields provided below and either update, or skip depending on your choice of Import Strategy." | t('feed-me') }}</p>
+
+{% set uniqueFields = fields %}
+
+{% for field in recurrenceFields %}
+    {% set uniqueFields = uniqueFields | merge([{ name: field.name, handle: field.handle }]) %}
+{% endfor %}
+
+{% for tab in tabs %}
+    {% for field in tab.getFields() %}
+        {% set uniqueFields = uniqueFields | merge([{ name: field.name, handle: field.handle }]) %}
+    {% endfor %}
+{% endfor %}
+
+<div class="feedme-uniques">
+    {% for field in uniqueFields %}
+        {{ forms.checkboxField({
+            name: 'fieldUnique[' ~ field.handle ~ ']',
+            label: field.name,
+            checked: feed.fieldUnique[field.handle] ?? '',
+        }) }}
+    {% endfor %}
+</div>

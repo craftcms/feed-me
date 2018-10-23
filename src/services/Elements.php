@@ -4,6 +4,7 @@ namespace verbb\feedme\services;
 use verbb\feedme\FeedMe;
 use verbb\feedme\base\ElementInterface;
 use verbb\feedme\elements\Asset;
+use verbb\feedme\elements\CalenderEvent;
 use verbb\feedme\elements\Category;
 use verbb\feedme\elements\CommerceOrder;
 use verbb\feedme\elements\CommerceProduct;
@@ -84,6 +85,9 @@ class Elements extends Component
                 CommerceProduct::class,
                 Entry::class,
                 User::class,
+
+                // Third-party
+                CalenderEvent::class,
             ];
         } else {
             $elements = [
