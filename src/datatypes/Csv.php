@@ -48,13 +48,15 @@ class Csv extends DataType implements DataTypeInterface
             $data = StringHelper::convertToUtf8($data);
 
             $reader = Reader::createFromString($data);
-
             $reader->setDelimiter($csvColumnDelimiter);
 
             $array = [];
 
+            // We need to check if the CSV provided has headers. Bit tricky in 8.x, but lets do it.
+            $rows = $this->_getRows($reader);
+
             // Create associative array with Row 1 header as keys
-            foreach($reader->fetchAssoc(0) as $row) {
+            foreach($rows as $row) {
                 $filteredRow = [];
 
                 // Additional work here to handle line-breaks in keys (CSV header) - they're not allowed
@@ -90,5 +92,28 @@ class Csv extends DataType implements DataTypeInterface
         }
 
         return ['success' => true, 'data' => $array];
+    }
+
+    private function _getRows($reader)
+    {
+        $array = [];
+
+        // We try to first fetch the first row in the CSV which we figure is the headers. But if its not
+        // it'll throw an error saying the first row of the CSV isn't valid, and not unique, etc.
+        // So, in that case, just fail silently, and move on to the 'traditional' method which are just numbers.
+        //
+        // You really should provide your CSVs with headers though.
+
+        try {
+            $array = $reader->fetchAssoc(0);
+        } catch (\Throwable $e) {}
+
+        try {
+            if (!$array) {
+                $array = $reader->fetch();
+            }
+        } catch (\Throwable $e) {}
+
+        return $array;
     }
 }
