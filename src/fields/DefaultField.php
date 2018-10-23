@@ -31,6 +31,17 @@ class DefaultField extends Field implements FieldInterface
 
     public function parseField()
     {
-        return $this->fetchValue();
+        $value = $this->fetchValue();
+
+        // Default fields expect strings, if its an array for an odd reason, serialise it
+        if (is_array($value)) {
+            if (empty($value)) {
+                $value = '';
+            } else {
+                $value = json_encode($value);
+            }
+        }
+
+        return $value;
     }
 }
