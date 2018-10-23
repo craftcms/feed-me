@@ -1,5 +1,29 @@
 # Changelog
 
+## 3.0.0-beta.23 - 2018-10-23
+
+### Added
+- Added support for [Digital Products](https://github.com/craftcms/digital-products) element and field.
+- Added support for [Solspace Calendar](https://github.com/solspace/craft3-calendar) element and field.
+- Added support for [Comments](https://github.com/verbb/comments) element.
+- Added support for [Super Table](https://github.com/verbb/super-table) field.
+- Added support for [Linkit](https://github.com/fruitstudios/craft-linkit) field.
+- Added support for [Typed Link](https://github.com/sebastian-lenz/craft-linkfield) field.
+- Added support for [SimpleMap](https://github.com/ethercreative/simplemap) field.
+- Add offset/limit options to template params
+
+### Changed
+- Matrix handling, particularly for XML-based feeds are much more opinionated about structure for better results. See [docs](https://verbb.io/craft-plugins/feed-me/docs/guides/importing-into-matrix#note-on-structure).
+
+### Fixed
+- Fix element fields in Matrix not mapping correctly.
+- Fix Twig parsing in default and feed data too early, resulting in empty values.
+- Matrix - fix block types with no fields messing things up.
+- Fix ‘placeholder’ in products query causing PostgreSQL errors.
+- Fix error thrown on entry mapping screen when no sections are available.
+- Assets - fix filename matches not including subfolders.
+- Table - protect against array values importing into fields.
+
 ## 3.0.0-beta.22 - 2018-10-04
 
 ### Fixed
