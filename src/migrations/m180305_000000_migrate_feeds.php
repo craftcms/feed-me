@@ -36,31 +36,35 @@ class m180305_000000_migrate_feeds extends Migration
                 $feedId = $feed['id'];
 
                 // Convert the Element Type
-                if (isset($this->elements[$feed['elementType']])) {
-                    $oldElementType = $feed['elementType'];
-                    $newElementType = $this->elements[$oldElementType];
+                if (isset($feed['elementType'])) {
+                    if (isset($this->elements[$feed['elementType']])) {
+                        $oldElementType = $feed['elementType'];
+                        $newElementType = $this->elements[$oldElementType];
 
-                    $this->update($table, ['elementType' => $newElementType], ['id' => $feedId]);
+                        $this->update($table, ['elementType' => $newElementType], ['id' => $feedId]);
+                    }
                 }
 
                 // Convert the Element Group
-                $elementGroup = json_decode($feed['elementGroup'], true);
+                if (isset($feed['elementGroup'])) {
+                    $elementGroup = json_decode($feed['elementGroup'], true);
 
-                if ($elementGroup) {
-                    foreach ($elementGroup as $key => $value) {
-                        if (isset($this->elements[$key])) {
-                            $oldElementType = $key;
-                            $newElementType = $this->elements[$oldElementType];
+                    if ($elementGroup) {
+                        foreach ($elementGroup as $key => $value) {
+                            if (isset($this->elements[$key])) {
+                                $oldElementType = $key;
+                                $newElementType = $this->elements[$oldElementType];
 
-                            unset($elementGroup[$key]);
-                            $elementGroup[$newElementType] = $value;
+                                unset($elementGroup[$key]);
+                                $elementGroup[$newElementType] = $value;
+                            }
                         }
+
+                        $elementGroup = json_encode($elementGroup);
                     }
 
-                    $elementGroup = json_encode($elementGroup);
+                    $this->update($table, ['elementGroup' => $elementGroup], ['id' => $feedId]);
                 }
-
-                $this->update($table, ['elementGroup' => $elementGroup], ['id' => $feedId]);
 
                 // Rename the 'locale' column
                 if ($this->db->columnExists($table, 'locale')) {
