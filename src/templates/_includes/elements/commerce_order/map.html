@@ -233,15 +233,13 @@
 {% endfor %}
 
 {% for tab in craft.app.fields.getLayoutById(orderSettings.fieldLayoutId).getTabs() %}
-    {% for fieldtype in tab.getFields() %}
-        {% set field = fieldtype.getField() %}
-
-        {% set uniqueFields = uniqueFields | merge([{ label: field.name, handle: field.handle }]) %}
+    {% for field in tab.getFields() %}
+        {% set uniqueFields = uniqueFields | merge([{ label: field.name, handle: field.handle, type: className(field) }]) %}
     {% endfor %}
 {% endfor %}
 
 <div class="feedme-uniques">
-    {% for field in uniqueFields %}
+    {% for field in uniqueFields if field and feedMeMacro.fieldCanBeUniqueId(field) %}
         {{ forms.checkboxField({
             name: 'fieldUnique[' ~ field.handle ~ ']',
             label: field.label,

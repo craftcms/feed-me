@@ -113,7 +113,7 @@
 <p>{{ "Select the fields you want to use to check for existing elements. When selected, Feed Me will look for existing elements that match the fields provided below and either update, or skip depending on your choice of Import Strategy." | t('feed-me') }}</p>
 
 <div class="feedme-uniques">
-    {% for field in fields %}
+    {% for field in fields if field and feedMeMacro.fieldCanBeUniqueId(field) %}
         {{ forms.checkboxField({
             name: 'fieldUnique[' ~ field.handle ~ ']',
             label: field.name,

@@ -17,3 +17,30 @@
 
     {% endspaceless -%}
 {% endmacro %}
+
+{% macro fieldCanBeUniqueId(field) %}
+    {%- spaceless %}
+        {% set supportedFieldTypes = [
+            'attribute',
+            'craft\\fields\\Checkboxes',
+            'craft\\fields\\Color',
+            'craft\\fields\\Date',
+            'craft\\fields\\Dropdown',
+            'craft\\fields\\Email',
+            'craft\\fields\\Lightswitch',
+            'craft\\fields\\MultiSelect',
+            'craft\\fields\\Number',
+            'craft\\fields\\PlainText',
+            'craft\\fields\\RadioButtons',
+            'craft\\fields\\Url',
+        ] %}
+
+        {% set type = field.type ?? 'attribute' %}
+
+        {% if type in supportedFieldTypes %}
+            true
+        {% endif %}
+    {% endspaceless -%}
+{% endmacro %}
+
+

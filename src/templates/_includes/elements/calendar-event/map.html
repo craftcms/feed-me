@@ -222,12 +222,12 @@
 
 {% for tab in tabs %}
     {% for field in tab.getFields() %}
-        {% set uniqueFields = uniqueFields | merge([{ name: field.name, handle: field.handle }]) %}
+        {% set uniqueFields = uniqueFields | merge([{ name: field.name, handle: field.handle, type: className(field) }]) %}
     {% endfor %}
 {% endfor %}
 
 <div class="feedme-uniques">
-    {% for field in uniqueFields %}
+    {% for field in uniqueFields if field and feedMeMacro.fieldCanBeUniqueId(field) %}
         {{ forms.checkboxField({
             name: 'fieldUnique[' ~ field.handle ~ ']',
             label: field.name,
