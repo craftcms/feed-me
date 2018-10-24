@@ -195,13 +195,13 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
             $this->parseInlineTwig($data, $dataValue);
 
             switch ($handle) {
-                case 'id';
+                case 'id':
                     $element->$handle = $dataValue;
                     break;
-                case 'authorId';
+                case 'authorId':
                     $element->$handle = $this->prepareAuthorForElement($dataValue);
                     break;
-                case 'slug';
+                case 'slug':
                     if (craft()->config->get('limitAutoSlugsToAscii')) {
                         $dataValue = StringHelper::asciiString($dataValue);
                     }
@@ -209,8 +209,10 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
                     $element->$handle = ElementHelper::createSlug($dataValue);
                     break;
                 case 'postDate':
-                case 'expiryDate';
-                    $element->$handle = FeedMeDateHelper::parseString($dataValue);
+                case 'expiryDate':
+                    // https://github.com/verbb/feed-me/issues/388
+                    // Force postDate and expiryDate fields to have the defined Craft timezone set when going through the date helper
+                    $element->$handle = FeedMeDateHelper::parseString($dataValue, null, true);
                     break;
                 case 'enabled':
                 case 'localeEnabled':
@@ -322,7 +324,7 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
         if (count($requiredContent)) {
             $element->setContentFromPost($requiredContent);
         }
-    }    
+    }
 
     private function _prepareParentForElement($fieldData, $sectionId)
     {
