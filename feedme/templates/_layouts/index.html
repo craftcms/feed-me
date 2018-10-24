@@ -3,12 +3,12 @@
 {% import "_includes/forms" as forms %}
 {% import "feedme/_macros" as feedMeMacro %}
 
-{% includeCssResource 'feedme/css/font-awesome.min.css' %}
-{% includeCssResource 'feedme/css/feedme.css' %}
+{% includeCssResource 'feedme/dist/css/font-awesome.css' %}
+{% includeCssResource 'feedme/dist/css/feed-me.css' %}
 
-{% includeJsResource 'feedme/js/selectize.js' %}
-{% includeJsResource 'feedme/js/feedme.js' %}
-{% includeJsResource 'feedme/js/feedmehelp.js' %}
+{% includeJsResource 'feedme/dist/js/selectize.js' %}
+{% includeJsResource 'feedme/dist/js/feed-me.js' %}
+{% includeJsResource 'feedme/dist/js/feed-me-help.js' %}
 
 {% if noTabs is not defined %}
     {% set tabs = craft.feedme.getTabs() %}

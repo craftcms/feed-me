@@ -95,7 +95,7 @@
 </div>
 {% endblock %}
 
-{% includejsresource 'feedme/js/feedmelicenseform.js' %}
+{% includejsresource 'feedme/dist/js/feed-me-license-form.js' %}
 {% includejs %}
     window.regForm = new Craft.FeedMe.LicenseForm({{ hasLicenseKey ? 'true' : 'false' }});
 {% endincludejs %}
