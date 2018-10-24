@@ -4,11 +4,11 @@
 {% import "feedme/_macros" as feedMeMacro %}
 
 {% includeCssResource 'feedme/css/font-awesome.min.css' %}
-{% includeCssResource 'feedme/css/FeedMe.css' %}
+{% includeCssResource 'feedme/css/feedme.css' %}
 
 {% includeJsResource 'feedme/js/selectize.js' %}
-{% includeJsResource 'feedme/js/FeedMe.js' %}
-{% includeJsResource 'feedme/js/FeedMeHelp.js' %}
+{% includeJsResource 'feedme/js/feedme.js' %}
+{% includeJsResource 'feedme/js/feedmehelp.js' %}
 
 {% if noTabs is not defined %}
     {% set tabs = craft.feedme.getTabs() %}
