@@ -127,7 +127,11 @@ class AssetFeedMeElementType extends BaseFeedMeElementType
 
             $fileId = $service->fetchRemoteImage($urlData, $folderId, $fieldData['options']);
 
-            $element = craft()->assets->getFileById($fileId);
+            $file = craft()->assets->getFileById($fileId);
+
+            if ($file) {
+                $element = $file;
+            }
         } else {
             foreach ($data as $handle => $value) {
                 if (is_null($value)) {
