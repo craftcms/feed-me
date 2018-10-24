@@ -1,5 +1,19 @@
 [
     {
+        "version": "2.0.14",
+        "downloadUrl": "https://github.com/verbb/feed-me/archive/2.0.14.zip",
+        "date": "2018-10-24T00:00:00+10:00",
+        "notes": [
+            "[Fixed] Assets - when uploading, make sure to finishing preparing the model.",
+            "[Fixed] Fix asset imports not finding existing elements properly.",
+            "[Fixed] Add `postForFeedMeFieldType` hook back.",
+            "[Fixed] Update resource references to lowercase.",
+            "[Fixed] Use Craft timezone on postDate/expiryDate fields.",
+            "[Fixed] Clarify primary elements.",
+            "[Fixed] Check that $enabledTabs is array before iteration."
+        ]
+    },
+    {
         "version": "2.0.13",
         "downloadUrl": "https://github.com/verbb/feed-me/archive/2.0.13.zip",
         "date": "2018-08-17T00:00:00+10:00",
