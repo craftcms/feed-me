@@ -1,5 +1,13 @@
 [
     {
+        "version": "2.0.15",
+        "downloadUrl": "https://github.com/verbb/feed-me/archive/2.0.15.zip",
+        "date": "2018-10-24T01:00:00+10:00",
+        "notes": [
+            "[Fixed] Fix broken resources on some environments."
+        ]
+    },
+    {
         "version": "2.0.14",
         "downloadUrl": "https://github.com/verbb/feed-me/archive/2.0.14.zip",
         "date": "2018-10-24T00:00:00+10:00",
