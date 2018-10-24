@@ -132,39 +132,39 @@ class AssetFeedMeElementType extends BaseFeedMeElementType
             if ($file) {
                 $element = $file;
             }
-        } else {
-            foreach ($data as $handle => $value) {
-                if (is_null($value)) {
-                    continue;
-                }
+        }
 
-                if (isset($value['data']) && $value['data'] === null) {
-                    continue;
-                }
-
-                if (is_array($value)) {
-                    $dataValue = Hash::get($value, 'data', null);
-                } else {
-                    $dataValue = $value;
-                }
-                
-                switch ($handle) {
-                    case 'id';
-                        $element->$handle = $dataValue;
-                        break;
-                    case 'filename';
-                        $element->$handle = $dataValue;
-                        break;
-                    case 'title':
-                        $element->getContent()->$handle = $dataValue;
-                        break;
-                    default:
-                        continue 2;
-                }
-
-                // Update the original data in our feed - for clarity in debugging
-                $data[$handle] = $element->$handle;
+        foreach ($data as $handle => $value) {
+            if (is_null($value)) {
+                continue;
             }
+
+            if (isset($value['data']) && $value['data'] === null) {
+                continue;
+            }
+
+            if (is_array($value)) {
+                $dataValue = Hash::get($value, 'data', null);
+            } else {
+                $dataValue = $value;
+            }
+            
+            switch ($handle) {
+                case 'id';
+                    $element->$handle = $dataValue;
+                    break;
+                case 'filename';
+                    $element->$handle = $dataValue;
+                    break;
+                case 'title':
+                    $element->getContent()->$handle = $dataValue;
+                    break;
+                default:
+                    continue 2;
+            }
+
+            // Update the original data in our feed - for clarity in debugging
+            $data[$handle] = $element->$handle;
         }
 
         return $element;
