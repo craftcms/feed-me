@@ -9,7 +9,7 @@ class FeedMeDateHelper
     // Public Methods
     // =========================================================================
 
-    public static function parseString($date, $formatting = 'auto')
+    public static function parseString($date, $formatting = 'auto', $useTimezone = null)
     {
         $parsedDate = null;
 
@@ -68,7 +68,16 @@ class FeedMeDateHelper
             if ($dt) {
                 $dateTimeString = $dt->toDateTimeString();
 
-                $parsedDate = DateTime::createFromString($dateTimeString, null, true);
+                // https://github.com/verbb/feed-me/issues/388
+                // For some reason postDate (and possibly expiryDate) values are sometimes +1 hour than they should be, but it doesn't happen consistently
+                // Debugging the date helper it is when createFromString is used on the postDate/expiryDate value without a timezone.
+                // Problem is when using craft()->timezone on other date fields (not Craft defaults) this causes -1 hour differences. WTF.
+                if ($useTimezone) {
+                    $parsedDate = DateTime::createFromString($dateTimeString, craft()->timezone);
+                }
+                else {
+                    $parsedDate = DateTime::createFromString($dateTimeString, null, true);
+                }
             }
         } catch (\Exception $e) {
             FeedMePlugin::log('Date parse error: ' . $date . ' - ' . $e->getMessage(), LogLevel::Error, true);
