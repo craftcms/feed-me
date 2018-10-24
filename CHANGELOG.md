@@ -1,5 +1,19 @@
 # Changelog
 
+## 3.0.0-beta.24 - 2018-10-24
+
+### Changed
+- Tighten restrictions on what can be a unique identifier field.
+- Improve local file handling a little and relative paths.
+- CSV - allow files without headers to still be processed instead of throwing an error.
+
+### Fixed
+- AssetHelper - add checks for spaces in filenames.
+- Add array-handling to default fields, preventing errors like `trim()`, etc.
+- Add some conditionals to migration from Craft 2 > 3.
+- Fix template error when updating Craft 2 > 3.
+
+
 ## 3.0.0-beta.23 - 2018-10-23
 
 ### Added
