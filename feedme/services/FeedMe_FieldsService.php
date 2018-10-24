@@ -60,7 +60,12 @@ class FeedMe_FieldsService extends BaseApplicationComponent
 
             // Get data for the field we're mapping to - can be all sorts of logic here
             if (method_exists($service, 'postFieldData')) {
-                return $service->postFieldData($element, $field, $data, $handle);
+                $preppedData = $service->postFieldData($element, $field, $data, $handle);
+
+                // Third-party fieldtype support
+                craft()->plugins->call('postForFeedMeFieldType', array(&$preppedData, $element, $field, $data, $handle));
+
+                return $preppedData;
             }
         }
     }
