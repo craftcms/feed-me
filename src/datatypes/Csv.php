@@ -30,7 +30,7 @@ class Csv extends DataType implements DataTypeInterface
         if (!$response['success']) {
             $error = 'Unable to reach ' . $url . '. Message: ' . $response['error'];
 
-            FeedMe::error($settings, $error);
+            FeedMe::error($error);
 
             return ['success' => false, 'error' => $error];
         }
@@ -70,7 +70,7 @@ class Csv extends DataType implements DataTypeInterface
         } catch (\Exception $e) {
             $error = 'Invalid CSV: ' . $e->getMessage();
 
-            FeedMe::error($settings, $error);
+            FeedMe::error($error);
 
             return ['success' => false, 'error' => $error];
         }
@@ -79,7 +79,7 @@ class Csv extends DataType implements DataTypeInterface
         if (!is_array($array)) {
             $error = 'Invalid CSV: ' . json_encode($array);
 
-            FeedMe::error($settings, $error);
+            FeedMe::error($error);
 
             return ['success' => false, 'error' => $error];
         }

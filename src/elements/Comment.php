@@ -167,10 +167,10 @@ class Comment extends Element implements ElementInterface
             $element->email = $value;
 
             if (!Craft::$app->getElements()->saveElement($element)) {
-                FeedMe::error(null, 'Entry error: Could not create author - ' . json_encode($element->getErrors()));
+                FeedMe::error('Comment error: Could not create author - `{e}`.', ['e' => json_encode($element->getErrors())]);
+            } else {
+                FeedMe::info('Author `#{id}` added.', ['id' => $element->id]);
             }
-
-            FeedMe::info(null, 'Author ' . $element->id . ' added.');
 
             return $element->id;
         }

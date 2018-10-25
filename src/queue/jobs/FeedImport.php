@@ -36,7 +36,7 @@ class FeedImport extends BaseJob
 
             // Do we even have any data to process?
             if (!$feedData) {
-                FeedMe::info($this->feed, 'No feed items to process.');
+                FeedMe::info('No feed items to process.');
                 return;
             }
 
@@ -50,7 +50,7 @@ class FeedImport extends BaseJob
                 } catch (\Throwable $e) {
                     // We want to catch any issues in each iteration of the loop (and log them), but this allows the
                     // rest of the feed to continue processing.
-                    FeedMe::error($this->feed, $e->getMessage() . ' - ' . basename($e->getFile()) . ':' . $e->getLine());
+                    FeedMe::error('`{e} - {f}: {l}`.', ['e' => $e->getMessage(), 'f' => basename($e->getFile()), 'l' => $e->getLine()]);
                 }
 
                 $this->setProgress($queue, $key++ / $totalSteps);
@@ -60,7 +60,7 @@ class FeedImport extends BaseJob
         } catch (\Throwable $e) {
             // Even though we catch errors on each step of the loop, make sure to catch errors that can be anywhere
             // else in this function, just to be super-safe and not cause the queue job to die.
-            FeedMe::error($this->feed, $e->getMessage() . ' - ' . basename($e->getFile()) . ':' . $e->getLine());
+            FeedMe::error('`{e} - {f}: {l}`.', ['e' => $e->getMessage(), 'f' => basename($e->getFile()), 'l' => $e->getLine()]);
         }
     }
 

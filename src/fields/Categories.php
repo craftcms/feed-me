@@ -118,10 +118,10 @@ class Categories extends Field implements FieldInterface
         $element->groupId = $groupId;
 
         if (!Craft::$app->getElements()->saveElement($element)) {
-            FeedMe::error(null, 'Category error: Could not create - ' . json_encode($element->getErrors()));
+            FeedMe::error('`{handle}` - Category error: Could not create - `{e}`.', ['e' => json_encode($element->getErrors()), 'handle' => $this->field->handle]);
+        } else {
+            FeedMe::info('`{handle}` - Category `#{id}` added.', ['id' => $element->id, 'handle' => $this->field->handle]);
         }
-
-        FeedMe::info(null, 'Category ' . $element->id . ' added.');
 
         return $element->id;
     }

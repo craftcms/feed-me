@@ -7,6 +7,7 @@ use Craft;
 use craft\base\Component;
 use craft\helpers\App;
 use craft\helpers\FileHelper;
+use craft\helpers\StringHelper;
 
 class Logs extends Component
 {
@@ -24,16 +25,30 @@ class Logs extends Component
         $this->_logFile = Craft::$app->path->getLogPath() . '/feedme.log';
     }
 
-    public function log(string $message, $method)
+    public function log($method, $message, $params = [], $options = [])
     {
         $dateTime = new \DateTime();
         $type = explode('::', $method)[1];
+        $message = Craft::t('feed-me', $message, $params);
 
-        $options = json_encode([
+        // Always prepend the feed we're dealing with
+        if (FeedMe::$feedName) {
+            $message = FeedMe::$feedName . ': ' . $message;
+        }
+
+        $options = array_merge([
             'date' => $dateTime->format('Y-m-d H:i:s'),
-            'message' => $message,
             'type' => $type,
-        ]);
+            'message' => $message,
+        ], $options);
+
+        // If we're not explicitly sending a key for logging, check if we've started a feed.
+        // If we have, our $stepKey variable will have a value and can use it here.
+        if (!isset($options['key']) && FeedMe::$stepKey) {
+            $options['key'] = FeedMe::$stepKey;
+        }
+
+        $options = json_encode($options);
 
         $fp = fopen($this->_logFile, 'ab');
         fwrite($fp, $options . PHP_EOL);
@@ -64,19 +79,31 @@ class Logs extends Component
                 foreach ($lines as $line) {
                     $json = json_decode($line, true);
 
-                    if (isset($json['date'])) {
-                        $json['date'] = \DateTime::createFromFormat('Y-m-d H:i:s', $json['date']);
+                    if (!$json) {
+                        continue;
                     }
 
-                    $logEntries[] = $json;
+                    if (isset($json['date'])) {
+                        $json['date'] = \DateTime::createFromFormat('Y-m-d H:i:s', $json['date'])->format('Y-m-d H:i:s');
+                    }
+
+                    // Backward compatiblity
+                    if (isset($json['key'])) {
+                        $key = $json['key'];
+                    } else {
+                        $key = count($logEntries);
+                    }
+
+                    if (isset($logEntries[$key])) {
+                        $logEntries[$key]['items'][] = $json;
+                    } else {
+                        $logEntries[$key] = $json;
+                    }
                 }
             }
 
             // Resort log entries: latest entries first
             $logEntries = array_reverse($logEntries);
-
-            // Kill off any blank lines
-            $logEntries = array_values(array_filter($logEntries));
         }
 
         return $logEntries;

@@ -87,8 +87,11 @@ class AssetHelper
                     $uploadedAssets[] = $result;
                 }
             } catch (\Throwable $e) {
-                FeedMe::error(null, 'Asset error: ' . $url . ' - ' . $e->getMessage());
-                echo $e->getMessage();
+                if ($field) {
+                    FeedMe::error('`{handle}` - Asset error: `{url}` - `{e}`.', ['url' => $url, 'e' => $e->getMessage(), 'handle' => $field->handle]);
+                } else {
+                    FeedMe::error('Asset error: `{url}` - `{e}`.', ['url' => $url, 'e' => $e->getMessage()]);
+                }
             }
         }
 
@@ -131,7 +134,7 @@ class AssetHelper
                     $uploadedAssets[] = $result;
                 }
             } catch (\Throwable $e) {
-                FeedMe::error(null, 'Base64 error: ' . $fetchedImageWithExtension . ' - ' . $e->getMessage());
+                FeedMe::error('Base64 error: `{url}` - `{e}`.', ['url' => $fetchedImageWithExtension, 'e' => $e->getMessage()]);
                 echo $e->getMessage();
             }
         }

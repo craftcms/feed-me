@@ -128,7 +128,7 @@ class DateHelper
                 return DateTimeHelper::toDateTime($dateTimeString, true, false);
             }
         } catch (\Exception $e) {
-            FeedMe::error(null, 'Date parse error: ' . $value . ' - ' . $e->getMessage());
+            FeedMe::error('Date parse error: `{value}` - `{e}`.', ['value' => $value, 'e' => $e->getMessage()]);
         }
     }
 

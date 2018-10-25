@@ -48,7 +48,9 @@ class Process extends Component
 
     public function beforeProcessFeed($feed, $feedData)
     {
-        FeedMe::info($feed, 'Preparing for feed processing.');
+        FeedMe::$feedName = $feed->name;
+
+        FeedMe::info('Preparing for feed processing.');
 
         if (!$feedData) {
             throw new \Exception(Craft::t('feed-me', 'No data to import.'));
@@ -132,8 +134,7 @@ class Process extends Component
             'feedData' => $feedData,
         ]);
 
-        FeedMe::info($feed, 'Finished preparing for feed processing.');
-        FeedMe::info($feed, 'Starting feed processing.');
+        FeedMe::info('Finished preparing for feed processing.');
 
         return $return;
     }
@@ -153,6 +154,13 @@ class Process extends Component
         //
         // Lets get started!
         //
+
+        $logKey = StringHelper::randomString(20);
+
+        // Save this to session so we don't have to pass it around everywhere.
+        FeedMe::$stepKey = $logKey;
+
+        FeedMe::info('Starting processing of node `#{i}`.', ['i' => ($step + 1)]);
 
         // Set up a model for this Element Type
         $element = $this->_service->setModel($feed);
@@ -188,6 +196,8 @@ class Process extends Component
             }
         }
 
+        FeedMe::info('Match existing element with data `{i}`.', ['i' => json_encode($matchExistingElementData)]);
+
 
         //
         // Check for Add/Update/Delete for existing elements
@@ -214,6 +224,7 @@ class Process extends Component
 
         // If there's an existing matching element
         if ($existingElement) {
+            FeedMe::info('Existing element [`#{id}`]({url}) found.', ['id' => $existingElement->id, 'url' => $existingElement->cpEditUrl]);
 
             // If we're deleting or updating an existing element, we want to focus on that one
             if (DuplicateHelper::isUpdate($feed)) {
@@ -229,17 +240,23 @@ class Process extends Component
 
                 // We've got our special field on this element, and its switched on
                 if ($updateField === '1') {
+                    FeedMe::info('Skipped due to config setting.');
+
                     return;
                 }
             }
 
             // If we're adding only, and there's an existing element - quit now
             if (DuplicateHelper::isAdd($feed, true)) {
+                FeedMe::info('Skipped due to an existing element found, and elements are set to add only.');
+
                 return;
             }
         } else {
             // Have we set to update-only? There are no existing elements, so skip
             if (DuplicateHelper::isUpdate($feed, true)) {
+                FeedMe::info('Skipped due to an existing element not found, and elements are set to update only.');
+
                 return;
             }
 
@@ -247,6 +264,8 @@ class Process extends Component
             // existing elements - thats a problem no matter which option is selected, so don't proceed.
             // Even if Add is selected, we'll end up with duplicates because it can't find existing elements to skip over
             if ($existingElement === false) {
+                FeedMe::info('No existing element mapping data found. Have you ensured you\'ve supplied all correct data in your feed?');
+
                 return;
             }
         }
@@ -350,7 +369,9 @@ class Process extends Component
             $element = $event->element;
         }
 
-        FeedMe::debug($feed, $contentData);
+        FeedMe::info('Data ready to import `{i}`.', ['i' => json_encode($contentData)]);
+
+        FeedMe::debug($contentData);
 
         // Save the element
         if ($this->_service->save($contentData, $feed)) {
@@ -366,18 +387,20 @@ class Process extends Component
             ]);
 
             if ($existingElement) {
-                FeedMe::info($feed, $this->_service->displayName() . ' ' . $element->id . ' updated.');
+                FeedMe::info('{name} [`#{id}`]({url}) updated successfully.', ['name' => $this->_service->displayName(), 'id' => $element->id, 'url' => $element->cpEditUrl]);
             } else {
-                FeedMe::info($feed, $this->_service->displayName() . ' ' . $element->id . ' added.');
+                FeedMe::info('{name} [`#{id}`]({url}) added successfully.', ['name' => $this->_service->displayName(), 'id' => $element->id, 'url' => $element->cpEditUrl]);
             }
 
             // Store our successfully processed element for feedback in logs, but also in case we're deleting
             $this->_processedElementIds[] = $element->id;
 
+            FeedMe::info('Finished processing of node `#{i}`.', ['i' => ($step + 1)]);
+
             return $element;
         } else {
             if ($element->getErrors()) {
-                throw new \Exception('Item #' . $step . ' - ' . json_encode($element->getErrors()));
+                throw new \Exception('Node #' . ($step + 1) . ' - ' . json_encode($element->getErrors()));
             } else {
                 throw new \Exception(Craft::t('feed-me', 'Unknown Element saving error occurred.'));
             }
@@ -387,7 +410,7 @@ class Process extends Component
     public function afterProcessFeed($settings, $feed)
     {
         if (DuplicateHelper::isDelete($feed) && DuplicateHelper::isDisable($feed)) {
-            FeedMe::info($feed, "You can't have Delete and Disabled enabled at the same time as an Import Strategy.");
+            FeedMe::info("You can't have Delete and Disabled enabled at the same time as an Import Strategy.");
             return;
         }
 
@@ -404,17 +427,19 @@ class Process extends Component
                 $message = 'The following elements have been deleted: ' . json_encode($elementsToDeleteDisable) . '.';
             }
 
-            FeedMe::info($feed, $message);
-            FeedMe::debug($feed, $message);
+            FeedMe::info($message);
+            FeedMe::debug($message);
         }
 
         // Log the total time taken to process the feed
         $time_end = microtime(true);
         $execution_time = number_format(($time_end - $this->_time_start), 2);
 
+        FeedMe::$stepKey = null;
+
         $message = 'Processing ' . count($this->_processedElementIds) . ' elements finished in ' . $execution_time . 's';
-        FeedMe::info($feed, $message);
-        FeedMe::debug($feed, $message);
+        FeedMe::info($message);
+        FeedMe::debug($message);
 
         // Fire an 'onProcessFeed' event
         $this->_triggerEvent(self::EVENT_AFTER_PROCESS_FEED, [
@@ -438,7 +463,7 @@ class Process extends Component
 
         // Do we even have any data to process?
         if (!$feedData) {
-            FeedMe::debug($feed, 'No feed items to process.');
+            FeedMe::debug('No feed items to process.');
             return;
         }
 
@@ -467,7 +492,11 @@ class Process extends Component
 
     private function _backupBeforeFeed($feed)
     {
+        $logKey = StringHelper::randomString(20);
+
         $limit = FeedMe::$plugin->service->getConfig('backupLimit') ?? 100;
+
+        FeedMe::info('Preparing for database backup.', [], ['key' => $logKey]);
 
         $backupPath = Craft::$app->getPath()->getDbBackupPath();
 
@@ -490,18 +519,22 @@ class Process extends Component
             // If we have any to remove, lets delete them
             if (count($backupsToDelete)) {
                 foreach ($backupsToDelete as $file) {
+                    FeedMe::info('Deleting old backup `{i}`.', ['i' => $file], ['key' => $logKey]);
+
                     FileHelper::unlink($file);
                 }
             }
         }
 
-        FeedMe::info($feed, 'Starting database backup');
+        FeedMe::info('Starting database backup.', [], ['key' => $logKey]);
 
-        $file = $backupPath.'/feedme-'.gmdate('ymd_His').'_'.strtolower(StringHelper::randomString(10)).'.sql';
+        $file = $backupPath . '/feedme-' . gmdate('ymd_His') . '_' . strtolower(StringHelper::randomString(10)) . '.sql';
+
+        FeedMe::info('Limit: `{i}` Path: `{j}`.', ['i' => $limit, 'j' => $file], ['key' => $logKey]);
 
         Craft::$app->getDb()->backupTo($file);
 
-        FeedMe::info($feed, 'Finished database backup');
+        FeedMe::info('Finished database backup successfully.', [], ['key' => $logKey]);
     }
 
     // Function to be recursively called to weed out fields that are set to 'noimport'. More complex than usual by the fact

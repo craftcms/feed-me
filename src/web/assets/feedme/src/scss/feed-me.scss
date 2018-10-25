@@ -468,8 +468,25 @@ body.ltr #feeds .thin.action {
 // ==========================================================================
 
 .feed-me-logs-table {
+    table-layout: fixed;
     font-size: 13px;
     padding-top: 2rem;
+}
+
+.feed-me-logs-table th:nth-child(1) {
+    width: 50px;
+}
+
+.feed-me-logs-table th:nth-child(3) {
+    width: 140px;
+}
+
+.feed-me-logs-table .col-label code {
+    font-size: 80% !important;
+    background: lighten(#a4adb6, 28%);
+    border: 1px lighten(#a4adb6, 23%) solid;
+    padding: 3px 3px;
+    border-radius: 2px;
 }
 
 .log-result {
@@ -487,6 +504,11 @@ body.ltr #feeds .thin.action {
     &.type-error {
         background: #D0021B;
     }
+}
+
+.log-detail-link {
+    float: right;
+    font-size: 80%;
 }
 
 

@@ -154,10 +154,10 @@ class Entry extends Element implements ElementInterface
             $element->typeId = $this->element->typeId;
 
             if (!Craft::$app->getElements()->saveElement($element)) {
-                FeedMe::error(null, 'Entry error: Could not create parent entry - ' . json_encode($element->getErrors()));
+                FeedMe::error('Entry error: Could not create parent - `{e}`.', ['e' => json_encode($element->getErrors())]);
+            } else {
+                FeedMe::info('Entry `#{id}` added.', ['id' => $element->id]);
             }
-
-            FeedMe::info(null, 'Entry ' . $element->id . ' added.');
 
             return $element->id;
         }
@@ -200,10 +200,10 @@ class Entry extends Element implements ElementInterface
             $element->email = $value;
 
             if (!Craft::$app->getElements()->saveElement($element)) {
-                FeedMe::error(null, 'Entry error: Could not create author - ' . json_encode($element->getErrors()));
+                FeedMe::error('Entry error: Could not create author - `{e}`.', ['e' => json_encode($element->getErrors())]);
+            } else {
+                FeedMe::info('Author `#{id}` added.', ['id' => $element->id]);
             }
-
-            FeedMe::info(null, 'Author ' . $element->id . ' added.');
 
             return $element->id;
         }

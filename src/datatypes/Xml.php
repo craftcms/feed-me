@@ -26,7 +26,7 @@ class Xml extends DataType implements DataTypeInterface
         if (!$response['success']) {
             $error = 'Unable to reach ' . $url . '. Message: ' . $response['error'];
             
-            FeedMe::error($settings, $error);
+            FeedMe::error($error);
             
             return ['success' => false, 'error' => $error];
         }
@@ -40,7 +40,7 @@ class Xml extends DataType implements DataTypeInterface
         } catch (\Exception $e) {
             $error = 'Invalid XML: ' . $e->getMessage();
 
-            FeedMe::error($settings, $error);
+            FeedMe::error($error);
 
             return ['success' => false, 'error' => $error];
         }
@@ -49,7 +49,7 @@ class Xml extends DataType implements DataTypeInterface
         if (!is_array($array)) {
             $error = 'Invalid XML: ' . json_encode($array);
 
-            FeedMe::error($settings, $error);
+            FeedMe::error($error);
 
             return ['success' => false, 'error' => $error];
         }

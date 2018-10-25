@@ -150,10 +150,10 @@ class CalenderEvent extends Element implements ElementInterface
             $element->email = $value;
 
             if (!Craft::$app->getElements()->saveElement($element)) {
-                FeedMe::error(null, 'Event error: Could not create author - ' . json_encode($element->getErrors()));
+                FeedMe::error('Event error: Could not create author - `{e}`.', ['e' => json_encode($element->getErrors())]);
+            } else {
+                FeedMe::info('Author `#{id}` added.', ['id' => $element->id]);
             }
-
-            FeedMe::info(null, 'Author ' . $element->id . ' added.');
 
             return $element->id;
         }
@@ -186,7 +186,7 @@ class CalenderEvent extends Element implements ElementInterface
                 $this->rruleInfo[$attribute] = $ruleValue;
             }
         } catch (\Throwable $e) {
-            FeedMe::error(null, $e->getMessage());
+            FeedMe::error($e->getMessage());
         }
     }
 

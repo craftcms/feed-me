@@ -154,7 +154,9 @@ class Entries extends Field implements FieldInterface
         $element->typeId = $typeId;
 
         if (!Craft::$app->getElements()->saveElement($element)) {
-            FeedMe::error(null, 'Entry error: Could not create - ' . json_encode($element->getErrors()));
+            FeedMe::error('`{handle}` - Entry error: Could not create - `{e}`.', ['e' => json_encode($element->getErrors()), 'handle' => $this->field->handle]);
+        } else {
+            FeedMe::info('`{handle}` - Entry `#{id}` added.', ['id' => $element->id, 'handle' => $this->field->handle]);
         }
 
         return $element->id;

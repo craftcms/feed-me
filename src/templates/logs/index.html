@@ -23,21 +23,59 @@
 
         <tbody>
             {% for logEntry in logEntries %}
+                {% set hasChildErrors = false %}
+
+                {% if logEntry.items is defined %}
+                    {% for subEntry in logEntry.items %}
+                        {% if subEntry.type == 'error' %}
+                            {% set hasChildErrors = true %}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+
                 <tr>
                     <td class="col-label" data-title="{{ 'Result' | t('feed-me') }}">
-                        <span class="log-result type-{{ logEntry.type }}">{{ logEntry.type }}</span>
+                        {% if hasChildErrors %}
+                            <span class="log-result type-error">{{ 'error' | t('feed-me') }}</span>
+                        {% else %}
+                            <span class="log-result type-{{ logEntry.type }}">{{ logEntry.type }}</span>
+                        {% endif %}
                     </td>
 
                     <td class="col-label" data-title="{{ 'Message' | t('feed-me') }}">
-                        <span class="">{{ logEntry.message }}</span>
+                        {{ logEntry.message | md | striptags('<code><strong><a>') | raw }}
+
+                        {% if logEntry.items is defined %}
+                            <a class="log-detail-link" href="#" data-key="{{ logEntry.key }}">Show detail</a>
+                        {% endif %}
                     </td>
 
-                    <td data-title="{{ 'Timestamp' | t('feed-me') }}" style="width: 140px;">
+                    <td data-title="{{ 'Timestamp' | t('feed-me') }}">
                         <code>
                             {{ logEntry.date | date('short') ~ ' ' ~ logEntry.date | time('short') }}
                         </code>
                     </td>
                 </tr>
+
+                {% if logEntry.items is defined %}
+                    {% for subEntry in logEntry.items %}
+                        <tr class="hidden sub-items" data-key="{{ subEntry.key }}">
+                            <td class="col-label" data-title="{{ 'Result' | t('feed-me') }}">
+                                <span class="log-result type-{{ subEntry.type }}">{{ subEntry.type }}</span>
+                            </td>
+
+                            <td class="col-label" data-title="{{ 'Message' | t('feed-me') }}">
+                                &rdsh; {{ subEntry.message | md | striptags('<code><strong><a>') | raw }}
+                            </td>
+
+                            <td data-title="{{ 'Timestamp' | t('feed-me') }}">
+                                <code>
+                                    {{ subEntry.date | date('short') ~ ' ' ~ subEntry.date | time('short') }}
+                                </code>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
             {% endfor %}
         </tbody>
     </table>

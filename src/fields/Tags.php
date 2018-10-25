@@ -106,7 +106,9 @@ class Tags extends Field implements FieldInterface
         $element->groupId = $groupId;
 
         if (!Craft::$app->getElements()->saveElement($element)) {
-            FeedMe::error(null, 'Tag error: Could not create - ' . json_encode($element->getErrors()));
+            FeedMe::error('`{handle}` - Tag error: Could not create - `{e}`.', ['e' => json_encode($element->getErrors()), 'handle' => $this->field->handle]);
+        } else {
+            FeedMe::info('`{handle}` - Tag `#{id}` added.', ['id' => $element->id, 'handle' => $this->field->handle]);
         }
 
         return $element->id;

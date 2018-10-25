@@ -105,7 +105,7 @@ class HelpController extends Controller
             $zip = new ZipArchive();
 
             if ($zip->open($zipPath, ZipArchive::CREATE) !== true) {
-                throw new Exception('Cannot create zip at '.$zipPath);
+                throw new Exception('Cannot create zip at ' . $zipPath . '.');
             }
 
             //
@@ -144,11 +144,11 @@ class HelpController extends Controller
 
                     $zip->addFile($tempFileSettings, 'backups/'.pathinfo($tempFileSettings, PATHINFO_BASENAME));
                 } catch (\Throwable $e) {
-                    $noteError = "\n\nError adding database to help request: ".$e->getMessage();
+                    $noteError = "\n\nError adding database to help request: `".$e->getMessage() . '`.';
                     $requestParamDefaults['note'] .= $noteError;
                     $requestParams['note'] .= $noteError;
 
-                    FeedMe::error(null, $noteError);
+                    FeedMe::error($noteError);
                 }
             }
 
@@ -165,11 +165,11 @@ class HelpController extends Controller
 
                     $zip->addFile($tempFileFeed, 'feed/'.pathinfo($tempFileFeed, PATHINFO_BASENAME));
                 } catch (\Throwable $e) {
-                    $noteError = "\n\nError adding feed to help request: ".$e->getMessage();
+                    $noteError = "\n\nError adding feed to help request: `".$e->getMessage() . '`.';
                     $requestParamDefaults['note'] .= $noteError;
                     $requestParams['note'] .= $noteError;
 
-                    FeedMe::error(null, $noteError);
+                    FeedMe::error($noteError);
                 }
             }
 
@@ -212,11 +212,11 @@ class HelpController extends Controller
                         $zip->addFile($tempFileFields, 'fields/'.pathinfo($tempFileFields, PATHINFO_BASENAME));
                     }
                 } catch (\Throwable $e) {
-                    $noteError = "\n\nError adding field into to help request: ".$e->getMessage();
+                    $noteError = "\n\nError adding field into to help request: `".$e->getMessage() . '`.';
                     $requestParamDefaults['note'] .= $noteError;
                     $requestParams['note'] .= $noteError;
 
-                    FeedMe::error(null, $noteError);
+                    FeedMe::error($noteError);
                 }
             }
 
@@ -247,11 +247,11 @@ class HelpController extends Controller
                 FileHelper::unlink($tempFileFields);
             }
         } catch (\Throwable $e) {
-            FeedMe::info(null, 'Tried to attach debug logs to a support request and something went horribly wrong: '.$e->getMessage());
+            FeedMe::info('Tried to attach debug logs to a support request and something went horribly wrong: `'.$e->getMessage() . '`.');
 
             // There was a problem zipping, so reset the params and just send the email without the attachment.
             $requestParams = $requestParamDefaults;
-            $requestParams['note'] .= "\n\nError attaching zip: ".$e->getMessage();
+            $requestParams['note'] .= "\n\nError attaching zip: `".$e->getMessage() . '`.';
         }
 
         $guzzleClient = Craft::createGuzzleClient(['timeout' => 120, 'connect_timeout' => 120]);
@@ -259,7 +259,7 @@ class HelpController extends Controller
         try {
             $guzzleClient->post('https://support.verbb.io/api/get-help', [ 'json' => $requestParams ]);
         } catch (\Throwable $e) {
-            FeedMe::error(null, (string)$e->getresponse()->getBody());
+            FeedMe::error('`' . (string)$e->getresponse()->getBody() . '`');
 
             return $this->renderTemplate('feed-me/help/response', [
                 'widgetId' => $widgetId,

@@ -110,17 +110,17 @@ abstract class Field extends Component
 
             $element->setFieldValues($fieldContent);
 
-            FeedMe::debug($this->feed, [
+            FeedMe::debug([
                 $this->fieldHandle => [
                     $elementId => $fieldContent,
                 ]
             ]);
 
             if (!$elementsService->saveElement($element)) {
-                FeedMe::error($this->feed, 'Unable to save sub-field: ' . json_encode($element->getErrors()));
+                FeedMe::error('`{handle}` - Unable to save sub-field: `{e}`.', ['e' => json_encode($element->getErrors()), 'handle' => $this->fieldHandle]);
             }
 
-            FeedMe::info($this->feed, 'Processed ' . $element->displayName() . ' ' . $elementId . '  sub-fields with content: ' . json_encode($fieldContent));
+            FeedMe::info('`{handle}` - Processed {name} [`#{id}`]({url}) sub-fields with content: `{content}`.', ['name' => $element->displayName(), 'id' => $elementId, 'url' => $element->cpEditUrl, 'handle' => $this->fieldHandle, 'content' => json_encode($fieldContent)]);
         }
     }
 

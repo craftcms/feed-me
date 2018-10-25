@@ -169,9 +169,16 @@ $(function() {
     });
 
 
+    //
+    // Logs
+    //
+    $(document).on('click', '.log-detail-link', function(e) {
+        e.preventDefault();
 
+        var key = $(this).data('key');
 
-
+        $('tr[data-key="' + key + '"]').toggleClass('hidden');
+    });
 
     // Allow multiple submit actions, that trigger different actions as required
     $(document).on('click', 'input[data-action]', function(e) {

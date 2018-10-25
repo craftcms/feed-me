@@ -19,42 +19,29 @@ trait PluginTrait
     // Static Properties
     // =========================================================================
 
-    /**
-     * @var FeedMe
-     */
     public static $plugin;
+
+    // Keeping state for logging
+    public static $feedName;
+    public static $stepKey;
 
 
     // Static Methods
     // =========================================================================
 
-    public static function error($feed = null, $message, array $params = [])
+    public static function error($message, $params = [], $options = [])
     {
-        if (isset($feed['name'])) {
-            $message = $feed['name'] . ': ' . $message;
-        }
-
-        $message = Craft::t('feed-me', $message, $params);
-
-        FeedMe::$plugin->getLogs()->log($message, __METHOD__);
-        Craft::error($message, __METHOD__);
+        FeedMe::$plugin->getLogs()->log(__METHOD__, $message, $params, $options);
     }
 
-    public static function info($feed = null, $message, array $params = [])
+    public static function info($message, $params = [], $options = [])
     {
-        if (isset($feed['name'])) {
-            $message = $feed['name'] . ': ' . $message;
-        }
-
-        $message = Craft::t('feed-me', $message, $params);
-
-        FeedMe::$plugin->getLogs()->log($message, __METHOD__);
-        Craft::info($message, __METHOD__);
+        FeedMe::$plugin->getLogs()->log(__METHOD__, $message, $params, $options);
     }
 
-    public static function debug($feed = null, $message)
+    public static function debug($message, $params = [])
     {
-        if (isset($feed['debug'])) {
+        if (Craft::$app->getRequest()->getSegment(-1) === 'debug') {
             echo "<pre>";
             print_r($message);
             echo "</pre>";
@@ -99,6 +86,10 @@ trait PluginTrait
     {
         return $this->get('service');
     }
+
+
+    // Private Methods
+    // =========================================================================
 
     private function _setPluginComponents()
     {
