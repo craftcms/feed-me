@@ -332,7 +332,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
             $limit = craft()->config->get('backupLimit', 'feedMe') ? craft()->config->get('backupLimit', 'feedMe') : 100;
 
             // Check for any existing backups, if more than our limit, we need to kill some off...
-            $currentBackups = glob(craft()->path->getDbBackupPath() . 'feedme-*.sql');
+            $currentBackups = glob(craft()->path->getDbBackupPath() . '*.sql');
 
             // Remove all the previous backups, except the amount we want to limit
             $backupsToDelete = array();
