@@ -1,5 +1,13 @@
 [
     {
+        "version": "2.0.16",
+        "downloadUrl": "https://github.com/verbb/feed-me/archive/2.0.16.zip",
+        "date": "2018-10-26T00:00:00+10:00",
+        "notes": [
+            "[Fixed] Fix backups not being deleted when past their defined limit."
+        ]
+    },
+    {
         "version": "2.0.15",
         "downloadUrl": "https://github.com/verbb/feed-me/archive/2.0.15.zip",
         "date": "2018-10-24T01:00:00+10:00",
