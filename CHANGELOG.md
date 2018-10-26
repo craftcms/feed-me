@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.0.0-beta.25 - 2018-10-26
+
+### Changed
+- All new logging! More logging and more details.
+
+### Fixed
+- Fixed an error with Super Table fields (thanks @jaydensmith).
+
 ## 3.0.0-beta.24 - 2018-10-24
 
 ### Changed
@@ -12,7 +20,6 @@
 - Add array-handling to default fields, preventing errors like `trim()`, etc.
 - Add some conditionals to migration from Craft 2 > 3.
 - Fix template error when updating Craft 2 > 3.
-
 
 ## 3.0.0-beta.23 - 2018-10-23
 
