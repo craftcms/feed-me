@@ -36,6 +36,7 @@ class SuperTable extends Field implements FieldInterface
     {
         $preppedData = [];
         $fieldData = [];
+        $complexFields = [];
 
         $blockTypeId = Hash::get($this->fieldInfo, 'blockTypeId');
         $fields = Hash::get($this->fieldInfo, 'fields');
@@ -97,22 +98,20 @@ class SuperTable extends Field implements FieldInterface
         // They have their mapping setup on sub-fields, and need to be processed all together, which we've already prepared.
         // Additionally, we only want to supply each field with a sub-set of data related to that specific block and field
         // otherwise, we get the field class processing all blocks in one go - not what we want.
-        if (isset($complexFields)) {
-            foreach ($complexFields as $key => $complexInfo) {
-                $parts = explode('.', $key);
-                $blockIndex = $parts[0];
-                $subFieldHandle = $parts[1];
+        foreach ($complexFields as $key => $complexInfo) {
+            $parts = explode('.', $key);
+            $blockIndex = $parts[0];
+            $subFieldHandle = $parts[1];
 
-                $subFieldInfo = Hash::get($complexInfo, 'info');
-                $nodePaths = Hash::get($complexInfo, 'data');
+            $subFieldInfo = Hash::get($complexInfo, 'info');
+            $nodePaths = Hash::get($complexInfo, 'data');
 
-                $parsedValue = $this->_parseSubField($nodePaths, $subFieldHandle, $subFieldInfo);
+            $parsedValue = $this->_parseSubField($nodePaths, $subFieldHandle, $subFieldInfo);
 
-                if (isset($fieldData[$key])) {
-                    $fieldData[$key] = array_merge_recursive($fieldData[$key], $parsedValue);
-                } else {
-                    $fieldData[$key] = $parsedValue;
-                }
+            if (isset($fieldData[$key])) {
+                $fieldData[$key] = array_merge_recursive($fieldData[$key], $parsedValue);
+            } else {
+                $fieldData[$key] = $parsedValue;
             }
         }
 
