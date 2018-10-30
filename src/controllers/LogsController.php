@@ -15,6 +15,9 @@ class LogsController extends Controller
     {
         $logEntries = FeedMe::$plugin->logs->getLogEntries();
 
+        // Limit to 300 for UI
+        $logEntries = array_slice($logEntries, 0, 300);
+
         return $this->renderTemplate('feed-me/logs/index', [
             'logEntries' => $logEntries,
         ]);
