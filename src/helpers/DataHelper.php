@@ -33,7 +33,7 @@ class DataHelper
         $node = Hash::get($fieldInfo, 'node');
         $default = Hash::get($fieldInfo, 'default');
 
-        $dataDelimiter = FeedMe::$plugin->service->getConfig('dataDelimiter') ?? '|';
+        $dataDelimiter = FeedMe::$plugin->service->getConfig('dataDelimiter') ?? '-|-';
 
         // Some fields require array, or multiple values like Elements, Checkboxes, etc, and we need to parse them differently.
         // Firstly, field mapping is setup like `MatrixBlock/Images` but actual feed is structured like `MatrixBlock/0/Images/0`.
@@ -74,7 +74,7 @@ class DataHelper
         $node = Hash::get($fieldInfo, 'node');
         $default = Hash::get($fieldInfo, 'default');
 
-        $dataDelimiter = FeedMe::$plugin->service->getConfig('dataDelimiter') ?? '|';
+        $dataDelimiter = FeedMe::$plugin->service->getConfig('dataDelimiter') ?? '-|-';
 
         // Some fields require array, or multiple values like Elements, Checkboxes, etc, and we need to parse them differently.
         // Firstly, field mapping is setup like `MatrixBlock/Images` but actual feed is structured like `MatrixBlock/0/Images/0`.
