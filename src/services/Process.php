@@ -331,12 +331,20 @@ class Process extends Component
 
         // Now we've fully prepped our element, one last final check each attribute and field for Twig shorthand to parse
         // We have to do this at the end, separately so we've got full access to the prepped element content
-        foreach ($attributeData as $key => $value) {
-            $attributeData[$key] = DataHelper::parseFieldDataForElement($value, $element);
-        }
+        $parseTwig = FeedMe::$plugin->service->getConfig('parseTwig') ?? [];
 
-        foreach ($fieldData as $key => $value) {
-            $fieldData[$key] = DataHelper::parseFieldDataForElement($value, $element);
+        if ($parseTwig) {
+            foreach ($attributeData as $key => $value) {
+                if (in_array($key, $parseTwig)) {
+                    $attributeData[$key] = DataHelper::parseFieldDataForElement($value, $element);
+                }
+            }
+
+            foreach ($fieldData as $key => $value) {
+                if (in_array($key, $parseTwig)) {
+                    $fieldData[$key] = DataHelper::parseFieldDataForElement($value, $element);
+                }
+            }
         }
 
         // Set the attributes and fields again
