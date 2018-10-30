@@ -57,7 +57,7 @@
 
         {% for field in craft.app.fields.getAllFields() %}
             {% if className(field) in supportedFieldTypes %}
-                {% set matchAttributes = matchAttributes | merge({ (field.handle): field.name }) %}
+                {% set matchAttributes = matchAttributes | merge({ ('field_' ~ field.handle): field.name }) %}
             {% endif %}
         {% endfor %}
 
