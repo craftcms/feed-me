@@ -1,0 +1,102 @@
+[
+    {
+        "title": "Get Started",
+        "children": [
+            "get-started/installation-setup",
+            "get-started/requirements",
+            "get-started/configuration"
+        ]
+    },
+    {
+        "title": "Feature Tour",
+        "children": [
+            "feature-tour/feed-overview",
+            "feature-tour/creating-your-feed",
+            "feature-tour/field-mapping",
+            "feature-tour/importing-your-content",
+            "feature-tour/trigger-import-via-cron",
+            "feature-tour/using-in-your-templates"
+        ]
+    },
+    {
+        "title": "Content Mapping",
+        "children": [
+            {
+                "title": "Element Types",
+                "children": [
+                    "content-mapping/element-types/assets",
+                    "content-mapping/element-types/categories",
+                    "content-mapping/element-types/craft-commerce-products",
+                    "content-mapping/element-types/element-types",
+                    "content-mapping/element-types/entries",
+                    "content-mapping/element-types/users"
+                ]
+            },
+            "content-mapping/field-types"
+        ]
+    },
+    {
+        "title": "Developers",
+        "children": [
+            "developers/events-reference",
+            "developers/hooks-reference",
+            "developers/field-types",
+            "developers/element-types",
+            "developers/data-types"
+        ]
+    },
+    {
+        "title": "Guides",
+        "children": [
+            {
+                "title": "Importing Entries",
+                "children": [
+                    "guides/importing-entries/setup-your-feed",
+                    "guides/importing-entries/field-mapping",
+                    "guides/importing-entries/importing-your-content"
+                ]
+            },
+            {
+                "title": "Importing Commerce Products",
+                "children": [
+                    "guides/importing-commerce-products/setup-your-feed",
+                    "guides/importing-commerce-products/field-mapping",
+                    "guides/importing-commerce-products/importing-your-content"
+                ]
+            },
+            {
+                "title": "Importing Commerce Variants",
+                "children": [
+                    "guides/importing-commerce-variants/setup-your-feed",
+                    "guides/importing-commerce-variants/field-mapping",
+                    "guides/importing-commerce-variants/importing-your-content"
+                ]
+            },
+            {
+                "title": "Importing into Matrix",
+                "children": [
+                    "guides/importing-into-matrix/setup-your-feed",
+                    "guides/importing-into-matrix/field-mapping",
+                    "guides/importing-into-matrix/importing-your-content"
+                ]
+            },
+            "guides/migrating-from-expressionengine",
+            "guides/migrating-from-wordpress",
+            "guides/updating-from-1-x-x"
+        ]
+    },
+    {
+        "title": "Support",
+        "children": [
+            {
+                "title": "Troubleshooting",
+                "children": [
+                    "support/troubleshooting/logging",
+                    "support/troubleshooting/debugging"
+                ]
+            },
+            "support/get-support",
+            "support/faqs"
+        ]
+    }
+]
