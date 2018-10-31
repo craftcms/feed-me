@@ -41,6 +41,10 @@ trait PluginTrait
 
     public static function debug($message, $params = [])
     {
+        if (Craft::$app->getRequest()->getIsConsoleRequest()) {
+            return;
+        }
+
         if (Craft::$app->getRequest()->getSegment(-1) === 'debug') {
             echo "<pre>";
             print_r($message);
