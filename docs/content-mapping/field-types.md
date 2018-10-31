@@ -11,6 +11,7 @@ Accepts single or multiple values. You should supply the filename only, excludin
 - Upload remote asset (choose how to handle existing assets - Replace/Keep/Ignore)
 - [Inner-element fields](/craft-plugins/feed-me/docs/content-mapping/field-types#inner-element-fields)
 
+:::code
 ```xml
 <Asset>my_filename.jpg</Asset>
 
@@ -60,6 +61,7 @@ Accepts single or multiple values. You should supply the filename only, excludin
     ]
 }
 ```
+:::
 
 ### Categories
 
@@ -74,6 +76,7 @@ Accepts single or multiple values.
 - ID
 - Slug
 
+:::code
 ```xml
 <Category>My Category</Category>
 
@@ -97,11 +100,13 @@ Accepts single or multiple values.
     ]
 }
 ```
+:::
 
 ### Checkboxes
 
 Accepts single or multiple values. You must provide the Value of the option to check, not the Label.
 
+:::code
 ```xml
 <Checkbox>option1</Checkbox>
 
@@ -125,11 +130,13 @@ Accepts single or multiple values. You must provide the Value of the option to c
     ]
 }
 ```
+:::
 
 ### Color
 
 Accepts a single valid Colour value - usually in Hexadecimal.
 
+:::code
 ```xml
 <Color>#ffffff</Color>
 ```
@@ -139,10 +146,12 @@ Accepts a single valid Colour value - usually in Hexadecimal.
     "Color": "#ffffff"
 }
 ```
+:::
 
 ### Date/Time
 Accepts a single valid date and time string. Supports many different formats, using PHP's [date\_parse](http://php.net/manual/en/function.date-parse.php) function.
 
+:::code
 ```xml
 <Date>Tue, 24 Feb 2015 09:00:53 +0000</Date>
 <Date>2015-02-24 09:00:53</Date>
@@ -162,11 +171,13 @@ Accepts a single valid date and time string. Supports many different formats, us
     "Date": "02/24/2015"
 }
 ```
+:::
 
 ### Dropdown
 
 Accepts a single value. You must provide the Value of the option to select, not the Label.
 
+:::code
 ```xml
 <Dropdown>option2</Dropdown>
 ```
@@ -176,6 +187,7 @@ Accepts a single value. You must provide the Value of the option to select, not 
     "Dropdown": "option2"
 }
 ```
+:::
 
 ### Entries
 Accepts single or multiple values.
@@ -189,6 +201,7 @@ Accepts single or multiple values.
 - ID
 - Slug
 
+:::code
 ```xml
 <Entry>My Entry</Entry>
 
@@ -212,11 +225,13 @@ Accepts single or multiple values.
     ]
 }
 ```
+:::
 
 ### Lightswitch
 
 Accepts a single value. Can be provided as any boolean-like string.
 
+:::code
 ```xml
 // 1/0
 <Lightswitch>1</Lightswitch>
@@ -244,6 +259,7 @@ Accepts a single value. Can be provided as any boolean-like string.
     "Lightswitch": "Yes"
 }
 ```
+:::
 
 ### Matrix
 
@@ -253,6 +269,7 @@ Check out [Importing into Matrix](/craft-plugins/feed-me/docs/guides/importing-i
 
 Accepts single or multiple values. You must provide the Value of the option to select, not the Label.
 
+:::code
 ```xml
 <MultiSelect>option1</MultiSelect>
 
@@ -276,11 +293,13 @@ Accepts single or multiple values. You must provide the Value of the option to s
     ]
 }
 ```
+:::
 
 ### Number
 
 Accepts a single value.
 
+:::code
 ```xml
 <Number>10</Number>
 ```
@@ -290,11 +309,13 @@ Accepts a single value.
     "Number": "10"
 }
 ```
+:::
 
 ### Plain Text
 
 Accepts a single value.
 
+:::code
 ```xml
 <PlainText>Lorem ipsum dolor sit amet</PlainText>
 ```
@@ -304,6 +325,7 @@ Accepts a single value.
     "PlainText": "Lorem ipsum dolor sit amet"
 }
 ```
+:::
 
 ### Position Select
 
@@ -316,6 +338,7 @@ Accepts a single or multiple values. Should provide from the below options:
 - `drop-left`
 - `drop-right`
 
+:::code
 ```xml
 <Position>right</Position>
 
@@ -339,11 +362,13 @@ Accepts a single or multiple values. Should provide from the below options:
     ]
 }
 ```
+:::
 
 ### Radio Buttons
 
 Accepts a single value. You must provide the Value of the option to select, not the Label.
 
+:::code
 ```xml
 <Radio>option2</Radio>
 ```
@@ -353,11 +378,13 @@ Accepts a single value. You must provide the Value of the option to select, not 
     "Radio": "option2"
 }
 ```
+:::
 
 ### Rich Text
 
 Accepts a single value. Be sure to escape your content properly if it contains HTML.
 
+:::code
 ```xml
 <RichText><![CDATA[<p>Lorem ipsum dolor sit amet.</p>]]></RichText>
 ```
@@ -367,11 +394,13 @@ Accepts a single value. Be sure to escape your content properly if it contains H
     "RichText": "<p>Lorem ipsum dolor sit amet.</p>"
 }
 ```
+:::
 
 ### Table
 
 Each Table field row has multiple columns, so you map each field value to a column, rather than the entire Table field. You also group your columns into rows, as shown below.
 
+:::code
 ```xml
 <Table>
     <Row>
@@ -397,6 +426,7 @@ Each Table field row has multiple columns, so you map each field value to a colu
     }]
 }
 ```
+:::
 
 ### Tags
 
@@ -407,6 +437,7 @@ Accepts single or multiple values.
 - Create tag if it does not exist
 - [Inner-element fields](/craft-plugins/feed-me/docs/content-mapping/field-types#inner-element-fields)
 
+:::code
 ```xml
 <Tag>My Tag</Tag>
 
@@ -430,6 +461,7 @@ Accepts single or multiple values.
     ]
 }
 ```
+:::
 
 ### Users
 
@@ -445,6 +477,7 @@ Accepts single or multiple values.
 - Username
 - Full Name
 
+:::code
 ```xml
 <User>123@nothing.com</User>
 
@@ -468,6 +501,7 @@ Accepts single or multiple values.
     ]
 }
 ```
+:::
 
 ## Third Party
 
@@ -482,7 +516,7 @@ What this means in practical terms, is that your feed data can provide the ID, T
 
 For instance, look at the following example feed data we want to import into a Categories field:
 
-
+:::code
 ```xml
 // Title provided
 <Category>My Category</Category>
@@ -510,6 +544,7 @@ For instance, look at the following example feed data we want to import into a C
     "Category": "23"
 }
 ```
+:::
 
 Depending on what data your feed contains, you'll need to select the appropriate attribute, to tell Feed Me how to deal with your data.
 
