@@ -1,5 +1,19 @@
 # Changelog
 
+## 3.0.0-beta.26 - 2018-11-01
+
+### Changed
+- Limit logs entries in the UI to 300.
+- Switch `dataDelimiter` from `|` to `-|-` - causing too many issues with Twig.
+- Twig parsing in field content or default values is now opt-in. Use an array of field handles or attribute handles in a config setting `parseTwig`.
+
+### Fixed
+- Fix error when trying to match against custom field in category, entry and user fields.
+- Allow to map against Preparse element field content.
+- Fix missing FeedMe class definitions.
+- Protect debug output from console requests.
+- Fix element field matching.
+
 ## 3.0.0-beta.25 - 2018-10-26
 
 ### Changed
