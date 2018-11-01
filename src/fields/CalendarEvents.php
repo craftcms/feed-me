@@ -66,13 +66,22 @@ class CalendarEvents extends Field implements FieldInterface
                 $foundElements = $value;
                 break;
             }
+
+            // Because we can match on element attributes and custom fields, AND we're directly using SQL
+            // queries in our `where` below, we need to check if we need a prefix for custom fields accessing
+            // the content table.
+            $columnName = $match;
+
+            if (Craft::$app->getFields()->getFieldByHandle($match)) {
+                $columnName = Craft::$app->getFields()->oldFieldColumnPrefix . $match;
+            }
             
             $query = EventElement::find();
 
             $criteria['status'] = null;
             $criteria['typeId'] = $typeIds;
             $criteria['limit'] = $limit;
-            $criteria[$match] = ['=', Db::escapeParam($dataValue)];
+            $criteria['where'] = ['=', $columnName, $dataValue];
 
             Craft::configure($query, $criteria);
 
