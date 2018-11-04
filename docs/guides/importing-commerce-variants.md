@@ -10,7 +10,7 @@ Looking to import products without Variants? Have a look at the [Importing Comme
 
 The below data is what we'll use for this guide:
 
-+++xmltojson
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <products>
     <product>
@@ -89,7 +89,7 @@ The below data is what we'll use for this guide:
         </variants>
     </product>
 </products>
-+++
+```
 
 #### Things to note
 

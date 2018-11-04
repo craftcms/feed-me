@@ -24,7 +24,7 @@ Its important to set the Feed Type to match the type of data you're importing. W
 
 ![Feedme Setup 4](/uploads/plugins/feed-me/feedme-setup-4.png)
 
-+++xmltojson
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <rss>
     <channel>
@@ -39,7 +39,7 @@ Its important to set the Feed Type to match the type of data you're importing. W
         </item>
     </channel>
 </rss>
-+++
+```
 
 Your Primary Element would be `item`. This is the node thats repeatable, and you can usually pick it as it'll be the node thats one level above the content you want to import (`title` and `slug` in this case). In the JSON example, you'll see its a plain array, but the same applies.
 

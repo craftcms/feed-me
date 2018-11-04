@@ -16,7 +16,7 @@ In this example, we'll be importing 2 Entries, which have a single Matrix field 
 
 The below data is what we'll use for this guide:
 
-+++xmltojson
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <entries>
     <entry>
@@ -90,7 +90,7 @@ The below data is what we'll use for this guide:
         </Matrix>
     </entry>
 </entries>
-+++
+```
 
 ### Note on structure
 
@@ -98,7 +98,7 @@ You'll notice we're using `Matrix` and `MatrixBlock` for the nodes that contain 
 
 For example, you should **not** do:
 
-+++xmltojson
+```xml
 <MatrixContent>
     <RichTextBlock>
         <Copy>Lorem ipsum...</Copy>
@@ -109,11 +109,11 @@ For example, you should **not** do:
         <Image>img_fjords.jpg</Image>
     </ImageBlock>
 </MatrixContent>
-+++
+```
 
 Instead, use the same named node to surround the content for each block:
 
-+++xmltojson
+```xml
 <MatrixContent>
     <MatrixBlock>
         <Copy>Lorem ipsum...</Copy>
@@ -124,7 +124,7 @@ Instead, use the same named node to surround the content for each block:
         <Image>img_fjords.jpg</Image>
     </MatrixBlock>
 </MatrixContent>
-+++
+```
 
 Choose either the XML or JSON (depending on your preference), and save as a file in the root of your public directory. We'll assume its `http://craft.dev/matrix-feed.xml`.
 
