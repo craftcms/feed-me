@@ -3,7 +3,8 @@
     "devDependencies": {
         "markdown-it-deflist": "^2.0.3",
         "vuepress": "^0.11.0",
-        "vuepress-theme-verbbdocs": "^1.0.0"
+        "vuepress-theme-verbbdocs": "^1.0.0",
+        "svg-inline-loader": "^0.8.0"
     },
     "scripts": {
         "docs:dev": "vuepress dev docs",
