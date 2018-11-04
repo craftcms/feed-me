@@ -9,7 +9,7 @@ Looking for a Matrix example? Check out [Import into Matrix](/craft-plugins/feed
 ### Example Feed Data
 The below data is what we'll use for this guide:
 
-```xml
++++xmltojson
 <?xml version="1.0" encoding="UTF-8"?>
 <propertyList>
     <listing>
@@ -99,7 +99,7 @@ The below data is what we'll use for this guide:
         </objects>
     </listing>
 </propertyList>
-```
++++
 
 Choose either the XML or JSON (depending on your preference), and save as a file in the root of your public directory. We'll assume its `http://craft.dev/property-feed.xml`.
 

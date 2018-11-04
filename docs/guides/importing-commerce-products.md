@@ -10,7 +10,7 @@ Looking to import products with multiple Variants? Have a look at the [Importing
 
 The below data is what we'll use for this guide:
 
-```xml
++++xmltojson
 <?xml version="1.0" encoding="UTF-8"?>
 <products>
     <product>
@@ -35,7 +35,7 @@ The below data is what we'll use for this guide:
         <weight>480</weight>
     </product>
 </products>
-```
++++
 
 #### Things to note
 
