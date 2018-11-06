@@ -8,6 +8,7 @@ use verbb\feedme\helpers\DateHelper;
 
 use Craft;
 use craft\base\Component;
+use craft\base\Element as BaseElement;
 use craft\elements\User as UserElement;
 use craft\helpers\Db;
 use craft\helpers\ElementHelper;
@@ -143,9 +144,9 @@ abstract class Element extends Component
 
     public function save($data, $settings)
     {
-        $this->element->fieldLayoutId;
-
         $propogate = isset($settings['siteId']) && $settings['siteId'] ? false : true;
+
+        $this->element->setScenario(BaseElement::SCENARIO_ESSENTIALS);
 
         if (!Craft::$app->getElements()->saveElement($this->element, true, $propogate)) {
             return false;
