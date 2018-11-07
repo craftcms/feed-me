@@ -22,5 +22,3 @@ With Feed Me now installed, you'll be able to access to the plugin settings. Her
 ## Setup
 
 With Feed Me now installed, setup and ready to go, you'll want to [add your first feed](/craft-plugins/feed-me/docs/feature-tour/feed-overview).
-
-
