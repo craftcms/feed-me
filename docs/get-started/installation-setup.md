@@ -1,24 +1,23 @@
 # Installation & Setup
+You can install Feed Me via the plugin store, or through Composer.
 
-Installing Feed Me is as simple as any other Craft plugin - just drop the `feedme` folder in your `craft/plugins` directory and install.
+### Craft Plugin Store
+To install **Feed Me**, navigate to the _Plugin Store_ section of your Craft control panel, search for `Feed Me`, and click the _Try_ button.
 
-## Installation
+### Composer
+You can also add the package to your project using Composer.
 
-1. [Download the latest version](/craft-plugins/feed-me/pricing) of Feed Me and unzip.
-2. Copy the `feedme/` directory into your `craft/plugins/` directory.
-3. Inside the Craft control panel, navigate to _Settings → Plugins_.
-4. Locate the row showing the Feed Me plugin and click _Install_.
+1. Open your terminal and go to your Craft project:
+```
+cd /path/to/project
+```
+2. Then tell Composer to load the plugin:
+```
+composer require verbb/feed-me
+```
+3. In the Control Panel, go to Settings → Plugins and click the “Install” button for Feed Me.
 
-## Settings
+## Licensing
+You can try Feed Me in a development environment for as long as you like. Once your site goes live, you are required to purchase a license for the plugin.
 
-With Feed Me now installed, you'll be able to access to the plugin settings. Here you can:
-
-- **Plugin name** - just in case you're not a fan of `Feed Me`.
-- **Cache duration** - used to save request when calling via template tags.
-- **Enabled tabs** - you can enable/disable any tabs in the Feed Me plugin section.
-- **Clear pending tasks** - allowing you to clear out any stuck tasks.
-- **License** - enter in your license key for Pro, or use the always-free version.
-
-## Setup
-
-With Feed Me now installed, setup and ready to go, you'll want to [add your first feed](/craft-plugins/feed-me/docs/feature-tour/feed-overview).
+For more information, see [Craft's Commercial Plugin Licensing](https://docs.craftcms.com/v3/plugins.html#commercial-plugin-licensing).
