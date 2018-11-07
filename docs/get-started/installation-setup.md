@@ -1,4 +1,4 @@
-# Installation & 
+# Installation & Setup
 
 Installing Feed Me is as simple as any other Craft plugin - just drop the `feedme` folder in your `craft/plugins` directory and install.
 
