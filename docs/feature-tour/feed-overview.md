@@ -2,7 +2,7 @@
 
 Go to the main Feed Me section via your CP sidebar menu. You'll be presented with a table listings your saved feed, or none if you've yet to set any up yet.
 
-![Feedme Overview](/uploads/plugins/feed-me/feedme-overview.png)
+![Feedme Overview](/docs/screenshots/feedme-overview.png)
 
 This overview shows the following:
 

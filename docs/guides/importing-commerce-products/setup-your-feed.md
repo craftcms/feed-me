@@ -2,7 +2,7 @@
 
 With your feed data in place, go to Feed Me's main control panel screen, and add a new feed.
 
-![Feedme Matrix Guide Setup](/uploads/plugins/feed-me/feedme-matrix-guide-setup.png)
+![Feedme Matrix Guide Setup](/docs/screenshots/feedme-matrix-guide-setup.png)
 
 Enter the following details:
 

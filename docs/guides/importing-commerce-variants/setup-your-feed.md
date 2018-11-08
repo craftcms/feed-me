@@ -2,7 +2,7 @@
 
 With your feed data in place, go to Feed Me's main control panel screen, and add a new feed.
 
-![Feedme Variants Guide Setup](/uploads/plugins/feed-me/feedme-variants-guide-setup.png)
+![Feedme Variants Guide Setup](/docs/screenshots/feedme-variants-guide-setup.png)
 
 Enter the following details:
 

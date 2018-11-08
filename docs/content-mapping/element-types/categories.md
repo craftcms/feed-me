@@ -2,4 +2,4 @@
 
 When importing into categories, you'll have access to map to the below category attributes. Below this section will list each custom field type attached to that element.
 
-![Category](/uploads/plugins/feed-me/category.png)
+![Category](/docs/screenshots/category.png)

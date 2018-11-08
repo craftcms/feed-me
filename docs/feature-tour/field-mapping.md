@@ -6,7 +6,9 @@ Field Mapping provides an interface to match items in your feed to fields in Cra
 
 You can map data in your feed to the Element ID, which is useful if you know for certain an element you want to update. This can be when updating for content in other locales, or bulk-updating existing items.
 
-**Caution** - do not use this when importing new data. If you're importing your content from another system (Expression Engine, Wordpress, etc), your new content will almost assuredly not have the same ID between systems. This is how Craft's Elements work, and if you specify the wrong Element ID to update, you could be updating the wrong content altogether (an Asset when you meant to update an Entry).
+:::danger
+Do not use this when importing new data. If you're importing your content from another system (Expression Engine, Wordpress, etc), your new content will almost assuredly not have the same ID between systems. This is how Craft's Elements work, and if you specify the wrong Element ID to update, you could be updating the wrong content altogether (an Asset when you meant to update an Entry).
+:::
 
 ### Unique Identifiers
 
@@ -18,7 +20,7 @@ You can set a default value for any field, and depending on the field, this may 
 
 For example, say you're importing Entries - you could set the default value for a Plain Text field to `{title}`, which would use the value for the entry Title, as the default value for the Plain Text field.
 
-![Feedme Mapping](/uploads/plugins/feed-me/feedme-mapping.png)
+![Feedme Mapping](/docs/screenshots/feedme-mapping.png)
 
 You'll see the screenshot above shows three columns. The first is for your Craft field, the second is a dropdown allowing you to select the node in your feed, and the third setting the default value.
 
