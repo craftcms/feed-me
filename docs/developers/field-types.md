@@ -82,7 +82,7 @@ Add as many private or public functions to this class as you like - but you **mu
 
 #### getMappingTemplate
 
-This function returns a HTML template for use on the [Field Mapping](/craft-plugins/feed-me/docs/feature-tour/field-mapping) screen. This is useful if your field type requires special processing, or is more than a simple text-field.
+This function returns a HTML template for use on the [Field Mapping](docs:feature-tour/field-mapping) screen. This is useful if your field type requires special processing, or is more than a simple text-field.
 
 For example, consider the Table field type - mapping data in your feed to the Table field type doesn't make sense. Instead, you want to map data to individual columns in your Table field. The `getMappingTemplate()` function allows you to create your own HTML for your field type.
 

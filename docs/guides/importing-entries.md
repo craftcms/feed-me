@@ -3,7 +3,7 @@
 Importing Entries is one of the more common tasks for Feed Me, but this same guide applies for any other Element Type you wish to import. This guide will serve as a real-world example for importing real estate property listings.
 
 :::tip
-Looking for a Matrix example? Check out [Import into Matrix](/craft-plugins/feed-me/docs/guides/importing-into-matrix).
+Looking for a Matrix example? Check out [Import into Matrix](docs:guides/importing-into-matrix).
 :::
 
 ### Example Feed Data
@@ -105,4 +105,4 @@ Choose either the XML or JSON (depending on your preference), and save as a file
 
 * * *
 
-Let's continue and [Setup your Feed →](/craft-plugins/feed-me/docs/guides/importing-entries/setup-your-feed)
+Let's continue and [Setup your Feed →](docs:guides/importing-entries/setup-your-feed)

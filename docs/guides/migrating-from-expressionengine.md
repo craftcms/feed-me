@@ -27,4 +27,4 @@ http://my.ee.site/export?id=9
 With `id` being the ID of your channel. This template code will loop through all custom fields for this channel, grab the data from the contents table, and output as JSON. Either save the contents of this page as `*.json` file, or save the URL for use with Feed Me.
 
 ### Settings up Feed Me
-Follow the guide to [Importing Entries](/craft-plugins/feed-me/docs/guides/importing-entries), using the URL or file from the previous step.
+Follow the guide to [Importing Entries](docs:guides/importing-entries), using the URL or file from the previous step.

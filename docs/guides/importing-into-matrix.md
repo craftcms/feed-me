@@ -1,6 +1,6 @@
 # Importing into Matrix
 
-Importing into a Matrix field is like many other [Field Types](/craft-plugins/feed-me/docs/content-mapping/field-types), however, this reference provides a practical example of how to structure your feed properly.
+Importing into a Matrix field is like many other [Field Types](docs:content-mapping/field-types), however, this reference provides a practical example of how to structure your feed properly.
 
 In this example, we'll be importing 2 Entries, which have a single Matrix field called Content Builder. The entry itself has a Featured Image `(Assets)` and Description `(Rich Text)` field. Our Page Builder Matrix field has 3 Blocktypes:
 
@@ -130,4 +130,4 @@ Choose either the XML or JSON (depending on your preference), and save as a file
 
 * * *
 
-Let's continue and [Setup your Feed →](/craft-plugins/feed-me/docs/guides/importing-into-matrix/setup-your-feed)
+Let's continue and [Setup your Feed →](docs:guides/importing-into-matrix/setup-your-feed)

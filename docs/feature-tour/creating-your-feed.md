@@ -18,7 +18,7 @@ Provide the URL for your feed. This can be an absolute URL, relative (to the web
 
 ![Feedme Setup 3](/docs/screenshots/feedme-setup-3.png)
 
-Its important to set the Feed Type to match the type of data you're importing. While its optional to pick `RSS` or `ATOM`, you'll find that choosing these options will pre-set the [Primary Element](/craft-plugins/feed-me/docs/feature-tour/creating-your-feed#primary-element) field below.
+Its important to set the Feed Type to match the type of data you're importing. While its optional to pick `RSS` or `ATOM`, you'll find that choosing these options will pre-set the [Primary Element](docs:feature-tour/creating-your-feed#primary-element) field below.
 
 ### Primary Element
 
@@ -91,7 +91,7 @@ A generated, unique string to increase security against imports being run inadve
 
 ![Feedme Setup 9](/docs/screenshots/feedme-setup-9.png)
 
-Enable a backup of your database to be taken on each import. Please note the [performance implications](/craft-plugins/feed-me/docs/support/troubleshooting#performance) when switching this on.
+Enable a backup of your database to be taken on each import. Please note the [performance implications](docs:support/troubleshooting#performance) when switching this on.
 
 * * *
 
@@ -99,6 +99,6 @@ With your fields populated, you should have a final result similar to the below 
 
 ![Feedme Setup](/docs/screenshots/feedme-setup.png)
 
-Click on the _Save & Continue_ button to be taken to the [Field Mapping](/craft-plugins/feed-me/docs/feature-tour/field-mapping) screen, or press _Save_ to continue editing this screen.
+Click on the _Save & Continue_ button to be taken to the [Field Mapping](docs:feature-tour/field-mapping) screen, or press _Save_ to continue editing this screen.
 
 * * *

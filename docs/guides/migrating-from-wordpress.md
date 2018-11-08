@@ -18,4 +18,4 @@ We'll not be covering the ins-and-outs of how to export your content from Wordpr
 
 ### Settings up Feed Me
 
-Follow the guide to [Importing Entries](/craft-plugins/feed-me/docs/guides/importing-entries), using the URL or file from the previous step.
+Follow the guide to [Importing Entries](docs:guides/importing-entries), using the URL or file from the previous step.

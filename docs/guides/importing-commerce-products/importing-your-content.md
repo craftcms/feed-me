@@ -5,7 +5,7 @@ Wait for the feed processing to finish. Remember, you can always navigate away f
 ![Feedme Matrix Guide Start](/docs/screenshots/feedme-matrix-guide-start.png)
 
 :::tip
-If you're having issues, or seeing errors at this point, look at the [Troubleshooting](/craft-plugins/feed-me/docs/support/troubleshooting) section.
+If you're having issues, or seeing errors at this point, look at the [Troubleshooting](docs:support/troubleshooting) section.
 :::
 
 You should now have 2 brand new products in your Clothing product type.

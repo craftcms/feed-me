@@ -8,11 +8,11 @@ Only the [Pro edition](/craft-plugins/feed-me/pricing) of Feed Me supports Asset
 
 ## Native Element Types
 
-- [Assets](/craft-plugins/feed-me/docs/content-mapping/element-types/assets)
-- [Entries](/craft-plugins/feed-me/docs/content-mapping/element-types/entries)
-- [Categories](/craft-plugins/feed-me/docs/content-mapping/element-types/categories)
-- [Users](/craft-plugins/feed-me/docs/content-mapping/element-types/users)
-- [Craft Commerce Products](/craft-plugins/feed-me/docs/content-mapping/element-types/craft-commerce-products)
+- [Assets](docs:content-mapping/element-types/assets)
+- [Entries](docs:content-mapping/element-types/entries)
+- [Categories](docs:content-mapping/element-types/categories)
+- [Users](docs:content-mapping/element-types/users)
+- [Craft Commerce Products](docs:content-mapping/element-types/craft-commerce-products)
 
 ### Third Party Element Types
 

@@ -4,7 +4,7 @@
 Triggering an import via Cron still uses Craft's Task system, so it won't effect the performance of your site.
 :::
 
-Once your feed is configured properly, you can trigger the feed processing directly using a special URL. Find this URL by copying the Direct Feed Link from the [Feed Overview](/craft-plugins/feed-me/docs/feature-tour/feed-overview) screen. You'll receive a URL similar to:
+Once your feed is configured properly, you can trigger the feed processing directly using a special URL. Find this URL by copying the Direct Feed Link from the [Feed Overview](docs:feature-tour/feed-overview) screen. You'll receive a URL similar to:
 
 ```
 http://your.domain/actions/feedMe/feeds/runTask?direct=1&feedId=1&passkey=FwafY5kg3c

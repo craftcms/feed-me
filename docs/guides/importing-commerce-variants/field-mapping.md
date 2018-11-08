@@ -11,4 +11,4 @@ Use the below screenshot as a guide for the data we want to map to our product f
 
 * * *
 
-Click the _Save & Import_ button to start [Importing your Content →](/craft-plugins/feed-me/docs/guides/importing-commerce-variants/importing-your-content)
+Click the _Save & Import_ button to start [Importing your Content →](docs:guides/importing-commerce-variants/importing-your-content)

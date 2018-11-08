@@ -3,7 +3,7 @@
 This guide will serve as a real-world example of importing Commerce Products into [Craft Commerce](http://craftcommerce.com). We'll be importing two T-Shirt products into Commerce, each with their own set of variants. This guide specifically deals with **multiple-variant** products.
 
 :::tip
-Looking to import products without Variants? Have a look at the [Importing Commerce Products](/craft-plugins/feed-me/docs/guides/importing-commerce-products) guide.
+Looking to import products without Variants? Have a look at the [Importing Commerce Products](docs:guides/importing-commerce-products) guide.
 :::
 
 ### Example Feed Data
@@ -102,4 +102,4 @@ Choose either the XML or JSON (depending on your preference), and save as a file
 
 * * *
 
-Let's continue and [Setup your Feed →](/craft-plugins/feed-me/docs/guides/importing-commerce-variants/setup-your-feed)
+Let's continue and [Setup your Feed →](docs:guides/importing-commerce-variants/setup-your-feed)

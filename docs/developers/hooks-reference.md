@@ -13,7 +13,7 @@ public function registerFeedMeFieldTypes()
 }
 ```
 
-Learn more about [Field Types](/craft-plugins/feed-me/docs/developers/field-types).
+Learn more about [Field Types](docs:developers/field-types).
 
 ### registerFeedMeDataTypes
 
@@ -26,7 +26,7 @@ public function registerFeedMeDataTypes()
 }
 ```
 
-Learn more about [Data Types](/craft-plugins/feed-me/docs/developers/data-types).
+Learn more about [Data Types](docs:developers/data-types).
 
 ### registerFeedMeElementTypes
 
@@ -39,4 +39,4 @@ public function registerFeedMeElementTypes()
 }
 ```
 
-Learn more about [Element Types](/craft-plugins/feed-me/docs/developers/element-types).
+Learn more about [Element Types](docs:developers/element-types).

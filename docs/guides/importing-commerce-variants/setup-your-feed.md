@@ -18,4 +18,4 @@ Enter the following details:
 
 * * *
 
-Click the _Save & Continue_ button to proceed to [Field Mapping →](/craft-plugins/feed-me/docs/guides/importing-commerce-variants/field-mapping)
+Click the _Save & Continue_ button to proceed to [Field Mapping →](docs:guides/importing-commerce-variants/field-mapping)
