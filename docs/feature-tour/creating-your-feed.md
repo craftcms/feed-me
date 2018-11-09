@@ -47,6 +47,5 @@ Enable a backup of your database to be taken on each import. Please note the [pe
 
 * * *
 
-Click on the _Save & Continue_ button to be taken to the [Field Mapping](docs:feature-tour/field-mapping) screen, or press _Save_ to continue editing this screen.
+Click on the _Save & Continue_ button to be taken to the [Primary Element](docs:feature-tour/primary-element) screen, or press _Save_ to continue editing this screen.
 
-* * *

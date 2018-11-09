@@ -23,22 +23,16 @@
         "title": "Content Mapping",
         "children": [
             "content-mapping/element-types",
-            "content-mapping/element-types/assets",
-            "content-mapping/element-types/categories",
-            "content-mapping/element-types/craft-commerce-products",
-            "content-mapping/element-types/entries",
-            "content-mapping/element-types/users",
             "content-mapping/field-types"
         ]
     },
     {
         "title": "Developers",
         "children": [
-            "developers/events-reference",
-            "developers/hooks-reference",
             "developers/field-types",
             "developers/element-types",
-            "developers/data-types"
+            "developers/data-types",
+            "developers/events",
         ]
     },
     {

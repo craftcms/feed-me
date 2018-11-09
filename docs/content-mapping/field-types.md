@@ -505,8 +505,17 @@ Accepts single or multiple values.
 
 ## Third Party
 
-- [Smart Map](https://craftpl.us/plugins/smart-map/)
-- [Super Table](https://github.com/engram-design/SuperTable)
+The following third-party fields are supported.
+
+- [Smart Map](https://github.com/doublesecretagency/craft-smartmap)
+- [Simple Map](https://github.com/ethercreative/simplemap)
+- [Super Table](https://verbb.io/craft-plugins/super-table)
+- [Solspace Calendars](https://solspace.com/craft/calendar)
+- [Digital Products](https://github.com/craftcms/digital-products)
+- [Commerce Products](https://docs.craftcms.com/commerce/v2/products-fields.html)
+- [Commerce Variants](https://docs.craftcms.com/commerce/v2/products-fields.html)
+- [Linkit](https://github.com/fruitstudios/linkit)
+- [Typed Link](https://github.com/sebastian-lenz/craft-linkfield)
 
 ## Element Attributes
 
