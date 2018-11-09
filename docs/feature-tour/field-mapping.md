@@ -16,9 +16,11 @@ Its important to select a Unique Identifier for your feed to assist with the Imp
 
 ### Default Value
 
-You can set a default value for any field, and depending on the field, this may be in the form of a text field or a select field. You can also provide a default value using shorthand Twig, referring to other fields in the element you're importing.
+You can set a default value for any field, and depending on the field, this may be in the form of a text field or a select field. You can also provide a default value using shorthand Twig (if you enable `parseTwig` in your [Configuration](docs:get-started/configuration)), referring to other fields in the element you're importing.
 
-For example, say you're importing Entries - you could set the default value for a Plain Text field to `{title}`, which would use the value for the entry Title, as the default value for the Plain Text field.
+:::tip
+Make sure you select the `Use default value` in the "Feed Element" dropdown, otherwise it won't work!
+:::
 
 ![Feedme Mapping](/docs/screenshots/feedme-mapping.png)
 

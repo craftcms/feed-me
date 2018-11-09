@@ -12,6 +12,7 @@
         "children": [
             "feature-tour/feed-overview",
             "feature-tour/creating-your-feed",
+            "feature-tour/primary-element",
             "feature-tour/field-mapping",
             "feature-tour/importing-your-content",
             "feature-tour/trigger-import-via-cron",
