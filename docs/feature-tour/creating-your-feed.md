@@ -12,11 +12,11 @@ Provide the URL for your feed. This can be an absolute URL, relative (to the web
 
 ### Feed Type
 
-Its important to set the Feed Type to match the type of data you're importing. While its optional to pick `RSS` or `ATOM`, you'll find that choosing these options will pre-set the [Primary Element](docs:feature-tour/creating-your-feed#primary-element) field below.
+Set the Feed Type to match the type of data you're importing.
 
 ### Element Type
 
-Select the Element you wish to import your feed content into. For the [Free](/craft-plugins/feed-me/pricing) version, you'll only be able to import into Entries, but [Pro](https://verbb.io/craft-plugins/feed-me/pricing) will allow you to select Assets, Categories, Users, Commerce Products.
+Select the Element you wish to import your feed content into. For the [Free](/craft-plugins/feed-me/pricing) version, you'll only be able to import into Entries, but [Pro](https://verbb.io/craft-plugins/feed-me/pricing) will allow you to select Assets, Categories, Users, Commerce Products and third-party elements.
 
 ### Sites
 
@@ -32,10 +32,10 @@ You can select from any combination of the following:
 
 Attribute | Description
 --- | ---
-Create new elements | Adds new elements if they do not already exist. If an element does exist, it simply skips over it, leaving it unchanged.
-Update existing elements | Updates elements that match the Unique Identifier (next step). If no existing element to update, it won't create it unless you select `Create new elements`.
-Disable missing elements | Disables elements that are not updated by this feed.
-Delete missing elements | Deletes elements that are not updated by this feed. **Be careful when deleting**.
+`Create new elements` | Adds new elements if they do not already exist. If an element does exist, it simply skips over it, leaving it unchanged.
+`Update existing elements` | Updates elements that match the Unique Identifier (next step). If no existing element to update, it won't create it unless you select `Create new elements`.
+`Disable missing elements` | Disables elements that are not updated by this feed.
+`Delete missing elements` | Deletes elements that are not updated by this feed. **Be careful when deleting**.
 
 ### Passkey
 
