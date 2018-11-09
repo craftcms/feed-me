@@ -4,8 +4,6 @@
 
 Feed Me is a Craft plugin for super-simple importing of content, either once-off or at regular intervals. With support for XML, RSS, ATOM, CSV or JSON feeds, you'll be able to import your content as Entries, Categories, Craft Commerce Products (and variants), and more.
 
-![](https://verbb.io/uploads/plugins/navigation/68747470733a2f2f7367.png)
-
 ## Features
 
 - Import data from XML, RSS, ATOM, CSV or JSON feeds, local or remote.
@@ -17,7 +15,8 @@ Feed Me is a Craft plugin for super-simple importing of content, either once-off
 - Database backups before each feed processing.
 - Troubleshoot feed processing issues with logs.
 - Grab feed data directly from your twig templates.
-- Craft 3.0+ compatible.
+ 
+ <img src="https://verbb.io/uploads/plugins/navigation/68747470733a2f2f7367.png" style="box-shadow: 0 4px 16px rgba(0,0,0,0.08); border-radius: 4px; border: 1px solid rgba(0,0,0,0.12);">
  
 ## Documentation
 
