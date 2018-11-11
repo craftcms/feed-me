@@ -20,6 +20,13 @@ use yii\base\Event;
 
 class FeedMe extends Plugin
 {
+    // Public Properties
+    // =========================================================================
+
+    public $schemaVersion = '1.0.0';
+    public $hasCpSettings = true;
+    public $hasCpSection = true;
+
     // Traits
     // =========================================================================
 

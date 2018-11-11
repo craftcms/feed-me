@@ -51,9 +51,6 @@
     "extra": {
         "name": "Feed Me",
         "handle": "feed-me",
-        "schemaVersion": "1.0.0",
-        "hasCpSettings": true,
-        "hasCpSection": true,
         "changelogUrl": "https://raw.githubusercontent.com/verbb/feed-me/craft-3/CHANGELOG.md",
         "class": "verbb\\feedme\\FeedMe"
     }
