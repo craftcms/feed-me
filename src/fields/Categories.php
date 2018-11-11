@@ -41,6 +41,7 @@ class Categories extends Field implements FieldInterface
         $source = Hash::get($this->field, 'settings.source');
         $limit = Hash::get($this->field, 'settings.limit');
         $targetSiteId = Hash::get($this->field, 'settings.targetSiteId');
+        $feedSiteId = Hash::get($this->feed, 'siteId');
         $match = Hash::get($this->fieldInfo, 'options.match', 'title');
         $create = Hash::get($this->fieldInfo, 'options.create');
         $fields = Hash::get($this->fieldInfo, 'fields');
@@ -70,6 +71,8 @@ class Categories extends Field implements FieldInterface
             if (Craft::$app->getIsMultiSite()) {
                 if ($targetSiteId) {
                     $criteria['siteId'] = $targetSiteId;
+                } else if ($feedSiteId) {
+                    $criteria['siteId'] = $feedSiteId;
                 } else {
                     $criteria['siteId'] = Craft::$app->getSites()->getCurrentSite()->id;
                 }
