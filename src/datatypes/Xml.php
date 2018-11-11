@@ -5,6 +5,8 @@ use verbb\feedme\FeedMe;
 use verbb\feedme\base\DataType;
 use verbb\feedme\base\DataTypeInterface;
 
+use Craft;
+
 use Cake\Utility\Hash;
 use Cake\Utility\Xml as XmlParser;
 
@@ -35,10 +37,18 @@ class Xml extends DataType implements DataTypeInterface
 
         // Parse the XML string into an array
         try {
+            // Allow parsing errors to be caught
+            libxml_use_internal_errors(true);
+
             $array = XmlParser::build($data);
             $array = XmlParser::toArray($array);
         } catch (\Exception $e) {
-            $error = 'Invalid XML: ' . $e->getMessage();
+            // Get a more useful error from parsing - if available
+            if ($parseErrors = libxml_get_errors()) {
+                $error = Craft::t('feed-me', 'Invalid XML: {e}: Line #{l}.', ['e' => $parseErrors[0]->message, 'l' => $parseErrors[0]->line]);
+            } else {
+                $error = Craft::t('feed-me', 'Invalid XML: {e}.', ['e' => $e->getMessage()]);
+            }
 
             FeedMe::error($error);
 
