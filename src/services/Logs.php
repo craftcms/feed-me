@@ -62,7 +62,7 @@ class Logs extends Component
         }
     }
 
-    public function getLogEntries(): array
+    public function getLogEntries($type = null): array
     {
         $logEntries = [];
 
@@ -80,6 +80,10 @@ class Logs extends Component
                     $json = json_decode($line, true);
 
                     if (!$json) {
+                        continue;
+                    }
+
+                    if ($type && $json['type'] !== $type) {
                         continue;
                     }
 

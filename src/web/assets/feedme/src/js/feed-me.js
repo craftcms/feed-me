@@ -189,6 +189,12 @@ $(function() {
         $form.submit();
     });
 
+    $(document).on('change', '.log-type-form .select', function(e) {
+        e.preventDefault();
+
+        $(this).parents('form').submit();
+    });
+
     // A nice loading animation on the success page for feeds
     new Craft.FeedMe.TaskProgress();
 

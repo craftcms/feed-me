@@ -470,7 +470,6 @@ body.ltr #feeds .thin.action {
 .feed-me-logs-table {
     table-layout: fixed;
     font-size: 13px;
-    padding-top: 2rem;
 }
 
 .feed-me-logs-table th:nth-child(1) {
@@ -511,6 +510,23 @@ body.ltr #feeds .thin.action {
     font-size: 80%;
 }
 
+.log-type-form {
+    display: inline-flex;
+}
+
+.log-type-form .field {
+    display: inline-flex;
+    margin: 0;
+    align-items: center;
+}
+
+.log-type-form .field .heading {
+    margin: 0;
+}
+
+.log-type-form .field .input {
+    margin: 0 1rem;
+}
 
 
 

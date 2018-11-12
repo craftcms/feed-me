@@ -13,12 +13,14 @@ class LogsController extends Controller
 
     public function actionLogs()
     {
-        $logEntries = FeedMe::$plugin->logs->getLogEntries();
+        $show = Craft::$app->getRequest()->getParam('show');
+        $logEntries = FeedMe::$plugin->logs->getLogEntries($show);
 
         // Limit to 300 for UI
         $logEntries = array_slice($logEntries, 0, 300);
 
         return $this->renderTemplate('feed-me/logs/index', [
+            'show' => $show,
             'logEntries' => $logEntries,
         ]);
     }
