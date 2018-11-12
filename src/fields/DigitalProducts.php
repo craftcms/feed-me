@@ -95,6 +95,8 @@ class DigitalProducts extends Field implements FieldInterface
             $foundElements = array_chunk($foundElements, $limit)[0];
         }
 
+        $foundElements = array_unique($foundElements);
+
         return $foundElements;
     }
 

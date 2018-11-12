@@ -111,6 +111,8 @@ class Users extends Field implements FieldInterface
             $this->populateElementFields($foundElements);
         }
 
+        $foundElements = array_unique($foundElements);
+
         return $foundElements;
     }
 
