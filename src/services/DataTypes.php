@@ -5,6 +5,7 @@ use verbb\feedme\FeedMe;
 use verbb\feedme\base\DataTypeInterface;
 use verbb\feedme\datatypes\Atom;
 use verbb\feedme\datatypes\Csv;
+use verbb\feedme\datatypes\GoogleSheet;
 use verbb\feedme\datatypes\Json;
 use verbb\feedme\datatypes\Rss;
 use verbb\feedme\datatypes\Xml;
@@ -86,6 +87,7 @@ class DataTypes extends Component
             'dataTypes' => [
                 Atom::class,
                 Csv::class,
+                GoogleSheet::class,
                 Json::class,
                 Rss::class,
                 Xml::class,
