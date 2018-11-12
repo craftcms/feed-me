@@ -21,6 +21,7 @@
 {% macro fieldCanBeUniqueId(field) %}
     {%- spaceless %}
         {% set supportedFieldTypes = [
+            'assets',
             'attribute',
             'craft\\fields\\Checkboxes',
             'craft\\fields\\Color',
