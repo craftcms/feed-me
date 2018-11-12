@@ -39,7 +39,7 @@ class Categories extends Field implements FieldInterface
 
         $settings = Hash::get($this->field, 'settings');
         $source = Hash::get($this->field, 'settings.source');
-        $limit = Hash::get($this->field, 'settings.limit');
+        $branchLimit = Hash::get($this->field, 'settings.branchLimit');
         $targetSiteId = Hash::get($this->field, 'settings.targetSiteId');
         $feedSiteId = Hash::get($this->feed, 'siteId');
         $match = Hash::get($this->fieldInfo, 'options.match', 'title');
@@ -89,7 +89,7 @@ class Categories extends Field implements FieldInterface
 
             $criteria['status'] = null;
             $criteria['groupId'] = $groupId;
-            $criteria['limit'] = $limit;
+            $criteria['limit'] = $branchLimit;
             $criteria['where'] = ['=', $columnName, $dataValue];
 
             Craft::configure($query, $criteria);
@@ -107,8 +107,8 @@ class Categories extends Field implements FieldInterface
         }
 
         // Check for field limit - only return the specified amount
-        if ($foundElements && $limit) {
-            $foundElements = array_chunk($foundElements, $limit)[0];
+        if ($foundElements && $branchLimit) {
+            $foundElements = array_chunk($foundElements, $branchLimit)[0];
         }
 
         // Check for any sub-fields for the lement
