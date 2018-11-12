@@ -88,6 +88,17 @@ class Table extends Field implements FieldInterface
             }
         }
 
+        // Make sure each column has values, even if null
+        foreach ($preppedData as $key => $columnData) {
+            if (count($columnData) != count($columns)) {
+                for ($i = 1; $i <= count($columns); $i++) { 
+                    if (!isset($preppedData[$key]['col' . $i])) {
+                        $preppedData[$key]['col' . $i] = null;
+                    }
+                }
+            }
+        }
+
         // Fix keys for columns to be in correct order
         foreach ($preppedData as $key => &$columnData) {
             ksort($columnData, SORT_NATURAL);
