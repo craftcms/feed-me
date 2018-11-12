@@ -345,11 +345,11 @@ class Process extends Component
                     $fieldData[$key] = DataHelper::parseFieldDataForElement($value, $element);
                 }
             }
-        }
 
-        // Set the attributes and fields again
-        $element->setAttributes($attributeData, false);
-        $element->setFieldValues($fieldData);
+            // Set the attributes and fields again
+            $element->setAttributes($attributeData, false);
+            $element->setFieldValues($fieldData);
+        }
 
         // We need to keep these separate to apply to the element but required when matching against existing elements
         $contentData = $attributeData + $fieldData;
