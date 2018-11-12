@@ -107,7 +107,9 @@ class Table extends Field implements FieldInterface
         } else if ($type == 'color') {
             return BaseHelper::parseColor($value);
         } else if ($type == 'date') {
-            return DateTimeHelper::toDateTime($value) ?: null;
+            $parsedValue = DateTimeHelper::toDateTime($value) ?: null;
+            
+            return $this->field->serializeValue($parsedValue);
         } else if ($type == 'lightswitch') {
             return BaseHelper::parseBoolean($value);
         } else if ($type == 'multiline') {
@@ -117,7 +119,9 @@ class Table extends Field implements FieldInterface
         } else if ($type == 'singleline') {
 
         } else if ($type == 'time') {
-            return DateTimeHelper::toDateTime($value) ?: null;
+            $parsedValue = DateTimeHelper::toDateTime($value) ?: null;
+
+            return $this->field->serializeValue($parsedValue);
         }
 
         // Protect against array values
