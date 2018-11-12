@@ -18,33 +18,21 @@ class Service extends Component
 
     public function getConfig($key)
     {
-        $config = Craft::$app->getConfig()->getConfigFromFile('feed-me');
+        $settings = FeedMe::$plugin->getSettings();
 
-        return Hash::get($config, $key);
+        return Hash::get($settings, $key);
     }
 
     public function createGuzzleClient()
     {
-        $configOptions = $this->getConfig('clientOptions');
-
-        $defaultOptions = [];
-
-        $options = Hash::merge($defaultOptions, $configOptions);
+        $options = $this->getConfig('clientOptions');
 
         return Craft::createGuzzleClient($options);
     }
 
     public function getRequestOptions()
     {
-        $configOptions = $this->getConfig('requestOptions');
-
-        $defaultOptions = [
-            'headers' => [
-                'User-Agent' => FeedMe::$plugin->getPluginName(),
-            ]
-        ];
-
-        $options = Hash::merge($defaultOptions, $configOptions);
+        $options = $this->getConfig('requestOptions');
 
         return $options;
     }

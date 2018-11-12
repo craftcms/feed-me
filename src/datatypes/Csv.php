@@ -25,7 +25,7 @@ class Csv extends DataType implements DataTypeInterface
     {
         $response = FeedMe::$plugin->data->getRawData($url);
 
-        $csvColumnDelimiter = FeedMe::$plugin->service->getConfig('csvColumnDelimiter') ?? ',';
+        $csvColumnDelimiter = FeedMe::$plugin->service->getConfig('csvColumnDelimiter');
 
         if (!$response['success']) {
             $error = 'Unable to reach ' . $url . '. Message: ' . $response['error'];

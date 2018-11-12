@@ -331,7 +331,7 @@ class Process extends Component
 
         // Now we've fully prepped our element, one last final check each attribute and field for Twig shorthand to parse
         // We have to do this at the end, separately so we've got full access to the prepped element content
-        $parseTwig = FeedMe::$plugin->service->getConfig('parseTwig') ?? [];
+        $parseTwig = FeedMe::$plugin->service->getConfig('parseTwig');
 
         if ($parseTwig) {
             foreach ($attributeData as $key => $value) {
@@ -502,7 +502,7 @@ class Process extends Component
     {
         $logKey = StringHelper::randomString(20);
 
-        $limit = FeedMe::$plugin->service->getConfig('backupLimit') ?? 100;
+        $limit = FeedMe::$plugin->service->getConfig('backupLimit');
 
         FeedMe::info('Preparing for database backup.', [], ['key' => $logKey]);
 

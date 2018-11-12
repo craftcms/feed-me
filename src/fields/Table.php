@@ -67,7 +67,7 @@ class Table extends Field implements FieldInterface
             }
         }
 
-        $dataDelimiter = FeedMe::$plugin->service->getConfig('dataDelimiter') ?? '-|-';
+        $dataDelimiter = FeedMe::$plugin->service->getConfig('dataDelimiter');
 
         foreach ($parsedData as $rowKey => $row) {
             foreach ($row as $columnKey => $column) {
