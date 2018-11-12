@@ -121,7 +121,7 @@ class Matrix extends Field implements FieldInterface
 
         ksort($fieldData, SORT_NUMERIC);
 
-        $order = 0;
+        // $order = 0;
 
         // New, we've got a collection of prepared data, but its formatted a little rough, due to catering for
         // sub-field data that could be arrays or single values. Lets build our Matrix-ready data
@@ -131,17 +131,17 @@ class Matrix extends Field implements FieldInterface
             $blockHandle = $handles[1];
             $subFieldHandle = $handles[2];
 
-            $disabled = Hash::get($this->fieldInfo, 'blocks.' . $blockHandle . '.disabled');
-            $collapsed = Hash::get($this->fieldInfo, 'blocks.' . $blockHandle . '.collapsed');
+            $disabled = Hash::get($this->fieldInfo, 'blocks.' . $blockHandle . '.disabled', false);
+            $collapsed = Hash::get($this->fieldInfo, 'blocks.' . $blockHandle . '.collapsed', false);
 
             // Prepare an array thats ready for Matrix to import it
             $preppedData[$blockIndex . '.type'] = $blockHandle;
-            $preppedData[$blockIndex . '.order'] = $order;
+            // $preppedData[$blockIndex . '.order'] = $order;
             $preppedData[$blockIndex . '.enabled'] = !$disabled;
             $preppedData[$blockIndex . '.collapsed'] = $collapsed;
             $preppedData[$blockIndex . '.fields.' . $subFieldHandle] = $value;
 
-            $order++;
+            // $order++;
         }
 
         $preppedData = Hash::expand($preppedData);
