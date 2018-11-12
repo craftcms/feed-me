@@ -386,11 +386,9 @@ class Process extends Component
 
                 FeedMe::info($info);
                 FeedMe::debug($info);
+                FeedMe::debug($contentData);
 
-                // When running through debug, always proceed
-                if (!$feed['debug']) {
-                    return;
-                }
+                return;
             }
         }
 

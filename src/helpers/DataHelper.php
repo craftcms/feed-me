@@ -157,11 +157,20 @@ class DataHelper
                 continue;
             }
 
-            // Now, for more involved
+            // Check for complicated fields = looking at you Matrix!
             $existingValue = Hash::get($fields, $key);
 
-            FeedMe::debug($key);
+            // For debugging - clearly see how the data differs
+            if (is_array($existingValue) && is_array($newValue)) {
+                $diff = self::arrayCompare($existingValue, $newValue);
+
+                FeedMe::debug($key . ' - diff');
+                FeedMe::debug($diff);
+            }
+
+            FeedMe::debug($key . ' - existing');
             FeedMe::debug($existingValue);
+            FeedMe::debug($key . ' - new');
             FeedMe::debug($newValue);
 
             FeedMe::info('Data to update for `{i}`: `{j}`.', ['i' => $key, 'j' => json_encode($newValue)]);
@@ -170,6 +179,45 @@ class DataHelper
         if (empty($trackedChanges)) {
             return true;
         }
+    }
+
+    public static function arrayCompare($array1, $array2)
+    {
+        $diff = false;
+        
+        foreach ($array1 as $key => $value) {
+            if (!array_key_exists($key, $array2)) {
+                $diff[0][$key] = $value;
+            } elseif (is_array($value)) {
+                if (!is_array($array2[$key])) {
+                    $diff[0][$key] = $value;
+                    $diff[1][$key] = $array2[$key];
+                } else {
+                    $new = self::arrayCompare($value, $array2[$key]);
+                    
+                    if ($new !== false) {
+                        if (isset($new[0])) {
+                            $diff[0][$key] = $new[0];
+                        }
+
+                        if (isset($new[1])) {
+                            $diff[1][$key] = $new[1];
+                        }
+                    }
+                }
+            } elseif ($array2[$key] !== $value) {
+                $diff[0][$key] = $value;
+                $diff[1][$key] = $array2[$key];
+            }
+        }
+
+        foreach ($array2 as $key => $value) {
+            if (!array_key_exists($key, $array1)) {
+                $diff[1][$key] = $value;
+            }
+        }
+
+        return $diff;
     }
 
 }
