@@ -28,6 +28,7 @@ return [
         'dataDelimiter' => '-|-',
         'csvColumnDelimiter' => '',
         'parseTwig' => false,
+        'compareContent' => false,
     ]
 ];
 ```
@@ -43,6 +44,7 @@ return [
 - `dataDelimiter` - Feed Me will try and split content based on this delimiter. Useful for CSVs.
 - `csvColumnDelimiter` - Optionally set the delimiter for columns in CSVs before fetching the content.
 - `parseTwig` - Whether to parse field data and default values for Twig. Disabled by default.
+- `compareContent` - Whether to check against existing element content before updating. This can have considerable performance improvements and prevent against needless updating. Default to false while the plugin is in beta.
 
 ## Control Panel
 
