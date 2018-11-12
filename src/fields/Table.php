@@ -8,6 +8,7 @@ use verbb\feedme\helpers\BaseHelper;
 use verbb\feedme\helpers\DateHelper;
 
 use Craft;
+use craft\helpers\DateTimeHelper;
 use craft\helpers\Localization;
 
 use Cake\Utility\Hash;
@@ -104,9 +105,9 @@ class Table extends Field implements FieldInterface
         if ($type == 'checkbox') {
             return BaseHelper::parseBoolean($value);
         } else if ($type == 'color') {
-
+            return BaseHelper::parseColor($value);
         } else if ($type == 'date') {
-            return DateHelper::parseString($value);
+            return DateTimeHelper::toDateTime($value) ?: null;
         } else if ($type == 'lightswitch') {
             return BaseHelper::parseBoolean($value);
         } else if ($type == 'multiline') {
@@ -116,7 +117,7 @@ class Table extends Field implements FieldInterface
         } else if ($type == 'singleline') {
 
         } else if ($type == 'time') {
-
+            return DateTimeHelper::toDateTime($value) ?: null;
         }
 
         // Protect against array values
