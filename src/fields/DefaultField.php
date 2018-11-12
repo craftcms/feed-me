@@ -42,6 +42,9 @@ class DefaultField extends Field implements FieldInterface
             }
         }
 
+        // Lastly, get each field to prepare values how they should
+        $value = $this->field->serializeValue($this->field->normalizeValue($value));
+
         return $value;
     }
 }
