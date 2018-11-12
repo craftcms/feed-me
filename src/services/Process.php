@@ -377,8 +377,24 @@ class Process extends Component
             $element = $event->element;
         }
 
-        FeedMe::info('Data ready to import `{i}`.', ['i' => json_encode($contentData)]);
+        // If we want to check the existing element's content against this new one, let's do it.
+        if (FeedMe::$plugin->service->getConfig('compareContent')) {
+            $unchangedContent = DataHelper::compareElementContent($contentData, $existingElement);
 
+            if ($unchangedContent) {
+                $info = Craft::t('feed-me', 'Node `#{i}` skipped. No content has changed.', ['i' => ($step + 1)]);
+
+                FeedMe::info($info);
+                FeedMe::debug($info);
+
+                // When running through debug, always proceed
+                if (!$feed['debug']) {
+                    return;
+                }
+            }
+        }
+
+        FeedMe::info('Data ready to import `{i}`.', ['i' => json_encode($contentData)]);
         FeedMe::debug($contentData);
 
         // Save the element

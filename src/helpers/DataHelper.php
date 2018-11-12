@@ -129,4 +129,47 @@ class DataHelper
         return $value;
     }
 
+    public static function compareElementContent($content, $element)
+    {
+        if (!$element) {
+            return false;
+        }
+
+        $trackedChanges = $content;
+
+        $fields = $element->getSerializedFieldValues();
+        $attributes = $element->attributes;
+
+        foreach ($content as $key => $newValue) {
+            $existingValue = Hash::get($fields, $key);
+
+            // Check for simple fields first
+            if ($existingValue === $newValue) {
+                unset($trackedChanges[$key]);
+                continue;
+            }
+
+            // Then check for simple attributes
+            $existingValue = Hash::get($attributes, $key);
+
+            if ($existingValue === $newValue) {
+                unset($trackedChanges[$key]);
+                continue;
+            }
+
+            // Now, for more involved
+            $existingValue = Hash::get($fields, $key);
+
+            FeedMe::debug($key);
+            FeedMe::debug($existingValue);
+            FeedMe::debug($newValue);
+
+            FeedMe::info('Data to update for `{i}`: `{j}`.', ['i' => $key, 'j' => json_encode($newValue)]);
+        }
+
+        if (empty($trackedChanges)) {
+            return true;
+        }
+    }
+
 }

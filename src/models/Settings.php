@@ -17,7 +17,7 @@ class Settings extends Model
             'User-Agent' => 'Feed Me',
         ]
     ];
-    public $checkContentBeforeUpdating = false;
+    public $compareContent = false;
     public $skipUpdateFieldHandle = '';
     public $backupLimit = 100;
     public $dataDelimiter = '-|-';
