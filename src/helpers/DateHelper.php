@@ -132,14 +132,12 @@ class DateHelper
         }
     }
 
-    // public static function isValidTimeStamp($string)
-    // {
-    //     try {
-    //         new DateTime('@' . $string);
-    //     } catch(\Exception $e) {
-    //         return false;
-    //     }
-
-    //     return true;
-    // }
+    public static function parseTimeString($value)
+    {
+        try {
+            return DateTimeHelper::toDateTime($value) ?: null;
+        } catch (\Exception $e) {
+            FeedMe::error('Time parse error: `{value}` - `{e}`.', ['value' => $value, 'e' => $e->getMessage()]);
+        }
+    }
 }
