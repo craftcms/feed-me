@@ -2,6 +2,8 @@
 namespace verbb\feedme\helpers;
 
 use Craft;
+use craft\fields\data\ColorData;
+use craft\validators\ColorValidator;
 
 class BaseHelper
 {
@@ -56,6 +58,29 @@ class BaseHelper
         }
 
         return $result;
+    }
+
+    public static function parseColor($value)
+    {
+        if ($value instanceof ColorData) {
+            return $value;
+        }
+
+        if (!$value || $value === '#') {
+            return null;
+        }
+
+        $value = strtolower($value);
+
+        if ($value[0] !== '#') {
+            $value = '#' . $value;
+        }
+
+        if (strlen($value) === 4) {
+            $value = '#' . $value[1] . $value[1] . $value[2] . $value[2] . $value[3] . $value[3];
+        }
+
+        return ColorValidator::normalizeColor($value);
     }
 
     public static function getBrowserName($userAgent)
