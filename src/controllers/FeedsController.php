@@ -62,6 +62,7 @@ class FeedsController extends Controller
         }
 
         $variables['primaryElements'] = $feed->getFeedNodes();
+        $variables['feedMappingData'] = $feed->getFeedMapping(false);
         $variables['feed'] = $feed;
 
         return $this->renderTemplate('feed-me/feeds/_element', $variables);
@@ -299,6 +300,7 @@ class FeedsController extends Controller
         $feed->elementGroup = $request->getBodyParam('elementGroup', $feed->elementGroup);
         $feed->siteId = $request->getBodyParam('siteId', $feed->siteId);
         $feed->duplicateHandle = $request->getBodyParam('duplicateHandle', $feed->duplicateHandle);
+        $feed->paginationNode = $request->getBodyParam('paginationNode', $feed->paginationNode);
         $feed->passkey = $request->getBodyParam('passkey', $feed->passkey);
         $feed->backup = (bool)$request->getBodyParam('backup', $feed->backup);
 

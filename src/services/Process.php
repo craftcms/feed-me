@@ -489,12 +489,15 @@ class Process extends Component
             return;
         }
 
-        $totalSteps = count($feedData);
-
         $feedSettings = $this->beforeProcessFeed($feed, $feedData);
 
         foreach ($feedData as $key => $data) {
             $element = $this->processFeed($key, $feedSettings);
+        }
+
+        // Check if we need to paginate the feed to run again
+        if ($feed->getNextPagination()) {
+            $this->debugFeed($feed, null, null);
         }
 
         $this->afterProcessFeed($feedSettings, $feed);

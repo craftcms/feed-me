@@ -64,6 +64,9 @@ class Xml extends DataType implements DataTypeInterface
             return ['success' => false, 'error' => $error];
         }
 
+        // If using pagination, set it up here - we need to do this before messing around with the primary element
+        $this->setupPaginationUrl($array, $settings);
+
         // Look for and return only the items for primary element
         $primaryElement = Hash::get($settings, 'primaryElement');
 

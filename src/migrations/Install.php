@@ -37,6 +37,7 @@ class Install extends Migration
             'elementGroup'         => $this->text(),
             'siteId'               => $this->string(),
             'duplicateHandle'      => $this->text(),
+            'paginationNode'       => $this->text(),
             'fieldMapping'         => $this->text(),
             'fieldUnique'          => $this->text(),
             'passkey'              => $this->string()->notNull(),

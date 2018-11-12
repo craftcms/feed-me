@@ -85,6 +85,7 @@ class Feeds extends Component
         $record->elementType        = $model->elementType;
         $record->siteId             = $model->siteId;
         $record->duplicateHandle    = $model->duplicateHandle;
+        $record->paginationNode     = $model->paginationNode;
         $record->passkey            = $model->passkey;
         $record->backup             = $model->backup;
 
@@ -150,6 +151,7 @@ class Feeds extends Component
                 'elementGroup',
                 'siteId',
                 'duplicateHandle',
+                'paginationNode',
                 'fieldMapping',
                 'fieldUnique',
                 'passkey',

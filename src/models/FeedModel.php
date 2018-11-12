@@ -22,6 +22,7 @@ class FeedModel extends Model
     public $elementGroup;
     public $siteId;
     public $duplicateHandle;
+    public $paginationNode;
     public $fieldMapping;
     public $fieldUnique;
     public $passkey;
@@ -32,7 +33,8 @@ class FeedModel extends Model
 
     // Model-only properties
     public $debug;
-    
+    public $paginationUrl;
+
 
     // Public Methods
     // =========================================================================
@@ -57,16 +59,16 @@ class FeedModel extends Model
         return FeedMe::$plugin->elements->getRegisteredElement($this->elementType);
     }
 
-    public function getFeedData()
+    public function getFeedData($usePrimaryElement = true)
     {
-        $feedDataResponse = $this->getDataType()->getFeed($this->feedUrl, $this);
+        $feedDataResponse = $this->getDataType()->getFeed($this->feedUrl, $this, $usePrimaryElement);
 
         return Hash::get($feedDataResponse, 'data');
     }
 
-    public function getFeedNodes()
+    public function getFeedNodes($usePrimaryElement = false)
     {
-        $feedDataResponse = $this->getDataType()->getFeed($this->feedUrl, $this, false);
+        $feedDataResponse = $this->getDataType()->getFeed($this->feedUrl, $this, $usePrimaryElement);
 
         $feedData = Hash::get($feedDataResponse, 'data');
 
@@ -75,15 +77,27 @@ class FeedModel extends Model
         return $feedDataResponse;
     }
 
-    public function getFeedMapping()
+    public function getFeedMapping($usePrimaryElement = true)
     {
-        $feedDataResponse = $this->getDataType()->getFeed($this->feedUrl, $this);
+        $feedDataResponse = $this->getDataType()->getFeed($this->feedUrl, $this, $usePrimaryElement);
 
         $feedData = Hash::get($feedDataResponse, 'data');
 
         $feedDataResponse['data'] = FeedMe::$plugin->data->getFeedMapping($feedData);
 
         return $feedDataResponse;
+    }
+
+    public function getNextPagination()
+    {
+        if (!$this->paginationUrl) {
+            return;
+        }
+
+        // Set the URL dynamically on the feed, then kick off processing again
+        $this->feedUrl = $this->paginationUrl;
+
+        return true;
     }
 
     public function rules()

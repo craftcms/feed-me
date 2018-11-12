@@ -56,6 +56,15 @@ class FeedImport extends BaseJob
                 $this->setProgress($queue, $key++ / $totalSteps);
             }
 
+            // Check if we need to paginate the feed to run again
+            if ($this->feed->getNextPagination()) {
+                Craft::$app->getQueue()->delay(0)->push(new FeedImport([
+                    'feed' => $this->feed,
+                    'limit' => $this->limit,
+                    'offset' => $this->offset,
+                ]));
+            }
+
             FeedMe::$plugin->process->afterProcessFeed($feedSettings, $this->feed);
         } catch (\Throwable $e) {
             // Even though we catch errors on each step of the loop, make sure to catch errors that can be anywhere

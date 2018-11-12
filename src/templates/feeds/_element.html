@@ -45,6 +45,30 @@
             errors: feed.getErrors('primaryElement'),
         }) }}
 
+        {% set parsedFeedData = [
+            { label: "No Pagination URL", value: '' },
+        ] %}
+
+        {% for key, data in feedMappingData.data %}
+            {% if data is iterable %}
+                {% set snippet = '' %}
+            {% else %}
+                {% set snippet = data | length > 30 ? data[0:30] ~ '...' : data %}
+            {% endif %}
+
+            {% set parsedFeedData = parsedFeedData | merge([{ label: '<' ~ key ~ '> eg: ' ~ snippet, value: key }]) %}
+        {% endfor %}
+
+        {{ forms.selectField({
+            label: "Pagination URL" | t('feed-me'),
+            instructions: "If your feed is paginated, select the next page's URL." | t('feed-me'),
+            id: 'paginationUrl',
+            name: 'paginationUrl',
+            value: feed.paginationUrl,
+            options: parsedFeedData,
+            errors: feed.getErrors('paginationUrl'),
+        }) }}
+
     {% else %}
         <div class="feedme-fullpage fullpage-error">
             <img src="{{ baseAssetsUrl ~ '/img/icon-error.svg' }}">
