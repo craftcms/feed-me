@@ -46,7 +46,7 @@
         }) }}
 
         {% set parsedFeedData = [
-            { label: "No Pagination URL", value: '' },
+            { label: "No Pagination URL" | t('feed-me'), value: '' },
         ] %}
 
         {% for key, data in feedMappingData.data %}
