@@ -146,6 +146,20 @@ class User extends Element implements ElementInterface
         } 
     }
 
+    public function disable($elementIds)
+    {
+        $elementsService = Craft::$app->getElements();
+
+        foreach ($elementIds as $elementId) {
+            // User status can't be set on the element anymore, only directly on the record.
+            $record = UserRecord::findOne($elementId);
+            $record->suspended = true;
+            $record->save(false);
+        }
+
+        return true;
+    }
+
 
     // Protected Methods
     // =========================================================================
