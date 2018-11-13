@@ -21,7 +21,7 @@ class Json extends DataType implements DataTypeInterface
 
     public function getFeed($url, $settings, $usePrimaryElement = true)
     {
-        $response = FeedMe::$plugin->data->getRawData($url);
+        $response = FeedMe::$plugin->data->getRawData($url, $settings->id);
 
         if (!$response['success']) {
             $error = 'Unable to reach ' . $url . '. Message: ' . $response['error'];

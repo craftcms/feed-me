@@ -158,7 +158,7 @@ class HelpController extends Controller
 
             if ($getHelpModel->attachFeed) {
                 try {
-                    $feedData = FeedMe::$plugin->data->getRawData($feed->feedUrl);
+                    $feedData = FeedMe::$plugin->data->getRawData($feed->feedUrl, $feed->id);
                     $tempFileFeed = $tempFolder . '/feed.' . StringHelper::toLowerCase($feed->feedType);
 
                     FileHelper::writeToFile($tempFileFeed, print_r($feedData, true) . PHP_EOL);

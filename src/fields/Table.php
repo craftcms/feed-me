@@ -68,7 +68,7 @@ class Table extends Field implements FieldInterface
             }
         }
 
-        $dataDelimiter = FeedMe::$plugin->service->getConfig('dataDelimiter');
+        $dataDelimiter = FeedMe::$plugin->service->getConfig('dataDelimiter', $this->feed['id']);
 
         foreach ($parsedData as $rowKey => $row) {
             foreach ($row as $columnKey => $column) {

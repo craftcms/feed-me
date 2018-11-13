@@ -15,6 +15,12 @@ use Cake\Utility\Hash;
 
 class Feeds extends Component
 {
+    // Properties
+    // =========================================================================
+
+    private $_overrides = [];
+
+
     // Constants
     // =========================================================================
 
@@ -134,6 +140,15 @@ class Feeds extends Component
         return $this->saveFeed($feed);
     }
 
+    public function getModelOverrides($handle, $feedId)
+    {
+        if (!$this->_overrides) {
+            $this->_overrides = Hash::get(Craft::$app->getConfig()->getConfigFromFile('feed-me'), 'feedOptions.' . $feedId);
+        }
+
+        return $this->_overrides[$handle] ?? null;
+    }
+
 
     // Private Methods
     // =========================================================================
@@ -173,7 +188,17 @@ class Feeds extends Component
         $record['fieldMapping'] = Json::decode($record['fieldMapping']);
         $record['fieldUnique'] = Json::decode($record['fieldUnique']);
 
-        return new FeedModel($record->toArray());
+        $attributes = $record->toArray();
+
+        foreach ($attributes as $attribute => $value) {
+            $override = $this->getModelOverrides($attribute, $record['id']);
+
+            if ($override) {
+                $attributes[$attribute] = $override;
+            }
+        }
+
+        return new FeedModel($attributes);
     }
 
 }

@@ -16,23 +16,35 @@ class Service extends Component
     // Public Methods
     // =========================================================================
 
-    public function getConfig($key)
+    public function getConfig($key, $feedId = null)
     {
         $settings = FeedMe::$plugin->getSettings();
 
-        return Hash::get($settings, $key);
+        // Get the config item from the global settings
+        $configItem = Hash::get($settings, $key);
+
+        // Or, check if there's a setting set per-feed
+        if ($feedId) {
+            $configFeedItem = Hash::get($settings, 'feedOptions.' . $feedId . '.' . $key);
+
+            if ($configFeedItem) {
+                $configItem = $configFeedItem;
+            }
+        }
+
+        return $configItem;
     }
 
-    public function createGuzzleClient()
+    public function createGuzzleClient($feedId = null)
     {
-        $options = $this->getConfig('clientOptions');
+        $options = $this->getConfig('clientOptions', $feedId);
 
         return Craft::createGuzzleClient($options);
     }
 
-    public function getRequestOptions()
+    public function getRequestOptions($feedId = null)
     {
-        $options = $this->getConfig('requestOptions');
+        $options = $this->getConfig('requestOptions', $feedId);
 
         return $options;
     }

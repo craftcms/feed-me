@@ -118,7 +118,7 @@ class DataTypes extends Component
         return $dataType;
     }
 
-    public function getRawData($url)
+    public function getRawData($url, $feedId = null)
     {
         $response = [];
 
@@ -156,8 +156,8 @@ class DataTypes extends Component
         }
 
         try {
-            $client = FeedMe::$plugin->service->createGuzzleClient();
-            $options = FeedMe::$plugin->service->getRequestOptions();
+            $client = FeedMe::$plugin->service->createGuzzleClient($feedId);
+            $options = FeedMe::$plugin->service->getRequestOptions($feedId);
 
             $resp = $client->request('GET', $url, $options);
             $data = (string)$resp->getBody();

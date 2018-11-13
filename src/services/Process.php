@@ -149,7 +149,7 @@ class Process extends Component
         $fieldData = [];
 
         // We can opt-out of updating certain elements if a field is switched on
-        $skipUpdateFieldHandle = FeedMe::$plugin->service->getConfig('skipUpdateFieldHandle');
+        $skipUpdateFieldHandle = FeedMe::$plugin->service->getConfig('skipUpdateFieldHandle', $feed['id']);
 
         //
         // Lets get started!
@@ -331,7 +331,7 @@ class Process extends Component
 
         // Now we've fully prepped our element, one last final check each attribute and field for Twig shorthand to parse
         // We have to do this at the end, separately so we've got full access to the prepped element content
-        $parseTwig = FeedMe::$plugin->service->getConfig('parseTwig');
+        $parseTwig = FeedMe::$plugin->service->getConfig('parseTwig', $feed['id']);
 
         if ($parseTwig) {
             foreach ($attributeData as $key => $value) {
@@ -378,7 +378,7 @@ class Process extends Component
         }
 
         // If we want to check the existing element's content against this new one, let's do it.
-        if (FeedMe::$plugin->service->getConfig('compareContent')) {
+        if (FeedMe::$plugin->service->getConfig('compareContent', $feed['id'])) {
             $unchangedContent = DataHelper::compareElementContent($contentData, $existingElement);
 
             if ($unchangedContent) {
@@ -519,7 +519,7 @@ class Process extends Component
     {
         $logKey = StringHelper::randomString(20);
 
-        $limit = FeedMe::$plugin->service->getConfig('backupLimit');
+        $limit = FeedMe::$plugin->service->getConfig('backupLimit', $feed['id']);
 
         FeedMe::info('Preparing for database backup.', [], ['key' => $logKey]);
 

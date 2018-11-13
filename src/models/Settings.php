@@ -17,11 +17,12 @@ class Settings extends Model
             'User-Agent' => 'Feed Me',
         ]
     ];
-    public $compareContent = false;
+    public $compareContent = true;
     public $skipUpdateFieldHandle = '';
     public $backupLimit = 100;
     public $dataDelimiter = '-|-';
     public $csvColumnDelimiter = ',';
     public $parseTwig = [];
+    public $feedOptions = [];
 
 }
