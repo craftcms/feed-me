@@ -1,7 +1,5 @@
 <?php
-namespace verbb\navigation\migrations;
-
-use verbb\navigation\elements\Node;
+namespace verbb\feedme\migrations;
 
 use Craft;
 use craft\db\Migration;
@@ -10,8 +8,10 @@ class m181113_000000_add_paginationNode extends Migration
 {
     public function safeUp()
     {
-        $this->addColumn('{{%feedme_feeds}}', 'paginationNode', $this->text()->after('duplicateHandle'));
-
+        if (!$this->db->columnExists('{{%feedme_feeds}}', 'paginationNode')) {
+            $this->addColumn('{{%feedme_feeds}}', 'paginationNode', $this->text()->after('duplicateHandle'));
+        }
+    
         return true;
     }
 
