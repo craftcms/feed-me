@@ -1,5 +1,35 @@
 # Changelog
 
+## 3.0.0-beta.27 - 2018-11-13
+
+### Added
+- Added pagination handling for feeds. Select a node in your feed that contains a URL to the next set of data for your content, and Feed Me will automatically fetch it.
+- Added content comparison functionality, where Feed Me will look at all your existing content for an element, compare it, and only proceed if content has changed. This brings massive performance improvements by not needlessly updating elements. Also controlled through `compareContent` as a config setting, default to true.
+- Added Google Sheet as a datatype.
+- Added type switch for logs - filter your logs by info, error or all.
+- Added `feedOptions` config for feed-specific settings. Control request headers per-feed, or change any feed attribute in your configuration file.
+
+### Changed
+- Set `SCENARIO_ESSENTIALS` scenario when saving an element. In-line with how Craft handles bulk element updates, and to integrate nicely with [SEOmatic](https://github.com/nystudio107/craft-seomatic).
+- All element fields now return unique IDs.
+- Provide more detail for XML parsing errors.
+- Users - set user to be suspended when disabling elements.
+
+### Fixed
+- Fix enabled tabs throwing an error in some cases.
+- Fix error thrown when matching elements on their ID.
+- Fix not matching entries and categories across multi-sites.
+- Fix not being able to select filename as an identifier for asset fields.
+- Cleanup and properly sort settings and config options.
+- Move extra element attribute setting within parseTwig conditional, ensuring elements are bound twice with attribute and field data.
+- Fix categories fields not limiting per their field settings.
+- Add serialise and normalise for default field content, particularly useful with Redactor.
+- Fix additional Linkit data being added to import.
+- Implement table field sub-field validations.
+- Fix Table fields not containing all columns when null values.
+- Fix Matrix including order and not setting collapsed/disabled to boolean.
+- Fix Matrix not handling scenario when only adding content to one block type.
+
 ## 3.0.0-beta.26 - 2018-11-01
 
 ### Changed
