@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.0-beta.28 - 2018-11-13
+
+### Fixed
+- Fix conflict with Navigation plugin migration
+
 ## 3.0.0-beta.27 - 2018-11-13
 
 ### Added
