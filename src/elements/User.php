@@ -106,29 +106,20 @@ class User extends Element implements ElementInterface
         if ($this->status) {
             $record = UserRecord::findOne($this->element->id);
 
+            // Reset all states - default to active
+            $record->locked = false;
+            $record->suspended = false;
+            $record->pending = false;
+
             switch ($this->status) {
                 case 'locked';
                     $record->locked = true;
                     break;
                 case 'suspended';
-                    $record->locked = false;
                     $record->suspended = true;
                     break;
-                case 'archived':
-                    $record->locked = false;
-                    $record->suspended = false;
-                    $record->archived = true;
-                    break;
                 case 'pending':
-                    $record->locked = false;
-                    $record->suspended = false;
-                    $record->archived = false;
                     $record->pending = true;
-                    break;
-                case 'active':
-                    $record->suspended = false;
-                    $record->locked = false;
-                    $record->setActive();
                     break;
             }
 
