@@ -30,7 +30,7 @@
         {{ forms.selectField({
             name: 'options[match]',
             class: '',
-            value: feed.fieldMapping[handle].options.match ?? '',
+            value: hash_get(feed.fieldMapping, optionsPath ~ '.match') ?: '',
             options: [
                 { value: 'title', label: 'Title' | t('feed-me') },
                 { value: 'elements.id', label: 'ID' | t('feed-me') },

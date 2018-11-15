@@ -31,7 +31,7 @@
                 { value: 'value', label: 'Value' | t('feed-me') },
                 { value: 'label', label: 'Label' | t('feed-me') }
             ],
-            value: feed.fieldMapping[handle].options.match ?? '',
+            value: hash_get(feed.fieldMapping, optionsPath ~ '.match') ?: '',
         }) }}
     </div>
 {% endblock %}

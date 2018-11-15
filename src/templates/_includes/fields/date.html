@@ -24,7 +24,7 @@
         {{ forms.selectField({
             name: 'options[match]',
             class: '',
-            value: feed.fieldMapping[handle].options.match ?? '',
+            value: hash_get(feed.fieldMapping, optionsPath ~ '.match') ?: '',
             options: [
                 { value: 'auto', label: 'Auto' | t('feed-me') },
                 { value: 'america', label: 'mm/dd/yyyy' | t('feed-me') },
