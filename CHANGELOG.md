@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.0-beta.30 - 2018-11-15
+
+### Fixed
+- Fix error thrown by datatypes when using template tags (properly).
+
 ## 3.0.0-beta.29 - 2018-11-15
 
 ### Fixed
