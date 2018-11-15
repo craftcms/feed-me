@@ -228,11 +228,21 @@ class CommerceProduct extends Element implements ElementInterface
 
         $variantData = [];
         $variants = [];
+        $complexFields = [];
 
         // Fetch any existing variants on the product, indexes by their SKU
         if (isset($element->variants[0]['sku'])) {
             foreach ($element->variants as $key => $value) {
                 $variants[$value['sku']] = $value;
+            }
+        }
+
+        // Weed out any non-variant mapped field
+        $variantFieldsByNode = [];
+
+        foreach (Hash::flatten($variantMapping) as $key => $value) {
+            if (strstr($key, 'node') && $value !== 'noimport' && $value !== 'usedefault') {
+                $variantFieldsByNode[] = $value;
             }
         }
 
@@ -244,18 +254,40 @@ class CommerceProduct extends Element implements ElementInterface
                 $feedPath = preg_replace('/(\/\d+\/)/', '/', $nodePath);
                 $feedPath = preg_replace('/^(\d+\/)|(\/\d+)/', '', $feedPath);
 
+                if (!in_array($feedPath, $variantFieldsByNode)) {
+                    continue;
+                }
+
+                // Try and determine the index. We need to always be dealing with an array of variant data
+                $nodePathSegments = explode('/', $nodePath);
+                $variantIndex = Hash::get($nodePathSegments, 2);
+
+                if (!is_numeric($variantIndex)) {
+                    // Try to check if its only one-level deep (only importing one block type)
+                    // which is particuarly common for JSON.
+                    $variantIndex = Hash::get($nodePathSegments, 1);
+
+                    if (!is_numeric($variantIndex)) {
+                        $variantIndex = 0;
+                    }
+                }
+
+                $isMatrixField = (Hash::get($fieldInfo, 'field') === 'craft\fields\Matrix');
+
+                if ($isMatrixField) {
+                    $complexFields[$variantIndex][$fieldHandle]['info'] = $fieldInfo;
+                    $complexFields[$variantIndex][$fieldHandle]['data'][$nodePath] = $value;
+                    continue;
+                }
+
                 // Find the node in the feed (stripped of indexes) that matches what's stored in field mapping
                 if ($feedPath === $node) {
-                    // Try and determine the index. We need to always be dealing with an array of variant data
-                    preg_match('/\/(\d+)\//', $nodePath, $matches);
-                    $count = Hash::get($matches, '1', '0');
-
                     // Store this information so we can parse the field data later
-                    if (!isset($variantData[$count][$fieldHandle])) {
-                        $variantData[$count][$fieldHandle] = $fieldInfo;
+                    if (!isset($variantData[$variantIndex][$fieldHandle])) {
+                        $variantData[$variantIndex][$fieldHandle] = $fieldInfo;
                     }
 
-                    $variantData[$count][$fieldHandle]['data'][$nodePath] = $value;
+                    $variantData[$variantIndex][$fieldHandle]['data'][$nodePath] = $value;
                 }
             }
         }
@@ -271,6 +303,51 @@ class CommerceProduct extends Element implements ElementInterface
                     $variantData[$variantNumber][$fieldHandle] = $fieldInfo;
                     $variantData[$variantNumber][$fieldHandle]['data'][$fieldHandle] = $default;
                 }
+            }
+        }
+
+        foreach ($complexFields as $variantNumber => $complexInfo) {
+            foreach ($complexInfo as $fieldHandle => $fieldInfo) {
+
+                $variantNodePathKey = null;
+
+                // Refrain from looking at the whole nodepath, really just want to find the first bits
+                foreach ($fieldInfo['data'] as $nodePath => $value) {
+                    $nodePathExcerpt = implode('/', array_slice(explode('/', $nodePath), 0, 3));
+
+                    preg_match('/^(.*)\d+\//U', $nodePathExcerpt, $matches);
+
+                    $variantNodePathKey = Hash::get($matches, '1');
+
+                    if ($variantNodePathKey) {
+                        break;
+                    }
+                }
+
+                // Likely, we've only got a single variant in our import, so we'll assume `variants/variant`
+                if (!$variantNodePathKey) {
+                    foreach ($fieldInfo['data'] as $nodePath => $value) {
+                        $variantNodePathKey = implode('/', array_slice(explode('/', $nodePath), 0, 2)) . '/';
+                        break;
+                    }
+                }
+
+                $alteredData = [];
+
+                foreach (Hash::flatten($fieldInfo) as $key => $value) {
+                    $key = str_replace($variantNodePathKey . $variantNumber . '/', '', $key);
+                    $key = str_replace($variantNodePathKey, '', $key);
+
+                    $value = str_replace($variantNodePathKey . $variantNumber . '/', '', $value);
+                    $value = str_replace($variantNodePathKey, '', $value);
+                    
+                    $alteredData[$key] = $value;
+                }
+
+                $fieldInfo = Hash::expand($alteredData);
+
+                $variantData[$variantNumber][$fieldHandle] = $fieldInfo['info'];
+                $variantData[$variantNumber][$fieldHandle]['data'] = $fieldInfo['data'];
             }
         }
 
