@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.0.0-beta.29 - 2018-11-15
+
+### Fixed
+- Fix user status not working correctly, or throwing an error if setting to active.
+- Fix content checks not comparing existing content correctly.
+- Fix error thrown by datatypes when using template tags.
+- Refactor and fix variants not working with Matrix fields (and other complex fields).
+
 ## 3.0.0-beta.28 - 2018-11-13
 
 ### Fixed
