@@ -11,6 +11,7 @@ use verbb\feedme\datatypes\Rss;
 use verbb\feedme\datatypes\Xml;
 use verbb\feedme\events\FeedDataEvent;
 use verbb\feedme\events\RegisterFeedMeDataTypesEvent;
+use verbb\feedme\models\FeedModel;
 
 use Craft;
 use craft\base\Component;
@@ -289,11 +290,11 @@ class DataTypes extends Component
             return [];
         }
 
-        $settings = [];
+        $feed = new FeedModel();
         $dataType = $this->getRegisteredDataType($type);
 
         if ($element) {
-            $settings['primaryElement'] = $element;
+            $feed->primaryElement = $element;
         }
 
         // If cache explicitly set to false, always return latest data
@@ -301,7 +302,7 @@ class DataTypes extends Component
             if ($headers) {
                 $data = $this->_headers;
             } else {
-                $data = Hash::get($dataType->getFeed($url, $settings), 'data');
+                $data = Hash::get($dataType->getFeed($url, $feed), 'data');
             }
 
             if ($offset) {
@@ -327,7 +328,7 @@ class DataTypes extends Component
                 if ($headers) {
                     $data = $this->_headers;
                 } else {
-                    $data = Hash::get($dataType->getFeed($url, $settings), 'data');
+                    $data = Hash::get($dataType->getFeed($url, $feed), 'data');
                 }
 
                 if ($offset) {
