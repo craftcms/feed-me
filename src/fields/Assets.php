@@ -76,6 +76,10 @@ class Assets extends Field implements FieldInterface
         $urlsToUpload = [];
         $base64ToUpload = [];
 
+        if (!$value) {
+            return $foundElements;
+        }
+
         foreach ($value as $key => $dataValue) {
             // Prevent empty or blank values (string or array), which match all elements
             if (empty($dataValue)) {

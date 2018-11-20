@@ -67,6 +67,10 @@ class Entries extends Field implements FieldInterface
 
         $foundElements = [];
 
+        if (!$value) {
+            return $foundElements;
+        }
+
         foreach ($value as $dataValue) {
             // Prevent empty or blank values (string or array), which match all elements
             if (empty($dataValue)) {
