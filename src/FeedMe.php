@@ -50,6 +50,9 @@ class FeedMe extends Plugin
 
     public function afterInstall()
     {
+        if (Craft::$app->getRequest()->getIsConsoleRequest()) {
+            return;
+        }
         Craft::$app->controller->redirect(UrlHelper::cpUrl('feed-me/welcome'))->send();
     }
 
