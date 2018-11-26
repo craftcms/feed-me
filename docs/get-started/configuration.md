@@ -29,6 +29,7 @@ return [
         'csvColumnDelimiter' => '',
         'parseTwig' => false,
         'compareContent' => true,
+        'sleepTime' => 0,
         'feedOptions' => [
             '1' => [
                 'feedUrl' => 'https://specialurl.io/feed.json',
@@ -63,6 +64,7 @@ return [
 - `csvColumnDelimiter` - Optionally set the delimiter for columns in CSVs before fetching the content.
 - `parseTwig` - Whether to parse field data and default values for Twig. Disabled by default.
 - `compareContent` - Whether to check against existing element content before updating. This can have considerable performance improvements and prevent against needless updating.
+- `sleepTime` - Add the number of seconds to sleep after each feed item has been processed.
 - `feedOptions` - Provide an array of any of the above options or [Feed Settings](docs:feature-tour/feed-overview) to set specifically for certain feeds. Use the Feed ID as the key for the array.
 
 ## Control Panel

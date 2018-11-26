@@ -24,5 +24,6 @@ class Settings extends Model
     public $csvColumnDelimiter = ',';
     public $parseTwig = [];
     public $feedOptions = [];
+    public $sleepTime = 0;
 
 }

@@ -419,6 +419,13 @@ class Process extends Component
 
             FeedMe::info('Finished processing of node `#{i}`.', ['i' => ($step + 1)]);
 
+            // Sleep if required
+            $sleepTime = FeedMe::$plugin->service->getConfig('sleepTime', $feed['id']);
+
+            if ($sleepTime) {
+                sleep($sleepTime);
+            }
+
             return $element;
         } else {
             if ($element->getErrors()) {
