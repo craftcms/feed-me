@@ -1,5 +1,28 @@
 # Changelog
 
+## 3.0.0 - 2018-11-28
+
+### Added
+- Add JSON linter for better parsing errors.
+- Add `composer.json` and `composer.lock` to support requests.
+- Add `onAfterParseFeed` event.
+- Add `sleepTime` config setting, to set `sleep()` on each feed processing.
+
+### Changed
+- Selecting a default author now uses an element select field.
+- Clarify suspending users with disabling elements.
+- Make a few more events modifiable.
+
+### Fixed
+- Fix template tags not working properly.
+- Fix pagination URL not saving.
+- Assets - ensure existing element is set/updated when fetching image.
+- Fix matrix fields not grouping content correctly for JSON feeds.
+- Ensure element fields, when set to create, respect the feed propagation settings.
+- Return empty array when no data for element fields
+- Do not make redirect request after install if install is done via CLI. Thanks (@nettum).
+- Fix for some fields not saving their mapping options inside Matrix.
+
 ## 3.0.0-beta.30 - 2018-11-15
 
 ### Fixed
