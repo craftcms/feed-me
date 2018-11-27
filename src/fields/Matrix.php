@@ -59,12 +59,12 @@ class Matrix extends Field implements FieldInterface
                 $isComplexField = $fieldInfo['isComplexField'];
 
                 $nodePathSegments = explode('/', $nodePath);
-                $blockIndex = Hash::get($nodePathSegments, 2);
+                $blockIndex = Hash::get($nodePathSegments, 1);
 
                 if (!is_numeric($blockIndex)) {
                     // Try to check if its only one-level deep (only importing one block type)
                     // which is particuarly common for JSON.
-                    $blockIndex = Hash::get($nodePathSegments, 1);
+                    $blockIndex = Hash::get($nodePathSegments, 2);
 
                     if (!is_numeric($blockIndex)) {
                         $blockIndex = 0;
