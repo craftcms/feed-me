@@ -62,11 +62,11 @@
         {{ forms.selectField({
             label: "Pagination URL" | t('feed-me'),
             instructions: "If your feed is paginated, select the next page's URL." | t('feed-me'),
-            id: 'paginationUrl',
-            name: 'paginationUrl',
-            value: feed.paginationUrl,
+            id: 'paginationNode',
+            name: 'paginationNode',
+            value: feed.paginationNode,
             options: parsedFeedData,
-            errors: feed.getErrors('paginationUrl'),
+            errors: feed.getErrors('paginationNode'),
         }) }}
 
     {% else %}
