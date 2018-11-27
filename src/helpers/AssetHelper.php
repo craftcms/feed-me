@@ -52,7 +52,7 @@ class AssetHelper
         return $status;
     }
 
-    public static function fetchRemoteImage($urls, $fieldInfo, $field = null, $element = null, $folderId = null)
+    public static function fetchRemoteImage($urls, $fieldInfo, $feed, $field = null, $element = null, $folderId = null)
     {
         $uploadedAssets = [];
 
@@ -81,7 +81,7 @@ class AssetHelper
                     $fetchedImage = $cachedImage[0];
                 }
 
-                $result = self::createAsset($fetchedImage, $filename, $folderId, $field, $element, $conflict);
+                $result = self::createAsset($fetchedImage, $filename, $folderId, $feed, $field, $element, $conflict);
 
                 if ($result) {
                     $uploadedAssets[] = $result;
@@ -98,7 +98,7 @@ class AssetHelper
         return $uploadedAssets;
     }
 
-    public static function createBase64Image($base64, $fieldInfo, $field = null, $element = null, $folderId = null)
+    public static function createBase64Image($base64, $fieldInfo, $feed, $field = null, $element = null, $folderId = null)
     {
         $uploadedAssets = [];
 
@@ -128,7 +128,7 @@ class AssetHelper
                 $fetchedImageWithExtension = $tempFeedMePath . $filename;
                 FileHelper::writeToFile($fetchedImageWithExtension, $decodedImage);
 
-                $result = self::createAsset($fetchedImageWithExtension, $filename, $folderId, $field, $element, $conflict);
+                $result = self::createAsset($fetchedImageWithExtension, $filename, $folderId, $feed, $field, $element, $conflict);
                 
                 if ($result) {
                     $uploadedAssets[] = $result;
@@ -152,7 +152,7 @@ class AssetHelper
      *
      * @return int
      */
-    private static function createAsset($tempFilePath, $filename, $folderId, $field, $element, $conflict)
+    private static function createAsset($tempFilePath, $filename, $folderId, $feed, $field, $element, $conflict)
     {
         $assets = Craft::$app->getAssets();
 
@@ -171,7 +171,9 @@ class AssetHelper
         $asset->avoidFilenameConflicts = true;
         $asset->setScenario(AssetElement::SCENARIO_CREATE);
 
-        $result = Craft::$app->getElements()->saveElement($asset);
+        $propagate = isset($feed['siteId']) && $feed['siteId'] ? false : true;
+
+        $result = Craft::$app->getElements()->saveElement($asset, true, $propagate);
 
         if ($result) {
             // Annoyingly, you have to create the asset field, then move it to the temp directly, then replace the conflicting

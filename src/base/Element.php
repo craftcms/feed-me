@@ -25,6 +25,12 @@ abstract class Element extends Component
     const EVENT_AFTER_PARSE_ATTRIBUTE = 'onParseAttribute';
 
 
+    // Properties
+    // =========================================================================
+
+    public $feed;
+
+
     // Public Methods
     // =========================================================================
 
@@ -144,11 +150,11 @@ abstract class Element extends Component
 
     public function save($data, $settings)
     {
-        $propogate = isset($settings['siteId']) && $settings['siteId'] ? false : true;
+        $propagate = isset($settings['siteId']) && $settings['siteId'] ? false : true;
 
         $this->element->setScenario(BaseElement::SCENARIO_ESSENTIALS);
 
-        if (!Craft::$app->getElements()->saveElement($this->element, true, $propogate)) {
+        if (!Craft::$app->getElements()->saveElement($this->element, true, $propagate)) {
             return false;
         }
 

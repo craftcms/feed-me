@@ -88,8 +88,10 @@ class Comment extends Element implements ElementInterface
 
     public function save($data, $settings)
     {
+        $propagate = isset($settings['siteId']) && $settings['siteId'] ? false : true;
+
         // We have to turn off validation - otherwise Spam checks will kick in
-        if (!Craft::$app->getElements()->saveElement($this->element, false)) {
+        if (!Craft::$app->getElements()->saveElement($this->element, false, $propagate)) {
             return false;
         }
 
@@ -166,7 +168,9 @@ class Comment extends Element implements ElementInterface
             $element->username = $value;
             $element->email = $value;
 
-            if (!Craft::$app->getElements()->saveElement($element)) {
+            $propagate = isset($this->feed['siteId']) && $this->feed['siteId'] ? false : true;
+
+            if (!Craft::$app->getElements()->saveElement($element, true, $propagate)) {
                 FeedMe::error('Comment error: Could not create author - `{e}`.', ['e' => json_encode($element->getErrors())]);
             } else {
                 FeedMe::info('Author `#{id}` added.', ['id' => $element->id]);

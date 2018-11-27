@@ -53,6 +53,7 @@ class FeedMe extends Plugin
         if (Craft::$app->getRequest()->getIsConsoleRequest()) {
             return;
         }
+        
         Craft::$app->controller->redirect(UrlHelper::cpUrl('feed-me/welcome'))->send();
     }
 

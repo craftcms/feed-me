@@ -113,7 +113,9 @@ class CommerceProduct extends Element implements ElementInterface
     {
         $this->element->fieldLayoutId;
 
-        if (!Craft::$app->getElements()->saveElement($this->element)) {
+        $propagate = isset($settings['siteId']) && $settings['siteId'] ? false : true;
+
+        if (!Craft::$app->getElements()->saveElement($this->element, true, $propagate)) {
             $errors = [$this->element->getErrors()];
 
             if ($this->element->getErrors()) {

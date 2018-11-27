@@ -116,7 +116,9 @@ abstract class Field extends Component
                 ]
             ]);
 
-            if (!$elementsService->saveElement($element)) {
+            $propagate = isset($this->feed['siteId']) && $this->feed['siteId'] ? false : true;
+
+            if (!$elementsService->saveElement($element, true, $propagate)) {
                 FeedMe::error('`{handle}` - Unable to save sub-field: `{e}`.', ['e' => json_encode($element->getErrors()), 'handle' => $this->fieldHandle]);
             }
 

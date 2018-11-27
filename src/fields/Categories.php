@@ -135,7 +135,9 @@ class Categories extends Field implements FieldInterface
         $element->title = $dataValue;
         $element->groupId = $groupId;
 
-        if (!Craft::$app->getElements()->saveElement($element)) {
+        $propagate = isset($this->feed['siteId']) && $this->feed['siteId'] ? false : true;
+
+        if (!Craft::$app->getElements()->saveElement($element, true, $propagate)) {
             FeedMe::error('`{handle}` - Category error: Could not create - `{e}`.', ['e' => json_encode($element->getErrors()), 'handle' => $this->field->handle]);
         } else {
             FeedMe::info('`{handle}` - Category `#{id}` added.', ['id' => $element->id, 'handle' => $this->field->handle]);

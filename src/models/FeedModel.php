@@ -56,7 +56,13 @@ class FeedModel extends Model
 
     public function getElement()
     {
-        return FeedMe::$plugin->elements->getRegisteredElement($this->elementType);
+        $element = FeedMe::$plugin->elements->getRegisteredElement($this->elementType);
+
+        if ($element) {
+            $element->feed = $this;
+        }
+        
+        return $element;
     }
 
     public function getFeedData($usePrimaryElement = true)

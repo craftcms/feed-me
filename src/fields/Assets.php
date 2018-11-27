@@ -133,12 +133,12 @@ class Assets extends Field implements FieldInterface
 
         if ($upload) {
             if ($urlsToUpload) {
-                $uploadedElements = AssetHelper::fetchRemoteImage($urlsToUpload, $this->fieldInfo, $this->field, $this->element);
+                $uploadedElements = AssetHelper::fetchRemoteImage($urlsToUpload, $this->fieldInfo, $this->feed, $this->field, $this->element);
                 $foundElements = array_merge($foundElements, $uploadedElements);
             }
 
             if ($base64ToUpload) {
-                $uploadedElements = AssetHelper::createBase64Image($base64ToUpload, $this->fieldInfo, $this->field, $this->element);
+                $uploadedElements = AssetHelper::createBase64Image($base64ToUpload, $this->fieldInfo, $this->feed, $this->field, $this->element);
                 $foundElements = array_merge($foundElements, $uploadedElements);
             }
         }

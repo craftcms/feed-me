@@ -231,7 +231,7 @@ class User extends Element implements ElementInterface
         if ($urlToUpload) {
             $folderId = $this->_prepareUserPhotosFolder($this->element);
 
-            $uploadedElementIds = AssetHelper::fetchRemoteImage([$urlToUpload], $fieldInfo, null, $this->element, $folderId);
+            $uploadedElementIds = AssetHelper::fetchRemoteImage([$urlToUpload], $fieldInfo, $this->feed, null, $this->element, $folderId);
 
             if ($uploadedElementIds) {
                 $uploadedAsset = AssetElement::findOne(['id' => $uploadedElementIds[0]]);
