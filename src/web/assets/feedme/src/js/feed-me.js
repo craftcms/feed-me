@@ -30,6 +30,16 @@ $(function() {
 
         var value = $(this).val().replace(/\\/g, '-');
         $('.element-select[data-type="' + value + '"]').show();
+
+        // Change the import strategy for Users
+        var $duplicateHandle = $('[name="duplicateHandle"]').parent().find('.checkbox-group');
+
+        if (value === 'craft-elements-User') {
+            $duplicateHandle.find(':nth-child(3) label').html(Craft.t('feed-me', 'Suspend missing users'));
+        } else {
+            $duplicateHandle.find(':nth-child(3) label').html(Craft.t('feed-me', 'Disable missing elements'));
+        }
+        console.log(value)
     });
 
     $('#elementType').trigger('change');
