@@ -126,11 +126,13 @@ class DataTypes extends Component
     {
         $response = [];
 
-        if ($this->hasEventHandlers(self::EVENT_BEFORE_FETCH_FEED)) {
-            $this->trigger(self::EVENT_BEFORE_FETCH_FEED, new FeedDataEvent([
-                'url' => $url,
-            ]));
-        }
+        $event = new FeedDataEvent([
+            'url' => $url,
+        ]);
+
+        Event::trigger(static::class, self::EVENT_BEFORE_FETCH_FEED, $event);
+
+        $url = $event->url;
 
         $url = Craft::getAlias($url);
 
@@ -174,14 +176,14 @@ class DataTypes extends Component
             $response = ['success' => false, 'error' => $e->getMessage()];
         }
 
-        if ($this->hasEventHandlers(self::EVENT_AFTER_FETCH_FEED)) {
-            $this->trigger(self::EVENT_AFTER_FETCH_FEED, new FeedDataEvent([
-                'url' => $url,
-                'response' => $response,
-            ]));
-        }
+        $event = new FeedDataEvent([
+            'url' => $url,
+            'response' => $response,
+        ]);
 
-        return $response;
+        Event::trigger(static::class, self::EVENT_AFTER_FETCH_FEED, $event);
+
+        return $event->response;
     }
 
     public function getFeedData($feedModel, $usePrimaryElement = true)
