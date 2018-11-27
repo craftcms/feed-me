@@ -61,14 +61,14 @@ class FeedModel extends Model
 
     public function getFeedData($usePrimaryElement = true)
     {
-        $feedDataResponse = $this->getDataType()->getFeed($this->feedUrl, $this, $usePrimaryElement);
+        $feedDataResponse = FeedMe::$plugin->data->getFeedData($this, $usePrimaryElement);
 
         return Hash::get($feedDataResponse, 'data');
     }
 
     public function getFeedNodes($usePrimaryElement = false)
     {
-        $feedDataResponse = $this->getDataType()->getFeed($this->feedUrl, $this, $usePrimaryElement);
+        $feedDataResponse = FeedMe::$plugin->data->getFeedData($this, $usePrimaryElement);
 
         $feedData = Hash::get($feedDataResponse, 'data');
 
@@ -79,7 +79,7 @@ class FeedModel extends Model
 
     public function getFeedMapping($usePrimaryElement = true)
     {
-        $feedDataResponse = $this->getDataType()->getFeed($this->feedUrl, $this, $usePrimaryElement);
+        $feedDataResponse = FeedMe::$plugin->data->getFeedData($this, $usePrimaryElement);
 
         $feedData = Hash::get($feedDataResponse, 'data');
 

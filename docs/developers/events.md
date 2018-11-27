@@ -51,7 +51,7 @@ Event::on(DataTypes::class, DataTypes::EVENT_BEFORE_FETCH_FEED, function(FeedDat
 
 ### The `afterFetchFeed` event
 
-Plugins can get notified after a feed's data has been fetched.
+Plugins can get notified after a feed's data has been fetched. Note the feed data hasn't been parsed at this point.
 
 ```php
 use verbb\feedme\events\FeedDataEvent;
@@ -59,6 +59,20 @@ use verbb\feedme\services\DataTypes;
 use yii\base\Event;
 
 Event::on(DataTypes::class, DataTypes::EVENT_AFTER_FETCH_FEED, function(FeedDataEvent $event) {
+
+});
+```
+
+### The `afterParseFeed` event
+
+Plugins can get notified after a feed's data has been fetched and parsed into an array.
+
+```php
+use verbb\feedme\events\FeedDataEvent;
+use verbb\feedme\services\DataTypes;
+use yii\base\Event;
+
+Event::on(DataTypes::class, DataTypes::EVENT_AFTER_PARSE_FEED, function(FeedDataEvent $event) {
 
 });
 ```

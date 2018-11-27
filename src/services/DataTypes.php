@@ -20,6 +20,8 @@ use craft\helpers\Component as ComponentHelper;
 use craft\helpers\UrlHelper;
 use craft\models\Section;
 
+use yii\base\Event;
+
 use GuzzleHttp\Psr7;
 use GuzzleHttp\Exception\RequestException;
 
@@ -32,7 +34,8 @@ class DataTypes extends Component
 
     const EVENT_REGISTER_FEED_ME_DATA_TYPES = 'registerFeedMeDataTypes';
     const EVENT_BEFORE_FETCH_FEED = 'onBeforeFetchFeed';
-    const EVENT_AFTER_FETCH_FEED = 'onAfterFetchFeed';    
+    const EVENT_AFTER_FETCH_FEED = 'onAfterFetchFeed';
+    const EVENT_AFTER_PARSE_FEED = 'onAfterParseFeed';
 
 
     // Properties
@@ -181,6 +184,20 @@ class DataTypes extends Component
         return $response;
     }
 
+    public function getFeedData($feedModel, $usePrimaryElement = true)
+    {
+        $feedDataResponse = $feedModel->getDataType()->getFeed($feedModel->feedUrl, $feedModel, $usePrimaryElement);
+
+        $event = new FeedDataEvent([
+            'url' => $feedModel->feedUrl,
+            'response' => $feedDataResponse,
+        ]);
+
+        Event::trigger(static::class, self::EVENT_AFTER_PARSE_FEED, $event);
+
+        return $event->response;
+    }
+
     public function getFeedNodes($data)
     {
         if (!is_array($data)) {
@@ -302,7 +319,7 @@ class DataTypes extends Component
             if ($headers) {
                 $data = $this->_headers;
             } else {
-                $data = Hash::get($dataType->getFeed($url, $feed), 'data');
+                $data = Hash::get($this->getFeedData($feed), 'data');
             }
 
             if ($offset) {
@@ -328,7 +345,7 @@ class DataTypes extends Component
                 if ($headers) {
                     $data = $this->_headers;
                 } else {
-                    $data = Hash::get($dataType->getFeed($url, $feed), 'data');
+                    $data = Hash::get($this->getFeedData($feed), 'data');
                 }
 
                 if ($offset) {
