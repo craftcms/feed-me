@@ -33,7 +33,8 @@
         "league/csv": "^8.2",
         "guzzlehttp/guzzle": "~6.3.0",
         "vlucas/phpdotenv": "^2.4",
-        "ralouphie/mimey": "^1.0"
+        "ralouphie/mimey": "^1.0",
+        "seld/jsonlint": "^1.7"
     },
     "require-dev": {
         "codeception/codeception": "~2.3.3"

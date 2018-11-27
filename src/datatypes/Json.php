@@ -7,6 +7,7 @@ use verbb\feedme\base\DataTypeInterface;
 
 use Cake\Utility\Hash;
 use craft\helpers\Json as JsonHelper;
+use Seld\JsonLint\JsonParser;
 
 class Json extends DataType implements DataTypeInterface
 {
@@ -36,8 +37,16 @@ class Json extends DataType implements DataTypeInterface
 
         // Parse the JSON string - using Yii's built-in cleanup
         try {
-            $array = JsonHelper::decode($data, true);
-        } catch (\Exception $e) {
+            // Try to parse the JSON first, no real useful error handling for stock JSON
+            $parser = new JsonParser();
+            $parseErrors = $parser->lint($data);
+
+            if ($parseErrors) {
+                throw $parseErrors;
+            }
+
+            $array = json_decode($data, true);
+        } catch (\Throwable $e) {
             $error = 'Invalid JSON: ' . $e->getMessage();
 
             FeedMe::error($error);
