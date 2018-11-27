@@ -7,18 +7,6 @@
     {% set calendar = craft.calendar.calendar({ id: calendarId }) %}
 {% endif %}
 
-{% set users = [{ label: 'Don\'t import', value: '' }] %}
-{% if CraftEdition == CraftSolo %}
-    {% set user = craft.users().one() %}
-    {% set users = users | merge([{ label: user, value: user.id }]) %}
-{% endif %}
-
-{% if CraftEdition == CraftPro %}
-    {% for user in craft.users.can('manageEventsFor:' ~ calendarId).all() %}
-        {% set users = users | merge([{ label: user, value: user.id }]) %}
-    {% endfor %}
-{% endif %}
-
 {% set fields = [{
     name: 'Title',
     handle: 'title',
@@ -78,8 +66,12 @@
     handle: 'authorId',
     instructions: 'Entries will be assigned to the user in this field. If the field does not match any existing member, the default author will be assigned.' | t('feed-me'),
     default: {
-        type: 'select',
-        options: users,
+        type: 'elementselect',
+        options: {
+            elementType: 'craft\\elements\\User',
+            selectionLabel: "Default Author" | t('feed-me'),
+            limit: 1,
+        },
     },
 }, {
     name: 'Event ID',
