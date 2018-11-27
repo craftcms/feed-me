@@ -120,11 +120,13 @@ class Asset extends Element implements ElementInterface
 
         Craft::configure($query, $criteria);
 
-        $foundElements = $query->one();
+        $foundElement = $query->one();
 
         // Do we want to match existing elements, and was one found?
-        if ($foundElements && $conflict === AssetElement::SCENARIO_INDEX) {
-            return $foundElements->filename;
+        if ($foundElement && $conflict === AssetElement::SCENARIO_INDEX) {
+            $this->element = $foundElement;
+
+            return $foundElement->filename;
         }
 
         // We can't find an existing asset, we need to download it, or plain ignore it
@@ -132,7 +134,10 @@ class Asset extends Element implements ElementInterface
             $uploadedElementIds = AssetHelper::fetchRemoteImage([$urlToUpload], $fieldInfo, $this->feed, null, $this->element, $folderId);
 
             if ($uploadedElementIds) {
-                return AssetElement::findOne(['id' => $uploadedElementIds[0]])->filename;
+                $foundElement = AssetElement::findOne(['id' => $uploadedElementIds[0]]);
+                $this->element = $foundElement;
+
+                return $foundElement->filename;
             }
         }
     }
