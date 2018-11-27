@@ -310,7 +310,8 @@ class DataTypes extends Component
         }
 
         $feed = new FeedModel();
-        $dataType = $this->getRegisteredDataType($type);
+        $feed->feedUrl = $url;
+        $feed->feedType = $type;
 
         if ($element) {
             $feed->primaryElement = $element;
