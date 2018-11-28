@@ -13,6 +13,18 @@ abstract class BaseFeedMeElementType
         return str_replace(array('Craft\\', 'FeedMeElementType'), array('', ''), get_class($this));
     }
 
+    public function disable(array $elements)
+    {
+        // Mark all as false
+        $elementIds = array();
+
+        foreach ($elements as $element) {
+            $elementIds[] = $element->id;
+        }
+
+        return craft()->db->createCommand()->update('elements', array('enabled' => 0), array('in', 'id', $elementIds));
+    }
+
     // Protected Methods
     // =========================================================================
 
