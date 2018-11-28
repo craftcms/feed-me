@@ -1,5 +1,14 @@
 [
     {
+        "version": "2.0.17",
+        "downloadUrl": "https://github.com/verbb/feed-me/archive/2.0.17.zip",
+        "date": "2018-11-28T00:00:00+10:00",
+        "notes": [
+            "[Fixed] Fix config setting handle.",
+            "[Fixed] Fix error when trying to disable non-entry imports."
+        ]
+    },
+    {
         "version": "2.0.16",
         "downloadUrl": "https://github.com/verbb/feed-me/archive/2.0.16.zip",
         "date": "2018-10-26T00:00:00+10:00",

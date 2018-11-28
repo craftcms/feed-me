@@ -19,7 +19,7 @@ class FeedMePlugin extends BasePlugin
 
     public function getVersion()
     {
-        return '2.0.16';
+        return '2.0.17';
     }
 
     public function getSchemaVersion()
