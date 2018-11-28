@@ -97,7 +97,7 @@ class CategoriesFeedMeFieldType extends BaseFeedMeFieldType
 
                 $preppedData[$fieldHandle] = $data;
 
-                if (craft()->config->get('checkExistingFieldData', 'feedMe')) {
+                if (craft()->config->get('checkExistingFieldData', 'feedme')) {
                     $field = craft()->fields->getFieldByHandle($fieldHandle);
 
                     craft()->feedMe_fields->checkExistingFieldData($category, $preppedData, $fieldHandle, $field);

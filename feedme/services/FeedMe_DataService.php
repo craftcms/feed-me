@@ -150,7 +150,7 @@ class FeedMe_DataService extends BaseApplicationComponent
             CURLOPT_HEADERFUNCTION => array($this, '_handleFeedMeDataHeader'),
         );
 
-        $configOptions = craft()->config->get('curlOptions', 'feedMe');
+        $configOptions = craft()->config->get('curlOptions', 'feedme');
 
         if ($configOptions) {
             $options = $configOptions + $defaultOptions;

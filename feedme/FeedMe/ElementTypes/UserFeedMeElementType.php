@@ -270,7 +270,7 @@ class UserFeedMeElementType extends BaseFeedMeElementType
                 CURLOPT_FAILONERROR => true,
             );
 
-            $configOptions = craft()->config->get('curlOptions', 'feedMe');
+            $configOptions = craft()->config->get('curlOptions', 'feedme');
 
             if ($configOptions) {
                 $opts = $configOptions + $defaultOptions;

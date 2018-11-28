@@ -68,7 +68,7 @@ class FeedMe_LicenseService extends BaseApplicationComponent
     {
         $licenseKey = craft()->plugins->getPluginLicenseKey('FeedMe');
 
-        $configLicenseKey = craft()->config->get('licenseKey', 'feedMe');
+        $configLicenseKey = craft()->config->get('licenseKey', 'feedme');
 
         if ($configLicenseKey) {
             $licenseKey = $configLicenseKey;

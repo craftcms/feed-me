@@ -101,7 +101,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         $uniqueMatches = array();
 
         // We can opt-out of updating certain elements if a field is switched on
-        $skipUpdateFieldHandle = craft()->config->get('skipUpdateFieldHandle', 'feedMe');
+        $skipUpdateFieldHandle = craft()->config->get('skipUpdateFieldHandle', 'feedme');
 
         //
         // Lets get started!
@@ -182,7 +182,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
         foreach ($data as $handle => $preppedData) {
             craft()->feedMe_fields->postForFieldType($element, $fieldData, $handle);
 
-            if (craft()->config->get('checkExistingFieldData', 'feedMe')) {
+            if (craft()->config->get('checkExistingFieldData', 'feedme')) {
                 craft()->feedMe_fields->checkExistingFieldData($element, $fieldData, $handle);
             }
         }
@@ -329,7 +329,7 @@ class FeedMe_ProcessService extends BaseApplicationComponent
     public function backupBeforeFeed($feed)
     {
         try {
-            $limit = craft()->config->get('backupLimit', 'feedMe') ? craft()->config->get('backupLimit', 'feedMe') : 100;
+            $limit = craft()->config->get('backupLimit', 'feedme') ? craft()->config->get('backupLimit', 'feedme') : 100;
 
             // Check for any existing backups, if more than our limit, we need to kill some off...
             $currentBackups = glob(craft()->path->getDbBackupPath() . '*.sql');
