@@ -12,7 +12,22 @@ Provide the URL for your feed. This can be an absolute URL, relative (to the web
 
 ### Feed Type
 
-Set the Feed Type to match the type of data you're importing.
+Set the Feed Type to match the type of data you're importing. Your options are:
+
+- JSON
+- XML
+- RSS
+- ATOM
+- Google Sheet
+
+:::tip
+When using Google Sheet as your feed type, consult the [Google Sheets API](https://developers.google.com/sheets/api/guides/concepts) docs. Your URL should include a `key` value for your API key. For example:
+
+```
+https://sheets.googleapis.com/v4/spreadsheets/xxxxxxxxxxxxxxxx/values/SheetName?key=xxxxxxxxxxxxxxxx
+```
+
+:::
 
 ### Element Type
 
