@@ -262,9 +262,6 @@ class AssetsFeedMeFieldType extends BaseFeedMeFieldType
             curl_setopt_array($ch, $opts);
             $result = curl_exec($ch);
 
-            var_dump($curlUrl);
-            var_dump(curl_error($ch));
-
             if ($result === false) {
                 FeedMePlugin::log('Asset error: ' . $url . ' - ' . curl_error($ch), LogLevel::Error, true);
                 continue;
