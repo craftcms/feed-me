@@ -119,7 +119,7 @@ class FeedMeVariable extends ServiceLocator
             foreach ($field->sources as $source) {
                 list($type, $id) = explode(':', $source);
 
-                $sources[] = Craft::$app->volumes->getVolumeById($id);
+                $sources[] = Craft::$app->volumes->getVolumeByUid($id);
             }
         } else if ($field->sources === '*') {
             $sources = Craft::$app->volumes->getAllVolumes();
@@ -136,7 +136,7 @@ class FeedMeVariable extends ServiceLocator
 
         list($type, $id) = explode(':', $field->source);
 
-        return Craft::$app->categories->getGroupById($id);
+        return Craft::$app->categories->getGroupByUid($id);
     }
 
     public function getEntrySourcesByField($field)
@@ -158,7 +158,7 @@ class FeedMeVariable extends ServiceLocator
                 } else {
                     list($type, $id) = explode(':', $source);
 
-                    $sources[] = Craft::$app->sections->getSectionById($id);
+                    $sources[] = Craft::$app->sections->getSectionByUid($id);
                 }
             }
         } else if ($field->sources === '*') {
@@ -176,7 +176,7 @@ class FeedMeVariable extends ServiceLocator
 
         list($type, $id) = explode(':', $field->source);
 
-        return Craft::$app->tags->getTagGroupById($id);
+        return Craft::$app->tags->getTagGroupByUid($id);
     }
 
 
