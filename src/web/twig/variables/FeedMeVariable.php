@@ -117,9 +117,9 @@ class FeedMeVariable extends ServiceLocator
 
         if (is_array($field->sources)) {
             foreach ($field->sources as $source) {
-                list($type, $id) = explode(':', $source);
+                list($type, $uid) = explode(':', $source);
 
-                $sources[] = Craft::$app->volumes->getVolumeByUid($id);
+                $sources[] = Craft::$app->volumes->getVolumeByUid($uid);
             }
         } else if ($field->sources === '*') {
             $sources = Craft::$app->volumes->getAllVolumes();
@@ -134,9 +134,9 @@ class FeedMeVariable extends ServiceLocator
             return;
         }
 
-        list($type, $id) = explode(':', $field->source);
+        list($type, $uid) = explode(':', $field->source);
 
-        return Craft::$app->categories->getGroupByUid($id);
+        return Craft::$app->categories->getGroupByUid($uid);
     }
 
     public function getEntrySourcesByField($field)
@@ -156,9 +156,9 @@ class FeedMeVariable extends ServiceLocator
                         }
                     }
                 } else {
-                    list($type, $id) = explode(':', $source);
+                    list($type, $uid) = explode(':', $source);
 
-                    $sources[] = Craft::$app->sections->getSectionByUid($id);
+                    $sources[] = Craft::$app->sections->getSectionByUid($uid);
                 }
             }
         } else if ($field->sources === '*') {
@@ -174,9 +174,9 @@ class FeedMeVariable extends ServiceLocator
             return;
         }
 
-        list($type, $id) = explode(':', $field->source);
+        list($type, $uid) = explode(':', $field->source);
 
-        return Craft::$app->tags->getTagGroupByUid($id);
+        return Craft::$app->tags->getTagGroupByUid($uid);
     }
 
 
