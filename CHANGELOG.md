@@ -1,5 +1,17 @@
 # Changelog
 
+## 3.0.1 - 2018-12-06
+
+### Changed
+- All element titles will be truncated automatically if over 255 characters.
+
+### Fixed
+- Fix SQL error when setting a default author.
+- Fix `matchExistingElement` not supporting false-y values.
+- Fix Matrix/Super Table support for nested (complex) fields.
+- Fix SQL error ocurring when mapping a parent entry.
+- Fix Assets (and other) elements not having their modified data saved properly in some instances.
+
 ## 3.0.0 - 2018-11-28
 
 ### Added
