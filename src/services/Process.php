@@ -396,7 +396,7 @@ class Process extends Component
         FeedMe::debug($contentData);
 
         // Save the element
-        if ($this->_service->save($contentData, $feed)) {
+        if ($this->_service->save($element, $feed)) {
             // Give elements a chance to perform actions after save
             $this->_service->afterSave($contentData, $feed);
 

@@ -148,8 +148,10 @@ abstract class Element extends Component
         return true;
     }
 
-    public function save($data, $settings)
+    public function save($element, $settings)
     {
+        $this->element = $element;
+
         $propagate = isset($settings['siteId']) && $settings['siteId'] ? false : true;
 
         $this->element->setScenario(BaseElement::SCENARIO_ESSENTIALS);

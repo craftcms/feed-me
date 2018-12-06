@@ -109,9 +109,9 @@ class CommerceProduct extends Element implements ElementInterface
         return $this->element;
     }
 
-    public function save($data, $settings)
+    public function save($element, $settings)
     {
-        $this->element->fieldLayoutId;
+        $this->element = $element;
 
         $propagate = isset($settings['siteId']) && $settings['siteId'] ? false : true;
 
