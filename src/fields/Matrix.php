@@ -170,23 +170,20 @@ class Matrix extends Field implements FieldInterface
             foreach ($fields as $subFieldHandle => $subFieldInfo) {
                 $node = Hash::get($subFieldInfo, 'node');
 
-                $isComplexField = Hash::extract($subFieldInfo, 'fields.{*}.node');
+                $nestedFieldNodes = Hash::extract($subFieldInfo, 'fields.{*}.node');
 
-                // Remove any un-mapped items
-                foreach ($isComplexField as $key => $complexInfo) {
-                    if ($complexInfo === 'noimport') {
-                        unset($isComplexField[$key]);
+                if ($nestedFieldNodes) {
+                    foreach ($nestedFieldNodes as $key => $nestedFieldNode) {
+                        if ($feedPath == $nestedFieldNode) {
+                            return [
+                                'blockHandle' => $blockHandle,
+                                'subFieldHandle' => $subFieldHandle,
+                                'subFieldInfo' => $subFieldInfo,
+                                'nodePath' => $nodePath,
+                                'isComplexField' => true,
+                            ];
+                        }
                     }
-                }
-
-                if ($isComplexField) {
-                    return [
-                        'blockHandle' => $blockHandle,
-                        'subFieldHandle' => $subFieldHandle,
-                        'subFieldInfo' => $subFieldInfo,
-                        'nodePath' => $nodePath,
-                        'isComplexField' => true,
-                    ];
                 }
 
                 if ($feedPath == $node) {
