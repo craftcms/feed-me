@@ -102,7 +102,7 @@ abstract class Element extends Component
         foreach ($settings['fieldUnique'] as $handle => $value) {
             $feedValue = Hash::get($data, $handle);
 
-            if ($feedValue) {
+            if (!is_null($feedValue)) {
                 if (is_object($feedValue) && get_class($feedValue) === 'DateTime') {
                     $feedValue = $feedValue->format('Y-m-d H:i:s');
                 }
@@ -148,8 +148,10 @@ abstract class Element extends Component
         return true;
     }
 
-    public function save($data, $settings)
+    public function save($element, $settings)
     {
+        $this->element = $element;
+
         $propagate = isset($settings['siteId']) && $settings['siteId'] ? false : true;
 
         $this->element->setScenario(BaseElement::SCENARIO_ESSENTIALS);
@@ -169,6 +171,18 @@ abstract class Element extends Component
 
     // Protected Methods
     // =========================================================================
+
+    protected function parseTitle($feedData, $fieldInfo)
+    {
+        $value = $this->fetchSimpleValue($feedData, $fieldInfo);
+
+        // Truncate if need be
+        if (is_string($value) && strlen($value) > 255) {
+            $value = StringHelper::safeTruncate($value, 255);
+        }
+
+        return $value;
+    }
 
     protected function parseSlug($feedData, $fieldInfo)
     {

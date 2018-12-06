@@ -11,10 +11,17 @@
 {% import 'feed-me/_macros' as feedMeMacro %}
 {% import '_includes/forms' as forms %}
 
+{# Special case when inside another complex field (Matrix) #}
+{% if parentPath is defined %}
+    {% set prefixPath = parentPath %}
+{% else %}
+    {% set prefixPath = [handle] %}
+{% endif %}
+
 {% set classes = ['complex-field'] %}
 
 <div class="additional-mapping-fields">
-    {% namespace 'fieldMapping[' ~ handle ~ ']' %}
+    {% namespace 'fieldMapping[' ~ prefixPath | join('][') ~ ']' %}
         <input type="text" name="field" value="{{ className(field) }}">
         <input type="text" name="blockTypeId" value="{{ field.getBlockTypes()[0] ?? '' }}">
     {% endnamespace %}
@@ -42,7 +49,7 @@
             {% set nameLabel = blocktypefield.name %}
             {% set instructionsHandle = handle ~ '[' ~ blocktypefield.handle ~ ']' %}
 
-            {% set parentPath = [ handle, 'fields', blocktypefield.handle ] %}
+            {% set parentPath = prefixPath | merge ([ 'fields', blocktypefield.handle ]) %}
 
             {% set fieldClass = craft.feedme.fields.getRegisteredField(className(blocktypefield)) %}
             {% set template = fieldClass.getMappingTemplate() %}

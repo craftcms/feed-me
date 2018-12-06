@@ -132,7 +132,7 @@ class Entry extends Element implements ElementInterface
         }
 
         if (is_numeric($value)) {
-            $match = 'id';
+            $match = 'elements.id';
         }
 
         $element = EntryElement::find()
@@ -176,6 +176,10 @@ class Entry extends Element implements ElementInterface
         // Element lookups must have a value to match against
         if ($value === null || $value === '') {
             return null;
+        }
+
+        if (is_array($value)) {
+            $value = $value[0];
         }
 
         if (is_numeric($value)) {

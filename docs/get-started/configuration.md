@@ -9,19 +9,7 @@ return [
     '*' => [
         'pluginName' => 'Feed Me',
         'cache' => 60,
-        'requestOptions' => [
-            'headers' => [
-                'Accept' => 'application/json',
-                'X-Foo' => ['Bar', 'Baz']
-            ],
-            'auth' => [
-                'username',
-                'password'
-            ],
-            'query' => [
-                'foo' => 'bar'
-            ],
-        ],
+        'requestOptions' => [],
         'checkExistingFieldData' => false,
         'skipUpdateFieldHandle' => 'skipFeedMeUpdate',
         'backupLimit' => 100,
@@ -56,7 +44,7 @@ return [
 
 - `pluginName` - Optionally change the name of the plugin.
 - `cache` - For template calls, change the default cache time.
-- `requestOptions` - Any additionl options to be sent with requests when fetching your feed content [Guzzle Options](http://docs.guzzlephp.org/en/stable/request-options.html).
+- `requestOptions` - Any additionl options to be sent with requests when fetching your feed content [Guzzle Options](http://docs.guzzlephp.org/en/stable/request-options.html). See an example below.
 - `checkExistingFieldData` - Whether to do performance checks against existing data when updating. Can help to improve processing speed. 
 - `skipUpdateFieldHandle` - A provided field handle attached to your elements (often a Lightswitch or similar). If this field has a value during processing, Feed Me will skip the element.
 - `backupLimit` - Set a limit to the number of backups to keep.
@@ -66,6 +54,24 @@ return [
 - `compareContent` - Whether to check against existing element content before updating. This can have considerable performance improvements and prevent against needless updating.
 - `sleepTime` - Add the number of seconds to sleep after each feed item has been processed.
 - `feedOptions` - Provide an array of any of the above options or [Feed Settings](docs:feature-tour/feed-overview) to set specifically for certain feeds. Use the Feed ID as the key for the array.
+
+#### Example `requestOptions`
+See [Guzzle Options](http://docs.guzzlephp.org/en/stable/request-options.html) for the full range:
+
+```php
+'requestOptions' => [
+    'headers' => [
+        'Accept' => 'application/json',
+    ],
+    'auth' => [
+        'username', 'password'
+    ],
+    'query' => [
+        'foo' => 'bar'
+    ],
+],
+
+```
 
 ## Control Panel
 

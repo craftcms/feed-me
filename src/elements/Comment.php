@@ -86,8 +86,10 @@ class Comment extends Element implements ElementInterface
         return $this->element;
     }
 
-    public function save($data, $settings)
+    public function save($element, $settings)
     {
+        $this->element = $element;
+        
         $propagate = isset($settings['siteId']) && $settings['siteId'] ? false : true;
 
         // We have to turn off validation - otherwise Spam checks will kick in
