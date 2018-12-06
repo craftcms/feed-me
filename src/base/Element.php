@@ -170,6 +170,18 @@ abstract class Element extends Component
     // Protected Methods
     // =========================================================================
 
+    protected function parseTitle($feedData, $fieldInfo)
+    {
+        $value = $this->fetchSimpleValue($feedData, $fieldInfo);
+
+        // Truncate if need be
+        if (is_string($value) && strlen($value) > 255) {
+            $value = StringHelper::safeTruncate($value, 255);
+        }
+
+        return $value;
+    }
+
     protected function parseSlug($feedData, $fieldInfo)
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
