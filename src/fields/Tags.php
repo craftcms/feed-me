@@ -46,7 +46,8 @@ class Tags extends Field implements FieldInterface
         $node = Hash::get($this->fieldInfo, 'node');
 
         // Get tag group id
-        list($type, $groupId) = explode(':', $source);
+        list($type, $groupUid) = explode(':', $source);
+        $groupId = Db::idByUid('{{%taggroups}}', $groupUid);
 
         $foundElements = [];
 

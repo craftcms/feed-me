@@ -50,8 +50,8 @@ class Users extends Field implements FieldInterface
 
         if (is_array($sources)) {
             foreach ($sources as $source) {
-                list($type, $id) = explode(':', $source);
-                $groupIds[] = $id;
+                list($type, $uid) = explode(':', $source);
+                $groupIds[] = Db::idByUid('{{%usergroups}}', $uid);
             }
         } else if ($sources === '*') {
             $groupIds = '';

@@ -54,11 +54,11 @@ class Assets extends Field implements FieldInterface
 
         if (is_array($folders)) {
             foreach ($folders as $folder) {
-                list(, $id) = explode(':', $folder);
-                $folderIds[] = $id;
+                list(, $uid) = explode(':', $folder);
+                $folderIds[] = $uid;
 
                 // Get all sub-folders for this root folder
-                $folderModel = Craft::$app->getAssets()->getFolderById($id);
+                $folderModel = Craft::$app->getAssets()->getFolderByUid($uid);
 
                 if ($folderModel) {
                     $subFolders = Craft::$app->getAssets()->getAllDescendantFolders($folderModel);

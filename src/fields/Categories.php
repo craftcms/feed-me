@@ -49,7 +49,7 @@ class Categories extends Field implements FieldInterface
 
         // Get source id's for connecting
         list($type, $groupUid) = explode(':', $source);
-        $groupId = Db::idByUid('{{%fieldgroups}}',$groupUid);
+        $groupId = Db::idByUid('{{%categorygroups}}', $groupUid);
 
         $foundElements = [];
 
