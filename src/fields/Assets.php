@@ -55,7 +55,7 @@ class Assets extends Field implements FieldInterface
         if (is_array($folders)) {
             foreach ($folders as $folder) {
                 list(, $uid) = explode(':', $folder);
-                $folderIds[] = $uid;
+                $folderIds[] = Db::idByUid('{{%volumefolders}}', $uid);
 
                 // Get all sub-folders for this root folder
                 $folderModel = Craft::$app->getAssets()->getFolderByUid($uid);
