@@ -10,7 +10,6 @@ return [
         'pluginName' => 'Feed Me',
         'cache' => 60,
         'requestOptions' => [],
-        'checkExistingFieldData' => false,
         'skipUpdateFieldHandle' => 'skipFeedMeUpdate',
         'backupLimit' => 100,
         'dataDelimiter' => '-|-',
@@ -21,19 +20,7 @@ return [
         'feedOptions' => [
             '1' => [
                 'feedUrl' => 'https://specialurl.io/feed.json',
-                'requestOptions' => [
-                    'headers' => [
-                        'Accept' => 'application/json',
-                        'X-Foo' => ['Bar', 'Baz']
-                    ],
-                    'auth' => [
-                        'username',
-                        'password'
-                    ],
-                    'query' => [
-                        'foo' => 'bar'
-                    ],
-                ],
+                'requestOptions' => [],
             ]
         ],
     ]
@@ -45,7 +32,6 @@ return [
 - `pluginName` - Optionally change the name of the plugin.
 - `cache` - For template calls, change the default cache time.
 - `requestOptions` - Any additionl options to be sent with requests when fetching your feed content [Guzzle Options](http://docs.guzzlephp.org/en/stable/request-options.html). See an example below.
-- `checkExistingFieldData` - Whether to do performance checks against existing data when updating. Can help to improve processing speed. 
 - `skipUpdateFieldHandle` - A provided field handle attached to your elements (often a Lightswitch or similar). If this field has a value during processing, Feed Me will skip the element.
 - `backupLimit` - Set a limit to the number of backups to keep.
 - `dataDelimiter` - Feed Me will try and split content based on this delimiter. Useful for CSVs.
