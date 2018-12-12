@@ -6,6 +6,7 @@ use verbb\feedme\base\Element;
 use verbb\feedme\base\ElementInterface;
 
 use Craft;
+use craft\base\Element as BaseElement;
 use craft\db\Query;
 use craft\elements\User as UserElement;
 use craft\helpers\Db;

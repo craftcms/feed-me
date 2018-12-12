@@ -10,6 +10,7 @@ use verbb\feedme\helpers\DataHelper;
 use verbb\feedme\services\Process;
 
 use Craft;
+use craft\base\Element as BaseElement;
 use craft\db\Query;
 
 use craft\commerce\Plugin as Commerce;
