@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.2.1 - 2018-12-13
+
+### Fixed
+- Fix `SCENARIO_ESSENTIALS` error from 3.0.2.
+
 ## 3.0.2 - 2018-12-12
 
 ### Added
