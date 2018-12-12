@@ -92,6 +92,8 @@ class Comment extends Element implements ElementInterface
         
         $propagate = isset($settings['siteId']) && $settings['siteId'] ? false : true;
 
+        $this->element->setScenario(BaseElement::SCENARIO_ESSENTIALS);
+
         // We have to turn off validation - otherwise Spam checks will kick in
         if (!Craft::$app->getElements()->saveElement($this->element, false, $propagate)) {
             return false;
