@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.0.2 - 2018-12-12
+
+### Added
+- Added `logging` config option.
+
+### Fixed
+- Fix `SCENARIO_ESSENTIALS` not being applied for products and comments.
+- Fix elements being disabled/deleted with `compareContent` on.
+
 ## 3.0.1 - 2018-12-06
 
 ### Changed
