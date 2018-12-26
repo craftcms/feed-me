@@ -25,5 +25,6 @@ class Settings extends Model
     public $parseTwig = [];
     public $feedOptions = [];
     public $sleepTime = 0;
+    public $logging = true;
 
 }

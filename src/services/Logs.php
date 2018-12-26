@@ -31,6 +31,11 @@ class Logs extends Component
         $type = explode('::', $method)[1];
         $message = Craft::t('feed-me', $message, $params);
 
+        // Make sure to check if we should log anything
+        if (!$this->_canLog($type)) {
+            return;
+        }
+
         // Always prepend the feed we're dealing with
         if (FeedMe::$feedName) {
             $message = FeedMe::$feedName . ': ' . $message;
@@ -113,4 +118,23 @@ class Logs extends Component
         return $logEntries;
     }
     
+
+    // Private Methods
+    // =========================================================================
+
+    private function _canLog($type)
+    {   
+        $logging = FeedMe::$plugin->service->getConfig('logging');
+
+        // If logging set to false, don't log anything
+        if ($logging === false) {
+            return false;
+        }
+
+        if ($type === 'info' && $logging === 'error') {
+            return false;
+        }
+
+        return true;
+    }
 }

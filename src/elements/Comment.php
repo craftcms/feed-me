@@ -6,6 +6,7 @@ use verbb\feedme\base\Element;
 use verbb\feedme\base\ElementInterface;
 
 use Craft;
+use craft\base\Element as BaseElement;
 use craft\db\Query;
 use craft\elements\User as UserElement;
 use craft\helpers\Db;
@@ -91,6 +92,8 @@ class Comment extends Element implements ElementInterface
         $this->element = $element;
         
         $propagate = isset($settings['siteId']) && $settings['siteId'] ? false : true;
+
+        $this->element->setScenario(BaseElement::SCENARIO_ESSENTIALS);
 
         // We have to turn off validation - otherwise Spam checks will kick in
         if (!Craft::$app->getElements()->saveElement($this->element, false, $propagate)) {

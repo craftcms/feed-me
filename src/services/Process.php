@@ -388,6 +388,8 @@ class Process extends Component
                 FeedMe::debug($info);
                 FeedMe::debug($contentData);
 
+                $this->_processedElementIds[] = $element->id;
+
                 return;
             }
         }

@@ -10,6 +10,7 @@ use verbb\feedme\helpers\DataHelper;
 use verbb\feedme\services\Process;
 
 use Craft;
+use craft\base\Element as BaseElement;
 use craft\db\Query;
 
 use craft\commerce\Plugin as Commerce;
@@ -114,6 +115,8 @@ class CommerceProduct extends Element implements ElementInterface
         $this->element = $element;
 
         $propagate = isset($settings['siteId']) && $settings['siteId'] ? false : true;
+
+        $this->element->setScenario(BaseElement::SCENARIO_ESSENTIALS);
 
         if (!Craft::$app->getElements()->saveElement($this->element, true, $propagate)) {
             $errors = [$this->element->getErrors()];
