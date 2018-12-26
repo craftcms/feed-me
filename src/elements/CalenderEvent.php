@@ -63,7 +63,9 @@ class CalenderEvent extends Element implements ElementInterface
 
     public function getGroups()
     {
-        return Calendar::getInstance()->calendars->getAllAllowedCalendars();
+        if (Calendar::getInstance()) {
+            return Calendar::getInstance()->calendars->getAllAllowedCalendars();
+        }
     }
 
     public function getQuery($settings, $params = [])

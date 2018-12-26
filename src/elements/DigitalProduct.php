@@ -48,7 +48,9 @@ class DigitalProduct extends Element implements ElementInterface
 
     public function getGroups()
     {
-        return DigitalProducts::getInstance()->getProductTypes()->getEditableProductTypes();
+        if (DigitalProducts::getInstance()) {
+            return DigitalProducts::getInstance()->getProductTypes()->getEditableProductTypes();
+        }
     }
 
     public function getQuery($settings, $params = [])
