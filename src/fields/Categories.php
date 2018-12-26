@@ -48,7 +48,8 @@ class Categories extends Field implements FieldInterface
         $node = Hash::get($this->fieldInfo, 'node');
 
         // Get source id's for connecting
-        list($type, $groupId) = explode(':', $source);
+        list($type, $groupUid) = explode(':', $source);
+        $groupId = Db::idByUid('{{%categorygroups}}', $groupUid);
 
         $foundElements = [];
 
