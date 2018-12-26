@@ -55,6 +55,8 @@
     </tbody>
 </table>
 
+{% set tabs = [] %}
+
 {% if source.fieldLayoutId %}
     {% set tabs = craft.app.fields.getLayoutById(source.fieldLayoutId).getTabs() %}
 

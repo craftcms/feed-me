@@ -194,6 +194,8 @@
     </tbody>
 </table>
 
+{% set tabs = [] %}
+
 {% if orderSettings.fieldLayoutId %}
     {% for tab in craft.app.fields.getLayoutById(orderSettings.fieldLayoutId).getTabs() %}
         <hr>

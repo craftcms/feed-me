@@ -109,6 +109,8 @@
     </tbody>
 </table>
 
+{% set tabs = [] %}
+
 {% if productType.fieldLayoutId %}
     {% set tabs = craft.app.fields.getLayoutById(productType.fieldLayoutId).getTabs() %}
 

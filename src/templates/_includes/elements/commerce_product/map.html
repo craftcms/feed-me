@@ -228,6 +228,8 @@
     </tbody>
 </table>
 
+{% set productTabs = [] %}
+
 {% if productType.fieldLayoutId %}
     {% set productTabs = craft.app.fields.getLayoutById(productType.fieldLayoutId).getTabs() %}
 
@@ -255,6 +257,8 @@
         </table>
     {% endfor %}
 {% endif %}
+
+{% set variantTabs = [] %}
 
 {% if productType.variantFieldLayoutId %}
     {% set variantTabs = craft.app.fields.getLayoutById(productType.variantFieldLayoutId).getTabs() %}
