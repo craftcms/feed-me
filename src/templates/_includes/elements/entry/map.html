@@ -131,31 +131,33 @@
     </tbody>
 </table>
 
-{% set tabs = craft.app.fields.getLayoutById(entryType.fieldLayoutId).getTabs() %}
+{% if entryType.fieldLayoutId %}
+    {% set tabs = craft.app.fields.getLayoutById(entryType.fieldLayoutId).getTabs() %}
 
-{% for tab in tabs %}
-    <hr>
+    {% for tab in tabs %}
+        <hr>
 
-    <h2>{{ tab.name }} Fields</h2>
+        <h2>{{ tab.name }} Fields</h2>
 
-    <table class="feedme-mapping data fullwidth collapsible">
-        <thead>
-            <th>{{ 'Field' | t('feed-me') }}</th>
-            <th>{{ 'Feed Element' | t('feed-me') }}</th>
-            <th>{{ 'Default Value' | t('feed-me') }}</th>
-        </thead>
-        <tbody>
-            {% for field in tab.getFields() %}
-                {% set fieldClass = craft.feedme.fields.getRegisteredField(className(field)) %}
-                {% set template = fieldClass.getMappingTemplate() %}
+        <table class="feedme-mapping data fullwidth collapsible">
+            <thead>
+                <th>{{ 'Field' | t('feed-me') }}</th>
+                <th>{{ 'Feed Element' | t('feed-me') }}</th>
+                <th>{{ 'Default Value' | t('feed-me') }}</th>
+            </thead>
+            <tbody>
+                {% for field in tab.getFields() %}
+                    {% set fieldClass = craft.feedme.fields.getRegisteredField(className(field)) %}
+                    {% set template = fieldClass.getMappingTemplate() %}
 
-                {% set variables = { name: field.name, handle: field.handle, feed: feed, feedData: feedData, field: field, fieldClass: fieldClass } %}
-                
-                {% include template ignore missing with variables only %}
-            {% endfor %}
-        </tbody>
-    </table>
-{% endfor %}
+                    {% set variables = { name: field.name, handle: field.handle, feed: feed, feedData: feedData, field: field, fieldClass: fieldClass } %}
+                    
+                    {% include template ignore missing with variables only %}
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endfor %}
+{% endif %}
 
 <hr>
 
