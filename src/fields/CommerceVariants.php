@@ -45,8 +45,9 @@ class CommerceVariants extends Field implements FieldInterface
         $typeIds = [];
 
         if (is_array($sources)) {
-            foreach ($sources as $type) {
-                list(, $id) = explode(':', $type);
+            foreach ($sources as $source) {
+                list($type, $id) = explode(':', $source);
+                $typeIds[] = $id;
             }
         } else if ($sources === '*') {
             $typeIds = '*';
