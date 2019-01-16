@@ -1,5 +1,6 @@
+> ## Feed Me for Craft 2.x is now retired.
 > 
-> ### Feed Me has a new home with the fine folks at Verbb. Read about it in our [blog post](https://verbb.io/blog/welcome-to-verbb).
+> ### This plugin has reached its end-of-life as of January 31st, 2019. As such, no support will be provided for its functionality. You are free to continue to use it, and the license allows you to fork it and make changes as required. Be sure to check out the [Craft 3.x version](https://github.com/verbb/feed-me/craft-3) with new features and ongoing support.
 >
 
 # Feed Me Plugin for Craft CMS
