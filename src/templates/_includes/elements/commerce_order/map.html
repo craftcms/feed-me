@@ -194,27 +194,31 @@
     </tbody>
 </table>
 
-{% for tab in craft.app.fields.getLayoutById(orderSettings.fieldLayoutId).getTabs() %}
-    <hr>
+{% set tabs = [] %}
 
-    <h2>{{ tab.name }} Fields</h2>
+{% if orderSettings.fieldLayoutId %}
+    {% for tab in craft.app.fields.getLayoutById(orderSettings.fieldLayoutId).getTabs() %}
+        <hr>
 
-    <table class="feedme-mapping data fullwidth collapsible">
-        <thead>
-            <th>{{ 'Field' | t('feed-me') }}</th>
-            <th>{{ 'Feed Element' | t('feed-me') }}</th>
-            <th>{{ 'Default Value' | t('feed-me') }}</th>
-        </thead>
-        <tbody>
-            {% for fieldtype in tab.getFields() %}
-                {% set field = fieldtype.getField() %}
+        <h2>{{ tab.name }} Fields</h2>
 
-                {% set variables = { field: field, fieldtype: fieldtype, feed: feed, feedData: feedData } %}
-                {% include 'feedme/_includes/field' with variables %}
-            {% endfor %}
-        </tbody>
-    </table>
-{% endfor %}
+        <table class="feedme-mapping data fullwidth collapsible">
+            <thead>
+                <th>{{ 'Field' | t('feed-me') }}</th>
+                <th>{{ 'Feed Element' | t('feed-me') }}</th>
+                <th>{{ 'Default Value' | t('feed-me') }}</th>
+            </thead>
+            <tbody>
+                {% for fieldtype in tab.getFields() %}
+                    {% set field = fieldtype.getField() %}
+
+                    {% set variables = { field: field, fieldtype: fieldtype, feed: feed, feedData: feedData } %}
+                    {% include 'feedme/_includes/field' with variables %}
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endfor %}
+{% endif %}
 
 <hr>
 
@@ -232,11 +236,13 @@
     {% set uniqueFields = uniqueFields | merge([{ label: field.label, handle: field.handle }]) %}
 {% endfor %}
 
-{% for tab in craft.app.fields.getLayoutById(orderSettings.fieldLayoutId).getTabs() %}
-    {% for field in tab.getFields() %}
-        {% set uniqueFields = uniqueFields | merge([{ label: field.name, handle: field.handle, type: className(field) }]) %}
+{% if orderSettings.fieldLayoutId %}
+    {% for tab in craft.app.fields.getLayoutById(orderSettings.fieldLayoutId).getTabs() %}
+        {% for field in tab.getFields() %}
+            {% set uniqueFields = uniqueFields | merge([{ label: field.name, handle: field.handle, type: className(field) }]) %}
+        {% endfor %}
     {% endfor %}
-{% endfor %}
+{% endif %}
 
 <div class="feedme-uniques">
     {% for field in uniqueFields if field and feedMeMacro.fieldCanBeUniqueId(field) %}

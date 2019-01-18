@@ -57,8 +57,8 @@ class Entries extends Field implements FieldInterface
                         $sectionIds[] = ($section->type == 'single') ? $section->id : '';
                     }
                 } else {
-                    list($type, $id) = explode(':', $source);
-                    $sectionIds[] = $id;
+                    list($type, $uid) = explode(':', $source);
+                    $sectionIds[] = Db::idByUid('{{%sections}}', $uid);
                 }
             }
         } else if ($sources === '*') {

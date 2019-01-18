@@ -73,7 +73,9 @@ class CommerceProduct extends Element implements ElementInterface
 
     public function getGroups()
     {
-        return Commerce::getInstance()->getProductTypes()->getEditableProductTypes();
+        if (Commerce::getInstance()) {
+            return Commerce::getInstance()->getProductTypes()->getEditableProductTypes();
+        }
     }
 
     public function getQuery($settings, $params = [])

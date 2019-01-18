@@ -45,9 +45,8 @@ class CommerceProducts extends Field implements FieldInterface
         $typeIds = [];
 
         if (is_array($sources)) {
-            foreach ($sources as $source) {
-                list($type, $id) = explode(':', $source);
-                $typeIds[] = $id;
+            foreach ($sources as $type) {
+                list(, $uid) = explode(':', $type);
             }
         } else if ($sources === '*') {
             $typeIds = '*';
