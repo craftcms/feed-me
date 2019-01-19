@@ -202,7 +202,7 @@ class FeedMeVariable extends ServiceLocator
             $source = $this->getCategorySourcesByField($field) ?? null;
         }
 
-        if (!$source) {
+        if (!$source || !$source->fieldLayoutId) {
             return;
         }
 
