@@ -30,6 +30,7 @@ class CalenderEvent extends Element implements ElementInterface
 
     public $element;
     private $rruleInfo = [];
+    private $selectDates = [];
 
 
     // Templates
@@ -58,6 +59,9 @@ class CalenderEvent extends Element implements ElementInterface
     {
         Event::on(Process::class, Process::EVENT_STEP_BEFORE_ELEMENT_SAVE, function(FeedProcessEvent $event) {
             $this->_onBeforeElementSave($event);
+        });
+        Event::on(Process::class, Process::EVENT_STEP_AFTER_ELEMENT_SAVE, function(FeedProcessEvent $event) {
+            $this->_onAfterElementSave($event);
         });
     }
 
@@ -198,11 +202,15 @@ class CalenderEvent extends Element implements ElementInterface
         }
     }
 
+    protected function parseSelectDates($feedData, $fieldInfo) {
+        $value = $this->fetchArrayValue($feedData, $fieldInfo);
+        $this->selectDates = $value;
+    }
 
 
     // Private Methods
     // =========================================================================
-    
+
     private function _parseDate($feedData, $fieldInfo)
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
@@ -217,7 +225,7 @@ class CalenderEvent extends Element implements ElementInterface
     }
 
     private function _onBeforeElementSave($event)
-    {   
+    {
         // We prepare rrule info earlier on
         foreach ($this->rruleInfo as $key => $value) {
             $event->element->$key = $value;
@@ -226,4 +234,14 @@ class CalenderEvent extends Element implements ElementInterface
             $event->contentData[$key] = $value;
         }
     }
+
+    private function _onAfterElementSave($event)
+    {
+        if(sizeof($this->selectDates)) {
+            $EventElement = EventElement::find()->id($event->element->id)->one();
+            Calendar::getInstance()->selectDates->saveDates($EventElement, $this->selectDates);
+        }
+    }
+
+
 }

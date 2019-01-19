@@ -126,35 +126,44 @@
     },
 }, {
     name: 'Until' | t,
-    handle: 'until',    
+    handle: 'until',
     default: {
         type: 'text',
     },
 }, {
     name: 'By Month' | t,
-    handle: 'byMonth',    
+    handle: 'byMonth',
     default: {
         type: 'text',
     },
 }, {
     name: 'By Year Day' | t,
-    handle: 'byYearDay',    
+    handle: 'byYearDay',
     default: {
         type: 'text',
     },
 }, {
     name: 'By Month Day' | t,
-    handle: 'byMonthDay',    
+    handle: 'byMonthDay',
     default: {
         type: 'text',
     },
 }, {
     name: 'By Day' | t,
-    handle: 'byDay',    
+    handle: 'byDay',
     default: {
         type: 'text',
     },
-}] %}
+}, {
+    name: 'Select Dates' | t,
+    handle: 'selectDates',
+    default: {
+        type: 'text',
+    },
+}
+
+
+] %}
 
 <h2>{{ 'Recurrence Fields' | t('feed-me') }}</h2>
 
@@ -174,35 +183,31 @@
     </tbody>
 </table>
 
-{% set tabs = [] %}
+{% set tabs = craft.app.fields.getLayoutById(calendar.fieldLayoutId).getTabs() %}
 
-{% if calendar.fieldLayoutId %}
-    {% set tabs = craft.app.fields.getLayoutById(calendar.fieldLayoutId).getTabs() %}
+{% for tab in tabs %}
+    <hr>
 
-    {% for tab in tabs %}
-        <hr>
+    <h2>{{ tab.name }} Fields</h2>
 
-        <h2>{{ tab.name }} Fields</h2>
+    <table class="feedme-mapping data fullwidth collapsible">
+        <thead>
+            <th>{{ 'Field' | t('feed-me') }}</th>
+            <th>{{ 'Feed Element' | t('feed-me') }}</th>
+            <th>{{ 'Default Value' | t('feed-me') }}</th>
+        </thead>
+        <tbody>
+            {% for field in tab.getFields() %}
+                {% set fieldClass = craft.feedme.fields.getRegisteredField(className(field)) %}
+                {% set template = fieldClass.getMappingTemplate() %}
 
-        <table class="feedme-mapping data fullwidth collapsible">
-            <thead>
-                <th>{{ 'Field' | t('feed-me') }}</th>
-                <th>{{ 'Feed Element' | t('feed-me') }}</th>
-                <th>{{ 'Default Value' | t('feed-me') }}</th>
-            </thead>
-            <tbody>
-                {% for field in tab.getFields() %}
-                    {% set fieldClass = craft.feedme.fields.getRegisteredField(className(field)) %}
-                    {% set template = fieldClass.getMappingTemplate() %}
+                {% set variables = { name: field.name, handle: field.handle, feed: feed, feedData: feedData, field: field, fieldClass: fieldClass } %}
 
-                    {% set variables = { name: field.name, handle: field.handle, feed: feed, feedData: feedData, field: field, fieldClass: fieldClass } %}
-                    
-                    {% include template ignore missing with variables only %}
-                {% endfor %}
-            </tbody>
-        </table>
-    {% endfor %}
-{% endif %}
+                {% include template ignore missing with variables only %}
+            {% endfor %}
+        </tbody>
+    </table>
+{% endfor %}
 
 <hr>
 
