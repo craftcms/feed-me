@@ -33,27 +33,6 @@ class DateHelper
             return DateTimeHelper::toDateTime($value);
         }
 
-        // Check if provided as a timestamp
-        if (DateTimeHelper::isValidTimeStamp($value)) {
-            $date = null;
-
-            // Check if provided as milliseconds first
-            if (strlen((int)$value) === 13) {
-                $date = Carbon::createFromTimestampMs($value);
-            }
-
-            // Then, check if in seconds
-            if (strlen((int)$value) === 10) {
-                $date = Carbon::createFromTimestamp($value);
-            }
-
-            if ($date) {
-                $dateTimeString = $date->toDateTimeString();
-
-                return DateTimeHelper::toDateTime($dateTimeString, true, false);
-            }
-        }
-
         try {
             $date = null;
 
@@ -61,6 +40,10 @@ class DateHelper
             // Typically Carbon will see dates formatted with slashes are American, but thats often not the case
             if ($formatting === 'auto') {
                 $date = Carbon::parse($value);
+            } elseif ($formatting === 'milliseconds') {
+                $date = Carbon::createFromTimestampMs($value);
+            } elseif ($formatting === 'seconds') {
+                $date = Carbon::createFromTimestamp($value);
             } else {
                 $date = str_replace(['/', '.'], '-', $value);
 
