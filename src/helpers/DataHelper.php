@@ -16,7 +16,10 @@ class DataHelper
     {
         $node = Hash::get($fieldInfo, 'node');
         $default = Hash::get($fieldInfo, 'default');
-        $value = Hash::get($feedData, $node);
+
+        // We can't use Hash::get because the node path might contain a dot - that'll mess things up
+        // $value = Hash::get($feedData, $node);
+        $value = $feedData[$node] ?? null;
 
         // Use the default value for the field-mapping (if defined)
         if ($value === null || $value === '') {
