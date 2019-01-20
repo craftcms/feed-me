@@ -150,15 +150,24 @@ abstract class Element extends Component
 
     public function save($element, $settings)
     {
-        $this->element = $element;
+        // Setup some stuff before the element saves, and also give a chance to prevent saving
+        if (!$this->beforeSave($element, $settings)) {
+            return true;
+        }
 
         $propagate = isset($settings['siteId']) && $settings['siteId'] ? false : true;
-
-        $this->element->setScenario(BaseElement::SCENARIO_ESSENTIALS);
 
         if (!Craft::$app->getElements()->saveElement($this->element, true, $propagate)) {
             return false;
         }
+
+        return true;
+    }
+
+    public function beforeSave($element, $settings)
+    {
+        $this->element = $element;
+        $this->element->setScenario(BaseElement::SCENARIO_ESSENTIALS);
 
         return true;
     }
