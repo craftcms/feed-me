@@ -578,6 +578,10 @@ class Process extends Component
     {
         $return = [];
 
+        if (!is_array($fields)) {
+            return $return;
+        }
+
         foreach ($fields as $key => $value) {
             $node = Hash::get($value, 'node');
             $nestedFields = Hash::get($value, 'fields');
