@@ -114,11 +114,9 @@ class CommerceProduct extends Element implements ElementInterface
 
     public function save($element, $settings)
     {
-        $this->element = $element;
+        $this->beforeSave($element, $settings);
 
         $propagate = isset($settings['siteId']) && $settings['siteId'] ? false : true;
-
-        $this->element->setScenario(BaseElement::SCENARIO_ESSENTIALS);
 
         if (!Craft::$app->getElements()->saveElement($this->element, true, $propagate)) {
             $errors = [$this->element->getErrors()];
