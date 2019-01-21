@@ -72,6 +72,10 @@ class Assets extends Field implements FieldInterface
             }
         }
 
+        if (!$folderIds) {
+            $folderIds[] = $this->field->resolveDynamicPathToFolderId($this->element);
+        }
+
         $foundElements = [];
         $urlsToUpload = [];
         $base64ToUpload = [];
