@@ -18,7 +18,7 @@
 - Fix some element fields not matching elements properly when selecting specific types.
 - Fix mapping element fields with no field layout.
 - Fix empty string values not being imported into fields, in some cases, for some fields.
-- Fix potential error occuring when incorrectly configuring an element and trying to proceed to mapping screen.
+- Fix potential error occurring when incorrectly configuring an element and trying to proceed to mapping screen.
 - Fix not fetching node content when the node contains a dot character.
 - Include `resolveDynamicPathToFolderId()` in asset field matching to resolve to dynamic folders correctly.
 
