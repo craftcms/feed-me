@@ -1,5 +1,27 @@
 # Changelog
 
+## 3.1.0 - 2019-01-21
+
+### Added
+- Added full support for Craft 3.1 (now also minimum version). Thanks to all the contributors!
+- Added beforeSave() for elements.
+- Allows SELECT_DATES to be imported for Solspace Calendar events. (thanks @samstevens).
+
+### Changed
+- Add better handling for milliseconds and seconds timestamps. Date fields can now choose which timestamp is used in their feed.
+- Refactor asset element imports, particularly for remote uploads. Prevents asset duplication and fixes element fields not being populated.
+
+### Fixed
+- Add checks around third-party elements if they exist but aren’t installed.
+- Add conditionals around element field layouts throwing errors in some cases.
+- Fix element mapping templates throwing errors in some cases.
+- Fix some element fields not matching elements properly when selecting specific types.
+- Fix mapping element fields with no field layout.
+- Fix empty string values not being imported into fields, in some cases, for some fields.
+- Fix potential error occuring when incorrectly configuring an element and trying to proceed to mapping screen.
+- Fix not fetching node content when the node contains a dot character.
+- Include `resolveDynamicPathToFolderId()` in asset field matching to resolve to dynamic folders correctly.
+
 ## 3.0.2.1 - 2018-12-13
 
 ### Fixed
