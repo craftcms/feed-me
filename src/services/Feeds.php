@@ -31,10 +31,15 @@ class Feeds extends Component
     // Public Methods
     // =========================================================================
 
-    public function getFeeds()
+    public function getFeeds($orderBy = null)
     {
-        $results = $this->_getQuery()
-            ->all();
+        $query = $this->_getQuery();
+
+        if ($orderBy) {
+            $query->orderBy($orderBy);
+        }
+
+        $results = $query->all();
 
         foreach ($results as $key => $result) {
             $results[$key] = $this->_createModelFromRecord($result);
