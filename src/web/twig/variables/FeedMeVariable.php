@@ -62,7 +62,11 @@ class FeedMeVariable extends ServiceLocator
         $values = [];
 
         if ($includeNone) {
-            $values[''] = 'None';
+            if (is_string($includeNone)) {
+                $values[''] = $includeNone;
+            } else {
+                $values[''] = 'None';
+            }
         }
 
         if (is_array($options)) {
