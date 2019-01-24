@@ -46,7 +46,7 @@ class DataHelper
             // its supposed to match up with, which is stored in the DB like MatrixBlock/Images
             $feedPath = preg_replace('/(\/\d+\/)/', '/', $nodePath);
             $feedPath = preg_replace('/^(\d+\/)|(\/\d+)/', '', $feedPath);
-            
+
             if ($feedPath == $node || $nodePath == $node) {
                 if ($nodeValue === null || $nodeValue === '') {
                     $nodeValue = $default;
@@ -55,7 +55,12 @@ class DataHelper
                 // Allow pipes '|' to denote multiple items, but even if it doesn't contain one, explode will create
                 // an array, so ensure to merge with the current results.
                 if (is_string($nodeValue) && strpos($nodeValue, $dataDelimiter) !== false) {
-                    $value = array_merge($value, explode($dataDelimiter, $nodeValue));
+                    $delimitedValues = explode($dataDelimiter, $nodeValue);
+                    
+                    // Trim values in case whitespace was used between delimiter
+                    $delimitedValues = array_map('trim', $delimitedValues);
+
+                    $value = array_merge($value, $delimitedValues);
                 } else {
                     $value[] = $nodeValue;
                 }
@@ -96,7 +101,12 @@ class DataHelper
                 // Allow pipes '|' to denote multiple items, but even if it doesn't contain one, explode will create
                 // an array, so ensure to merge with the current results.
                 if (is_string($nodeValue) && strpos($nodeValue, $dataDelimiter) !== false) {
-                    $value = array_merge($value, explode($dataDelimiter, $nodeValue));
+                    $delimitedValues = explode($dataDelimiter, $nodeValue);
+                    
+                    // Trim values in case whitespace was used between delimiter
+                    $delimitedValues = array_map('trim', $delimitedValues);
+
+                    $value = array_merge($value, $delimitedValues);
                 } else {
                     $value[] = $nodeValue;
                 }
