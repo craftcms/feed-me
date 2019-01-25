@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2fd3404b3737a706c47b532bb022af13",
+    "content-hash": "c1ecfda6f0e7c2f922e52cedc63ae2f3",
     "packages": [
         {
             "name": "bower-asset/bootstrap",
@@ -527,16 +527,16 @@
         },
         {
             "name": "craftcms/cms",
-            "version": "3.1.0-beta.4",
+            "version": "3.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/craftcms/cms.git",
-                "reference": "5b420f3a5e8262f94e69c7b61155558c3af6d68f"
+                "reference": "b2791566f2981d09fab415a4c9e3674f7144d8a7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/craftcms/cms/zipball/5b420f3a5e8262f94e69c7b61155558c3af6d68f",
-                "reference": "5b420f3a5e8262f94e69c7b61155558c3af6d68f",
+                "url": "https://api.github.com/repos/craftcms/cms/zipball/b2791566f2981d09fab415a4c9e3674f7144d8a7",
+                "reference": "b2791566f2981d09fab415a4c9e3674f7144d8a7",
                 "shasum": ""
             },
             "require": {
@@ -611,7 +611,7 @@
                 "craftcms",
                 "yii2"
             ],
-            "time": "2018-11-30T18:12:32+00:00"
+            "time": "2019-01-25T21:02:47+00:00"
         },
         {
             "name": "craftcms/oauth2-craftid",
@@ -1599,28 +1599,29 @@
         },
         {
             "name": "nesbot/carbon",
-            "version": "1.36.1",
+            "version": "2.10.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/briannesbitt/Carbon.git",
-                "reference": "63da8cdf89d7a5efe43aabc794365f6e7b7b8983"
+                "reference": "39a8ebfffc2a75de9d2ade3f0e12c7e11669f7ce"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/63da8cdf89d7a5efe43aabc794365f6e7b7b8983",
-                "reference": "63da8cdf89d7a5efe43aabc794365f6e7b7b8983",
+                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/39a8ebfffc2a75de9d2ade3f0e12c7e11669f7ce",
+                "reference": "39a8ebfffc2a75de9d2ade3f0e12c7e11669f7ce",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.9",
-                "symfony/translation": "~2.6 || ~3.0 || ~4.0"
+                "ext-json": "*",
+                "php": "^7.1.8",
+                "symfony/translation": "^4.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^4.8.35 || ^5.7"
-            },
-            "suggest": {
-                "friendsofphp/php-cs-fixer": "Needed for the `composer phpcs` command. Allow to automatically fix code style.",
-                "phpstan/phpstan": "Needed for the `composer phpstan` command. Allow to detect potential errors."
+                "friendsofphp/php-cs-fixer": "^2.14 || ^3.0",
+                "phpmd/phpmd": "^2.6",
+                "phpstan/phpstan": "^0.10.8",
+                "phpunit/phpunit": "^7.1.5",
+                "squizlabs/php_codesniffer": "^3.4"
             },
             "type": "library",
             "extra": {
@@ -1632,7 +1633,7 @@
             },
             "autoload": {
                 "psr-4": {
-                    "": "src/"
+                    "Carbon\\": "src/Carbon/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -1653,7 +1654,7 @@
                 "datetime",
                 "time"
             ],
-            "time": "2018-11-22T18:23:02+00:00"
+            "time": "2019-01-14T09:25:45+00:00"
         },
         {
             "name": "paragonie/random_compat",
@@ -5371,9 +5372,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "craftcms/cms": 10
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
