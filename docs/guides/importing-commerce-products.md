@@ -43,7 +43,7 @@ The below data is what we'll use for this guide:
 - `length`, `width`, `height` and `weight` should all be units according to your Commerce settings
 - The first product has limited stock, the second unlimited
 
-Choose either the XML or JSON (depending on your preference), and save as a file in the root of your public directory. We'll assume its `http://craft.dev/products-feed.xml`.
+Choose either the XML or JSON (depending on your preference), and save as a file in the root of your public directory. We'll assume its `http://craft.local/products-feed.xml`.
 
 * * *
 

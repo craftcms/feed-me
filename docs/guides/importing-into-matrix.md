@@ -126,7 +126,7 @@ Instead, use the same named node to surround the content for each block:
 </MatrixContent>
 +++
 
-Choose either the XML or JSON (depending on your preference), and save as a file in the root of your public directory. We'll assume its `http://craft.dev/matrix-feed.xml`.
+Choose either the XML or JSON (depending on your preference), and save as a file in the root of your public directory. We'll assume its `http://craft.local/matrix-feed.xml`.
 
 * * *
 

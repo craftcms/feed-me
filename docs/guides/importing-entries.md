@@ -101,7 +101,7 @@ The below data is what we'll use for this guide:
 </propertyList>
 +++
 
-Choose either the XML or JSON (depending on your preference), and save as a file in the root of your public directory. We'll assume its `http://craft.dev/property-feed.xml`.
+Choose either the XML or JSON (depending on your preference), and save as a file in the root of your public directory. We'll assume its `http://craft.local/property-feed.xml`.
 
 * * *
 

@@ -98,7 +98,7 @@ The below data is what we'll use for this guide:
 - `length`, `width`, `height` and `weight` should all be units according to your Commerce settings
 - We have a `title` for the product, and `title`'s for each variant
 
-Choose either the XML or JSON (depending on your preference), and save as a file in the root of your public directory. We'll assume its `http://craft.dev/variants-feed.xml`.
+Choose either the XML or JSON (depending on your preference), and save as a file in the root of your public directory. We'll assume its `http://craft.local/variants-feed.xml`.
 
 * * *
 
