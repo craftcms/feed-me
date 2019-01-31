@@ -60,6 +60,7 @@ class CalenderEvent extends Element implements ElementInterface
         Event::on(Process::class, Process::EVENT_STEP_BEFORE_ELEMENT_SAVE, function(FeedProcessEvent $event) {
             $this->_onBeforeElementSave($event);
         });
+
         Event::on(Process::class, Process::EVENT_STEP_AFTER_ELEMENT_SAVE, function(FeedProcessEvent $event) {
             $this->_onAfterElementSave($event);
         });
@@ -237,7 +238,7 @@ class CalenderEvent extends Element implements ElementInterface
 
     private function _onAfterElementSave($event)
     {
-        if(sizeof($this->selectDates)) {
+        if (sizeof($this->selectDates)) {
             $EventElement = EventElement::find()->id($event->element->id)->one();
             Calendar::getInstance()->selectDates->saveDates($EventElement, $this->selectDates);
         }
