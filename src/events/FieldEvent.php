@@ -9,14 +9,9 @@ class FieldEvent extends Event
     // =========================================================================
     
     public $feed;
-
     public $feedData;
-
     public $fieldHandle;
-
     public $fieldInfo;
-
     public $parsedValue;
-
     public $element;
 }

@@ -1,18 +1,15 @@
 <?php
 namespace verbb\feedme\events;
 
-use yii\base\Event;
+use craft\events\CancelableEvent;
 
-class FeedProcessEvent extends Event
+class FeedProcessEvent extends CancelableEvent
 {
     // Properties
     // =========================================================================
 
     public $feed;
-
     public $feedData;
-
     public $contentData;
-
     public $element;
 }

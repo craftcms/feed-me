@@ -9,10 +9,7 @@ class ElementEvent extends Event
     // =========================================================================
 
     public $feedData;
-
     public $fieldHandle;
-
     public $fieldInfo;
-
     public $parsedValue;
 }

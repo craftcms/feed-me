@@ -129,10 +129,20 @@ class Process extends Component
         }
 
         // Fire an 'onBeforeProcessFeed' event
-        $this->_triggerEvent(self::EVENT_BEFORE_PROCESS_FEED, [
+        $event = new FeedProcessEvent([
             'feed' => $feed,
             'feedData' => $feedData,
         ]);
+
+        $this->trigger(self::EVENT_BEFORE_PROCESS_FEED, $event);
+
+        if (!$event->isValid) {
+            return;
+        }
+
+        // Allow event to modify variables
+        $feed = $event->feed;
+        $feedData = $event->feedData;
 
         FeedMe::info('Finished preparing for feed processing.');
 
@@ -212,6 +222,10 @@ class Process extends Component
             ]);
 
             $this->trigger(self::EVENT_STEP_BEFORE_ELEMENT_MATCH, $event);
+
+            if (!$event->isValid) {
+                return;
+            }
 
             // Allow event to modify variables
             $feed = $event->feed;
@@ -295,6 +309,10 @@ class Process extends Component
 
             $this->trigger(self::EVENT_STEP_BEFORE_PARSE_CONTENT, $event);
 
+            if (!$event->isValid) {
+                return;
+            }
+
             // Allow event to modify variables
             $feed = $event->feed;
             $feedData = $event->feedData;
@@ -370,6 +388,10 @@ class Process extends Component
 
             $this->trigger(self::EVENT_STEP_BEFORE_ELEMENT_SAVE, $event);
 
+            if (!$event->isValid) {
+                return;
+            }
+
             // Allow event to modify variables
             $feed = $event->feed;
             $feedData = $event->feedData;
@@ -403,12 +425,24 @@ class Process extends Component
             $this->_service->afterSave($contentData, $feed);
 
             // Fire an 'onStepElementSave' event
-            $this->_triggerEvent(self::EVENT_STEP_AFTER_ELEMENT_SAVE, [
+            $event = new FeedProcessEvent([
                 'feed' => $feed,
                 'feedData' => $feedData,
                 'contentData' => $contentData,
                 'element' => $element,
             ]);
+
+            $this->trigger(self::EVENT_STEP_AFTER_ELEMENT_SAVE, $event);
+
+            if (!$event->isValid) {
+                return;
+            }
+
+            // Allow event to modify variables
+            $feed = $event->feed;
+            $feedData = $event->feedData;
+            $contentData = $event->contentData;
+            $element = $event->element;
 
             if ($existingElement) {
                 FeedMe::info('{name} [`#{id}`]({url}) updated successfully.', ['name' => $this->_service->displayName(), 'id' => $element->id, 'url' => $element->cpEditUrl]);
@@ -473,9 +507,18 @@ class Process extends Component
         FeedMe::debug($message);
 
         // Fire an 'onProcessFeed' event
-        $this->_triggerEvent(self::EVENT_AFTER_PROCESS_FEED, [
+        $event = new FeedProcessEvent([
             'feed' => $feed,
         ]);
+
+        $this->trigger(self::EVENT_AFTER_PROCESS_FEED, $event);
+
+        if (!$event->isValid) {
+            return;
+        }
+
+        // Allow event to modify variables
+        $feed = $event->feed;
     }
 
     public function debugFeed($feed, $limit, $offset)
@@ -516,13 +559,6 @@ class Process extends Component
 
     // Private Methods
     // =========================================================================
-
-    private function _triggerEvent($event, $variables)
-    {
-        if ($this->hasEventHandlers($event)) {
-            $this->trigger($event, new FeedProcessEvent($variables));
-        }
-    }
 
     private function _backupBeforeFeed($feed)
     {

@@ -9,6 +9,5 @@ class FeedDataEvent extends Event
     // =========================================================================
 
     public $url;
-
     public $response;
 }

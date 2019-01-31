@@ -9,6 +9,5 @@ class FeedEvent extends Event
     // =========================================================================
 
     public $feed;
-
     public $isNew = false;
 }
