@@ -434,16 +434,6 @@ class Process extends Component
 
             $this->trigger(self::EVENT_STEP_AFTER_ELEMENT_SAVE, $event);
 
-            if (!$event->isValid) {
-                return;
-            }
-
-            // Allow event to modify variables
-            $feed = $event->feed;
-            $feedData = $event->feedData;
-            $contentData = $event->contentData;
-            $element = $event->element;
-
             if ($existingElement) {
                 FeedMe::info('{name} [`#{id}`]({url}) updated successfully.', ['name' => $this->_service->displayName(), 'id' => $element->id, 'url' => $element->cpEditUrl]);
             } else {
@@ -512,13 +502,6 @@ class Process extends Component
         ]);
 
         $this->trigger(self::EVENT_AFTER_PROCESS_FEED, $event);
-
-        if (!$event->isValid) {
-            return;
-        }
-
-        // Allow event to modify variables
-        $feed = $event->feed;
     }
 
     public function debugFeed($feed, $limit, $offset)
