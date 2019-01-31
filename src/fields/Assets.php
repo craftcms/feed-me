@@ -8,6 +8,8 @@ use verbb\feedme\helpers\AssetHelper;
 use verbb\feedme\helpers\DataHelper;
 
 use Craft;
+use craft\db\Query;
+use craft\db\Table;
 use craft\elements\Asset as AssetElement;
 use craft\helpers\Db;
 use craft\helpers\UrlHelper;
@@ -54,22 +56,20 @@ class Assets extends Field implements FieldInterface
 
         if (is_array($folders)) {
             foreach ($folders as $folder) {
-                list(, $uid) = explode(':', $folder);
-                $folderIds[] = Db::idByUid('{{%volumefolders}}', $uid);
+                list($volume, $uid) = explode(':', $folder);
+                $volumeId = Db::idByUid(Table::VOLUMES, $uid);
 
-                // Get all sub-folders for this root folder
-                $folderModel = Craft::$app->getAssets()->getFolderByUid($uid);
+                // Get all folders for this volume
+                $ids = (new Query())
+                    ->select(['id'])
+                    ->from([Table::VOLUMEFOLDERS])
+                    ->where(['volumeId' => $volumeId])
+                    ->column();
 
-                if ($folderModel) {
-                    $subFolders = Craft::$app->getAssets()->getAllDescendantFolders($folderModel);
-
-                    if (is_array($subFolders)) {
-                        foreach ($subFolders as $subFolder) {
-                            $folderIds[] = $subFolder->id;
-                        }
-                    }
-                }
+                $folderIds = array_merge($folderIds, $ids);
             }
+        } else if ($folders === '*') {
+            $folderIds = '*';
         }
 
         if (!$folderIds) {
