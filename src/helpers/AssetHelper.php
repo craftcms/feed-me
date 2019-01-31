@@ -56,7 +56,6 @@ class AssetHelper
     {
         $uploadedAssets = [];
 
-        $upload = Hash::get($fieldInfo, 'options.upload');
         $conflict = Hash::get($fieldInfo, 'options.conflict');
 
         $tempFeedMePath = self::createTempFeedMePath();
@@ -102,7 +101,6 @@ class AssetHelper
     {
         $uploadedAssets = [];
 
-        $upload = Hash::get($fieldInfo, 'options.upload');
         $conflict = Hash::get($fieldInfo, 'options.conflict');
 
         $tempFeedMePath = self::createTempFeedMePath();

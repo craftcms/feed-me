@@ -5,6 +5,7 @@ use verbb\feedme\base\Element;
 use verbb\feedme\base\ElementInterface;
 use verbb\feedme\events\FeedProcessEvent;
 use verbb\feedme\helpers\AssetHelper;
+use verbb\feedme\helpers\DuplicateHelper;
 use verbb\feedme\services\Process;
 
 use Craft;
@@ -50,10 +51,10 @@ class Asset extends Element implements ElementInterface
 
     public function init()
     {
-        // If we need to upload a remote asset, it has to be done before the content is populated on the element.
-        // We of course, want content to be ppulated on the newly-created element, not one that won't be uploaded
+        // If we are adding a new asset, it has to be done before the content is populated on the element.
+        // We of course, want content to be populated on the newly-created element, not one that won't be uploaded
         Event::on(Process::class, Process::EVENT_STEP_BEFORE_PARSE_CONTENT, function(FeedProcessEvent $event) {
-            $this->_checkForRemoteImageUpload($event);
+            $this->_handleImageCreation($event);
         });
     }
 
@@ -115,12 +116,17 @@ class Asset extends Element implements ElementInterface
     // Private Methods
     // =========================================================================
 
-    private function _checkForRemoteImageUpload($event)
+    private function _handleImageCreation($event)
     {
         $feed = $event->feed;
         $feedData = $event->feedData;
 
-        $fieldInfo = $feed['fieldMapping']['filename'] ?? [];
+        // If we're not adding new assets, skip this altogether
+        if (!DuplicateHelper::isAdd($feed)) {
+            return;
+        }
+
+        $fieldInfo = $feed['fieldMapping']['urlOrPath'] ?? [];
 
         // Just in case...
         if (!$fieldInfo) {
@@ -130,18 +136,12 @@ class Asset extends Element implements ElementInterface
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
         $folderId = $this->parseFolderId($feedData, $fieldInfo);
 
-        $upload = Hash::get($fieldInfo, 'options.upload');
         $conflict = Hash::get($fieldInfo, 'options.conflict');
-
-        // If we're not uploading, don't proceed any further. Also we need an absolute URL.
-        if (!$upload || !UrlHelper::isAbsoluteUrl($value)) {
-            return;
-        }
         
         // Do we want to match existing element? If one exists, we need to set our element to be that
         if ($conflict === AssetElement::SCENARIO_INDEX) {
             // Make sure to parse the URL into a filename to find the asset by
-            $filename = AssetHelper::getRemoteUrlFilename($value);
+            $filename = $this->_getFilename($value);
 
             $foundElement = AssetElement::find()
                 ->folderId($folderId)
@@ -155,7 +155,7 @@ class Asset extends Element implements ElementInterface
             }
         }
 
-        // We can't find an existing asset, we need to download it, or plain ignore it
+        // We can't find an existing asset, we need to download from a remote URL, or local path
         $uploadedElementIds = AssetHelper::fetchRemoteImage([$value], $fieldInfo, $this->feed, null, $this->element, $folderId);
 
         if ($uploadedElementIds) {
@@ -170,6 +170,17 @@ class Asset extends Element implements ElementInterface
         }
     }
 
+    private function _getFilename($value)
+    {
+        // If this is an absolute URL, we're uploading the asset. Parse it to just get the filename
+        if (UrlHelper::isAbsoluteUrl($value)) {
+            return AssetHelper::getRemoteUrlFilename($value);
+        }
+
+        // Otherwise, probably a local path
+        return basename($value);
+    }
+
 
     // Protected Methods
     // =========================================================================
@@ -178,12 +189,7 @@ class Asset extends Element implements ElementInterface
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
 
-        // If this is an absolute URL, we're uploading the asset. Parse it to just get the filename
-        if (UrlHelper::isAbsoluteUrl($value)) {
-            $value = AssetHelper::getRemoteUrlFilename($value);
-        }
-
-        return $value;
+        return $this->_getFilename($value);
     }
 
     protected function parseFolderId($feedData, $fieldInfo)
