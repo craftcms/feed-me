@@ -156,7 +156,7 @@ class HelpController extends Controller
 
                     $zip->addFile($tempFileSettings, 'backups/'.pathinfo($tempFileSettings, PATHINFO_BASENAME));
                 } catch (\Throwable $e) {
-                    $noteError = "\n\nError adding database to help request: `".$e->getMessage() . '`.';
+                    $noteError = "\n\nError adding database to help request: `" . $e->getMessage() . ":" . $e->getLine() . "`.";
                     $requestParamDefaults['note'] .= $noteError;
                     $requestParams['note'] .= $noteError;
 
@@ -177,7 +177,7 @@ class HelpController extends Controller
 
                     $zip->addFile($tempFileFeed, 'feed/'.pathinfo($tempFileFeed, PATHINFO_BASENAME));
                 } catch (\Throwable $e) {
-                    $noteError = "\n\nError adding feed to help request: `".$e->getMessage() . '`.';
+                    $noteError = "\n\nError adding feed to help request: `" . $e->getMessage() . ":" . $e->getLine() . "`.";
                     $requestParamDefaults['note'] .= $noteError;
                     $requestParams['note'] .= $noteError;
 
@@ -224,7 +224,7 @@ class HelpController extends Controller
                         $zip->addFile($tempFileFields, 'fields/'.pathinfo($tempFileFields, PATHINFO_BASENAME));
                     }
                 } catch (\Throwable $e) {
-                    $noteError = "\n\nError adding field into to help request: `".$e->getMessage() . '`.';
+                    $noteError = "\n\nError adding field into to help request: `" . $e->getMessage() . ":" . $e->getLine() . "`.";
                     $requestParamDefaults['note'] .= $noteError;
                     $requestParams['note'] .= $noteError;
 
@@ -259,11 +259,11 @@ class HelpController extends Controller
                 FileHelper::unlink($tempFileFields);
             }
         } catch (\Throwable $e) {
-            FeedMe::info('Tried to attach debug logs to a support request and something went horribly wrong: `'.$e->getMessage() . '`.');
+            FeedMe::info('Tried to attach debug logs to a support request and something went horribly wrong: `' . $e->getMessage() . ':' . $e->getLine() . '`.';
 
             // There was a problem zipping, so reset the params and just send the email without the attachment.
             $requestParams = $requestParamDefaults;
-            $requestParams['note'] .= "\n\nError attaching zip: `".$e->getMessage() . '`.';
+            $requestParams['note'] .= "\n\nError attaching zip: `" . $e->getMessage() . ":" . $e->getLine() . "`.";
         }
 
         $guzzleClient = Craft::createGuzzleClient(['timeout' => 120, 'connect_timeout' => 120]);
