@@ -29,7 +29,7 @@
         "cakephp/core": "^3.5",
         "cakephp/utility": "^3.3.12",
         "jakeasmith/http_build_url": "^1.0",
-        "nesbot/carbon": "^1.22",
+        "nesbot/carbon": "^2.10",
         "league/csv": "^8.2",
         "guzzlehttp/guzzle": "~6.3.0",
         "vlucas/phpdotenv": "^2.4",
