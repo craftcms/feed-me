@@ -122,7 +122,12 @@ class Tags extends Field implements FieldInterface
         $element->title = $dataValue;
         $element->groupId = $groupId;
 
-        $propagate = isset($this->feed['siteId']) && $this->feed['siteId'] ? false : true;
+        $siteId = Hash::get($this->feed, 'siteId');
+        $propagate = $siteId ? false : true;
+
+        if ($siteId) {
+            $element->siteId = $siteId;
+        }
 
         if (!Craft::$app->getElements()->saveElement($element, true, $propagate)) {
             FeedMe::error('`{handle}` - Tag error: Could not create - `{e}`.', ['e' => json_encode($element->getErrors()), 'handle' => $this->field->handle]);

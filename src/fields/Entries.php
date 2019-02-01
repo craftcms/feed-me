@@ -163,7 +163,12 @@ class Entries extends Field implements FieldInterface
         $element->sectionId = $sectionId;
         $element->typeId = $typeId;
 
-        $propagate = isset($this->feed['siteId']) && $this->feed['siteId'] ? false : true;
+        $siteId = Hash::get($this->feed, 'siteId');
+        $propagate = $siteId ? false : true;
+
+        if ($siteId) {
+            $element->siteId = $siteId;
+        }
 
         if (!Craft::$app->getElements()->saveElement($element, true, $propagate)) {
             FeedMe::error('`{handle}` - Entry error: Could not create - `{e}`.', ['e' => json_encode($element->getErrors()), 'handle' => $this->field->handle]);
