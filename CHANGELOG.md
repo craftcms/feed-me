@@ -1,5 +1,27 @@
 # Changelog
 
+## 3.1.1 - 2019-02-01
+
+### Added
+- Updates to asset element importing, including "URL or Path" field.
+- Added docs guide for asset element importing (finally, right).
+
+### Changed
+- Add some more clarity around errors in help requests.
+- Update processing events to be cancelable and modify params.
+- Upgrades to nesbot/carbon ^2.10.
+- Allow `getSelectOptions()` to modify the ‘none’ option.
+- Alphabetise help feeds.
+
+### Fixed
+- Fix primary elements not showing all levels of options to pick from.
+- Fix error occurring when `parseTwig` was set to true.
+- When creating elements via fields, ensure they’re created in the same siteId as the owner element.
+- Fix asset field matching local assets.
+- Fix import issues when values contain data delimiter with whitespace around the delimiter.
+- Updates to asset element importing, fixing a few issues.
+- Fix asset fields not matching existing assets.
+
 ## 3.1.0 - 2019-01-21
 
 ### Added
