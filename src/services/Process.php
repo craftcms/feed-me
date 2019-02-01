@@ -353,15 +353,11 @@ class Process extends Component
 
         if ($parseTwig) {
             foreach ($attributeData as $key => $value) {
-                if (in_array($key, $parseTwig)) {
-                    $attributeData[$key] = DataHelper::parseFieldDataForElement($value, $element);
-                }
+                $attributeData[$key] = DataHelper::parseFieldDataForElement($value, $element);
             }
 
             foreach ($fieldData as $key => $value) {
-                if (in_array($key, $parseTwig)) {
-                    $fieldData[$key] = DataHelper::parseFieldDataForElement($value, $element);
-                }
+                $fieldData[$key] = DataHelper::parseFieldDataForElement($value, $element);
             }
 
             // Set the attributes and fields again
