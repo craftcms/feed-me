@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.1.2 - 2019-02-02
+
+### Changed
+- Support `nesbot/carbon` `^1.22 || ^2.10`
+- Support `league/csv` `^8.2 || ^9.0`
+
+### Fixed
+- `EVENT_BEFORE_PROCESS_FEED` process event can actually modify variables (thanks @monachilada).
+- Always include a root node for primary element.
+
 ## 3.1.1 - 2019-02-01
 
 ### Added
