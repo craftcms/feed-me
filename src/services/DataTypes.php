@@ -383,6 +383,11 @@ class DataTypes extends Component
 
                     $this->_parseNodeTree($tree, $val, $index . '/' . $key);
                 }
+            } else {
+                // Keep diving
+                if (is_array($val)) {
+                    $this->_parseNodeTree($tree, $val, $index);
+                }
             }
         }
     }
