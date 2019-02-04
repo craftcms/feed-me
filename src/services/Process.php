@@ -141,8 +141,8 @@ class Process extends Component
         }
 
         // Allow event to modify variables
-        $this->_feed = $event->feed;
-        $this->_data = $event->feedData;
+        $feed = $event->feed;
+        $feedData = $event->feedData;
 
         FeedMe::info('Finished preparing for feed processing.');
 
