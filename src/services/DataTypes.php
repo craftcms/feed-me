@@ -208,18 +208,16 @@ class DataTypes extends Component
 
         $tree = [];
         $this->_parseNodeTree($tree, $data);
-
         $nodes = [];
+
+        $elements = (count($data) > 1) ? ' elements' : ' element';
+        $nodes[''] = '/root (x' . count($data) . $elements . ')';
+
         foreach ($tree as $key => $value) {
             $elements = ($value > 1) ? ' elements' : ' element';
             $index = array_values(array_slice(explode('/', $key), -1))[0];
 
             $nodes[$index] = $key . ' (x' . $value . $elements . ')';
-        }
-
-        if (empty($tree)) {
-            $elements = (count($data) > 1) ? ' elements' : ' element';
-            $nodes[''] = '/root (x' . count($data) . $elements . ')';
         }
 
         return $nodes;
