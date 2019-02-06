@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.1.4 - 2019-02-06
+
+### Fixed
+- Fix user photo upload and issues.
+- Fix syntax error in help controller.
+
 ## 3.1.3 - 2019-02-06
 
 ### Fixed
