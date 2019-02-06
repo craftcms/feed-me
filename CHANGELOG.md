@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.1.3 - 2019-02-06
+
+### Fixed
+- Fixed `EVENT_BEFORE_PROCESS_FEED` change from 3.1.2 causing issues in feed processing.
+
 ## 3.1.2 - 2019-02-02
 
 ### Changed
