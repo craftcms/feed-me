@@ -259,7 +259,7 @@ class HelpController extends Controller
                 FileHelper::unlink($tempFileFields);
             }
         } catch (\Throwable $e) {
-            FeedMe::info('Tried to attach debug logs to a support request and something went horribly wrong: `' . $e->getMessage() . ':' . $e->getLine() . '`.';
+            FeedMe::info('Tried to attach debug logs to a support request and something went horribly wrong: `' . $e->getMessage() . ':' . $e->getLine() . '`.');
 
             // There was a problem zipping, so reset the params and just send the email without the attachment.
             $requestParams = $requestParamDefaults;
