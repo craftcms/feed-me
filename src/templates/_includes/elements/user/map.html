@@ -28,9 +28,14 @@
 }, {
     type: 'assets',
     name: 'Photo',
-    handle: 'photo',
+    handle: 'photoId',
     default: {
-        type: 'text',
+        type: 'elementselect',
+        options: {
+            limit: 1,
+            elementType: 'craft\\elements\\asset',
+            selectionLabel: "Default Asset" | t('feed-me'),
+        },
     },
 }, {
     name: 'Preferred Locale',

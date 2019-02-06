@@ -129,12 +129,6 @@ class User extends Element implements ElementInterface
         if ($groupsIds) {
             Craft::$app->users->assignUserToGroups($this->element->id, $groupsIds);
         }
-
-        if ($profilePhoto) {
-            $filename = basename($profilePhoto);
-
-            Craft::$app->users->saveUserPhoto($profilePhoto, $this->element, $filename);
-        } 
     }
 
     public function disable($elementIds)
@@ -197,7 +191,7 @@ class User extends Element implements ElementInterface
         return $groupIds;
     }
 
-    protected function parsePhoto($feedData, $fieldInfo)
+    protected function parsePhotoId($feedData, $fieldInfo)
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
 
@@ -218,26 +212,33 @@ class User extends Element implements ElementInterface
             }
         }
 
+        // See if its a default asset
+        if (is_array($value) && isset($value[0])) {
+            return $value[0];
+        }
+
+        $folderId = $this->_prepareUserPhotosFolder($this->element);
+
         // Search anywhere in Craft
-        $foundElement = AssetElement::findOne(['filename' => $value]);
+        $foundElement = AssetElement::find()
+             ->filename($value)
+             ->folderId($folderId)
+             ->one();
 
         // Do we want to match existing elements, and was one found?
         if ($foundElement && $conflict === AssetElement::SCENARIO_INDEX) {
             // If so, we still need to make a copy temporarily, as the Users service needs to add it in properly
-            return $foundElement->getCopyOfFile();
+            return $foundElement->id;
         }
 
         // We can't find an existing asset, we need to download it, or plain ignore it
         if ($urlToUpload) {
-            $folderId = $this->_prepareUserPhotosFolder($this->element);
-
-            $uploadedElementIds = AssetHelper::fetchRemoteImage([$urlToUpload], $fieldInfo, $this->feed, null, $this->element, $folderId);
+            $uploadedElements = AssetHelper::fetchRemoteImage([$urlToUpload], $fieldInfo, $this->feed, null, $this->element, $folderId);
 
             if ($uploadedElementIds) {
-                $uploadedAsset = AssetElement::findOne(['id' => $uploadedElementIds[0]]);
 
                 // We still need to make a copy temporarily, as the Users service needs to add it in properly
-                return $uploadedAsset->getCopyOfFile();
+                return $uploadedElementIds[0];
             }
         }
     }
@@ -261,10 +262,10 @@ class User extends Element implements ElementInterface
         $assetsService = Craft::$app->getAssets();
         $volumes = Craft::$app->getVolumes();
 
-        $volumeId = Craft::$app->getSystemSettings()->getSetting('users', 'photoVolumeId');
-        $volume = $volumes->getVolumeById($volumeId);
+        $volumeUid = Craft::$app->getProjectConfig()->get('users.photoVolumeUid');
+        $volume = $volumes->getVolumeByUid($volumeUid);
 
-        $subpath = (string)Craft::$app->getSystemSettings()->getSetting('users', 'photoSubpath');
+        $subpath = (string)Craft::$app->getProjectConfig()->get('users.photoSubpath');
 
         if ($subpath) {
             $subpath = Craft::$app->getView()->renderObjectTemplate($subpath, $user);
