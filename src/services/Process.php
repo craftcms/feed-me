@@ -33,8 +33,6 @@ class Process extends Component
     // Properties
     // =========================================================================
 
-    private $_processedElements = [];
-    private $_processedElementIds = [];
     private $_time_start = null;
 
     private $_service = null;
@@ -78,10 +76,6 @@ class Process extends Component
         $this->_time_start = microtime(true);
 
         App::maxPowerCaptain();
-
-        // Reset properties to allow an instance of this service to be reused
-        $this->_processedElements = [];
-        $this->_processedElementIds = [];
 
         // Add some additional information to our FeedModel - for ease of use in processing
         // $return['fields'] = [];
@@ -149,7 +143,7 @@ class Process extends Component
         return $return;
     }
 
-    public function processFeed($step, $feed)
+    public function processFeed($step, $feed, &$processedElementIds)
     {
         $existingElement = false;
         $uniqueMatches = [];
@@ -288,7 +282,7 @@ class Process extends Component
         if (DuplicateHelper::isDisable($feed, true) || DuplicateHelper::isDelete($feed, true)) {
             // If there's an existing element, we want to keep it, otherwise remove it
             if ($existingElement) {
-                $this->_processedElementIds[] = $existingElement->id;
+                $processedElementIds[] = $existingElement->id;
             }
 
             return;
@@ -406,7 +400,7 @@ class Process extends Component
                 FeedMe::debug($info);
                 FeedMe::debug($contentData);
 
-                $this->_processedElementIds[] = $element->id;
+                $processedElementIds[] = $element->id;
 
                 return;
             }
@@ -437,7 +431,7 @@ class Process extends Component
             }
 
             // Store our successfully processed element for feedback in logs, but also in case we're deleting
-            $this->_processedElementIds[] = $element->id;
+            $processedElementIds[] = $element->id;
 
             FeedMe::info('Finished processing of node `#{i}`.', ['i' => ($step + 1)]);
 
@@ -458,14 +452,14 @@ class Process extends Component
         }
     }
 
-    public function afterProcessFeed($settings, $feed)
+    public function afterProcessFeed($settings, $feed, $processedElementIds)
     {
         if (DuplicateHelper::isDelete($feed) && DuplicateHelper::isDisable($feed)) {
             FeedMe::info("You can't have Delete and Disabled enabled at the same time as an Import Strategy.");
             return;
         }
 
-        $elementsToDeleteDisable = array_diff($settings['existingElements'], $this->_processedElementIds);
+        $elementsToDeleteDisable = array_diff($settings['existingElements'], $processedElementIds);
 
         if ($elementsToDeleteDisable) {
             if (DuplicateHelper::isDisable($feed)) {
@@ -488,7 +482,7 @@ class Process extends Component
 
         FeedMe::$stepKey = null;
 
-        $message = 'Processing ' . count($this->_processedElementIds) . ' elements finished in ' . $execution_time . 's';
+        $message = 'Processing ' . count($processedElementIds) . ' elements finished in ' . $execution_time . 's';
         FeedMe::info($message);
         FeedMe::debug($message);
 
@@ -500,7 +494,7 @@ class Process extends Component
         $this->trigger(self::EVENT_AFTER_PROCESS_FEED, $event);
     }
 
-    public function debugFeed($feed, $limit, $offset)
+    public function debugFeed($feed, $limit, $offset, $processedElementIds)
     {
         $feed->debug = true;
 
@@ -523,15 +517,15 @@ class Process extends Component
         $feedSettings = $this->beforeProcessFeed($feed, $feedData);
 
         foreach ($feedData as $key => $data) {
-            $element = $this->processFeed($key, $feedSettings);
+            $element = $this->processFeed($key, $feedSettings, $processedElementIds);
         }
 
         // Check if we need to paginate the feed to run again
         if ($feed->getNextPagination()) {
-            $this->debugFeed($feed, null, null);
+            $this->debugFeed($feed, null, null, $processedElementIds);
+        } else {
+            $this->afterProcessFeed($feedSettings, $feed, $processedElementIds);
         }
-
-        $this->afterProcessFeed($feedSettings, $feed);
     }
 
 

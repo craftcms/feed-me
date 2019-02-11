@@ -206,7 +206,10 @@ class FeedsController extends Controller
 
         ob_start();
 
-        FeedMe::$plugin->process->debugFeed($feed, $limit, $offset);
+        // Keep track of processed elements here - particularly for paginated feeds
+        $processedElementIds = [];
+
+        FeedMe::$plugin->process->debugFeed($feed, $limit, $offset, $processedElementIds);
 
         return ob_get_clean();
     }
@@ -226,6 +229,9 @@ class FeedsController extends Controller
         $limit = $request->getParam('limit');
         $offset = $request->getParam('offset');
 
+        // Keep track of processed elements here - particularly for paginated feeds
+        $processedElementIds = [];
+
         // Are we running from the CP?
         if ($request->getIsCpRequest()) {
             // if not using the direct param for this request, do UI stuff 
@@ -234,6 +240,7 @@ class FeedsController extends Controller
             // Create the import task
             Craft::$app->getQueue()->delay(0)->push(new FeedImport([
                 'feed' => $feed,
+                'processedElementIds' => $processedElementIds,
             ]));
         }
 
@@ -252,6 +259,7 @@ class FeedsController extends Controller
                     'feed' => $feed,
                     'limit' => $limit,
                     'offset' => $offset,
+                    'processedElementIds' => $processedElementIds,
                 ]));
             }
 

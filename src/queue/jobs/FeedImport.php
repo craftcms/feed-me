@@ -14,6 +14,7 @@ class FeedImport extends BaseJob
     public $feed;
     public $limit;
     public $offset;
+    public $processedElementIds;
 
 
     // Public Methods
@@ -46,7 +47,7 @@ class FeedImport extends BaseJob
 
             foreach ($feedData as $key => $data) {
                 try {
-                    $element = FeedMe::$plugin->process->processFeed($key, $feedSettings);
+                    $element = FeedMe::$plugin->process->processFeed($key, $feedSettings, $this->processedElementIds);
                 } catch (\Throwable $e) {
                     // We want to catch any issues in each iteration of the loop (and log them), but this allows the
                     // rest of the feed to continue processing.
@@ -62,10 +63,12 @@ class FeedImport extends BaseJob
                     'feed' => $this->feed,
                     'limit' => $this->limit,
                     'offset' => $this->offset,
+                    'processedElementIds' => $this->processedElementIds,
                 ]));
+            } else {
+                // Only perform the afterProcessFeed function after any/all pagination is done
+                FeedMe::$plugin->process->afterProcessFeed($feedSettings, $this->feed, $this->processedElementIds);
             }
-
-            FeedMe::$plugin->process->afterProcessFeed($feedSettings, $this->feed);
         } catch (\Throwable $e) {
             // Even though we catch errors on each step of the loop, make sure to catch errors that can be anywhere
             // else in this function, just to be super-safe and not cause the queue job to die.
