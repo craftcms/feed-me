@@ -90,10 +90,28 @@ class Entry extends Element implements ElementInterface
         $this->element->sectionId = $settings['elementGroup'][EntryElement::class]['section'];
         $this->element->typeId = $settings['elementGroup'][EntryElement::class]['entryType'];
 
+        $section = Craft::$app->sections->getSectionById($this->element->sectionId);
         $siteId = Hash::get($settings, 'siteId');
 
         if ($siteId) {
             $this->element->siteId = $siteId;
+
+            // Set the default site status based on the section's settings
+            foreach ($section->getSiteSettings() as $siteSettings) {
+                if ($siteSettings->siteId == $siteId) {
+                    $this->element->enabledForSite = $siteSettings->enabledByDefault;
+                    break;
+                }
+            }
+        } else {
+            // Set the default entry status based on the section's settings
+            foreach ($section->getSiteSettings() as $siteSettings) {
+                if (!$siteSettings->enabledByDefault) {
+                    $this->element->enabled = false;
+                }
+
+                break;
+            }
         }
 
         return $this->element;
