@@ -11,6 +11,7 @@ use Craft;
 use craft\db\Query;
 use craft\db\Table;
 use craft\elements\Asset as AssetElement;
+use craft\helpers\Assets as AssetsHelper;
 use craft\helpers\Db;
 use craft\helpers\UrlHelper;
 
@@ -117,11 +118,13 @@ class Assets extends Field implements FieldInterface
                 $base64ToUpload[$key] = $dataValue;
             }
 
+            $filename = AssetsHelper::prepareAssetName($dataValue);
+
             $criteria['status'] = null;
             $criteria['folderId'] = $folderIds;
             $criteria['kind'] = $settings['allowedKinds'];
             $criteria['limit'] = $limit;
-            $criteria['filename'] = Db::escapeParam($dataValue);
+            $criteria['filename'] = $filename;
             $criteria['includeSubfolders'] = true;
 
             Craft::configure($query, $criteria);

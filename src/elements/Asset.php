@@ -11,6 +11,7 @@ use verbb\feedme\services\Process;
 use Craft;
 use craft\db\Query;
 use craft\elements\Asset as AssetElement;
+use craft\helpers\Assets as AssetsHelper;
 use craft\helpers\UrlHelper;
 
 use yii\base\Event;
@@ -142,6 +143,8 @@ class Asset extends Element implements ElementInterface
         if ($conflict === AssetElement::SCENARIO_INDEX) {
             // Make sure to parse the URL into a filename to find the asset by
             $filename = $this->_getFilename($value);
+
+            $filename = AssetsHelper::prepareAssetName($filename);
 
             $foundElement = AssetElement::find()
                 ->folderId($folderId)
