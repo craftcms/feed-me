@@ -1,5 +1,17 @@
 # Changelog
 
+## 3.1.5 - 2019-02-11
+
+### Changed
+- Refactor `afterProcessFeed` to work with pagination.
+
+### Fixed
+- Fix lightswitch default value not saving.
+- Fix typo in user profile photo uploads.
+- Fix checking for entry’s default status for section.
+- Fix searching for existing assets not using the prepped filename.
+- Fix elements being disabled/deleted incorrectly for paginated feeds.
+
 ## 3.1.4 - 2019-02-06
 
 ### Fixed
