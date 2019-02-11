@@ -233,7 +233,7 @@ class User extends Element implements ElementInterface
 
         // We can't find an existing asset, we need to download it, or plain ignore it
         if ($urlToUpload) {
-            $uploadedElements = AssetHelper::fetchRemoteImage([$urlToUpload], $fieldInfo, $this->feed, null, $this->element, $folderId);
+            $uploadedElementIds = AssetHelper::fetchRemoteImage([$urlToUpload], $fieldInfo, $this->feed, null, $this->element, $folderId);
 
             if ($uploadedElementIds) {
 
