@@ -53,28 +53,26 @@ class Assets extends Field implements FieldInterface
         $node = Hash::get($this->fieldInfo, 'node');
 
         // Get folder id's for connecting
-        $folderIds = [];
-
-        if (is_array($folders)) {
-            foreach ($folders as $folder) {
-                list($volume, $uid) = explode(':', $folder);
-                $volumeId = Db::idByUid(Table::VOLUMES, $uid);
-
-                // Get all folders for this volume
-                $ids = (new Query())
-                    ->select(['id'])
-                    ->from([Table::VOLUMEFOLDERS])
-                    ->where(['volumeId' => $volumeId])
-                    ->column();
-
-                $folderIds = array_merge($folderIds, $ids);
-            }
-        } else if ($folders === '*') {
-            $folderIds = null;
-        }
+        $folderIds = $this->field->resolveDynamicPathToFolderId($this->element);
 
         if (!$folderIds) {
-            $folderIds[] = $this->field->resolveDynamicPathToFolderId($this->element);
+            if (is_array($folders)) {
+                foreach ($folders as $folder) {
+                    list($volume, $uid) = explode(':', $folder);
+                    $volumeId = Db::idByUid(Table::VOLUMES, $uid);
+
+                    // Get all folders for this volume
+                    $ids = (new Query())
+                        ->select(['id'])
+                        ->from([Table::VOLUMEFOLDERS])
+                        ->where(['volumeId' => $volumeId])
+                        ->column();
+
+                    $folderIds = array_merge($folderIds, $ids);
+                }
+            } else if ($folders === '*') {
+                $folderIds = null;
+            }
         }
 
         $foundElements = [];
