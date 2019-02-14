@@ -2,9 +2,13 @@
 namespace verbb\feedme\helpers;
 
 use Craft;
+use craft\base\Serializable;
+use craft\helpers\DateTimeHelper;
+use craft\helpers\Db;
 
 use verbb\feedme\FeedMe;
 
+use yii\base\Arrayable;
 use Cake\Utility\Hash;
 
 class DataHelper
@@ -155,6 +159,16 @@ class DataHelper
 
         foreach ($content as $key => $newValue) {
             $existingValue = Hash::get($fields, $key);
+
+            // If date value, make sure to cast it as a string to compare
+            if ($newValue instanceof \DateTime || DateTimeHelper::isIso8601($newValue)) {
+                $newValue = Db::prepareDateForDb($newValue);
+            }
+
+            // If an empty 'date' value, its the same as null
+            if (is_array($newValue) && isset($newValue['date']) && $newValue['date'] === '') {
+                $newValue = null;
+            }
 
             // Check for simple fields first
             if ($existingValue === $newValue) {
