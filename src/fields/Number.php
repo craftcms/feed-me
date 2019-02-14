@@ -34,6 +34,11 @@ class Number extends Field implements FieldInterface
     {
         $value = $this->fetchValue();
         
+        return $this->parseValue($value);
+    }
+
+    public function parseValue($value)
+    {
         return Localization::normalizeNumber($value);
     }
     

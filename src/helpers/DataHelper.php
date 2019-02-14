@@ -206,6 +206,10 @@ class DataHelper
                 FeedMe::debug($diff);
             }
 
+            // Now its getting personal. We need to check things per field type
+            // Find the resulting value from what Feed Me's field processing would produce
+            // $field = Craft::$app->getFields()->getFieldByHandle($key);
+
             FeedMe::debug($key . ' - existing');
             FeedMe::debug($existingValue);
             FeedMe::debug($key . ' - new');
