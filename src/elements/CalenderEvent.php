@@ -137,10 +137,6 @@ class CalenderEvent extends Element implements ElementInterface
             $value = $value[0];
         }
 
-        if (is_numeric($value)) {
-            $match = 'elements.id';
-        }
-
         if ($match === 'fullName') {
             $element = UserElement::findOne(['search' => $value, 'status' => null]);
         } else {

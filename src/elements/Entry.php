@@ -149,10 +149,6 @@ class Entry extends Element implements ElementInterface
             return null;
         }
 
-        if (is_numeric($value)) {
-            $match = 'elements.id';
-        }
-
         $element = EntryElement::find()
             ->status(null)
             ->andWhere(['=', $match, Db::escapeParam($value)])
@@ -198,10 +194,6 @@ class Entry extends Element implements ElementInterface
 
         if (is_array($value)) {
             $value = $value[0];
-        }
-
-        if (is_numeric($value)) {
-            $match = 'elements.id';
         }
 
         if ($match === 'fullName') {
