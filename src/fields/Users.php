@@ -54,7 +54,7 @@ class Users extends Field implements FieldInterface
                 $groupIds[] = Db::idByUid('{{%usergroups}}', $uid);
             }
         } else if ($sources === '*') {
-            $groupIds = '';
+            $groupIds = null;
         }
 
         $foundElements = [];

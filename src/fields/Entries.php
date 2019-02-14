@@ -62,7 +62,7 @@ class Entries extends Field implements FieldInterface
                 }
             }
         } else if ($sources === '*') {
-            $sectionIds = '*';
+            $sectionIds = null;
         }
 
         $foundElements = [];

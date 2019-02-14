@@ -50,7 +50,7 @@ class CommerceVariants extends Field implements FieldInterface
                 $typeIds[] = $uid;
             }
         } else if ($sources === '*') {
-            $typeIds = '*';
+            $typeIds = null;
         }
 
         $foundElements = [];

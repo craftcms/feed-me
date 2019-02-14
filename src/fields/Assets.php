@@ -70,7 +70,7 @@ class Assets extends Field implements FieldInterface
                 $folderIds = array_merge($folderIds, $ids);
             }
         } else if ($folders === '*') {
-            $folderIds = '*';
+            $folderIds = null;
         }
 
         if (!$folderIds) {
