@@ -30,6 +30,10 @@ class DataHelper
             $value = $default;
         }
 
+        if (is_string($value)) {
+            $value = trim($value);
+        }
+
         return $value;
     }
 
