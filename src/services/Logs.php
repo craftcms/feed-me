@@ -15,7 +15,7 @@ class Logs extends Component
     // =========================================================================
 
     public $enableRotation = true;
-    public $maxFileSize = 1024; // in KB
+    public $maxFileSize = 6656; // 6.5MB limit for support
     public $maxLogFiles = 20;
     public $fileMode;
     public $dirMode = 0775;
