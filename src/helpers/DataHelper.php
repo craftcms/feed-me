@@ -179,6 +179,17 @@ class DataHelper
             // Then check for simple attributes
             $existingValue = Hash::get($attributes, $key);
 
+            // Check for attribute groups - more than simple asset
+            if ($key === 'groups') {
+                $groups = $element->getGroups();
+
+                foreach ($groups as $k => $group) {
+                    $groups[$k] = $group->id;
+                }
+
+                $existingValue = $groups;
+            }
+
             if ($existingValue === $newValue) {
                 unset($trackedChanges[$key]);
                 continue;
