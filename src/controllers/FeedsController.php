@@ -240,6 +240,8 @@ class FeedsController extends Controller
             // Create the import task
             Craft::$app->getQueue()->delay(0)->push(new FeedImport([
                 'feed' => $feed,
+                'limit' => $limit,
+                'offset' => $offset,
                 'processedElementIds' => $processedElementIds,
             ]));
         }
