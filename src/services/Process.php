@@ -164,6 +164,11 @@ class Process extends Component
         // Save this to session so we don't have to pass it around everywhere.
         FeedMe::$stepKey = $logKey;
 
+        // Try to fix an elusive bug...
+        if (!is_numeric($step)) {
+            FeedMe::error('Error `{i}`.', ['i' => json_encode($step)]);
+        }
+
         FeedMe::info('Starting processing of node `#{i}`.', ['i' => ($step + 1)]);
 
         // Set up a model for this Element Type
