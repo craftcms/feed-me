@@ -1,5 +1,27 @@
 # Changelog
 
+## 3.1.6 - 2019-02-15
+
+### Added
+- Add console command to run feeds. Refer to [docs](https://verbb.io/craft-plugins/feed-me/docs/feature-tour/trigger-import-via-cron#console-command)
+- Implement log file rotation - stop them getting out of hand
+- Add more date formatting options.
+
+### Changed
+- Add better content checks for number and lightswitch.
+- Add better checks for element groups (user groups) content.
+- Improve checking against existing date content.
+- Update asset fields to use `resolveDynamicPathToFolderId` by default. Should match field settings more consistently.
+
+### Fixed
+- Ensure blank CSV rows are stripped out.
+- Ensure when matching against existing data that there’s values to compare against. Prevents againt matching incorrectly.
+- Try to fix `A non-numeric value encountered` error.
+- Fix error in help controller when no field found.
+- Fix entry/category matching against parents correctly.
+- Fix Postgres error when no sources for element fields are selected.
+- Ensure values trim for whitespace, if strings.
+
 ## 3.1.5 - 2019-02-11
 
 ### Changed

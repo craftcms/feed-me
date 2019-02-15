@@ -2,7 +2,7 @@
     "name": "verbb/feed-me",
     "description": "Import content from XML, RSS, CSV or JSON feeds into Entries, Categories, Craft Commerce Products (and variants), and more.",
     "type": "craft-plugin",
-    "version": "3.1.5",
+    "version": "3.1.6",
     "keywords": [
         "craft",
         "cms",
