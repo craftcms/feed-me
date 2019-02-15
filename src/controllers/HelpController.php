@@ -197,21 +197,26 @@ class HelpController extends Controller
                         foreach ($feed->fieldMapping as $fieldHandle => $feedHandle) {
                             if (isset($feedHandle['field'])) {
                                 $field = Craft::$app->fields->getFieldByHandle($fieldHandle);
-                                $attributes = $field->attributes;
-                                $attributes['type'] = get_class($field);
 
-                                if ($attributes['type'] == 'craft\fields\Matrix') {
-                                    foreach ($field->blocktypes as $key => $blocktype) {
-                                        $attributes['blocktypes'][$key] = $blocktype->attributes;
+                                if ($field) {
+                                    $attributes = $field->attributes;
+                                    $attributes['type'] = get_class($field);
 
-                                        foreach ($blocktype->fields as $key2 => $blocktypeField) {
-                                            $attributes['blocktypes'][$key]['fields'][$key2] = $blocktypeField->attributes;
-                                            $attributes['blocktypes'][$key]['fields'][$key2]['type'] = get_class($blocktypeField);
+                                    if ($attributes['type'] == 'craft\fields\Matrix') {
+                                        foreach ($field->blocktypes as $key => $blocktype) {
+                                            $attributes['blocktypes'][$key] = $blocktype->attributes;
+
+                                            foreach ($blocktype->fields as $key2 => $blocktypeField) {
+                                                $attributes['blocktypes'][$key]['fields'][$key2] = $blocktypeField->attributes;
+                                                $attributes['blocktypes'][$key]['fields'][$key2]['type'] = get_class($blocktypeField);
+                                            }
                                         }
                                     }
-                                }
 
-                                $fieldInfo[$fieldHandle] = $attributes;
+                                    $fieldInfo[$fieldHandle] = $attributes;
+                                } else {
+                                    $fieldInfo[$fieldHandle] = get_class($field);
+                                }
                             }
                         }
 
