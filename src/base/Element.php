@@ -107,6 +107,11 @@ abstract class Element extends Component
                     $feedValue = $feedValue->format('Y-m-d H:i:s');
                 }
 
+                // We need a value to check against
+                if (is_string($feedValue) && $feedValue === '') {
+                    continue;
+                }
+
                 $criteria[$handle] = Db::escapeParam($feedValue);
             }
         }
