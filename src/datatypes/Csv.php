@@ -5,6 +5,7 @@ use verbb\feedme\FeedMe;
 use verbb\feedme\base\DataType;
 use verbb\feedme\base\DataTypeInterface;
 
+use Craft;
 use craft\helpers\StringHelper;
 
 use Cake\Utility\Hash;
@@ -57,13 +58,18 @@ class Csv extends DataType implements DataTypeInterface
             $rows = $this->_getRows($reader);
 
             // Create associative array with Row 1 header as keys
-            foreach($rows as $row) {
+            foreach ($rows as $row) {
                 $filteredRow = [];
 
                 // Additional work here to handle line-breaks in keys (CSV header) - they're not allowed
                 foreach ($row as $key => $value) {
                     $newKey = preg_replace('#\r\n?#', " ", $key);
                     $filteredRow[$newKey] = $value;
+                }
+
+                // Check for empty rows - ditch them
+                if ($this->_isArrayEmpty($filteredRow)) {
+                    continue;
                 }
 
                 $array[] = $filteredRow;
@@ -95,6 +101,10 @@ class Csv extends DataType implements DataTypeInterface
         return ['success' => true, 'data' => $array];
     }
 
+
+    // Private Methods
+    // =========================================================================
+
     private function _getRows($reader)
     {
         $array = [];
@@ -116,5 +126,16 @@ class Csv extends DataType implements DataTypeInterface
         } catch (\Throwable $e) {}
 
         return $array;
+    }
+
+    private function _isArrayEmpty($array)
+    {
+        foreach ($array as $key => $val) {
+            if (trim($val) !== '') {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
