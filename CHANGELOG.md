@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.1.7 - 2019-02-16
+
+### Fixed
+- Fix primary element selector showing incorrect values when two nested nodes have the same name.
+- Switch variant parsing behaviour to support nested levels less than 2 first.
+- Remove assumption that empty arrays should be ignored.
+- Ensure third-party fields check for empty data before returning.
+- Ensure element fields check for empty data before returning.
+
 ## 3.1.6 - 2019-02-15
 
 ### Added
