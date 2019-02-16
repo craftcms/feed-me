@@ -137,6 +137,11 @@ class Entries extends Field implements FieldInterface
 
         $foundElements = array_unique($foundElements);
 
+        // Protect against sending an empty array - removing any existing elements
+        if (!$foundElements) {
+            return null;
+        }
+
         return $foundElements;
     }
 
