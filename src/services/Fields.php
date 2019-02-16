@@ -190,9 +190,9 @@ class Fields extends Component
 
         // We don't really want to set an empty array on fields, which is dangerous for existing date (elements)
         // But empty strings and booleans are totally fine, and desirable.
-        if (is_array($parsedValue) && empty($parsedValue)) {
-            $parsedValue = null;
-        }
+        // if (is_array($parsedValue) && empty($parsedValue)) {
+        //     $parsedValue = null;
+        // }
 
         if ($this->hasEventHandlers(self::EVENT_AFTER_PARSE_FIELD)) {
             $this->trigger(self::EVENT_AFTER_PARSE_FIELD, new FieldEvent([
