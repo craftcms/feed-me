@@ -42,6 +42,10 @@ class Table extends Field implements FieldInterface
 
         $columns = Hash::get($this->fieldInfo, 'fields');
 
+        if (!$columns) {
+            return null;
+        }
+
         foreach ($this->feedData as $nodePath => $value) {
             foreach ($columns as $columnHandle => $columnInfo) {
 
