@@ -217,7 +217,9 @@ class DataTypes extends Component
             $elements = ($value > 1) ? ' elements' : ' element';
             $index = array_values(array_slice(explode('/', $key), -1))[0];
 
-            $nodes[$index] = $key . ' (x' . $value . $elements . ')';
+            if (!isset($nodes[$index])) {
+                $nodes[$index] = $key . ' (x' . $value . $elements . ')';
+            }
         }
 
         return $nodes;
