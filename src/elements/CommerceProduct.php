@@ -265,12 +265,12 @@ class CommerceProduct extends Element implements ElementInterface
 
                 // Try and determine the index. We need to always be dealing with an array of variant data
                 $nodePathSegments = explode('/', $nodePath);
-                $variantIndex = Hash::get($nodePathSegments, 2);
+                $variantIndex = Hash::get($nodePathSegments, 1);
 
                 if (!is_numeric($variantIndex)) {
                     // Try to check if its only one-level deep (only importing one block type)
                     // which is particuarly common for JSON.
-                    $variantIndex = Hash::get($nodePathSegments, 1);
+                    $variantIndex = Hash::get($nodePathSegments, 2);
 
                     if (!is_numeric($variantIndex)) {
                         $variantIndex = 0;
