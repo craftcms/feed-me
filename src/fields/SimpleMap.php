@@ -74,6 +74,11 @@ class SimpleMap extends Field implements FieldInterface
             $preppedData['parts'] = json_encode($preppedData['parts']);
         }
 
+        // Protect against sending an empty array
+        if (!$preppedData) {
+            return null;
+        }
+
         return $preppedData;
     }
 

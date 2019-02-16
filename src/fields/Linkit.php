@@ -46,6 +46,11 @@ class Linkit extends Field implements FieldInterface
             $preppedData['type'] = 'fruitstudios\linkit\models\Url';
         }
 
+        // Protect against sending an empty array
+        if (!$preppedData) {
+            return null;
+        }
+
         return $preppedData;
     }
 

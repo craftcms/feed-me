@@ -38,6 +38,11 @@ class SmartMap extends Field implements FieldInterface
             $preppedData[$subFieldHandle] = DataHelper::fetchValue($this->feedData, $subFieldInfo);
         }
 
+        // Protect against sending an empty array
+        if (!$preppedData) {
+            return null;
+        }
+
         return $preppedData;
     }
 
