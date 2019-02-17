@@ -89,7 +89,7 @@ class Entries extends Field implements FieldInterface
             // See https://github.com/craftcms/cms/issues/2854
             if (Craft::$app->getIsMultiSite()) {
                 if ($targetSiteId) {
-                    $criteria['siteId'] = $targetSiteId;
+                    $criteria['siteId'] = Craft::$app->getSites()->getSiteByUid($targetSiteId)->id;
                 } else if ($feedSiteId) {
                     $criteria['siteId'] = $feedSiteId;
                 } else {

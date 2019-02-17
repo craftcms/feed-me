@@ -40,6 +40,8 @@ class Tags extends Field implements FieldInterface
         $settings = Hash::get($this->field, 'settings');
         $source = Hash::get($this->field, 'settings.source');
         $limit = Hash::get($this->field, 'settings.limit');
+        $targetSiteId = Hash::get($this->field, 'settings.targetSiteId');
+        $feedSiteId = Hash::get($this->feed, 'siteId');
         $match = Hash::get($this->fieldInfo, 'options.match', 'title');
         $create = Hash::get($this->fieldInfo, 'options.create');
         $fields = Hash::get($this->fieldInfo, 'fields');
@@ -77,6 +79,18 @@ class Tags extends Field implements FieldInterface
             }
             
             $query = TagElement::find();
+
+            // In multi-site, there's currently no way to query across all sites - we use the current site
+            // See https://github.com/craftcms/cms/issues/2854
+            if (Craft::$app->getIsMultiSite()) {
+                if ($targetSiteId) {
+                    $criteria['siteId'] = Craft::$app->getSites()->getSiteByUid($targetSiteId)->id;
+                } else if ($feedSiteId) {
+                    $criteria['siteId'] = $feedSiteId;
+                } else {
+                    $criteria['siteId'] = Craft::$app->getSites()->getCurrentSite()->id;
+                }
+            }
 
             $criteria['status'] = null;
             $criteria['groupId'] = $groupId;

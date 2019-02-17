@@ -47,6 +47,8 @@ class Assets extends Field implements FieldInterface
         $settings = Hash::get($this->field, 'settings');
         $folders = Hash::get($this->field, 'settings.sources');
         $limit = Hash::get($this->field, 'settings.limit');
+        $targetSiteId = Hash::get($this->field, 'settings.targetSiteId');
+        $feedSiteId = Hash::get($this->feed, 'siteId');
         $upload = Hash::get($this->fieldInfo, 'options.upload');
         $conflict = Hash::get($this->fieldInfo, 'options.conflict');
         $fields = Hash::get($this->fieldInfo, 'fields');
@@ -96,6 +98,18 @@ class Assets extends Field implements FieldInterface
             }
 
             $query = AssetElement::find();
+
+            // In multi-site, there's currently no way to query across all sites - we use the current site
+            // See https://github.com/craftcms/cms/issues/2854
+            if (Craft::$app->getIsMultiSite()) {
+                if ($targetSiteId) {
+                    $criteria['siteId'] = Craft::$app->getSites()->getSiteByUid($targetSiteId)->id;
+                } else if ($feedSiteId) {
+                    $criteria['siteId'] = $feedSiteId;
+                } else {
+                    $criteria['siteId'] = Craft::$app->getSites()->getCurrentSite()->id;
+                }
+            }
 
             // If we're uploading files, this will need to be an absolute URL. If it is, save until later.
             // We also don't check for existing assets here, so break out instantly.
