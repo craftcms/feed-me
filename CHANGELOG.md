@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.1.8 - 2019-02-17
+
+### Fixed
+- Fix element fields not finding existing elements when `Relate digital products from a specific site?` was set on the field.
+
 ## 3.1.7 - 2019-02-16
 
 ### Fixed
