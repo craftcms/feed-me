@@ -175,7 +175,7 @@ class DataHelper
             }
 
             // Check for simple fields first
-            if ($existingValue === $newValue) {
+            if ($existingValue == $newValue) {
                 unset($trackedChanges[$key]);
                 continue;
             }
@@ -193,8 +193,8 @@ class DataHelper
 
                 $existingValue = $groups;
             }
-
-            if ($existingValue === $newValue) {
+            
+            if ($existingValue == $newValue) {
                 unset($trackedChanges[$key]);
                 continue;
             }
