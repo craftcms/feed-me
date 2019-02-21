@@ -125,6 +125,14 @@ class Csv extends DataType implements DataTypeInterface
             }
         } catch (\Throwable $e) {}
 
+        // Support league/csv v9 syntax
+        try {
+            if (!$array) {
+                $reader->setHeaderOffset(0);
+                $array = $reader->getRecords();
+            }
+        } catch (\Throwable $e) {}
+
         return $array;
     }
 
