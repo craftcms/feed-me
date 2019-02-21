@@ -171,8 +171,27 @@ class Entries extends Field implements FieldInterface
         $siteId = Hash::get($this->feed, 'siteId');
         $propagate = $siteId ? false : true;
 
+        $section = Craft::$app->sections->getSectionById($element->sectionId);
+
         if ($siteId) {
             $element->siteId = $siteId;
+
+            // Set the default site status based on the section's settings
+            foreach ($section->getSiteSettings() as $siteSettings) {
+                if ($siteSettings->siteId == $siteId) {
+                    $element->enabledForSite = $siteSettings->enabledByDefault;
+                    break;
+                }
+            }
+        } else {
+            // Set the default entry status based on the section's settings
+            foreach ($section->getSiteSettings() as $siteSettings) {
+                if (!$siteSettings->enabledByDefault) {
+                    $element->enabled = false;
+                }
+
+                break;
+            }
         }
 
         if (!Craft::$app->getElements()->saveElement($element, true, $propagate)) {
