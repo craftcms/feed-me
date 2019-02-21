@@ -134,6 +134,8 @@ $(function() {
         $container.find('select').html(newOptions);
     });
 
+    $('.field-extra-settings .element-group-section select').trigger('change');
+
     // Selectize inputs
     $('.feedme-mapping .selectize select').selectize({
         allowEmptyOption: true,
