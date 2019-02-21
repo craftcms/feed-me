@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.1.9 - 2019-02-22
+
+### Fixed
+- Add support for league/csv:^9.0, where some combinations of plugins loaded this version instead of 8.0. Caused some CSVs to show as empty.
+- Ensure entries created through their fields respect their default status.
+- Fix entries section not being selected properly in mapping.
+- Ease up on comparing content - doesn’t need to match exact type.
+
 ## 3.1.8 - 2019-02-17
 
 ### Fixed
