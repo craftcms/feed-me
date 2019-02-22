@@ -117,19 +117,25 @@ class Comment extends Element implements ElementInterface
 
         $elementId = null;
 
-        if (is_numeric($value)) {
-            $elementId = $value;
-        } else {
-            $result = (new Query())
-                ->select(['elements.id', 'elements_sites.elementId'])
-                ->from(['{{%elements}} elements'])
-                ->innerJoin('{{%elements_sites}} elements_sites', '[[elements_sites.elementId]] = [[elements.id]]')
-                ->where(['=', $match, Db::escapeParam($value)])
-                ->one();
+        // Because we can match on element attributes and custom fields, AND we're directly using SQL
+        // queries in our `where` below, we need to check if we need a prefix for custom fields accessing
+        // the content table.
+        $columnName = $match;
 
-            if ($result) {
-                $elementId = $result['id'];
-            }
+        if (Craft::$app->getFields()->getFieldByHandle($match)) {
+            $columnName = Craft::$app->getFields()->oldFieldColumnPrefix . $match;
+        }
+
+        $result = (new Query())
+            ->select(['elements.id', 'elements_sites.elementId'])
+            ->from(['{{%elements}} elements'])
+            ->innerJoin('{{%elements_sites}} elements_sites', '[[elements_sites.elementId]] = [[elements.id]]')
+            ->innerJoin('{{%content}} content', '[[content.elementId]] = [[elements.id]]')
+            ->where(['=', $columnName, Db::escapeParam($value)])
+            ->one();
+
+        if ($result) {
+            $elementId = $result['id'];
         }
 
         if ($elementId) {
