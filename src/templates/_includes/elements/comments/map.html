@@ -19,6 +19,14 @@
         type: 'text',
     },
 }, {
+    type: 'date',
+    name: 'Comment Date',
+    handle: 'commentDate',
+    instructions: 'Accepts Unix timestamp, or just about any English textual datetime description.' | t('feed-me'),
+    default: {
+        type: 'dateTime',
+    },
+}, {
     name: 'Name',
     handle: 'name',
     instructions: 'The name of the commenter.' | t('feed-me'),

@@ -105,6 +105,14 @@ class Comment extends Element implements ElementInterface
     // Protected Methods
     // =========================================================================
 
+    protected function parseCommentDate($feedData, $fieldInfo)
+    {
+        $value = $this->fetchSimpleValue($feedData, $fieldInfo);
+        $formatting = Hash::get($fieldInfo, 'options.match');
+
+        return $this->parseDateAttribute($value, $formatting);
+    }
+
     protected function parseOwnerId($feedData, $fieldInfo)
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
