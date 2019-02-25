@@ -109,7 +109,7 @@ class Entries extends Field implements FieldInterface
             $criteria['status'] = null;
             $criteria['sectionId'] = $sectionIds;
             $criteria['limit'] = $limit;
-            $criteria['where'] = ['=', $columnName, Db::escapeParam($dataValue)];
+            $criteria['where'] = ['=', $columnName, $dataValue];
 
             Craft::configure($query, $criteria);
 

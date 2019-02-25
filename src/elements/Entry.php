@@ -151,7 +151,7 @@ class Entry extends Element implements ElementInterface
 
         $element = EntryElement::find()
             ->status(null)
-            ->andWhere(['=', $match, Db::escapeParam($value)])
+            ->andWhere(['=', $match, $value])
             ->one();
 
         if ($element) {
@@ -201,7 +201,7 @@ class Entry extends Element implements ElementInterface
         } else {
             $element = UserElement::find()
                 ->status(null)
-                ->andWhere(['=', $match, Db::escapeParam($value)])
+                ->andWhere(['=', $match, $value])
                 ->one();
         }
 

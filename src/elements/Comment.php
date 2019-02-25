@@ -134,7 +134,7 @@ class Comment extends Element implements ElementInterface
             ->from(['{{%elements}} elements'])
             ->innerJoin('{{%elements_sites}} elements_sites', '[[elements_sites.elementId]] = [[elements.id]]')
             ->innerJoin('{{%content}} content', '[[content.elementId]] = [[elements.id]]')
-            ->where(['=', $columnName, Db::escapeParam($value)])
+            ->where(['=', $columnName, $value])
             ->one();
 
         if ($result) {
@@ -166,7 +166,7 @@ class Comment extends Element implements ElementInterface
         } else {
             $element = UserElement::find()
                 ->status(null)
-                ->andWhere(['=', $match, Db::escapeParam($value)])
+                ->andWhere(['=', $match, $value])
                 ->one();
         }
 

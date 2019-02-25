@@ -111,7 +111,7 @@ class Category extends Element implements ElementInterface
 
         $element = CategoryElement::find()
             ->status(null)
-            ->andWhere(['=', $match, Db::escapeParam($value)])
+            ->andWhere(['=', $match, $value])
             ->one();
 
         if ($element) {

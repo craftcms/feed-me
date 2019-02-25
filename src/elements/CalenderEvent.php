@@ -142,7 +142,7 @@ class CalenderEvent extends Element implements ElementInterface
         } else {
             $element = UserElement::find()
                 ->status(null)
-                ->andWhere(['=', $match, Db::escapeParam($value)])
+                ->andWhere(['=', $match, $value])
                 ->one();
         }
 
