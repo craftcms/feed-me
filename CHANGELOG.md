@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.1.10 - 2019-02-26
+
+### Fixed
+- Allow comments owner to match on custom fields.
+- Fix compatibility with latest Comments release, add missing commentDate.
+- Comments - Remove unneeded custom save function thanks to `Element::SCENARIO_ESSENTIALS` disabling validation.
+- Remove `Db::escapeParam()` when directly querying (not required and causing matching issues).
+
 ## 3.1.9 - 2019-02-22
 
 ### Fixed
