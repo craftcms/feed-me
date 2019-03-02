@@ -19,6 +19,7 @@ Plugins can get notified before a element's attribute has been parsed.
 ```php
 use verbb\feedme\base\Element;
 use verbb\feedme\events\ElementEvent;
+use yii\base\Event;
 
 Event::on(Element::class, Element::EVENT_BEFORE_PARSE_ATTRIBUTE, function(ElementEvent $e) {
 
@@ -31,6 +32,7 @@ Plugins can get notified after a element's attribute has been parsed.
 ```php
 use verbb\feedme\base\Element;
 use verbb\feedme\events\ElementEvent;
+use yii\base\Event;
 
 Event::on(Element::class, Element::EVENT_AFTER_PARSE_ATTRIBUTE, function(ElementEvent $e) {
     $parsedValue = $e->parsedValue;
