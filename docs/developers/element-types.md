@@ -13,28 +13,26 @@ Event::on(Elements::class, Elements::EVENT_REGISTER_FEED_ME_ELEMENTS, function(R
 });
 ```
 
-### The `beforeParseElement` event
-Plugins can get notified before a element's data has been parsed.
+### The `beforeParseAttribute` event
+Plugins can get notified before a element's attribute has been parsed.
 
 ```php
+use verbb\feedme\base\Element;
 use verbb\feedme\events\ElementEvent;
-use verbb\feedme\services\Elements;
-use yii\base\Event;
 
-Event::on(Elements::class, Elements::EVENT_BEFORE_PARSE_ELEMENT, function(ElementEvent $e) {
+Event::on(Element::class, Element::EVENT_BEFORE_PARSE_ATTRIBUTE, function(ElementEvent $e) {
 
 });
 ```
 
-### The `afterParseElement` event
-Plugins can get notified after a element's data has been parsed.
+### The `parseAttribute` event
+Plugins can get notified after a element's attribute has been parsed.
 
 ```php
+use verbb\feedme\base\Element;
 use verbb\feedme\events\ElementEvent;
-use verbb\feedme\services\Elements;
-use yii\base\Event;
 
-Event::on(Elements::class, Elements::EVENT_AFTER_PARSE_ELEMENT, function(ElementEvent $e) {
-
+Event::on(Element::class, Element::EVENT_AFTER_PARSE_ATTRIBUTE, function(ElementEvent $e) {
+    $parsedValue = $e->parsedValue;
 });
 ```
