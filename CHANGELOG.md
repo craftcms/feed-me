@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.1.12 - 2019-03-03
+
+### Fixed
+- Ensure all complex fields don't process when none of their sub-fields are mapped.
+
 ## 3.1.11 - 2019-03-02
 
 ### Added
