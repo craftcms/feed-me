@@ -18,6 +18,7 @@ return [
         'compareContent' => true,
         'sleepTime' => 0,
         'logging' => true,
+        'runGcBeforeFeed' => false,
         'feedOptions' => [
             '1' => [
                 'feedUrl' => 'https://specialurl.io/feed.json',
@@ -41,6 +42,7 @@ return [
 - `compareContent` - Whether to check against existing element content before updating. This can have considerable performance improvements and prevent against needless updating.
 - `sleepTime` - Add the number of seconds to sleep after each feed item has been processed.
 - `logging` - Set the level of logging to do. Possible values are `true` (default) to log everything, `false` to disable logging or `errors` to only record errors.
+- `runGcBeforeFeed` - Whether to run the Garbage Collection service before running a feed.
 - `feedOptions` - Provide an array of any of the above options or [Feed Settings](docs:feature-tour/feed-overview) to set specifically for certain feeds. Use the Feed ID as the key for the array.
 
 #### Example `requestOptions`

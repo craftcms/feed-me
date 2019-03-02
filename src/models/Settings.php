@@ -26,5 +26,6 @@ class Settings extends Model
     public $feedOptions = [];
     public $sleepTime = 0;
     public $logging = true;
+    public $runGcBeforeFeed = false;
 
 }

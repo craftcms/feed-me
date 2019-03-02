@@ -66,6 +66,14 @@ class Process extends Component
             $this->_backupBeforeFeed($feed);
         }
 
+        $runGcBeforeFeed = FeedMe::$plugin->service->getConfig('runGcBeforeFeed', $feed['id']);
+
+        if ($runGcBeforeFeed) {
+            $gc = Craft::$app->getGc();
+            $gc->deleteAllTrashed = true;
+            $gc->run(true);
+        }
+
         $this->_data = $feedData;
         $this->_feed = $feed;
         $this->_service = $feed->element;
