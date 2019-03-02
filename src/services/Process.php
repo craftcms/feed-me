@@ -593,66 +593,35 @@ class Process extends Component
         FeedMe::info('Finished database backup successfully.', [], ['key' => $logKey]);
     }
 
-    // Function to be recursively called to weed out fields that are set to 'noimport'. More complex than usual by the fact
+    // Function to weed out fields that are set to 'noimport'. More complex than usual by the fact
     // that complex fields (Table, Matrix) have multiple fields, some of which aren't mapped. This is why all nested fields
     // should be templated through the 'fields' index, and this function will take care of things from there.
     private function _filterUnmappedFields($fields)
     {
-        $return = [];
+        // Find any items like `[title.node] => noimport` and remove the outer field info. Slightly complicated
+        // for nested block/fields, and if I was better at recursion, this could be more elegant, but loop through a 
+        // bunch of times, removing stuff as we go, starting at the inner nested level. Each loop will remove more levels
+        // of un-mapped nodes
+        for ($i = 0; $i < 5; $i++) { 
+            foreach (Hash::flatten($fields) as $key => $value) {
+                $explode = explode('.', $key);
+                $lastIndex = array_pop($explode);
+                $infoPath = implode('.', $explode);
 
-        if (!is_array($fields)) {
-            return $return;
-        }
-
-        foreach ($fields as $key => $value) {
-            $node = Hash::get($value, 'node');
-            $nestedBlocks = Hash::get($value, 'blocks');
-            $nestedFields = Hash::get($value, 'fields');
-
-            if ($nestedFields) {
-                $value['fields'] = []; // Reset immediately - only care about mapped
-
-                foreach ($nestedFields as $i => $nestedField) {
-                    $nestedFieldNode = Hash::get($nestedField, 'node');
-
-                    if ($nestedFieldNode !== 'noimport') {
-                        $value['fields'][$i] = $nestedField;
-                    }
+                if ($lastIndex === 'node' && $value === 'noimport') {
+                    $fields = Hash::remove($fields, $infoPath);
                 }
 
-                // If nothing was mapped, don't map this field at all
-                if (!$value['fields']) {
-                    $node = 'noimport';
-                }
-            }
-
-            // Are any of the nested block fields mapped?
-            if ($nestedBlocks) {
-                $value['blocks'] = []; // Reset immediately - only care about mapped
-
-                foreach ($nestedBlocks as $i => $nestedBlock) {
-                    $nestedFields = Hash::get($nestedBlock, 'fields');
-
-                    foreach ($nestedFields as $j => $nestedField) {
-                        $nestedFieldNode = Hash::get($nestedField, 'node');
-
-                        if ($nestedFieldNode !== 'noimport') {
-                            $value['blocks'][$i]['fields'][$j] = $nestedField;
-                        }
-                    }
+                if ($lastIndex === 'fields' && empty($value)) {
+                    $fields = Hash::remove($fields, $infoPath);
                 }
 
-                // If nothing was mapped, don't map this field at all
-                if (!$value['blocks']) {
-                    $node = 'noimport';
+                if ($lastIndex === 'blocks' && empty($value)) {
+                    $fields = Hash::remove($fields, $infoPath);
                 }
-            }
-
-            if ($node !== 'noimport') {
-                $return[$key] = $value;
             }
         }
 
-        return $return;
+        return $fields;
     }
 }
