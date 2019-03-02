@@ -629,7 +629,7 @@ class Process extends Component
                         $nestedFieldNode = Hash::get($nestedField, 'node');
 
                         if ($nestedFieldNode !== 'noimport') {
-                            $value['blocks'][$i][$j] = $nestedField;
+                            $value['blocks'][$i]['fields'][$j] = $nestedField;
                         }
                     }
                 }
