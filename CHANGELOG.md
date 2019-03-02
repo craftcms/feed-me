@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.1.11 - 2019-03-02
+
+### Added
+- Added config option to run Garbage Collection before a feed starts.
+
+### Fixed
+- Ensure complex fields (Matrix, etc) don't process when none of their sub-fields are mapped.
+
 ## 3.1.10 - 2019-02-26
 
 ### Fixed
