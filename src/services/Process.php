@@ -598,10 +598,46 @@ class Process extends Component
 
         foreach ($fields as $key => $value) {
             $node = Hash::get($value, 'node');
+            $nestedBlocks = Hash::get($value, 'blocks');
             $nestedFields = Hash::get($value, 'fields');
 
             if ($nestedFields) {
-                $value['fields'] = $this->_filterUnmappedFields($nestedFields);
+                $value['fields'] = []; // Reset immediately - only care about mapped
+
+                foreach ($nestedFields as $i => $nestedField) {
+                    $nestedFieldNode = Hash::get($nestedField, 'node');
+
+                    if ($nestedFieldNode !== 'noimport') {
+                        $value['fields'][$i] = $nestedField;
+                    }
+                }
+
+                // If nothing was mapped, don't map this field at all
+                if (!$value['fields']) {
+                    $node = 'noimport';
+                }
+            }
+
+            // Are any of the nested block fields mapped?
+            if ($nestedBlocks) {
+                $value['blocks'] = []; // Reset immediately - only care about mapped
+
+                foreach ($nestedBlocks as $i => $nestedBlock) {
+                    $nestedFields = Hash::get($nestedBlock, 'fields');
+
+                    foreach ($nestedFields as $j => $nestedField) {
+                        $nestedFieldNode = Hash::get($nestedField, 'node');
+
+                        if ($nestedFieldNode !== 'noimport') {
+                            $value['blocks'][$i][$j] = $nestedField;
+                        }
+                    }
+                }
+
+                // If nothing was mapped, don't map this field at all
+                if (!$value['blocks']) {
+                    $node = 'noimport';
+                }
             }
 
             if ($node !== 'noimport') {
