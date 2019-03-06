@@ -215,7 +215,7 @@ class HelpController extends Controller
 
                                     $fieldInfo[$fieldHandle] = $attributes;
                                 } else {
-                                    $fieldInfo[$fieldHandle] = get_class($field);
+                                    $fieldInfo[$fieldHandle] = $field;
                                 }
                             }
                         }
