@@ -79,7 +79,7 @@ class Elements extends Component
             return $this->_elements;
         }
 
-        if (FeedMe::$plugin->service->isProEdition()) {
+        if (FeedMe::$plugin->is(FeedMe::EDITION_PRO)) {
             $elements = [
                 Asset::class,
                 Category::class,
