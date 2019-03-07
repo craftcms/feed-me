@@ -56,7 +56,7 @@ class Process extends Component
 
         // A simple license check
         if ($feed['elementType'] != 'craft\elements\Entry') {
-            if (!FeedMe::$plugin->is(FeedMe::EDITION_PRO)) {
+            if (!FeedMe::$plugin->service->isProEdition()) {
                 throw new \Exception(Craft::t('feed-me', 'Feed Me is not licensed.'));
             }
         }

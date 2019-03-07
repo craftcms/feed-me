@@ -54,4 +54,9 @@ class Service extends Component
         return DateTimeHelper::toDateTime($dateTime);
     }
 
+    public function isProEdition()
+    {
+        return (bool)Craft::$app->plugins->getPlugin('feed-me-pro');
+    }
+
 }

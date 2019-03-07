@@ -5,6 +5,8 @@ use verbb\feedme\FeedMe;
 use verbb\feedme\models\GetHelp;
 use verbb\feedme\records\FeedRecord;
 
+use verbb\feedmepro\FeedMePro;
+
 use Craft;
 use craft\helpers\App;
 use craft\helpers\ArrayHelper;
@@ -75,10 +77,10 @@ class HelpController extends Controller
         $message .= 'Feed Me: ' . FeedMe::$plugin->getVersion() . "\n";
         $message .= 'License: ' . $plugins->getPluginLicenseKey('feed-me') . ' - ' . $plugins->getPluginLicenseKeyStatus('feed-me') . "\n\n";
 
-        // if (Craft::$app->plugins->getPlugin('feed-me-pro')) {
-        //     $message .= 'Feed Me Pro: ' . FeedMePro::$plugin->getVersion() . "\n";
-        //     $message .= 'License: ' . $plugins->getPluginLicenseKey('feed-me-pro') . ' - ' . $plugins->getPluginLicenseKeyStatus('feed-me-pro') . "\n\n";
-        // }
+        if (Craft::$app->plugins->getPlugin('feed-me-pro')) {
+            $message .= 'Feed Me Pro: ' . FeedMePro::$plugin->getVersion() . "\n";
+            $message .= 'License: ' . $plugins->getPluginLicenseKey('feed-me-pro') . ' - ' . $plugins->getPluginLicenseKeyStatus('feed-me-pro') . "\n\n";
+        }
 
         $message .= 'Domain: ' . Craft::$app->getRequest()->getHostInfo();
 
