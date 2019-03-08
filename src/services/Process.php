@@ -613,14 +613,37 @@ class Process extends Component
                 }
 
                 if ($lastIndex === 'fields' && empty($value)) {
-                    $fields = Hash::remove($fields, $infoPath);
+                    $fields = Hash::remove($fields, $infoPath . '.fields');
                 }
 
                 if ($lastIndex === 'blocks' && empty($value)) {
-                    $fields = Hash::remove($fields, $infoPath);
+                    $fields = Hash::remove($fields, $infoPath . '.blocks');
                 }
             }
         }
+
+        // Perform a final cleanup for Matrix where blocks might be 'empty' - but not _really_ empty
+        foreach ($fields as $handle => $field) {
+            $blocks = Hash::get($field, 'blocks');
+
+            // Check each block definition has values
+            if ($blocks) {
+                foreach ($blocks as $key => $block) {
+                    if (empty($block)) {
+                        $fields = Hash::remove($fields, $handle . '.blocks.' . $key);
+                    }
+                }
+
+                $blocks = array_filter($blocks);
+
+                // Finally, check if there are no values at all for the Matrix field
+                if (empty($blocks)) {
+                    $fields = Hash::remove($fields, $handle);
+                }
+            }
+        }
+
+        Craft::dd($fields);
 
         return $fields;
     }
