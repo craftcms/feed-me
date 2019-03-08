@@ -643,8 +643,6 @@ class Process extends Component
             }
         }
 
-        Craft::dd($fields);
-
         return $fields;
     }
 }
