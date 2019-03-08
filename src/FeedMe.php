@@ -20,12 +20,20 @@ use yii\base\Event;
 
 class FeedMe extends Plugin
 {
+    // Constants
+    // =========================================================================
+
+    const EDITION_LITE = 'lite';
+    const EDITION_PRO = 'pro';
+
+
     // Public Properties
     // =========================================================================
 
     public $schemaVersion = '1.0.2';
     public $hasCpSettings = true;
     public $hasCpSection = true;
+
 
     // Traits
     // =========================================================================
@@ -73,6 +81,14 @@ class FeedMe extends Plugin
         $navItem['label'] = $this->getPluginName();
 
         return $navItem;
+    }
+
+    public static function editions(): array
+    {
+        return [
+            self::EDITION_LITE,
+            self::EDITION_PRO,
+        ];
     }
 
 
