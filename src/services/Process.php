@@ -598,6 +598,10 @@ class Process extends Component
     // should be templated through the 'fields' index, and this function will take care of things from there.
     private function _filterUnmappedFields($fields)
     {
+        if (!is_array($fields)) {
+            return [];
+        }
+
         // Find any items like `[title.node] => noimport` and remove the outer field info. Slightly complicated
         // for nested block/fields, and if I was better at recursion, this could be more elegant, but loop through a 
         // bunch of times, removing stuff as we go, starting at the inner nested level. Each loop will remove more levels
@@ -608,37 +612,25 @@ class Process extends Component
                 $lastIndex = array_pop($explode);
                 $infoPath = implode('.', $explode);
 
+                $node = Hash::get($fields, $infoPath . '.node');
+
                 if ($lastIndex === 'node' && $value === 'noimport') {
                     $fields = Hash::remove($fields, $infoPath);
                 }
 
                 if ($lastIndex === 'fields' && empty($value)) {
-                    $fields = Hash::remove($fields, $infoPath . '.fields');
-                }
-
-                if ($lastIndex === 'blocks' && empty($value)) {
-                    $fields = Hash::remove($fields, $infoPath . '.blocks');
-                }
-            }
-        }
-
-        // Perform a final cleanup for Matrix where blocks might be 'empty' - but not _really_ empty
-        foreach ($fields as $handle => $field) {
-            $blocks = Hash::get($field, 'blocks');
-
-            // Check each block definition has values
-            if ($blocks) {
-                foreach ($blocks as $key => $block) {
-                    if (empty($block)) {
-                        $fields = Hash::remove($fields, $handle . '.blocks.' . $key);
+                    // Remove any empty field definitions - but only if there's no node mapping.
+                    // This is the case when mapping a value to entries, but not mapping any of its inner element fields. 
+                    // We want to retain the mapping to the outer field, but ditch any inner fields not mapped
+                    if ($node) {
+                        $fields = Hash::remove($fields, $infoPath . '.fields');
+                    } else {
+                        $fields = Hash::remove($fields, $infoPath);
                     }
                 }
 
-                $blocks = array_filter($blocks);
-
-                // Finally, check if there are no values at all for the Matrix field
-                if (empty($blocks)) {
-                    $fields = Hash::remove($fields, $handle);
+                if ($lastIndex === 'blocks' && empty($value)) {
+                    $fields = Hash::remove($fields, $infoPath);
                 }
             }
         }
