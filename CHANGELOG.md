@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.1.14 - 2019-03-08
+
+### Added
+- Added support for native editions.
+
 ## 3.1.13 - 2019-03-08
 
 ### Fixed
