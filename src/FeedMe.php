@@ -30,7 +30,7 @@ class FeedMe extends Plugin
     // Public Properties
     // =========================================================================
 
-    public $schemaVersion = '1.0.2';
+    public $schemaVersion = '2.1.0';
     public $hasCpSettings = true;
     public $hasCpSection = true;
 
