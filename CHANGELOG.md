@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.1.13 - 2019-03-08
+
+### Fixed
+- Fix element fields with their own element fields not having their values set on feeds.
+- Fix help controller field error.
+- Fix parsing mapped values a little too eagerly for Matrix fields, potentially ignoring mapping for other element fields.
+
 ## 3.1.12 - 2019-03-03
 
 ### Fixed
