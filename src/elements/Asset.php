@@ -13,6 +13,7 @@ use craft\db\Query;
 use craft\elements\Asset as AssetElement;
 use craft\helpers\Assets as AssetsHelper;
 use craft\helpers\UrlHelper;
+use craft\models\VolumeFolder;
 
 use yii\base\Event;
 use Cake\Utility\Hash;
@@ -200,23 +201,58 @@ class Asset extends Element implements ElementInterface
     protected function parseFolderId($feedData, $fieldInfo)
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
+        $create = Hash::get($fieldInfo, 'options.create');
+
+        $assets = Craft::$app->getAssets();
+
+        $volumeId = $this->element->volumeId;
+        $rootFolder = $assets->getRootFolderByVolumeId($volumeId);
 
         if (is_numeric($value)) {
             return $value;
         }
 
-        $result = (new Query())
-            ->select(['id', 'name'])
-            ->from(['{{%volumefolders}}'])
-            ->where(['name' => $value])
-            ->one();
+        $folder = $assets->findFolder([
+            'name' => $value,
+            'volumeId' => $volumeId,
+        ]);
 
-        if ($result) {
-            return $result->id;
+        if ($folder) {
+            return $folder->id;
+        } else if ($create) {
+            $lastCreatedFolder = null;
+
+            // Process all folders (create them)
+            foreach (explode('/', $value) as $key => $folderName) {
+                $existingFolder = $assets->findFolder([
+                    'name' => $folderName,
+                    'volumeId' => $volumeId,
+                ]);
+
+                if ($existingFolder) {
+                    $lastCreatedFolder = $existingFolder;
+                    continue;
+                }
+
+                $parentFolder = $lastCreatedFolder ?? $rootFolder;
+
+                $folderModel = new VolumeFolder();
+                $folderModel->name = $folderName;
+                $folderModel->parentId = $parentFolder->id;
+                $folderModel->volumeId = $volumeId;
+                $folderModel->path = $parentFolder->path . $folderName . '/';
+
+                $assets->createFolder($folderModel);
+
+                $lastCreatedFolder = $folderModel;
+            }
+
+            // Then, we just want the lowest level folder to use
+            return $lastCreatedFolder->id;
         }
 
         // If we've provided a bad folder, just return the root - we always need a folderId
-        return Craft::$app->assets->getRootFolderByVolumeId($this->element->volumeId)->id;
+        return $rootFolder->id;
     }
 
 }

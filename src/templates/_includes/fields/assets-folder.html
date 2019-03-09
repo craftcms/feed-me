@@ -1,0 +1,29 @@
+{# ------------------------ #}
+{# Available Variables #}
+{# ------------------------ #}
+{# Attributes: #}
+{# type, name, handle, instructions, attribute, default, feed, feedData #}
+{# ------------------------ #}
+{# Fields: #}
+{# name, handle, instructions, feed, feedData, field, fieldClass #}
+{# ------------------------ #}
+
+{% import 'feed-me/_macros' as feedMeMacro %}
+{% import '_includes/forms' as forms %}
+
+{% set default = default ?? {
+    type: 'text',
+} %}
+
+{% extends 'feed-me/_includes/fields/_base' %}
+
+{% block extraSettings %}
+    <div class="element-create">
+        {{ feedMeMacro.checkbox({
+            label: 'Create folders if they do not exist' | t('feed-me'),
+            name: 'options[create]',
+            value: 1,
+            checked: hash_get(feed.fieldMapping, optionsPath ~ '.create') ?: '',
+        }) }}
+    </div>
+{% endblock %}
