@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.1.15 - 2019-03-09
+
+### Added
+- Add option to create folders for asset imports.
+
+### Fixed
+- Fix un-mapped fields being processed incorrectly in some cases.
+- Fix assets not actually using the correct folder mapping config.
+- Update schema version - just in case its an issue for C2 upgrades.
+- Fix handling of asset folders when importing assets.
+
 ## 3.1.14 - 2019-03-08
 
 ### Added
