@@ -134,8 +134,10 @@ class Asset extends Element implements ElementInterface
             return;
         }
 
+        $folderIdInfo = $feed['fieldMapping']['folderId'] ?? [];
+
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
-        $folderId = $this->parseFolderId($feedData, $fieldInfo);
+        $folderId = $this->parseFolderId($feedData, $folderIdInfo);
 
         $conflict = Hash::get($fieldInfo, 'options.conflict');
         
