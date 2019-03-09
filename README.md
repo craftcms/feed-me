@@ -6,7 +6,8 @@ Feed Me is a Craft plugin for super-simple importing of content, either once-off
 
 > ## Editions
 > As of [Feed Me 3.1.14](https://github.com/verbb/feed-me/releases/tag/3.1.14) and [Craft 3.1.17.1](https://github.com/craftcms/cms/releases/tag/3.1.17.1) you no longer need both [Feed Me](https://github.com/verbb/feed-me) and [Feed Me Pro](https://github.com/verbb/feed-me-pro).
-> To update Feed Me to Pro, visit Settings → Plugins page in your Control Panel and enter your Feed Me Pro license key into the Feed Me license key input. You can then safely uninstall the Feed Me Pro plugin.
+> To update Feed Me to Pro, visit Settings → Plugins page in your Control Panel and enter your Feed Me Pro license key into the Feed Me license key input. If listed as the 'Lite' version, click on the Lite badge to be taken to the plugin store, and then hit 'Try' on the Pro version of Feed Me. Go back to Settings → Plugins and enter your license key.
+> At this point, you can safely uninstall the Feed Me Pro plugin.
 
 ## Features
 
