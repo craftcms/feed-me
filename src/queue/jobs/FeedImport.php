@@ -6,7 +6,9 @@ use verbb\feedme\FeedMe;
 use Craft;
 use craft\queue\BaseJob;
 
-class FeedImport extends BaseJob
+use yii\queue\RetryableJobInterface;
+
+class FeedImport extends BaseJob implements RetryableJobInterface
 {
     // Properties
     // =========================================================================
@@ -19,6 +21,16 @@ class FeedImport extends BaseJob
 
     // Public Methods
     // =========================================================================
+
+    public function getTtr()
+    {
+        return FeedMe::$plugin->getSettings()->queueTtr;
+    }
+
+    public function canRetry($attempt, $error)
+    {
+        return ($attempt < FeedMe::$plugin->getSettings()->queueMaxRetry);
+    }
 
     public function execute($queue)
     {
