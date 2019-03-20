@@ -65,33 +65,33 @@ class m180305_000000_migrate_feeds extends Migration
 
                     $this->update($table, ['elementGroup' => $elementGroup], ['id' => $feedId]);
                 }
+            }
 
-                // Rename the 'locale' column
-                if ($this->db->columnExists($table, 'locale')) {
-                    MigrationHelper::renameColumn($table, 'locale', 'siteId', $this);
-                }
+            // Rename the 'locale' column
+            if ($this->db->columnExists($table, 'locale')) {
+                MigrationHelper::renameColumn($table, 'locale', 'siteId', $this);
+            }
 
-                // Our old field mapping columns are impossible to update, without extreme thought (if it all).
-                // We're going to rename them for posterity, but users will need to re-create feeds.
-                if ($this->db->columnExists($table, 'fieldMapping') && !$this->db->columnExists($table, 'fieldMapping_v2')) {
-                    MigrationHelper::renameColumn($table, 'fieldMapping', 'fieldMapping_v2', $this);
-                }
-                
-                if ($this->db->columnExists($table, 'fieldDefaults')) {
-                    MigrationHelper::renameColumn($table, 'fieldDefaults', 'fieldDefaults_v2', $this);
-                }
-                
-                if ($this->db->columnExists($table, 'fieldElementMapping')) {
-                    MigrationHelper::renameColumn($table, 'fieldElementMapping', 'fieldElementMapping_v2', $this);
-                }
-                
-                if ($this->db->columnExists($table, 'fieldElementDefaults')) {
-                    MigrationHelper::renameColumn($table, 'fieldElementDefaults', 'fieldElementDefaults_v2', $this);
-                }
+            // Our old field mapping columns are impossible to update, without extreme thought (if it all).
+            // We're going to rename them for posterity, but users will need to re-create feeds.
+            if ($this->db->columnExists($table, 'fieldMapping') && !$this->db->columnExists($table, 'fieldMapping_v2')) {
+                MigrationHelper::renameColumn($table, 'fieldMapping', 'fieldMapping_v2', $this);
+            }
+            
+            if ($this->db->columnExists($table, 'fieldDefaults')) {
+                MigrationHelper::renameColumn($table, 'fieldDefaults', 'fieldDefaults_v2', $this);
+            }
+            
+            if ($this->db->columnExists($table, 'fieldElementMapping')) {
+                MigrationHelper::renameColumn($table, 'fieldElementMapping', 'fieldElementMapping_v2', $this);
+            }
+            
+            if ($this->db->columnExists($table, 'fieldElementDefaults')) {
+                MigrationHelper::renameColumn($table, 'fieldElementDefaults', 'fieldElementDefaults_v2', $this);
+            }
 
-                if (!$this->db->columnExists($table, 'fieldMapping')) {
-                    $this->addColumn($table, 'fieldMapping', $this->text()->after('duplicateHandle'));
-                }
+            if (!$this->db->columnExists($table, 'fieldMapping')) {
+                $this->addColumn($table, 'fieldMapping', $this->text()->after('duplicateHandle'));
             }
         }
 
