@@ -151,6 +151,8 @@ class Assets extends Field implements FieldInterface
             // Are we uploading, and did we find existing assets? No need to process
             if ($upload && $ids && $conflict === AssetElement::SCENARIO_INDEX) {
                 unset($urlsToUpload[$key]);
+
+                FeedMe::info('Skipping asset upload (already exists).');
             }
         }
 

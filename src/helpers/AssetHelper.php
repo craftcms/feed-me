@@ -74,6 +74,8 @@ class AssetHelper
                     'recursive' => false,
                 ]);
 
+                FeedMe::info('Fetching remote image `{i}` - `{j}`', ['i' => $url, 'j' => $filename]);
+
                 if (!$cachedImage) {
                     AssetHelper::downloadFile($url, $fetchedImage);
                 } else {
@@ -84,6 +86,8 @@ class AssetHelper
 
                 if ($result) {
                     $uploadedAssets[] = $result;
+                } else {
+                    FeedMe::error('Failed to create asset from `{i}`', ['i' => $url]);
                 }
             } catch (\Throwable $e) {
                 if ($field) {
@@ -130,6 +134,8 @@ class AssetHelper
                 
                 if ($result) {
                     $uploadedAssets[] = $result;
+                } else {
+                    FeedMe::error('Failed to create asset from `{i}`', ['i' => $dataString]);
                 }
             } catch (\Throwable $e) {
                 FeedMe::error('Base64 error: `{url}` - `{e}`.', ['url' => $fetchedImageWithExtension, 'e' => $e->getMessage()]);
@@ -171,6 +177,17 @@ class AssetHelper
 
         $propagate = isset($feed['siteId']) && $feed['siteId'] ? false : true;
 
+        FeedMe::info('Creating asset with content `{i}`', ['i' => json_encode([
+            'tempFilePath' => $tempFilePath,
+            'filename' => $filename,
+            'newFolderId' => $folder->id,
+            'volumeId' => $folder->volumeId,
+            'avoidFilenameConflicts' => true,
+            'scenario' => AssetElement::SCENARIO_CREATE,
+            'propagate' => $propagate,
+            'conflict' => $conflict,
+        ])]);
+
         $result = Craft::$app->getElements()->saveElement($asset, true, $propagate);
 
         if ($result) {
@@ -179,15 +196,19 @@ class AssetHelper
             if ($asset->conflictingFilename !== null && $conflict === AssetElement::SCENARIO_REPLACE) {
                 $conflictingAsset = AssetElement::findOne(['folderId' => $folder->id, 'filename' => $asset->conflictingFilename]);
 
+                FeedMe::info('Replacing existing asset `#{i}` with `#{j}`', ['i' => $conflictingAsset->id, 'j' => $asset->id]);
+
                 $tempPath = $asset->getCopyOfFile();
                 $assets->replaceAssetFile($conflictingAsset, $tempPath, $conflictingAsset->filename);
                 Craft::$app->getElements()->deleteElement($asset);
 
                 return $conflictingAsset->id;
             } else {
-                return  $asset->id;
+                return $asset->id;
             }
         }
+
+        return false;
     }
 
     /**
