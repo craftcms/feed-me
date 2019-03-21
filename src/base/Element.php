@@ -162,6 +162,10 @@ abstract class Element extends Component
 
         $propagate = isset($settings['siteId']) && $settings['siteId'] ? false : true;
 
+        if (Craft::$app->getIsMultiSite()) {
+            $this->element->enabledForSite = $this->element->enabled;
+        }
+
         if (!Craft::$app->getElements()->saveElement($this->element, true, $propagate)) {
             return false;
         }
