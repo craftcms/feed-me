@@ -141,8 +141,12 @@ class Assets extends Field implements FieldInterface
 
             Craft::configure($query, $criteria);
 
+            FeedMe::info('Search for existing asset with query `{i}`', ['i' => json_encode($criteria)]);
+
             $ids = $query->ids();
             $foundElements = array_merge($foundElements, $ids);
+
+            FeedMe::info('Found `{i}` existing assets: `{j}`', ['i' => count($foundElements), 'j' => json_encode($foundElements)]);
 
             // Are we uploading, and did we find existing assets? No need to process
             if ($upload && $ids && $conflict === AssetElement::SCENARIO_INDEX) {

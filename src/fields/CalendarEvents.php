@@ -104,9 +104,13 @@ class CalendarEvents extends Field implements FieldInterface
 
             Craft::configure($query, $criteria);
 
+            FeedMe::info('Search for existing event with query `{i}`', ['i' => json_encode($criteria)]);
+
             $ids = $query->ids();
 
             $foundElements = array_merge($foundElements, $ids);
+
+            FeedMe::info('Found `{i}` existing events: `{j}`', ['i' => count($foundElements), 'j' => json_encode($foundElements)]);
         }
 
         // Check for field limit - only return the specified amount

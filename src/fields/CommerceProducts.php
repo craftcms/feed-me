@@ -103,9 +103,13 @@ class CommerceProducts extends Field implements FieldInterface
 
             Craft::configure($query, $criteria);
 
+            FeedMe::info('Search for existing product with query `{i}`', ['i' => json_encode($criteria)]);
+
             $ids = $query->ids();
 
             $foundElements = array_merge($foundElements, $ids);
+
+            FeedMe::info('Found `{i}` existing products: `{j}`', ['i' => count($foundElements), 'j' => json_encode($foundElements)]);
         }
 
         // Check for field limit - only return the specified amount

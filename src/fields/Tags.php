@@ -99,9 +99,13 @@ class Tags extends Field implements FieldInterface
 
             Craft::configure($query, $criteria);
 
+            FeedMe::info('Search for existing tag with query `{i}`', ['i' => json_encode($criteria)]);
+
             $ids = $query->ids();
 
             $foundElements = array_merge($foundElements, $ids);
+
+            FeedMe::info('Found `{i}` existing tags: `{j}`', ['i' => count($foundElements), 'j' => json_encode($foundElements)]);
 
             // Check if we should create the element. But only if title is provided (for the moment)
             if (count($ids) == 0) {
