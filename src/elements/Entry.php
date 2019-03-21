@@ -149,10 +149,13 @@ class Entry extends Element implements ElementInterface
             return null;
         }
 
-        $element = EntryElement::find()
+        $elementQuery = EntryElement::find()
             ->status(null)
-            ->andWhere(['=', $match, $value])
-            ->one();
+            ->andWhere(['=', $match, $value]);
+        if (isset($this->feed['siteId']) && $this->feed['siteId']) {
+            $elementQuery->siteId($this->feed['siteId']);
+        }
+        $element = $elementQuery->one();
 
         if ($element) {
             $this->element->newParentId = $element->id;
