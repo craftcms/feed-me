@@ -109,10 +109,15 @@ class Category extends Element implements ElementInterface
             return null;
         }
 
-        $element = CategoryElement::find()
+        $query = CategoryElement::find()
             ->status(null)
-            ->andWhere(['=', $match, $value])
-            ->one();
+            ->andWhere(['=', $match, $value]);
+
+        if (isset($this->feed['siteId']) && $this->feed['siteId']) {
+            $query->siteId($this->feed['siteId']);
+        }
+
+        $element = $query->one();
 
         if ($element) {
             return $element->id;
