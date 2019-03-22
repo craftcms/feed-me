@@ -1,5 +1,19 @@
 # Changelog
 
+## 3.1.16 - 2019-03-22
+
+### Added
+- Add more logging info around assets and uploading.
+- Add logging info for all element fields and their matching criteria.
+- Add `queueTtr` and `queueMaxRetry` for queue timeout handling.
+
+### Fixed
+- Add siteId check to category parent matching. Thanks (@pieter-janDB).
+- Elements should inherit the `enabled` value for `enabledForSite` in multi-site setups.
+- Add siteId migration (just in case).
+- Update Craft 2>3 migration to include table updates when no feeds exist.
+- Comments - add URL to mapping.
+
 ## 3.1.15 - 2019-03-09
 
 ### Added
