@@ -1,6 +1,7 @@
 <?php
 namespace verbb\feedme\fields;
 
+use verbb\feedme\FeedMe;
 use verbb\feedme\base\Field;
 use verbb\feedme\base\FieldInterface;
 
