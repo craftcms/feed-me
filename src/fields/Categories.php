@@ -6,6 +6,7 @@ use verbb\feedme\base\Field;
 use verbb\feedme\base\FieldInterface;
 
 use Craft;
+use craft\base\Element as BaseElement;
 use craft\elements\Category as CategoryElement;
 use craft\helpers\Db;
 
@@ -151,6 +152,8 @@ class Categories extends Field implements FieldInterface
         if ($siteId) {
             $element->siteId = $siteId;
         }
+
+        $element->setScenario(BaseElement::SCENARIO_ESSENTIALS);
 
         if (!Craft::$app->getElements()->saveElement($element, true, $propagate)) {
             FeedMe::error('`{handle}` - Category error: Could not create - `{e}`.', ['e' => json_encode($element->getErrors()), 'handle' => $this->field->handle]);

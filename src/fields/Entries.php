@@ -6,6 +6,7 @@ use verbb\feedme\base\Field;
 use verbb\feedme\base\FieldInterface;
 
 use Craft;
+use craft\base\Element as BaseElement;
 use craft\elements\Entry as EntryElement;
 use craft\helpers\Db;
 
@@ -197,6 +198,8 @@ class Entries extends Field implements FieldInterface
                 break;
             }
         }
+
+        $element->setScenario(BaseElement::SCENARIO_ESSENTIALS);
 
         if (!Craft::$app->getElements()->saveElement($element, true, $propagate)) {
             FeedMe::error('`{handle}` - Entry error: Could not create - `{e}`.', ['e' => json_encode($element->getErrors()), 'handle' => $this->field->handle]);

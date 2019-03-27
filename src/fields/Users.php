@@ -6,6 +6,7 @@ use verbb\feedme\base\Field;
 use verbb\feedme\base\FieldInterface;
 
 use Craft;
+use craft\base\Element as BaseElement;
 use craft\elements\User as UserElement;
 use craft\helpers\Db;
 
@@ -150,6 +151,8 @@ class Users extends Field implements FieldInterface
         if ($siteId) {
             $element->siteId = $siteId;
         }
+
+        $element->setScenario(BaseElement::SCENARIO_ESSENTIALS);
 
         if (!Craft::$app->getElements()->saveElement($element, true, $propagate)) {
             FeedMe::error('`{handle}` - User error: Could not create - `{e}`.', ['e' => json_encode($element->getErrors()), 'handle' => $this->field->handle]);
