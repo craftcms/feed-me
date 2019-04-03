@@ -19,7 +19,7 @@ class FeedMeAsset extends AssetBundle
         ];
 
         $this->js = [
-            'js/feed-me.js',
+            'js/feed-me' . $this->dotJs(),
         ];
 
         $this->css = [
