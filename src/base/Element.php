@@ -208,40 +208,40 @@ abstract class Element extends Component
 
         $value = mb_strtolower($value);
 
-		if (Craft::$app->getConfig()->getGeneral()->limitAutoSlugsToAscii) {
-			$value = $this->asciiString($value);
-		}
+        if (Craft::$app->getConfig()->getGeneral()->limitAutoSlugsToAscii) {
+            $value = $this->asciiString($value);
+        }
 
-		return $this->createSlug($value);
-	}
+        return $this->createSlug($value);
+    }
 
-	private function createSlug(string $str): string
-	{
-		// Remove HTML tags
-		$str = StringHelper::stripHtml($str);
+    private function createSlug(string $str): string
+    {
+        // Remove HTML tags
+        $str = StringHelper::stripHtml($str);
 
-		// Convert to kebab case
-		$glue = Craft::$app->getConfig()->getGeneral()->slugWordSeparator;
-		$lower = !Craft::$app->getConfig()->getGeneral()->allowUppercaseInSlug;
-		$str = StringHelper::toKebabCase($str, $glue, $lower);
+        // Convert to kebab case
+        $glue = Craft::$app->getConfig()->getGeneral()->slugWordSeparator;
+        $lower = !Craft::$app->getConfig()->getGeneral()->allowUppercaseInSlug;
+        $str = StringHelper::toKebabCase($str, $glue, $lower);
 
-		return $str;
-	}
+        return $str;
+    }
 
-	private function asciiString($str)
-	{
-		$charMap = StringHelper::asciiCharMap(true, Craft::$app->language);
+    private function asciiString($str)
+    {
+        $charMap = StringHelper::asciiCharMap(true, Craft::$app->language);
 
-		$asciiStr = '';
+        $asciiStr = '';
 
-		$iMax = mb_strlen($str);
-		for ($i = 0; $i < $iMax; $i++) {
-			$char = mb_substr($str, $i, 1);
-			$asciiStr .= $charMap[$char] ?? $char;
-		}
+        $iMax = mb_strlen($str);
+        for ($i = 0; $i < $iMax; $i++) {
+            $char = mb_substr($str, $i, 1);
+            $asciiStr .= $charMap[$char] ?? $char;
+        }
 
-		return $asciiStr;
-	}
+        return $asciiStr;
+    }
 
     protected function parseEnabled($feedData, $fieldInfo)
     {
