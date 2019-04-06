@@ -45,7 +45,7 @@
                         </span>
                     </th>
 
-                    <td>{{ feed.dataType.name }}</td>
+                    <td>{{ feed.dataType.name ?? 'Unknown datatype' }}</td>
                       
                     <td>
                         {% if feed.element %}
