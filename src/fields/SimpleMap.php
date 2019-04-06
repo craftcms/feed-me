@@ -52,7 +52,7 @@ class SimpleMap extends Field implements FieldInterface
         
         // Check for empty Address
         if (!isset($preppedData['address'])) {
-            if (isset($preppedData['lat']) || isset($preppedData['lng'])) {
+            if ( (isset($preppedData['lat']) && !empty($preppedData['lat'])) && (isset($preppedData['lng']) && !empty($preppedData['lng'])) ) {
                 $addressInfo = $this->_getAddressFromLatLng($preppedData['lat'], $preppedData['lng']);
                 $preppedData['address'] = $addressInfo['formatted_address'];
 
@@ -92,10 +92,10 @@ class SimpleMap extends Field implements FieldInterface
 
     private function _getAddressFromLatLng($lat, $lng)
     {
-        $apiKey = SimpleMapPlugin::$plugin->getSettings()->unrestrictedApiKey;
+        $apiKey = SimpleMapPlugin::getInstance()->getSettings()->geoToken;
 
         if (!$apiKey)
-            $apiKey = SimpleMapPlugin::$plugin->getSettings()->apiKey;
+            $apiKey = SimpleMapPlugin::getInstance()->getSettings()->mapToken;
 
         if (!$apiKey) return null;
 
