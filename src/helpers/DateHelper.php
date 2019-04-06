@@ -3,6 +3,7 @@ namespace verbb\feedme\helpers;
 
 use verbb\feedme\FeedMe;
 
+use Craft;
 use craft\helpers\DateTimeHelper;
 
 use DateTime;
@@ -18,7 +19,7 @@ class DateHelper
     {
         // Check for null or empty strings
         if ($value === null || $value === '' || $value === '0') {
-            return null;
+            return [];
         }
 
         // Was this a date/time-picker?
@@ -26,8 +27,11 @@ class DateHelper
             $dateIndex = Hash::get($value, 'date');
             $timeIndex = Hash::get($value, 'time');
 
+            // Its okay to return this if it was an empty date-time array. This will often be the default
+            // value for an empty stringed date value in the feed. At this point, we want to retain the 
+            // empty value in the feed to overwrite the date value on the element.
             if (!$dateIndex || !$timeIndex) {
-                return null;
+                return '';
             }
 
             return DateTimeHelper::toDateTime($value);

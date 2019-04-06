@@ -254,7 +254,7 @@ abstract class Element extends Component
     {
         $dateValue = DateHelper::parseString($value, $formatting);
 
-        if ($dateValue) {
+        if (!is_null($dateValue)) {
             return $dateValue;
         }
         
