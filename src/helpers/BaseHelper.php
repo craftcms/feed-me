@@ -40,6 +40,14 @@ class BaseHelper
             $result = true;
         }
 
+        if (strtolower($value) === Craft::t('app', 'active')) {
+            $result = true;
+        }
+
+        if (strtolower($value) === Craft::t('app', 'y')) {
+            $result = true;
+        }
+
 
         if (strtolower($value) === Craft::t('app', 'no')) {
             $result = false;
@@ -54,6 +62,14 @@ class BaseHelper
         }
 
         if (strtolower($value) === Craft::t('app', 'disabled')) {
+            $result = false;
+        }
+
+        if (strtolower($value) === Craft::t('app', 'inactive')) {
+            $result = false;
+        }
+
+        if (strtolower($value) === Craft::t('app', 'n')) {
             $result = false;
         }
 
