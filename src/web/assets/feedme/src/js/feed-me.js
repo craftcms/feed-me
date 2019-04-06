@@ -19,7 +19,7 @@ $(function() {
         e.preventDefault();
 
         var row = $(this).parents('tr').data('id') + '-settings';
-        var $settingsRow = $('tr[data-id="' + row + '"] .settings-pane');
+        var $settingsRow = $('tr[data-settings-id="' + row + '"] .settings-pane');
 
         $settingsRow.toggle();
     });

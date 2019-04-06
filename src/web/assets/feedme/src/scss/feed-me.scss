@@ -35,11 +35,11 @@
 //     color: #0d78f2;
 // }
 
-body.ltr #feeds .thin.action {
+body.ltr .table-feed-me .thin.action {
     padding-left: 10px;
 }
 
-#feeds .thin.action .icon {
+.table-feed-me .thin.action .icon {
     color: rgba(0, 0, 0, 0.2);
 
     &:hover {
@@ -47,7 +47,7 @@ body.ltr #feeds .thin.action {
     }
 }
 
-#feeds .element-group-sub {
+.table-feed-me .element-group-sub {
     display: block;
     font-size: 11px;
     line-height: 1.2;
@@ -55,7 +55,7 @@ body.ltr #feeds .thin.action {
     font-weight: bold;
 }
 
-#feeds .index-url {
+.table-feed-me .index-url {
     font-weight: 400;
     font-size: 12px;
     color: #8f98a3;
@@ -64,7 +64,7 @@ body.ltr #feeds .thin.action {
 }
 
 // Settings Pane
-#feeds .settings-pane {
+.table-feed-me .settings-pane {
     padding: 0;
     display: none;
 }
@@ -73,7 +73,7 @@ body.ltr #feeds .thin.action {
 //     display: table-cell;
 // }
 
-#feeds .settings-pane-wrap {
+.table-feed-me .settings-pane-wrap {
     background: #f6f7f8;
     padding: 15px;
     font-size: 12px;
@@ -81,8 +81,8 @@ body.ltr #feeds .thin.action {
     box-shadow: 0 0 0 1px #e4e6e8;
 }
 
-#feeds .settings-pane .icon,
-#feeds .settings-pane .fa {
+.table-feed-me .settings-pane .icon,
+.table-feed-me .settings-pane .fa {
     margin-right: 3px;
     color: rgba(0, 0, 0, 0.2);
 

@@ -20,7 +20,7 @@
 </div>
 
 {% if feeds | length %}
-    <table id="feeds" class="data fullwidth collapsible">
+    <table id="feeds" class="data fullwidth collapsible table-feed-me">
         <thead>
             <th scope="col">{{ "Name" | t('feed-me') }}</th>
             <th scope="col">{{ "Type" | t('feed-me') }}</th>
@@ -28,7 +28,7 @@
             <th scope="col">{{ "Element Group" | t('feed-me') }}</th>
             <th scope="col">{{ "Strategy" | t('feed-me') }}</th>
             <th scope="col">{{ "Process" | t('feed-me') }}</th>
-            <th class="thin" colspan="2"></th>
+            <th class="thin" colspan="3"></th>
         </thead>
         <tbody>
             {% for feed in feeds %}
@@ -72,12 +72,16 @@
                     </td>
 
                     <td class="thin action">
+                        <a class="move icon" title="{{ 'Reorder' | t('feed-me') }}" role="button"></a>
+                    </td>
+
+                    <td class="thin action">
                         <a class="delete icon" title="{{ 'Delete' | t('feed-me') }}" role="button"></a>
                     </td>
                 </tr>
 
-                <tr data-id="{{ feed.id }}-settings">
-                    <td colspan="8" class="settings-pane">
+                <tr data-settings-id="{{ feed.id }}-settings">
+                    <td colspan="9" class="settings-pane">
                         <div class="settings-pane-wrap">
                             <div class="btn-group" role="group">
                                 {% if craft.app.config.general.devMode %}
@@ -125,6 +129,8 @@
         tableSelector: '#feeds',
         noObjectsSelector: '#nofeeds',
         newObjectBtnSelector: '#newfeedcontainer',
+        sortable: true,
+        reorderAction: 'feed-me/feeds/reorder-feeds',
         deleteAction: 'feed-me/feeds/delete-feed',
         confirmDeleteMessage: '{{ "Are you sure you want to delete “{name}”?" | t('feed-me') }}'
     });

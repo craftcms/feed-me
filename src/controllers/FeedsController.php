@@ -7,6 +7,7 @@ use verbb\feedme\models\FeedModel;
 use verbb\feedme\queue\jobs\FeedImport;
 
 use Craft;
+use craft\helpers\Json;
 use craft\helpers\StringHelper;
 use craft\web\Controller;
 
@@ -212,6 +213,18 @@ class FeedsController extends Controller
         FeedMe::$plugin->process->debugFeed($feed, $limit, $offset, $processedElementIds);
 
         return ob_get_clean();
+    }
+
+    public function actionReorderFeeds()
+    {
+        $this->requirePostRequest();
+        $this->requireAcceptsJson();
+
+        $feedIds = Json::decode(Craft::$app->getRequest()->getRequiredBodyParam('ids'));
+        $feedIds = array_filter($feedIds);
+        FeedMe::$plugin->getFeeds()->reorderFeeds($feedIds);
+
+        return $this->asJson(['success' => true]);
     }
 
 

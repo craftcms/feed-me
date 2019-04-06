@@ -112,6 +112,14 @@ class Feeds extends Component
             $record->setAttribute('fieldUnique', json_encode($model->fieldUnique));
         }
 
+        if ($isNewModel) {
+            $maxSortOrder = (new Query())
+                ->from(['{{%feedme_feeds}}'])
+                ->max('[[sortOrder]]');
+
+            $record->sortOrder = $maxSortOrder ? $maxSortOrder + 1 : 1;
+        }
+
         $record->save(false);
 
         if (!$model->id) {
@@ -154,6 +162,27 @@ class Feeds extends Component
         return $this->_overrides[$handle] ?? null;
     }
 
+    public function reorderFeeds(array $feedIds): bool
+    {
+        $transaction = Craft::$app->getDb()->beginTransaction();
+
+        try {
+            foreach ($feedIds as $feedOrder => $feedId) {
+                $feedRecord = $this->_getFeedRecordById($feedId);
+                $feedRecord->sortOrder = $feedOrder + 1;
+                $feedRecord->save();
+            }
+
+            $transaction->commit();
+        } catch (\Throwable $e) {
+            $transaction->rollBack();
+
+            throw $e;
+        }
+
+        return true;
+    }
+
 
     // Private Methods
     // =========================================================================
@@ -170,6 +199,7 @@ class Feeds extends Component
                 'elementType',
                 'elementGroup',
                 'siteId',
+                'sortOrder',
                 'duplicateHandle',
                 'paginationNode',
                 'fieldMapping',
@@ -179,7 +209,8 @@ class Feeds extends Component
                 'dateCreated',
                 'dateUpdated',
                 'uid',
-            ]);
+            ])
+            ->orderBy(['sortOrder' => SORT_ASC]);
     }
 
     private function _createModelFromRecord(FeedRecord $record = null)
@@ -204,6 +235,21 @@ class Feeds extends Component
         }
 
         return new FeedModel($attributes);
+    }
+
+    private function _getFeedRecordById(int $feedId = null): FeedRecord
+    {
+        if ($feedId !== null) {
+            $feedRecord = FeedRecord::findOne(['id' => $feedId]);
+
+            if (!$feedRecord) {
+                throw new Exception(Craft::t('feed-me', 'No feed exists with the ID “{id}”.', ['id' => $feedId]));
+            }
+        } else {
+            $feedRecord = new FeedRecord();
+        }
+
+        return $feedRecord;
     }
 
 }
