@@ -8,6 +8,7 @@ use verbb\feedme\records\FeedRecord;
 
 use Craft;
 use craft\base\Component;
+use craft\db\Query;
 use craft\helpers\Json;
 use craft\models\Section;
 
