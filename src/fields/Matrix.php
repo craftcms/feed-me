@@ -186,7 +186,7 @@ class Matrix extends Field implements FieldInterface
                     }
                 }
 
-                if ($feedPath == $node) {
+                if ($feedPath == $node || $node === 'usedefault') {
                     return [
                         'blockHandle' => $blockHandle,
                         'subFieldHandle' => $subFieldHandle,
