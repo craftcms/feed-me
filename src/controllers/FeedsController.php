@@ -1,16 +1,16 @@
 <?php
 
-namespace verbb\feedme\controllers;
+namespace craft\feedme\controllers;
 
 use Cake\Utility\Hash;
 use Craft;
+use craft\feedme\helpers\BaseHelper;
+use craft\feedme\models\FeedModel;
+use craft\feedme\Plugin;
+use craft\feedme\queue\jobs\FeedImport;
 use craft\helpers\Json;
 use craft\helpers\StringHelper;
 use craft\web\Controller;
-use verbb\feedme\Plugin;
-use verbb\feedme\helpers\BaseHelper;
-use verbb\feedme\models\FeedModel;
-use verbb\feedme\queue\jobs\FeedImport;
 
 class FeedsController extends Controller
 {

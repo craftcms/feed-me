@@ -1,15 +1,15 @@
 <?php
 
-namespace verbb\feedme\helpers;
+namespace craft\feedme\helpers;
 
 use Cake\Utility\Hash;
 use Craft;
 use craft\elements\Asset as AssetElement;
+use craft\feedme\Plugin;
 use craft\helpers\Assets as AssetsHelper;
 use craft\helpers\FileHelper;
 use craft\helpers\UrlHelper;
 use Mimey\MimeTypes;
-use verbb\feedme\Plugin;
 
 class AssetHelper
 {

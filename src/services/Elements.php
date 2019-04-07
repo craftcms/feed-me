@@ -1,21 +1,21 @@
 <?php
 
-namespace verbb\feedme\services;
+namespace craft\feedme\services;
 
 use craft\base\Component;
+use craft\feedme\base\ElementInterface;
+use craft\feedme\elements\Asset;
+use craft\feedme\elements\CalenderEvent;
+use craft\feedme\elements\Category;
+use craft\feedme\elements\Comment;
+use craft\feedme\elements\CommerceProduct;
+use craft\feedme\elements\DigitalProduct;
+use craft\feedme\elements\Entry;
+use craft\feedme\elements\Tag;
+use craft\feedme\elements\User;
+use craft\feedme\events\RegisterFeedMeElementsEvent;
+use craft\feedme\Plugin;
 use craft\helpers\Component as ComponentHelper;
-use verbb\feedme\base\ElementInterface;
-use verbb\feedme\elements\Asset;
-use verbb\feedme\elements\CalenderEvent;
-use verbb\feedme\elements\Category;
-use verbb\feedme\elements\Comment;
-use verbb\feedme\elements\CommerceProduct;
-use verbb\feedme\elements\DigitalProduct;
-use verbb\feedme\elements\Entry;
-use verbb\feedme\elements\Tag;
-use verbb\feedme\elements\User;
-use verbb\feedme\events\RegisterFeedMeElementsEvent;
-use verbb\feedme\Plugin;
 
 class Elements extends Component
 {

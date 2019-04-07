@@ -1,15 +1,15 @@
 <?php
 
-namespace verbb\feedme\services;
+namespace craft\feedme\services;
 
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
 use craft\db\Query;
+use craft\feedme\events\FeedEvent;
+use craft\feedme\models\FeedModel;
+use craft\feedme\records\FeedRecord;
 use craft\helpers\Json;
-use verbb\feedme\events\FeedEvent;
-use verbb\feedme\models\FeedModel;
-use verbb\feedme\records\FeedRecord;
 
 class Feeds extends Component
 {

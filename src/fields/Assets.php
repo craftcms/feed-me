@@ -1,19 +1,19 @@
 <?php
 
-namespace verbb\feedme\fields;
+namespace craft\feedme\fields;
 
 use Cake\Utility\Hash;
 use Craft;
 use craft\db\Query;
 use craft\db\Table;
 use craft\elements\Asset as AssetElement;
+use craft\feedme\base\Field;
+use craft\feedme\base\FieldInterface;
+use craft\feedme\helpers\AssetHelper;
+use craft\feedme\Plugin;
 use craft\helpers\Assets as AssetsHelper;
 use craft\helpers\Db;
 use craft\helpers\UrlHelper;
-use verbb\feedme\base\Field;
-use verbb\feedme\base\FieldInterface;
-use verbb\feedme\Plugin;
-use verbb\feedme\helpers\AssetHelper;
 
 class Assets extends Field implements FieldInterface
 {

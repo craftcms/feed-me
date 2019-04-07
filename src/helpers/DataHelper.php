@@ -1,12 +1,12 @@
 <?php
 
-namespace verbb\feedme\helpers;
+namespace craft\feedme\helpers;
 
 use Cake\Utility\Hash;
 use Craft;
+use craft\feedme\Plugin;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Db;
-use verbb\feedme\Plugin;
 
 class DataHelper
 {

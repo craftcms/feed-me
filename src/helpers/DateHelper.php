@@ -1,11 +1,11 @@
 <?php
 
-namespace verbb\feedme\helpers;
+namespace craft\feedme\helpers;
 
 use Cake\Utility\Hash;
 use Carbon\Carbon;
+use craft\feedme\Plugin;
 use craft\helpers\DateTimeHelper;
-use verbb\feedme\Plugin;
 
 class DateHelper
 {

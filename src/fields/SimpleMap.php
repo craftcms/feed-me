@@ -1,14 +1,14 @@
 <?php
 
-namespace verbb\feedme\fields;
+namespace craft\feedme\fields;
 
 use Cake\Utility\Hash;
+use craft\feedme\base\Field;
+use craft\feedme\base\FieldInterface;
+use craft\feedme\helpers\DataHelper;
 use ether\simplemap\models\Map;
 use ether\simplemap\services\MapService;
 use ether\simplemap\SimpleMap as SimpleMapPlugin;
-use verbb\feedme\base\Field;
-use verbb\feedme\base\FieldInterface;
-use verbb\feedme\helpers\DataHelper;
 
 class SimpleMap extends Field implements FieldInterface
 {

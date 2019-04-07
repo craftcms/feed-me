@@ -4,8 +4,8 @@
 Plugins can register their own elements.
 
 ```php
-use verbb\feedme\events\RegisterFeedMeElementsEvent;
-use verbb\feedme\services\Elements;
+use craft\feedme\events\RegisterFeedMeElementsEvent;
+use craft\feedme\services\Elements;
 use yii\base\Event;
 
 Event::on(Elements::class, Elements::EVENT_REGISTER_FEED_ME_ELEMENTS, function(RegisterFeedMeElementsEvent $e) {
@@ -17,8 +17,8 @@ Event::on(Elements::class, Elements::EVENT_REGISTER_FEED_ME_ELEMENTS, function(R
 Plugins can get notified before a element's attribute has been parsed.
 
 ```php
-use verbb\feedme\base\Element;
-use verbb\feedme\events\ElementEvent;
+use craft\feedme\base\Element;
+use craft\feedme\events\ElementEvent;
 use yii\base\Event;
 
 Event::on(Element::class, Element::EVENT_BEFORE_PARSE_ATTRIBUTE, function(ElementEvent $e) {
@@ -30,8 +30,8 @@ Event::on(Element::class, Element::EVENT_BEFORE_PARSE_ATTRIBUTE, function(Elemen
 Plugins can get notified after a element's attribute has been parsed.
 
 ```php
-use verbb\feedme\base\Element;
-use verbb\feedme\events\ElementEvent;
+use craft\feedme\base\Element;
+use craft\feedme\events\ElementEvent;
 use yii\base\Event;
 
 Event::on(Element::class, Element::EVENT_AFTER_PARSE_ATTRIBUTE, function(ElementEvent $e) {

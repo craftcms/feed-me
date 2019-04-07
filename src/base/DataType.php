@@ -1,6 +1,6 @@
 <?php
 
-namespace verbb\feedme\base;
+namespace craft\feedme\base;
 
 use Cake\Utility\Hash;
 use craft\base\Component;

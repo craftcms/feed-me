@@ -1,20 +1,20 @@
 <?php
 
-namespace verbb\feedme\elements;
+namespace craft\feedme\elements;
 
 use Cake\Utility\Hash;
 use Carbon\Carbon;
 use Craft;
 use craft\elements\User as UserElement;
+use craft\feedme\base\Element;
+use craft\feedme\base\ElementInterface;
+use craft\feedme\events\FeedProcessEvent;
+use craft\feedme\Plugin;
+use craft\feedme\services\Process;
 use RRule\RfcParser;
 use Solspace\Calendar\Calendar;
 use Solspace\Calendar\Elements\Event as EventElement;
 use Solspace\Calendar\Library\DateHelper;
-use verbb\feedme\base\Element;
-use verbb\feedme\base\ElementInterface;
-use verbb\feedme\events\FeedProcessEvent;
-use verbb\feedme\Plugin;
-use verbb\feedme\services\Process;
 use yii\base\Event;
 
 class CalenderEvent extends Element implements ElementInterface

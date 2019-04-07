@@ -1,17 +1,17 @@
 <?php
 
-namespace verbb\feedme\elements;
+namespace craft\feedme\elements;
 
 use Cake\Utility\Hash;
 use Craft;
 use craft\db\Query;
 use craft\elements\Asset as AssetElement;
 use craft\elements\User as UserElement;
+use craft\feedme\base\Element;
+use craft\feedme\base\ElementInterface;
+use craft\feedme\helpers\AssetHelper;
 use craft\helpers\UrlHelper;
 use craft\records\User as UserRecord;
-use verbb\feedme\base\Element;
-use verbb\feedme\base\ElementInterface;
-use verbb\feedme\helpers\AssetHelper;
 
 class User extends Element implements ElementInterface
 {

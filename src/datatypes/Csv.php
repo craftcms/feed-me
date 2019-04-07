@@ -1,13 +1,13 @@
 <?php
 
-namespace verbb\feedme\datatypes;
+namespace craft\feedme\datatypes;
 
 use Cake\Utility\Hash;
+use craft\feedme\base\DataType;
+use craft\feedme\base\DataTypeInterface;
+use craft\feedme\Plugin;
 use craft\helpers\StringHelper;
 use League\Csv\Reader;
-use verbb\feedme\base\DataType;
-use verbb\feedme\base\DataTypeInterface;
-use verbb\feedme\Plugin;
 
 class Csv extends DataType implements DataTypeInterface
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace verbb\feedme\migrations;
+namespace craft\feedme\migrations;
 
 use craft\db\Migration;
 

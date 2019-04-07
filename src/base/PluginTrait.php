@@ -1,16 +1,16 @@
 <?php
 
-namespace verbb\feedme\base;
+namespace craft\feedme\base;
 
 use Craft;
-use verbb\feedme\Plugin;
-use verbb\feedme\services\DataTypes;
-use verbb\feedme\services\Elements;
-use verbb\feedme\services\Feeds;
-use verbb\feedme\services\Fields;
-use verbb\feedme\services\Logs;
-use verbb\feedme\services\Process;
-use verbb\feedme\services\Service;
+use craft\feedme\Plugin;
+use craft\feedme\services\DataTypes;
+use craft\feedme\services\Elements;
+use craft\feedme\services\Feeds;
+use craft\feedme\services\Fields;
+use craft\feedme\services\Logs;
+use craft\feedme\services\Process;
+use craft\feedme\services\Service;
 
 trait PluginTrait
 {

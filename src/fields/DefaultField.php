@@ -1,9 +1,9 @@
 <?php
 
-namespace verbb\feedme\fields;
+namespace craft\feedme\fields;
 
-use verbb\feedme\base\Field;
-use verbb\feedme\base\FieldInterface;
+use craft\feedme\base\Field;
+use craft\feedme\base\FieldInterface;
 
 class DefaultField extends Field implements FieldInterface
 {

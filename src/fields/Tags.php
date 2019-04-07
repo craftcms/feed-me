@@ -1,15 +1,15 @@
 <?php
 
-namespace verbb\feedme\fields;
+namespace craft\feedme\fields;
 
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Element as BaseElement;
 use craft\elements\Tag as TagElement;
+use craft\feedme\base\Field;
+use craft\feedme\base\FieldInterface;
+use craft\feedme\Plugin;
 use craft\helpers\Db;
-use verbb\feedme\base\Field;
-use verbb\feedme\base\FieldInterface;
-use verbb\feedme\Plugin;
 
 class Tags extends Field implements FieldInterface
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace verbb\feedme\web\twig;
+namespace craft\feedme\web\twig;
 
 use Cake\Utility\Hash;
 use Twig_Extension;

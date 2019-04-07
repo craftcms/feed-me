@@ -1,11 +1,11 @@
 <?php
 
-namespace verbb\feedme\models;
+namespace craft\feedme\models;
 
 use Cake\Utility\Hash;
 use craft\base\Model;
-use verbb\feedme\Plugin;
-use verbb\feedme\helpers\DuplicateHelper;
+use craft\feedme\helpers\DuplicateHelper;
+use craft\feedme\Plugin;
 
 class FeedModel extends Model
 {

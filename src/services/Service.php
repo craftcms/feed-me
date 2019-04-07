@@ -1,11 +1,11 @@
 <?php
 
-namespace verbb\feedme\services;
+namespace craft\feedme\services;
 
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
-use verbb\feedme\Plugin;
+use craft\feedme\Plugin;
 
 class Service extends Component
 {

@@ -1,10 +1,10 @@
 <?php
 
-namespace verbb\feedme\queue\jobs;
+namespace craft\feedme\queue\jobs;
 
 use Craft;
+use craft\feedme\Plugin;
 use craft\queue\BaseJob;
-use verbb\feedme\Plugin;
 use yii\queue\RetryableJobInterface;
 
 class FeedImport extends BaseJob implements RetryableJobInterface

@@ -1,16 +1,16 @@
 <?php
 
-namespace verbb\feedme\controllers;
+namespace craft\feedme\controllers;
 
 use Craft;
+use craft\feedme\models\GetHelp;
+use craft\feedme\Plugin;
+use craft\feedme\records\FeedRecord;
 use craft\helpers\App;
 use craft\helpers\FileHelper;
 use craft\helpers\StringHelper;
 use craft\web\Controller;
 use craft\web\UploadedFile;
-use verbb\feedme\Plugin;
-use verbb\feedme\models\GetHelp;
-use verbb\feedme\records\FeedRecord;
 use yii\base\ErrorException;
 use yii\base\Exception;
 use ZipArchive;

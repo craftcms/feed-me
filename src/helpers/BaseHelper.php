@@ -1,6 +1,6 @@
 <?php
 
-namespace verbb\feedme\helpers;
+namespace craft\feedme\helpers;
 
 use Craft;
 use craft\fields\data\ColorData;

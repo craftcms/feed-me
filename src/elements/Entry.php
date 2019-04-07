@@ -1,15 +1,15 @@
 <?php
 
-namespace verbb\feedme\elements;
+namespace craft\feedme\elements;
 
 use Cake\Utility\Hash;
 use Craft;
 use craft\elements\Entry as EntryElement;
 use craft\elements\User as UserElement;
+use craft\feedme\base\Element;
+use craft\feedme\base\ElementInterface;
+use craft\feedme\Plugin;
 use craft\models\Section;
-use verbb\feedme\base\Element;
-use verbb\feedme\base\ElementInterface;
-use verbb\feedme\Plugin;
 
 class Entry extends Element implements ElementInterface
 {

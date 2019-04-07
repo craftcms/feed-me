@@ -1,6 +1,6 @@
 <?php
 
-use verbb\feedme\elements\Entry;
+use craft\feedme\elements\Entry;
 
 class EntryTest extends \Codeception\Test\Unit
 {

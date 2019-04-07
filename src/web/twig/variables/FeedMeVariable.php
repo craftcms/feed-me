@@ -1,11 +1,11 @@
 <?php
 
-namespace verbb\feedme\web\twig\variables;
+namespace craft\feedme\web\twig\variables;
 
 use Craft;
+use craft\feedme\Plugin;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\UrlHelper;
-use verbb\feedme\Plugin;
 use yii\di\ServiceLocator;
 
 class FeedMeVariable extends ServiceLocator

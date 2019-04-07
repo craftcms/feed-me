@@ -1,14 +1,14 @@
 <?php
 
-namespace verbb\feedme\fields;
+namespace craft\feedme\fields;
 
 use Cake\Utility\Hash;
+use craft\feedme\base\Field;
+use craft\feedme\base\FieldInterface;
+use craft\feedme\helpers\BaseHelper;
+use craft\feedme\Plugin;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Localization;
-use verbb\feedme\base\Field;
-use verbb\feedme\base\FieldInterface;
-use verbb\feedme\Plugin;
-use verbb\feedme\helpers\BaseHelper;
 
 class Table extends Field implements FieldInterface
 {

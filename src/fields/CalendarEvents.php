@@ -1,13 +1,13 @@
 <?php
 
-namespace verbb\feedme\fields;
+namespace craft\feedme\fields;
 
 use Cake\Utility\Hash;
 use Craft;
+use craft\feedme\base\Field;
+use craft\feedme\base\FieldInterface;
+use craft\feedme\Plugin;
 use Solspace\Calendar\Elements\Event as EventElement;
-use verbb\feedme\base\Field;
-use verbb\feedme\base\FieldInterface;
-use verbb\feedme\Plugin;
 
 class CalendarEvents extends Field implements FieldInterface
 {

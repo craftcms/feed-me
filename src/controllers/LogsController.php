@@ -1,10 +1,10 @@
 <?php
 
-namespace verbb\feedme\controllers;
+namespace craft\feedme\controllers;
 
 use Craft;
+use craft\feedme\Plugin;
 use craft\web\Controller;
-use verbb\feedme\Plugin;
 
 class LogsController extends Controller
 {

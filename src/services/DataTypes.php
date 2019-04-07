@@ -1,23 +1,23 @@
 <?php
 
-namespace verbb\feedme\services;
+namespace craft\feedme\services;
 
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
+use craft\feedme\base\DataTypeInterface;
+use craft\feedme\datatypes\Atom;
+use craft\feedme\datatypes\Csv;
+use craft\feedme\datatypes\GoogleSheet;
+use craft\feedme\datatypes\Json;
+use craft\feedme\datatypes\Rss;
+use craft\feedme\datatypes\Xml;
+use craft\feedme\events\FeedDataEvent;
+use craft\feedme\events\RegisterFeedMeDataTypesEvent;
+use craft\feedme\models\FeedModel;
+use craft\feedme\Plugin;
 use craft\helpers\Component as ComponentHelper;
 use craft\helpers\UrlHelper;
-use verbb\feedme\base\DataTypeInterface;
-use verbb\feedme\datatypes\Atom;
-use verbb\feedme\datatypes\Csv;
-use verbb\feedme\datatypes\GoogleSheet;
-use verbb\feedme\datatypes\Json;
-use verbb\feedme\datatypes\Rss;
-use verbb\feedme\datatypes\Xml;
-use verbb\feedme\events\FeedDataEvent;
-use verbb\feedme\events\RegisterFeedMeDataTypesEvent;
-use verbb\feedme\Plugin;
-use verbb\feedme\models\FeedModel;
 use yii\base\Event;
 
 class DataTypes extends Component

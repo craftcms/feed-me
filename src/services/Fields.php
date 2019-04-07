@@ -1,38 +1,38 @@
 <?php
 
-namespace verbb\feedme\services;
+namespace craft\feedme\services;
 
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
+use craft\feedme\base\FieldInterface;
+use craft\feedme\events\FieldEvent;
+use craft\feedme\events\RegisterFeedMeFieldsEvent;
+use craft\feedme\fields\Assets;
+use craft\feedme\fields\CalendarEvents;
+use craft\feedme\fields\Categories;
+use craft\feedme\fields\Checkboxes;
+use craft\feedme\fields\CommerceProducts;
+use craft\feedme\fields\CommerceVariants;
+use craft\feedme\fields\Date;
+use craft\feedme\fields\DefaultField;
+use craft\feedme\fields\DigitalProducts;
+use craft\feedme\fields\Dropdown;
+use craft\feedme\fields\Entries;
+use craft\feedme\fields\Lightswitch;
+use craft\feedme\fields\Linkit;
+use craft\feedme\fields\Matrix;
+use craft\feedme\fields\MultiSelect;
+use craft\feedme\fields\Number;
+use craft\feedme\fields\RadioButtons;
+use craft\feedme\fields\SimpleMap;
+use craft\feedme\fields\SmartMap;
+use craft\feedme\fields\SuperTable;
+use craft\feedme\fields\Table;
+use craft\feedme\fields\Tags;
+use craft\feedme\fields\TypedLink;
+use craft\feedme\fields\Users;
 use craft\helpers\Component as ComponentHelper;
-use verbb\feedme\base\FieldInterface;
-use verbb\feedme\events\FieldEvent;
-use verbb\feedme\events\RegisterFeedMeFieldsEvent;
-use verbb\feedme\fields\Assets;
-use verbb\feedme\fields\CalendarEvents;
-use verbb\feedme\fields\Categories;
-use verbb\feedme\fields\Checkboxes;
-use verbb\feedme\fields\CommerceProducts;
-use verbb\feedme\fields\CommerceVariants;
-use verbb\feedme\fields\Date;
-use verbb\feedme\fields\DefaultField;
-use verbb\feedme\fields\DigitalProducts;
-use verbb\feedme\fields\Dropdown;
-use verbb\feedme\fields\Entries;
-use verbb\feedme\fields\Lightswitch;
-use verbb\feedme\fields\Linkit;
-use verbb\feedme\fields\Matrix;
-use verbb\feedme\fields\MultiSelect;
-use verbb\feedme\fields\Number;
-use verbb\feedme\fields\RadioButtons;
-use verbb\feedme\fields\SimpleMap;
-use verbb\feedme\fields\SmartMap;
-use verbb\feedme\fields\SuperTable;
-use verbb\feedme\fields\Table;
-use verbb\feedme\fields\Tags;
-use verbb\feedme\fields\TypedLink;
-use verbb\feedme\fields\Users;
 
 class Fields extends Component
 {

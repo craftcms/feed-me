@@ -1,19 +1,19 @@
 <?php
 
-namespace verbb\feedme\elements;
+namespace craft\feedme\elements;
 
 use Cake\Utility\Hash;
 use Craft;
 use craft\elements\Asset as AssetElement;
+use craft\feedme\base\Element;
+use craft\feedme\base\ElementInterface;
+use craft\feedme\events\FeedProcessEvent;
+use craft\feedme\helpers\AssetHelper;
+use craft\feedme\helpers\DuplicateHelper;
+use craft\feedme\services\Process;
 use craft\helpers\Assets as AssetsHelper;
 use craft\helpers\UrlHelper;
 use craft\models\VolumeFolder;
-use verbb\feedme\base\Element;
-use verbb\feedme\base\ElementInterface;
-use verbb\feedme\events\FeedProcessEvent;
-use verbb\feedme\helpers\AssetHelper;
-use verbb\feedme\helpers\DuplicateHelper;
-use verbb\feedme\services\Process;
 use yii\base\Event;
 
 class Asset extends Element implements ElementInterface

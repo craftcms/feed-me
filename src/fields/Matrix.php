@@ -1,11 +1,11 @@
 <?php
 
-namespace verbb\feedme\fields;
+namespace craft\feedme\fields;
 
 use Cake\Utility\Hash;
-use verbb\feedme\base\Field;
-use verbb\feedme\base\FieldInterface;
-use verbb\feedme\Plugin;
+use craft\feedme\base\Field;
+use craft\feedme\base\FieldInterface;
+use craft\feedme\Plugin;
 
 class Matrix extends Field implements FieldInterface
 {
@@ -38,7 +38,7 @@ class Matrix extends Field implements FieldInterface
 
         // Before we do anything, we need to extract the data from our feed and normalise it. This is especially
         // complex due to sub-fields, which each can be a variety of fields and formats, compounded by multiple or
-        // Matrix blocks - we don't know! We also need to be careful of the order data is in the feed to be 
+        // Matrix blocks - we don't know! We also need to be careful of the order data is in the feed to be
         // reflected in the field - phew!
         //
         // So, in order to keep data in the order provided in our feed, we start there (as opposed to looping through blocks)

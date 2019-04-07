@@ -1,6 +1,6 @@
 <?php
 
-namespace verbb\feedme\elements;
+namespace craft\feedme\elements;
 
 use Cake\Utility\Hash;
 use Craft;
@@ -8,13 +8,13 @@ use craft\commerce\elements\Product as ProductElement;
 use craft\commerce\elements\Variant as VariantElement;
 use craft\commerce\Plugin as Commerce;
 use craft\db\Query;
-use verbb\feedme\base\Element;
-use verbb\feedme\base\ElementInterface;
-use verbb\feedme\events\FeedProcessEvent;
-use verbb\feedme\Plugin;
-use verbb\feedme\helpers\BaseHelper;
-use verbb\feedme\helpers\DataHelper;
-use verbb\feedme\services\Process;
+use craft\feedme\base\Element;
+use craft\feedme\base\ElementInterface;
+use craft\feedme\events\FeedProcessEvent;
+use craft\feedme\helpers\BaseHelper;
+use craft\feedme\helpers\DataHelper;
+use craft\feedme\Plugin;
+use craft\feedme\services\Process;
 use yii\base\Event;
 
 class CommerceProduct extends Element implements ElementInterface

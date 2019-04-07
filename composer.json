@@ -45,12 +45,12 @@
     },
     "autoload": {
         "psr-4": {
-          "verbb\\feedme\\": "src/"
+          "craft\\feedme\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "verbb\\feedme\\tests\\": "tests/"
+            "craft\\feedme\\tests\\": "tests/"
         }
     },
     "extra": {

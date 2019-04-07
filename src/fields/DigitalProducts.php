@@ -1,13 +1,13 @@
 <?php
 
-namespace verbb\feedme\fields;
+namespace craft\feedme\fields;
 
 use Cake\Utility\Hash;
 use Craft;
 use craft\digitalproducts\elements\Product as ProductElement;
-use verbb\feedme\base\Field;
-use verbb\feedme\base\FieldInterface;
-use verbb\feedme\Plugin;
+use craft\feedme\base\Field;
+use craft\feedme\base\FieldInterface;
+use craft\feedme\Plugin;
 
 class DigitalProducts extends Field implements FieldInterface
 {

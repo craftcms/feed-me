@@ -1,17 +1,17 @@
 <?php
 
-namespace verbb\feedme\services;
+namespace craft\feedme\services;
 
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
+use craft\feedme\events\FeedProcessEvent;
+use craft\feedme\helpers\DataHelper;
+use craft\feedme\helpers\DuplicateHelper;
+use craft\feedme\Plugin;
 use craft\helpers\App;
 use craft\helpers\FileHelper;
 use craft\helpers\StringHelper;
-use verbb\feedme\events\FeedProcessEvent;
-use verbb\feedme\Plugin;
-use verbb\feedme\helpers\DataHelper;
-use verbb\feedme\helpers\DuplicateHelper;
 
 class Process extends Component
 {

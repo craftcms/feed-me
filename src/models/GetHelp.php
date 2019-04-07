@@ -1,6 +1,6 @@
 <?php
 
-namespace verbb\feedme\models;
+namespace craft\feedme\models;
 
 use Craft;
 use craft\base\Model;

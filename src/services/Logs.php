@@ -1,12 +1,12 @@
 <?php
 
-namespace verbb\feedme\services;
+namespace craft\feedme\services;
 
 use Craft;
 use craft\base\Component;
+use craft\feedme\Plugin;
 use craft\helpers\App;
 use craft\helpers\FileHelper;
-use verbb\feedme\Plugin;
 
 class Logs extends Component
 {

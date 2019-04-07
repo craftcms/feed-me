@@ -1,16 +1,16 @@
 <?php
 
-namespace verbb\feedme\base;
+namespace craft\feedme\base;
 
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
 use craft\base\Element as BaseElement;
+use craft\feedme\helpers\BaseHelper;
+use craft\feedme\helpers\DataHelper;
+use craft\feedme\helpers\DateHelper;
 use craft\helpers\Db;
 use craft\helpers\StringHelper;
-use verbb\feedme\helpers\BaseHelper;
-use verbb\feedme\helpers\DataHelper;
-use verbb\feedme\helpers\DateHelper;
 
 abstract class Element extends Component
 {

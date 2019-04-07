@@ -1,10 +1,10 @@
 <?php
 
-namespace verbb\feedme\fields;
+namespace craft\feedme\fields;
 
-use verbb\feedme\base\Field;
-use verbb\feedme\base\FieldInterface;
-use verbb\feedme\helpers\BaseHelper;
+use craft\feedme\base\Field;
+use craft\feedme\base\FieldInterface;
+use craft\feedme\helpers\BaseHelper;
 
 class Lightswitch extends Field implements FieldInterface
 {

@@ -1,16 +1,16 @@
 <?php
 
-namespace verbb\feedme;
+namespace craft\feedme;
 
 use Craft;
 use craft\events\RegisterUrlRulesEvent;
+use craft\feedme\base\PluginTrait;
+use craft\feedme\models\Settings;
+use craft\feedme\web\twig\Extension;
+use craft\feedme\web\twig\variables\FeedMeVariable;
 use craft\helpers\UrlHelper;
 use craft\web\twig\variables\CraftVariable;
 use craft\web\UrlManager;
-use verbb\feedme\base\PluginTrait;
-use verbb\feedme\models\Settings;
-use verbb\feedme\web\twig\Extension;
-use verbb\feedme\web\twig\variables\FeedMeVariable;
 use yii\base\Event;
 
 class Plugin extends \craft\base\Plugin

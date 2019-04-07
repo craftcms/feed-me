@@ -1,10 +1,10 @@
 <?php
 
-namespace verbb\feedme\fields;
+namespace craft\feedme\fields;
 
+use craft\feedme\base\Field;
+use craft\feedme\base\FieldInterface;
 use craft\helpers\Localization;
-use verbb\feedme\base\Field;
-use verbb\feedme\base\FieldInterface;
 
 class Number extends Field implements FieldInterface
 {

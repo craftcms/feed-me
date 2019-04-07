@@ -1,13 +1,13 @@
 <?php
 
-namespace verbb\feedme\datatypes;
+namespace craft\feedme\datatypes;
 
 use Cake\Utility\Hash;
 use Cake\Utility\Xml as XmlParser;
 use Craft;
-use verbb\feedme\base\DataType;
-use verbb\feedme\base\DataTypeInterface;
-use verbb\feedme\Plugin;
+use craft\feedme\base\DataType;
+use craft\feedme\base\DataTypeInterface;
+use craft\feedme\Plugin;
 
 class Xml extends DataType implements DataTypeInterface
 {

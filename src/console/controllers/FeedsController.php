@@ -1,10 +1,10 @@
 <?php
 
-namespace verbb\feedme\console\controllers;
+namespace craft\feedme\console\controllers;
 
 use Craft;
-use verbb\feedme\Plugin;
-use verbb\feedme\queue\jobs\FeedImport;
+use craft\feedme\Plugin;
+use craft\feedme\queue\jobs\FeedImport;
 use yii\console\Controller;
 
 class FeedsController extends Controller
