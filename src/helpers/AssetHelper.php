@@ -22,34 +22,50 @@ class AssetHelper
     // =========================================================================
 
     public static function downloadFile($srcName, $dstName, $chunkSize = 1, $returnbytes = true) {
-        $chunksize = $chunkSize * (1024 * 1024);
-        $data = '';
-        $bytesCount = 0;
-        $handle = fopen($srcName, 'rb');
-        $fp = fopen($dstName, 'w');
+        $assetDownloadCurl = FeedMe::$plugin->getSettings()->assetDownloadCurl;
 
-        if ($handle === false) {
-            return false;
-        }
+        // Provide some legacy support
+        if ($assetDownloadCurl) {
+            $ch = curl_init($srcName);
+            $fp = fopen($dstName, 'wb');
 
-        while (!feof($handle)) {
-            $data = fread($handle, $chunksize);
-            fwrite($fp, $data, strlen($data));
+            curl_setopt($ch, CURLOPT_FILE, $fp);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 
-            if ($returnbytes) {
-                $bytesCount += strlen($data);
+            curl_exec($ch);
+            curl_close($ch);
+
+            return fclose($fp);
+        } else {
+            $chunksize = $chunkSize * (1024 * 1024);
+            $data = '';
+            $bytesCount = 0;
+            $handle = fopen($srcName, 'rb');
+            $fp = fopen($dstName, 'w');
+
+            if ($handle === false) {
+                return false;
             }
+
+            while (!feof($handle)) {
+                $data = fread($handle, $chunksize);
+                fwrite($fp, $data, strlen($data));
+
+                if ($returnbytes) {
+                    $bytesCount += strlen($data);
+                }
+            }
+
+            $status = fclose($handle);
+
+            fclose($fp);
+
+            if ($returnbytes && $status) {
+                return $bytesCount;
+            }
+
+            return $status;
         }
-
-        $status = fclose($handle);
-
-        fclose($fp);
-
-        if ($returnbytes && $status) {
-            return $bytesCount;
-        }
-
-        return $status;
     }
 
     public static function fetchRemoteImage($urls, $fieldInfo, $feed, $field = null, $element = null, $folderId = null)

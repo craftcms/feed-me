@@ -21,6 +21,7 @@ return [
         'runGcBeforeFeed' => false,
         'queueTtr' => 300,
         'queueMaxRetry' => 5,
+        'assetDownloadCurl' => false,
         'feedOptions' => [
             '1' => [
                 'feedUrl' => 'https://specialurl.io/feed.json',
@@ -47,6 +48,7 @@ return [
 - `runGcBeforeFeed` - Whether to run the Garbage Collection service before running a feed.
 - `queueTtr` - Set the 'time to reserve' time in seconds, to prevent the job being cancelled after 300 seconds (default).
 - `queueMaxRetry` - Set the maxiumum amount of retries the queue job should have before failing.
+- `assetDownloadCurl` - Use curl to download assets from a remote source. Can be used when issues arise using the default implementation.
 - `feedOptions` - Provide an array of any of the above options or [Feed Settings](docs:feature-tour/feed-overview) to set specifically for certain feeds. Use the Feed ID as the key for the array.
 
 #### Example `requestOptions`
