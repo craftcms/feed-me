@@ -132,6 +132,10 @@ class DataTypes extends Component
 
         Event::trigger(static::class, self::EVENT_BEFORE_FETCH_FEED, $event);
 
+        if ($event->response) {
+            return $event->response;
+        }
+
         $url = $event->url;
 
         $url = Craft::getAlias($url);

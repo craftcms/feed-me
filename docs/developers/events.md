@@ -37,7 +37,7 @@ Event::on(Feeds::class, Feeds::EVENT_AFTER_SAVE_FEED, function(FeedEvent $event)
 
 ### The `beforeFetchFeed` event
 
-Plugins can get notified before a feed's data has been fetched.
+Plugins can get notified before a feed's data has been fetched. You can also return with a response to bypass Feed Me's default fetching.
 
 ```php
 use verbb\feedme\events\FeedDataEvent;
@@ -45,7 +45,11 @@ use verbb\feedme\services\DataTypes;
 use yii\base\Event;
 
 Event::on(DataTypes::class, DataTypes::EVENT_BEFORE_FETCH_FEED, function(FeedDataEvent $event) {
-
+    // This will set the feed's data
+    $event->response = [
+        'success' => true,
+        'data' => '<?xml version="1.0" encoding="UTF-8"?><entries><entry><title>Some Title</title></entry></entries>',
+    ];
 });
 ```
 
