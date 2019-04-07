@@ -15,7 +15,7 @@
 
 ### Fixed
 - Fix Matrix mapping not applying default values.
-- Refactor unqiue identifier check, including inherited fields.
+- Refactor unique identifier check, including inherited fields.
 - Error-handle a little for custom datatypes from Craft 2.
 - Fix Simple Map integration.
 - Ensure correct element scenario is set for element fields, when set to create.
