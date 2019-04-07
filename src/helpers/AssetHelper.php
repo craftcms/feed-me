@@ -1,27 +1,23 @@
 <?php
+
 namespace verbb\feedme\helpers;
 
-use verbb\feedme\FeedMe;
-use verbb\feedme\base\Field;
-use verbb\feedme\base\FieldInterface;
-use verbb\feedme\helpers\AssetHelper;
-
+use Cake\Utility\Hash;
 use Craft;
 use craft\elements\Asset as AssetElement;
 use craft\helpers\Assets as AssetsHelper;
 use craft\helpers\FileHelper;
 use craft\helpers\UrlHelper;
-use craft\helpers\StringHelper;
-
-use Cake\Utility\Hash;
 use Mimey\MimeTypes;
+use verbb\feedme\FeedMe;
 
 class AssetHelper
 {
     // Public Methods
     // =========================================================================
 
-    public static function downloadFile($srcName, $dstName, $chunkSize = 1, $returnbytes = true) {
+    public static function downloadFile($srcName, $dstName, $chunkSize = 1, $returnbytes = true)
+    {
         $assetDownloadCurl = FeedMe::$plugin->getSettings()->assetDownloadCurl;
 
         // Provide some legacy support
@@ -147,7 +143,7 @@ class AssetHelper
                 FileHelper::writeToFile($fetchedImageWithExtension, $decodedImage);
 
                 $result = self::createAsset($fetchedImageWithExtension, $filename, $folderId, $feed, $field, $element, $conflict);
-                
+
                 if ($result) {
                     $uploadedAssets[] = $result;
                 } else {
@@ -165,7 +161,7 @@ class AssetHelper
     /**
      * @param string $tempFilePath
      * @param string $filename
-     * @param int    $folderId
+     * @param int $folderId
      * @param string $field
      * @param string $element
      * @param string $conflict
@@ -193,16 +189,18 @@ class AssetHelper
 
         $propagate = isset($feed['siteId']) && $feed['siteId'] ? false : true;
 
-        FeedMe::info('Creating asset with content `{i}`', ['i' => json_encode([
-            'tempFilePath' => $tempFilePath,
-            'filename' => $filename,
-            'newFolderId' => $folder->id,
-            'volumeId' => $folder->volumeId,
-            'avoidFilenameConflicts' => true,
-            'scenario' => AssetElement::SCENARIO_CREATE,
-            'propagate' => $propagate,
-            'conflict' => $conflict,
-        ])]);
+        FeedMe::info('Creating asset with content `{i}`', [
+            'i' => json_encode([
+                'tempFilePath' => $tempFilePath,
+                'filename' => $filename,
+                'newFolderId' => $folder->id,
+                'volumeId' => $folder->volumeId,
+                'avoidFilenameConflicts' => true,
+                'scenario' => AssetElement::SCENARIO_CREATE,
+                'propagate' => $propagate,
+                'conflict' => $conflict,
+            ])
+        ]);
 
         $result = Craft::$app->getElements()->saveElement($asset, true, $propagate);
 
@@ -237,7 +235,7 @@ class AssetHelper
         if (!is_dir($tempFeedMePath)) {
             FileHelper::createDirectory($tempFeedMePath);
         }
-        
+
         return $tempFeedMePath;
     }
 
@@ -302,13 +300,15 @@ class AssetHelper
             // Try using HEAD requests (for performance), if it fails use GET
             try {
                 $response = $client->head($url);
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) {
+            }
 
             try {
                 if (!$response) {
                     $response = $client->get($url);
                 }
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) {
+            }
 
             if ($response) {
                 $contentType = $response->getHeader('Content-Type');

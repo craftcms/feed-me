@@ -1,14 +1,13 @@
 <?php
+
 namespace verbb\feedme\datatypes;
-
-use verbb\feedme\FeedMe;
-use verbb\feedme\base\DataType;
-use verbb\feedme\base\DataTypeInterface;
-
-use Craft;
 
 use Cake\Utility\Hash;
 use Cake\Utility\Xml as XmlParser;
+use Craft;
+use verbb\feedme\base\DataType;
+use verbb\feedme\base\DataTypeInterface;
+use verbb\feedme\FeedMe;
 
 class Xml extends DataType implements DataTypeInterface
 {
@@ -28,9 +27,9 @@ class Xml extends DataType implements DataTypeInterface
 
         if (!$response['success']) {
             $error = 'Unable to reach ' . $url . '. Message: ' . $response['error'];
-            
+
             FeedMe::error($error);
-            
+
             return ['success' => false, 'error' => $error];
         }
 

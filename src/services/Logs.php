@@ -1,13 +1,12 @@
 <?php
-namespace verbb\feedme\services;
 
-use verbb\feedme\FeedMe;
+namespace verbb\feedme\services;
 
 use Craft;
 use craft\base\Component;
 use craft\helpers\App;
 use craft\helpers\FileHelper;
-use craft\helpers\StringHelper;
+use verbb\feedme\FeedMe;
 
 class Logs extends Component
 {
@@ -119,13 +118,13 @@ class Logs extends Component
 
         return $logEntries;
     }
-    
+
 
     // Private Methods
     // =========================================================================
 
     private function _canLog($type)
-    {   
+    {
         $logging = FeedMe::$plugin->service->getConfig('logging');
 
         // If logging set to false, don't log anything

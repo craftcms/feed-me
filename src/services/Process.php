@@ -1,21 +1,17 @@
 <?php
+
 namespace verbb\feedme\services;
 
-use verbb\feedme\FeedMe;
-use verbb\feedme\events\FeedProcessEvent;
-use verbb\feedme\helpers\DataHelper;
-use verbb\feedme\helpers\DuplicateHelper;
-
+use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
-use craft\elements\Entry;
 use craft\helpers\App;
 use craft\helpers\FileHelper;
 use craft\helpers\StringHelper;
-use craft\models\Section;
-use craft\events\RegisterElementSourcesEvent;
-
-use Cake\Utility\Hash;
+use verbb\feedme\events\FeedProcessEvent;
+use verbb\feedme\FeedMe;
+use verbb\feedme\helpers\DataHelper;
+use verbb\feedme\helpers\DuplicateHelper;
 
 class Process extends Component
 {
@@ -302,7 +298,7 @@ class Process extends Component
         }
 
 
-        // 
+        //
         // Now, parse all element attributes and custom fields
         //
 
@@ -477,11 +473,11 @@ class Process extends Component
         if ($elementsToDeleteDisable) {
             if (DuplicateHelper::isDisable($feed)) {
                 $this->_service->disable($elementsToDeleteDisable);
-                
+
                 $message = 'The following elements have been disabled: ' . json_encode($elementsToDeleteDisable) . '.';
             } else {
                 $this->_service->delete($elementsToDeleteDisable);
-                
+
                 $message = 'The following elements have been deleted: ' . json_encode($elementsToDeleteDisable) . '.';
             }
 
@@ -603,10 +599,10 @@ class Process extends Component
         }
 
         // Find any items like `[title.node] => noimport` and remove the outer field info. Slightly complicated
-        // for nested block/fields, and if I was better at recursion, this could be more elegant, but loop through a 
+        // for nested block/fields, and if I was better at recursion, this could be more elegant, but loop through a
         // bunch of times, removing stuff as we go, starting at the inner nested level. Each loop will remove more levels
         // of un-mapped nodes
-        for ($i = 0; $i < 5; $i++) { 
+        for ($i = 0; $i < 5; $i++) {
             foreach (Hash::flatten($fields) as $key => $value) {
                 $explode = explode('.', $key);
                 $lastIndex = array_pop($explode);
@@ -620,7 +616,7 @@ class Process extends Component
 
                 if ($lastIndex === 'fields' && empty($value)) {
                     // Remove any empty field definitions - but only if there's no node mapping.
-                    // This is the case when mapping a value to entries, but not mapping any of its inner element fields. 
+                    // This is the case when mapping a value to entries, but not mapping any of its inner element fields.
                     // We want to retain the mapping to the outer field, but ditch any inner fields not mapped
                     if ($node) {
                         $fields = Hash::remove($fields, $infoPath . '.fields');

@@ -1,6 +1,8 @@
 <?php
+
 namespace verbb\feedme\base;
 
+use Craft;
 use verbb\feedme\FeedMe;
 use verbb\feedme\services\DataTypes;
 use verbb\feedme\services\Elements;
@@ -9,10 +11,6 @@ use verbb\feedme\services\Fields;
 use verbb\feedme\services\Logs;
 use verbb\feedme\services\Process;
 use verbb\feedme\services\Service;
-
-use Craft;
-
-use Cake\Utility\Hash;
 
 trait PluginTrait
 {
@@ -98,13 +96,13 @@ trait PluginTrait
     private function _setPluginComponents()
     {
         $this->setComponents([
-            'data'     => DataTypes::class,
+            'data' => DataTypes::class,
             'elements' => Elements::class,
-            'feeds'    => Feeds::class,
-            'fields'   => Fields::class,
-            'logs'     => Logs::class,
-            'process'  => Process::class,
-            'service'  => Service::class,
+            'feeds' => Feeds::class,
+            'fields' => Fields::class,
+            'logs' => Logs::class,
+            'process' => Process::class,
+            'service' => Service::class,
         ]);
     }
 

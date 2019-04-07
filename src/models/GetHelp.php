@@ -1,9 +1,9 @@
 <?php
+
 namespace verbb\feedme\models;
 
 use Craft;
 use craft\base\Model;
-use craft\web\UploadedFile;
 
 class GetHelp extends Model
 {

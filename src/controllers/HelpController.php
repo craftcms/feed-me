@@ -1,25 +1,18 @@
 <?php
-namespace verbb\feedme\controllers;
 
-use verbb\feedme\FeedMe;
-use verbb\feedme\models\GetHelp;
-use verbb\feedme\records\FeedRecord;
+namespace verbb\feedme\controllers;
 
 use Craft;
 use craft\helpers\App;
-use craft\helpers\ArrayHelper;
 use craft\helpers\FileHelper;
-use craft\helpers\Json;
 use craft\helpers\StringHelper;
-use craft\i18n\Locale;
 use craft\web\Controller;
 use craft\web\UploadedFile;
-use DateTime;
+use verbb\feedme\FeedMe;
+use verbb\feedme\models\GetHelp;
+use verbb\feedme\records\FeedRecord;
 use yii\base\ErrorException;
 use yii\base\Exception;
-use yii\base\InvalidArgumentException;
-use yii\web\BadRequestHttpException;
-use yii\web\Response;
 use ZipArchive;
 
 class HelpController extends Controller
@@ -38,17 +31,17 @@ class HelpController extends Controller
 
         $widgetId = 'feedMeHelp';
         $namespace = $request->getBodyParam('namespace');
-        $namespace = $namespace ? $namespace.'.' : '';
+        $namespace = $namespace ? $namespace . '.' : '';
 
         $getHelpModel = new GetHelp();
-        $getHelpModel->fromEmail = $request->getBodyParam($namespace.'fromEmail');
-        $getHelpModel->feedIssue = $request->getBodyParam($namespace.'feedIssue');
-        $getHelpModel->message = trim($request->getBodyParam($namespace.'message'));
-        $getHelpModel->attachLogs = (bool)$request->getBodyParam($namespace.'attachLogs');
-        $getHelpModel->attachSettings = (bool)$request->getBodyParam($namespace.'attachSettings');
-        $getHelpModel->attachFeed = (bool)$request->getBodyParam($namespace.'attachFeed');
-        $getHelpModel->attachFields = (bool)$request->getBodyParam($namespace.'attachFields');
-        $getHelpModel->attachment = UploadedFile::getInstanceByName($namespace.'attachAdditionalFile');
+        $getHelpModel->fromEmail = $request->getBodyParam($namespace . 'fromEmail');
+        $getHelpModel->feedIssue = $request->getBodyParam($namespace . 'feedIssue');
+        $getHelpModel->message = trim($request->getBodyParam($namespace . 'message'));
+        $getHelpModel->attachLogs = (bool)$request->getBodyParam($namespace . 'attachLogs');
+        $getHelpModel->attachSettings = (bool)$request->getBodyParam($namespace . 'attachSettings');
+        $getHelpModel->attachFeed = (bool)$request->getBodyParam($namespace . 'attachFeed');
+        $getHelpModel->attachFields = (bool)$request->getBodyParam($namespace . 'attachFields');
+        $getHelpModel->attachment = UploadedFile::getInstanceByName($namespace . 'attachAdditionalFile');
 
         $success = false;
         $errors = [];
@@ -59,7 +52,7 @@ class HelpController extends Controller
         if (!$getHelpModel->validate()) {
             return $this->renderTemplate('feed-me/help/response', [
                 'widgetId' => $widgetId,
-                'success'  => false,
+                'success' => false,
                 'errors' => $getHelpModel->getErrors(),
             ]);
         }
@@ -68,9 +61,9 @@ class HelpController extends Controller
         $feed = FeedMe::$plugin->feeds->getFeedById($getHelpModel->feedIssue);
 
         // Add some extra info about this install
-        $message = $getHelpModel->message."\n\n".
-            "------------------------------\n\n".
-            'Craft ' . Craft::$app->getEditionName().' '.Craft::$app->getVersion() . "\n\n";
+        $message = $getHelpModel->message . "\n\n" .
+            "------------------------------\n\n" .
+            'Craft ' . Craft::$app->getEditionName() . ' ' . Craft::$app->getVersion() . "\n\n";
 
         $message .= 'Feed Me: ' . FeedMe::$plugin->getVersion() . "\n";
         $message .= 'License: ' . $plugins->getPluginLicenseKey('feed-me') . ' - ' . $plugins->getPluginLicenseKeyStatus('feed-me') . "\n\n";
@@ -92,8 +85,8 @@ class HelpController extends Controller
         $requestParams = $requestParamDefaults;
 
         // Create the SupportAttachment zip
-        $zipPath = $tempFolder.'/'.StringHelper::UUID().'.zip';
-        
+        $zipPath = $tempFolder . '/' . StringHelper::UUID() . '.zip';
+
         try {
             $tempFileSettings = null;
             $tempFileFeed = null;
@@ -110,7 +103,7 @@ class HelpController extends Controller
             try {
                 $composerService = Craft::$app->getComposer();
                 $zip->addFile($composerService->getJsonPath(), 'composer.json');
-                
+
                 if (($composerLockPath = $composerService->getLockPath()) !== null) {
                     $zip->addFile($composerLockPath, 'composer.lock');
                 }
@@ -136,7 +129,7 @@ class HelpController extends Controller
                     }
 
                     foreach ($logFiles as $logFile) {
-                        $zip->addFile($logFile, 'logs/'.pathinfo($logFile, PATHINFO_BASENAME));
+                        $zip->addFile($logFile, 'logs/' . pathinfo($logFile, PATHINFO_BASENAME));
                     }
                 }
             }
@@ -152,7 +145,7 @@ class HelpController extends Controller
 
                     FileHelper::writeToFile($tempFileSettings, $feedInfo . PHP_EOL);
 
-                    $zip->addFile($tempFileSettings, 'backups/'.pathinfo($tempFileSettings, PATHINFO_BASENAME));
+                    $zip->addFile($tempFileSettings, 'backups/' . pathinfo($tempFileSettings, PATHINFO_BASENAME));
                 } catch (\Throwable $e) {
                     $noteError = "\n\nError adding database to help request: `" . $e->getMessage() . ":" . $e->getLine() . "`.";
                     $requestParamDefaults['note'] .= $noteError;
@@ -173,7 +166,7 @@ class HelpController extends Controller
 
                     FileHelper::writeToFile($tempFileFeed, print_r($feedData, true) . PHP_EOL);
 
-                    $zip->addFile($tempFileFeed, 'feed/'.pathinfo($tempFileFeed, PATHINFO_BASENAME));
+                    $zip->addFile($tempFileFeed, 'feed/' . pathinfo($tempFileFeed, PATHINFO_BASENAME));
                 } catch (\Throwable $e) {
                     $noteError = "\n\nError adding feed to help request: `" . $e->getMessage() . ":" . $e->getLine() . "`.";
                     $requestParamDefaults['note'] .= $noteError;
@@ -224,7 +217,7 @@ class HelpController extends Controller
 
                         FileHelper::writeToFile($tempFileFields, $json . PHP_EOL);
 
-                        $zip->addFile($tempFileFields, 'fields/'.pathinfo($tempFileFields, PATHINFO_BASENAME));
+                        $zip->addFile($tempFileFields, 'fields/' . pathinfo($tempFileFields, PATHINFO_BASENAME));
                     }
                 } catch (\Throwable $e) {
                     $noteError = "\n\nError adding field into to help request: `" . $e->getMessage() . ":" . $e->getLine() . "`.";
@@ -253,7 +246,7 @@ class HelpController extends Controller
             if (is_file($tempFileSettings)) {
                 FileHelper::unlink($tempFileSettings);
             }
-            
+
             if (is_file($tempFileFeed)) {
                 FileHelper::unlink($tempFileFeed);
             }
@@ -272,7 +265,7 @@ class HelpController extends Controller
         $guzzleClient = Craft::createGuzzleClient(['timeout' => 120, 'connect_timeout' => 120]);
 
         try {
-            $guzzleClient->post('https://support.verbb.io/api/get-help', [ 'json' => $requestParams ]);
+            $guzzleClient->post('https://support.verbb.io/api/get-help', ['json' => $requestParams]);
         } catch (\Throwable $e) {
             FeedMe::error('`' . (string)$e->getresponse()->getBody() . '`');
 

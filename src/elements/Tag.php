@@ -1,15 +1,12 @@
 <?php
+
 namespace verbb\feedme\elements;
 
-use verbb\feedme\FeedMe;
-use verbb\feedme\base\Element;
-use verbb\feedme\base\ElementInterface;
-
+use Cake\Utility\Hash;
 use Craft;
 use craft\elements\Tag as TagElement;
-use craft\helpers\Db;
-
-use Cake\Utility\Hash;
+use verbb\feedme\base\Element;
+use verbb\feedme\base\ElementInterface;
 
 class Tag extends Element implements ElementInterface
 {

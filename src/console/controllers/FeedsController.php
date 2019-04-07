@@ -1,13 +1,11 @@
 <?php
+
 namespace verbb\feedme\console\controllers;
 
+use Craft;
 use verbb\feedme\FeedMe;
 use verbb\feedme\queue\jobs\FeedImport;
-
-use Craft;
-
 use yii\console\Controller;
-use yii\helpers\Console;
 
 class FeedsController extends Controller
 {

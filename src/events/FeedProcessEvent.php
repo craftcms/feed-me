@@ -1,4 +1,5 @@
 <?php
+
 namespace verbb\feedme\events;
 
 use craft\events\CancelableEvent;

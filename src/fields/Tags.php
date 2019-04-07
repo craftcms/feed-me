@@ -1,16 +1,15 @@
 <?php
+
 namespace verbb\feedme\fields;
 
-use verbb\feedme\FeedMe;
-use verbb\feedme\base\Field;
-use verbb\feedme\base\FieldInterface;
-
+use Cake\Utility\Hash;
 use Craft;
 use craft\base\Element as BaseElement;
 use craft\elements\Tag as TagElement;
 use craft\helpers\Db;
-
-use Cake\Utility\Hash;
+use verbb\feedme\base\Field;
+use verbb\feedme\base\FieldInterface;
+use verbb\feedme\FeedMe;
 
 class Tags extends Field implements FieldInterface
 {
@@ -78,7 +77,7 @@ class Tags extends Field implements FieldInterface
             if (Craft::$app->getFields()->getFieldByHandle($match)) {
                 $columnName = Craft::$app->getFields()->oldFieldColumnPrefix . $match;
             }
-            
+
             $query = TagElement::find();
 
             // In multi-site, there's currently no way to query across all sites - we use the current site

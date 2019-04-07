@@ -1,19 +1,17 @@
 <?php
+
 namespace verbb\feedme\elements;
 
-use verbb\feedme\base\Element;
-use verbb\feedme\base\ElementInterface;
-use verbb\feedme\helpers\AssetHelper;
-
+use Cake\Utility\Hash;
 use Craft;
 use craft\db\Query;
 use craft\elements\Asset as AssetElement;
 use craft\elements\User as UserElement;
-use craft\helpers\FileHelper;
 use craft\helpers\UrlHelper;
 use craft\records\User as UserRecord;
-
-use Cake\Utility\Hash;
+use verbb\feedme\base\Element;
+use verbb\feedme\base\ElementInterface;
+use verbb\feedme\helpers\AssetHelper;
 
 class User extends Element implements ElementInterface
 {
@@ -221,9 +219,9 @@ class User extends Element implements ElementInterface
 
         // Search anywhere in Craft
         $foundElement = AssetElement::find()
-             ->filename($value)
-             ->folderId($folderId)
-             ->one();
+            ->filename($value)
+            ->folderId($folderId)
+            ->one();
 
         // Do we want to match existing elements, and was one found?
         if ($foundElement && $conflict === AssetElement::SCENARIO_INDEX) {

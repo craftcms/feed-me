@@ -1,12 +1,8 @@
 <?php
+
 namespace verbb\feedme\fields;
 
-use verbb\feedme\FeedMe;
-use verbb\feedme\base\Field;
-use verbb\feedme\base\FieldInterface;
-use verbb\feedme\helpers\AssetHelper;
-use verbb\feedme\helpers\DataHelper;
-
+use Cake\Utility\Hash;
 use Craft;
 use craft\db\Query;
 use craft\db\Table;
@@ -14,8 +10,10 @@ use craft\elements\Asset as AssetElement;
 use craft\helpers\Assets as AssetsHelper;
 use craft\helpers\Db;
 use craft\helpers\UrlHelper;
-
-use Cake\Utility\Hash;
+use verbb\feedme\base\Field;
+use verbb\feedme\base\FieldInterface;
+use verbb\feedme\FeedMe;
+use verbb\feedme\helpers\AssetHelper;
 
 class Assets extends Field implements FieldInterface
 {

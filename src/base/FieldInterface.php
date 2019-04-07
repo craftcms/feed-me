@@ -1,4 +1,5 @@
 <?php
+
 namespace verbb\feedme\base;
 
 use craft\base\ComponentInterface;

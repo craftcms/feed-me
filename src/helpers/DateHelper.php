@@ -1,14 +1,11 @@
 <?php
+
 namespace verbb\feedme\helpers;
 
-use verbb\feedme\FeedMe;
-
-use Craft;
-use craft\helpers\DateTimeHelper;
-
-use DateTime;
-use Carbon\Carbon;
 use Cake\Utility\Hash;
+use Carbon\Carbon;
+use craft\helpers\DateTimeHelper;
+use verbb\feedme\FeedMe;
 
 class DateHelper
 {
@@ -28,7 +25,7 @@ class DateHelper
             $timeIndex = Hash::get($value, 'time');
 
             // Its okay to return this if it was an empty date-time array. This will often be the default
-            // value for an empty stringed date value in the feed. At this point, we want to retain the 
+            // value for an empty stringed date value in the feed. At this point, we want to retain the
             // empty value in the feed to overwrite the date value on the element.
             if (!$dateIndex || !$timeIndex) {
                 return '';

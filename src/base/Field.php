@@ -1,13 +1,12 @@
 <?php
+
 namespace verbb\feedme\base;
 
-use verbb\feedme\FeedMe;
-use verbb\feedme\helpers\DataHelper;
-
+use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
-
-use Cake\Utility\Hash;
+use verbb\feedme\FeedMe;
+use verbb\feedme\helpers\DataHelper;
 
 abstract class Field extends Component
 {

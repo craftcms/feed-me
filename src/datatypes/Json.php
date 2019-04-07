@@ -1,13 +1,12 @@
 <?php
+
 namespace verbb\feedme\datatypes;
 
-use verbb\feedme\FeedMe;
+use Cake\Utility\Hash;
+use Seld\JsonLint\JsonParser;
 use verbb\feedme\base\DataType;
 use verbb\feedme\base\DataTypeInterface;
-
-use Cake\Utility\Hash;
-use craft\helpers\Json as JsonHelper;
-use Seld\JsonLint\JsonParser;
+use verbb\feedme\FeedMe;
 
 class Json extends DataType implements DataTypeInterface
 {
@@ -27,9 +26,9 @@ class Json extends DataType implements DataTypeInterface
 
         if (!$response['success']) {
             $error = 'Unable to reach ' . $url . '. Message: ' . $response['error'];
-            
+
             FeedMe::error($error);
-            
+
             return ['success' => false, 'error' => $error];
         }
 
@@ -68,7 +67,7 @@ class Json extends DataType implements DataTypeInterface
 
         // Look for and return only the items for primary element
         $primaryElement = Hash::get($settings, 'primaryElement');
-        
+
         if ($primaryElement && $usePrimaryElement) {
             $array = FeedMe::$plugin->data->findPrimaryElement($primaryElement, $array);
         }

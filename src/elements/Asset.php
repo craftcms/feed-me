@@ -1,22 +1,20 @@
 <?php
+
 namespace verbb\feedme\elements;
 
+use Cake\Utility\Hash;
+use Craft;
+use craft\elements\Asset as AssetElement;
+use craft\helpers\Assets as AssetsHelper;
+use craft\helpers\UrlHelper;
+use craft\models\VolumeFolder;
 use verbb\feedme\base\Element;
 use verbb\feedme\base\ElementInterface;
 use verbb\feedme\events\FeedProcessEvent;
 use verbb\feedme\helpers\AssetHelper;
 use verbb\feedme\helpers\DuplicateHelper;
 use verbb\feedme\services\Process;
-
-use Craft;
-use craft\db\Query;
-use craft\elements\Asset as AssetElement;
-use craft\helpers\Assets as AssetsHelper;
-use craft\helpers\UrlHelper;
-use craft\models\VolumeFolder;
-
 use yii\base\Event;
-use Cake\Utility\Hash;
 
 class Asset extends Element implements ElementInterface
 {
@@ -104,7 +102,7 @@ class Asset extends Element implements ElementInterface
     {
         parent::beforeSave($element, $settings);
 
-        // If we don't have an ID for this element, we don't want to continue. The reason is that we only want Feed Me to 
+        // If we don't have an ID for this element, we don't want to continue. The reason is that we only want Feed Me to
         // update an asset, not create a new one. Instead, asset-creation (upload from remote) is handled earlier in processing.
         // If this were to proceed, we'd get invalid assets created.
         if (!$element->id) {
@@ -141,7 +139,7 @@ class Asset extends Element implements ElementInterface
         $folderId = $this->parseFolderId($feedData, $folderIdInfo);
 
         $conflict = Hash::get($fieldInfo, 'options.conflict');
-        
+
         // Do we want to match existing element? If one exists, we need to set our element to be that
         if ($conflict === AssetElement::SCENARIO_INDEX) {
             // Make sure to parse the URL into a filename to find the asset by

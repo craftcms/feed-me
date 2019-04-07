@@ -1,25 +1,21 @@
 <?php
+
 namespace verbb\feedme\services;
 
-use verbb\feedme\FeedMe;
+use craft\base\Component;
+use craft\helpers\Component as ComponentHelper;
 use verbb\feedme\base\ElementInterface;
 use verbb\feedme\elements\Asset;
 use verbb\feedme\elements\CalenderEvent;
 use verbb\feedme\elements\Category;
 use verbb\feedme\elements\Comment;
-use verbb\feedme\elements\CommerceOrder;
 use verbb\feedme\elements\CommerceProduct;
 use verbb\feedme\elements\DigitalProduct;
 use verbb\feedme\elements\Entry;
 use verbb\feedme\elements\Tag;
 use verbb\feedme\elements\User;
 use verbb\feedme\events\RegisterFeedMeElementsEvent;
-
-use Craft;
-use craft\base\Component;
-use craft\helpers\Component as ComponentHelper;
-
-use Cake\Utility\Hash;
+use verbb\feedme\FeedMe;
 
 class Elements extends Component
 {

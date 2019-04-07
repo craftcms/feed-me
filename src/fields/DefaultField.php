@@ -1,13 +1,9 @@
 <?php
+
 namespace verbb\feedme\fields;
 
-use verbb\feedme\FeedMe;
 use verbb\feedme\base\Field;
 use verbb\feedme\base\FieldInterface;
-
-use Craft;
-
-use Cake\Utility\Hash;
 
 class DefaultField extends Field implements FieldInterface
 {

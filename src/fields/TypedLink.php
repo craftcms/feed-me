@@ -1,15 +1,11 @@
 <?php
+
 namespace verbb\feedme\fields;
 
-use verbb\feedme\FeedMe;
+use Cake\Utility\Hash;
 use verbb\feedme\base\Field;
 use verbb\feedme\base\FieldInterface;
 use verbb\feedme\helpers\DataHelper;
-
-use Craft;
-use craft\helpers\Localization;
-
-use Cake\Utility\Hash;
 
 class TypedLink extends Field implements FieldInterface
 {

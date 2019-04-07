@@ -1,15 +1,12 @@
 <?php
+
 namespace verbb\feedme\helpers;
 
+use Cake\Utility\Hash;
 use Craft;
-use craft\base\Serializable;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Db;
-
 use verbb\feedme\FeedMe;
-
-use yii\base\Arrayable;
-use Cake\Utility\Hash;
 
 class DataHelper
 {
@@ -64,7 +61,7 @@ class DataHelper
                 // an array, so ensure to merge with the current results.
                 if (is_string($nodeValue) && strpos($nodeValue, $dataDelimiter) !== false) {
                     $delimitedValues = explode($dataDelimiter, $nodeValue);
-                    
+
                     // Trim values in case whitespace was used between delimiter
                     $delimitedValues = array_map('trim', $delimitedValues);
 
@@ -100,7 +97,7 @@ class DataHelper
             // its supposed to match up with, which is stored in the DB like MatrixBlock/Images
             $feedPath = preg_replace('/(\/\d+\/)/', '/', $nodePath);
             $feedPath = preg_replace('/^(\d+\/)|(\/\d+)/', '', $feedPath);
-            
+
             if ($feedPath == $node || $nodePath == $node) {
                 if ($nodeValue === null || $nodeValue === '') {
                     $nodeValue = $default;
@@ -110,7 +107,7 @@ class DataHelper
                 // an array, so ensure to merge with the current results.
                 if (is_string($nodeValue) && strpos($nodeValue, $dataDelimiter) !== false) {
                     $delimitedValues = explode($dataDelimiter, $nodeValue);
-                    
+
                     // Trim values in case whitespace was used between delimiter
                     $delimitedValues = array_map('trim', $delimitedValues);
 
@@ -143,7 +140,7 @@ class DataHelper
             try {
                 $value = Craft::$app->getView()->renderObjectTemplate($value, $element);
             } catch (\Throwable $e) {
-                
+
             }
         }
 
@@ -193,7 +190,7 @@ class DataHelper
 
                 $existingValue = $groups;
             }
-            
+
             if ($existingValue == $newValue) {
                 unset($trackedChanges[$key]);
                 continue;
@@ -230,7 +227,7 @@ class DataHelper
     public static function arrayCompare($array1, $array2)
     {
         $diff = false;
-        
+
         foreach ($array1 as $key => $value) {
             if (!array_key_exists($key, $array2)) {
                 $diff[0][$key] = $value;
@@ -240,7 +237,7 @@ class DataHelper
                     $diff[1][$key] = $array2[$key];
                 } else {
                     $new = self::arrayCompare($value, $array2[$key]);
-                    
+
                     if ($new !== false) {
                         if (isset($new[0])) {
                             $diff[0][$key] = $new[0];

@@ -1,12 +1,11 @@
 <?php
+
 namespace verbb\feedme\models;
 
+use Cake\Utility\Hash;
+use craft\base\Model;
 use verbb\feedme\FeedMe;
 use verbb\feedme\helpers\DuplicateHelper;
-
-use craft\base\Model;
-
-use Cake\Utility\Hash;
 
 class FeedModel extends Model
 {
@@ -62,7 +61,7 @@ class FeedModel extends Model
         if ($element) {
             $element->feed = $this;
         }
-        
+
         return $element;
     }
 
@@ -116,4 +115,3 @@ class FeedModel extends Model
     }
 
 }
-  

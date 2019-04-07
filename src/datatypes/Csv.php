@@ -1,15 +1,13 @@
 <?php
+
 namespace verbb\feedme\datatypes;
 
-use verbb\feedme\FeedMe;
+use Cake\Utility\Hash;
+use craft\helpers\StringHelper;
+use League\Csv\Reader;
 use verbb\feedme\base\DataType;
 use verbb\feedme\base\DataTypeInterface;
-
-use Craft;
-use craft\helpers\StringHelper;
-
-use Cake\Utility\Hash;
-use League\Csv\Reader;
+use verbb\feedme\FeedMe;
 
 class Csv extends DataType implements DataTypeInterface
 {
@@ -117,13 +115,15 @@ class Csv extends DataType implements DataTypeInterface
 
         try {
             $array = $reader->fetchAssoc(0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) {
+        }
 
         try {
             if (!$array) {
                 $array = $reader->fetch();
             }
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) {
+        }
 
         // Support league/csv v9 syntax
         try {
@@ -131,7 +131,8 @@ class Csv extends DataType implements DataTypeInterface
                 $reader->setHeaderOffset(0);
                 $array = $reader->getRecords();
             }
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) {
+        }
 
         return $array;
     }

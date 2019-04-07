@@ -1,16 +1,13 @@
 <?php
+
 namespace verbb\feedme\fields;
 
-use verbb\feedme\FeedMe;
+use Cake\Utility\Hash;
+use Craft;
+use Solspace\Calendar\Elements\Event as EventElement;
 use verbb\feedme\base\Field;
 use verbb\feedme\base\FieldInterface;
-
-use Craft;
-use craft\helpers\Db;
-
-use Solspace\Calendar\Elements\Event as EventElement;
-
-use Cake\Utility\Hash;
+use verbb\feedme\FeedMe;
 
 class CalendarEvents extends Field implements FieldInterface
 {
@@ -83,7 +80,7 @@ class CalendarEvents extends Field implements FieldInterface
             if (Craft::$app->getFields()->getFieldByHandle($match)) {
                 $columnName = Craft::$app->getFields()->oldFieldColumnPrefix . $match;
             }
-            
+
             $query = EventElement::find();
 
             // In multi-site, there's currently no way to query across all sites - we use the current site

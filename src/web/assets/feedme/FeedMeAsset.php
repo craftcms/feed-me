@@ -1,7 +1,7 @@
 <?php
+
 namespace verbb\feedme\web\assets\feedme;
 
-use Craft;
 use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;
 

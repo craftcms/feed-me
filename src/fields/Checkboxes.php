@@ -1,13 +1,10 @@
 <?php
+
 namespace verbb\feedme\fields;
 
-use verbb\feedme\FeedMe;
+use Cake\Utility\Hash;
 use verbb\feedme\base\Field;
 use verbb\feedme\base\FieldInterface;
-
-use Craft;
-
-use Cake\Utility\Hash;
 
 class Checkboxes extends Field implements FieldInterface
 {

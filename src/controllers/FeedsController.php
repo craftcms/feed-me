@@ -1,17 +1,16 @@
 <?php
+
 namespace verbb\feedme\controllers;
 
-use verbb\feedme\FeedMe;
-use verbb\feedme\helpers\BaseHelper;
-use verbb\feedme\models\FeedModel;
-use verbb\feedme\queue\jobs\FeedImport;
-
+use Cake\Utility\Hash;
 use Craft;
 use craft\helpers\Json;
 use craft\helpers\StringHelper;
 use craft\web\Controller;
-
-use Cake\Utility\Hash;
+use verbb\feedme\FeedMe;
+use verbb\feedme\helpers\BaseHelper;
+use verbb\feedme\models\FeedModel;
+use verbb\feedme\queue\jobs\FeedImport;
 
 class FeedsController extends Controller
 {
@@ -97,7 +96,7 @@ class FeedsController extends Controller
         $variables['task'] = $this->_runImportTask($feed);
 
         if ($request->getParam('direct')) {
-            // If the user triggers this from the control panel (maybe for testing), triggering a task immediately will 
+            // If the user triggers this from the control panel (maybe for testing), triggering a task immediately will
             // lock up the browser session while it runs. In that case, we use JS to trigger the task (in _direct template)
             //
             // However, when triggering via Cron, run the task immediately, as Cron doesn't trigger JS (there's no browser)
@@ -106,7 +105,7 @@ class FeedsController extends Controller
 
             if ($browser == 'Other') {
                 Craft::$app->getQueue()->run();
-                return $this->asJson(Craft::t('feed-me', '{name} has completed processing', [ 'name' => $feed->name ] ));
+                return $this->asJson(Craft::t('feed-me', '{name} has completed processing', ['name' => $feed->name]));
             }
 
             $view = $this->getView();
@@ -198,7 +197,7 @@ class FeedsController extends Controller
     public function actionDebug()
     {
         $request = Craft::$app->getRequest();
-        
+
         $feedId = $request->getParam('feedId');
         $limit = $request->getParam('limit');
         $offset = $request->getParam('offset');
@@ -247,7 +246,7 @@ class FeedsController extends Controller
 
         // Are we running from the CP?
         if ($request->getIsCpRequest()) {
-            // if not using the direct param for this request, do UI stuff 
+            // if not using the direct param for this request, do UI stuff
             Craft::$app->getSession()->setNotice(Craft::t('feed-me', 'Feed processing started.'));
 
             // Create the import task

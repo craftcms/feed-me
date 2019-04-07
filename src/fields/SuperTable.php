@@ -1,15 +1,11 @@
 <?php
+
 namespace verbb\feedme\fields;
 
-use verbb\feedme\FeedMe;
+use Cake\Utility\Hash;
 use verbb\feedme\base\Field;
 use verbb\feedme\base\FieldInterface;
-use verbb\feedme\helpers\DataHelper;
-
-use Craft;
-use craft\db\Query;
-
-use Cake\Utility\Hash;
+use verbb\feedme\FeedMe;
 
 class SuperTable extends Field implements FieldInterface
 {
@@ -83,7 +79,7 @@ class SuperTable extends Field implements FieldInterface
                 // Swap out the node-path stored in the field-mapping info, because
                 // it'll be generic MatrixBlock/Images not MatrixBlock/0/Images/0 like we need
                 $subFieldInfo['node'] = $nodePath;
-                
+
                 // Parse each field via their own fieldtype service
                 $parsedValue = $this->_parseSubField($this->feedData, $subFieldHandle, $subFieldInfo);
 

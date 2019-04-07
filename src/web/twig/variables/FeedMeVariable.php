@@ -1,16 +1,12 @@
 <?php
+
 namespace verbb\feedme\web\twig\variables;
 
-use verbb\feedme\FeedMe;
-
 use Craft;
-use craft\elements\User;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\UrlHelper;
-
+use verbb\feedme\FeedMe;
 use yii\di\ServiceLocator;
-
-use Cake\Utility\Hash;
 
 class FeedMeVariable extends ServiceLocator
 {
@@ -34,10 +30,10 @@ class FeedMeVariable extends ServiceLocator
         $enabledTabs = $settings->enabledTabs;
 
         $tabs = [
-            'feeds' => [ 'label' => Craft::t('feed-me', 'Feeds'), 'url' => UrlHelper::cpUrl('feed-me/feeds') ],
-            'logs' => [ 'label' => Craft::t('feed-me', 'Logs'), 'url' => UrlHelper::cpUrl('feed-me/logs') ],
-            'help' => [ 'label' => Craft::t('feed-me', 'Help'), 'url' => UrlHelper::cpUrl('feed-me/help') ],
-            'settings' => [ 'label' => Craft::t('feed-me', 'Settings'), 'url' => UrlHelper::cpUrl('feed-me/settings') ],
+            'feeds' => ['label' => Craft::t('feed-me', 'Feeds'), 'url' => UrlHelper::cpUrl('feed-me/feeds')],
+            'logs' => ['label' => Craft::t('feed-me', 'Logs'), 'url' => UrlHelper::cpUrl('feed-me/logs')],
+            'help' => ['label' => Craft::t('feed-me', 'Help'), 'url' => UrlHelper::cpUrl('feed-me/help')],
+            'settings' => ['label' => Craft::t('feed-me', 'Settings'), 'url' => UrlHelper::cpUrl('feed-me/settings')],
         ];
 
         if ($enabledTabs === '*' || $enabledTabs === 1 || !is_array($enabledTabs)) {
@@ -128,7 +124,7 @@ class FeedMeVariable extends ServiceLocator
         } else if ($field->sources === '*') {
             $sources = Craft::$app->volumes->getAllVolumes();
         }
-        
+
         return $sources;
     }
 
@@ -226,27 +222,27 @@ class FeedMeVariable extends ServiceLocator
 
     public function getAssetFolderBySourceId($id)
     {
-        $folders = Craft::$app->assets->getFolderTreeByVolumeIds(array($id));
+        $folders = Craft::$app->assets->getFolderTreeByVolumeIds([$id]);
 
-        $return = array();
+        $return = [];
 
         $return[''] = Craft::t('feed-me', 'Don\'t Import');
 
         if (is_array($folders)) {
             foreach ($folders as $folder) {
-                $return[] = array(
+                $return[] = [
                     'value' => 'root',
                     'label' => Craft::t('feed-me', 'Root Folder'),
-                );
+                ];
 
                 $children = $folder->getChildren();
 
                 if ($children) {
                     foreach ($children as $childFolder) {
-                        $return[] = array(
+                        $return[] = [
                             'value' => $childFolder['id'],
                             'label' => $childFolder['name'],
-                        );
+                        ];
                     }
                 }
             }

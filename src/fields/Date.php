@@ -1,14 +1,11 @@
 <?php
+
 namespace verbb\feedme\fields;
 
-use verbb\feedme\FeedMe;
+use Cake\Utility\Hash;
 use verbb\feedme\base\Field;
 use verbb\feedme\base\FieldInterface;
 use verbb\feedme\helpers\DateHelper;
-
-use Craft;
-
-use Cake\Utility\Hash;
 
 class Date extends Field implements FieldInterface
 {
@@ -34,7 +31,7 @@ class Date extends Field implements FieldInterface
     public function parseField()
     {
         $value = $this->fetchValue();
-        
+
         $formatting = Hash::get($this->fieldInfo, 'options.match');
 
         $dateValue = DateHelper::parseString($value, $formatting);

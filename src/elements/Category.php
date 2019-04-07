@@ -1,15 +1,13 @@
 <?php
+
 namespace verbb\feedme\elements;
 
-use verbb\feedme\FeedMe;
-use verbb\feedme\base\Element;
-use verbb\feedme\base\ElementInterface;
-
+use Cake\Utility\Hash;
 use Craft;
 use craft\elements\Category as CategoryElement;
-use craft\helpers\Db;
-
-use Cake\Utility\Hash;
+use verbb\feedme\base\Element;
+use verbb\feedme\base\ElementInterface;
+use verbb\feedme\FeedMe;
 
 class Category extends Element implements ElementInterface
 {

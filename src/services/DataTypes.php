@@ -1,7 +1,12 @@
 <?php
+
 namespace verbb\feedme\services;
 
-use verbb\feedme\FeedMe;
+use Cake\Utility\Hash;
+use Craft;
+use craft\base\Component;
+use craft\helpers\Component as ComponentHelper;
+use craft\helpers\UrlHelper;
 use verbb\feedme\base\DataTypeInterface;
 use verbb\feedme\datatypes\Atom;
 use verbb\feedme\datatypes\Csv;
@@ -11,21 +16,9 @@ use verbb\feedme\datatypes\Rss;
 use verbb\feedme\datatypes\Xml;
 use verbb\feedme\events\FeedDataEvent;
 use verbb\feedme\events\RegisterFeedMeDataTypesEvent;
+use verbb\feedme\FeedMe;
 use verbb\feedme\models\FeedModel;
-
-use Craft;
-use craft\base\Component;
-use craft\elements\Entry;
-use craft\helpers\Component as ComponentHelper;
-use craft\helpers\UrlHelper;
-use craft\models\Section;
-
 use yii\base\Event;
-
-use GuzzleHttp\Psr7;
-use GuzzleHttp\Exception\RequestException;
-
-use Cake\Utility\Hash;
 
 class DataTypes extends Component
 {
@@ -234,7 +227,7 @@ class DataTypes extends Component
         if (!is_array($data)) {
             return [];
         }
-        
+
         $mappingPaths = [];
 
         // Go through entire feed and grab all nodes - that way, its normalised across the entire feed
@@ -273,7 +266,7 @@ class DataTypes extends Component
                 if (array_key_exists('0', $parsed[$element])) { // is multidimensional
                     return $parsed[$element];
                 } else {
-                    return array($parsed[$element]);
+                    return [$parsed[$element]];
                 }
             }
         }
@@ -373,7 +366,8 @@ class DataTypes extends Component
     // Private
     // =========================================================================
 
-    private function _parseNodeTree(&$tree, $array, $index = '') {
+    private function _parseNodeTree(&$tree, $array, $index = '')
+    {
         foreach ($array as $key => $val) {
             if (!is_numeric($key)) {
                 if (is_array($val)) {
@@ -382,7 +376,7 @@ class DataTypes extends Component
                     if (Hash::dimensions($val) == 1) {
                         $count = 1;
                     }
-                    
+
                     $tree[$index . '/' . $key] = $count;
 
                     $this->_parseNodeTree($tree, $val, $index . '/' . $key);

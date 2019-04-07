@@ -1,20 +1,16 @@
 <?php
+
 namespace verbb\feedme\elements;
 
-use verbb\feedme\FeedMe;
-use verbb\feedme\base\Element;
-use verbb\feedme\base\ElementInterface;
-
+use Cake\Utility\Hash;
 use Craft;
-use craft\base\Element as BaseElement;
 use craft\db\Query;
 use craft\elements\User as UserElement;
-use craft\helpers\Db;
-
 use verbb\comments\Comments;
 use verbb\comments\elements\Comment as CommentElement;
-
-use Cake\Utility\Hash;
+use verbb\feedme\base\Element;
+use verbb\feedme\base\ElementInterface;
+use verbb\feedme\FeedMe;
 
 class Comment extends Element implements ElementInterface
 {

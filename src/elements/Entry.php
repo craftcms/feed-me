@@ -1,18 +1,15 @@
 <?php
+
 namespace verbb\feedme\elements;
 
-use verbb\feedme\FeedMe;
-use verbb\feedme\base\Element;
-use verbb\feedme\base\ElementInterface;
-use verbb\feedme\helpers\DateHelper;
-
+use Cake\Utility\Hash;
 use Craft;
 use craft\elements\Entry as EntryElement;
 use craft\elements\User as UserElement;
-use craft\helpers\Db;
 use craft\models\Section;
-
-use Cake\Utility\Hash;
+use verbb\feedme\base\Element;
+use verbb\feedme\base\ElementInterface;
+use verbb\feedme\FeedMe;
 
 class Entry extends Element implements ElementInterface
 {

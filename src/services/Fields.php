@@ -1,17 +1,23 @@
 <?php
+
 namespace verbb\feedme\services;
 
-use verbb\feedme\FeedMe;
+use Cake\Utility\Hash;
+use Craft;
+use craft\base\Component;
+use craft\helpers\Component as ComponentHelper;
 use verbb\feedme\base\FieldInterface;
+use verbb\feedme\events\FieldEvent;
+use verbb\feedme\events\RegisterFeedMeFieldsEvent;
 use verbb\feedme\fields\Assets;
+use verbb\feedme\fields\CalendarEvents;
 use verbb\feedme\fields\Categories;
 use verbb\feedme\fields\Checkboxes;
-use verbb\feedme\fields\CalendarEvents;
 use verbb\feedme\fields\CommerceProducts;
 use verbb\feedme\fields\CommerceVariants;
 use verbb\feedme\fields\Date;
-use verbb\feedme\fields\DigitalProducts;
 use verbb\feedme\fields\DefaultField;
+use verbb\feedme\fields\DigitalProducts;
 use verbb\feedme\fields\Dropdown;
 use verbb\feedme\fields\Entries;
 use verbb\feedme\fields\Lightswitch;
@@ -27,15 +33,6 @@ use verbb\feedme\fields\Table;
 use verbb\feedme\fields\Tags;
 use verbb\feedme\fields\TypedLink;
 use verbb\feedme\fields\Users;
-use verbb\feedme\events\RegisterFeedMeFieldsEvent;
-use verbb\feedme\events\FieldEvent;
-
-use Craft;
-use craft\base\Component;
-use craft\db\Query;
-use craft\helpers\Component as ComponentHelper;
-
-use Cake\Utility\Hash;
 
 class Fields extends Component
 {
@@ -44,7 +41,7 @@ class Fields extends Component
 
     const EVENT_REGISTER_FEED_ME_FIELDS = 'registerFeedMeFields';
     const EVENT_BEFORE_PARSE_FIELD = 'onBeforeParseField';
-    const EVENT_AFTER_PARSE_FIELD = 'onAfterParseField';    
+    const EVENT_AFTER_PARSE_FIELD = 'onAfterParseField';
 
 
     // Properties
@@ -105,7 +102,7 @@ class Fields extends Component
         if (count($this->_fields)) {
             return $this->_fields;
         }
-        
+
         $event = new RegisterFeedMeFieldsEvent([
             'fields' => [
                 Assets::class,

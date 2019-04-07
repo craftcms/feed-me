@@ -1,16 +1,15 @@
 <?php
+
 namespace verbb\feedme\fields;
 
-use verbb\feedme\FeedMe;
-use verbb\feedme\base\Field;
-use verbb\feedme\base\FieldInterface;
-
+use Cake\Utility\Hash;
 use Craft;
 use craft\base\Element as BaseElement;
 use craft\elements\User as UserElement;
 use craft\helpers\Db;
-
-use Cake\Utility\Hash;
+use verbb\feedme\base\Field;
+use verbb\feedme\base\FieldInterface;
+use verbb\feedme\FeedMe;
 
 class Users extends Field implements FieldInterface
 {
@@ -84,7 +83,7 @@ class Users extends Field implements FieldInterface
             if (Craft::$app->getFields()->getFieldByHandle($match)) {
                 $columnName = Craft::$app->getFields()->oldFieldColumnPrefix . $match;
             }
-            
+
             $query = UserElement::find();
 
             $criteria['status'] = null;

@@ -1,16 +1,13 @@
 <?php
+
 namespace verbb\feedme\fields;
 
-use verbb\feedme\FeedMe;
+use Cake\Utility\Hash;
+use Craft;
+use craft\digitalproducts\elements\Product as ProductElement;
 use verbb\feedme\base\Field;
 use verbb\feedme\base\FieldInterface;
-
-use Craft;
-use craft\helpers\Db;
-
-use craft\digitalproducts\elements\Product as ProductElement;
-
-use Cake\Utility\Hash;
+use verbb\feedme\FeedMe;
 
 class DigitalProducts extends Field implements FieldInterface
 {
@@ -83,7 +80,7 @@ class DigitalProducts extends Field implements FieldInterface
             if (Craft::$app->getFields()->getFieldByHandle($match)) {
                 $columnName = Craft::$app->getFields()->oldFieldColumnPrefix . $match;
             }
-            
+
             $query = ProductElement::find();
 
             // In multi-site, there's currently no way to query across all sites - we use the current site

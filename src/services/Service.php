@@ -1,15 +1,11 @@
 <?php
+
 namespace verbb\feedme\services;
 
-use verbb\feedme\FeedMe;
-
+use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
-use craft\elements\Entry;
-use craft\models\Section;
-use craft\events\RegisterComponentTypesEvent;
-
-use Cake\Utility\Hash;
+use verbb\feedme\FeedMe;
 
 class Service extends Component
 {

@@ -1,15 +1,12 @@
 <?php
+
 namespace verbb\feedme\elements;
 
+use Cake\Utility\Hash;
+use Craft;
+use craft\commerce\elements\Order as OrderElement;
 use verbb\feedme\base\Element;
 use verbb\feedme\base\ElementInterface;
-
-use Craft;
-
-use craft\commerce\Plugin as Commerce;
-use craft\commerce\elements\Order as OrderElement;
-
-use Cake\Utility\Hash;
 
 class CommerceOrder extends Element implements ElementInterface
 {

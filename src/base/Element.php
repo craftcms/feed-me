@@ -1,20 +1,16 @@
 <?php
+
 namespace verbb\feedme\base;
 
-use verbb\feedme\FeedMe;
-use verbb\feedme\helpers\BaseHelper;
-use verbb\feedme\helpers\DataHelper;
-use verbb\feedme\helpers\DateHelper;
-
+use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
 use craft\base\Element as BaseElement;
-use craft\elements\User as UserElement;
 use craft\helpers\Db;
-use craft\helpers\ElementHelper;
 use craft\helpers\StringHelper;
-
-use Cake\Utility\Hash;
+use verbb\feedme\helpers\BaseHelper;
+use verbb\feedme\helpers\DataHelper;
+use verbb\feedme\helpers\DateHelper;
 
 abstract class Element extends Component
 {
@@ -124,14 +120,14 @@ abstract class Element extends Component
 
         // Check against elements that may be disabled for site
         $criteria['enabledForSite'] = false;
-        
+
         return $this->getQuery($settings, $criteria)->one();
     }
 
     public function delete($elementIds)
     {
         $elementsService = Craft::$app->getElements();
-        
+
         foreach ($elementIds as $elementId) {
             $elementsService->deleteElementById($elementId);
         }
@@ -257,7 +253,7 @@ abstract class Element extends Component
         if (!is_null($dateValue)) {
             return $dateValue;
         }
-        
+
         return null;
     }
 

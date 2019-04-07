@@ -1,11 +1,10 @@
 <?php
-namespace verbb\feedme\queue\jobs;
 
-use verbb\feedme\FeedMe;
+namespace verbb\feedme\queue\jobs;
 
 use Craft;
 use craft\queue\BaseJob;
-
+use verbb\feedme\FeedMe;
 use yii\queue\RetryableJobInterface;
 
 class FeedImport extends BaseJob implements RetryableJobInterface
@@ -58,7 +57,7 @@ class FeedImport extends BaseJob implements RetryableJobInterface
             $feedSettings = FeedMe::$plugin->process->beforeProcessFeed($this->feed, $feedData);
 
             $index = 0;
-            
+
             foreach ($feedData as $key => $data) {
                 try {
                     $element = FeedMe::$plugin->process->processFeed($index, $feedSettings, $this->processedElementIds);
@@ -96,6 +95,6 @@ class FeedImport extends BaseJob implements RetryableJobInterface
 
     protected function defaultDescription(): string
     {
-        return Craft::t('feed-me', 'Running {name} feed.', [ 'name' => $this->feed->name ]);
+        return Craft::t('feed-me', 'Running {name} feed.', ['name' => $this->feed->name]);
     }
 }

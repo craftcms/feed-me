@@ -1,4 +1,5 @@
 <?php
+
 namespace verbb\feedme\records;
 
 use craft\db\ActiveRecord;

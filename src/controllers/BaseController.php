@@ -1,10 +1,10 @@
 <?php
-namespace verbb\feedme\controllers;
 
-use verbb\feedme\FeedMe;
+namespace verbb\feedme\controllers;
 
 use Craft;
 use craft\web\Controller;
+use verbb\feedme\FeedMe;
 
 class BaseController extends Controller
 {

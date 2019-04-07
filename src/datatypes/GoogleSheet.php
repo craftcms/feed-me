@@ -1,14 +1,12 @@
 <?php
+
 namespace verbb\feedme\datatypes;
-
-use verbb\feedme\FeedMe;
-use verbb\feedme\base\DataType;
-use verbb\feedme\base\DataTypeInterface;
-
-use Craft;
 
 use Cake\Utility\Hash;
 use craft\helpers\Json as JsonHelper;
+use verbb\feedme\base\DataType;
+use verbb\feedme\base\DataTypeInterface;
+use verbb\feedme\FeedMe;
 
 class GoogleSheet extends DataType implements DataTypeInterface
 {

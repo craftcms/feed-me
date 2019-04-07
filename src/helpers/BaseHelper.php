@@ -1,4 +1,5 @@
 <?php
+
 namespace verbb\feedme\helpers;
 
 use Craft;
