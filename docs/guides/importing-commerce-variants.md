@@ -179,6 +179,63 @@ The below data is what we'll use for this guide:
 
 Choose either the XML or JSON (depending on your preference), and save as a file in the root of your public directory. We'll assume its `http://craft.local/variants-feed.xml`.
 
+## Setup your Feed
+
+With your feed data in place, go to Feed Me's main control panel screen, and add a new feed.
+
+![Feedme Variants Guide Setup](../screenshots/feedme-variants-guide-setup.png)
+
+Enter the following details:
+
+- **Name** - Products
+- **Feed URL** - `http://craft.local/variants-feed.xml`
+- **Feed Type** - _XML or JSON_
+- **Element Type** - Products
+- **Commerce Product Type** - Clothing (or similar)
+- **Import Strategy** - `Create new elements`, and `Update existing elements`
+- **Passkey** - Leave as generated
+- **Backup** - Turn on
+
+Click the _Save & Continue_ button to set up the primary element.
+
+## Primary Element
+
+The primary element can be confusing at first, but its vitally important to ensure Feed Me can hone in on the content in your feed correctly. Refer to [Primary Element →](docs:feature-tour/primary-element) for a detailed explanation.
+
+Enter the following details:
+
+- **Primary Element** - `/products/product`
+- **Pagination URL** - `No Pagination URL`
+
+Click the _Save & Continue_ button to set up the field mapping.
+
+## Field Mapping
+
+Use the below screenshot as a guide for the data we want to map to our product fields.
+
+![Feedme Variants Guide Mapping](../screenshots/feedme-variants-guide-mapping.png)
+
+#### Things to note
+
+- Our unique identifier is the Variant SKU - simply as its unique to each product.
+- We have some custom fields for Products and Variants mapped.
+
 * * *
 
-Let's continue and [Setup your Feed →](docs:guides/importing-commerce-variants/setup-your-feed)
+Click the _Save & Import_ button to begin importing your content.
+
+## Importing your Content
+
+Wait for the feed processing to finish. Remember, you can always navigate away from this confirmation screen.
+
+![Feedme Products Guide Start](../screenshots/feedme-products-guide-start.png)
+
+:::tip
+If you're having issues, or seeing errors at this point, look at the [Troubleshooting](docs:support/troubleshooting) section.
+:::
+
+You should now have 2 brand new products in your Clothing product type.
+
+![Feedme Variants Guide Finish 1](../screenshots/feedme-variants-guide-finish-1.png)
+
+![Feedme Variants Guide Finish 2](../screenshots/feedme-variants-guide-finish-2.png)

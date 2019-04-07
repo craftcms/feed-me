@@ -74,6 +74,64 @@ The below data is what we'll use for this guide:
 
 Choose either the XML or JSON (depending on your preference), and save as a file in the root of your public directory. We'll assume its `http://craft.local/products-feed.xml`.
 
-* * *
+## Setup your Feed
 
-Let's continue and [Setup your Feed →](docs:guides/importing-commerce-products/setup-your-feed)
+With your feed data in place, go to Feed Me's main control panel screen, and add a new feed.
+
+![Feedme Matrix Guide Setup](../screenshots/feedme-matrix-guide-setup.png)
+
+Enter the following details:
+
+- **Name** - Products
+- **Feed URL** - `http://craft.local/products-feed.xml`
+- **Feed Type** - _XML or JSON_
+- **Element Type** - Products
+- **Commerce Product Type** - Clothing (or similar)
+- **Import Strategy** - `Create new elements`, and `Update existing elements`
+- **Passkey** - Leave as generated
+- **Backup** - Turn on
+
+Click the _Save & Continue_ button to set up the primary element.
+
+## Primary Element
+
+The primary element can be confusing at first, but its vitally important to ensure Feed Me can hone in on the content in your feed correctly. Refer to [Primary Element →](docs:feature-tour/primary-element) for a detailed explanation.
+
+Enter the following details:
+
+- **Primary Element** - `/products/product`
+- **Pagination URL** - `No Pagination URL`
+
+Click the _Save & Continue_ button to set up the field mapping.
+
+## Field Mapping
+
+Use the below screenshot as a guide for the data we want to map to our product fields.
+
+![Feedme Products Guide Mapping](../screenshots/feedme-products-guide-mapping.png)
+
+#### Things to note
+
+- As these are single variant products, we check the `Is Default` option. This tells Commerce this variant is the default variant for this product.
+- Our unique identifier is the Variant SKU - simply as its unique to each product.
+- We have no custom fields for Products setup - but they would appear underneath the Product Variant Fields as per a regular [Importing into Entries](docs:guides/importing-entries) workflow.
+
+Click the _Save & Import_ button to begin importing your content.
+
+## Importing your Content
+
+Wait for the feed processing to finish. Remember, you can always navigate away from this confirmation screen.
+
+![Feedme Matrix Guide Start](../screenshots/feedme-matrix-guide-start.png)
+
+:::tip
+If you're having issues, or seeing errors at this point, look at the [Troubleshooting](docs:support/troubleshooting) section.
+:::
+
+You should now have 2 brand new products in your Clothing product type.
+
+![Feedme Matrix Guide Finish1](../screenshots/feedme-matrix-guide-finish1.png)
+
+![Feedme Matrix Guide Finish2](../screenshots/feedme-matrix-guide-finish2.png)
+
+

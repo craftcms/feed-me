@@ -226,6 +226,60 @@ The below data is what we'll use for this guide:
 
 Choose either the XML or JSON (depending on your preference), and save as a file in the root of your public directory. We'll assume its `http://craft.local/property-feed.xml`.
 
-* * *
+## Setup your Feed
 
-Let's continue and [Setup your Feed →](docs:guides/importing-entries/setup-your-feed)
+With your feed data in place, go to Feed Me's main control panel screen, and add a new feed.
+
+![Feedme Guide Setup](../screenshots/feedme-guide-setup.png)
+
+Enter the following details:
+
+- **Name** - Property Feed
+- **Feed URL** - `http://craft.local/property-feed.xml`
+- **Feed Type** - _XML or JSON_
+- **Primary Element** - `listing`
+- **Element Type** - Entries
+- **Section** - Property Listings
+- **Entry Type** - Property Listings
+- **Import Strategy** - `Create new elements`, and `Update existing elements`
+- **Passkey** - Leave as generated
+- **Backup** - Turn on
+
+Click the _Save & Continue_ button to set up the primary element.
+
+## Primary Element
+
+The primary element can be confusing at first, but its vitally important to ensure Feed Me can hone in on the content in your feed correctly. Refer to [Primary Element →](docs:feature-tour/primary-element) for a detailed explanation.
+
+Enter the following details:
+
+- **Primary Element** - `/propertyList/listing`
+- **Pagination URL** - `No Pagination URL`
+
+Click the _Save & Continue_ button to set up the field mapping.
+
+## Field Mapping
+
+Use the below screenshot as a guide for the data we want to map to our entry fields. Items to note are:
+
+- We're creating Property Categories if they don't already exist
+- We're uploading the remote URLs in the feed for Property Images. These will be uploaded to Craft's assets.
+- We're checking against existing entries and their Property Unique ID value. In this case, Title isn't necessarily unique enough.
+
+![Feedme Guide Mapping](../screenshots/feedme-guide-mapping.png)
+
+Click the _Save & Import_ button to begin importing your content.
+
+## Importing your Content
+
+Wait for the feed processing to finish. Remember, you can always navigate away from this confirmation screen.
+
+![Feedme Start](../screenshots/feedme-start.png)
+
+:::tip
+If you're having issues, or seeing errors at this point, look at the [Troubleshooting](docs:support/troubleshooting) section.
+:::
+
+You should now have 2 brand new entries in your Property Listings section.
+
+![Feedme Guide Finish](../screenshots/feedme-guide-finish.png)
