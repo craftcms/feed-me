@@ -15,7 +15,7 @@ use verbb\feedme\elements\Entry;
 use verbb\feedme\elements\Tag;
 use verbb\feedme\elements\User;
 use verbb\feedme\events\RegisterFeedMeElementsEvent;
-use verbb\feedme\FeedMe;
+use verbb\feedme\Plugin;
 
 class Elements extends Component
 {
@@ -76,7 +76,7 @@ class Elements extends Component
             return $this->_elements;
         }
 
-        if (FeedMe::$plugin->is(FeedMe::EDITION_PRO)) {
+        if (Plugin::$plugin->is(Plugin::EDITION_PRO)) {
             $elements = [
                 Asset::class,
                 Category::class,

@@ -7,7 +7,7 @@ use Cake\Utility\Xml as XmlParser;
 use Craft;
 use verbb\feedme\base\DataType;
 use verbb\feedme\base\DataTypeInterface;
-use verbb\feedme\FeedMe;
+use verbb\feedme\Plugin;
 
 class Xml extends DataType implements DataTypeInterface
 {
@@ -23,12 +23,12 @@ class Xml extends DataType implements DataTypeInterface
     public function getFeed($url, $settings, $usePrimaryElement = true)
     {
         $feedId = Hash::get($settings, 'id');
-        $response = FeedMe::$plugin->data->getRawData($url, $feedId);
+        $response = Plugin::$plugin->data->getRawData($url, $feedId);
 
         if (!$response['success']) {
             $error = 'Unable to reach ' . $url . '. Message: ' . $response['error'];
 
-            FeedMe::error($error);
+            Plugin::error($error);
 
             return ['success' => false, 'error' => $error];
         }
@@ -50,7 +50,7 @@ class Xml extends DataType implements DataTypeInterface
                 $error = Craft::t('feed-me', 'Invalid XML: {e}.', ['e' => $e->getMessage()]);
             }
 
-            FeedMe::error($error);
+            Plugin::error($error);
 
             return ['success' => false, 'error' => $error];
         }
@@ -59,7 +59,7 @@ class Xml extends DataType implements DataTypeInterface
         if (!is_array($array)) {
             $error = 'Invalid XML: ' . json_encode($array);
 
-            FeedMe::error($error);
+            Plugin::error($error);
 
             return ['success' => false, 'error' => $error];
         }
@@ -71,7 +71,7 @@ class Xml extends DataType implements DataTypeInterface
         $primaryElement = Hash::get($settings, 'primaryElement');
 
         if ($primaryElement && $usePrimaryElement) {
-            $array = FeedMe::$plugin->data->findPrimaryElement($primaryElement, $array);
+            $array = Plugin::$plugin->data->findPrimaryElement($primaryElement, $array);
         }
 
         return ['success' => true, 'data' => $array];

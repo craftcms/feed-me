@@ -7,7 +7,7 @@ use Craft;
 use craft\helpers\Json;
 use craft\helpers\StringHelper;
 use craft\web\Controller;
-use verbb\feedme\FeedMe;
+use verbb\feedme\Plugin;
 use verbb\feedme\helpers\BaseHelper;
 use verbb\feedme\models\FeedModel;
 use verbb\feedme\queue\jobs\FeedImport;
@@ -25,7 +25,7 @@ class FeedsController extends Controller
 
     public function actionFeedsIndex()
     {
-        $variables['feeds'] = FeedMe::$plugin->feeds->getFeeds();
+        $variables['feeds'] = Plugin::$plugin->feeds->getFeeds();
 
         return $this->renderTemplate('feed-me/feeds/index', $variables);
     }
@@ -36,7 +36,7 @@ class FeedsController extends Controller
 
         if (!$feed) {
             if ($feedId) {
-                $variables['feed'] = FeedMe::$plugin->feeds->getFeedById($feedId);
+                $variables['feed'] = Plugin::$plugin->feeds->getFeedById($feedId);
             } else {
                 $variables['feed'] = new FeedModel();
                 $variables['feed']->passkey = StringHelper::randomString(10);
@@ -45,8 +45,8 @@ class FeedsController extends Controller
             $variables['feed'] = $feed;
         }
 
-        $variables['dataTypes'] = FeedMe::$plugin->data->dataTypesList();
-        $variables['elements'] = FeedMe::$plugin->elements->getRegisteredElements();
+        $variables['dataTypes'] = Plugin::$plugin->data->dataTypesList();
+        $variables['elements'] = Plugin::$plugin->elements->getRegisteredElements();
 
         return $this->renderTemplate('feed-me/feeds/_edit', $variables);
     }
@@ -55,7 +55,7 @@ class FeedsController extends Controller
     {
         $variables = [];
 
-        $feed = FeedMe::$plugin->feeds->getFeedById($feedId);
+        $feed = Plugin::$plugin->feeds->getFeedById($feedId);
 
         if ($postData) {
             $feed = Hash::merge($feed, $postData);
@@ -72,7 +72,7 @@ class FeedsController extends Controller
     {
         $variables = [];
 
-        $feed = FeedMe::$plugin->feeds->getFeedById($feedId);
+        $feed = Plugin::$plugin->feeds->getFeedById($feedId);
 
         if ($postData) {
             $feed = Hash::merge($feed, $postData);
@@ -88,7 +88,7 @@ class FeedsController extends Controller
     {
         $request = Craft::$app->getRequest();
 
-        $feed = FeedMe::$plugin->feeds->getFeedById($feedId);
+        $feed = Plugin::$plugin->feeds->getFeedById($feedId);
 
         $return = $request->getParam('return') ?: 'feed-me';
 
@@ -119,7 +119,7 @@ class FeedsController extends Controller
 
     public function actionStatusFeed($feedId = null)
     {
-        $feed = FeedMe::$plugin->feeds->getFeedById($feedId);
+        $feed = Plugin::$plugin->feeds->getFeedById($feedId);
 
         $variables['feed'] = $feed;
 
@@ -159,9 +159,9 @@ class FeedsController extends Controller
         $request = Craft::$app->getRequest();
 
         $feedId = $request->getParam('feedId');
-        $feed = FeedMe::$plugin->feeds->getFeedById($feedId);
+        $feed = Plugin::$plugin->feeds->getFeedById($feedId);
 
-        FeedMe::$plugin->feeds->duplicateFeed($feed);
+        Plugin::$plugin->feeds->duplicateFeed($feed);
 
         Craft::$app->getSession()->setNotice(Craft::t('feed-me', 'Feed duplicated.'));
 
@@ -176,7 +176,7 @@ class FeedsController extends Controller
 
         $feedId = $request->getRequiredBodyParam('id');
 
-        FeedMe::$plugin->feeds->deleteFeedById($feedId);
+        Plugin::$plugin->feeds->deleteFeedById($feedId);
 
         return $this->asJson(['success' => true]);
     }
@@ -202,14 +202,14 @@ class FeedsController extends Controller
         $limit = $request->getParam('limit');
         $offset = $request->getParam('offset');
 
-        $feed = FeedMe::$plugin->feeds->getFeedById($feedId);
+        $feed = Plugin::$plugin->feeds->getFeedById($feedId);
 
         ob_start();
 
         // Keep track of processed elements here - particularly for paginated feeds
         $processedElementIds = [];
 
-        FeedMe::$plugin->process->debugFeed($feed, $limit, $offset, $processedElementIds);
+        Plugin::$plugin->process->debugFeed($feed, $limit, $offset, $processedElementIds);
 
         return ob_get_clean();
     }
@@ -221,7 +221,7 @@ class FeedsController extends Controller
 
         $feedIds = Json::decode(Craft::$app->getRequest()->getRequiredBodyParam('ids'));
         $feedIds = array_filter($feedIds);
-        FeedMe::$plugin->getFeeds()->reorderFeeds($feedIds);
+        Plugin::$plugin->getFeeds()->reorderFeeds($feedIds);
 
         return $this->asJson(['success' => true]);
     }
@@ -283,7 +283,7 @@ class FeedsController extends Controller
 
     private function _saveAndRedirect($feed, $redirect, $withId = false)
     {
-        if (!FeedMe::$plugin->feeds->saveFeed($feed)) {
+        if (!Plugin::$plugin->feeds->saveFeed($feed)) {
             Craft::$app->getSession()->setError(Craft::t('feed-me', 'Unable to save feed.'));
 
             Craft::$app->getUrlManager()->setRouteParams([
@@ -309,7 +309,7 @@ class FeedsController extends Controller
         $request = Craft::$app->getRequest();
 
         if ($request->getBodyParam('feedId')) {
-            $feed = FeedMe::$plugin->feeds->getFeedById($request->getBodyParam('feedId'));
+            $feed = Plugin::$plugin->feeds->getFeedById($request->getBodyParam('feedId'));
         } else {
             $feed = new FeedModel();
         }

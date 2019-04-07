@@ -9,7 +9,7 @@ use craft\elements\User as UserElement;
 use craft\helpers\Db;
 use verbb\feedme\base\Field;
 use verbb\feedme\base\FieldInterface;
-use verbb\feedme\FeedMe;
+use verbb\feedme\Plugin;
 
 class Users extends Field implements FieldInterface
 {
@@ -93,13 +93,13 @@ class Users extends Field implements FieldInterface
 
             Craft::configure($query, $criteria);
 
-            FeedMe::info('Search for existing user with query `{i}`', ['i' => json_encode($criteria)]);
+            Plugin::info('Search for existing user with query `{i}`', ['i' => json_encode($criteria)]);
 
             $ids = $query->ids();
 
             $foundElements = array_merge($foundElements, $ids);
 
-            FeedMe::info('Found `{i}` existing users: `{j}`', ['i' => count($foundElements), 'j' => json_encode($foundElements)]);
+            Plugin::info('Found `{i}` existing users: `{j}`', ['i' => count($foundElements), 'j' => json_encode($foundElements)]);
 
             // Check if we should create the element. But only if email is provided (for the moment)
             if (count($ids) == 0) {
@@ -154,9 +154,9 @@ class Users extends Field implements FieldInterface
         $element->setScenario(BaseElement::SCENARIO_ESSENTIALS);
 
         if (!Craft::$app->getElements()->saveElement($element, true, $propagate)) {
-            FeedMe::error('`{handle}` - User error: Could not create - `{e}`.', ['e' => json_encode($element->getErrors()), 'handle' => $this->field->handle]);
+            Plugin::error('`{handle}` - User error: Could not create - `{e}`.', ['e' => json_encode($element->getErrors()), 'handle' => $this->field->handle]);
         } else {
-            FeedMe::info('`{handle}` - User `#{id}` added.', ['id' => $element->id, 'handle' => $this->field->handle]);
+            Plugin::info('`{handle}` - User `#{id}` added.', ['id' => $element->id, 'handle' => $this->field->handle]);
         }
 
         return $element->id;

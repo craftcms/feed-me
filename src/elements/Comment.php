@@ -10,7 +10,7 @@ use verbb\comments\Comments;
 use verbb\comments\elements\Comment as CommentElement;
 use verbb\feedme\base\Element;
 use verbb\feedme\base\ElementInterface;
-use verbb\feedme\FeedMe;
+use verbb\feedme\Plugin;
 
 class Comment extends Element implements ElementInterface
 {
@@ -179,9 +179,9 @@ class Comment extends Element implements ElementInterface
             $propagate = isset($this->feed['siteId']) && $this->feed['siteId'] ? false : true;
 
             if (!Craft::$app->getElements()->saveElement($element, true, $propagate)) {
-                FeedMe::error('Comment error: Could not create author - `{e}`.', ['e' => json_encode($element->getErrors())]);
+                Plugin::error('Comment error: Could not create author - `{e}`.', ['e' => json_encode($element->getErrors())]);
             } else {
-                FeedMe::info('Author `#{id}` added.', ['id' => $element->id]);
+                Plugin::info('Author `#{id}` added.', ['id' => $element->id]);
             }
 
             return $element->id;

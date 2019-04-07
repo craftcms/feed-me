@@ -11,7 +11,7 @@ use craft\db\Query;
 use verbb\feedme\base\Element;
 use verbb\feedme\base\ElementInterface;
 use verbb\feedme\events\FeedProcessEvent;
-use verbb\feedme\FeedMe;
+use verbb\feedme\Plugin;
 use verbb\feedme\helpers\BaseHelper;
 use verbb\feedme\helpers\DataHelper;
 use verbb\feedme\services\Process;
@@ -388,7 +388,7 @@ class CommerceProduct extends Element implements ElementInterface
                 if (Hash::get($fieldInfo, 'field')) {
                     $data = Hash::get($fieldInfo, 'data');
 
-                    $fieldValue = FeedMe::$plugin->fields->parseField($feed, $element, $data, $fieldHandle, $fieldInfo);
+                    $fieldValue = Plugin::$plugin->fields->parseField($feed, $element, $data, $fieldHandle, $fieldInfo);
 
                     if ($fieldValue !== null) {
                         $fieldData[$fieldHandle] = $fieldValue;

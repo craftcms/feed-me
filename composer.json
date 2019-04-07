@@ -56,7 +56,6 @@
     "extra": {
         "name": "Feed Me",
         "handle": "feed-me",
-        "documentationUrl": "https://github.com/craftcms/feed-me/blob/craft-3/README.md",
-        "class": "verbb\\feedme\\FeedMe"
+        "documentationUrl": "https://github.com/craftcms/feed-me/blob/craft-3/README.md"
     }
 }

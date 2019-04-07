@@ -3,7 +3,6 @@
 namespace verbb\feedme;
 
 use Craft;
-use craft\base\Plugin;
 use craft\events\RegisterUrlRulesEvent;
 use craft\helpers\UrlHelper;
 use craft\web\twig\variables\CraftVariable;
@@ -14,7 +13,7 @@ use verbb\feedme\web\twig\Extension;
 use verbb\feedme\web\twig\variables\FeedMeVariable;
 use yii\base\Event;
 
-class FeedMe extends Plugin
+class Plugin extends \craft\base\Plugin
 {
     // Constants
     // =========================================================================

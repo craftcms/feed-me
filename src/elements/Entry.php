@@ -9,7 +9,7 @@ use craft\elements\User as UserElement;
 use craft\models\Section;
 use verbb\feedme\base\Element;
 use verbb\feedme\base\ElementInterface;
-use verbb\feedme\FeedMe;
+use verbb\feedme\Plugin;
 
 class Entry extends Element implements ElementInterface
 {
@@ -172,9 +172,9 @@ class Entry extends Element implements ElementInterface
             $propagate = isset($this->feed['siteId']) && $this->feed['siteId'] ? false : true;
 
             if (!Craft::$app->getElements()->saveElement($element, true, $propagate)) {
-                FeedMe::error('Entry error: Could not create parent - `{e}`.', ['e' => json_encode($element->getErrors())]);
+                Plugin::error('Entry error: Could not create parent - `{e}`.', ['e' => json_encode($element->getErrors())]);
             } else {
-                FeedMe::info('Entry `#{id}` added.', ['id' => $element->id]);
+                Plugin::info('Entry `#{id}` added.', ['id' => $element->id]);
             }
 
             return $element->id;
@@ -220,9 +220,9 @@ class Entry extends Element implements ElementInterface
             $propagate = isset($this->feed['siteId']) && $this->feed['siteId'] ? false : true;
 
             if (!Craft::$app->getElements()->saveElement($element, true, $propagate)) {
-                FeedMe::error('Entry error: Could not create author - `{e}`.', ['e' => json_encode($element->getErrors())]);
+                Plugin::error('Entry error: Could not create author - `{e}`.', ['e' => json_encode($element->getErrors())]);
             } else {
-                FeedMe::info('Author `#{id}` added.', ['id' => $element->id]);
+                Plugin::info('Author `#{id}` added.', ['id' => $element->id]);
             }
 
             return $element->id;

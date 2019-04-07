@@ -12,7 +12,7 @@ use craft\helpers\Db;
 use craft\helpers\UrlHelper;
 use verbb\feedme\base\Field;
 use verbb\feedme\base\FieldInterface;
-use verbb\feedme\FeedMe;
+use verbb\feedme\Plugin;
 use verbb\feedme\helpers\AssetHelper;
 
 class Assets extends Field implements FieldInterface
@@ -139,18 +139,18 @@ class Assets extends Field implements FieldInterface
 
             Craft::configure($query, $criteria);
 
-            FeedMe::info('Search for existing asset with query `{i}`', ['i' => json_encode($criteria)]);
+            Plugin::info('Search for existing asset with query `{i}`', ['i' => json_encode($criteria)]);
 
             $ids = $query->ids();
             $foundElements = array_merge($foundElements, $ids);
 
-            FeedMe::info('Found `{i}` existing assets: `{j}`', ['i' => count($foundElements), 'j' => json_encode($foundElements)]);
+            Plugin::info('Found `{i}` existing assets: `{j}`', ['i' => count($foundElements), 'j' => json_encode($foundElements)]);
 
             // Are we uploading, and did we find existing assets? No need to process
             if ($upload && $ids && $conflict === AssetElement::SCENARIO_INDEX) {
                 unset($urlsToUpload[$key]);
 
-                FeedMe::info('Skipping asset upload (already exists).');
+                Plugin::info('Skipping asset upload (already exists).');
             }
         }
 

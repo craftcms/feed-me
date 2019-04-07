@@ -7,7 +7,7 @@ use craft\helpers\DateTimeHelper;
 use craft\helpers\Localization;
 use verbb\feedme\base\Field;
 use verbb\feedme\base\FieldInterface;
-use verbb\feedme\FeedMe;
+use verbb\feedme\Plugin;
 use verbb\feedme\helpers\BaseHelper;
 
 class Table extends Field implements FieldInterface
@@ -69,7 +69,7 @@ class Table extends Field implements FieldInterface
             }
         }
 
-        $dataDelimiter = FeedMe::$plugin->service->getConfig('dataDelimiter', $this->feed['id']);
+        $dataDelimiter = Plugin::$plugin->service->getConfig('dataDelimiter', $this->feed['id']);
 
         foreach ($parsedData as $rowKey => $row) {
             foreach ($row as $columnKey => $column) {

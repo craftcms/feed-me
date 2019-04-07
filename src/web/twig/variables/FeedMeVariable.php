@@ -5,7 +5,7 @@ namespace verbb\feedme\web\twig\variables;
 use Craft;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\UrlHelper;
-use verbb\feedme\FeedMe;
+use verbb\feedme\Plugin;
 use yii\di\ServiceLocator;
 
 class FeedMeVariable extends ServiceLocator
@@ -14,19 +14,19 @@ class FeedMeVariable extends ServiceLocator
 
     public function __construct($config = [])
     {
-        $config['components'] = FeedMe::$plugin->getComponents();
+        $config['components'] = Plugin::$plugin->getComponents();
 
         parent::__construct($config);
     }
 
     public function getPluginName()
     {
-        return FeedMe::$plugin->getPluginName();
+        return Plugin::$plugin->getPluginName();
     }
 
     public function getTabs()
     {
-        $settings = FeedMe::$plugin->getSettings();
+        $settings = Plugin::$plugin->getSettings();
         $enabledTabs = $settings->enabledTabs;
 
         $tabs = [
@@ -81,14 +81,14 @@ class FeedMeVariable extends ServiceLocator
 
     public function feed($options = [])
     {
-        return FeedMe::$plugin->data->getFeedForTemplate($options);
+        return Plugin::$plugin->data->getFeedForTemplate($options);
     }
 
     public function feedHeaders($options = [])
     {
         $options['headers'] = true;
 
-        return FeedMe::$plugin->data->getFeedForTemplate($options);
+        return Plugin::$plugin->data->getFeedForTemplate($options);
     }
 
 

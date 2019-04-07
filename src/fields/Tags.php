@@ -9,7 +9,7 @@ use craft\elements\Tag as TagElement;
 use craft\helpers\Db;
 use verbb\feedme\base\Field;
 use verbb\feedme\base\FieldInterface;
-use verbb\feedme\FeedMe;
+use verbb\feedme\Plugin;
 
 class Tags extends Field implements FieldInterface
 {
@@ -99,13 +99,13 @@ class Tags extends Field implements FieldInterface
 
             Craft::configure($query, $criteria);
 
-            FeedMe::info('Search for existing tag with query `{i}`', ['i' => json_encode($criteria)]);
+            Plugin::info('Search for existing tag with query `{i}`', ['i' => json_encode($criteria)]);
 
             $ids = $query->ids();
 
             $foundElements = array_merge($foundElements, $ids);
 
-            FeedMe::info('Found `{i}` existing tags: `{j}`', ['i' => count($foundElements), 'j' => json_encode($foundElements)]);
+            Plugin::info('Found `{i}` existing tags: `{j}`', ['i' => count($foundElements), 'j' => json_encode($foundElements)]);
 
             // Check if we should create the element. But only if title is provided (for the moment)
             if (count($ids) == 0) {
@@ -155,9 +155,9 @@ class Tags extends Field implements FieldInterface
         $element->setScenario(BaseElement::SCENARIO_ESSENTIALS);
 
         if (!Craft::$app->getElements()->saveElement($element, true, $propagate)) {
-            FeedMe::error('`{handle}` - Tag error: Could not create - `{e}`.', ['e' => json_encode($element->getErrors()), 'handle' => $this->field->handle]);
+            Plugin::error('`{handle}` - Tag error: Could not create - `{e}`.', ['e' => json_encode($element->getErrors()), 'handle' => $this->field->handle]);
         } else {
-            FeedMe::info('`{handle}` - Tag `#{id}` added.', ['id' => $element->id, 'handle' => $this->field->handle]);
+            Plugin::info('`{handle}` - Tag `#{id}` added.', ['id' => $element->id, 'handle' => $this->field->handle]);
         }
 
         return $element->id;

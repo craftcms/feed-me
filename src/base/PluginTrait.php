@@ -3,7 +3,7 @@
 namespace verbb\feedme\base;
 
 use Craft;
-use verbb\feedme\FeedMe;
+use verbb\feedme\Plugin;
 use verbb\feedme\services\DataTypes;
 use verbb\feedme\services\Elements;
 use verbb\feedme\services\Feeds;
@@ -29,12 +29,12 @@ trait PluginTrait
 
     public static function error($message, $params = [], $options = [])
     {
-        FeedMe::$plugin->getLogs()->log(__METHOD__, $message, $params, $options);
+        Plugin::$plugin->getLogs()->log(__METHOD__, $message, $params, $options);
     }
 
     public static function info($message, $params = [], $options = [])
     {
-        FeedMe::$plugin->getLogs()->log(__METHOD__, $message, $params, $options);
+        Plugin::$plugin->getLogs()->log(__METHOD__, $message, $params, $options);
     }
 
     public static function debug($message, $params = [])

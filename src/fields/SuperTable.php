@@ -5,7 +5,7 @@ namespace verbb\feedme\fields;
 use Cake\Utility\Hash;
 use verbb\feedme\base\Field;
 use verbb\feedme\base\FieldInterface;
-use verbb\feedme\FeedMe;
+use verbb\feedme\Plugin;
 
 class SuperTable extends Field implements FieldInterface
 {
@@ -186,7 +186,7 @@ class SuperTable extends Field implements FieldInterface
 
         $subField = Hash::extract($this->field->getBlockTypeFields(), '{n}[handle=' . $subFieldHandle . ']')[0];
 
-        $class = FeedMe::$plugin->fields->getRegisteredField($subFieldClassHandle);
+        $class = Plugin::$plugin->fields->getRegisteredField($subFieldClassHandle);
         $class->feedData = $feedData;
         $class->fieldHandle = $subFieldHandle;
         $class->fieldInfo = $subFieldInfo;

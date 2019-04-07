@@ -5,7 +5,7 @@ namespace verbb\feedme\helpers;
 use Cake\Utility\Hash;
 use Carbon\Carbon;
 use craft\helpers\DateTimeHelper;
-use verbb\feedme\FeedMe;
+use verbb\feedme\Plugin;
 
 class DateHelper
 {
@@ -167,7 +167,7 @@ class DateHelper
                 return DateTimeHelper::toDateTime($dateTimeString, true, false);
             }
         } catch (\Exception $e) {
-            FeedMe::error('Date parse error: `{value}` - `{e}`.', ['value' => $value, 'e' => $e->getMessage()]);
+            Plugin::error('Date parse error: `{value}` - `{e}`.', ['value' => $value, 'e' => $e->getMessage()]);
         }
     }
 
@@ -176,7 +176,7 @@ class DateHelper
         try {
             return DateTimeHelper::toDateTime($value) ?: null;
         } catch (\Exception $e) {
-            FeedMe::error('Time parse error: `{value}` - `{e}`.', ['value' => $value, 'e' => $e->getMessage()]);
+            Plugin::error('Time parse error: `{value}` - `{e}`.', ['value' => $value, 'e' => $e->getMessage()]);
         }
     }
 }

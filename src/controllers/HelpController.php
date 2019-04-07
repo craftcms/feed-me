@@ -8,7 +8,7 @@ use craft\helpers\FileHelper;
 use craft\helpers\StringHelper;
 use craft\web\Controller;
 use craft\web\UploadedFile;
-use verbb\feedme\FeedMe;
+use verbb\feedme\Plugin;
 use verbb\feedme\models\GetHelp;
 use verbb\feedme\records\FeedRecord;
 use yii\base\ErrorException;
@@ -58,14 +58,14 @@ class HelpController extends Controller
         }
 
         $user = Craft::$app->getUser()->getIdentity();
-        $feed = FeedMe::$plugin->feeds->getFeedById($getHelpModel->feedIssue);
+        $feed = Plugin::$plugin->feeds->getFeedById($getHelpModel->feedIssue);
 
         // Add some extra info about this install
         $message = $getHelpModel->message . "\n\n" .
             "------------------------------\n\n" .
             'Craft ' . Craft::$app->getEditionName() . ' ' . Craft::$app->getVersion() . "\n\n";
 
-        $message .= 'Feed Me: ' . FeedMe::$plugin->getVersion() . "\n";
+        $message .= 'Feed Me: ' . Plugin::$plugin->getVersion() . "\n";
         $message .= 'License: ' . $plugins->getPluginLicenseKey('feed-me') . ' - ' . $plugins->getPluginLicenseKeyStatus('feed-me') . "\n\n";
 
         // if (Craft::$app->plugins->getPlugin('feed-me-pro')) {
@@ -151,7 +151,7 @@ class HelpController extends Controller
                     $requestParamDefaults['note'] .= $noteError;
                     $requestParams['note'] .= $noteError;
 
-                    FeedMe::error($noteError);
+                    Plugin::error($noteError);
                 }
             }
 
@@ -161,7 +161,7 @@ class HelpController extends Controller
 
             if ($getHelpModel->attachFeed) {
                 try {
-                    $feedData = FeedMe::$plugin->data->getRawData($feed->feedUrl, $feed->id);
+                    $feedData = Plugin::$plugin->data->getRawData($feed->feedUrl, $feed->id);
                     $tempFileFeed = $tempFolder . '/feed.' . StringHelper::toLowerCase($feed->feedType);
 
                     FileHelper::writeToFile($tempFileFeed, print_r($feedData, true) . PHP_EOL);
@@ -172,7 +172,7 @@ class HelpController extends Controller
                     $requestParamDefaults['note'] .= $noteError;
                     $requestParams['note'] .= $noteError;
 
-                    FeedMe::error($noteError);
+                    Plugin::error($noteError);
                 }
             }
 
@@ -224,7 +224,7 @@ class HelpController extends Controller
                     $requestParamDefaults['note'] .= $noteError;
                     $requestParams['note'] .= $noteError;
 
-                    FeedMe::error($noteError);
+                    Plugin::error($noteError);
                 }
             }
 
@@ -255,7 +255,7 @@ class HelpController extends Controller
                 FileHelper::unlink($tempFileFields);
             }
         } catch (\Throwable $e) {
-            FeedMe::info('Tried to attach debug logs to a support request and something went horribly wrong: `' . $e->getMessage() . ':' . $e->getLine() . '`.');
+            Plugin::info('Tried to attach debug logs to a support request and something went horribly wrong: `' . $e->getMessage() . ':' . $e->getLine() . '`.');
 
             // There was a problem zipping, so reset the params and just send the email without the attachment.
             $requestParams = $requestParamDefaults;
@@ -267,7 +267,7 @@ class HelpController extends Controller
         try {
             $guzzleClient->post('https://support.verbb.io/api/get-help', ['json' => $requestParams]);
         } catch (\Throwable $e) {
-            FeedMe::error('`' . (string)$e->getresponse()->getBody() . '`');
+            Plugin::error('`' . (string)$e->getresponse()->getBody() . '`');
 
             return $this->renderTemplate('feed-me/help/response', [
                 'widgetId' => $widgetId,

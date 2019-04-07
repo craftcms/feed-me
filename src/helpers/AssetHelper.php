@@ -9,7 +9,7 @@ use craft\helpers\Assets as AssetsHelper;
 use craft\helpers\FileHelper;
 use craft\helpers\UrlHelper;
 use Mimey\MimeTypes;
-use verbb\feedme\FeedMe;
+use verbb\feedme\Plugin;
 
 class AssetHelper
 {
@@ -18,7 +18,7 @@ class AssetHelper
 
     public static function downloadFile($srcName, $dstName, $chunkSize = 1, $returnbytes = true)
     {
-        $assetDownloadCurl = FeedMe::$plugin->getSettings()->assetDownloadCurl;
+        $assetDownloadCurl = Plugin::$plugin->getSettings()->assetDownloadCurl;
 
         // Provide some legacy support
         if ($assetDownloadCurl) {
@@ -86,7 +86,7 @@ class AssetHelper
                     'recursive' => false,
                 ]);
 
-                FeedMe::info('Fetching remote image `{i}` - `{j}`', ['i' => $url, 'j' => $filename]);
+                Plugin::info('Fetching remote image `{i}` - `{j}`', ['i' => $url, 'j' => $filename]);
 
                 if (!$cachedImage) {
                     AssetHelper::downloadFile($url, $fetchedImage);
@@ -99,13 +99,13 @@ class AssetHelper
                 if ($result) {
                     $uploadedAssets[] = $result;
                 } else {
-                    FeedMe::error('Failed to create asset from `{i}`', ['i' => $url]);
+                    Plugin::error('Failed to create asset from `{i}`', ['i' => $url]);
                 }
             } catch (\Throwable $e) {
                 if ($field) {
-                    FeedMe::error('`{handle}` - Asset error: `{url}` - `{e}`.', ['url' => $url, 'e' => $e->getMessage(), 'handle' => $field->handle]);
+                    Plugin::error('`{handle}` - Asset error: `{url}` - `{e}`.', ['url' => $url, 'e' => $e->getMessage(), 'handle' => $field->handle]);
                 } else {
-                    FeedMe::error('Asset error: `{url}` - `{e}`.', ['url' => $url, 'e' => $e->getMessage()]);
+                    Plugin::error('Asset error: `{url}` - `{e}`.', ['url' => $url, 'e' => $e->getMessage()]);
                 }
             }
         }
@@ -147,10 +147,10 @@ class AssetHelper
                 if ($result) {
                     $uploadedAssets[] = $result;
                 } else {
-                    FeedMe::error('Failed to create asset from `{i}`', ['i' => $dataString]);
+                    Plugin::error('Failed to create asset from `{i}`', ['i' => $dataString]);
                 }
             } catch (\Throwable $e) {
-                FeedMe::error('Base64 error: `{url}` - `{e}`.', ['url' => $fetchedImageWithExtension, 'e' => $e->getMessage()]);
+                Plugin::error('Base64 error: `{url}` - `{e}`.', ['url' => $fetchedImageWithExtension, 'e' => $e->getMessage()]);
                 echo $e->getMessage();
             }
         }
@@ -189,7 +189,7 @@ class AssetHelper
 
         $propagate = isset($feed['siteId']) && $feed['siteId'] ? false : true;
 
-        FeedMe::info('Creating asset with content `{i}`', [
+        Plugin::info('Creating asset with content `{i}`', [
             'i' => json_encode([
                 'tempFilePath' => $tempFilePath,
                 'filename' => $filename,
@@ -210,7 +210,7 @@ class AssetHelper
             if ($asset->conflictingFilename !== null && $conflict === AssetElement::SCENARIO_REPLACE) {
                 $conflictingAsset = AssetElement::findOne(['folderId' => $folder->id, 'filename' => $asset->conflictingFilename]);
 
-                FeedMe::info('Replacing existing asset `#{i}` with `#{j}`', ['i' => $conflictingAsset->id, 'j' => $asset->id]);
+                Plugin::info('Replacing existing asset `#{i}` with `#{j}`', ['i' => $conflictingAsset->id, 'j' => $asset->id]);
 
                 $tempPath = $asset->getCopyOfFile();
                 $assets->replaceAssetFile($conflictingAsset, $tempPath, $conflictingAsset->filename);
@@ -294,7 +294,7 @@ class AssetHelper
 
         // If we can't easily determine the extension of the url, fetch it
         if (!$extension) {
-            $client = FeedMe::$plugin->service->createGuzzleClient();
+            $client = Plugin::$plugin->service->createGuzzleClient();
             $response = null;
 
             // Try using HEAD requests (for performance), if it fails use GET

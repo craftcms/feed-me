@@ -6,7 +6,7 @@ use Craft;
 use craft\base\Component;
 use craft\helpers\App;
 use craft\helpers\FileHelper;
-use verbb\feedme\FeedMe;
+use verbb\feedme\Plugin;
 
 class Logs extends Component
 {
@@ -42,8 +42,8 @@ class Logs extends Component
         }
 
         // Always prepend the feed we're dealing with
-        if (FeedMe::$feedName) {
-            $message = FeedMe::$feedName . ': ' . $message;
+        if (Plugin::$feedName) {
+            $message = Plugin::$feedName . ': ' . $message;
         }
 
         $options = array_merge([
@@ -54,8 +54,8 @@ class Logs extends Component
 
         // If we're not explicitly sending a key for logging, check if we've started a feed.
         // If we have, our $stepKey variable will have a value and can use it here.
-        if (!isset($options['key']) && FeedMe::$stepKey) {
-            $options['key'] = FeedMe::$stepKey;
+        if (!isset($options['key']) && Plugin::$stepKey) {
+            $options['key'] = Plugin::$stepKey;
         }
 
         $options = json_encode($options);
@@ -125,7 +125,7 @@ class Logs extends Component
 
     private function _canLog($type)
     {
-        $logging = FeedMe::$plugin->service->getConfig('logging');
+        $logging = Plugin::$plugin->service->getConfig('logging');
 
         // If logging set to false, don't log anything
         if ($logging === false) {

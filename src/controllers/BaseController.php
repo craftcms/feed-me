@@ -4,7 +4,7 @@ namespace verbb\feedme\controllers;
 
 use Craft;
 use craft\web\Controller;
-use verbb\feedme\FeedMe;
+use verbb\feedme\Plugin;
 
 class BaseController extends Controller
 {
@@ -16,7 +16,7 @@ class BaseController extends Controller
 
     public function actionSettings()
     {
-        $settings = FeedMe::$plugin->getSettings();
+        $settings = Plugin::$plugin->getSettings();
 
         return $this->renderTemplate('feed-me/settings/general', [
             'settings' => $settings,

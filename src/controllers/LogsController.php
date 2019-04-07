@@ -4,7 +4,7 @@ namespace verbb\feedme\controllers;
 
 use Craft;
 use craft\web\Controller;
-use verbb\feedme\FeedMe;
+use verbb\feedme\Plugin;
 
 class LogsController extends Controller
 {
@@ -14,7 +14,7 @@ class LogsController extends Controller
     public function actionLogs()
     {
         $show = Craft::$app->getRequest()->getParam('show');
-        $logEntries = FeedMe::$plugin->logs->getLogEntries($show);
+        $logEntries = Plugin::$plugin->logs->getLogEntries($show);
 
         // Limit to 300 for UI
         $logEntries = array_slice($logEntries, 0, 300);
@@ -27,7 +27,7 @@ class LogsController extends Controller
 
     public function actionClear()
     {
-        $logEntries = FeedMe::$plugin->logs->clear();
+        $logEntries = Plugin::$plugin->logs->clear();
 
         return $this->redirect('feed-me/logs');
     }

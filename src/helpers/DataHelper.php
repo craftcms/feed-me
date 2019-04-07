@@ -6,7 +6,7 @@ use Cake\Utility\Hash;
 use Craft;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Db;
-use verbb\feedme\FeedMe;
+use verbb\feedme\Plugin;
 
 class DataHelper
 {
@@ -41,7 +41,7 @@ class DataHelper
         $node = Hash::get($fieldInfo, 'node');
         $default = Hash::get($fieldInfo, 'default');
 
-        $dataDelimiter = FeedMe::$plugin->service->getConfig('dataDelimiter');
+        $dataDelimiter = Plugin::$plugin->service->getConfig('dataDelimiter');
 
         // Some fields require array, or multiple values like Elements, Checkboxes, etc, and we need to parse them differently.
         // Firstly, field mapping is setup like `MatrixBlock/Images` but actual feed is structured like `MatrixBlock/0/Images/0`.
@@ -87,7 +87,7 @@ class DataHelper
         $node = Hash::get($fieldInfo, 'node');
         $default = Hash::get($fieldInfo, 'default');
 
-        $dataDelimiter = FeedMe::$plugin->service->getConfig('dataDelimiter');
+        $dataDelimiter = Plugin::$plugin->service->getConfig('dataDelimiter');
 
         // Some fields require array, or multiple values like Elements, Checkboxes, etc, and we need to parse them differently.
         // Firstly, field mapping is setup like `MatrixBlock/Images` but actual feed is structured like `MatrixBlock/0/Images/0`.
@@ -203,20 +203,20 @@ class DataHelper
             if (is_array($existingValue) && is_array($newValue)) {
                 $diff = self::arrayCompare($existingValue, $newValue);
 
-                FeedMe::debug($key . ' - diff');
-                FeedMe::debug($diff);
+                Plugin::debug($key . ' - diff');
+                Plugin::debug($diff);
             }
 
             // Now its getting personal. We need to check things per field type
             // Find the resulting value from what Feed Me's field processing would produce
             // $field = Craft::$app->getFields()->getFieldByHandle($key);
 
-            FeedMe::debug($key . ' - existing');
-            FeedMe::debug($existingValue);
-            FeedMe::debug($key . ' - new');
-            FeedMe::debug($newValue);
+            Plugin::debug($key . ' - existing');
+            Plugin::debug($existingValue);
+            Plugin::debug($key . ' - new');
+            Plugin::debug($newValue);
 
-            FeedMe::info('Data to update for `{i}`: `{j}`.', ['i' => $key, 'j' => json_encode($newValue)]);
+            Plugin::info('Data to update for `{i}`: `{j}`.', ['i' => $key, 'j' => json_encode($newValue)]);
         }
 
         if (empty($trackedChanges)) {

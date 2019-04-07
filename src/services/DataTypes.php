@@ -16,7 +16,7 @@ use verbb\feedme\datatypes\Rss;
 use verbb\feedme\datatypes\Xml;
 use verbb\feedme\events\FeedDataEvent;
 use verbb\feedme\events\RegisterFeedMeDataTypesEvent;
-use verbb\feedme\FeedMe;
+use verbb\feedme\Plugin;
 use verbb\feedme\models\FeedModel;
 use yii\base\Event;
 
@@ -159,8 +159,8 @@ class DataTypes extends Component
         }
 
         try {
-            $client = FeedMe::$plugin->service->createGuzzleClient($feedId);
-            $options = FeedMe::$plugin->service->getRequestOptions($feedId);
+            $client = Plugin::$plugin->service->createGuzzleClient($feedId);
+            $options = Plugin::$plugin->service->getRequestOptions($feedId);
 
             $resp = $client->request('GET', $url, $options);
             $data = (string)$resp->getBody();
@@ -286,7 +286,7 @@ class DataTypes extends Component
 
     public function getFeedForTemplate($options = [])
     {
-        $pluginSettings = FeedMe::$plugin->getSettings();
+        $pluginSettings = Plugin::$plugin->getSettings();
 
         $url = Hash::get($options, 'url');
         $type = Hash::get($options, 'type');

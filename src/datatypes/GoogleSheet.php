@@ -6,7 +6,7 @@ use Cake\Utility\Hash;
 use craft\helpers\Json as JsonHelper;
 use verbb\feedme\base\DataType;
 use verbb\feedme\base\DataTypeInterface;
-use verbb\feedme\FeedMe;
+use verbb\feedme\Plugin;
 
 class GoogleSheet extends DataType implements DataTypeInterface
 {
@@ -22,12 +22,12 @@ class GoogleSheet extends DataType implements DataTypeInterface
     public function getFeed($url, $settings, $usePrimaryElement = true)
     {
         $feedId = Hash::get($settings, 'id');
-        $response = FeedMe::$plugin->data->getRawData($url, $feedId);
+        $response = Plugin::$plugin->data->getRawData($url, $feedId);
 
         if (!$response['success']) {
             $error = 'Unable to reach ' . $url . '. Message: ' . $response['error'];
 
-            FeedMe::error($error);
+            Plugin::error($error);
 
             return ['success' => false, 'error' => $error];
         }
@@ -52,7 +52,7 @@ class GoogleSheet extends DataType implements DataTypeInterface
         } catch (\Exception $e) {
             $error = 'Invalid data: ' . $e->getMessage();
 
-            FeedMe::error($error);
+            Plugin::error($error);
 
             return ['success' => false, 'error' => $error];
         }
@@ -61,7 +61,7 @@ class GoogleSheet extends DataType implements DataTypeInterface
         if (!is_array($array)) {
             $error = 'Invalid data: ' . json_encode($array);
 
-            FeedMe::error($error);
+            Plugin::error($error);
 
             return ['success' => false, 'error' => $error];
         }
@@ -70,7 +70,7 @@ class GoogleSheet extends DataType implements DataTypeInterface
         $primaryElement = Hash::get($settings, 'primaryElement');
 
         if ($primaryElement && $usePrimaryElement) {
-            $array = FeedMe::$plugin->data->findPrimaryElement($primaryElement, $array);
+            $array = Plugin::$plugin->data->findPrimaryElement($primaryElement, $array);
         }
 
         return ['success' => true, 'data' => $array];
