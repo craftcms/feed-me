@@ -1,5 +1,26 @@
 # Changelog
 
+## 3.1.17 - 2019-04-07
+
+### Added
+- Add `assetDownloadCurl` option.
+- Add Tag element support.
+- Add `sortOrder` for feeds.
+
+### Changed
+- Allow `beforeFetchFeed` the ability to set the feed’s response.
+- Allow empty date values to be included in field data.
+- Port additional boolean-like values from Craft 2 version. (thanks @jamesmacwhite).
+- Create slug the same way as Craft. (thanks @smcyr).
+
+### Fixed
+- Fix Matrix mapping not applying default values.
+- Refactor unqiue identifier check, including inherited fields.
+- Error-handle a little for custom datatypes from Craft 2.
+- Fix Simple Map integration.
+- Ensure correct element scenario is set for element fields, when set to create.
+- Fix some fields throwing errors due to namespacing.
+
 ## 3.1.16 - 2019-03-22
 
 ### Added
