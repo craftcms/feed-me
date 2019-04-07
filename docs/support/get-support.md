@@ -9,7 +9,7 @@ Get in touch via the [Craft Discord](https://craftcms.com/discord) and be sure t
 
 ### GitHub
 
-If you've found a bug, or would like to make a feature request, head to the [GitHub Repo](https://github.com/verbb/feed-me/issues) and file an issue. Pull requests are also most welcome!
+If you've found a bug, or would like to make a feature request, head to the [GitHub Repo](https://github.com/craftcms/feed-me/issues) and file an issue. Pull requests are also most welcome!
 
 ### Twitter
 

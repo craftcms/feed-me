@@ -656,7 +656,7 @@
 - Fix for CP becoming unresponsive when running a feed from the control panel directly.
 - Fix to ensure local-testing works as expected without a license.
 - Fix for Commerce Products default values not being properly sorted into variant data.
-- Fixed an issue when triggering feeds from CLI. Thanks to [@joshangell](https://github.com/verbb/feed-me/pull/262).
+- Fixed an issue when triggering feeds from CLI. Thanks to [@joshangell](https://github.com/craftcms/feed-me/pull/262).
 - Fix for date attributes not checking for falsey values before returning current date.
 - Fix for locale entries not having their status set as per the default section status.
 
@@ -833,7 +833,7 @@
 
 ### Fixed
 - Properly support third-party element types.
-- Properly support third-party data types (thanks to [@timeverts](https://github.com/verbb/feed-me/pull/172)).
+- Properly support third-party data types (thanks to [@timeverts](https://github.com/craftcms/feed-me/pull/172)).
 - Fixed default value for dropdown field (when no value matches).
 - Better error-handling when importing into specific locale.
 - Ensure default start/date are correctly parsed entries/commerce.
@@ -966,7 +966,7 @@
 
 ### Added
 - Added support for locales - set which locale you want your feed to go to.
-- Added support for non-http protocols for feeds (ftp://, file://, etc) [#29](https://github.com/verbb/feed-me/issues/29)
+- Added support for non-http protocols for feeds (ftp://, file://, etc) [#29](https://github.com/craftcms/feed-me/issues/29)
 
 ## 1.4.6 - 2016-01-19
 
@@ -981,7 +981,7 @@
 ## 1.4.4 - 2015-12-27
 
 ### Fixed
-- Fixed issue with irregular nested elements. See [#24](https://github.com/verbb/feed-me/issues/24#issuecomment-167106972).
+- Fixed issue with irregular nested elements. See [#24](https://github.com/craftcms/feed-me/issues/24#issuecomment-167106972).
 
 ## 1.4.3 - 2015-12-01
 
@@ -1004,7 +1004,7 @@
 - Craft 2.5 support, including release feed and icons.
 - Added `registerFeedMeMappingOptions` for third-party fieldtypes to control the options for mapping feed nodes to field data.
 - Added `postForFeedMeFieldType` for third-party fieldtypes to modify entry data before being saved to entry.
-- Added documentation for hooks. Refer to [Wiki](https://github.com/verbb/feed-me/wiki/Hooks).
+- Added documentation for hooks. Refer to [Wiki](https://github.com/craftcms/feed-me/wiki/Hooks).
 
 ### Changed
 - Code cleanup and refactoring field-mapping logic for performance and sanity.
