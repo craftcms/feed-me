@@ -255,6 +255,45 @@ class FeedMeVariable extends ServiceLocator
         return $return;
     }
 
+    public function fieldCanBeUniqueId($field)
+    {
+        $type = $field['type'] ?? 'attribute';
+
+        $supportedFields = [
+            'craft\fields\Checkboxes',
+            'craft\fields\Color',
+            'craft\fields\Date',
+            'craft\fields\Dropdown',
+            'craft\fields\Email',
+            'craft\fields\Lightswitch',
+            'craft\fields\MultiSelect',
+            'craft\fields\Number',
+            'craft\fields\PlainText',
+            'craft\fields\RadioButtons',
+            'craft\fields\Url',
+        ];
+
+        $supportedValues = [
+            'assets',
+            'attribute',
+        ];
+
+        $supported = array_merge($supportedFields, $supportedValues);
+
+        if (in_array($type, $supported)) {
+            return true;
+        }
+
+        // Include any field types that extend one of the above
+        foreach ($supportedFields as $supportedField) {
+            if (is_a($type, $supportedField, true)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function supportedSubField($class)
     {
         $supportedSubFields = [

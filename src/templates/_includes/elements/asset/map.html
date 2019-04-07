@@ -112,7 +112,7 @@
 {% endfor %}
 
 <div class="feedme-uniques">
-    {% for field in fields if field and feedMeMacro.fieldCanBeUniqueId(field) %}
+    {% for field in fields if field and craft.feedme.fieldCanBeUniqueId(field) %}
         {% if field.handle != 'urlOrPath' %}
             {{ forms.checkboxField({
                 name: 'fieldUnique[' ~ field.handle ~ ']',
