@@ -11,6 +11,7 @@ use verbb\feedme\elements\CommerceOrder;
 use verbb\feedme\elements\CommerceProduct;
 use verbb\feedme\elements\DigitalProduct;
 use verbb\feedme\elements\Entry;
+use verbb\feedme\elements\Tag;
 use verbb\feedme\elements\User;
 use verbb\feedme\events\RegisterFeedMeElementsEvent;
 
@@ -86,6 +87,7 @@ class Elements extends Component
                 // CommerceOrder::class,
                 CommerceProduct::class,
                 Entry::class,
+                Tag::class,
                 User::class,
 
                 // Third-party
