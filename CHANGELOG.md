@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.0.0 (WIP)
+
+### Changed
+- The package name is now `craftcms/feed-me`.
+- Feed Me now requires Craft 3.1.21 or later.
+
 ## 3.1.17 - 2019-04-07
 
 ### Added
