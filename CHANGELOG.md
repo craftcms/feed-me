@@ -104,7 +104,7 @@
 ## 3.1.6 - 2019-02-15
 
 ### Added
-- Add console command to run feeds. Refer to [docs](https://verbb.io/craft-plugins/feed-me/docs/feature-tour/trigger-import-via-cron#console-command)
+- Add console command to run feeds. Refer to [docs](https://docs.craftcms.com/feed-me/v4/feature-tour/trigger-import-via-cron.html#console-command)
 - Implement log file rotation - stop them getting out of hand
 - Add more date formatting options.
 
@@ -345,7 +345,7 @@
 - Add offset/limit options to template params
 
 ### Changed
-- Matrix handling, particularly for XML-based feeds are much more opinionated about structure for better results. See [docs](https://verbb.io/craft-plugins/feed-me/docs/guides/importing-into-matrix#note-on-structure).
+- Matrix handling, particularly for XML-based feeds are much more opinionated about structure for better results. See [docs](https://docs.craftcms.com/feed-me/v4/guides/importing-into-matrix.html#note-on-structure).
 
 ### Fixed
 - Fix element fields in Matrix not mapping correctly.
@@ -656,7 +656,7 @@
 - Fix for CP becoming unresponsive when running a feed from the control panel directly.
 - Fix to ensure local-testing works as expected without a license.
 - Fix for Commerce Products default values not being properly sorted into variant data.
-- Fixed an issue when triggering feeds from CLI. Thanks to [@joshangell](https://github.com/craftcms/feed-me/pull/262).
+- Fixed an issue when triggering feeds from CLI. ([#262](https://github.com/craftcms/feed-me/pull/262))
 - Fix for date attributes not checking for falsey values before returning current date.
 - Fix for locale entries not having their status set as per the default section status.
 
@@ -669,7 +669,6 @@
 ## 2.0.8 - 2017-10-17
 
 ### Added
-- Verbb marketing (new plugin icon, readme, etc).
 - Add headers from feed request to special `_headers` variable for template requests
 - Create `feedHeaders` template call
 - Add commerce products fieldtype support
@@ -833,7 +832,7 @@
 
 ### Fixed
 - Properly support third-party element types.
-- Properly support third-party data types (thanks to [@timeverts](https://github.com/craftcms/feed-me/pull/172)).
+- Properly support third-party data types. ([#172](https://github.com/craftcms/feed-me/pull/172))
 - Fixed default value for dropdown field (when no value matches).
 - Better error-handling when importing into specific locale.
 - Ensure default start/date are correctly parsed entries/commerce.
@@ -966,7 +965,7 @@
 
 ### Added
 - Added support for locales - set which locale you want your feed to go to.
-- Added support for non-http protocols for feeds (ftp://, file://, etc) [#29](https://github.com/craftcms/feed-me/issues/29)
+- Added support for non-http protocols for feeds (ftp://, file://, etc). ([#29](https://github.com/craftcms/feed-me/issues/29))
 
 ## 1.4.6 - 2016-01-19
 
@@ -981,7 +980,7 @@
 ## 1.4.4 - 2015-12-27
 
 ### Fixed
-- Fixed issue with irregular nested elements. See [#24](https://github.com/craftcms/feed-me/issues/24#issuecomment-167106972).
+- Fixed issue with irregular nested elements. ([#24](https://github.com/craftcms/feed-me/issues/24#issuecomment-167106972))
 
 ## 1.4.3 - 2015-12-01
 
@@ -1004,7 +1003,6 @@
 - Craft 2.5 support, including release feed and icons.
 - Added `registerFeedMeMappingOptions` for third-party fieldtypes to control the options for mapping feed nodes to field data.
 - Added `postForFeedMeFieldType` for third-party fieldtypes to modify entry data before being saved to entry.
-- Added documentation for hooks. Refer to [Wiki](https://github.com/craftcms/feed-me/wiki/Hooks).
 
 ### Changed
 - Code cleanup and refactoring field-mapping logic for performance and sanity.
