@@ -84,7 +84,6 @@ module.exports = {
                     'guides/importing-into-matrix',
                     'guides/migrating-from-expressionengine',
                     'guides/migrating-from-wordpress',
-                    'guides/craftquest-course'
                 ]
             },
             {
