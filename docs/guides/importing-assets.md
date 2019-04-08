@@ -15,7 +15,8 @@ This will scan the folder and add and images into Craft as assets.
 ### Example Feed Data
 The below data is what we'll use for this guide:
 
-+++xmltojson
+::: code
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <Images>
     <Image>
@@ -30,7 +31,25 @@ The below data is what we'll use for this guide:
         <Caption>Another Caption</Caption>
     </Image>
 </Images>
-+++
+```
+
+```json
+{
+    "Image": [
+        {
+            "Title": "Feed Me Social Card",
+            "URL": "https://verbb.io/uploads/plugins/feed-me/_800x455_crop_center-center_none/feed-me-social-card.png",
+            "Caption": "Some Caption"
+        },
+        {
+            "Title": "Super Table Social Card",
+            "URL": "https://verbb.io/uploads/plugins/super-table/_800x455_crop_center-center_none/super-table-social-card.png",
+            "Caption": "Another Caption"
+        }
+    ]
+}
+```
+:::
 
 Choose either the XML or JSON (depending on your preference), and save as a file in the root of your public directory. We'll assume its `http://craft.local/assets-feed.xml`.
 

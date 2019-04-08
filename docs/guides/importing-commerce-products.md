@@ -10,7 +10,8 @@ Looking to import products with multiple Variants? Have a look at the [Importing
 
 The below data is what we'll use for this guide:
 
-+++xmltojson
+::: code
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <products>
     <product>
@@ -35,7 +36,35 @@ The below data is what we'll use for this guide:
         <weight>480</weight>
     </product>
 </products>
-+++
+```
+
+```json
+{
+    "product": [
+        {
+            "title": "Printed T-Shirt",
+            "sku": "SHIRT-101",
+            "price": "15",
+            "stock": "500",
+            "length": "10",
+            "width": "25",
+            "height": "32",
+            "weight": "500"
+        },
+        {
+            "title": "Plain T-Shirt",
+            "sku": "SHIRT-102",
+            "price": "19",
+            "unlimitedStock": "1",
+            "length": "9",
+            "width": "28",
+            "height": "30",
+            "weight": "480"
+        }
+    ]
+}
+```
+:::
 
 #### Things to note
 

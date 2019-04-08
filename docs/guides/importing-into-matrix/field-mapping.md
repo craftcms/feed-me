@@ -2,7 +2,7 @@
 
 Use the below screenshot as a guide for the data we want to map to our Entry and Matrix fields.
 
-![Feedme Matrix Guide Mapping](/docs/screenshots/feedme-matrix-guide-mapping.png)
+![Feedme Matrix Guide Mapping](../../screenshots/feedme-matrix-guide-mapping.png)
 
 * * *
 

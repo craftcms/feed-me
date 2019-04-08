@@ -17,7 +17,7 @@ While this example is for adding remote URLs, local path's work fine too. Just p
 For example, `to-upload/feed-me.png` would be a folder in your web root named `to-upload` with the file `feed-me.png` inside it.
 :::
 
-![Feedme Guide Mapping](/docs/screenshots/feedme-guide-asset-field-mapping.png)
+![Feedme Guide Mapping](../../screenshots/feedme-guide-asset-field-mapping.png)
 
 * * *
 

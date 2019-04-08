@@ -2,7 +2,7 @@
 
 With your feed data in place, go to Feed Me's main control panel screen, and add a new feed.
 
-![Feedme Guide Setup](/docs/screenshots/feedme-guide-setup.png)
+![Feedme Guide Setup](../../screenshots/feedme-guide-setup.png)
 
 Enter the following details:
 

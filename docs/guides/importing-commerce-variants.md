@@ -10,7 +10,8 @@ Looking to import products without Variants? Have a look at the [Importing Comme
 
 The below data is what we'll use for this guide:
 
-+++xmltojson
+::: code
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <products>
     <product>
@@ -89,7 +90,85 @@ The below data is what we'll use for this guide:
         </variants>
     </product>
 </products>
-+++
+```
+
+```json
+{
+    "product": [
+        {
+            "title": "Printed T-Shirt",
+            "featuredImage": "t-shirt-printed.jpg",
+            "description": "The best T-Shirt you'll ever wear",
+            "variants": {
+                "variant": [
+                    {
+                        "Title": "Red",
+                        "sku": "SHIRT-101-RED",
+                        "price": "15",
+                        "stock": "500",
+                        "length": "10",
+                        "width": "25",
+                        "height": "32",
+                        "weight": "500",
+                        "images": {
+                            "image": "t-shirt-printed-red.jpg"
+                        }
+                    },
+                    {
+                        "Title": "Blue",
+                        "sku": "SHIRT-101-BLUE",
+                        "price": "15",
+                        "stock": "1000",
+                        "length": "10",
+                        "width": "25",
+                        "height": "32",
+                        "weight": "500",
+                        "images": {
+                            "image": "t-shirt-printed-blue.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "title": "Plain T-Shirt",
+            "featuredImage": "t-shirt-plain.jpg",
+            "description": "The second-best T-Shirt you'll ever wear",
+            "variants": {
+                "variant": [
+                    {
+                        "Title": "Green",
+                        "sku": "SHIRT-201-GREEN",
+                        "price": "15",
+                        "stock": "500",
+                        "length": "10",
+                        "width": "25",
+                        "height": "32",
+                        "weight": "500",
+                        "images": {
+                            "image": "t-shirt-plain-green.jpg"
+                        }
+                    },
+                    {
+                        "Title": "Purple",
+                        "sku": "SHIRT-201-PURPLE",
+                        "price": "15",
+                        "stock": "1000",
+                        "length": "10",
+                        "width": "25",
+                        "height": "32",
+                        "weight": "500",
+                        "images": {
+                            "image": "t-shirt-plain-purple.jpg"
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
+```
+:::
 
 #### Things to note
 

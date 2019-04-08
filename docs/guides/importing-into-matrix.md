@@ -16,7 +16,8 @@ In this example, we'll be importing 2 Entries, which have a single Matrix field 
 
 The below data is what we'll use for this guide:
 
-+++xmltojson
+::: code
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <entries>
     <entry>
@@ -90,7 +91,79 @@ The below data is what we'll use for this guide:
         </Matrix>
     </entry>
 </entries>
-+++
+```
+
+```json
+{
+    "entry": [
+        {
+            "Title": "Guide first entry example",
+            "FeaturedImage": "ocean_sunset.jpg",
+            "Description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
+            "Matrix": {
+                "MatrixBlock": [
+                    {
+                        "HeadingSize": "h1",
+                        "HeadingText": "This is an H1 tag"
+                    },
+                    {
+                        "Copy": {}
+                    },
+                    {
+                        "HeadingSize": "h2",
+                        "HeadingText": "This is an H2 tag"
+                    },
+                    {
+                        "Images": {
+                            "Image": [
+                                "img_fjords.jpg",
+                                "recent-images-11.jpg"
+                            ]
+                        }
+                    },
+                    {
+                        "Copy": {}
+                    }
+                ]
+            }
+        },
+        {
+            "Title": "Guide second entry example",
+            "FeaturedImage": "ocean_sunset.jpg",
+            "Description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
+            "Matrix": {
+                "MatrixBlock": [
+                    {
+                        "HeadingSize": "h3",
+                        "HeadingText": "This is an H3 tag"
+                    },
+                    {
+                        "Images": {
+                            "Image": "recent-images-11.jpg"
+                        }
+                    },
+                    {
+                        "Copy": {}
+                    },
+                    {
+                        "HeadingSize": "h3",
+                        "HeadingText": "This is an H3 tag"
+                    },
+                    {
+                        "Copy": {}
+                    },
+                    {
+                        "Images": {
+                            "Image": "img_fjords.jpg"
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
+```
+:::
 
 ### Note on structure
 
@@ -98,7 +171,8 @@ You'll notice we're using `Matrix` and `MatrixBlock` for the nodes that contain 
 
 For example, you should **not** do:
 
-+++xmltojson
+::: code
+```xml
 <MatrixContent>
     <RichTextBlock>
         <Copy>Lorem ipsum...</Copy>
@@ -109,11 +183,25 @@ For example, you should **not** do:
         <Image>img_fjords.jpg</Image>
     </ImageBlock>
 </MatrixContent>
-+++
+```
+
+```json
+{
+    "RichTextBlock": {
+        "Copy": "Lorem ipsum...",
+        "Caption": "Some more text."
+    },
+    "ImageBlock": {
+        "Image": "img_fjords.jpg"
+    }
+}
+```
+:::
 
 Instead, use the same named node to surround the content for each block:
 
-+++xmltojson
+::: code
+```xml
 <MatrixContent>
     <MatrixBlock>
         <Copy>Lorem ipsum...</Copy>
@@ -124,7 +212,22 @@ Instead, use the same named node to surround the content for each block:
         <Image>img_fjords.jpg</Image>
     </MatrixBlock>
 </MatrixContent>
-+++
+```
+
+```json
+{
+    "MatrixBlock": [
+        {
+            "Copy": "Lorem ipsum...",
+            "Caption": "Some more text."
+        },
+        {
+            "Image": "img_fjords.jpg"
+        }
+    ]
+}
+```
+:::
 
 Choose either the XML or JSON (depending on your preference), and save as a file in the root of your public directory. We'll assume its `http://craft.local/matrix-feed.xml`.
 

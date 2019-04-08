@@ -2,7 +2,7 @@
 
 Use the below screenshot as a guide for the data we want to map to our product fields.
 
-![Feedme Products Guide Mapping](/docs/screenshots/feedme-products-guide-mapping.png)
+![Feedme Products Guide Mapping](../../screenshots/feedme-products-guide-mapping.png)
 
 #### Things to note
 
