@@ -25,8 +25,8 @@
         "email": "support@craftcms.com",
         "issues": "https://github.com/craftcms/feed-me/issues?state=open",
         "source": "https://github.com/craftcms/feed-me",
-        "docs": "https://github.com/craftcms/feed-me/blob/craft-3/README.md",
-        "rss": "https://github.com/craftcms/feed-me/commits/craft-3.atom"
+        "docs": "https://docs.craftcms.com/feed-me/v4/",
+        "rss": "https://github.com/craftcms/feed-me/commits/master.atom"
     },
     "require": {
         "craftcms/cms": "^3.1.21",
@@ -56,6 +56,6 @@
     "extra": {
         "name": "Feed Me",
         "handle": "feed-me",
-        "documentationUrl": "https://github.com/craftcms/feed-me/blob/craft-3/README.md"
+        "documentationUrl": "https://docs.craftcms.com/feed-me/v4/"
     }
 }
