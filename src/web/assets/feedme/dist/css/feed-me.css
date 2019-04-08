@@ -1,22 +1,5 @@
 #plugin-footer .footer-left { float: left; }
 
-#plugin-footer .footer-right { float: right; }
-
-.plugin-credit { position: relative; width: 78px; height: 29px; display: block; }
-
-.plugin-credit .credit-love { position: absolute; top: 0; left: -114px; color: #8f98a3; opacity: 0; padding: 5px 9px 5px 0; -webkit-transition: all 0.3s ease 0s; transition: all 0.3s ease 0s; -webkit-transform: translateY(5px); transform: translateY(5px); }
-
-.plugin-credit .credit-pill { float: right; display: inline-block; background: #d5d9dd; border-radius: 25px; padding: 8px 10px 8px 5px; -webkit-transition: all 0.3s ease; transition: all 0.3s ease; }
-
-.plugin-credit .credit-mask { width: 12px; overflow: hidden; padding-left: 3px; margin-right: -1px; -webkit-transform: skewX(-25deg); transform: skewX(-25deg); -webkit-transition: all 0.3s ease; transition: all 0.3s ease; }
-
-.plugin-credit .credit-wrap { width: 60px; height: 13px; -webkit-transform: skewX(25deg); transform: skewX(25deg); }
-.plugin-credit .credit-wrap svg { width: 100%; height: 100%; display: block; }
-
-.plugin-credit:hover .credit-pill { background: #4b308c; }
-.plugin-credit:hover .credit-love { opacity: 1; -webkit-transform: translateY(0); transform: translateY(0); -webkit-transition-delay: 0.4s; transition-delay: 0.4s; }
-.plugin-credit:hover .credit-mask { width: 61px; }
-
 /*!
  * Font Awesome Pro 5.0.9 by @fontawesome - https://fontawesome.com
  * License - https://fontawesome.com/license (Commercial License)
@@ -2533,20 +2516,6 @@ body.rtl .feedme-mapping .select:after { left: 9px; }
 body.feedme-message .message-container .pane { width: 36em; padding: 2em; margin: 0 auto !important; -webkit-transform: translate(0, -50%); transform: translate(0, -50%); }
 
 body.feedme-message .feedme-fullpage { margin-bottom: 24px; }
-
-.feedme-help-form { width: 320px; margin-bottom: 40px; }
-
-.feedme-help .fa { color: #bbb; font-size: 15px; vertical-align: bottom; margin-right: 2px; }
-
-.feedme-help .contact-block { margin-bottom: 20px; }
-
-.feedme-help .contact-block h3, .feedme-help .contact-block p { margin: 5px 0 0 0; }
-
-.feedme-help-form .errors { margin-top: 20px; }
-
-.feedme-help ul.feedme-info { list-style: initial; margin-left: 20px; margin-top: -6px; margin-bottom: 30px; }
-
-.feedme-help ul.feedme-info li { font-size: 12px; color: #8f98a3; }
 
 .feedme-welcome { text-align: center; margin: 0 auto; }
 

@@ -87,13 +87,10 @@ module.exports = {
                 ]
             },
             {
-                title: 'Support',
+                title: 'Troubleshooting',
                 collapsable: false,
                 children: [
-                    'support/troubleshooting',
-                    'support/troubleshooting/logging',
-                    'support/troubleshooting/debugging',
-                    'support/get-support'
+                    'troubleshooting',
                 ]
             },
         ],

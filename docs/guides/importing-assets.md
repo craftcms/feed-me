@@ -21,13 +21,13 @@ The below data is what we'll use for this guide:
 <Images>
     <Image>
         <Title>Feed Me Social Card</Title>
-        <URL>https://verbb.io/uploads/plugins/feed-me/_800x455_crop_center-center_none/feed-me-social-card.png</URL>
+        <URL>https://craftcms.com/uploads/plugins/feed-me/_800x455_crop_center-center_none/feed-me-social-card.png</URL>
         <Caption>Some Caption</Caption>
     </Image>
 
     <Image>
-        <Title>Super Table Social Card</Title>
-        <URL>https://verbb.io/uploads/plugins/super-table/_800x455_crop_center-center_none/super-table-social-card.png</URL>
+        <Title>Craft Commerce Social Card</Title>
+        <URL>https://craftcms.com/uploads/plugins/commerce/_800x455_crop_center-center_none/commerce-social-card.png</URL>
         <Caption>Another Caption</Caption>
     </Image>
 </Images>
@@ -38,12 +38,12 @@ The below data is what we'll use for this guide:
     "Image": [
         {
             "Title": "Feed Me Social Card",
-            "URL": "https://verbb.io/uploads/plugins/feed-me/_800x455_crop_center-center_none/feed-me-social-card.png",
+            "URL": "https://craftcms.com/uploads/plugins/feed-me/_800x455_crop_center-center_none/feed-me-social-card.png",
             "Caption": "Some Caption"
         },
         {
-            "Title": "Super Table Social Card",
-            "URL": "https://verbb.io/uploads/plugins/super-table/_800x455_crop_center-center_none/super-table-social-card.png",
+            "Title": "Craft Commerce Social Card",
+            "URL": "https://craftcms.com/uploads/plugins/commerce/_800x455_crop_center-center_none/commerce-social-card.png",
             "Caption": "Another Caption"
         }
     ]
