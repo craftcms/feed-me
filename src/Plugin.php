@@ -15,13 +15,6 @@ use yii\base\Event;
 
 class Plugin extends \craft\base\Plugin
 {
-    // Constants
-    // =========================================================================
-
-    const EDITION_LITE = 'lite';
-    const EDITION_PRO = 'pro';
-
-
     // Public Properties
     // =========================================================================
 
@@ -77,15 +70,6 @@ class Plugin extends \craft\base\Plugin
 
         return $navItem;
     }
-
-    public static function editions(): array
-    {
-        return [
-            self::EDITION_LITE,
-            self::EDITION_PRO,
-        ];
-    }
-
 
     // Protected Methods
     // =========================================================================

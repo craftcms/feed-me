@@ -50,13 +50,6 @@ class Process extends Component
             throw new \Exception(Craft::t('feed-me', 'No data to import.'));
         }
 
-        // A simple license check
-        if ($feed['elementType'] != 'craft\elements\Entry') {
-            if (!Plugin::$plugin->is(Plugin::EDITION_PRO)) {
-                throw new \Exception(Craft::t('feed-me', 'Feed Me is not licensed.'));
-            }
-        }
-
         // Check for backup, best to do this before we do anything
         if ($feed->backup) {
             $this->_backupBeforeFeed($feed);

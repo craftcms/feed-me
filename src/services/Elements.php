@@ -76,26 +76,20 @@ class Elements extends Component
             return $this->_elements;
         }
 
-        if (Plugin::$plugin->is(Plugin::EDITION_PRO)) {
-            $elements = [
-                Asset::class,
-                Category::class,
-                // CommerceOrder::class,
-                CommerceProduct::class,
-                Entry::class,
-                Tag::class,
-                User::class,
+        $elements = [
+            Asset::class,
+            Category::class,
+            // CommerceOrder::class,
+            CommerceProduct::class,
+            Entry::class,
+            Tag::class,
+            User::class,
 
-                // Third-party
-                CalenderEvent::class,
-                Comment::class,
-                DigitalProduct::class,
-            ];
-        } else {
-            $elements = [
-                Entry::class,
-            ];
-        }
+            // Third-party
+            CalenderEvent::class,
+            Comment::class,
+            DigitalProduct::class,
+        ];
 
         $event = new RegisterFeedMeElementsEvent([
             'elements' => $elements,

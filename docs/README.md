@@ -5,7 +5,7 @@ Feed Me is a Craft plugin for super-simple importing of content, either once-off
 ## Features
 
 - Import data from XML, RSS, ATOM, CSV or JSON feeds, local or remote.
-- Import into Entries (Free), Categories, Users, and Commerce Products (Pro only).
+- Built-in importers for [several element types](content-mapping/element-types.md), plus an importer API. 
 - Feeds are saved to allow easy re-processing on-demand, or to be used in a Cron job.
 - Simple field-mapping interface to match your feed data with your element fields.
 - Duplication handling - control what happens when feeds are processed again.

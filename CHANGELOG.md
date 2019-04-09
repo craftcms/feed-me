@@ -3,6 +3,7 @@
 ## 4.0.0 (WIP)
 
 ### Changed
+- Feed Me is now available as a single, free edition.
 - The package name is now `craftcms/feed-me`.
 - Feed Me now requires Craft 3.1.21 or later.
 
