@@ -5,6 +5,7 @@
 ### Changed
 - Feed Me is now available as a single, free edition.
 - The package name is now `craftcms/feed-me`.
+- The root namespace is now `craft\feedme`.
 - Feed Me now requires Craft 3.1.21 or later.
 
 ## 3.1.17 - 2019-04-07
