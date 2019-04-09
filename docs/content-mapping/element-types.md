@@ -6,16 +6,12 @@ Selecting which Element Type to import into is the first step in using Feed Me. 
 Only the [Pro edition](/craft-plugins/feed-me/pricing) of Feed Me supports Assets, Categories, Users, Commerce Products and third-party elements.
 :::
 
-## Native Elements
+## Built-in Importers
 
-- Assets
-- Entries
-- Categories
-- Users
-- Commerce Products
+Feed Me can import content for the following element types out of the box:
 
-### Third Party Elements
-
-- [Comments](https://verbb.io/craft-plugins/comments)
-- [Solspace Calendar](https://solspace.com/craft/calendar)
-- [Digital Products](https://github.com/craftcms/digital-products)
+- **Core element types:** entries, categories, tags, assets, and users
+- **[Craft Commerce](https://plugins.craftcms.com/commerce):** orders and products
+- **[Digital Products](https://plugins.craftcms.com/digital-products):** digital products
+- **[Calendar by Solspace](https://plugins.craftcms.com/calendar):** events
+- **[Verbb Comments](https://plugins.craftcms.com/comments):** comments
