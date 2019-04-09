@@ -1,16 +1,15 @@
 <?php
-namespace verbb\feedme\fields;
 
-use verbb\feedme\FeedMe;
-use verbb\feedme\base\Field;
-use verbb\feedme\base\FieldInterface;
+namespace craft\feedme\fields;
 
+use Cake\Utility\Hash;
 use Craft;
 use craft\base\Element as BaseElement;
 use craft\elements\Entry as EntryElement;
+use craft\feedme\base\Field;
+use craft\feedme\base\FieldInterface;
+use craft\feedme\Plugin;
 use craft\helpers\Db;
-
-use Cake\Utility\Hash;
 
 class Entries extends Field implements FieldInterface
 {
@@ -83,7 +82,7 @@ class Entries extends Field implements FieldInterface
                 $foundElements = $value;
                 break;
             }
-            
+
             $query = EntryElement::find();
 
             // In multi-site, there's currently no way to query across all sites - we use the current site
@@ -114,13 +113,13 @@ class Entries extends Field implements FieldInterface
 
             Craft::configure($query, $criteria);
 
-            FeedMe::info('Search for existing entry with query `{i}`', ['i' => json_encode($criteria)]);
+            Plugin::info('Search for existing entry with query `{i}`', ['i' => json_encode($criteria)]);
 
             $ids = $query->ids();
 
             $foundElements = array_merge($foundElements, $ids);
 
-            FeedMe::info('Found `{i}` existing entries: `{j}`', ['i' => count($foundElements), 'j' => json_encode($foundElements)]);
+            Plugin::info('Found `{i}` existing entries: `{j}`', ['i' => count($foundElements), 'j' => json_encode($foundElements)]);
 
             // Check if we should create the element. But only if title is provided (for the moment)
             if (count($ids) == 0) {
@@ -202,9 +201,9 @@ class Entries extends Field implements FieldInterface
         $element->setScenario(BaseElement::SCENARIO_ESSENTIALS);
 
         if (!Craft::$app->getElements()->saveElement($element, true, $propagate)) {
-            FeedMe::error('`{handle}` - Entry error: Could not create - `{e}`.', ['e' => json_encode($element->getErrors()), 'handle' => $this->field->handle]);
+            Plugin::error('`{handle}` - Entry error: Could not create - `{e}`.', ['e' => json_encode($element->getErrors()), 'handle' => $this->field->handle]);
         } else {
-            FeedMe::info('`{handle}` - Entry `#{id}` added.', ['id' => $element->id, 'handle' => $this->field->handle]);
+            Plugin::info('`{handle}` - Entry `#{id}` added.', ['id' => $element->id, 'handle' => $this->field->handle]);
         }
 
         return $element->id;

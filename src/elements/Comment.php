@@ -1,20 +1,16 @@
 <?php
-namespace verbb\feedme\elements;
 
-use verbb\feedme\FeedMe;
-use verbb\feedme\base\Element;
-use verbb\feedme\base\ElementInterface;
-
-use Craft;
-use craft\base\Element as BaseElement;
-use craft\db\Query;
-use craft\elements\User as UserElement;
-use craft\helpers\Db;
-
-use verbb\comments\Comments;
-use verbb\comments\elements\Comment as CommentElement;
+namespace craft\feedme\elements;
 
 use Cake\Utility\Hash;
+use Craft;
+use craft\db\Query;
+use craft\elements\User as UserElement;
+use craft\feedme\base\Element;
+use craft\feedme\base\ElementInterface;
+use craft\feedme\Plugin;
+use verbb\comments\Comments;
+use verbb\comments\elements\Comment as CommentElement;
 
 class Comment extends Element implements ElementInterface
 {
@@ -183,9 +179,9 @@ class Comment extends Element implements ElementInterface
             $propagate = isset($this->feed['siteId']) && $this->feed['siteId'] ? false : true;
 
             if (!Craft::$app->getElements()->saveElement($element, true, $propagate)) {
-                FeedMe::error('Comment error: Could not create author - `{e}`.', ['e' => json_encode($element->getErrors())]);
+                Plugin::error('Comment error: Could not create author - `{e}`.', ['e' => json_encode($element->getErrors())]);
             } else {
-                FeedMe::info('Author `#{id}` added.', ['id' => $element->id]);
+                Plugin::info('Author `#{id}` added.', ['id' => $element->id]);
             }
 
             return $element->id;

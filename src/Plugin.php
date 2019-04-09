@@ -1,32 +1,20 @@
 <?php
-namespace verbb\feedme;
 
-use verbb\feedme\base\PluginTrait;
-use verbb\feedme\models\Settings;
-use verbb\feedme\services\Plugin as FeedMePlugin;
-use verbb\feedme\web\twig\Extension;
-use verbb\feedme\web\twig\variables\FeedMeVariable;
+namespace craft\feedme;
 
 use Craft;
-use craft\base\Plugin;
-use craft\events\PluginEvent;
 use craft\events\RegisterUrlRulesEvent;
+use craft\feedme\base\PluginTrait;
+use craft\feedme\models\Settings;
+use craft\feedme\web\twig\Extension;
+use craft\feedme\web\twig\variables\FeedMeVariable;
 use craft\helpers\UrlHelper;
-use craft\services\Plugins;
 use craft\web\twig\variables\CraftVariable;
 use craft\web\UrlManager;
-
 use yii\base\Event;
 
-class FeedMe extends Plugin
+class Plugin extends \craft\base\Plugin
 {
-    // Constants
-    // =========================================================================
-
-    const EDITION_LITE = 'lite';
-    const EDITION_PRO = 'pro';
-
-
     // Public Properties
     // =========================================================================
 
@@ -61,7 +49,7 @@ class FeedMe extends Plugin
         if (Craft::$app->getRequest()->getIsConsoleRequest()) {
             return;
         }
-        
+
         Craft::$app->controller->redirect(UrlHelper::cpUrl('feed-me/welcome'))->send();
     }
 
@@ -82,15 +70,6 @@ class FeedMe extends Plugin
 
         return $navItem;
     }
-
-    public static function editions(): array
-    {
-        return [
-            self::EDITION_LITE,
-            self::EDITION_PRO,
-        ];
-    }
-
 
     // Protected Methods
     // =========================================================================
@@ -116,7 +95,7 @@ class FeedMe extends Plugin
                 'feed-me/feeds' => 'feed-me/feeds/feeds-index',
                 'feed-me/feeds/new' => 'feed-me/feeds/edit-feed',
                 'feed-me/feeds/<feedId:\d+>' => 'feed-me/feeds/edit-feed',
-                'feed-me/feeds/element/<feedId:\d+>'=> 'feed-me/feeds/element-feed',
+                'feed-me/feeds/element/<feedId:\d+>' => 'feed-me/feeds/element-feed',
                 'feed-me/feeds/map/<feedId:\d+>' => 'feed-me/feeds/map-feed',
                 'feed-me/feeds/run/<feedId:\d+>' => 'feed-me/feeds/run-feed',
                 'feed-me/feeds/status/<feedId:\d+>' => 'feed-me/feeds/status-feed',
@@ -132,5 +111,5 @@ class FeedMe extends Plugin
             $event->sender->set('feedme', FeedMeVariable::class);
         });
     }
-    
+
 }

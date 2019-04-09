@@ -1,24 +1,21 @@
 <?php
-namespace verbb\feedme\elements;
 
-use verbb\feedme\FeedMe;
-use verbb\feedme\base\Element;
-use verbb\feedme\base\ElementInterface;
-use verbb\feedme\events\FeedProcessEvent;
-use verbb\feedme\services\Process;
+namespace craft\feedme\elements;
 
+use Cake\Utility\Hash;
+use Carbon\Carbon;
 use Craft;
 use craft\elements\User as UserElement;
-use craft\helpers\Db;
-
+use craft\feedme\base\Element;
+use craft\feedme\base\ElementInterface;
+use craft\feedme\events\FeedProcessEvent;
+use craft\feedme\Plugin;
+use craft\feedme\services\Process;
+use RRule\RfcParser;
 use Solspace\Calendar\Calendar;
 use Solspace\Calendar\Elements\Event as EventElement;
 use Solspace\Calendar\Library\DateHelper;
-
 use yii\base\Event;
-use Cake\Utility\Hash;
-use Carbon\Carbon;
-use RRule\RfcParser;
 
 class CalenderEvent extends Element implements ElementInterface
 {
@@ -159,9 +156,9 @@ class CalenderEvent extends Element implements ElementInterface
             $propagate = isset($this->feed['siteId']) && $this->feed['siteId'] ? false : true;
 
             if (!Craft::$app->getElements()->saveElement($element, true, $propagate)) {
-                FeedMe::error('Event error: Could not create author - `{e}`.', ['e' => json_encode($element->getErrors())]);
+                Plugin::error('Event error: Could not create author - `{e}`.', ['e' => json_encode($element->getErrors())]);
             } else {
-                FeedMe::info('Author `#{id}` added.', ['id' => $element->id]);
+                Plugin::info('Author `#{id}` added.', ['id' => $element->id]);
             }
 
             return $element->id;
@@ -195,11 +192,12 @@ class CalenderEvent extends Element implements ElementInterface
                 $this->rruleInfo[$attribute] = $ruleValue;
             }
         } catch (\Throwable $e) {
-            FeedMe::error($e->getMessage());
+            Plugin::error($e->getMessage());
         }
     }
 
-    protected function parseSelectDates($feedData, $fieldInfo) {
+    protected function parseSelectDates($feedData, $fieldInfo)
+    {
         $value = $this->fetchArrayValue($feedData, $fieldInfo);
         $this->selectDates = $value;
     }

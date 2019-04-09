@@ -1,17 +1,13 @@
 <?php
-namespace verbb\feedme\elements;
 
-use verbb\feedme\FeedMe;
-use verbb\feedme\base\Element;
-use verbb\feedme\base\ElementInterface;
-
-use Craft;
-use craft\helpers\Db;
-
-use craft\digitalproducts\Plugin as DigitalProducts;
-use craft\digitalproducts\elements\Product as ProductElement;
+namespace craft\feedme\elements;
 
 use Cake\Utility\Hash;
+use Craft;
+use craft\digitalproducts\elements\Product as ProductElement;
+use craft\digitalproducts\Plugin as DigitalProducts;
+use craft\feedme\base\Element;
+use craft\feedme\base\ElementInterface;
 
 class DigitalProduct extends Element implements ElementInterface
 {

@@ -1,15 +1,11 @@
 <?php
-namespace verbb\feedme\fields;
 
-use verbb\feedme\FeedMe;
-use verbb\feedme\base\Field;
-use verbb\feedme\base\FieldInterface;
-use verbb\feedme\helpers\DataHelper;
-
-use Craft;
-use craft\helpers\Localization;
+namespace craft\feedme\fields;
 
 use Cake\Utility\Hash;
+use craft\feedme\base\Field;
+use craft\feedme\base\FieldInterface;
+use craft\feedme\helpers\DataHelper;
 
 class Linkit extends Field implements FieldInterface
 {

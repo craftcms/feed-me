@@ -1,18 +1,15 @@
 <?php
-namespace verbb\feedme\services;
 
-use verbb\feedme\FeedMe;
-use verbb\feedme\events\FeedEvent;
-use verbb\feedme\models\FeedModel;
-use verbb\feedme\records\FeedRecord;
+namespace craft\feedme\services;
 
+use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
 use craft\db\Query;
+use craft\feedme\events\FeedEvent;
+use craft\feedme\models\FeedModel;
+use craft\feedme\records\FeedRecord;
 use craft\helpers\Json;
-use craft\models\Section;
-
-use Cake\Utility\Hash;
 
 class Feeds extends Component
 {
@@ -90,16 +87,16 @@ class Feeds extends Component
             }
         }
 
-        $record->name               = $model->name;
-        $record->feedUrl            = $model->feedUrl;
-        $record->feedType           = $model->feedType;
-        $record->primaryElement     = $model->primaryElement;
-        $record->elementType        = $model->elementType;
-        $record->siteId             = $model->siteId;
-        $record->duplicateHandle    = $model->duplicateHandle;
-        $record->paginationNode     = $model->paginationNode;
-        $record->passkey            = $model->passkey;
-        $record->backup             = $model->backup;
+        $record->name = $model->name;
+        $record->feedUrl = $model->feedUrl;
+        $record->feedType = $model->feedType;
+        $record->primaryElement = $model->primaryElement;
+        $record->elementType = $model->elementType;
+        $record->siteId = $model->siteId;
+        $record->duplicateHandle = $model->duplicateHandle;
+        $record->paginationNode = $model->paginationNode;
+        $record->passkey = $model->passkey;
+        $record->backup = $model->backup;
 
         if ($model->elementGroup) {
             $record->setAttribute('elementGroup', json_encode($model->elementGroup));

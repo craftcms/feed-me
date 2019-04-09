@@ -1,18 +1,15 @@
 <?php
-namespace verbb\feedme\elements;
 
-use verbb\feedme\FeedMe;
-use verbb\feedme\base\Element;
-use verbb\feedme\base\ElementInterface;
-use verbb\feedme\helpers\DateHelper;
+namespace craft\feedme\elements;
 
+use Cake\Utility\Hash;
 use Craft;
 use craft\elements\Entry as EntryElement;
 use craft\elements\User as UserElement;
-use craft\helpers\Db;
+use craft\feedme\base\Element;
+use craft\feedme\base\ElementInterface;
+use craft\feedme\Plugin;
 use craft\models\Section;
-
-use Cake\Utility\Hash;
 
 class Entry extends Element implements ElementInterface
 {
@@ -175,9 +172,9 @@ class Entry extends Element implements ElementInterface
             $propagate = isset($this->feed['siteId']) && $this->feed['siteId'] ? false : true;
 
             if (!Craft::$app->getElements()->saveElement($element, true, $propagate)) {
-                FeedMe::error('Entry error: Could not create parent - `{e}`.', ['e' => json_encode($element->getErrors())]);
+                Plugin::error('Entry error: Could not create parent - `{e}`.', ['e' => json_encode($element->getErrors())]);
             } else {
-                FeedMe::info('Entry `#{id}` added.', ['id' => $element->id]);
+                Plugin::info('Entry `#{id}` added.', ['id' => $element->id]);
             }
 
             return $element->id;
@@ -223,9 +220,9 @@ class Entry extends Element implements ElementInterface
             $propagate = isset($this->feed['siteId']) && $this->feed['siteId'] ? false : true;
 
             if (!Craft::$app->getElements()->saveElement($element, true, $propagate)) {
-                FeedMe::error('Entry error: Could not create author - `{e}`.', ['e' => json_encode($element->getErrors())]);
+                Plugin::error('Entry error: Could not create author - `{e}`.', ['e' => json_encode($element->getErrors())]);
             } else {
-                FeedMe::info('Author `#{id}` added.', ['id' => $element->id]);
+                Plugin::info('Author `#{id}` added.', ['id' => $element->id]);
             }
 
             return $element->id;

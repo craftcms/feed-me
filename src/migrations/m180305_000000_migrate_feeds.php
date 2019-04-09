@@ -1,12 +1,10 @@
 <?php
-namespace verbb\feedme\migrations;
 
-use Craft;
+namespace craft\feedme\migrations;
+
 use craft\db\Migration;
 use craft\db\Query;
 use craft\helpers\MigrationHelper;
-use craft\helpers\Component as ComponentHelper;
-use craft\helpers\StringHelper;
 
 class m180305_000000_migrate_feeds extends Migration
 {
@@ -77,15 +75,15 @@ class m180305_000000_migrate_feeds extends Migration
             if ($this->db->columnExists($table, 'fieldMapping') && !$this->db->columnExists($table, 'fieldMapping_v2')) {
                 MigrationHelper::renameColumn($table, 'fieldMapping', 'fieldMapping_v2', $this);
             }
-            
+
             if ($this->db->columnExists($table, 'fieldDefaults')) {
                 MigrationHelper::renameColumn($table, 'fieldDefaults', 'fieldDefaults_v2', $this);
             }
-            
+
             if ($this->db->columnExists($table, 'fieldElementMapping')) {
                 MigrationHelper::renameColumn($table, 'fieldElementMapping', 'fieldElementMapping_v2', $this);
             }
-            
+
             if ($this->db->columnExists($table, 'fieldElementDefaults')) {
                 MigrationHelper::renameColumn($table, 'fieldElementDefaults', 'fieldElementDefaults_v2', $this);
             }

@@ -1,25 +1,21 @@
 <?php
-namespace verbb\feedme\elements;
 
-use verbb\feedme\FeedMe;
-use verbb\feedme\base\Element;
-use verbb\feedme\base\ElementInterface;
-use verbb\feedme\events\FeedProcessEvent;
-use verbb\feedme\helpers\BaseHelper;
-use verbb\feedme\helpers\DataHelper;
-use verbb\feedme\services\Process;
+namespace craft\feedme\elements;
 
+use Cake\Utility\Hash;
 use Craft;
-use craft\base\Element as BaseElement;
-use craft\db\Query;
-
-use craft\commerce\Plugin as Commerce;
 use craft\commerce\elements\Product as ProductElement;
 use craft\commerce\elements\Variant as VariantElement;
-use craft\commerce\services\Variants;
-
+use craft\commerce\Plugin as Commerce;
+use craft\db\Query;
+use craft\feedme\base\Element;
+use craft\feedme\base\ElementInterface;
+use craft\feedme\events\FeedProcessEvent;
+use craft\feedme\helpers\BaseHelper;
+use craft\feedme\helpers\DataHelper;
+use craft\feedme\Plugin;
+use craft\feedme\services\Process;
 use yii\base\Event;
-use Cake\Utility\Hash;
 
 class CommerceProduct extends Element implements ElementInterface
 {
@@ -140,7 +136,7 @@ class CommerceProduct extends Element implements ElementInterface
 
     // Private Methods
     // =========================================================================
-    
+
     private function _preParseVariants($event)
     {
         $feed = $event->feed;
@@ -170,7 +166,7 @@ class CommerceProduct extends Element implements ElementInterface
         $contentData = $event->contentData;
 
         // If we're trying to match an existing product element on a variant's content, we're not going to have much
-        // luck. So instead, in here, we look up the parent product (if any), and return that. We directly modify the 
+        // luck. So instead, in here, we look up the parent product (if any), and return that. We directly modify the
         // unique content array $contentData so we don't have to deal with any other shenanigans in core code.
         foreach ($contentData as $handle => $value) {
             if (strpos($handle, 'variant-') !== false) {
@@ -199,7 +195,7 @@ class CommerceProduct extends Element implements ElementInterface
 
                 $variant = $this->_getVariantBySku($sku);
 
-                // Now, we want to directly modify the unique fields to instead of using the variant SKU, use the 
+                // Now, we want to directly modify the unique fields to instead of using the variant SKU, use the
                 // product id. Note that we want to force this, even if we haven't found a variant, because trying to import
                 // using variant-sku as the unique identifier won't go down so well - it won't create the products like it should
                 $feed['fieldUnique']['id'] = '1';
@@ -345,7 +341,7 @@ class CommerceProduct extends Element implements ElementInterface
 
                     $value = str_replace($variantNodePathKey . $variantNumber . '/', '', $value);
                     $value = str_replace($variantNodePathKey, '', $value);
-                    
+
                     $alteredData[$key] = $value;
                 }
 
@@ -392,7 +388,7 @@ class CommerceProduct extends Element implements ElementInterface
                 if (Hash::get($fieldInfo, 'field')) {
                     $data = Hash::get($fieldInfo, 'data');
 
-                    $fieldValue = FeedMe::$plugin->fields->parseField($feed, $element, $data, $fieldHandle, $fieldInfo);
+                    $fieldValue = Plugin::$plugin->fields->parseField($feed, $element, $data, $fieldHandle, $fieldInfo);
 
                     if ($fieldValue !== null) {
                         $fieldData[$fieldHandle] = $fieldValue;

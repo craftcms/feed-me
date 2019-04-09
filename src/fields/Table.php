@@ -1,17 +1,14 @@
 <?php
-namespace verbb\feedme\fields;
 
-use verbb\feedme\FeedMe;
-use verbb\feedme\base\Field;
-use verbb\feedme\base\FieldInterface;
-use verbb\feedme\helpers\BaseHelper;
-use verbb\feedme\helpers\DateHelper;
-
-use Craft;
-use craft\helpers\DateTimeHelper;
-use craft\helpers\Localization;
+namespace craft\feedme\fields;
 
 use Cake\Utility\Hash;
+use craft\feedme\base\Field;
+use craft\feedme\base\FieldInterface;
+use craft\feedme\helpers\BaseHelper;
+use craft\feedme\Plugin;
+use craft\helpers\DateTimeHelper;
+use craft\helpers\Localization;
 
 class Table extends Field implements FieldInterface
 {
@@ -72,7 +69,7 @@ class Table extends Field implements FieldInterface
             }
         }
 
-        $dataDelimiter = FeedMe::$plugin->service->getConfig('dataDelimiter', $this->feed['id']);
+        $dataDelimiter = Plugin::$plugin->service->getConfig('dataDelimiter', $this->feed['id']);
 
         foreach ($parsedData as $rowKey => $row) {
             foreach ($row as $columnKey => $column) {
@@ -95,7 +92,7 @@ class Table extends Field implements FieldInterface
         // Make sure each column has values, even if null
         foreach ($preppedData as $key => $columnData) {
             if (count($columnData) != count($columns)) {
-                for ($i = 1; $i <= count($columns); $i++) { 
+                for ($i = 1; $i <= count($columns); $i++) {
                     if (!isset($preppedData[$key]['col' . $i])) {
                         $preppedData[$key]['col' . $i] = null;
                     }
@@ -123,7 +120,7 @@ class Table extends Field implements FieldInterface
             return BaseHelper::parseColor($value);
         } else if ($type == 'date') {
             $parsedValue = DateTimeHelper::toDateTime($value) ?: null;
-            
+
             return $this->field->serializeValue($parsedValue);
         } else if ($type == 'lightswitch') {
             return BaseHelper::parseBoolean($value);

@@ -1,16 +1,14 @@
 <?php
-namespace verbb\feedme\fields;
 
-use verbb\feedme\FeedMe;
-use verbb\feedme\base\Field;
-use verbb\feedme\base\FieldInterface;
-use verbb\feedme\helpers\DataHelper;
-
-use ether\simplemap\SimpleMap as SimpleMapPlugin;
-use ether\simplemap\models\Map;
-use ether\simplemap\services\MapService;
+namespace craft\feedme\fields;
 
 use Cake\Utility\Hash;
+use craft\feedme\base\Field;
+use craft\feedme\base\FieldInterface;
+use craft\feedme\helpers\DataHelper;
+use ether\simplemap\models\Map;
+use ether\simplemap\services\MapService;
+use ether\simplemap\SimpleMap as SimpleMapPlugin;
 
 class SimpleMap extends Field implements FieldInterface
 {
@@ -48,11 +46,11 @@ class SimpleMap extends Field implements FieldInterface
         }
 
         // In order to full-fill any empty gaps in data (lng/lat/address), we check to see if we have any data missing
-        // then, request that data through Google's geocoding API - making for a hands-free import. 
-        
+        // then, request that data through Google's geocoding API - making for a hands-free import.
+
         // Check for empty Address
         if (!isset($preppedData['address'])) {
-            if ( (isset($preppedData['lat']) && !empty($preppedData['lat'])) && (isset($preppedData['lng']) && !empty($preppedData['lng'])) ) {
+            if ((isset($preppedData['lat']) && !empty($preppedData['lat'])) && (isset($preppedData['lng']) && !empty($preppedData['lng']))) {
                 $addressInfo = $this->_getAddressFromLatLng($preppedData['lat'], $preppedData['lng']);
                 $preppedData['address'] = $addressInfo['formatted_address'];
 
@@ -94,10 +92,13 @@ class SimpleMap extends Field implements FieldInterface
     {
         $apiKey = SimpleMapPlugin::getInstance()->getSettings()->geoToken;
 
-        if (!$apiKey)
+        if (!$apiKey) {
             $apiKey = SimpleMapPlugin::getInstance()->getSettings()->mapToken;
+        }
 
-        if (!$apiKey) return null;
+        if (!$apiKey) {
+            return null;
+        }
 
         $url = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=' . rawurlencode($lat) . ',' . rawurlencode($lng) . '&key=' . $apiKey;
 

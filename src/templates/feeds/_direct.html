@@ -1,5 +1,5 @@
-{% do view.registerAssetBundle('verbb\\feedme\\web\\assets\\feedme\\FeedMeAsset') %}
-{% set baseAssetsUrl = view.getAssetManager().getPublishedUrl('@verbb/feedme/web/assets/feedme/dist', true) %}
+{% do view.registerAssetBundle('craft\\feedme\\web\\assets\\feedme\\FeedMeAsset') %}
+{% set baseAssetsUrl = view.getAssetManager().getPublishedUrl('@craft/feedme/web/assets/feedme/dist', true) %}
 
 <!doctype html>
 <html lang="en">
@@ -18,14 +18,14 @@
         {% if task %}
             <div class="feedme-fullpage fullpage-running">
                 <img src="{{ baseAssetsUrl ~ '/img/icon-success.svg' }}">
-                
+
                 <h2>{{ '{name} has started processing' | t('feed-me', { name: feed.name }) }}</h2>
                 <p>{{ 'Data is now being imported from your feed. You can navigate away from this page without disrupting your feed processing.' | t('feed-me') }}</p>
             </div>
         {% else %}
             <div class="feedme-fullpage fullpage-error">
                 <img src="{{ baseAssetsUrl ~ '/img/icon-error.svg' }}">
-                
+
                 <h2>{{ 'Unable to start feed' | t('feed-me') }}</h2>
                 <p>{{ 'Please check your passkey, and verify the URL is correct.' | t('feed-me') }}</p>
             </div>

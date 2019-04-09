@@ -1,15 +1,13 @@
 <?php
-namespace verbb\feedme\fields;
 
-use verbb\feedme\FeedMe;
-use verbb\feedme\base\Field;
-use verbb\feedme\base\FieldInterface;
-
-use Craft;
-use craft\commerce\elements\Variant as VariantElement;
-use craft\helpers\Db;
+namespace craft\feedme\fields;
 
 use Cake\Utility\Hash;
+use Craft;
+use craft\commerce\elements\Variant as VariantElement;
+use craft\feedme\base\Field;
+use craft\feedme\base\FieldInterface;
+use craft\feedme\Plugin;
 
 class CommerceVariants extends Field implements FieldInterface
 {
@@ -82,7 +80,7 @@ class CommerceVariants extends Field implements FieldInterface
             if (Craft::$app->getFields()->getFieldByHandle($match)) {
                 $columnName = Craft::$app->getFields()->oldFieldColumnPrefix . $match;
             }
-            
+
             $query = VariantElement::find();
 
             // In multi-site, there's currently no way to query across all sites - we use the current site
@@ -104,13 +102,13 @@ class CommerceVariants extends Field implements FieldInterface
 
             Craft::configure($query, $criteria);
 
-            FeedMe::info('Search for existing variant with query `{i}`', ['i' => json_encode($criteria)]);
+            Plugin::info('Search for existing variant with query `{i}`', ['i' => json_encode($criteria)]);
 
             $ids = $query->ids();
 
             $foundElements = array_merge($foundElements, $ids);
 
-            FeedMe::info('Found `{i}` existing variants: `{j}`', ['i' => count($foundElements), 'j' => json_encode($foundElements)]);
+            Plugin::info('Found `{i}` existing variants: `{j}`', ['i' => count($foundElements), 'j' => json_encode($foundElements)]);
         }
 
         // Check for field limit - only return the specified amount

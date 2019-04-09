@@ -1,15 +1,12 @@
 <?php
-namespace verbb\feedme\helpers;
 
+namespace craft\feedme\helpers;
+
+use Cake\Utility\Hash;
 use Craft;
-use craft\base\Serializable;
+use craft\feedme\Plugin;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Db;
-
-use verbb\feedme\FeedMe;
-
-use yii\base\Arrayable;
-use Cake\Utility\Hash;
 
 class DataHelper
 {
@@ -44,7 +41,7 @@ class DataHelper
         $node = Hash::get($fieldInfo, 'node');
         $default = Hash::get($fieldInfo, 'default');
 
-        $dataDelimiter = FeedMe::$plugin->service->getConfig('dataDelimiter');
+        $dataDelimiter = Plugin::$plugin->service->getConfig('dataDelimiter');
 
         // Some fields require array, or multiple values like Elements, Checkboxes, etc, and we need to parse them differently.
         // Firstly, field mapping is setup like `MatrixBlock/Images` but actual feed is structured like `MatrixBlock/0/Images/0`.
@@ -64,7 +61,7 @@ class DataHelper
                 // an array, so ensure to merge with the current results.
                 if (is_string($nodeValue) && strpos($nodeValue, $dataDelimiter) !== false) {
                     $delimitedValues = explode($dataDelimiter, $nodeValue);
-                    
+
                     // Trim values in case whitespace was used between delimiter
                     $delimitedValues = array_map('trim', $delimitedValues);
 
@@ -90,7 +87,7 @@ class DataHelper
         $node = Hash::get($fieldInfo, 'node');
         $default = Hash::get($fieldInfo, 'default');
 
-        $dataDelimiter = FeedMe::$plugin->service->getConfig('dataDelimiter');
+        $dataDelimiter = Plugin::$plugin->service->getConfig('dataDelimiter');
 
         // Some fields require array, or multiple values like Elements, Checkboxes, etc, and we need to parse them differently.
         // Firstly, field mapping is setup like `MatrixBlock/Images` but actual feed is structured like `MatrixBlock/0/Images/0`.
@@ -100,7 +97,7 @@ class DataHelper
             // its supposed to match up with, which is stored in the DB like MatrixBlock/Images
             $feedPath = preg_replace('/(\/\d+\/)/', '/', $nodePath);
             $feedPath = preg_replace('/^(\d+\/)|(\/\d+)/', '', $feedPath);
-            
+
             if ($feedPath == $node || $nodePath == $node) {
                 if ($nodeValue === null || $nodeValue === '') {
                     $nodeValue = $default;
@@ -110,7 +107,7 @@ class DataHelper
                 // an array, so ensure to merge with the current results.
                 if (is_string($nodeValue) && strpos($nodeValue, $dataDelimiter) !== false) {
                     $delimitedValues = explode($dataDelimiter, $nodeValue);
-                    
+
                     // Trim values in case whitespace was used between delimiter
                     $delimitedValues = array_map('trim', $delimitedValues);
 
@@ -143,7 +140,7 @@ class DataHelper
             try {
                 $value = Craft::$app->getView()->renderObjectTemplate($value, $element);
             } catch (\Throwable $e) {
-                
+
             }
         }
 
@@ -193,7 +190,7 @@ class DataHelper
 
                 $existingValue = $groups;
             }
-            
+
             if ($existingValue == $newValue) {
                 unset($trackedChanges[$key]);
                 continue;
@@ -206,20 +203,20 @@ class DataHelper
             if (is_array($existingValue) && is_array($newValue)) {
                 $diff = self::arrayCompare($existingValue, $newValue);
 
-                FeedMe::debug($key . ' - diff');
-                FeedMe::debug($diff);
+                Plugin::debug($key . ' - diff');
+                Plugin::debug($diff);
             }
 
             // Now its getting personal. We need to check things per field type
             // Find the resulting value from what Feed Me's field processing would produce
             // $field = Craft::$app->getFields()->getFieldByHandle($key);
 
-            FeedMe::debug($key . ' - existing');
-            FeedMe::debug($existingValue);
-            FeedMe::debug($key . ' - new');
-            FeedMe::debug($newValue);
+            Plugin::debug($key . ' - existing');
+            Plugin::debug($existingValue);
+            Plugin::debug($key . ' - new');
+            Plugin::debug($newValue);
 
-            FeedMe::info('Data to update for `{i}`: `{j}`.', ['i' => $key, 'j' => json_encode($newValue)]);
+            Plugin::info('Data to update for `{i}`: `{j}`.', ['i' => $key, 'j' => json_encode($newValue)]);
         }
 
         if (empty($trackedChanges)) {
@@ -230,7 +227,7 @@ class DataHelper
     public static function arrayCompare($array1, $array2)
     {
         $diff = false;
-        
+
         foreach ($array1 as $key => $value) {
             if (!array_key_exists($key, $array2)) {
                 $diff[0][$key] = $value;
@@ -240,7 +237,7 @@ class DataHelper
                     $diff[1][$key] = $array2[$key];
                 } else {
                     $new = self::arrayCompare($value, $array2[$key]);
-                    
+
                     if ($new !== false) {
                         if (isset($new[0])) {
                             $diff[0][$key] = $new[0];

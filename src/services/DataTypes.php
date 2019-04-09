@@ -1,31 +1,24 @@
 <?php
-namespace verbb\feedme\services;
 
-use verbb\feedme\FeedMe;
-use verbb\feedme\base\DataTypeInterface;
-use verbb\feedme\datatypes\Atom;
-use verbb\feedme\datatypes\Csv;
-use verbb\feedme\datatypes\GoogleSheet;
-use verbb\feedme\datatypes\Json;
-use verbb\feedme\datatypes\Rss;
-use verbb\feedme\datatypes\Xml;
-use verbb\feedme\events\FeedDataEvent;
-use verbb\feedme\events\RegisterFeedMeDataTypesEvent;
-use verbb\feedme\models\FeedModel;
-
-use Craft;
-use craft\base\Component;
-use craft\elements\Entry;
-use craft\helpers\Component as ComponentHelper;
-use craft\helpers\UrlHelper;
-use craft\models\Section;
-
-use yii\base\Event;
-
-use GuzzleHttp\Psr7;
-use GuzzleHttp\Exception\RequestException;
+namespace craft\feedme\services;
 
 use Cake\Utility\Hash;
+use Craft;
+use craft\base\Component;
+use craft\feedme\base\DataTypeInterface;
+use craft\feedme\datatypes\Atom;
+use craft\feedme\datatypes\Csv;
+use craft\feedme\datatypes\GoogleSheet;
+use craft\feedme\datatypes\Json;
+use craft\feedme\datatypes\Rss;
+use craft\feedme\datatypes\Xml;
+use craft\feedme\events\FeedDataEvent;
+use craft\feedme\events\RegisterFeedMeDataTypesEvent;
+use craft\feedme\models\FeedModel;
+use craft\feedme\Plugin;
+use craft\helpers\Component as ComponentHelper;
+use craft\helpers\UrlHelper;
+use yii\base\Event;
 
 class DataTypes extends Component
 {
@@ -166,8 +159,8 @@ class DataTypes extends Component
         }
 
         try {
-            $client = FeedMe::$plugin->service->createGuzzleClient($feedId);
-            $options = FeedMe::$plugin->service->getRequestOptions($feedId);
+            $client = Plugin::$plugin->service->createGuzzleClient($feedId);
+            $options = Plugin::$plugin->service->getRequestOptions($feedId);
 
             $resp = $client->request('GET', $url, $options);
             $data = (string)$resp->getBody();
@@ -234,7 +227,7 @@ class DataTypes extends Component
         if (!is_array($data)) {
             return [];
         }
-        
+
         $mappingPaths = [];
 
         // Go through entire feed and grab all nodes - that way, its normalised across the entire feed
@@ -273,7 +266,7 @@ class DataTypes extends Component
                 if (array_key_exists('0', $parsed[$element])) { // is multidimensional
                     return $parsed[$element];
                 } else {
-                    return array($parsed[$element]);
+                    return [$parsed[$element]];
                 }
             }
         }
@@ -293,7 +286,7 @@ class DataTypes extends Component
 
     public function getFeedForTemplate($options = [])
     {
-        $pluginSettings = FeedMe::$plugin->getSettings();
+        $pluginSettings = Plugin::$plugin->getSettings();
 
         $url = Hash::get($options, 'url');
         $type = Hash::get($options, 'type');
@@ -373,7 +366,8 @@ class DataTypes extends Component
     // Private
     // =========================================================================
 
-    private function _parseNodeTree(&$tree, $array, $index = '') {
+    private function _parseNodeTree(&$tree, $array, $index = '')
+    {
         foreach ($array as $key => $val) {
             if (!is_numeric($key)) {
                 if (is_array($val)) {
@@ -382,7 +376,7 @@ class DataTypes extends Component
                     if (Hash::dimensions($val) == 1) {
                         $count = 1;
                     }
-                    
+
                     $tree[$index . '/' . $key] = $count;
 
                     $this->_parseNodeTree($tree, $val, $index . '/' . $key);

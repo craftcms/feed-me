@@ -1,18 +1,16 @@
 <?php
-namespace verbb\feedme\base;
 
-use verbb\feedme\FeedMe;
-use verbb\feedme\services\DataTypes;
-use verbb\feedme\services\Elements;
-use verbb\feedme\services\Feeds;
-use verbb\feedme\services\Fields;
-use verbb\feedme\services\Logs;
-use verbb\feedme\services\Process;
-use verbb\feedme\services\Service;
+namespace craft\feedme\base;
 
 use Craft;
-
-use Cake\Utility\Hash;
+use craft\feedme\Plugin;
+use craft\feedme\services\DataTypes;
+use craft\feedme\services\Elements;
+use craft\feedme\services\Feeds;
+use craft\feedme\services\Fields;
+use craft\feedme\services\Logs;
+use craft\feedme\services\Process;
+use craft\feedme\services\Service;
 
 trait PluginTrait
 {
@@ -31,12 +29,12 @@ trait PluginTrait
 
     public static function error($message, $params = [], $options = [])
     {
-        FeedMe::$plugin->getLogs()->log(__METHOD__, $message, $params, $options);
+        Plugin::$plugin->getLogs()->log(__METHOD__, $message, $params, $options);
     }
 
     public static function info($message, $params = [], $options = [])
     {
-        FeedMe::$plugin->getLogs()->log(__METHOD__, $message, $params, $options);
+        Plugin::$plugin->getLogs()->log(__METHOD__, $message, $params, $options);
     }
 
     public static function debug($message, $params = [])
@@ -98,13 +96,13 @@ trait PluginTrait
     private function _setPluginComponents()
     {
         $this->setComponents([
-            'data'     => DataTypes::class,
+            'data' => DataTypes::class,
             'elements' => Elements::class,
-            'feeds'    => Feeds::class,
-            'fields'   => Fields::class,
-            'logs'     => Logs::class,
-            'process'  => Process::class,
-            'service'  => Service::class,
+            'feeds' => Feeds::class,
+            'fields' => Fields::class,
+            'logs' => Logs::class,
+            'process' => Process::class,
+            'service' => Service::class,
         ]);
     }
 

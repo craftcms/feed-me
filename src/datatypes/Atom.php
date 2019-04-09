@@ -1,7 +1,6 @@
 <?php
-namespace verbb\feedme\datatypes;
 
-use verbb\feedme\base\DataType;
+namespace craft\feedme\datatypes;
 
 class Atom extends Xml
 {
@@ -12,5 +11,5 @@ class Atom extends Xml
 
     // Same as XML data type.
 }
-    
+
 

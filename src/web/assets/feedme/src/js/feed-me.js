@@ -1,12 +1,8 @@
 // ==========================================================================
 
 // Feed Me Plugin for Craft CMS
-// Author: Verbb - https://verbb.io/
 
 // ==========================================================================
-
-// @codekit-prepend "_help.js"    
-// @codekit-prepend "_selectize.js" 
 
 if (typeof Craft.FeedMe === typeof undefined) {
     Craft.FeedMe = {};
@@ -217,10 +213,10 @@ $(function() {
 
 var feedMeSuccessHtml = '<div><span data-icon="check"></span> ' +
         Craft.t('feed-me', 'Processing complete!') +
-    '</div>' + 
+    '</div>' +
     '<div class="feedme-success-btns">' +
-        '<a class="btn submit" href="' + Craft.getUrl('feed-me/feeds') + '">Back to Feeds</a>' + 
-        '<a class="btn" href="' + Craft.getUrl('feed-me/logs') + '">View logs</a>' + 
+        '<a class="btn submit" href="' + Craft.getUrl('feed-me/feeds') + '">Back to Feeds</a>' +
+        '<a class="btn" href="' + Craft.getUrl('feed-me/logs') + '">View logs</a>' +
     '</div>';
 
 Craft.FeedMe.TaskProgress = Garnish.Base.extend({

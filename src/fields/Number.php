@@ -1,14 +1,10 @@
 <?php
-namespace verbb\feedme\fields;
 
-use verbb\feedme\FeedMe;
-use verbb\feedme\base\Field;
-use verbb\feedme\base\FieldInterface;
+namespace craft\feedme\fields;
 
-use Craft;
+use craft\feedme\base\Field;
+use craft\feedme\base\FieldInterface;
 use craft\helpers\Localization;
-
-use Cake\Utility\Hash;
 
 class Number extends Field implements FieldInterface
 {
@@ -34,7 +30,7 @@ class Number extends Field implements FieldInterface
     public function parseField()
     {
         $value = $this->fetchValue();
-        
+
         return $this->parseValue($value);
     }
 
@@ -42,5 +38,5 @@ class Number extends Field implements FieldInterface
     {
         return Localization::normalizeNumber($value);
     }
-    
+
 }

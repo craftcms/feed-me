@@ -9,8 +9,8 @@ Events can be used to extend the functionality of Feed Me.
 Plugins can get notified before a feed has been saved (through the control panel).
 
 ```php
-use verbb\feedme\events\FeedEvent;
-use verbb\feedme\services\Feeds;
+use craft\feedme\events\FeedEvent;
+use craft\feedme\services\Feeds;
 use yii\base\Event;
 
 Event::on(Feeds::class, Feeds::EVENT_BEFORE_SAVE_FEED, function(FeedEvent $event) {
@@ -23,8 +23,8 @@ Event::on(Feeds::class, Feeds::EVENT_BEFORE_SAVE_FEED, function(FeedEvent $event
 Plugins can get notified after a feed has been saved (through the control panel).
 
 ```php
-use verbb\feedme\events\FeedEvent;
-use verbb\feedme\services\Feeds;
+use craft\feedme\events\FeedEvent;
+use craft\feedme\services\Feeds;
 use yii\base\Event;
 
 Event::on(Feeds::class, Feeds::EVENT_AFTER_SAVE_FEED, function(FeedEvent $event) {
@@ -40,8 +40,8 @@ Event::on(Feeds::class, Feeds::EVENT_AFTER_SAVE_FEED, function(FeedEvent $event)
 Plugins can get notified before a feed's data has been fetched. You can also return with a response to bypass Feed Me's default fetching.
 
 ```php
-use verbb\feedme\events\FeedDataEvent;
-use verbb\feedme\services\DataTypes;
+use craft\feedme\events\FeedDataEvent;
+use craft\feedme\services\DataTypes;
 use yii\base\Event;
 
 Event::on(DataTypes::class, DataTypes::EVENT_BEFORE_FETCH_FEED, function(FeedDataEvent $event) {
@@ -58,8 +58,8 @@ Event::on(DataTypes::class, DataTypes::EVENT_BEFORE_FETCH_FEED, function(FeedDat
 Plugins can get notified after a feed's data has been fetched. Note the feed data hasn't been parsed at this point.
 
 ```php
-use verbb\feedme\events\FeedDataEvent;
-use verbb\feedme\services\DataTypes;
+use craft\feedme\events\FeedDataEvent;
+use craft\feedme\services\DataTypes;
 use yii\base\Event;
 
 Event::on(DataTypes::class, DataTypes::EVENT_AFTER_FETCH_FEED, function(FeedDataEvent $event) {
@@ -72,8 +72,8 @@ Event::on(DataTypes::class, DataTypes::EVENT_AFTER_FETCH_FEED, function(FeedData
 Plugins can get notified after a feed's data has been fetched and parsed into an array.
 
 ```php
-use verbb\feedme\events\FeedDataEvent;
-use verbb\feedme\services\DataTypes;
+use craft\feedme\events\FeedDataEvent;
+use craft\feedme\services\DataTypes;
 use yii\base\Event;
 
 Event::on(DataTypes::class, DataTypes::EVENT_AFTER_PARSE_FEED, function(FeedDataEvent $event) {
@@ -89,8 +89,8 @@ Event::on(DataTypes::class, DataTypes::EVENT_AFTER_PARSE_FEED, function(FeedData
 Plugins can get notified before the feed processing has started.
 
 ```php
-use verbb\feedme\events\FeedProcessEvent;
-use verbb\feedme\services\Process;
+use craft\feedme\events\FeedProcessEvent;
+use craft\feedme\services\Process;
 use yii\base\Event;
 
 Event::on(Process::class, Process::EVENT_BEFORE_PROCESS_FEED, function(FeedProcessEvent $event) {
@@ -103,8 +103,8 @@ Event::on(Process::class, Process::EVENT_BEFORE_PROCESS_FEED, function(FeedProce
 Plugins can get notified after the feed processing has completed (all items are done).
 
 ```php
-use verbb\feedme\events\FeedProcessEvent;
-use verbb\feedme\services\Process;
+use craft\feedme\events\FeedProcessEvent;
+use craft\feedme\services\Process;
 use yii\base\Event;
 
 Event::on(Process::class, Process::EVENT_AFTER_PROCESS_FEED, function(FeedProcessEvent $event) {
@@ -117,8 +117,8 @@ Event::on(Process::class, Process::EVENT_AFTER_PROCESS_FEED, function(FeedProces
 Triggered for each feed item, plugins can get notified before existing elements are tried to be matched.
 
 ```php
-use verbb\feedme\events\FeedProcessEvent;
-use verbb\feedme\services\Process;
+use craft\feedme\events\FeedProcessEvent;
+use craft\feedme\services\Process;
 use yii\base\Event;
 
 Event::on(Process::class, Process::EVENT_STEP_BEFORE_ELEMENT_MATCH, function(FeedProcessEvent $event) {
@@ -131,8 +131,8 @@ Event::on(Process::class, Process::EVENT_STEP_BEFORE_ELEMENT_MATCH, function(Fee
 Triggered for each feed item, plugins can get notified before the prepared element is about to be saved.
 
 ```php
-use verbb\feedme\events\FeedProcessEvent;
-use verbb\feedme\services\Process;
+use craft\feedme\events\FeedProcessEvent;
+use craft\feedme\services\Process;
 use yii\base\Event;
 
 Event::on(Process::class, Process::EVENT_STEP_BEFORE_ELEMENT_SAVE, function(FeedProcessEvent $event) {
@@ -145,8 +145,8 @@ Event::on(Process::class, Process::EVENT_STEP_BEFORE_ELEMENT_SAVE, function(Feed
 Triggered for each feed item, plugins can get notified after the prepared element has been saved.
 
 ```php
-use verbb\feedme\events\FeedProcessEvent;
-use verbb\feedme\services\Process;
+use craft\feedme\events\FeedProcessEvent;
+use craft\feedme\services\Process;
 use yii\base\Event;
 
 Event::on(Process::class, Process::EVENT_STEP_AFTER_ELEMENT_SAVE, function(FeedProcessEvent $event) {

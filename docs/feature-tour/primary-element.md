@@ -4,7 +4,8 @@ The primary element can be confusing at first, but its vitally important to ensu
 
 Take the following example:
 
-+++xmltojson
+::: code
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <rss>
     <channel>
@@ -19,7 +20,25 @@ Take the following example:
         </item>
     </channel>
 </rss>
-+++
+```
+
+```json
+{
+    "channel": {
+        "item": [
+            {
+                "title": "My Title",
+                "slug": "my-title"
+            },
+            {
+                "title": "Another Title",
+                "slug": "another-title"
+            }
+        ]
+    }
+}
+```
+:::
 
 Your Primary Element would be `item`. This is the node that's repeatable, and you can usually pick it as it'll be the node thats one level above the content you want to import (`title` and `slug` in this case). In the JSON example, you'll see its a plain array, but the same applies.
 
@@ -33,4 +52,4 @@ Use this option to select the node in your feed that contains the full URL to th
 
 * * *
 
-Click on the _Save & Continue_ button to be taken to the [Field Mapping](docs:feature-tour/field-mapping) screen, or press _Save_ to continue editing this screen.
+Click on the _Save & Continue_ button to be taken to the [Field Mapping](field-mapping.md) screen, or press _Save_ to continue editing this screen.

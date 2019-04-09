@@ -1,14 +1,24 @@
 {
     "private": true,
+    "main": "gulpfile.js",
     "devDependencies": {
+        "craftcms-sass": "^1.4.0",
+        "grunt": "^1.0.3",
+        "grunt-contrib-concat": "latest",
+        "grunt-contrib-jshint": "latest",
+        "grunt-contrib-sass": "latest",
+        "grunt-contrib-uglify": "latest",
+        "grunt-contrib-watch": "^1.1.0",
+        "grunt-postcss": "^0.9.0",
+        "gulp": "^3.9.1",
         "markdown-it-deflist": "^2.0.3",
         "vuepress": "^0.11.0",
-        "vuepress-theme-verbbdocs": "^1.0.0",
-        "svg-inline-loader": "^0.8.0"
+        "vuepress-plugin-sitemap": "^1.1.1",
+        "vuepress-theme-craftdocs": "^1.3.0"
     },
     "scripts": {
         "docs:dev": "vuepress dev docs",
         "docs:build": "vuepress build docs",
-        "docs:sitemap": "vuepress-sitemap -H https://docs.verbb.io/"
+        "docs:sitemap": "vuepress-sitemap -H https://docs.craftcms.com/feed-me/v4/"
     }
 }

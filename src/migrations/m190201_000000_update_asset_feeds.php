@@ -1,10 +1,9 @@
 <?php
-namespace verbb\feedme\migrations;
 
-use Craft;
-use craft\db\Query;
+namespace craft\feedme\migrations;
+
 use craft\db\Migration;
-use craft\helpers\Db;
+use craft\db\Query;
 use craft\helpers\Json;
 
 class m190201_000000_update_asset_feeds extends Migration
@@ -22,7 +21,7 @@ class m190201_000000_update_asset_feeds extends Migration
 
             if (!isset($fieldMapping['urlOrPath']) && isset($fieldMapping['filename'])) {
                 $fieldMapping['urlOrPath'] = $fieldMapping['filename'];
-            
+
                 $this->update('{{%feedme_feeds}}', [
                     'fieldMapping' => Json::encode($fieldMapping),
                 ], [
@@ -30,7 +29,7 @@ class m190201_000000_update_asset_feeds extends Migration
                 ]);
             }
         }
-    
+
         return true;
     }
 

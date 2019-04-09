@@ -1,11 +1,10 @@
 <?php
-namespace verbb\feedme\queue\jobs;
 
-use verbb\feedme\FeedMe;
+namespace craft\feedme\queue\jobs;
 
 use Craft;
+use craft\feedme\Plugin;
 use craft\queue\BaseJob;
-
 use yii\queue\RetryableJobInterface;
 
 class FeedImport extends BaseJob implements RetryableJobInterface
@@ -24,12 +23,12 @@ class FeedImport extends BaseJob implements RetryableJobInterface
 
     public function getTtr()
     {
-        return FeedMe::$plugin->getSettings()->queueTtr;
+        return Plugin::$plugin->getSettings()->queueTtr;
     }
 
     public function canRetry($attempt, $error)
     {
-        return ($attempt < FeedMe::$plugin->getSettings()->queueMaxRetry);
+        return ($attempt < Plugin::$plugin->getSettings()->queueMaxRetry);
     }
 
     public function execute($queue)
@@ -49,23 +48,23 @@ class FeedImport extends BaseJob implements RetryableJobInterface
 
             // Do we even have any data to process?
             if (!$feedData) {
-                FeedMe::info('No feed items to process.');
+                Plugin::info('No feed items to process.');
                 return;
             }
 
             $totalSteps = count($feedData);
 
-            $feedSettings = FeedMe::$plugin->process->beforeProcessFeed($this->feed, $feedData);
+            $feedSettings = Plugin::$plugin->process->beforeProcessFeed($this->feed, $feedData);
 
             $index = 0;
-            
+
             foreach ($feedData as $key => $data) {
                 try {
-                    $element = FeedMe::$plugin->process->processFeed($index, $feedSettings, $this->processedElementIds);
+                    $element = Plugin::$plugin->process->processFeed($index, $feedSettings, $this->processedElementIds);
                 } catch (\Throwable $e) {
                     // We want to catch any issues in each iteration of the loop (and log them), but this allows the
                     // rest of the feed to continue processing.
-                    FeedMe::error('`{e} - {f}: {l}`.', ['e' => $e->getMessage(), 'f' => basename($e->getFile()), 'l' => $e->getLine()]);
+                    Plugin::error('`{e} - {f}: {l}`.', ['e' => $e->getMessage(), 'f' => basename($e->getFile()), 'l' => $e->getLine()]);
                 }
 
                 $this->setProgress($queue, $index++ / $totalSteps);
@@ -81,12 +80,12 @@ class FeedImport extends BaseJob implements RetryableJobInterface
                 ]));
             } else {
                 // Only perform the afterProcessFeed function after any/all pagination is done
-                FeedMe::$plugin->process->afterProcessFeed($feedSettings, $this->feed, $this->processedElementIds);
+                Plugin::$plugin->process->afterProcessFeed($feedSettings, $this->feed, $this->processedElementIds);
             }
         } catch (\Throwable $e) {
             // Even though we catch errors on each step of the loop, make sure to catch errors that can be anywhere
             // else in this function, just to be super-safe and not cause the queue job to die.
-            FeedMe::error('`{e} - {f}: {l}`.', ['e' => $e->getMessage(), 'f' => basename($e->getFile()), 'l' => $e->getLine()]);
+            Plugin::error('`{e} - {f}: {l}`.', ['e' => $e->getMessage(), 'f' => basename($e->getFile()), 'l' => $e->getLine()]);
         }
     }
 
@@ -96,6 +95,6 @@ class FeedImport extends BaseJob implements RetryableJobInterface
 
     protected function defaultDescription(): string
     {
-        return Craft::t('feed-me', 'Running {name} feed.', [ 'name' => $this->feed->name ]);
+        return Craft::t('feed-me', 'Running {name} feed.', ['name' => $this->feed->name]);
     }
 }

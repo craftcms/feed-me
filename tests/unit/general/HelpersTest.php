@@ -1,13 +1,12 @@
 <?php
 
-use verbb\feedme\FeedMe;
-use verbb\feedme\helpers\BaseHelper;
-use verbb\feedme\helpers\DateHelper;
+use craft\feedme\helpers\BaseHelper;
+use craft\feedme\helpers\DateHelper;
 
 class HelpersTest extends \Codeception\Test\Unit
 {
     protected $tester;
-    
+
     protected function _before()
     {
     }
@@ -84,7 +83,7 @@ class HelpersTest extends \Codeception\Test\Unit
         $this->assertTrue(BaseHelper::parseBoolean('on'));
         $this->assertTrue(BaseHelper::parseBoolean('enabled'));
         $this->assertTrue(BaseHelper::parseBoolean('live'));
-        
+
         $this->assertFalse(BaseHelper::parseBoolean(0));
         $this->assertFalse(BaseHelper::parseBoolean(false));
         $this->assertFalse(BaseHelper::parseBoolean('0'));
@@ -96,7 +95,6 @@ class HelpersTest extends \Codeception\Test\Unit
 
         $this->assertFalse(BaseHelper::parseBoolean(2));
     }
-
 
 
 }

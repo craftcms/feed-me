@@ -1,7 +1,6 @@
 <?php
-namespace verbb\feedme\helpers;
 
-use Cake\Utility\Hash;
+namespace craft\feedme\helpers;
 
 class DuplicateHelper
 {

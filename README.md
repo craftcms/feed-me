@@ -1,38 +1,38 @@
-# Feed Me Plugin for Craft CMS
+<p align="center"><img src="./src/icon.svg" width="100" height="100" alt="Feed Me icon"></p>
 
-<img width="500" src="https://verbb.io/uploads/plugins/feed-me/_800x455_crop_center-center/feed-me-social-card.png">
+<h1 align="center">Feed Me for Craft CMS</h1>
 
 Feed Me is a Craft plugin for super-simple importing of content, either once-off or at regular intervals. With support for XML, RSS, ATOM, CSV or JSON feeds, you'll be able to import your content as Entries, Categories, Craft Commerce Products (and variants), and more.
 
-> ## Editions
-> As of [Feed Me 3.1.14](https://github.com/verbb/feed-me/releases/tag/3.1.14) and [Craft 3.1.17.1](https://github.com/craftcms/cms/releases/tag/3.1.17.1) you no longer need both [Feed Me](https://github.com/verbb/feed-me) and [Feed Me Pro](https://github.com/verbb/feed-me-pro).
-> To update Feed Me to Pro, visit Settings → Plugins page in your Control Panel and enter your Feed Me Pro license key into the Feed Me license key input. If listed as the 'Lite' version, click on the Lite badge to be taken to the plugin store, and then hit 'Try' on the Pro version of Feed Me. Go back to Settings → Plugins and enter your license key.
-> At this point, you can safely uninstall the Feed Me Pro plugin.
+## Requirements
 
-## Features
+This plugin requires Craft CMS 3.1.21 or later.
 
-- Import data from XML, RSS, ATOM, CSV or JSON feeds, local or remote.
-- Import into Entries (Free), Categories, Users, and Commerce Products (Pro only).
-- Feeds are saved to allow easy re-processing on-demand, or to be used in a Cron job.
-- Simple field-mapping interface to match your feed data with your element fields.
-- Duplication handling - control what happens when feeds are processed again.
-- Uses Craft's Queue service to process feeds in the background.
-- Database backups before each feed processing.
-- Troubleshoot feed processing issues with logs.
-- Grab feed data directly from your twig templates.
- 
- <img src="https://raw.githubusercontent.com/verbb/feed-me/craft-3/docs/screenshots/feedme-overview.png" style="box-shadow: 0 4px 16px rgba(0,0,0,0.08); border-radius: 4px; border: 1px solid rgba(0,0,0,0.12);">
- 
-## Documentation
+## Installation
 
-Visit the [Feed Me Plugin page](https://verbb.io/craft-plugins/feed-me) for all documentation, guides, pricing and developer resources.
+You can install this plugin from the Plugin Store or with Composer.
 
-## Support
+#### From the Plugin Store
 
-Get in touch with us via the [Feed Me Support page](https://verbb.io/craft-plugins/feed-me/support) or by [creating a Github issue](https://github.com/verbb/feed-me/issues)
+Go to the Plugin Store in your project’s Control Panel and search for “Feed Me”. Then click on the “Install” button in its modal window.
 
-<h2></h2>
+#### With Composer
 
-<a href="https://verbb.io" target="_blank">
-  <img width="100" src="https://verbb.io/assets/img/verbb-pill.svg">
-</a>
+Open your terminal and run the following commands:
+
+```bash
+# go to the project directory
+cd /path/to/my-project.test
+
+# tell Composer to load the plugin
+composer require craftcms/feed-me
+
+# tell Craft to install the plugin
+./craft install/plugin feed-me
+```
+
+## Resources
+
+- **[Feed Me Plugin Page](https://plugins.craftcms.com/feed-me)** – The official plugin page for Feed Me
+- **[Feed Me Documentation](https://docs.craftcms.com/feed-me/v4/)** – The official documentation
+- **[Migrating a Website to Craft CMS](https://craftquest.io/courses/migrating-a-website-to-craft-cms/)** – Full video course from CraftQuest that covers Feed Me

@@ -1,10 +1,9 @@
 <?php
-namespace verbb\feedme\base;
 
-use Craft;
-use craft\base\Component;
+namespace craft\feedme\base;
 
 use Cake\Utility\Hash;
+use craft\base\Component;
 
 abstract class DataType extends Component
 {

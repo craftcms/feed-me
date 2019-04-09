@@ -1,7 +1,7 @@
 <?php
-namespace verbb\feedme\web\assets\feedme;
 
-use Craft;
+namespace craft\feedme\web\assets\feedme;
+
 use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;
 
@@ -12,14 +12,14 @@ class FeedMeAsset extends AssetBundle
 
     public function init()
     {
-        $this->sourcePath = "@verbb/feedme/web/assets/feedme/dist";
+        $this->sourcePath = "@craft/feedme/web/assets/feedme/dist";
 
         $this->depends = [
             CpAsset::class,
         ];
 
         $this->js = [
-            'js/feed-me.js',
+            'js/feed-me' . $this->dotJs(),
         ];
 
         $this->css = [

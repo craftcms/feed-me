@@ -1,14 +1,10 @@
 <?php
-namespace verbb\feedme\fields;
 
-use verbb\feedme\FeedMe;
-use verbb\feedme\base\Field;
-use verbb\feedme\base\FieldInterface;
-use verbb\feedme\helpers\BaseHelper;
+namespace craft\feedme\fields;
 
-use Craft;
-
-use Cake\Utility\Hash;
+use craft\feedme\base\Field;
+use craft\feedme\base\FieldInterface;
+use craft\feedme\helpers\BaseHelper;
 
 class Lightswitch extends Field implements FieldInterface
 {
@@ -34,7 +30,7 @@ class Lightswitch extends Field implements FieldInterface
     public function parseField()
     {
         $value = $this->fetchValue();
-        
+
         return $this->parseValue($value);
     }
 

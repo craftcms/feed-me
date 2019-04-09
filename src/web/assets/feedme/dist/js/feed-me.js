@@ -1,2 +1,3994 @@
-!function(t){void 0===Craft.FeedMe&&(Craft.FeedMe={}),Craft.FeedMe.Help=Garnish.Base.extend({widgetId:0,loading:!1,$widget:null,$message:null,$fromEmail:null,$attachLogs:null,$attachDbBackup:null,$attachAdditionalFile:null,$sendBtn:null,$spinner:null,$error:null,$errorList:null,$iframe:null,init:function(){this.widgetId="feedMeHelp",Craft.FeedMe.Help.widgets[this.widgetId]=this,this.$widget=t(".feedme-help-form"),this.$message=this.$widget.find(".message:first"),this.$fromEmail=this.$widget.find(".fromEmail:first"),this.$attachLogs=this.$widget.find(".attachLogs:first"),this.$attachAdditionalFile=this.$widget.find(".attachAdditionalFile:first"),this.$sendBtn=this.$widget.find(".submit:first"),this.$spinner=this.$widget.find(".buttons .spinner"),this.$error=this.$widget.find(".error:first"),this.$form=this.$widget.find("form:first"),this.$form.prepend('<input type="hidden" name="widgetId" value="'+this.widgetId+'" />'),this.$form.prepend(Craft.getCsrfInput()),this.addListener(this.$sendBtn,"activate","sendMessage")},sendMessage:function(){var e="iframeWidget"+this.widgetId;this.loading||(this.$iframe||(this.$iframe=t('<iframe id="'+e+'" name="'+e+'" style="display: none" />').insertAfter(this.$form)),this.loading=!0,this.$sendBtn.addClass("active"),this.$spinner.removeClass("hidden"),this.$form.attr("target",e),this.$form.attr("action",Craft.getActionUrl("feed-me/help/send-support-request")),this.$form.submit())},parseResponse:function(e,i){if(this.loading=!1,this.$sendBtn.removeClass("active"),this.$spinner.addClass("hidden"),this.$errorList&&this.$errorList.children().remove(),e.errors)for(var s in this.$errorList||(this.$errorList=t('<ul class="errors"/>').insertAfter(this.$form)),e.errors)if(e.errors.hasOwnProperty(s))for(var n=0;n<e.errors[s].length;n++){var r=e.errors[s][n];t("<li>"+r+"</li>").appendTo(this.$errorList)}e.success&&(Craft.cp.displayNotice(Craft.t("feed-me","Message sent successfully.")),this.$message.val(""),this.$attachAdditionalFile.val("")),this.$iframe.html("")}},{widgets:{}})}(jQuery),function(t,e){"function"==typeof define&&define.amd?define("sifter",e):"object"==typeof exports?module.exports=e():t.Sifter=e()}(this,function(){var t=function(t,e){this.items=t,this.settings=e||{diacritics:!0}};t.prototype.tokenize=function(t){if(!(t=s(String(t||"").toLowerCase()))||!t.length)return[];var e,i,r,a,l=[],h=t.split(/ +/);for(e=0,i=h.length;e<i;e++){if(r=n(h[e]),this.settings.diacritics)for(a in o)o.hasOwnProperty(a)&&(r=r.replace(new RegExp(a,"g"),o[a]));l.push({string:h[e],regex:new RegExp(r,"i")})}return l},t.prototype.iterator=function(t,e){var i;(i=r(t)?Array.prototype.forEach||function(t){for(var e=0,i=this.length;e<i;e++)t(this[e],e,this)}:function(t){for(var e in this)this.hasOwnProperty(e)&&t(this[e],e,this)}).apply(t,[e])},t.prototype.getScoreFunction=function(t,e){var i,s,n,r;i=this,t=this.prepareSearch(t,e),n=t.tokens,s=t.options.fields,r=n.length;var o=function(t,e){var i,s;return t?-1===(s=(t=String(t||"")).search(e.regex))?0:(i=e.string.length/t.length,0===s&&(i+=.5),i):0},a=(l=s.length)?1===l?function(t,e){return o(e[s[0]],t)}:function(t,e){for(var i=0,n=0;i<l;i++)n+=o(e[s[i]],t);return n/l}:function(){return 0},l;return r?1===r?function(t){return a(n[0],t)}:"and"===t.options.conjunction?function(t){for(var e,i=0,s=0;i<r;i++){if((e=a(n[i],t))<=0)return 0;s+=e}return s/r}:function(t){for(var e=0,i=0;e<r;e++)i+=a(n[e],t);return i/r}:function(){return 0}},t.prototype.getSortFunction=function(t,i){var s,n,r,o,a,l,h,c,d,p,u;if(u=!(t=(r=this).prepareSearch(t,i)).query&&i.sort_empty||i.sort,d=function(t,e){return"$score"===t?e.score:r.items[e.id][t]},a=[],u)for(s=0,n=u.length;s<n;s++)(t.query||"$score"!==u[s].field)&&a.push(u[s]);if(t.query){for(p=!0,s=0,n=a.length;s<n;s++)if("$score"===a[s].field){p=!1;break}p&&a.unshift({field:"$score",direction:"desc"})}else for(s=0,n=a.length;s<n;s++)if("$score"===a[s].field){a.splice(s,1);break}for(c=[],s=0,n=a.length;s<n;s++)c.push("desc"===a[s].direction?-1:1);return(l=a.length)?1===l?(o=a[0].field,h=c[0],function(t,i){return h*e(d(o,t),d(o,i))}):function(t,i){var s,n,r,o,h;for(s=0;s<l;s++)if(h=a[s].field,n=c[s]*e(d(h,t),d(h,i)))return n;return 0}:null},t.prototype.prepareSearch=function(t,e){if("object"==typeof t)return t;var s=(e=i({},e)).fields,n=e.sort,o=e.sort_empty;return s&&!r(s)&&(e.fields=[s]),n&&!r(n)&&(e.sort=[n]),o&&!r(o)&&(e.sort_empty=[o]),{options:e,query:String(t||"").toLowerCase(),tokens:this.tokenize(t),total:0,items:[]}},t.prototype.search=function(t,e){var i=this,s,n,r,o,a,l;return r=this.prepareSearch(t,e),e=r.options,t=r.query,l=e.score||this.getScoreFunction(r),t.length?this.iterator(this.items,function(t,i){n=l(t),(!1===e.filter||n>0)&&r.items.push({score:n,id:i})}):this.iterator(this.items,function(t,e){r.items.push({score:1,id:e})}),(a=this.getSortFunction(r,e))&&r.items.sort(a),r.total=r.items.length,"number"==typeof e.limit&&(r.items=r.items.slice(0,e.limit)),r};var e=function(t,e){return"number"==typeof t&&"number"==typeof e?t>e?1:t<e?-1:0:(t=a(String(t||"")))>(e=a(String(e||"")))?1:e>t?-1:0},i=function(t,e){var i,s,n,r;for(i=1,s=arguments.length;i<s;i++)if(r=arguments[i])for(n in r)r.hasOwnProperty(n)&&(t[n]=r[n]);return t},s=function(t){return(t+"").replace(/^\s+|\s+$|/g,"")},n=function(t){return(t+"").replace(/([.?*+^$[\]\\(){}|-])/g,"\\$1")},r=Array.isArray||$&&$.isArray||function(t){return"[object Array]"===Object.prototype.toString.call(t)},o={a:"[aÀÁÂÃÄÅàáâãäåĀāąĄ]",c:"[cÇçćĆčČ]",d:"[dđĐďĎ]",e:"[eÈÉÊËèéêëěĚĒēęĘ]",i:"[iÌÍÎÏìíîïĪī]",l:"[lłŁ]",n:"[nÑñňŇńŃ]",o:"[oÒÓÔÕÕÖØòóôõöøŌō]",r:"[rřŘ]",s:"[sŠšśŚ]",t:"[tťŤ]",u:"[uÙÚÛÜùúûüůŮŪū]",y:"[yŸÿýÝ]",z:"[zŽžżŻźŹ]"},a=function(){var t,e,i,s,n="",r={};for(i in o)if(o.hasOwnProperty(i))for(n+=s=o[i].substring(2,o[i].length-1),t=0,e=s.length;t<e;t++)r[s.charAt(t)]=i;var a=new RegExp("["+n+"]","g");return function(t){return t.replace(a,function(t){return r[t]}).toLowerCase()}}();return t}),function(t,e){"function"==typeof define&&define.amd?define("microplugin",e):"object"==typeof exports?module.exports=e():t.MicroPlugin=e()}(this,function(){var t={mixin:function(t){t.plugins={},t.prototype.initializePlugins=function(t){var i,s,n,r=this,o=[];if(this.plugins={names:[],settings:{},requested:{},loaded:{}},e.isArray(t))for(i=0,s=t.length;i<s;i++)"string"==typeof t[i]?o.push(t[i]):(this.plugins.settings[t[i].name]=t[i].options,o.push(t[i].name));else if(t)for(n in t)t.hasOwnProperty(n)&&(this.plugins.settings[n]=t[n],o.push(n));for(;o.length;)this.require(o.shift())},t.prototype.loadPlugin=function(e){var i=this,s=this.plugins,n=t.plugins[e];if(!t.plugins.hasOwnProperty(e))throw new Error('Unable to find "'+e+'" plugin');s.requested[e]=!0,s.loaded[e]=n.fn.apply(this,[this.plugins.settings[e]||{}]),s.names.push(e)},t.prototype.require=function(t){var e=this,i=this.plugins;if(!this.plugins.loaded.hasOwnProperty(t)){if(i.requested[t])throw new Error('Plugin has circular dependency ("'+t+'")');this.loadPlugin(t)}return i.loaded[t]},t.define=function(e,i){t.plugins[e]={name:e,fn:i}}}},e={isArray:Array.isArray||function(t){return"[object Array]"===Object.prototype.toString.call(t)}};return t}),function(t,e){"function"==typeof define&&define.amd?define("selectize",["jquery","sifter","microplugin"],e):"object"==typeof exports?module.exports=e(require("jquery"),require("sifter"),require("microplugin")):t.Selectize=e(t.jQuery,t.Sifter,t.MicroPlugin)}(this,function(t,e,i){"use strict";var s=function(t,e){if("string"!=typeof e||e.length){var i="string"==typeof e?new RegExp(e,"i"):e,s=function(t){var e=0;if(3===t.nodeType){var n=t.data.search(i);if(n>=0&&t.data.length>0){var r=t.data.match(i),o=document.createElement("span");o.className="highlight";var a=t.splitText(n),l=a.splitText(r[0].length),h=a.cloneNode(!0);o.appendChild(h),a.parentNode.replaceChild(o,a),e=1}}else if(1===t.nodeType&&t.childNodes&&!/(script|style)/i.test(t.tagName))for(var c=0;c<t.childNodes.length;++c)c+=s(t.childNodes[c]);return e};return t.each(function(){s(this)})}},n=function(){};n.prototype={on:function(t,e){this._events=this._events||{},this._events[t]=this._events[t]||[],this._events[t].push(e)},off:function(t,e){var i=arguments.length;return 0===i?delete this._events:1===i?delete this._events[t]:(this._events=this._events||{},void(t in this._events!=!1&&this._events[t].splice(this._events[t].indexOf(e),1)))},trigger:function(t){if(this._events=this._events||{},t in this._events!=!1)for(var e=0;e<this._events[t].length;e++)this._events[t][e].apply(this,Array.prototype.slice.call(arguments,1))}},n.mixin=function(t){for(var e=["on","off","trigger"],i=0;i<e.length;i++)t.prototype[e[i]]=n.prototype[e[i]]};var r=/Mac/.test(navigator.userAgent),o=65,a=188,l=13,h=27,c=37,d=38,p=80,u=39,g=40,f=78,v=8,m=46,$=16,y=r?91:17,w=r?18:17,C=9,O=1,b=2,x=!/android/i.test(window.navigator.userAgent)&&!!document.createElement("form").validity,S=function(t){return void 0!==t},I=function(t){return null==t?null:"boolean"==typeof t?t?"1":"0":t+""},k=function(t){return(t+"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")},_=function(t){return(t+"").replace(/\$/g,"$$$$")},F={before:function(t,e,i){var s=t[e];t[e]=function(){return i.apply(t,arguments),s.apply(t,arguments)}},after:function(t,e,i){var s=t[e];t[e]=function(){var e=s.apply(t,arguments);return i.apply(t,arguments),e}}},D=function(t){var e=!1;return function(){e||(e=!0,t.apply(this,arguments))}},P=function(t,e){var i;return function(){var s=this,n=arguments;window.clearTimeout(i),i=window.setTimeout(function(){t.apply(s,n)},e)}},A=function(t,e,i){var s,n=t.trigger,r={};for(s in t.trigger=function(i){var s=i;if(-1===e.indexOf(s))return n.apply(t,arguments);r[s]=arguments},i.apply(t,[]),t.trigger=n,r)r.hasOwnProperty(s)&&n.apply(t,r[s])},T=function(t,e,i,s){t.on(e,i,function(e){for(var i=e.target;i&&i.parentNode!==t[0];)i=i.parentNode;return e.currentTarget=i,s.apply(this,[e])})},z=function(t){var e={};if("selectionStart"in t)e.start=t.selectionStart,e.length=t.selectionEnd-e.start;else if(document.selection){t.focus();var i=document.selection.createRange(),s=document.selection.createRange().text.length;i.moveStart("character",-t.value.length),e.start=i.text.length-s,e.length=s}return e},q=function(t,e,i){var s,n,r={};if(i)for(s=0,n=i.length;s<n;s++)r[i[s]]=t.css(i[s]);else r=t.css();e.css(r)},j=function(e,i){if(!e)return 0;var s=t("<test>").css({position:"absolute",top:-99999,left:-99999,width:"auto",padding:0,whiteSpace:"pre"}).text(e).appendTo("body");q(i,s,["letterSpacing","fontSize","fontFamily","fontWeight","textTransform"]);var n=s.width();return s.remove(),n},L=function(t){var e=null,i=function(i,s){var n,r,o,a,l,h,c,d;s=s||{},(i=i||window.event||{}).metaKey||i.altKey||(s.force||!1!==t.data("grow"))&&(n=t.val(),i.type&&"keydown"===i.type.toLowerCase()&&(o=(r=i.keyCode)>=97&&r<=122||r>=65&&r<=90||r>=48&&r<=57||32===r,46===r||8===r?(d=z(t[0])).length?n=n.substring(0,d.start)+n.substring(d.start+d.length):8===r&&d.start?n=n.substring(0,d.start-1)+n.substring(d.start+1):46===r&&void 0!==d.start&&(n=n.substring(0,d.start)+n.substring(d.start+1)):o&&(h=i.shiftKey,c=String.fromCharCode(i.keyCode),n+=c=h?c.toUpperCase():c.toLowerCase())),a=t.attr("placeholder"),!n&&a&&(n=a),(l=j(n,t)+4)!==e&&(e=l,t.width(l),t.triggerHandler("resize")))};t.on("keydown keyup update blur",i),i()},E=function(i,s){var n,r,o,a,l,h=this;(l=i[0]).selectize=this;var c=window.getComputedStyle&&window.getComputedStyle(l,null);if(a=(a=c?c.getPropertyValue("direction"):l.currentStyle&&l.currentStyle.direction)||i.parents("[dir]:first").attr("dir")||"",t.extend(this,{order:0,settings:s,$input:i,tabIndex:i.attr("tabindex")||"",tagType:"select"===l.tagName.toLowerCase()?1:2,rtl:/rtl/i.test(a),eventNS:".selectize"+ ++E.count,highlightedValue:null,isOpen:!1,isDisabled:!1,isRequired:i.is("[required]"),isInvalid:!1,isLocked:!1,isFocused:!1,isInputHidden:!1,isSetup:!1,isShiftDown:!1,isCmdDown:!1,isCtrlDown:!1,ignoreFocus:!1,ignoreBlur:!1,ignoreHover:!1,hasOptions:!1,currentResults:null,lastValue:"",caretPos:0,loading:0,loadedSearches:{},$activeOption:null,$activeItems:[],optgroups:{},options:{},userOptions:{},items:[],renderCache:{},onSearchChange:null===s.loadThrottle?this.onSearchChange:P(this.onSearchChange,s.loadThrottle)}),this.sifter=new e(this.options,{diacritics:s.diacritics}),this.settings.options){for(r=0,o=this.settings.options.length;r<o;r++)this.registerOption(this.settings.options[r]);delete this.settings.options}if(this.settings.optgroups){for(r=0,o=this.settings.optgroups.length;r<o;r++)this.registerOptionGroup(this.settings.optgroups[r]);delete this.settings.optgroups}this.settings.mode=this.settings.mode||(1===this.settings.maxItems?"single":"multi"),"boolean"!=typeof this.settings.hideSelected&&(this.settings.hideSelected="multi"===this.settings.mode),this.initializePlugins(this.settings.plugins),this.setupCallbacks(),this.setupTemplates(),this.setup()};return n.mixin(E),i.mixin(E),t.extend(E.prototype,{setup:function(){var e=this,i=e.settings,s=e.eventNS,n=t(window),o=t(document),a=e.$input,l,h,c,d,p,u,g,f,v,m,$;if(g=e.settings.mode,m=a.attr("class")||"",l=t("<div>").addClass(i.wrapperClass).addClass(m).addClass(g),h=t("<div>").addClass(i.inputClass).addClass("items").appendTo(l),c=t('<input type="text" autocomplete="false" />').appendTo(h).attr("tabindex",a.is(":disabled")?"-1":e.tabIndex),u=t(i.dropdownParent||l),d=t("<div>").addClass(i.dropdownClass).addClass(g).hide().appendTo(u),p=t("<div>").addClass(i.dropdownContentClass).appendTo(d),e.settings.copyClassesToDropdown&&d.addClass(m),l.css({width:a[0].style.width}),e.plugins.names.length&&($="plugin-"+e.plugins.names.join(" plugin-"),l.addClass($),d.addClass($)),(null===i.maxItems||i.maxItems>1)&&1===e.tagType&&a.attr("multiple","multiple"),e.settings.placeholder&&c.attr("placeholder",i.placeholder),!e.settings.splitOn&&e.settings.delimiter){var C=e.settings.delimiter.replace(/[-\/\\^$*+?.()|[\]{}]/g,"\\$&");e.settings.splitOn=new RegExp("\\s*"+C+"+\\s*")}a.attr("autocorrect")&&c.attr("autocorrect",a.attr("autocorrect")),a.attr("autocapitalize")&&c.attr("autocapitalize",a.attr("autocapitalize")),e.$wrapper=l,e.$control=h,e.$control_input=c,e.$dropdown=d,e.$dropdown_content=p,d.on("mouseenter","[data-selectable]",function(){return e.onOptionHover.apply(e,arguments)}),d.on("mousedown click","[data-selectable]",function(){return e.onOptionSelect.apply(e,arguments)}),T(h,"mousedown","*:not(input)",function(){return e.onItemSelect.apply(e,arguments)}),L(c),h.on({mousedown:function(){return e.onMouseDown.apply(e,arguments)},click:function(){return e.onClick.apply(e,arguments)}}),c.on({mousedown:function(t){t.stopPropagation()},keydown:function(){return e.onKeyDown.apply(e,arguments)},keyup:function(){return e.onKeyUp.apply(e,arguments)},keypress:function(){return e.onKeyPress.apply(e,arguments)},resize:function(){e.positionDropdown.apply(e,[])},blur:function(){return e.onBlur.apply(e,arguments)},focus:function(){return e.ignoreBlur=!1,e.onFocus.apply(e,arguments)},paste:function(){return e.onPaste.apply(e,arguments)}}),o.on("keydown"+s,function(t){e.isCmdDown=t[r?"metaKey":"ctrlKey"],e.isCtrlDown=t[r?"altKey":"ctrlKey"],e.isShiftDown=t.shiftKey}),o.on("keyup"+s,function(t){t.keyCode===w&&(e.isCtrlDown=!1),16===t.keyCode&&(e.isShiftDown=!1),t.keyCode===y&&(e.isCmdDown=!1)}),o.on("mousedown"+s,function(t){if(e.isFocused){if(t.target===e.$dropdown[0]||t.target.parentNode===e.$dropdown[0])return!1;e.$control.has(t.target).length||t.target===e.$control[0]||e.blur(t.target)}}),n.on(["scroll"+s,"resize"+s].join(" "),function(){e.isOpen&&e.positionDropdown.apply(e,arguments)}),n.on("mousemove"+s,function(){e.ignoreHover=!1}),this.revertSettings={$children:a.children().detach(),tabindex:a.attr("tabindex")},a.attr("tabindex",-1).hide().after(e.$wrapper),t.isArray(i.items)&&(e.setValue(i.items),delete i.items),x&&a.on("invalid"+s,function(t){t.preventDefault(),e.isInvalid=!0,e.refreshState()}),e.updateOriginalInput(),e.refreshItems(),e.refreshState(),e.updatePlaceholder(),e.isSetup=!0,a.is(":disabled")&&e.disable(),e.on("change",this.onChange),a.data("selectize",e),a.addClass("selectized"),e.trigger("initialize"),!0===i.preload&&e.onSearchChange("")},setupTemplates:function(){var e=this,i=this.settings.labelField,s=this.settings.optgroupLabelField,n={optgroup:function(t){return'<div class="optgroup">'+t.html+"</div>"},optgroup_header:function(t,e){return'<div class="optgroup-header">'+e(t[s])+"</div>"},option:function(t,e){return'<div class="option">'+e(t[i])+"</div>"},item:function(t,e){return'<div class="item">'+e(t[i])+"</div>"},option_create:function(t,e){return'<div class="create">Add <strong>'+e(t.input)+"</strong>&hellip;</div>"}};this.settings.render=t.extend({},n,this.settings.render)},setupCallbacks:function(){var t,e,i={initialize:"onInitialize",change:"onChange",item_add:"onItemAdd",item_remove:"onItemRemove",clear:"onClear",option_add:"onOptionAdd",option_remove:"onOptionRemove",option_clear:"onOptionClear",optgroup_add:"onOptionGroupAdd",optgroup_remove:"onOptionGroupRemove",optgroup_clear:"onOptionGroupClear",dropdown_open:"onDropdownOpen",dropdown_close:"onDropdownClose",type:"onType",load:"onLoad",focus:"onFocus",blur:"onBlur"};for(t in i)i.hasOwnProperty(t)&&(e=this.settings[i[t]])&&this.on(t,e)},onClick:function(t){var e=this;this.isFocused||(this.focus(),t.preventDefault())},onMouseDown:function(e){var i=this,s=e.isDefaultPrevented(),n=t(e.target);if(i.isFocused){if(e.target!==i.$control_input[0])return"single"===i.settings.mode?i.isOpen?i.close():i.open():s||i.setActiveItem(null),!1}else s||window.setTimeout(function(){i.focus()},0)},onChange:function(){this.$input.trigger("change")},onPaste:function(e){var i=this;i.isFull()||i.isInputHidden||i.isLocked?e.preventDefault():i.settings.splitOn&&setTimeout(function(){for(var e=t.trim(i.$control_input.val()||"").split(i.settings.splitOn),s=0,n=e.length;s<n;s++)i.createItem(e[s])},0)},onKeyPress:function(t){if(this.isLocked)return t&&t.preventDefault();var e=String.fromCharCode(t.keyCode||t.which);return this.settings.create&&"multi"===this.settings.mode&&e===this.settings.delimiter?(this.createItem(),t.preventDefault(),!1):void 0},onKeyDown:function(t){var e=t.target===this.$control_input[0],i=this;if(this.isLocked)9!==t.keyCode&&t.preventDefault();else{switch(t.keyCode){case 65:if(this.isCmdDown)return void this.selectAll();break;case 27:return void(this.isOpen&&(t.preventDefault(),t.stopPropagation(),this.close()));case 78:if(!t.ctrlKey||t.altKey)break;case 40:if(!this.isOpen&&this.hasOptions)this.open();else if(this.$activeOption){this.ignoreHover=!0;var s=this.getAdjacentOption(this.$activeOption,1);s.length&&this.setActiveOption(s,!0,!0)}return void t.preventDefault();case 80:if(!t.ctrlKey||t.altKey)break;case 38:if(this.$activeOption){this.ignoreHover=!0;var n=this.getAdjacentOption(this.$activeOption,-1);n.length&&this.setActiveOption(n,!0,!0)}return void t.preventDefault();case 13:return void(this.isOpen&&this.$activeOption&&(this.onOptionSelect({currentTarget:this.$activeOption}),t.preventDefault()));case 37:return void this.advanceSelection(-1,t);case 39:return void this.advanceSelection(1,t);case 9:return this.settings.selectOnTab&&this.isOpen&&this.$activeOption&&(this.onOptionSelect({currentTarget:this.$activeOption}),this.isFull()||t.preventDefault()),void(this.settings.create&&this.createItem()&&t.preventDefault());case 8:case 46:return void this.deleteSelection(t)}!this.isFull()&&!this.isInputHidden||(r?t.metaKey:t.ctrlKey)||t.preventDefault()}},onKeyUp:function(t){var e=this;if(this.isLocked)return t&&t.preventDefault();var i=this.$control_input.val()||"";this.lastValue!==i&&(this.lastValue=i,this.onSearchChange(i),this.refreshOptions(),this.trigger("type",i))},onSearchChange:function(t){var e=this,i=e.settings.load;i&&(e.loadedSearches.hasOwnProperty(t)||(e.loadedSearches[t]=!0,e.load(function(s){i.apply(e,[t,s])})))},onFocus:function(t){var e=this,i=this.isFocused;if(this.isDisabled)return this.blur(),t&&t.preventDefault(),!1;this.ignoreFocus||(this.isFocused=!0,"focus"===this.settings.preload&&this.onSearchChange(""),i||this.trigger("focus"),this.$activeItems.length||(this.showInput(),this.setActiveItem(null),this.refreshOptions(!!this.settings.openOnFocus)),this.refreshState())},onBlur:function(t,e){var i=this;if(i.isFocused&&(i.isFocused=!1,!i.ignoreFocus)){if(!i.ignoreBlur&&document.activeElement===i.$dropdown_content[0])return i.ignoreBlur=!0,void i.onFocus(t);var s=function(){i.close(),i.setTextboxValue(""),i.setActiveItem(null),i.setActiveOption(null),i.setCaret(i.items.length),i.refreshState(),(e||document.body).focus(),i.ignoreFocus=!1,i.trigger("blur")};i.ignoreFocus=!0,i.settings.create&&i.settings.createOnBlur?i.createItem(null,!1,s):s()}},onOptionHover:function(t){this.ignoreHover||this.setActiveOption(t.currentTarget,!1)},onOptionSelect:function(e){var i,s,n,r=this;e.preventDefault&&(e.preventDefault(),e.stopPropagation()),(s=t(e.currentTarget)).hasClass("create")?r.createItem(null,function(){r.settings.closeAfterSelect&&r.close()}):void 0!==(i=s.attr("data-value"))&&(r.lastQuery=null,r.setTextboxValue(""),r.addItem(i),r.settings.closeAfterSelect?r.close():!r.settings.hideSelected&&e.type&&/mouse/.test(e.type)&&r.setActiveOption(r.getOption(i)))},onItemSelect:function(t){var e=this;this.isLocked||"multi"===this.settings.mode&&(t.preventDefault(),this.setActiveItem(t.currentTarget,t))},load:function(t){var e=this,i=e.$wrapper.addClass(e.settings.loadingClass);e.loading++,t.apply(e,[function(t){e.loading=Math.max(e.loading-1,0),t&&t.length&&(e.addOption(t),e.refreshOptions(e.isFocused&&!e.isInputHidden)),e.loading||i.removeClass(e.settings.loadingClass),e.trigger("load",t)}])},setTextboxValue:function(t){var e=this.$control_input,i;e.val()!==t&&(e.val(t).triggerHandler("update"),this.lastValue=t)},getValue:function(){return 1===this.tagType&&this.$input.attr("multiple")?this.items:this.items.join(this.settings.delimiter)},setValue:function(t,e){var i;A(this,e?[]:["change"],function(){this.clear(e),this.addItems(t,e)})},setActiveItem:function(e,i){var s=this,n,r,o,a,l,h,c,d;if("single"!==this.settings.mode){if(!(e=t(e)).length)return t(this.$activeItems).removeClass("active"),this.$activeItems=[],void(this.isFocused&&this.showInput());if("mousedown"===(n=i&&i.type.toLowerCase())&&this.isShiftDown&&this.$activeItems.length){for(d=this.$control.children(".active:last"),(a=Array.prototype.indexOf.apply(this.$control[0].childNodes,[d[0]]))>(l=Array.prototype.indexOf.apply(this.$control[0].childNodes,[e[0]]))&&(c=a,a=l,l=c),r=a;r<=l;r++)h=this.$control[0].childNodes[r],-1===this.$activeItems.indexOf(h)&&(t(h).addClass("active"),this.$activeItems.push(h));i.preventDefault()}else"mousedown"===n&&this.isCtrlDown||"keydown"===n&&this.isShiftDown?e.hasClass("active")?(o=this.$activeItems.indexOf(e[0]),this.$activeItems.splice(o,1),e.removeClass("active")):this.$activeItems.push(e.addClass("active")[0]):(t(this.$activeItems).removeClass("active"),this.$activeItems=[e.addClass("active")[0]]);this.hideInput(),this.isFocused||this.focus()}},setActiveOption:function(e,i,s){var n,r,o,a,l,h=this;this.$activeOption&&this.$activeOption.removeClass("active"),this.$activeOption=null,(e=t(e)).length&&(this.$activeOption=e.addClass("active"),!i&&S(i)||(n=this.$dropdown_content.height(),r=this.$activeOption.outerHeight(!0),i=this.$dropdown_content.scrollTop()||0,a=o=this.$activeOption.offset().top-this.$dropdown_content.offset().top+i,l=o-n+r,o+r>n+i?this.$dropdown_content.stop().animate({scrollTop:l},s?this.settings.scrollDuration:0):o<i&&this.$dropdown_content.stop().animate({scrollTop:a},s?this.settings.scrollDuration:0)))},selectAll:function(){var t=this;"single"!==this.settings.mode&&(this.$activeItems=Array.prototype.slice.apply(this.$control.children(":not(input)").addClass("active")),this.$activeItems.length&&(this.hideInput(),this.close()),this.focus())},hideInput:function(){var t=this;this.setTextboxValue(""),this.$control_input.css({opacity:0,position:"absolute",left:this.rtl?1e4:-1e4}),this.isInputHidden=!0},showInput:function(){this.$control_input.css({opacity:1,position:"relative",left:0}),this.isInputHidden=!1},focus:function(){var t=this;t.isDisabled||(t.ignoreFocus=!0,t.$control_input[0].focus(),window.setTimeout(function(){t.ignoreFocus=!1,t.onFocus()},0))},blur:function(t){this.$control_input[0].blur(),this.onBlur(null,t)},getScoreFunction:function(t){return this.sifter.getScoreFunction(t,this.getSearchOptions())},getSearchOptions:function(){var t=this.settings,e=t.sortField;return"string"==typeof e&&(e=[{field:e}]),{fields:t.searchField,conjunction:t.searchConjunction,sort:e}},search:function(e){var i,s,n,r,o,a=this,l=this.settings,h=this.getSearchOptions();if(l.score&&"function"!=typeof(o=this.settings.score.apply(this,[e])))throw new Error('Selectize "score" setting must be a function that returns a function');if(e!==this.lastQuery?(this.lastQuery=e,r=this.sifter.search(e,t.extend(h,{score:o})),this.currentResults=r):r=t.extend(!0,{},this.currentResults),l.hideSelected)for(i=r.items.length-1;i>=0;i--)-1!==this.items.indexOf(I(r.items[i].id))&&r.items.splice(i,1);return r},refreshOptions:function(e){var i,n,r,o,a,l,h,c,d,p,u,g,f,v,m,$;void 0===e&&(e=!0);var y=this,w=t.trim(y.$control_input.val()),C=y.search(w),O=y.$dropdown_content,b=y.$activeOption&&I(y.$activeOption.attr("data-value"));for(o=C.items.length,"number"==typeof y.settings.maxOptions&&(o=Math.min(o,y.settings.maxOptions)),a={},l=[],i=0;i<o;i++)for(h=y.options[C.items[i].id],c=y.render("option",h),d=h[y.settings.optgroupField]||"",n=0,r=(p=t.isArray(d)?d:[d])&&p.length;n<r;n++)d=p[n],y.optgroups.hasOwnProperty(d)||(d=""),a.hasOwnProperty(d)||(a[d]=[],l.push(d)),a[d].push(c);for(this.settings.lockOptgroupOrder&&l.sort(function(t,e){var i,s;return(y.optgroups[t].$order||0)-(y.optgroups[e].$order||0)}),u=[],i=0,o=l.length;i<o;i++)d=l[i],y.optgroups.hasOwnProperty(d)&&a[d].length?(g=y.render("optgroup_header",y.optgroups[d])||"",g+=a[d].join(""),u.push(y.render("optgroup",t.extend({},y.optgroups[d],{html:g})))):u.push(a[d].join(""));if(O.html(u.join("")),y.settings.highlight&&C.query.length&&C.tokens.length)for(i=0,o=C.tokens.length;i<o;i++)s(O,C.tokens[i].regex);if(!y.settings.hideSelected)for(i=0,o=y.items.length;i<o;i++)y.getOption(y.items[i]).addClass("selected");(f=y.canCreate(w))&&(O.prepend(y.render("option_create",{input:w})),$=t(O[0].childNodes[0])),y.hasOptions=C.items.length>0||f,y.hasOptions?(C.items.length>0?((m=b&&y.getOption(b))&&m.length?v=m:"single"===y.settings.mode&&y.items.length&&(v=y.getOption(y.items[0])),v&&v.length||(v=$&&!y.settings.addPrecedence?y.getAdjacentOption($,1):O.find("[data-selectable]:first"))):v=$,y.setActiveOption(v),e&&!y.isOpen&&y.open()):(y.setActiveOption(null),e&&y.isOpen&&y.close())},addOption:function(e){var i,s,n,r=this;if(t.isArray(e))for(i=0,s=e.length;i<s;i++)this.addOption(e[i]);else(n=this.registerOption(e))&&(this.userOptions[n]=!0,this.lastQuery=null,this.trigger("option_add",n,e))},registerOption:function(t){var e=I(t[this.settings.valueField]);return null!=e&&!this.options.hasOwnProperty(e)&&(t.$order=t.$order||++this.order,this.options[e]=t,e)},registerOptionGroup:function(t){var e=I(t[this.settings.optgroupValueField]);return!!e&&(t.$order=t.$order||++this.order,this.optgroups[e]=t,e)},addOptionGroup:function(t,e){e[this.settings.optgroupValueField]=t,(t=this.registerOptionGroup(e))&&this.trigger("optgroup_add",t,e)},removeOptionGroup:function(t){this.optgroups.hasOwnProperty(t)&&(delete this.optgroups[t],this.renderCache={},this.trigger("optgroup_remove",t))},clearOptionGroups:function(){this.optgroups={},this.renderCache={},this.trigger("optgroup_clear")},updateOption:function(e,i){var s=this,n,r,o,a,l,h,c;if(e=I(e),o=I(i[this.settings.valueField]),null!==e&&this.options.hasOwnProperty(e)){if("string"!=typeof o)throw new Error("Value must be set in option data");c=this.options[e].$order,o!==e&&(delete this.options[e],-1!==(a=this.items.indexOf(e))&&this.items.splice(a,1,o)),i.$order=i.$order||c,this.options[o]=i,l=this.renderCache.item,h=this.renderCache.option,l&&(delete l[e],delete l[o]),h&&(delete h[e],delete h[o]),-1!==this.items.indexOf(o)&&(n=this.getItem(e),r=t(this.render("item",i)),n.hasClass("active")&&r.addClass("active"),n.replaceWith(r)),this.lastQuery=null,this.isOpen&&this.refreshOptions(!1)}},removeOption:function(t,e){var i=this;t=I(t);var s=this.renderCache.item,n=this.renderCache.option;s&&delete s[t],n&&delete n[t],delete this.userOptions[t],delete this.options[t],this.lastQuery=null,this.trigger("option_remove",t),this.removeItem(t,e)},clearOptions:function(){var t=this;this.loadedSearches={},this.userOptions={},this.renderCache={},this.options=this.sifter.items={},this.lastQuery=null,this.trigger("option_clear"),this.clear()},getOption:function(t){return this.getElementWithValue(t,this.$dropdown_content.find("[data-selectable]"))},getAdjacentOption:function(e,i){var s=this.$dropdown.find("[data-selectable]"),n=s.index(e)+i;return n>=0&&n<s.length?s.eq(n):t()},getElementWithValue:function(e,i){if(null!=(e=I(e)))for(var s=0,n=i.length;s<n;s++)if(i[s].getAttribute("data-value")===e)return t(i[s]);return t()},getItem:function(t){return this.getElementWithValue(t,this.$control.children())},addItems:function(e,i){for(var s=t.isArray(e)?e:[e],n=0,r=s.length;n<r;n++)this.isPending=n<r-1,this.addItem(s[n],i)},addItem:function(e,i){var s;A(this,i?[]:["change"],function(){var s,n,r,o=this,a=this.settings.mode,l,h,c,d;e=I(e),-1===this.items.indexOf(e)?this.options.hasOwnProperty(e)&&("single"===a&&this.clear(i),"multi"===a&&this.isFull()||(s=t(this.render("item",this.options[e])),d=this.isFull(),this.items.splice(this.caretPos,0,e),this.insertAtCaret(s),(!this.isPending||!d&&this.isFull())&&this.refreshState(),this.isSetup&&(r=this.$dropdown_content.find("[data-selectable]"),this.isPending||(n=this.getOption(e),c=this.getAdjacentOption(n,1).attr("data-value"),this.refreshOptions(this.isFocused&&"single"!==a),c&&this.setActiveOption(this.getOption(c))),!r.length||this.isFull()?this.close():this.positionDropdown(),this.updatePlaceholder(),this.trigger("item_add",e,s),this.updateOriginalInput({silent:i})))):"single"===a&&this.close()})},removeItem:function(t,e){var i=this,s,n,r;s="object"==typeof t?t:this.getItem(t),t=I(s.attr("data-value")),-1!==(n=this.items.indexOf(t))&&(s.remove(),s.hasClass("active")&&(r=this.$activeItems.indexOf(s[0]),this.$activeItems.splice(r,1)),this.items.splice(n,1),this.lastQuery=null,!this.settings.persist&&this.userOptions.hasOwnProperty(t)&&this.removeOption(t,e),n<this.caretPos&&this.setCaret(this.caretPos-1),this.refreshState(),this.updatePlaceholder(),this.updateOriginalInput({silent:e}),this.positionDropdown(),this.trigger("item_remove",t,s))},createItem:function(e,i){var s=this,n=s.caretPos;e=e||t.trim(s.$control_input.val()||"");var r=arguments[arguments.length-1];if("function"!=typeof r&&(r=function(){}),"boolean"!=typeof i&&(i=!0),!s.canCreate(e))return r(),!1;s.lock();var o="function"==typeof s.settings.create?this.settings.create:function(t){var e={};return e[s.settings.labelField]=t,e[s.settings.valueField]=t,e},a=D(function(t){if(s.unlock(),!t||"object"!=typeof t)return r();var e=I(t[s.settings.valueField]);if("string"!=typeof e)return r();s.setTextboxValue(""),s.addOption(t),s.setCaret(n),s.addItem(e),s.refreshOptions(i&&"single"!==s.settings.mode),r(t)}),l=o.apply(this,[e,a]);return void 0!==l&&a(l),!0},refreshItems:function(){this.lastQuery=null,this.isSetup&&this.addItem(this.items),this.refreshState(),this.updateOriginalInput()},refreshState:function(){var t,e=this;this.isRequired&&(this.items.length&&(this.isInvalid=!1),this.$control_input.prop("required",void 0)),this.refreshClasses()},refreshClasses:function(){var e=this,i=this.isFull(),s=this.isLocked;this.$wrapper.toggleClass("rtl",this.rtl),
-this.$control.toggleClass("focus",this.isFocused).toggleClass("disabled",this.isDisabled).toggleClass("required",this.isRequired).toggleClass("invalid",this.isInvalid).toggleClass("locked",s).toggleClass("full",i).toggleClass("not-full",!i).toggleClass("input-active",this.isFocused&&!this.isInputHidden).toggleClass("dropdown-active",this.isOpen).toggleClass("has-options",!t.isEmptyObject(this.options)).toggleClass("has-items",this.items.length>0),this.$control_input.data("grow",!i&&!s)},isFull:function(){return null!==this.settings.maxItems&&this.items.length>=this.settings.maxItems},updateOriginalInput:function(t){var e,i,s,n,r=this;if(t=t||{},1===this.tagType){for(s=[],e=0,i=this.items.length;e<i;e++)n=this.options[this.items[e]][this.settings.labelField]||"",s.push('<option value="'+k(this.items[e])+'" selected="selected">'+k(n)+"</option>");s.length||this.$input.attr("multiple")||s.push('<option value="" selected="selected"></option>'),this.$input.html(s.join(""))}else this.$input.val(this.getValue()),this.$input.attr("value",this.$input.val());this.isSetup&&(t.silent||this.trigger("change",this.$input.val()))},updatePlaceholder:function(){if(this.settings.placeholder){var t=this.$control_input;this.items.length?t.removeAttr("placeholder"):t.attr("placeholder",this.settings.placeholder),t.triggerHandler("update",{force:!0})}},open:function(){var t=this;this.isLocked||this.isOpen||"multi"===this.settings.mode&&this.isFull()||(this.focus(),this.isOpen=!0,this.refreshState(),this.$dropdown.css({visibility:"hidden",display:"block"}),this.positionDropdown(),this.$dropdown.css({visibility:"visible"}),this.trigger("dropdown_open",this.$dropdown))},close:function(){var t=this,e=this.isOpen;"single"===this.settings.mode&&this.items.length&&this.hideInput(),this.isOpen=!1,this.$dropdown.hide(),this.setActiveOption(null),this.refreshState(),e&&this.trigger("dropdown_close",this.$dropdown)},positionDropdown:function(){var t=this.$control,e="body"===this.settings.dropdownParent?t.offset():t.position();e.top+=t.outerHeight(!0),this.$dropdown.css({width:t.outerWidth(),top:e.top,left:e.left})},clear:function(t){var e=this;this.items.length&&(this.$control.children(":not(input)").remove(),this.items=[],this.lastQuery=null,this.setCaret(0),this.setActiveItem(null),this.updatePlaceholder(),this.updateOriginalInput({silent:t}),this.refreshState(),this.showInput(),this.trigger("clear"))},insertAtCaret:function(e){var i=Math.min(this.caretPos,this.items.length);0===i?this.$control.prepend(e):t(this.$control[0].childNodes[i]).before(e),this.setCaret(i+1)},deleteSelection:function(e){var i,s,n,r,o,a,l,h,c,d=this;if(n=e&&8===e.keyCode?-1:1,r=z(this.$control_input[0]),this.$activeOption&&!this.settings.hideSelected&&(l=this.getAdjacentOption(this.$activeOption,-1).attr("data-value")),o=[],this.$activeItems.length){for(c=this.$control.children(".active:"+(n>0?"last":"first")),a=this.$control.children(":not(input)").index(c),n>0&&a++,i=0,s=this.$activeItems.length;i<s;i++)o.push(t(this.$activeItems[i]).attr("data-value"));e&&(e.preventDefault(),e.stopPropagation())}else(this.isFocused||"single"===this.settings.mode)&&this.items.length&&(n<0&&0===r.start&&0===r.length?o.push(this.items[this.caretPos-1]):n>0&&r.start===this.$control_input.val().length&&o.push(this.items[this.caretPos]));if(!o.length||"function"==typeof this.settings.onDelete&&!1===this.settings.onDelete.apply(this,[o]))return!1;for(void 0!==a&&this.setCaret(a);o.length;)this.removeItem(o.pop());return this.showInput(),this.positionDropdown(),this.refreshOptions(!0),l&&(h=this.getOption(l)).length&&this.setActiveOption(h),!0},advanceSelection:function(t,e){var i,s,n,r,o,a,l=this;0!==t&&(this.rtl&&(t*=-1),i=t>0?"last":"first",s=z(this.$control_input[0]),this.isFocused&&!this.isInputHidden?(r=this.$control_input.val().length,(o=t<0?0===s.start&&0===s.length:s.start===r)&&!r&&this.advanceCaret(t,e)):(a=this.$control.children(".active:"+i)).length&&(n=this.$control.children(":not(input)").index(a),this.setActiveItem(null),this.setCaret(t>0?n+1:n)))},advanceCaret:function(t,e){var i=this,s,n;0!==t&&(s=t>0?"next":"prev",this.isShiftDown?(n=this.$control_input[s]()).length&&(this.hideInput(),this.setActiveItem(n),e&&e.preventDefault()):this.setCaret(this.caretPos+t))},setCaret:function(e){var i=this,s,n,r,o,a;if(e="single"===this.settings.mode?this.items.length:Math.max(0,Math.min(this.items.length,e)),!this.isPending)for(s=0,n=(o=this.$control.children(":not(input)")).length;s<n;s++)a=t(o[s]).detach(),s<e?this.$control_input.before(a):this.$control.append(a);this.caretPos=e},lock:function(){this.close(),this.isLocked=!0,this.refreshState()},unlock:function(){this.isLocked=!1,this.refreshState()},disable:function(){var t=this;this.$input.prop("disabled",!0),this.$control_input.prop("disabled",!0).prop("tabindex",-1),this.isDisabled=!0,this.lock()},enable:function(){var t=this;this.$input.prop("disabled",!1),this.$control_input.prop("disabled",!1).prop("tabindex",this.tabIndex),this.isDisabled=!1,this.unlock()},destroy:function(){var e=this,i=this.eventNS,s=this.revertSettings;this.trigger("destroy"),this.off(),this.$wrapper.remove(),this.$dropdown.remove(),this.$input.html("").append(s.$children).removeAttr("tabindex").removeClass("selectized").attr({tabindex:s.tabindex}).show(),this.$control_input.removeData("grow"),this.$input.removeData("selectize"),t(window).off(i),t(document).off(i),t(document.body).off(i),delete this.$input[0].selectize},render:function(t,e){var i,s,n,r="",o=!1,a=this,l=/^[\t \r\n]*<([a-z][a-z0-9\-_]*(?:\:[a-z][a-z0-9\-_]*)?)/i;return"option"!==t&&"item"!==t||(o=!!(i=I(e[this.settings.valueField]))),o&&(S(this.renderCache[t])||(this.renderCache[t]={}),this.renderCache[t].hasOwnProperty(i))?this.renderCache[t][i]:(r=this.settings.render[t].apply(this,[e,k]),"option"!==t&&"option_create"!==t||(r=r.replace(l,"<$1 data-selectable")),"optgroup"===t&&(s=e[this.settings.optgroupValueField]||"",r=r.replace(l,'<$1 data-group="'+_(k(s))+'"')),"option"!==t&&"item"!==t||(r=r.replace(l,'<$1 data-value="'+_(k(i||""))+'"')),o&&(this.renderCache[t][i]=r),r)},clearCache:function(t){var e=this;void 0===t?this.renderCache={}:delete this.renderCache[t]},canCreate:function(t){var e=this;if(!this.settings.create)return!1;var i=this.settings.createFilter;return t.length&&("function"!=typeof i||i.apply(this,[t]))&&("string"!=typeof i||new RegExp(i).test(t))&&(!(i instanceof RegExp)||i.test(t))}}),E.count=0,E.defaults={options:[],optgroups:[],plugins:[],delimiter:",",splitOn:null,persist:!0,diacritics:!0,create:!1,createOnBlur:!1,createFilter:null,highlight:!0,openOnFocus:!0,maxOptions:1e3,maxItems:null,hideSelected:null,addPrecedence:!1,selectOnTab:!1,preload:!1,allowEmptyOption:!1,closeAfterSelect:!1,scrollDuration:60,loadThrottle:300,loadingClass:"loading",dataAttr:"data-data",optgroupField:"optgroup",valueField:"value",labelField:"text",optgroupLabelField:"label",optgroupValueField:"value",lockOptgroupOrder:!1,sortField:"$order",searchField:["text"],searchConjunction:"and",mode:null,wrapperClass:"selectize-control",inputClass:"selectize-input",dropdownClass:"selectize-dropdown",dropdownContentClass:"selectize-dropdown-content",dropdownParent:null,copyClassesToDropdown:!0,render:{}},t.fn.selectize=function(e){var i=t.fn.selectize.defaults,s=t.extend({},i,e),n=s.dataAttr,r=s.labelField,o=s.valueField,a=s.optgroupField,l=s.optgroupLabelField,h=s.optgroupValueField,c=function(e,i){var a,l,h,c,d=e.attr(n);if(d)for(i.options=JSON.parse(d),a=0,l=i.options.length;a<l;a++)i.items.push(i.options[a][o]);else{var p=t.trim(e.val()||"");if(!s.allowEmptyOption&&!p.length)return;for(a=0,l=(h=p.split(s.delimiter)).length;a<l;a++)(c={})[r]=h[a],c[o]=h[a],i.options.push(c);i.items=h}},d=function(e,i){var c,d,p,u,g=0,f=i.options,v={},m=function(t){var e=n&&t.attr(n);return"string"==typeof e&&e.length?JSON.parse(e):null},$=function(e,n){e=t(e);var l=I(e.attr("value"));if(l||s.allowEmptyOption)if(v.hasOwnProperty(l)){if(n){var h=v[l][a];h?t.isArray(h)?h.push(n):v[l][a]=[h,n]:v[l][a]=n}}else{var c=m(e)||{};c[r]=c[r]||e.text(),c[o]=c[o]||l,c[a]=c[a]||n,v[l]=c,f.push(c),e.is(":selected")&&i.items.push(l)}},y=function(e){var s,n,r,o,a;for((r=(e=t(e)).attr("label"))&&((o=m(e)||{})[l]=r,o[h]=r,i.optgroups.push(o)),s=0,n=(a=t("option",e)).length;s<n;s++)$(a[s],r)};for(i.maxItems=e.attr("multiple")?null:1,c=0,d=(u=e.children()).length;c<d;c++)"optgroup"===(p=u[c].tagName.toLowerCase())?y(u[c]):"option"===p&&$(u[c])};return this.each(function(){if(!this.selectize){var n,r=t(this),o=this.tagName.toLowerCase(),a=r.attr("placeholder")||r.attr("data-placeholder");a||s.allowEmptyOption||(a=r.children('option[value=""]').text());var l={placeholder:a,options:[],optgroups:[],items:[]};"select"===o?d(r,l):c(r,l),n=new E(r,t.extend(!0,{},i,l,e))}})},t.fn.selectize.defaults=E.defaults,t.fn.selectize.support={validity:x},E.define("drag_drop",function(e){if(!t.fn.sortable)throw new Error('The "drag_drop" plugin requires jQuery UI "sortable".');if("multi"===this.settings.mode){var i=this,s;i.lock=(s=i.lock,function(){var t=i.$control.data("sortable");return t&&t.disable(),s.apply(i,arguments)}),i.unlock=function(){var t=i.unlock;return function(){var e=i.$control.data("sortable");return e&&e.enable(),t.apply(i,arguments)}}(),i.setup=function(){var e=i.setup;return function(){e.apply(this,arguments);var s=i.$control.sortable({items:"[data-value]",forcePlaceholderSize:!0,disabled:i.isLocked,start:function(t,e){e.placeholder.css("width",e.helper.css("width")),s.css({overflow:"visible"})},stop:function(){s.css({overflow:"hidden"});var e=i.$activeItems?i.$activeItems.slice():null,n=[];s.children("[data-value]").each(function(){n.push(t(this).attr("data-value"))}),i.setValue(n),i.setActiveItem(e)}})}}()}}),E.define("dropdown_header",function(e){var i=this,s;e=t.extend({title:"Untitled",headerClass:"selectize-dropdown-header",titleRowClass:"selectize-dropdown-header-title",labelClass:"selectize-dropdown-header-label",closeClass:"selectize-dropdown-header-close",html:function(t){return'<div class="'+t.headerClass+'"><div class="'+t.titleRowClass+'"><span class="'+t.labelClass+'">'+t.title+'</span><a href="javascript:void(0)" class="'+t.closeClass+'">&times;</a></div></div>'}},e),i.setup=(s=i.setup,function(){s.apply(i,arguments),i.$dropdown_header=t(e.html(e)),i.$dropdown.prepend(i.$dropdown_header)})}),E.define("optgroup_columns",function(e){var i=this,s;e=t.extend({equalizeWidth:!0,equalizeHeight:!0},e),this.getAdjacentOption=function(e,i){var s=e.closest("[data-group]").find("[data-selectable]"),n=s.index(e)+i;return n>=0&&n<s.length?s.eq(n):t()},this.onKeyDown=(s=i.onKeyDown,function(t){var e,n,r,o;return!this.isOpen||37!==t.keyCode&&39!==t.keyCode?s.apply(this,arguments):(i.ignoreHover=!0,e=(o=this.$activeOption.closest("[data-group]")).find("[data-selectable]").index(this.$activeOption),void((n=(r=(o=37===t.keyCode?o.prev("[data-group]"):o.next("[data-group]")).find("[data-selectable]")).eq(Math.min(r.length-1,e))).length&&this.setActiveOption(n)))});var n=function(){var t,e=n.width,i=document;return void 0===e&&((t=i.createElement("div")).innerHTML='<div style="width:50px;height:50px;position:absolute;left:-50px;top:-50px;overflow:auto;"><div style="width:1px;height:100px;"></div></div>',t=t.firstChild,i.body.appendChild(t),e=n.width=t.offsetWidth-t.clientWidth,i.body.removeChild(t)),e},r=function(){var s,r,o,a,l,h,c;if((r=(c=t("[data-group]",i.$dropdown_content)).length)&&i.$dropdown_content.width()){if(e.equalizeHeight){for(o=0,s=0;s<r;s++)o=Math.max(o,c.eq(s).height());c.css({height:o})}e.equalizeWidth&&(h=i.$dropdown_content.innerWidth()-n(),a=Math.round(h/r),c.css({width:a}),r>1&&(l=h-a*(r-1),c.eq(r-1).css({width:l})))}};(e.equalizeHeight||e.equalizeWidth)&&(F.after(this,"positionDropdown",r),F.after(this,"refreshOptions",r))}),E.define("remove_button",function(e){if("single"!==this.settings.mode){e=t.extend({label:"&times;",title:"Remove",className:"remove",append:!0},e);var i=this,s='<a href="javascript:void(0)" class="'+e.className+'" tabindex="-1" title="'+k(e.title)+'">'+e.label+"</a>",n=function(t,e){var i=t.search(/(<\/[^>]+>\s*)$/);return t.substring(0,i)+e+t.substring(i)},r;this.setup=(r=i.setup,function(){if(e.append){var o=i.settings.render.item;i.settings.render.item=function(t){return n(o.apply(this,arguments),s)}}r.apply(this,arguments),this.$control.on("click","."+e.className,function(e){if(e.preventDefault(),!i.isLocked){var s=t(e.currentTarget).parent();i.setActiveItem(s),i.deleteSelection()&&i.setCaret(i.items.length)}})})}}),E.define("restore_on_backspace",function(t){var e=this,i;t.text=t.text||function(t){return t[this.settings.labelField]},this.onKeyDown=(i=e.onKeyDown,function(e){var s,n;return 8===e.keyCode&&""===this.$control_input.val()&&!this.$activeItems.length&&(s=this.caretPos-1)>=0&&s<this.items.length?(n=this.options[this.items[s]],this.deleteSelection(e)&&(this.setTextboxValue(t.text.apply(this,[n])),this.refreshOptions(!0)),void e.preventDefault()):i.apply(this,arguments)})}),E}),void 0===Craft.FeedMe&&(Craft.FeedMe={}),$(function(){var t;($(document).on("click","#feeds .settings",function(t){t.preventDefault();var e=$(this).parents("tr").data("id")+"-settings",i;$('tr[data-settings-id="'+e+'"] .settings-pane').toggle()}),$(document).on("change","#elementType",function(){$(".element-select").hide();var t=$(this).val().replace(/\\/g,"-");$('.element-select[data-type="'+t+'"]').show();var e=$('[name="duplicateHandle"]').parent().find(".checkbox-group");"craft-elements-User"===t?e.find(":nth-child(3) label").html(Craft.t("feed-me","Suspend missing users")):e.find(":nth-child(3) label").html(Craft.t("feed-me","Disable missing elements")),console.log(t)}),$("#elementType").trigger("change"),$(document).on("change",".element-parent-group select",function(){var t,e,i=$(this).parents(".element-sub-group").data("items")["item_"+$(this).val()],s=$(".element-child-group select").val(),n='<option value="">'+Craft.t("feed-me","None")+"</option>";$.each(i,function(t,e){t&&(n+='<option value="'+t+'">'+e+"</option>")}),$(".element-child-group select").html(n),s?$(".element-child-group select").val(s):$($(".element-child-group select").children()[1]).attr("selected",!0)}),$(".element-parent-group select").trigger("change"),$(".feedme-uniques").length)&&($('.feedme-uniques input[type="checkbox"]:checked').length||$('.feedme-uniques input[type="checkbox"]:first').prop("checked",!0));$(".assets-uploads input").on("change",function(t){var e=$(this).parents(".field-extra-settings").find(".select"),i=$(this).parents(".field-extra-settings").find(".asset-label-hide");$(this).prop("checked")?(i.css({opacity:1,visibility:"visible"}),e.css({opacity:1,visibility:"visible"})):(i.css({opacity:0,visibility:"hidden"}),e.css({opacity:0,visibility:"hidden"}))}),$(".assets-uploads input").trigger("change"),$(".field-extra-settings .element-create input").on("change",function(t){var e=$(this).parents(".field-extra-settings").find(".element-groups");$(this).prop("checked")?e.show():e.hide()}),$(".field-extra-settings .element-create input").trigger("change"),$(".field-extra-settings .element-group-section select").on("change",function(t){var e=$(this).parents(".field-extra-settings").find(".element-group-entrytype"),i,s,n=e.data("items")["item_"+$(this).val()],r="";$.each(n,function(t,e){t&&(r+='<option value="'+t+'">'+e+"</option>")}),e.find("select").html(r)}),$(".field-extra-settings .element-group-section select").trigger("change"),$(".feedme-mapping .selectize select").selectize({allowEmptyOption:!0}),$(".subelement-toggle label").on("click",function(t){var e;$(this).parents(".subelement-toggle").find(".lightswitch").data("lightswitch").toggle()}),$(".subelement-toggle .lightswitch").on("change",function(t){var e=$(this).data("lightswitch"),i,s;$(this).parents("tr").nextUntil(":not(.element-sub-field)").toggle()}),$(".element-sub-field").each(function(t,e){var i,s,n=[$(this).find(".col-map select").val(),$(this).find(".col-default input").val()],r=!1,o,a;($.each(n,function(t,e){""!=e&&"noimport"!=e&&void 0!==e&&(r=!0)}),r)&&$(this).prevUntil(":not(.element-sub-field)").addBack().prev().find(".lightswitch").data("lightswitch").turnOn()}),$(document).on("click",".log-detail-link",function(t){t.preventDefault();var e=$(this).data("key");$('tr[data-key="'+e+'"]').toggleClass("hidden")}),$(document).on("click","input[data-action]",function(t){var e=$(this).parents("form"),i=$(this).data("action");e.find('input[name="action"]').val(i),e.submit()}),$(document).on("change",".log-type-form .select",function(t){t.preventDefault(),$(this).parents("form").submit()}),new Craft.FeedMe.TaskProgress}),function(){var t='<div><span data-icon="check"></span> '+Craft.t("feed-me","Processing complete!")+'</div><div class="feedme-success-btns"><a class="btn submit" href="'+Craft.getUrl("feed-me/feeds")+'">Back to Feeds</a><a class="btn" href="'+Craft.getUrl("feed-me/logs")+'">View logs</a></div>';Craft.FeedMe.TaskProgress=Garnish.Base.extend({runningTask:null,$spinnerScreen:null,$pendingScreen:null,$runningScreen:null,init:function(){this.$spinnerScreen=$(".feedme-status-spinner"),this.$pendingScreen=$(".feedme-fullpage.fullpage-waiting"),this.$runningScreen=$(".feedme-fullpage.fullpage-running"),this.updateTasks()},updateTasks:function(){Craft.postActionRequest("queue/get-job-info",$.proxy(function(t,e){"success"==e&&this.showTaskInfo(t[0])},this))},showTaskInfo:function(e){this.$spinnerScreen.addClass("hidden"),e?(this.$runningScreen.removeClass("hidden"),this.runningTask?this.runningTask.updateStatus(e):this.runningTask=new Craft.FeedMe.TaskProgress.Task(e),"error"!=e.status&&setTimeout($.proxy(this,"updateTasks"),500)):this.runningTask?this.runningTask.complete():this.$pendingScreen.hasClass("cp-triggered")?(this.$runningScreen.removeClass("hidden"),this.$runningScreen.find(".progress-container").html(t)):this.$pendingScreen.removeClass("hidden")}}),Craft.FeedMe.TaskProgress.Task=Garnish.Base.extend({progressBar:null,init:function(t){this.$statusContainer=$(".feedme-fullpage.fullpage-running .progress-container"),this.$statusContainer.empty(),this.progressBar=new Craft.ProgressBar(this.$statusContainer),this.progressBar.showProgressBar(),this.updateStatus(t)},updateStatus:function(t){this.progressBar.setProgressPercentage(t.progress),"error"==t.status&&this.fail()},complete:function(){this.progressBar.setProgressPercentage(100),setTimeout($.proxy(this,"success"),300)},success:function(){this.$statusContainer.html(t)},fail:function(){this.$statusContainer.html('<div class="error">'+Craft.t("feed-me",'Processing failed. <a class="go" href="'+Craft.getUrl("feed-me/logs")+'">View logs</a>')+"</div>")}})}();
+/*!   - 2019-04-08 */
+(function($){
+
+/**
+ * sifter.js
+ * Copyright (c) 2013 Brian Reavis & contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
+ * file except in compliance with the License. You may obtain a copy of the License at:
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
+ * ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ *
+ * @author Brian Reavis <brian@thirdroute.com>
+ */
+
+(function(root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define('sifter', factory);
+    } else if (typeof exports === 'object') {
+        module.exports = factory();
+    } else {
+        root.Sifter = factory();
+    }
+}(this, function() {
+
+    /**
+     * Textually searches arrays and hashes of objects
+     * by property (or multiple properties). Designed
+     * specifically for autocomplete.
+     *
+     * @constructor
+     * @param {array|object} items
+     * @param {object} items
+     */
+    var Sifter = function(items, settings) {
+        this.items = items;
+        this.settings = settings || {diacritics: true};
+    };
+
+    /**
+     * Splits a search string into an array of individual
+     * regexps to be used to match results.
+     *
+     * @param {string} query
+     * @returns {array}
+     */
+    Sifter.prototype.tokenize = function(query) {
+        query = trim(String(query || '').toLowerCase());
+        if (!query || !query.length) return [];
+
+        var i, n, regex, letter;
+        var tokens = [];
+        var words = query.split(/ +/);
+
+        for (i = 0, n = words.length; i < n; i++) {
+            regex = escape_regex(words[i]);
+            if (this.settings.diacritics) {
+                for (letter in DIACRITICS) {
+                    if (DIACRITICS.hasOwnProperty(letter)) {
+                        regex = regex.replace(new RegExp(letter, 'g'), DIACRITICS[letter]);
+                    }
+                }
+            }
+            tokens.push({
+                string : words[i],
+                regex  : new RegExp(regex, 'i')
+            });
+        }
+
+        return tokens;
+    };
+
+    /**
+     * Iterates over arrays and hashes.
+     *
+     * ```
+     * this.iterator(this.items, function(item, id) {
+     *    // invoked for each item
+     * });
+     * ```
+     *
+     * @param {array|object} object
+     */
+    Sifter.prototype.iterator = function(object, callback) {
+        var iterator;
+        if (is_array(object)) {
+            iterator = Array.prototype.forEach || function(callback) {
+                for (var i = 0, n = this.length; i < n; i++) {
+                    callback(this[i], i, this);
+                }
+            };
+        } else {
+            iterator = function(callback) {
+                for (var key in this) {
+                    if (this.hasOwnProperty(key)) {
+                        callback(this[key], key, this);
+                    }
+                }
+            };
+        }
+
+        iterator.apply(object, [callback]);
+    };
+
+    /**
+     * Returns a function to be used to score individual results.
+     *
+     * Good matches will have a higher score than poor matches.
+     * If an item is not a match, 0 will be returned by the function.
+     *
+     * @param {object|string} search
+     * @param {object} options (optional)
+     * @returns {function}
+     */
+    Sifter.prototype.getScoreFunction = function(search, options) {
+        var self, fields, tokens, token_count;
+
+        self        = this;
+        search      = self.prepareSearch(search, options);
+        tokens      = search.tokens;
+        fields      = search.options.fields;
+        token_count = tokens.length;
+
+        /**
+         * Calculates how close of a match the
+         * given value is against a search token.
+         *
+         * @param {mixed} value
+         * @param {object} token
+         * @return {number}
+         */
+        var scoreValue = function(value, token) {
+            var score, pos;
+
+            if (!value) return 0;
+            value = String(value || '');
+            pos = value.search(token.regex);
+            if (pos === -1) return 0;
+            score = token.string.length / value.length;
+            if (pos === 0) score += 0.5;
+            return score;
+        };
+
+        /**
+         * Calculates the score of an object
+         * against the search query.
+         *
+         * @param {object} token
+         * @param {object} data
+         * @return {number}
+         */
+        var scoreObject = (function() {
+            var field_count = fields.length;
+            if (!field_count) {
+                return function() { return 0; };
+            }
+            if (field_count === 1) {
+                return function(token, data) {
+                    return scoreValue(data[fields[0]], token);
+                };
+            }
+            return function(token, data) {
+                for (var i = 0, sum = 0; i < field_count; i++) {
+                    sum += scoreValue(data[fields[i]], token);
+                }
+                return sum / field_count;
+            };
+        })();
+
+        if (!token_count) {
+            return function() { return 0; };
+        }
+        if (token_count === 1) {
+            return function(data) {
+                return scoreObject(tokens[0], data);
+            };
+        }
+
+        if (search.options.conjunction === 'and') {
+            return function(data) {
+                var score;
+                for (var i = 0, sum = 0; i < token_count; i++) {
+                    score = scoreObject(tokens[i], data);
+                    if (score <= 0) return 0;
+                    sum += score;
+                }
+                return sum / token_count;
+            };
+        } else {
+            return function(data) {
+                for (var i = 0, sum = 0; i < token_count; i++) {
+                    sum += scoreObject(tokens[i], data);
+                }
+                return sum / token_count;
+            };
+        }
+    };
+
+    /**
+     * Returns a function that can be used to compare two
+     * results, for sorting purposes. If no sorting should
+     * be performed, `null` will be returned.
+     *
+     * @param {string|object} search
+     * @param {object} options
+     * @return function(a,b)
+     */
+    Sifter.prototype.getSortFunction = function(search, options) {
+        var i, n, self, field, fields, fields_count, multiplier, multipliers, get_field, implicit_score, sort;
+
+        self   = this;
+        search = self.prepareSearch(search, options);
+        sort   = (!search.query && options.sort_empty) || options.sort;
+
+        /**
+         * Fetches the specified sort field value
+         * from a search result item.
+         *
+         * @param  {string} name
+         * @param  {object} result
+         * @return {mixed}
+         */
+        get_field = function(name, result) {
+            if (name === '$score') return result.score;
+            return self.items[result.id][name];
+        };
+
+        // parse options
+        fields = [];
+        if (sort) {
+            for (i = 0, n = sort.length; i < n; i++) {
+                if (search.query || sort[i].field !== '$score') {
+                    fields.push(sort[i]);
+                }
+            }
+        }
+
+        // the "$score" field is implied to be the primary
+        // sort field, unless it's manually specified
+        if (search.query) {
+            implicit_score = true;
+            for (i = 0, n = fields.length; i < n; i++) {
+                if (fields[i].field === '$score') {
+                    implicit_score = false;
+                    break;
+                }
+            }
+            if (implicit_score) {
+                fields.unshift({field: '$score', direction: 'desc'});
+            }
+        } else {
+            for (i = 0, n = fields.length; i < n; i++) {
+                if (fields[i].field === '$score') {
+                    fields.splice(i, 1);
+                    break;
+                }
+            }
+        }
+
+        multipliers = [];
+        for (i = 0, n = fields.length; i < n; i++) {
+            multipliers.push(fields[i].direction === 'desc' ? -1 : 1);
+        }
+
+        // build function
+        fields_count = fields.length;
+        if (!fields_count) {
+            return null;
+        } else if (fields_count === 1) {
+            field = fields[0].field;
+            multiplier = multipliers[0];
+            return function(a, b) {
+                return multiplier * cmp(
+                    get_field(field, a),
+                    get_field(field, b)
+                );
+            };
+        } else {
+            return function(a, b) {
+                var i, result, a_value, b_value, field;
+                for (i = 0; i < fields_count; i++) {
+                    field = fields[i].field;
+                    result = multipliers[i] * cmp(
+                        get_field(field, a),
+                        get_field(field, b)
+                    );
+                    if (result) return result;
+                }
+                return 0;
+            };
+        }
+    };
+
+    /**
+     * Parses a search query and returns an object
+     * with tokens and fields ready to be populated
+     * with results.
+     *
+     * @param {string} query
+     * @param {object} options
+     * @returns {object}
+     */
+    Sifter.prototype.prepareSearch = function(query, options) {
+        if (typeof query === 'object') return query;
+
+        options = extend({}, options);
+
+        var option_fields     = options.fields;
+        var option_sort       = options.sort;
+        var option_sort_empty = options.sort_empty;
+
+        if (option_fields && !is_array(option_fields)) options.fields = [option_fields];
+        if (option_sort && !is_array(option_sort)) options.sort = [option_sort];
+        if (option_sort_empty && !is_array(option_sort_empty)) options.sort_empty = [option_sort_empty];
+
+        return {
+            options : options,
+            query   : String(query || '').toLowerCase(),
+            tokens  : this.tokenize(query),
+            total   : 0,
+            items   : []
+        };
+    };
+
+    /**
+     * Searches through all items and returns a sorted array of matches.
+     *
+     * The `options` parameter can contain:
+     *
+     *   - fields {string|array}
+     *   - sort {array}
+     *   - score {function}
+     *   - filter {bool}
+     *   - limit {integer}
+     *
+     * Returns an object containing:
+     *
+     *   - options {object}
+     *   - query {string}
+     *   - tokens {array}
+     *   - total {int}
+     *   - items {array}
+     *
+     * @param {string} query
+     * @param {object} options
+     * @returns {object}
+     */
+    Sifter.prototype.search = function(query, options) {
+        var self = this, value, score, search, calculateScore;
+        var fn_sort;
+        var fn_score;
+
+        search  = this.prepareSearch(query, options);
+        options = search.options;
+        query   = search.query;
+
+        // generate result scoring function
+        fn_score = options.score || self.getScoreFunction(search);
+
+        // perform search and sort
+        if (query.length) {
+            self.iterator(self.items, function(item, id) {
+                score = fn_score(item);
+                if (options.filter === false || score > 0) {
+                    search.items.push({'score': score, 'id': id});
+                }
+            });
+        } else {
+            self.iterator(self.items, function(item, id) {
+                search.items.push({'score': 1, 'id': id});
+            });
+        }
+
+        fn_sort = self.getSortFunction(search, options);
+        if (fn_sort) search.items.sort(fn_sort);
+
+        // apply limits
+        search.total = search.items.length;
+        if (typeof options.limit === 'number') {
+            search.items = search.items.slice(0, options.limit);
+        }
+
+        return search;
+    };
+
+    // utilities
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    var cmp = function(a, b) {
+        if (typeof a === 'number' && typeof b === 'number') {
+            return a > b ? 1 : (a < b ? -1 : 0);
+        }
+        a = asciifold(String(a || ''));
+        b = asciifold(String(b || ''));
+        if (a > b) return 1;
+        if (b > a) return -1;
+        return 0;
+    };
+
+    var extend = function(a, b) {
+        var i, n, k, object;
+        for (i = 1, n = arguments.length; i < n; i++) {
+            object = arguments[i];
+            if (!object) continue;
+            for (k in object) {
+                if (object.hasOwnProperty(k)) {
+                    a[k] = object[k];
+                }
+            }
+        }
+        return a;
+    };
+
+    var trim = function(str) {
+        return (str + '').replace(/^\s+|\s+$|/g, '');
+    };
+
+    var escape_regex = function(str) {
+        return (str + '').replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1');
+    };
+
+    var is_array = Array.isArray || ($ && $.isArray) || function(object) {
+        return Object.prototype.toString.call(object) === '[object Array]';
+    };
+
+    var DIACRITICS = {
+        'a': '[aÀÁÂÃÄÅàáâãäåĀāąĄ]',
+        'c': '[cÇçćĆčČ]',
+        'd': '[dđĐďĎ]',
+        'e': '[eÈÉÊËèéêëěĚĒēęĘ]',
+        'i': '[iÌÍÎÏìíîïĪī]',
+        'l': '[lłŁ]',
+        'n': '[nÑñňŇńŃ]',
+        'o': '[oÒÓÔÕÕÖØòóôõöøŌō]',
+        'r': '[rřŘ]',
+        's': '[sŠšśŚ]',
+        't': '[tťŤ]',
+        'u': '[uÙÚÛÜùúûüůŮŪū]',
+        'y': '[yŸÿýÝ]',
+        'z': '[zŽžżŻźŹ]'
+    };
+
+    var asciifold = (function() {
+        var i, n, k, chunk;
+        var foreignletters = '';
+        var lookup = {};
+        for (k in DIACRITICS) {
+            if (DIACRITICS.hasOwnProperty(k)) {
+                chunk = DIACRITICS[k].substring(2, DIACRITICS[k].length - 1);
+                foreignletters += chunk;
+                for (i = 0, n = chunk.length; i < n; i++) {
+                    lookup[chunk.charAt(i)] = k;
+                }
+            }
+        }
+        var regexp = new RegExp('[' +  foreignletters + ']', 'g');
+        return function(str) {
+            return str.replace(regexp, function(foreignletter) {
+                return lookup[foreignletter];
+            }).toLowerCase();
+        };
+    })();
+
+
+    // export
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    return Sifter;
+}));
+
+
+
+/**
+ * microplugin.js
+ * Copyright (c) 2013 Brian Reavis & contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
+ * file except in compliance with the License. You may obtain a copy of the License at:
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
+ * ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ *
+ * @author Brian Reavis <brian@thirdroute.com>
+ */
+
+(function(root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define('microplugin', factory);
+    } else if (typeof exports === 'object') {
+        module.exports = factory();
+    } else {
+        root.MicroPlugin = factory();
+    }
+}(this, function() {
+    var MicroPlugin = {};
+
+    MicroPlugin.mixin = function(Interface) {
+        Interface.plugins = {};
+
+        /**
+         * Initializes the listed plugins (with options).
+         * Acceptable formats:
+         *
+         * List (without options):
+         *   ['a', 'b', 'c']
+         *
+         * List (with options):
+         *   [{'name': 'a', options: {}}, {'name': 'b', options: {}}]
+         *
+         * Hash (with options):
+         *   {'a': { ... }, 'b': { ... }, 'c': { ... }}
+         *
+         * @param {mixed} plugins
+         */
+        Interface.prototype.initializePlugins = function(plugins) {
+            var i, n, key;
+            var self  = this;
+            var queue = [];
+
+            self.plugins = {
+                names     : [],
+                settings  : {},
+                requested : {},
+                loaded    : {}
+            };
+
+            if (utils.isArray(plugins)) {
+                for (i = 0, n = plugins.length; i < n; i++) {
+                    if (typeof plugins[i] === 'string') {
+                        queue.push(plugins[i]);
+                    } else {
+                        self.plugins.settings[plugins[i].name] = plugins[i].options;
+                        queue.push(plugins[i].name);
+                    }
+                }
+            } else if (plugins) {
+                for (key in plugins) {
+                    if (plugins.hasOwnProperty(key)) {
+                        self.plugins.settings[key] = plugins[key];
+                        queue.push(key);
+                    }
+                }
+            }
+
+            while (queue.length) {
+                self.require(queue.shift());
+            }
+        };
+
+        Interface.prototype.loadPlugin = function(name) {
+            var self    = this;
+            var plugins = self.plugins;
+            var plugin  = Interface.plugins[name];
+
+            if (!Interface.plugins.hasOwnProperty(name)) {
+                throw new Error('Unable to find "' +  name + '" plugin');
+            }
+
+            plugins.requested[name] = true;
+            plugins.loaded[name] = plugin.fn.apply(self, [self.plugins.settings[name] || {}]);
+            plugins.names.push(name);
+        };
+
+        /**
+         * Initializes a plugin.
+         *
+         * @param {string} name
+         */
+        Interface.prototype.require = function(name) {
+            var self = this;
+            var plugins = self.plugins;
+
+            if (!self.plugins.loaded.hasOwnProperty(name)) {
+                if (plugins.requested[name]) {
+                    throw new Error('Plugin has circular dependency ("' + name + '")');
+                }
+                self.loadPlugin(name);
+            }
+
+            return plugins.loaded[name];
+        };
+
+        /**
+         * Registers a plugin.
+         *
+         * @param {string} name
+         * @param {function} fn
+         */
+        Interface.define = function(name, fn) {
+            Interface.plugins[name] = {
+                'name' : name,
+                'fn'   : fn
+            };
+        };
+    };
+
+    var utils = {
+        isArray: Array.isArray || function(vArg) {
+            return Object.prototype.toString.call(vArg) === '[object Array]';
+        }
+    };
+
+    return MicroPlugin;
+}));
+
+/**
+ * selectize.js (v0.12.1)
+ * Copyright (c) 2013–2015 Brian Reavis & contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
+ * file except in compliance with the License. You may obtain a copy of the License at:
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
+ * ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ *
+ * @author Brian Reavis <brian@thirdroute.com>
+ */
+
+/*jshint curly:false */
+/*jshint browser:true */
+
+(function(root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define('selectize', ['jquery','sifter','microplugin'], factory);
+    } else if (typeof exports === 'object') {
+        module.exports = factory(require('jquery'), require('sifter'), require('microplugin'));
+    } else {
+        root.Selectize = factory(root.jQuery, root.Sifter, root.MicroPlugin);
+    }
+}(this, function($, Sifter, MicroPlugin) {
+    'use strict';
+
+    var highlight = function($element, pattern) {
+        if (typeof pattern === 'string' && !pattern.length) return;
+        var regex = (typeof pattern === 'string') ? new RegExp(pattern, 'i') : pattern;
+
+        var highlight = function(node) {
+            var skip = 0;
+            if (node.nodeType === 3) {
+                var pos = node.data.search(regex);
+                if (pos >= 0 && node.data.length > 0) {
+                    var match = node.data.match(regex);
+                    var spannode = document.createElement('span');
+                    spannode.className = 'highlight';
+                    var middlebit = node.splitText(pos);
+                    var endbit = middlebit.splitText(match[0].length);
+                    var middleclone = middlebit.cloneNode(true);
+                    spannode.appendChild(middleclone);
+                    middlebit.parentNode.replaceChild(spannode, middlebit);
+                    skip = 1;
+                }
+            } else if (node.nodeType === 1 && node.childNodes && !/(script|style)/i.test(node.tagName)) {
+                for (var i = 0; i < node.childNodes.length; ++i) {
+                    i += highlight(node.childNodes[i]);
+                }
+            }
+            return skip;
+        };
+
+        return $element.each(function() {
+            highlight(this);
+        });
+    };
+
+    var MicroEvent = function() {};
+    MicroEvent.prototype = {
+        on: function(event, fct){
+            this._events = this._events || {};
+            this._events[event] = this._events[event] || [];
+            this._events[event].push(fct);
+        },
+        off: function(event, fct){
+            var n = arguments.length;
+            if (n === 0) return delete this._events;
+            if (n === 1) return delete this._events[event];
+
+            this._events = this._events || {};
+            if (event in this._events === false) return;
+            this._events[event].splice(this._events[event].indexOf(fct), 1);
+        },
+        trigger: function(event /* , args... */){
+            this._events = this._events || {};
+            if (event in this._events === false) return;
+            for (var i = 0; i < this._events[event].length; i++){
+                this._events[event][i].apply(this, Array.prototype.slice.call(arguments, 1));
+            }
+        }
+    };
+
+    /**
+     * Mixin will delegate all MicroEvent.js function in the destination object.
+     *
+     * - MicroEvent.mixin(Foobar) will make Foobar able to use MicroEvent
+     *
+     * @param {object} the object which will support MicroEvent
+     */
+    MicroEvent.mixin = function(destObject){
+        var props = ['on', 'off', 'trigger'];
+        for (var i = 0; i < props.length; i++){
+            destObject.prototype[props[i]] = MicroEvent.prototype[props[i]];
+        }
+    };
+
+    var IS_MAC        = /Mac/.test(navigator.userAgent);
+
+    var KEY_A         = 65;
+    var KEY_COMMA     = 188;
+    var KEY_RETURN    = 13;
+    var KEY_ESC       = 27;
+    var KEY_LEFT      = 37;
+    var KEY_UP        = 38;
+    var KEY_P         = 80;
+    var KEY_RIGHT     = 39;
+    var KEY_DOWN      = 40;
+    var KEY_N         = 78;
+    var KEY_BACKSPACE = 8;
+    var KEY_DELETE    = 46;
+    var KEY_SHIFT     = 16;
+    var KEY_CMD       = IS_MAC ? 91 : 17;
+    var KEY_CTRL      = IS_MAC ? 18 : 17;
+    var KEY_TAB       = 9;
+
+    var TAG_SELECT    = 1;
+    var TAG_INPUT     = 2;
+
+    // for now, android support in general is too spotty to support validity
+    var SUPPORTS_VALIDITY_API = !/android/i.test(window.navigator.userAgent) && !!document.createElement('form').validity;
+
+    var isset = function(object) {
+        return typeof object !== 'undefined';
+    };
+
+    /**
+     * Converts a scalar to its best string representation
+     * for hash keys and HTML attribute values.
+     *
+     * Transformations:
+     *   'str'     -> 'str'
+     *   null      -> ''
+     *   undefined -> ''
+     *   true      -> '1'
+     *   false     -> '0'
+     *   0         -> '0'
+     *   1         -> '1'
+     *
+     * @param {string} value
+     * @returns {string|null}
+     */
+    var hash_key = function(value) {
+        if (typeof value === 'undefined' || value === null) return null;
+        if (typeof value === 'boolean') return value ? '1' : '0';
+        return value + '';
+    };
+
+    /**
+     * Escapes a string for use within HTML.
+     *
+     * @param {string} str
+     * @returns {string}
+     */
+    var escape_html = function(str) {
+        return (str + '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    };
+
+    /**
+     * Escapes "$" characters in replacement strings.
+     *
+     * @param {string} str
+     * @returns {string}
+     */
+    var escape_replace = function(str) {
+        return (str + '').replace(/\$/g, '$$$$');
+    };
+
+    var hook = {};
+
+    /**
+     * Wraps `method` on `self` so that `fn`
+     * is invoked before the original method.
+     *
+     * @param {object} self
+     * @param {string} method
+     * @param {function} fn
+     */
+    hook.before = function(self, method, fn) {
+        var original = self[method];
+        self[method] = function() {
+            fn.apply(self, arguments);
+            return original.apply(self, arguments);
+        };
+    };
+
+    /**
+     * Wraps `method` on `self` so that `fn`
+     * is invoked after the original method.
+     *
+     * @param {object} self
+     * @param {string} method
+     * @param {function} fn
+     */
+    hook.after = function(self, method, fn) {
+        var original = self[method];
+        self[method] = function() {
+            var result = original.apply(self, arguments);
+            fn.apply(self, arguments);
+            return result;
+        };
+    };
+
+    /**
+     * Wraps `fn` so that it can only be invoked once.
+     *
+     * @param {function} fn
+     * @returns {function}
+     */
+    var once = function(fn) {
+        var called = false;
+        return function() {
+            if (called) return;
+            called = true;
+            fn.apply(this, arguments);
+        };
+    };
+
+    /**
+     * Wraps `fn` so that it can only be called once
+     * every `delay` milliseconds (invoked on the falling edge).
+     *
+     * @param {function} fn
+     * @param {int} delay
+     * @returns {function}
+     */
+    var debounce = function(fn, delay) {
+        var timeout;
+        return function() {
+            var self = this;
+            var args = arguments;
+            window.clearTimeout(timeout);
+            timeout = window.setTimeout(function() {
+                fn.apply(self, args);
+            }, delay);
+        };
+    };
+
+    /**
+     * Debounce all fired events types listed in `types`
+     * while executing the provided `fn`.
+     *
+     * @param {object} self
+     * @param {array} types
+     * @param {function} fn
+     */
+    var debounce_events = function(self, types, fn) {
+        var type;
+        var trigger = self.trigger;
+        var event_args = {};
+
+        // override trigger method
+        self.trigger = function() {
+            var type = arguments[0];
+            if (types.indexOf(type) !== -1) {
+                event_args[type] = arguments;
+            } else {
+                return trigger.apply(self, arguments);
+            }
+        };
+
+        // invoke provided function
+        fn.apply(self, []);
+        self.trigger = trigger;
+
+        // trigger queued events
+        for (type in event_args) {
+            if (event_args.hasOwnProperty(type)) {
+                trigger.apply(self, event_args[type]);
+            }
+        }
+    };
+
+    /**
+     * A workaround for http://bugs.jquery.com/ticket/6696
+     *
+     * @param {object} $parent - Parent element to listen on.
+     * @param {string} event - Event name.
+     * @param {string} selector - Descendant selector to filter by.
+     * @param {function} fn - Event handler.
+     */
+    var watchChildEvent = function($parent, event, selector, fn) {
+        $parent.on(event, selector, function(e) {
+            var child = e.target;
+            while (child && child.parentNode !== $parent[0]) {
+                child = child.parentNode;
+            }
+            e.currentTarget = child;
+            return fn.apply(this, [e]);
+        });
+    };
+
+    /**
+     * Determines the current selection within a text input control.
+     * Returns an object containing:
+     *   - start
+     *   - length
+     *
+     * @param {object} input
+     * @returns {object}
+     */
+    var getSelection = function(input) {
+        var result = {};
+        if ('selectionStart' in input) {
+            result.start = input.selectionStart;
+            result.length = input.selectionEnd - result.start;
+        } else if (document.selection) {
+            input.focus();
+            var sel = document.selection.createRange();
+            var selLen = document.selection.createRange().text.length;
+            sel.moveStart('character', -input.value.length);
+            result.start = sel.text.length - selLen;
+            result.length = selLen;
+        }
+        return result;
+    };
+
+    /**
+     * Copies CSS properties from one element to another.
+     *
+     * @param {object} $from
+     * @param {object} $to
+     * @param {array} properties
+     */
+    var transferStyles = function($from, $to, properties) {
+        var i, n, styles = {};
+        if (properties) {
+            for (i = 0, n = properties.length; i < n; i++) {
+                styles[properties[i]] = $from.css(properties[i]);
+            }
+        } else {
+            styles = $from.css();
+        }
+        $to.css(styles);
+    };
+
+    /**
+     * Measures the width of a string within a
+     * parent element (in pixels).
+     *
+     * @param {string} str
+     * @param {object} $parent
+     * @returns {int}
+     */
+    var measureString = function(str, $parent) {
+        if (!str) {
+            return 0;
+        }
+
+        var $test = $('<test>').css({
+            position: 'absolute',
+            top: -99999,
+            left: -99999,
+            width: 'auto',
+            padding: 0,
+            whiteSpace: 'pre'
+        }).text(str).appendTo('body');
+
+        transferStyles($parent, $test, [
+            'letterSpacing',
+            'fontSize',
+            'fontFamily',
+            'fontWeight',
+            'textTransform'
+        ]);
+
+        var width = $test.width();
+        $test.remove();
+
+        return width;
+    };
+
+    /**
+     * Sets up an input to grow horizontally as the user
+     * types. If the value is changed manually, you can
+     * trigger the "update" handler to resize:
+     *
+     * $input.trigger('update');
+     *
+     * @param {object} $input
+     */
+    var autoGrow = function($input) {
+        var currentWidth = null;
+
+        var update = function(e, options) {
+            var value, keyCode, printable, placeholder, width;
+            var shift, character, selection;
+            e = e || window.event || {};
+            options = options || {};
+
+            if (e.metaKey || e.altKey) return;
+            if (!options.force && $input.data('grow') === false) return;
+
+            value = $input.val();
+            if (e.type && e.type.toLowerCase() === 'keydown') {
+                keyCode = e.keyCode;
+                printable = (
+                    (keyCode >= 97 && keyCode <= 122) || // a-z
+                    (keyCode >= 65 && keyCode <= 90)  || // A-Z
+                    (keyCode >= 48 && keyCode <= 57)  || // 0-9
+                    keyCode === 32 // space
+                );
+
+                if (keyCode === KEY_DELETE || keyCode === KEY_BACKSPACE) {
+                    selection = getSelection($input[0]);
+                    if (selection.length) {
+                        value = value.substring(0, selection.start) + value.substring(selection.start + selection.length);
+                    } else if (keyCode === KEY_BACKSPACE && selection.start) {
+                        value = value.substring(0, selection.start - 1) + value.substring(selection.start + 1);
+                    } else if (keyCode === KEY_DELETE && typeof selection.start !== 'undefined') {
+                        value = value.substring(0, selection.start) + value.substring(selection.start + 1);
+                    }
+                } else if (printable) {
+                    shift = e.shiftKey;
+                    character = String.fromCharCode(e.keyCode);
+                    if (shift) character = character.toUpperCase();
+                    else character = character.toLowerCase();
+                    value += character;
+                }
+            }
+
+            placeholder = $input.attr('placeholder');
+            if (!value && placeholder) {
+                value = placeholder;
+            }
+
+            width = measureString(value, $input) + 4;
+            if (width !== currentWidth) {
+                currentWidth = width;
+                $input.width(width);
+                $input.triggerHandler('resize');
+            }
+        };
+
+        $input.on('keydown keyup update blur', update);
+        update();
+    };
+
+    var Selectize = function($input, settings) {
+        var key, i, n, dir, input, self = this;
+        input = $input[0];
+        input.selectize = self;
+
+        // detect rtl environment
+        var computedStyle = window.getComputedStyle && window.getComputedStyle(input, null);
+        dir = computedStyle ? computedStyle.getPropertyValue('direction') : input.currentStyle && input.currentStyle.direction;
+        dir = dir || $input.parents('[dir]:first').attr('dir') || '';
+
+        // setup default state
+        $.extend(self, {
+            order            : 0,
+            settings         : settings,
+            $input           : $input,
+            tabIndex         : $input.attr('tabindex') || '',
+            tagType          : input.tagName.toLowerCase() === 'select' ? TAG_SELECT : TAG_INPUT,
+            rtl              : /rtl/i.test(dir),
+
+            eventNS          : '.selectize' + (++Selectize.count),
+            highlightedValue : null,
+            isOpen           : false,
+            isDisabled       : false,
+            isRequired       : $input.is('[required]'),
+            isInvalid        : false,
+            isLocked         : false,
+            isFocused        : false,
+            isInputHidden    : false,
+            isSetup          : false,
+            isShiftDown      : false,
+            isCmdDown        : false,
+            isCtrlDown       : false,
+            ignoreFocus      : false,
+            ignoreBlur       : false,
+            ignoreHover      : false,
+            hasOptions       : false,
+            currentResults   : null,
+            lastValue        : '',
+            caretPos         : 0,
+            loading          : 0,
+            loadedSearches   : {},
+
+            $activeOption    : null,
+            $activeItems     : [],
+
+            optgroups        : {},
+            options          : {},
+            userOptions      : {},
+            items            : [],
+            renderCache      : {},
+            onSearchChange   : settings.loadThrottle === null ? self.onSearchChange : debounce(self.onSearchChange, settings.loadThrottle)
+        });
+
+        // search system
+        self.sifter = new Sifter(this.options, {diacritics: settings.diacritics});
+
+        // build options table
+        if (self.settings.options) {
+            for (i = 0, n = self.settings.options.length; i < n; i++) {
+                self.registerOption(self.settings.options[i]);
+            }
+            delete self.settings.options;
+        }
+
+        // build optgroup table
+        if (self.settings.optgroups) {
+            for (i = 0, n = self.settings.optgroups.length; i < n; i++) {
+                self.registerOptionGroup(self.settings.optgroups[i]);
+            }
+            delete self.settings.optgroups;
+        }
+
+        // option-dependent defaults
+        self.settings.mode = self.settings.mode || (self.settings.maxItems === 1 ? 'single' : 'multi');
+        if (typeof self.settings.hideSelected !== 'boolean') {
+            self.settings.hideSelected = self.settings.mode === 'multi';
+        }
+
+        self.initializePlugins(self.settings.plugins);
+        self.setupCallbacks();
+        self.setupTemplates();
+        self.setup();
+    };
+
+    // mixins
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    MicroEvent.mixin(Selectize);
+    MicroPlugin.mixin(Selectize);
+
+    // methods
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    $.extend(Selectize.prototype, {
+
+        /**
+         * Creates all elements and sets up event bindings.
+         */
+        setup: function() {
+            var self      = this;
+            var settings  = self.settings;
+            var eventNS   = self.eventNS;
+            var $window   = $(window);
+            var $document = $(document);
+            var $input    = self.$input;
+
+            var $wrapper;
+            var $control;
+            var $control_input;
+            var $dropdown;
+            var $dropdown_content;
+            var $dropdown_parent;
+            var inputMode;
+            var timeout_blur;
+            var timeout_focus;
+            var classes;
+            var classes_plugins;
+
+            inputMode         = self.settings.mode;
+            classes           = $input.attr('class') || '';
+
+            $wrapper          = $('<div>').addClass(settings.wrapperClass).addClass(classes).addClass(inputMode);
+            $control          = $('<div>').addClass(settings.inputClass).addClass('items').appendTo($wrapper);
+            /* HACK */
+            //$control_input    = $('<input type="text" autocomplete="off" />').appendTo($control).attr('tabindex', $input.is(':disabled') ? '-1' : self.tabIndex);
+            $control_input    = $('<input type="text" autocomplete="false" />').appendTo($control).attr('tabindex', $input.is(':disabled') ? '-1' : self.tabIndex);
+            /* END HACK */
+            $dropdown_parent  = $(settings.dropdownParent || $wrapper);
+            $dropdown         = $('<div>').addClass(settings.dropdownClass).addClass(inputMode).hide().appendTo($dropdown_parent);
+            $dropdown_content = $('<div>').addClass(settings.dropdownContentClass).appendTo($dropdown);
+
+            if(self.settings.copyClassesToDropdown) {
+                $dropdown.addClass(classes);
+            }
+
+            $wrapper.css({
+                width: $input[0].style.width
+            });
+
+            if (self.plugins.names.length) {
+                classes_plugins = 'plugin-' + self.plugins.names.join(' plugin-');
+                $wrapper.addClass(classes_plugins);
+                $dropdown.addClass(classes_plugins);
+            }
+
+            if ((settings.maxItems === null || settings.maxItems > 1) && self.tagType === TAG_SELECT) {
+                $input.attr('multiple', 'multiple');
+            }
+
+            if (self.settings.placeholder) {
+                $control_input.attr('placeholder', settings.placeholder);
+            }
+
+            // if splitOn was not passed in, construct it from the delimiter to allow pasting universally
+            if (!self.settings.splitOn && self.settings.delimiter) {
+                var delimiterEscaped = self.settings.delimiter.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+                self.settings.splitOn = new RegExp('\\s*' + delimiterEscaped + '+\\s*');
+            }
+
+            if ($input.attr('autocorrect')) {
+                $control_input.attr('autocorrect', $input.attr('autocorrect'));
+            }
+
+            if ($input.attr('autocapitalize')) {
+                $control_input.attr('autocapitalize', $input.attr('autocapitalize'));
+            }
+
+            self.$wrapper          = $wrapper;
+            self.$control          = $control;
+            self.$control_input    = $control_input;
+            self.$dropdown         = $dropdown;
+            self.$dropdown_content = $dropdown_content;
+
+            $dropdown.on('mouseenter', '[data-selectable]', function() { return self.onOptionHover.apply(self, arguments); });
+            $dropdown.on('mousedown click', '[data-selectable]', function() { return self.onOptionSelect.apply(self, arguments); });
+            watchChildEvent($control, 'mousedown', '*:not(input)', function() { return self.onItemSelect.apply(self, arguments); });
+            autoGrow($control_input);
+
+            $control.on({
+                mousedown : function() { return self.onMouseDown.apply(self, arguments); },
+                click     : function() { return self.onClick.apply(self, arguments); }
+            });
+
+            $control_input.on({
+                mousedown : function(e) { e.stopPropagation(); },
+                keydown   : function() { return self.onKeyDown.apply(self, arguments); },
+                keyup     : function() { return self.onKeyUp.apply(self, arguments); },
+                keypress  : function() { return self.onKeyPress.apply(self, arguments); },
+                resize    : function() { self.positionDropdown.apply(self, []); },
+                blur      : function() { return self.onBlur.apply(self, arguments); },
+                focus     : function() { self.ignoreBlur = false; return self.onFocus.apply(self, arguments); },
+                paste     : function() { return self.onPaste.apply(self, arguments); }
+            });
+
+            $document.on('keydown' + eventNS, function(e) {
+                self.isCmdDown = e[IS_MAC ? 'metaKey' : 'ctrlKey'];
+                self.isCtrlDown = e[IS_MAC ? 'altKey' : 'ctrlKey'];
+                self.isShiftDown = e.shiftKey;
+            });
+
+            $document.on('keyup' + eventNS, function(e) {
+                if (e.keyCode === KEY_CTRL) self.isCtrlDown = false;
+                if (e.keyCode === KEY_SHIFT) self.isShiftDown = false;
+                if (e.keyCode === KEY_CMD) self.isCmdDown = false;
+            });
+
+            $document.on('mousedown' + eventNS, function(e) {
+                if (self.isFocused) {
+                    // prevent events on the dropdown scrollbar from causing the control to blur
+                    if (e.target === self.$dropdown[0] || e.target.parentNode === self.$dropdown[0]) {
+                        return false;
+                    }
+                    // blur on click outside
+                    if (!self.$control.has(e.target).length && e.target !== self.$control[0]) {
+                        self.blur(e.target);
+                    }
+                }
+            });
+
+            $window.on(['scroll' + eventNS, 'resize' + eventNS].join(' '), function() {
+                if (self.isOpen) {
+                    self.positionDropdown.apply(self, arguments);
+                }
+            });
+            $window.on('mousemove' + eventNS, function() {
+                self.ignoreHover = false;
+            });
+
+            // store original children and tab index so that they can be
+            // restored when the destroy() method is called.
+            this.revertSettings = {
+                $children : $input.children().detach(),
+                tabindex  : $input.attr('tabindex')
+            };
+
+            $input.attr('tabindex', -1).hide().after(self.$wrapper);
+
+            if ($.isArray(settings.items)) {
+                self.setValue(settings.items);
+                delete settings.items;
+            }
+
+            // feature detect for the validation API
+            if (SUPPORTS_VALIDITY_API) {
+                $input.on('invalid' + eventNS, function(e) {
+                    e.preventDefault();
+                    self.isInvalid = true;
+                    self.refreshState();
+                });
+            }
+
+            self.updateOriginalInput();
+            self.refreshItems();
+            self.refreshState();
+            self.updatePlaceholder();
+            self.isSetup = true;
+
+            if ($input.is(':disabled')) {
+                self.disable();
+            }
+
+            self.on('change', this.onChange);
+
+            $input.data('selectize', self);
+            $input.addClass('selectized');
+            self.trigger('initialize');
+
+            // preload options
+            if (settings.preload === true) {
+                self.onSearchChange('');
+            }
+
+        },
+
+        /**
+         * Sets up default rendering functions.
+         */
+        setupTemplates: function() {
+            var self = this;
+            var field_label = self.settings.labelField;
+            var field_optgroup = self.settings.optgroupLabelField;
+
+            var templates = {
+                'optgroup': function(data) {
+                    return '<div class="optgroup">' + data.html + '</div>';
+                },
+                'optgroup_header': function(data, escape) {
+                    return '<div class="optgroup-header">' + escape(data[field_optgroup]) + '</div>';
+                },
+                'option': function(data, escape) {
+                    return '<div class="option">' + escape(data[field_label]) + '</div>';
+                },
+                'item': function(data, escape) {
+                    return '<div class="item">' + escape(data[field_label]) + '</div>';
+                },
+                'option_create': function(data, escape) {
+                    return '<div class="create">Add <strong>' + escape(data.input) + '</strong>&hellip;</div>';
+                }
+            };
+
+            self.settings.render = $.extend({}, templates, self.settings.render);
+        },
+
+        /**
+         * Maps fired events to callbacks provided
+         * in the settings used when creating the control.
+         */
+        setupCallbacks: function() {
+            var key, fn, callbacks = {
+                'initialize'      : 'onInitialize',
+                'change'          : 'onChange',
+                'item_add'        : 'onItemAdd',
+                'item_remove'     : 'onItemRemove',
+                'clear'           : 'onClear',
+                'option_add'      : 'onOptionAdd',
+                'option_remove'   : 'onOptionRemove',
+                'option_clear'    : 'onOptionClear',
+                'optgroup_add'    : 'onOptionGroupAdd',
+                'optgroup_remove' : 'onOptionGroupRemove',
+                'optgroup_clear'  : 'onOptionGroupClear',
+                'dropdown_open'   : 'onDropdownOpen',
+                'dropdown_close'  : 'onDropdownClose',
+                'type'            : 'onType',
+                'load'            : 'onLoad',
+                'focus'           : 'onFocus',
+                'blur'            : 'onBlur'
+            };
+
+            for (key in callbacks) {
+                if (callbacks.hasOwnProperty(key)) {
+                    fn = this.settings[callbacks[key]];
+                    if (fn) this.on(key, fn);
+                }
+            }
+        },
+
+        /**
+         * Triggered when the main control element
+         * has a click event.
+         *
+         * @param {object} e
+         * @return {boolean}
+         */
+        onClick: function(e) {
+            var self = this;
+
+            // necessary for mobile webkit devices (manual focus triggering
+            // is ignored unless invoked within a click event)
+            if (!self.isFocused) {
+                self.focus();
+                e.preventDefault();
+            }
+        },
+
+        /**
+         * Triggered when the main control element
+         * has a mouse down event.
+         *
+         * @param {object} e
+         * @return {boolean}
+         */
+        onMouseDown: function(e) {
+            var self = this;
+            var defaultPrevented = e.isDefaultPrevented();
+            var $target = $(e.target);
+
+            if (self.isFocused) {
+                // retain focus by preventing native handling. if the
+                // event target is the input it should not be modified.
+                // otherwise, text selection within the input won't work.
+                if (e.target !== self.$control_input[0]) {
+                    if (self.settings.mode === 'single') {
+                        // toggle dropdown
+                        self.isOpen ? self.close() : self.open();
+                    } else if (!defaultPrevented) {
+                        self.setActiveItem(null);
+                    }
+                    return false;
+                }
+            } else {
+                // give control focus
+                if (!defaultPrevented) {
+                    window.setTimeout(function() {
+                        self.focus();
+                    }, 0);
+                }
+            }
+        },
+
+        /**
+         * Triggered when the value of the control has been changed.
+         * This should propagate the event to the original DOM
+         * input / select element.
+         */
+        onChange: function() {
+            this.$input.trigger('change');
+        },
+
+        /**
+         * Triggered on <input> paste.
+         *
+         * @param {object} e
+         * @returns {boolean}
+         */
+        onPaste: function(e) {
+            var self = this;
+            if (self.isFull() || self.isInputHidden || self.isLocked) {
+                e.preventDefault();
+            } else {
+                // If a regex or string is included, this will split the pasted
+                // input and create Items for each separate value
+                if (self.settings.splitOn) {
+                    setTimeout(function() {
+                        var splitInput = $.trim(self.$control_input.val() || '').split(self.settings.splitOn);
+                        for (var i = 0, n = splitInput.length; i < n; i++) {
+                            self.createItem(splitInput[i]);
+                        }
+                    }, 0);
+                }
+            }
+        },
+
+        /**
+         * Triggered on <input> keypress.
+         *
+         * @param {object} e
+         * @returns {boolean}
+         */
+        onKeyPress: function(e) {
+            if (this.isLocked) return e && e.preventDefault();
+            var character = String.fromCharCode(e.keyCode || e.which);
+            if (this.settings.create && this.settings.mode === 'multi' && character === this.settings.delimiter) {
+                this.createItem();
+                e.preventDefault();
+                return false;
+            }
+        },
+
+        /**
+         * Triggered on <input> keydown.
+         *
+         * @param {object} e
+         * @returns {boolean}
+         */
+        onKeyDown: function(e) {
+            var isInput = e.target === this.$control_input[0];
+            var self = this;
+
+            if (self.isLocked) {
+                if (e.keyCode !== KEY_TAB) {
+                    e.preventDefault();
+                }
+                return;
+            }
+
+            switch (e.keyCode) {
+                case KEY_A:
+                    if (self.isCmdDown) {
+                        self.selectAll();
+                        return;
+                    }
+                    break;
+                case KEY_ESC:
+                    if (self.isOpen) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        self.close();
+                    }
+                    return;
+                case KEY_N:
+                    if (!e.ctrlKey || e.altKey) break;
+                case KEY_DOWN:
+                    if (!self.isOpen && self.hasOptions) {
+                        self.open();
+                    } else if (self.$activeOption) {
+                        self.ignoreHover = true;
+                        var $next = self.getAdjacentOption(self.$activeOption, 1);
+                        if ($next.length) self.setActiveOption($next, true, true);
+                    }
+                    e.preventDefault();
+                    return;
+                case KEY_P:
+                    if (!e.ctrlKey || e.altKey) break;
+                case KEY_UP:
+                    if (self.$activeOption) {
+                        self.ignoreHover = true;
+                        var $prev = self.getAdjacentOption(self.$activeOption, -1);
+                        if ($prev.length) self.setActiveOption($prev, true, true);
+                    }
+                    e.preventDefault();
+                    return;
+                case KEY_RETURN:
+                    if (self.isOpen && self.$activeOption) {
+                        self.onOptionSelect({currentTarget: self.$activeOption});
+                        e.preventDefault();
+                    }
+                    return;
+                case KEY_LEFT:
+                    self.advanceSelection(-1, e);
+                    return;
+                case KEY_RIGHT:
+                    self.advanceSelection(1, e);
+                    return;
+                case KEY_TAB:
+                    if (self.settings.selectOnTab && self.isOpen && self.$activeOption) {
+                        self.onOptionSelect({currentTarget: self.$activeOption});
+
+                        // Default behaviour is to jump to the next field, we only want this
+                        // if the current field doesn't accept any more entries
+                        if (!self.isFull()) {
+                            e.preventDefault();
+                        }
+                    }
+                    if (self.settings.create && self.createItem()) {
+                        e.preventDefault();
+                    }
+                    return;
+                case KEY_BACKSPACE:
+                case KEY_DELETE:
+                    self.deleteSelection(e);
+                    return;
+            }
+
+            if ((self.isFull() || self.isInputHidden) && !(IS_MAC ? e.metaKey : e.ctrlKey)) {
+                e.preventDefault();
+                return;
+            }
+        },
+
+        /**
+         * Triggered on <input> keyup.
+         *
+         * @param {object} e
+         * @returns {boolean}
+         */
+        onKeyUp: function(e) {
+            var self = this;
+
+            if (self.isLocked) return e && e.preventDefault();
+            var value = self.$control_input.val() || '';
+            if (self.lastValue !== value) {
+                self.lastValue = value;
+                self.onSearchChange(value);
+                self.refreshOptions();
+                self.trigger('type', value);
+            }
+        },
+
+        /**
+         * Invokes the user-provide option provider / loader.
+         *
+         * Note: this function is debounced in the Selectize
+         * constructor (by `settings.loadDelay` milliseconds)
+         *
+         * @param {string} value
+         */
+        onSearchChange: function(value) {
+            var self = this;
+            var fn = self.settings.load;
+            if (!fn) return;
+            if (self.loadedSearches.hasOwnProperty(value)) return;
+            self.loadedSearches[value] = true;
+            self.load(function(callback) {
+                fn.apply(self, [value, callback]);
+            });
+        },
+
+        /**
+         * Triggered on <input> focus.
+         *
+         * @param {object} e (optional)
+         * @returns {boolean}
+         */
+        onFocus: function(e) {
+            var self = this;
+            var wasFocused = self.isFocused;
+
+            if (self.isDisabled) {
+                self.blur();
+                e && e.preventDefault();
+                return false;
+            }
+
+            if (self.ignoreFocus) return;
+            self.isFocused = true;
+            if (self.settings.preload === 'focus') self.onSearchChange('');
+
+            if (!wasFocused) self.trigger('focus');
+
+            if (!self.$activeItems.length) {
+                self.showInput();
+                self.setActiveItem(null);
+                self.refreshOptions(!!self.settings.openOnFocus);
+            }
+
+            self.refreshState();
+        },
+
+        /**
+         * Triggered on <input> blur.
+         *
+         * @param {object} e
+         * @param {Element} dest
+         */
+        onBlur: function(e, dest) {
+            var self = this;
+            if (!self.isFocused) return;
+            self.isFocused = false;
+
+            if (self.ignoreFocus) {
+                return;
+            } else if (!self.ignoreBlur && document.activeElement === self.$dropdown_content[0]) {
+                // necessary to prevent IE closing the dropdown when the scrollbar is clicked
+                self.ignoreBlur = true;
+                self.onFocus(e);
+                return;
+            }
+
+            var deactivate = function() {
+                self.close();
+                self.setTextboxValue('');
+                self.setActiveItem(null);
+                self.setActiveOption(null);
+                self.setCaret(self.items.length);
+                self.refreshState();
+
+                // IE11 bug: element still marked as active
+                (dest || document.body).focus();
+
+                self.ignoreFocus = false;
+                self.trigger('blur');
+            };
+
+            self.ignoreFocus = true;
+            if (self.settings.create && self.settings.createOnBlur) {
+                self.createItem(null, false, deactivate);
+            } else {
+                deactivate();
+            }
+        },
+
+        /**
+         * Triggered when the user rolls over
+         * an option in the autocomplete dropdown menu.
+         *
+         * @param {object} e
+         * @returns {boolean}
+         */
+        onOptionHover: function(e) {
+            if (this.ignoreHover) return;
+            this.setActiveOption(e.currentTarget, false);
+        },
+
+        /**
+         * Triggered when the user clicks on an option
+         * in the autocomplete dropdown menu.
+         *
+         * @param {object} e
+         * @returns {boolean}
+         */
+        onOptionSelect: function(e) {
+            var value, $target, $option, self = this;
+
+            if (e.preventDefault) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            $target = $(e.currentTarget);
+            if ($target.hasClass('create')) {
+                self.createItem(null, function() {
+                    if (self.settings.closeAfterSelect) {
+                        self.close();
+                    }
+                });
+            } else {
+                value = $target.attr('data-value');
+                if (typeof value !== 'undefined') {
+                    self.lastQuery = null;
+                    self.setTextboxValue('');
+                    self.addItem(value);
+                    if (self.settings.closeAfterSelect) {
+                        self.close();
+                    } else if (!self.settings.hideSelected && e.type && /mouse/.test(e.type)) {
+                        self.setActiveOption(self.getOption(value));
+                    }
+                }
+            }
+        },
+
+        /**
+         * Triggered when the user clicks on an item
+         * that has been selected.
+         *
+         * @param {object} e
+         * @returns {boolean}
+         */
+        onItemSelect: function(e) {
+            var self = this;
+
+            if (self.isLocked) return;
+            if (self.settings.mode === 'multi') {
+                e.preventDefault();
+                self.setActiveItem(e.currentTarget, e);
+            }
+        },
+
+        /**
+         * Invokes the provided method that provides
+         * results to a callback---which are then added
+         * as options to the control.
+         *
+         * @param {function} fn
+         */
+        load: function(fn) {
+            var self = this;
+            var $wrapper = self.$wrapper.addClass(self.settings.loadingClass);
+
+            self.loading++;
+            fn.apply(self, [function(results) {
+                self.loading = Math.max(self.loading - 1, 0);
+                if (results && results.length) {
+                    self.addOption(results);
+                    self.refreshOptions(self.isFocused && !self.isInputHidden);
+                }
+                if (!self.loading) {
+                    $wrapper.removeClass(self.settings.loadingClass);
+                }
+                self.trigger('load', results);
+            }]);
+        },
+
+        /**
+         * Sets the input field of the control to the specified value.
+         *
+         * @param {string} value
+         */
+        setTextboxValue: function(value) {
+            var $input = this.$control_input;
+            var changed = $input.val() !== value;
+            if (changed) {
+                $input.val(value).triggerHandler('update');
+                this.lastValue = value;
+            }
+        },
+
+        /**
+         * Returns the value of the control. If multiple items
+         * can be selected (e.g. <select multiple>), this returns
+         * an array. If only one item can be selected, this
+         * returns a string.
+         *
+         * @returns {mixed}
+         */
+        getValue: function() {
+            if (this.tagType === TAG_SELECT && this.$input.attr('multiple')) {
+                return this.items;
+            } else {
+                return this.items.join(this.settings.delimiter);
+            }
+        },
+
+        /**
+         * Resets the selected items to the given value.
+         *
+         * @param {mixed} value
+         */
+        setValue: function(value, silent) {
+            var events = silent ? [] : ['change'];
+
+            debounce_events(this, events, function() {
+                this.clear(silent);
+                this.addItems(value, silent);
+            });
+        },
+
+        /**
+         * Sets the selected item.
+         *
+         * @param {object} $item
+         * @param {object} e (optional)
+         */
+        setActiveItem: function($item, e) {
+            var self = this;
+            var eventName;
+            var i, idx, begin, end, item, swap;
+            var $last;
+
+            if (self.settings.mode === 'single') return;
+            $item = $($item);
+
+            // clear the active selection
+            if (!$item.length) {
+                $(self.$activeItems).removeClass('active');
+                self.$activeItems = [];
+                if (self.isFocused) {
+                    self.showInput();
+                }
+                return;
+            }
+
+            // modify selection
+            eventName = e && e.type.toLowerCase();
+
+            if (eventName === 'mousedown' && self.isShiftDown && self.$activeItems.length) {
+                $last = self.$control.children('.active:last');
+                begin = Array.prototype.indexOf.apply(self.$control[0].childNodes, [$last[0]]);
+                end   = Array.prototype.indexOf.apply(self.$control[0].childNodes, [$item[0]]);
+                if (begin > end) {
+                    swap  = begin;
+                    begin = end;
+                    end   = swap;
+                }
+                for (i = begin; i <= end; i++) {
+                    item = self.$control[0].childNodes[i];
+                    if (self.$activeItems.indexOf(item) === -1) {
+                        $(item).addClass('active');
+                        self.$activeItems.push(item);
+                    }
+                }
+                e.preventDefault();
+            } else if ((eventName === 'mousedown' && self.isCtrlDown) || (eventName === 'keydown' && this.isShiftDown)) {
+                if ($item.hasClass('active')) {
+                    idx = self.$activeItems.indexOf($item[0]);
+                    self.$activeItems.splice(idx, 1);
+                    $item.removeClass('active');
+                } else {
+                    self.$activeItems.push($item.addClass('active')[0]);
+                }
+            } else {
+                $(self.$activeItems).removeClass('active');
+                self.$activeItems = [$item.addClass('active')[0]];
+            }
+
+            // ensure control has focus
+            self.hideInput();
+            if (!this.isFocused) {
+                self.focus();
+            }
+        },
+
+        /**
+         * Sets the selected item in the dropdown menu
+         * of available options.
+         *
+         * @param {object} $object
+         * @param {boolean} scroll
+         * @param {boolean} animate
+         */
+        setActiveOption: function($option, scroll, animate) {
+            var height_menu, height_item, y;
+            var scroll_top, scroll_bottom;
+            var self = this;
+
+            if (self.$activeOption) self.$activeOption.removeClass('active');
+            self.$activeOption = null;
+
+            $option = $($option);
+            if (!$option.length) return;
+
+            self.$activeOption = $option.addClass('active');
+
+            if (scroll || !isset(scroll)) {
+
+                height_menu   = self.$dropdown_content.height();
+                height_item   = self.$activeOption.outerHeight(true);
+                scroll        = self.$dropdown_content.scrollTop() || 0;
+                y             = self.$activeOption.offset().top - self.$dropdown_content.offset().top + scroll;
+                scroll_top    = y;
+                scroll_bottom = y - height_menu + height_item;
+
+                if (y + height_item > height_menu + scroll) {
+                    self.$dropdown_content.stop().animate({scrollTop: scroll_bottom}, animate ? self.settings.scrollDuration : 0);
+                } else if (y < scroll) {
+                    self.$dropdown_content.stop().animate({scrollTop: scroll_top}, animate ? self.settings.scrollDuration : 0);
+                }
+
+            }
+        },
+
+        /**
+         * Selects all items (CTRL + A).
+         */
+        selectAll: function() {
+            var self = this;
+            if (self.settings.mode === 'single') return;
+
+            self.$activeItems = Array.prototype.slice.apply(self.$control.children(':not(input)').addClass('active'));
+            if (self.$activeItems.length) {
+                self.hideInput();
+                self.close();
+            }
+            self.focus();
+        },
+
+        /**
+         * Hides the input element out of view, while
+         * retaining its focus.
+         */
+        hideInput: function() {
+            var self = this;
+
+            self.setTextboxValue('');
+            self.$control_input.css({opacity: 0, position: 'absolute', left: self.rtl ? 10000 : -10000});
+            self.isInputHidden = true;
+        },
+
+        /**
+         * Restores input visibility.
+         */
+        showInput: function() {
+            this.$control_input.css({opacity: 1, position: 'relative', left: 0});
+            this.isInputHidden = false;
+        },
+
+        /**
+         * Gives the control focus.
+         */
+        focus: function() {
+            var self = this;
+            if (self.isDisabled) return;
+
+            self.ignoreFocus = true;
+            self.$control_input[0].focus();
+            window.setTimeout(function() {
+                self.ignoreFocus = false;
+                self.onFocus();
+            }, 0);
+        },
+
+        /**
+         * Forces the control out of focus.
+         *
+         * @param {Element} dest
+         */
+        blur: function(dest) {
+            this.$control_input[0].blur();
+            this.onBlur(null, dest);
+        },
+
+        /**
+         * Returns a function that scores an object
+         * to show how good of a match it is to the
+         * provided query.
+         *
+         * @param {string} query
+         * @param {object} options
+         * @return {function}
+         */
+        getScoreFunction: function(query) {
+            return this.sifter.getScoreFunction(query, this.getSearchOptions());
+        },
+
+        /**
+         * Returns search options for sifter (the system
+         * for scoring and sorting results).
+         *
+         * @see https://github.com/brianreavis/sifter.js
+         * @return {object}
+         */
+        getSearchOptions: function() {
+            var settings = this.settings;
+            var sort = settings.sortField;
+            if (typeof sort === 'string') {
+                sort = [{field: sort}];
+            }
+
+            return {
+                fields      : settings.searchField,
+                conjunction : settings.searchConjunction,
+                sort        : sort
+            };
+        },
+
+        /**
+         * Searches through available options and returns
+         * a sorted array of matches.
+         *
+         * Returns an object containing:
+         *
+         *   - query {string}
+         *   - tokens {array}
+         *   - total {int}
+         *   - items {array}
+         *
+         * @param {string} query
+         * @returns {object}
+         */
+        search: function(query) {
+            var i, value, score, result, calculateScore;
+            var self     = this;
+            var settings = self.settings;
+            var options  = this.getSearchOptions();
+
+            // validate user-provided result scoring function
+            if (settings.score) {
+                calculateScore = self.settings.score.apply(this, [query]);
+                if (typeof calculateScore !== 'function') {
+                    throw new Error('Selectize "score" setting must be a function that returns a function');
+                }
+            }
+
+            // perform search
+            if (query !== self.lastQuery) {
+                self.lastQuery = query;
+                result = self.sifter.search(query, $.extend(options, {score: calculateScore}));
+                self.currentResults = result;
+            } else {
+                result = $.extend(true, {}, self.currentResults);
+            }
+
+            // filter out selected items
+            if (settings.hideSelected) {
+                for (i = result.items.length - 1; i >= 0; i--) {
+                    if (self.items.indexOf(hash_key(result.items[i].id)) !== -1) {
+                        result.items.splice(i, 1);
+                    }
+                }
+            }
+
+            return result;
+        },
+
+        /**
+         * Refreshes the list of available options shown
+         * in the autocomplete dropdown menu.
+         *
+         * @param {boolean} triggerDropdown
+         */
+        refreshOptions: function(triggerDropdown) {
+            var i, j, k, n, groups, groups_order, option, option_html, optgroup, optgroups, html, html_children, has_create_option;
+            var $active, $active_before, $create;
+
+            if (typeof triggerDropdown === 'undefined') {
+                triggerDropdown = true;
+            }
+
+            var self              = this;
+            var query             = $.trim(self.$control_input.val());
+            var results           = self.search(query);
+            var $dropdown_content = self.$dropdown_content;
+            var active_before     = self.$activeOption && hash_key(self.$activeOption.attr('data-value'));
+
+            // build markup
+            n = results.items.length;
+            if (typeof self.settings.maxOptions === 'number') {
+                n = Math.min(n, self.settings.maxOptions);
+            }
+
+            // render and group available options individually
+            groups = {};
+            groups_order = [];
+
+            for (i = 0; i < n; i++) {
+                option      = self.options[results.items[i].id];
+                option_html = self.render('option', option);
+                optgroup    = option[self.settings.optgroupField] || '';
+                optgroups   = $.isArray(optgroup) ? optgroup : [optgroup];
+
+                for (j = 0, k = optgroups && optgroups.length; j < k; j++) {
+                    optgroup = optgroups[j];
+                    if (!self.optgroups.hasOwnProperty(optgroup)) {
+                        optgroup = '';
+                    }
+                    if (!groups.hasOwnProperty(optgroup)) {
+                        groups[optgroup] = [];
+                        groups_order.push(optgroup);
+                    }
+                    groups[optgroup].push(option_html);
+                }
+            }
+
+            // sort optgroups
+            if (this.settings.lockOptgroupOrder) {
+                groups_order.sort(function(a, b) {
+                    var a_order = self.optgroups[a].$order || 0;
+                    var b_order = self.optgroups[b].$order || 0;
+                    return a_order - b_order;
+                });
+            }
+
+            // render optgroup headers & join groups
+            html = [];
+            for (i = 0, n = groups_order.length; i < n; i++) {
+                optgroup = groups_order[i];
+                if (self.optgroups.hasOwnProperty(optgroup) && groups[optgroup].length) {
+                    // render the optgroup header and options within it,
+                    // then pass it to the wrapper template
+                    html_children = self.render('optgroup_header', self.optgroups[optgroup]) || '';
+                    html_children += groups[optgroup].join('');
+                    html.push(self.render('optgroup', $.extend({}, self.optgroups[optgroup], {
+                        html: html_children
+                    })));
+                } else {
+                    html.push(groups[optgroup].join(''));
+                }
+            }
+
+            $dropdown_content.html(html.join(''));
+
+            // highlight matching terms inline
+            if (self.settings.highlight && results.query.length && results.tokens.length) {
+                for (i = 0, n = results.tokens.length; i < n; i++) {
+                    highlight($dropdown_content, results.tokens[i].regex);
+                }
+            }
+
+            // add "selected" class to selected options
+            if (!self.settings.hideSelected) {
+                for (i = 0, n = self.items.length; i < n; i++) {
+                    self.getOption(self.items[i]).addClass('selected');
+                }
+            }
+
+            // add create option
+            has_create_option = self.canCreate(query);
+            if (has_create_option) {
+                $dropdown_content.prepend(self.render('option_create', {input: query}));
+                $create = $($dropdown_content[0].childNodes[0]);
+            }
+
+            // activate
+            self.hasOptions = results.items.length > 0 || has_create_option;
+            if (self.hasOptions) {
+                if (results.items.length > 0) {
+                    $active_before = active_before && self.getOption(active_before);
+                    if ($active_before && $active_before.length) {
+                        $active = $active_before;
+                    } else if (self.settings.mode === 'single' && self.items.length) {
+                        $active = self.getOption(self.items[0]);
+                    }
+                    if (!$active || !$active.length) {
+                        if ($create && !self.settings.addPrecedence) {
+                            $active = self.getAdjacentOption($create, 1);
+                        } else {
+                            $active = $dropdown_content.find('[data-selectable]:first');
+                        }
+                    }
+                } else {
+                    $active = $create;
+                }
+                self.setActiveOption($active);
+                if (triggerDropdown && !self.isOpen) { self.open(); }
+            } else {
+                self.setActiveOption(null);
+                if (triggerDropdown && self.isOpen) { self.close(); }
+            }
+        },
+
+        /**
+         * Adds an available option. If it already exists,
+         * nothing will happen. Note: this does not refresh
+         * the options list dropdown (use `refreshOptions`
+         * for that).
+         *
+         * Usage:
+         *
+         *   this.addOption(data)
+         *
+         * @param {object|array} data
+         */
+        addOption: function(data) {
+            var i, n, value, self = this;
+
+            if ($.isArray(data)) {
+                for (i = 0, n = data.length; i < n; i++) {
+                    self.addOption(data[i]);
+                }
+                return;
+            }
+
+            if (value = self.registerOption(data)) {
+                self.userOptions[value] = true;
+                self.lastQuery = null;
+                self.trigger('option_add', value, data);
+            }
+        },
+
+        /**
+         * Registers an option to the pool of options.
+         *
+         * @param {object} data
+         * @return {boolean|string}
+         */
+        registerOption: function(data) {
+            var key = hash_key(data[this.settings.valueField]);
+            // CHANGE
+            if (typeof key === 'undefined' || key === null || this.options.hasOwnProperty(key)) return false;
+            data.$order = data.$order || ++this.order;
+            this.options[key] = data;
+            return key;
+        },
+
+        /**
+         * Registers an option group to the pool of option groups.
+         *
+         * @param {object} data
+         * @return {boolean|string}
+         */
+        registerOptionGroup: function(data) {
+            var key = hash_key(data[this.settings.optgroupValueField]);
+            if (!key) return false;
+
+            data.$order = data.$order || ++this.order;
+            this.optgroups[key] = data;
+            return key;
+        },
+
+        /**
+         * Registers a new optgroup for options
+         * to be bucketed into.
+         *
+         * @param {string} id
+         * @param {object} data
+         */
+        addOptionGroup: function(id, data) {
+            data[this.settings.optgroupValueField] = id;
+            if (id = this.registerOptionGroup(data)) {
+                this.trigger('optgroup_add', id, data);
+            }
+        },
+
+        /**
+         * Removes an existing option group.
+         *
+         * @param {string} id
+         */
+        removeOptionGroup: function(id) {
+            if (this.optgroups.hasOwnProperty(id)) {
+                delete this.optgroups[id];
+                this.renderCache = {};
+                this.trigger('optgroup_remove', id);
+            }
+        },
+
+        /**
+         * Clears all existing option groups.
+         */
+        clearOptionGroups: function() {
+            this.optgroups = {};
+            this.renderCache = {};
+            this.trigger('optgroup_clear');
+        },
+
+        /**
+         * Updates an option available for selection. If
+         * it is visible in the selected items or options
+         * dropdown, it will be re-rendered automatically.
+         *
+         * @param {string} value
+         * @param {object} data
+         */
+        updateOption: function(value, data) {
+            var self = this;
+            var $item, $item_new;
+            var value_new, index_item, cache_items, cache_options, order_old;
+
+            value     = hash_key(value);
+            value_new = hash_key(data[self.settings.valueField]);
+
+            // sanity checks
+            if (value === null) return;
+            if (!self.options.hasOwnProperty(value)) return;
+            if (typeof value_new !== 'string') throw new Error('Value must be set in option data');
+
+            order_old = self.options[value].$order;
+
+            // update references
+            if (value_new !== value) {
+                delete self.options[value];
+                index_item = self.items.indexOf(value);
+                if (index_item !== -1) {
+                    self.items.splice(index_item, 1, value_new);
+                }
+            }
+            data.$order = data.$order || order_old;
+            self.options[value_new] = data;
+
+            // invalidate render cache
+            cache_items = self.renderCache['item'];
+            cache_options = self.renderCache['option'];
+
+            if (cache_items) {
+                delete cache_items[value];
+                delete cache_items[value_new];
+            }
+            if (cache_options) {
+                delete cache_options[value];
+                delete cache_options[value_new];
+            }
+
+            // update the item if it's selected
+            if (self.items.indexOf(value_new) !== -1) {
+                $item = self.getItem(value);
+                $item_new = $(self.render('item', data));
+                if ($item.hasClass('active')) $item_new.addClass('active');
+                $item.replaceWith($item_new);
+            }
+
+            // invalidate last query because we might have updated the sortField
+            self.lastQuery = null;
+
+            // update dropdown contents
+            if (self.isOpen) {
+                self.refreshOptions(false);
+            }
+        },
+
+        /**
+         * Removes a single option.
+         *
+         * @param {string} value
+         * @param {boolean} silent
+         */
+        removeOption: function(value, silent) {
+            var self = this;
+            value = hash_key(value);
+
+            var cache_items = self.renderCache['item'];
+            var cache_options = self.renderCache['option'];
+            if (cache_items) delete cache_items[value];
+            if (cache_options) delete cache_options[value];
+
+            delete self.userOptions[value];
+            delete self.options[value];
+            self.lastQuery = null;
+            self.trigger('option_remove', value);
+            self.removeItem(value, silent);
+        },
+
+        /**
+         * Clears all options.
+         */
+        clearOptions: function() {
+            var self = this;
+
+            self.loadedSearches = {};
+            self.userOptions = {};
+            self.renderCache = {};
+            self.options = self.sifter.items = {};
+            self.lastQuery = null;
+            self.trigger('option_clear');
+            self.clear();
+        },
+
+        /**
+         * Returns the jQuery element of the option
+         * matching the given value.
+         *
+         * @param {string} value
+         * @returns {object}
+         */
+        getOption: function(value) {
+            return this.getElementWithValue(value, this.$dropdown_content.find('[data-selectable]'));
+        },
+
+        /**
+         * Returns the jQuery element of the next or
+         * previous selectable option.
+         *
+         * @param {object} $option
+         * @param {int} direction  can be 1 for next or -1 for previous
+         * @return {object}
+         */
+        getAdjacentOption: function($option, direction) {
+            var $options = this.$dropdown.find('[data-selectable]');
+            var index    = $options.index($option) + direction;
+
+            return index >= 0 && index < $options.length ? $options.eq(index) : $();
+        },
+
+        /**
+         * Finds the first element with a "data-value" attribute
+         * that matches the given value.
+         *
+         * @param {mixed} value
+         * @param {object} $els
+         * @return {object}
+         */
+        getElementWithValue: function(value, $els) {
+            value = hash_key(value);
+
+            if (typeof value !== 'undefined' && value !== null) {
+                for (var i = 0, n = $els.length; i < n; i++) {
+                    if ($els[i].getAttribute('data-value') === value) {
+                        return $($els[i]);
+                    }
+                }
+            }
+
+            return $();
+        },
+
+        /**
+         * Returns the jQuery element of the item
+         * matching the given value.
+         *
+         * @param {string} value
+         * @returns {object}
+         */
+        getItem: function(value) {
+            return this.getElementWithValue(value, this.$control.children());
+        },
+
+        /**
+         * "Selects" multiple items at once. Adds them to the list
+         * at the current caret position.
+         *
+         * @param {string} value
+         * @param {boolean} silent
+         */
+        addItems: function(values, silent) {
+            var items = $.isArray(values) ? values : [values];
+            for (var i = 0, n = items.length; i < n; i++) {
+                this.isPending = (i < n - 1);
+                this.addItem(items[i], silent);
+            }
+        },
+
+        /**
+         * "Selects" an item. Adds it to the list
+         * at the current caret position.
+         *
+         * @param {string} value
+         * @param {boolean} silent
+         */
+        addItem: function(value, silent) {
+            var events = silent ? [] : ['change'];
+
+            debounce_events(this, events, function() {
+                var $item, $option, $options;
+                var self = this;
+                var inputMode = self.settings.mode;
+                var i, active, value_next, wasFull;
+                value = hash_key(value);
+
+                if (self.items.indexOf(value) !== -1) {
+                    if (inputMode === 'single') self.close();
+                    return;
+                }
+
+                if (!self.options.hasOwnProperty(value)) return;
+                if (inputMode === 'single') self.clear(silent);
+                if (inputMode === 'multi' && self.isFull()) return;
+
+                $item = $(self.render('item', self.options[value]));
+                wasFull = self.isFull();
+                self.items.splice(self.caretPos, 0, value);
+                self.insertAtCaret($item);
+                if (!self.isPending || (!wasFull && self.isFull())) {
+                    self.refreshState();
+                }
+
+                if (self.isSetup) {
+                    $options = self.$dropdown_content.find('[data-selectable]');
+
+                    // update menu / remove the option (if this is not one item being added as part of series)
+                    if (!self.isPending) {
+                        $option = self.getOption(value);
+                        value_next = self.getAdjacentOption($option, 1).attr('data-value');
+                        self.refreshOptions(self.isFocused && inputMode !== 'single');
+                        if (value_next) {
+                            self.setActiveOption(self.getOption(value_next));
+                        }
+                    }
+
+                    // hide the menu if the maximum number of items have been selected or no options are left
+                    if (!$options.length || self.isFull()) {
+                        self.close();
+                    } else {
+                        self.positionDropdown();
+                    }
+
+                    self.updatePlaceholder();
+                    self.trigger('item_add', value, $item);
+                    self.updateOriginalInput({silent: silent});
+                }
+            });
+        },
+
+        /**
+         * Removes the selected item matching
+         * the provided value.
+         *
+         * @param {string} value
+         */
+        removeItem: function(value, silent) {
+            var self = this;
+            var $item, i, idx;
+
+            $item = (typeof value === 'object') ? value : self.getItem(value);
+            value = hash_key($item.attr('data-value'));
+            i = self.items.indexOf(value);
+
+            if (i !== -1) {
+                $item.remove();
+                if ($item.hasClass('active')) {
+                    idx = self.$activeItems.indexOf($item[0]);
+                    self.$activeItems.splice(idx, 1);
+                }
+
+                self.items.splice(i, 1);
+                self.lastQuery = null;
+                if (!self.settings.persist && self.userOptions.hasOwnProperty(value)) {
+                    self.removeOption(value, silent);
+                }
+
+                if (i < self.caretPos) {
+                    self.setCaret(self.caretPos - 1);
+                }
+
+                self.refreshState();
+                self.updatePlaceholder();
+                self.updateOriginalInput({silent: silent});
+                self.positionDropdown();
+                self.trigger('item_remove', value, $item);
+            }
+        },
+
+        /**
+         * Invokes the `create` method provided in the
+         * selectize options that should provide the data
+         * for the new item, given the user input.
+         *
+         * Once this completes, it will be added
+         * to the item list.
+         *
+         * @param {string} value
+         * @param {boolean} [triggerDropdown]
+         * @param {function} [callback]
+         * @return {boolean}
+         */
+        createItem: function(input, triggerDropdown) {
+            var self  = this;
+            var caret = self.caretPos;
+            input = input || $.trim(self.$control_input.val() || '');
+
+            var callback = arguments[arguments.length - 1];
+            if (typeof callback !== 'function') callback = function() {};
+
+            if (typeof triggerDropdown !== 'boolean') {
+                triggerDropdown = true;
+            }
+
+            if (!self.canCreate(input)) {
+                callback();
+                return false;
+            }
+
+            self.lock();
+
+            var setup = (typeof self.settings.create === 'function') ? this.settings.create : function(input) {
+                var data = {};
+                data[self.settings.labelField] = input;
+                data[self.settings.valueField] = input;
+                return data;
+            };
+
+            var create = once(function(data) {
+                self.unlock();
+
+                if (!data || typeof data !== 'object') return callback();
+                var value = hash_key(data[self.settings.valueField]);
+                if (typeof value !== 'string') return callback();
+
+                self.setTextboxValue('');
+                self.addOption(data);
+                self.setCaret(caret);
+                self.addItem(value);
+                self.refreshOptions(triggerDropdown && self.settings.mode !== 'single');
+                callback(data);
+            });
+
+            var output = setup.apply(this, [input, create]);
+            if (typeof output !== 'undefined') {
+                create(output);
+            }
+
+            return true;
+        },
+
+        /**
+         * Re-renders the selected item lists.
+         */
+        refreshItems: function() {
+            this.lastQuery = null;
+
+            if (this.isSetup) {
+                this.addItem(this.items);
+            }
+
+            this.refreshState();
+            this.updateOriginalInput();
+        },
+
+        /**
+         * Updates all state-dependent attributes
+         * and CSS classes.
+         */
+        refreshState: function() {
+            var invalid, self = this;
+            if (self.isRequired) {
+                if (self.items.length) self.isInvalid = false;
+                self.$control_input.prop('required', invalid);
+            }
+            self.refreshClasses();
+        },
+
+        /**
+         * Updates all state-dependent CSS classes.
+         */
+        refreshClasses: function() {
+            var self     = this;
+            var isFull   = self.isFull();
+            var isLocked = self.isLocked;
+
+            self.$wrapper
+                .toggleClass('rtl', self.rtl);
+
+            self.$control
+                .toggleClass('focus', self.isFocused)
+                .toggleClass('disabled', self.isDisabled)
+                .toggleClass('required', self.isRequired)
+                .toggleClass('invalid', self.isInvalid)
+                .toggleClass('locked', isLocked)
+                .toggleClass('full', isFull).toggleClass('not-full', !isFull)
+                .toggleClass('input-active', self.isFocused && !self.isInputHidden)
+                .toggleClass('dropdown-active', self.isOpen)
+                .toggleClass('has-options', !$.isEmptyObject(self.options))
+                .toggleClass('has-items', self.items.length > 0);
+
+            self.$control_input.data('grow', !isFull && !isLocked);
+        },
+
+        /**
+         * Determines whether or not more items can be added
+         * to the control without exceeding the user-defined maximum.
+         *
+         * @returns {boolean}
+         */
+        isFull: function() {
+            return this.settings.maxItems !== null && this.items.length >= this.settings.maxItems;
+        },
+
+        /**
+         * Refreshes the original <select> or <input>
+         * element to reflect the current state.
+         */
+        updateOriginalInput: function(opts) {
+            var i, n, options, label, self = this;
+            opts = opts || {};
+
+            if (self.tagType === TAG_SELECT) {
+                options = [];
+                for (i = 0, n = self.items.length; i < n; i++) {
+                    label = self.options[self.items[i]][self.settings.labelField] || '';
+                    options.push('<option value="' + escape_html(self.items[i]) + '" selected="selected">' + escape_html(label) + '</option>');
+                }
+                if (!options.length && !this.$input.attr('multiple')) {
+                    options.push('<option value="" selected="selected"></option>');
+                }
+                self.$input.html(options.join(''));
+            } else {
+                self.$input.val(self.getValue());
+                self.$input.attr('value',self.$input.val());
+            }
+
+            if (self.isSetup) {
+                if (!opts.silent) {
+                    self.trigger('change', self.$input.val());
+                }
+            }
+        },
+
+        /**
+         * Shows/hide the input placeholder depending
+         * on if there items in the list already.
+         */
+        updatePlaceholder: function() {
+            if (!this.settings.placeholder) return;
+            var $input = this.$control_input;
+
+            if (this.items.length) {
+                $input.removeAttr('placeholder');
+            } else {
+                $input.attr('placeholder', this.settings.placeholder);
+            }
+            $input.triggerHandler('update', {force: true});
+        },
+
+        /**
+         * Shows the autocomplete dropdown containing
+         * the available options.
+         */
+        open: function() {
+            var self = this;
+
+            if (self.isLocked || self.isOpen || (self.settings.mode === 'multi' && self.isFull())) return;
+            self.focus();
+            self.isOpen = true;
+            self.refreshState();
+            self.$dropdown.css({visibility: 'hidden', display: 'block'});
+            self.positionDropdown();
+            self.$dropdown.css({visibility: 'visible'});
+            self.trigger('dropdown_open', self.$dropdown);
+        },
+
+        /**
+         * Closes the autocomplete dropdown menu.
+         */
+        close: function() {
+            var self = this;
+            var trigger = self.isOpen;
+
+            if (self.settings.mode === 'single' && self.items.length) {
+                self.hideInput();
+            }
+
+            self.isOpen = false;
+            self.$dropdown.hide();
+            self.setActiveOption(null);
+            self.refreshState();
+
+            if (trigger) self.trigger('dropdown_close', self.$dropdown);
+        },
+
+        /**
+         * Calculates and applies the appropriate
+         * position of the dropdown.
+         */
+        positionDropdown: function() {
+            var $control = this.$control;
+            var offset = this.settings.dropdownParent === 'body' ? $control.offset() : $control.position();
+            offset.top += $control.outerHeight(true);
+
+            this.$dropdown.css({
+                width : $control.outerWidth(),
+                top   : offset.top,
+                left  : offset.left
+            });
+        },
+
+        /**
+         * Resets / clears all selected items
+         * from the control.
+         *
+         * @param {boolean} silent
+         */
+        clear: function(silent) {
+            var self = this;
+
+            if (!self.items.length) return;
+            self.$control.children(':not(input)').remove();
+            self.items = [];
+            self.lastQuery = null;
+            self.setCaret(0);
+            self.setActiveItem(null);
+            self.updatePlaceholder();
+            self.updateOriginalInput({silent: silent});
+            self.refreshState();
+            self.showInput();
+            self.trigger('clear');
+        },
+
+        /**
+         * A helper method for inserting an element
+         * at the current caret position.
+         *
+         * @param {object} $el
+         */
+        insertAtCaret: function($el) {
+            var caret = Math.min(this.caretPos, this.items.length);
+            if (caret === 0) {
+                this.$control.prepend($el);
+            } else {
+                $(this.$control[0].childNodes[caret]).before($el);
+            }
+            this.setCaret(caret + 1);
+        },
+
+        /**
+         * Removes the current selected item(s).
+         *
+         * @param {object} e (optional)
+         * @returns {boolean}
+         */
+        deleteSelection: function(e) {
+            var i, n, direction, selection, values, caret, option_select, $option_select, $tail;
+            var self = this;
+
+            direction = (e && e.keyCode === KEY_BACKSPACE) ? -1 : 1;
+            selection = getSelection(self.$control_input[0]);
+
+            if (self.$activeOption && !self.settings.hideSelected) {
+                option_select = self.getAdjacentOption(self.$activeOption, -1).attr('data-value');
+            }
+
+            // determine items that will be removed
+            values = [];
+
+            if (self.$activeItems.length) {
+                $tail = self.$control.children('.active:' + (direction > 0 ? 'last' : 'first'));
+                caret = self.$control.children(':not(input)').index($tail);
+                if (direction > 0) { caret++; }
+
+                for (i = 0, n = self.$activeItems.length; i < n; i++) {
+                    values.push($(self.$activeItems[i]).attr('data-value'));
+                }
+                if (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            } else if ((self.isFocused || self.settings.mode === 'single') && self.items.length) {
+                if (direction < 0 && selection.start === 0 && selection.length === 0) {
+                    values.push(self.items[self.caretPos - 1]);
+                } else if (direction > 0 && selection.start === self.$control_input.val().length) {
+                    values.push(self.items[self.caretPos]);
+                }
+            }
+
+            // allow the callback to abort
+            if (!values.length || (typeof self.settings.onDelete === 'function' && self.settings.onDelete.apply(self, [values]) === false)) {
+                return false;
+            }
+
+            // perform removal
+            if (typeof caret !== 'undefined') {
+                self.setCaret(caret);
+            }
+            while (values.length) {
+                self.removeItem(values.pop());
+            }
+
+            self.showInput();
+            self.positionDropdown();
+            self.refreshOptions(true);
+
+            // select previous option
+            if (option_select) {
+                $option_select = self.getOption(option_select);
+                if ($option_select.length) {
+                    self.setActiveOption($option_select);
+                }
+            }
+
+            return true;
+        },
+
+        /**
+         * Selects the previous / next item (depending
+         * on the `direction` argument).
+         *
+         * > 0 - right
+         * < 0 - left
+         *
+         * @param {int} direction
+         * @param {object} e (optional)
+         */
+        advanceSelection: function(direction, e) {
+            var tail, selection, idx, valueLength, cursorAtEdge, $tail;
+            var self = this;
+
+            if (direction === 0) return;
+            if (self.rtl) direction *= -1;
+
+            tail = direction > 0 ? 'last' : 'first';
+            selection = getSelection(self.$control_input[0]);
+
+            if (self.isFocused && !self.isInputHidden) {
+                valueLength = self.$control_input.val().length;
+                cursorAtEdge = direction < 0
+                    ? selection.start === 0 && selection.length === 0
+                    : selection.start === valueLength;
+
+                if (cursorAtEdge && !valueLength) {
+                    self.advanceCaret(direction, e);
+                }
+            } else {
+                $tail = self.$control.children('.active:' + tail);
+                if ($tail.length) {
+                    idx = self.$control.children(':not(input)').index($tail);
+                    self.setActiveItem(null);
+                    self.setCaret(direction > 0 ? idx + 1 : idx);
+                }
+            }
+        },
+
+        /**
+         * Moves the caret left / right.
+         *
+         * @param {int} direction
+         * @param {object} e (optional)
+         */
+        advanceCaret: function(direction, e) {
+            var self = this, fn, $adj;
+
+            if (direction === 0) return;
+
+            fn = direction > 0 ? 'next' : 'prev';
+            if (self.isShiftDown) {
+                $adj = self.$control_input[fn]();
+                if ($adj.length) {
+                    self.hideInput();
+                    self.setActiveItem($adj);
+                    e && e.preventDefault();
+                }
+            } else {
+                self.setCaret(self.caretPos + direction);
+            }
+        },
+
+        /**
+         * Moves the caret to the specified index.
+         *
+         * @param {int} i
+         */
+        setCaret: function(i) {
+            var self = this;
+
+            if (self.settings.mode === 'single') {
+                i = self.items.length;
+            } else {
+                i = Math.max(0, Math.min(self.items.length, i));
+            }
+
+            if(!self.isPending) {
+                // the input must be moved by leaving it in place and moving the
+                // siblings, due to the fact that focus cannot be restored once lost
+                // on mobile webkit devices
+                var j, n, fn, $children, $child;
+                $children = self.$control.children(':not(input)');
+                for (j = 0, n = $children.length; j < n; j++) {
+                    $child = $($children[j]).detach();
+                    if (j <  i) {
+                        self.$control_input.before($child);
+                    } else {
+                        self.$control.append($child);
+                    }
+                }
+            }
+
+            self.caretPos = i;
+        },
+
+        /**
+         * Disables user input on the control. Used while
+         * items are being asynchronously created.
+         */
+        lock: function() {
+            this.close();
+            this.isLocked = true;
+            this.refreshState();
+        },
+
+        /**
+         * Re-enables user input on the control.
+         */
+        unlock: function() {
+            this.isLocked = false;
+            this.refreshState();
+        },
+
+        /**
+         * Disables user input on the control completely.
+         * While disabled, it cannot receive focus.
+         */
+        disable: function() {
+            var self = this;
+            self.$input.prop('disabled', true);
+            self.$control_input.prop('disabled', true).prop('tabindex', -1);
+            self.isDisabled = true;
+            self.lock();
+        },
+
+        /**
+         * Enables the control so that it can respond
+         * to focus and user input.
+         */
+        enable: function() {
+            var self = this;
+            self.$input.prop('disabled', false);
+            self.$control_input.prop('disabled', false).prop('tabindex', self.tabIndex);
+            self.isDisabled = false;
+            self.unlock();
+        },
+
+        /**
+         * Completely destroys the control and
+         * unbinds all event listeners so that it can
+         * be garbage collected.
+         */
+        destroy: function() {
+            var self = this;
+            var eventNS = self.eventNS;
+            var revertSettings = self.revertSettings;
+
+            self.trigger('destroy');
+            self.off();
+            self.$wrapper.remove();
+            self.$dropdown.remove();
+
+            self.$input
+                .html('')
+                .append(revertSettings.$children)
+                .removeAttr('tabindex')
+                .removeClass('selectized')
+                .attr({tabindex: revertSettings.tabindex})
+                .show();
+
+            self.$control_input.removeData('grow');
+            self.$input.removeData('selectize');
+
+            $(window).off(eventNS);
+            $(document).off(eventNS);
+            $(document.body).off(eventNS);
+
+            delete self.$input[0].selectize;
+        },
+
+        /**
+         * A helper method for rendering "item" and
+         * "option" templates, given the data.
+         *
+         * @param {string} templateName
+         * @param {object} data
+         * @returns {string}
+         */
+        render: function(templateName, data) {
+            var value, id, label;
+            var html = '';
+            var cache = false;
+            var self = this;
+            var regex_tag = /^[\t \r\n]*<([a-z][a-z0-9\-_]*(?:\:[a-z][a-z0-9\-_]*)?)/i;
+
+            if (templateName === 'option' || templateName === 'item') {
+                value = hash_key(data[self.settings.valueField]);
+                cache = !!value;
+            }
+
+            // pull markup from cache if it exists
+            if (cache) {
+                if (!isset(self.renderCache[templateName])) {
+                    self.renderCache[templateName] = {};
+                }
+                if (self.renderCache[templateName].hasOwnProperty(value)) {
+                    return self.renderCache[templateName][value];
+                }
+            }
+
+            // render markup
+            html = self.settings.render[templateName].apply(this, [data, escape_html]);
+
+            // add mandatory attributes
+            if (templateName === 'option' || templateName === 'option_create') {
+                html = html.replace(regex_tag, '<$1 data-selectable');
+            }
+            if (templateName === 'optgroup') {
+                id = data[self.settings.optgroupValueField] || '';
+                html = html.replace(regex_tag, '<$1 data-group="' + escape_replace(escape_html(id)) + '"');
+            }
+            if (templateName === 'option' || templateName === 'item') {
+                html = html.replace(regex_tag, '<$1 data-value="' + escape_replace(escape_html(value || '')) + '"');
+            }
+
+            // update cache
+            if (cache) {
+                self.renderCache[templateName][value] = html;
+            }
+
+            return html;
+        },
+
+        /**
+         * Clears the render cache for a template. If
+         * no template is given, clears all render
+         * caches.
+         *
+         * @param {string} templateName
+         */
+        clearCache: function(templateName) {
+            var self = this;
+            if (typeof templateName === 'undefined') {
+                self.renderCache = {};
+            } else {
+                delete self.renderCache[templateName];
+            }
+        },
+
+        /**
+         * Determines whether or not to display the
+         * create item prompt, given a user input.
+         *
+         * @param {string} input
+         * @return {boolean}
+         */
+        canCreate: function(input) {
+            var self = this;
+            if (!self.settings.create) return false;
+            var filter = self.settings.createFilter;
+            return input.length
+                && (typeof filter !== 'function' || filter.apply(self, [input]))
+                && (typeof filter !== 'string' || new RegExp(filter).test(input))
+                && (!(filter instanceof RegExp) || filter.test(input));
+        }
+
+    });
+
+
+    Selectize.count = 0;
+    Selectize.defaults = {
+        options: [],
+        optgroups: [],
+
+        plugins: [],
+        delimiter: ',',
+        splitOn: null, // regexp or string for splitting up values from a paste command
+        persist: true,
+        diacritics: true,
+        create: false,
+        createOnBlur: false,
+        createFilter: null,
+        highlight: true,
+        openOnFocus: true,
+        maxOptions: 1000,
+        maxItems: null,
+        hideSelected: null,
+        addPrecedence: false,
+        selectOnTab: false,
+        preload: false,
+        allowEmptyOption: false,
+        closeAfterSelect: false,
+
+        scrollDuration: 60,
+        loadThrottle: 300,
+        loadingClass: 'loading',
+
+        dataAttr: 'data-data',
+        optgroupField: 'optgroup',
+        valueField: 'value',
+        labelField: 'text',
+        optgroupLabelField: 'label',
+        optgroupValueField: 'value',
+        lockOptgroupOrder: false,
+
+        sortField: '$order',
+        searchField: ['text'],
+        searchConjunction: 'and',
+
+        mode: null,
+        wrapperClass: 'selectize-control',
+        inputClass: 'selectize-input',
+        dropdownClass: 'selectize-dropdown',
+        dropdownContentClass: 'selectize-dropdown-content',
+
+        dropdownParent: null,
+
+        copyClassesToDropdown: true,
+
+        /*
+        load                 : null, // function(query, callback) { ... }
+        score                : null, // function(search) { ... }
+        onInitialize         : null, // function() { ... }
+        onChange             : null, // function(value) { ... }
+        onItemAdd            : null, // function(value, $item) { ... }
+        onItemRemove         : null, // function(value) { ... }
+        onClear              : null, // function() { ... }
+        onOptionAdd          : null, // function(value, data) { ... }
+        onOptionRemove       : null, // function(value) { ... }
+        onOptionClear        : null, // function() { ... }
+        onOptionGroupAdd     : null, // function(id, data) { ... }
+        onOptionGroupRemove  : null, // function(id) { ... }
+        onOptionGroupClear   : null, // function() { ... }
+        onDropdownOpen       : null, // function($dropdown) { ... }
+        onDropdownClose      : null, // function($dropdown) { ... }
+        onType               : null, // function(str) { ... }
+        onDelete             : null, // function(values) { ... }
+        */
+
+        render: {
+            /*
+            item: null,
+            optgroup: null,
+            optgroup_header: null,
+            option: null,
+            option_create: null
+            */
+        }
+    };
+
+
+    $.fn.selectize = function(settings_user) {
+        var defaults             = $.fn.selectize.defaults;
+        var settings             = $.extend({}, defaults, settings_user);
+        var attr_data            = settings.dataAttr;
+        var field_label          = settings.labelField;
+        var field_value          = settings.valueField;
+        var field_optgroup       = settings.optgroupField;
+        var field_optgroup_label = settings.optgroupLabelField;
+        var field_optgroup_value = settings.optgroupValueField;
+
+        /**
+         * Initializes selectize from a <input type="text"> element.
+         *
+         * @param {object} $input
+         * @param {object} settings_element
+         */
+        var init_textbox = function($input, settings_element) {
+            var i, n, values, option;
+
+            var data_raw = $input.attr(attr_data);
+
+            if (!data_raw) {
+                var value = $.trim($input.val() || '');
+                if (!settings.allowEmptyOption && !value.length) return;
+                values = value.split(settings.delimiter);
+                for (i = 0, n = values.length; i < n; i++) {
+                    option = {};
+                    option[field_label] = values[i];
+                    option[field_value] = values[i];
+                    settings_element.options.push(option);
+                }
+                settings_element.items = values;
+            } else {
+                settings_element.options = JSON.parse(data_raw);
+                for (i = 0, n = settings_element.options.length; i < n; i++) {
+                    settings_element.items.push(settings_element.options[i][field_value]);
+                }
+            }
+        };
+
+        /**
+         * Initializes selectize from a <select> element.
+         *
+         * @param {object} $input
+         * @param {object} settings_element
+         */
+        var init_select = function($input, settings_element) {
+            var i, n, tagName, $children, order = 0;
+            var options = settings_element.options;
+            var optionsMap = {};
+
+            var readData = function($el) {
+                var data = attr_data && $el.attr(attr_data);
+                if (typeof data === 'string' && data.length) {
+                    return JSON.parse(data);
+                }
+                return null;
+            };
+
+            var addOption = function($option, group) {
+                $option = $($option);
+
+                var value = hash_key($option.attr('value'));
+                if (!value && !settings.allowEmptyOption) return;
+
+                // if the option already exists, it's probably been
+                // duplicated in another optgroup. in this case, push
+                // the current group to the "optgroup" property on the
+                // existing option so that it's rendered in both places.
+                if (optionsMap.hasOwnProperty(value)) {
+                    if (group) {
+                        var arr = optionsMap[value][field_optgroup];
+                        if (!arr) {
+                            optionsMap[value][field_optgroup] = group;
+                        } else if (!$.isArray(arr)) {
+                            optionsMap[value][field_optgroup] = [arr, group];
+                        } else {
+                            arr.push(group);
+                        }
+                    }
+                    return;
+                }
+
+                var option             = readData($option) || {};
+                option[field_label]    = option[field_label] || $option.text();
+                option[field_value]    = option[field_value] || value;
+                option[field_optgroup] = option[field_optgroup] || group;
+
+                optionsMap[value] = option;
+                options.push(option);
+
+                if ($option.is(':selected')) {
+                    settings_element.items.push(value);
+                }
+            };
+
+            var addGroup = function($optgroup) {
+                var i, n, id, optgroup, $options;
+
+                $optgroup = $($optgroup);
+                id = $optgroup.attr('label');
+
+                if (id) {
+                    optgroup = readData($optgroup) || {};
+                    optgroup[field_optgroup_label] = id;
+                    optgroup[field_optgroup_value] = id;
+                    settings_element.optgroups.push(optgroup);
+                }
+
+                $options = $('option', $optgroup);
+                for (i = 0, n = $options.length; i < n; i++) {
+                    addOption($options[i], id);
+                }
+            };
+
+            settings_element.maxItems = $input.attr('multiple') ? null : 1;
+
+            $children = $input.children();
+            for (i = 0, n = $children.length; i < n; i++) {
+                tagName = $children[i].tagName.toLowerCase();
+                if (tagName === 'optgroup') {
+                    addGroup($children[i]);
+                } else if (tagName === 'option') {
+                    addOption($children[i]);
+                }
+            }
+        };
+
+        return this.each(function() {
+            if (this.selectize) return;
+
+            var instance;
+            var $input = $(this);
+            var tag_name = this.tagName.toLowerCase();
+            var placeholder = $input.attr('placeholder') || $input.attr('data-placeholder');
+            if (!placeholder && !settings.allowEmptyOption) {
+                placeholder = $input.children('option[value=""]').text();
+            }
+
+            var settings_element = {
+                'placeholder' : placeholder,
+                'options'     : [],
+                'optgroups'   : [],
+                'items'       : []
+            };
+
+            if (tag_name === 'select') {
+                init_select($input, settings_element);
+            } else {
+                init_textbox($input, settings_element);
+            }
+
+            instance = new Selectize($input, $.extend(true, {}, defaults, settings_element, settings_user));
+        });
+    };
+
+    $.fn.selectize.defaults = Selectize.defaults;
+    $.fn.selectize.support = {
+        validity: SUPPORTS_VALIDITY_API
+    };
+
+
+    Selectize.define('drag_drop', function(options) {
+        if (!$.fn.sortable) throw new Error('The "drag_drop" plugin requires jQuery UI "sortable".');
+        if (this.settings.mode !== 'multi') return;
+        var self = this;
+
+        self.lock = (function() {
+            var original = self.lock;
+            return function() {
+                var sortable = self.$control.data('sortable');
+                if (sortable) sortable.disable();
+                return original.apply(self, arguments);
+            };
+        })();
+
+        self.unlock = (function() {
+            var original = self.unlock;
+            return function() {
+                var sortable = self.$control.data('sortable');
+                if (sortable) sortable.enable();
+                return original.apply(self, arguments);
+            };
+        })();
+
+        self.setup = (function() {
+            var original = self.setup;
+            return function() {
+                original.apply(this, arguments);
+
+                var $control = self.$control.sortable({
+                    items: '[data-value]',
+                    forcePlaceholderSize: true,
+                    disabled: self.isLocked,
+                    start: function(e, ui) {
+                        ui.placeholder.css('width', ui.helper.css('width'));
+                        $control.css({overflow: 'visible'});
+                    },
+                    stop: function() {
+                        $control.css({overflow: 'hidden'});
+                        var active = self.$activeItems ? self.$activeItems.slice() : null;
+                        var values = [];
+                        $control.children('[data-value]').each(function() {
+                            values.push($(this).attr('data-value'));
+                        });
+                        self.setValue(values);
+                        self.setActiveItem(active);
+                    }
+                });
+            };
+        })();
+
+    });
+
+    Selectize.define('dropdown_header', function(options) {
+        var self = this;
+
+        options = $.extend({
+            title         : 'Untitled',
+            headerClass   : 'selectize-dropdown-header',
+            titleRowClass : 'selectize-dropdown-header-title',
+            labelClass    : 'selectize-dropdown-header-label',
+            closeClass    : 'selectize-dropdown-header-close',
+
+            html: function(data) {
+                return (
+                    '<div class="' + data.headerClass + '">' +
+                        '<div class="' + data.titleRowClass + '">' +
+                            '<span class="' + data.labelClass + '">' + data.title + '</span>' +
+                            '<a href="javascript:void(0)" class="' + data.closeClass + '">&times;</a>' +
+                        '</div>' +
+                    '</div>'
+                );
+            }
+        }, options);
+
+        self.setup = (function() {
+            var original = self.setup;
+            return function() {
+                original.apply(self, arguments);
+                self.$dropdown_header = $(options.html(options));
+                self.$dropdown.prepend(self.$dropdown_header);
+            };
+        })();
+
+    });
+
+    Selectize.define('optgroup_columns', function(options) {
+        var self = this;
+
+        options = $.extend({
+            equalizeWidth  : true,
+            equalizeHeight : true
+        }, options);
+
+        this.getAdjacentOption = function($option, direction) {
+            var $options = $option.closest('[data-group]').find('[data-selectable]');
+            var index    = $options.index($option) + direction;
+
+            return index >= 0 && index < $options.length ? $options.eq(index) : $();
+        };
+
+        this.onKeyDown = (function() {
+            var original = self.onKeyDown;
+            return function(e) {
+                var index, $option, $options, $optgroup;
+
+                if (this.isOpen && (e.keyCode === KEY_LEFT || e.keyCode === KEY_RIGHT)) {
+                    self.ignoreHover = true;
+                    $optgroup = this.$activeOption.closest('[data-group]');
+                    index = $optgroup.find('[data-selectable]').index(this.$activeOption);
+
+                    if(e.keyCode === KEY_LEFT) {
+                        $optgroup = $optgroup.prev('[data-group]');
+                    } else {
+                        $optgroup = $optgroup.next('[data-group]');
+                    }
+
+                    $options = $optgroup.find('[data-selectable]');
+                    $option  = $options.eq(Math.min($options.length - 1, index));
+                    if ($option.length) {
+                        this.setActiveOption($option);
+                    }
+                    return;
+                }
+
+                return original.apply(this, arguments);
+            };
+        })();
+
+        var getScrollbarWidth = function() {
+            var div;
+            var width = getScrollbarWidth.width;
+            var doc = document;
+
+            if (typeof width === 'undefined') {
+                div = doc.createElement('div');
+                div.innerHTML = '<div style="width:50px;height:50px;position:absolute;left:-50px;top:-50px;overflow:auto;"><div style="width:1px;height:100px;"></div></div>';
+                div = div.firstChild;
+                doc.body.appendChild(div);
+                width = getScrollbarWidth.width = div.offsetWidth - div.clientWidth;
+                doc.body.removeChild(div);
+            }
+            return width;
+        };
+
+        var equalizeSizes = function() {
+            var i, n, height_max, width, width_last, width_parent, $optgroups;
+
+            $optgroups = $('[data-group]', self.$dropdown_content);
+            n = $optgroups.length;
+            if (!n || !self.$dropdown_content.width()) return;
+
+            if (options.equalizeHeight) {
+                height_max = 0;
+                for (i = 0; i < n; i++) {
+                    height_max = Math.max(height_max, $optgroups.eq(i).height());
+                }
+                $optgroups.css({height: height_max});
+            }
+
+            if (options.equalizeWidth) {
+                width_parent = self.$dropdown_content.innerWidth() - getScrollbarWidth();
+                width = Math.round(width_parent / n);
+                $optgroups.css({width: width});
+                if (n > 1) {
+                    width_last = width_parent - width * (n - 1);
+                    $optgroups.eq(n - 1).css({width: width_last});
+                }
+            }
+        };
+
+        if (options.equalizeHeight || options.equalizeWidth) {
+            hook.after(this, 'positionDropdown', equalizeSizes);
+            hook.after(this, 'refreshOptions', equalizeSizes);
+        }
+
+
+    });
+
+    Selectize.define('remove_button', function(options) {
+        if (this.settings.mode === 'single') return;
+
+        options = $.extend({
+            label     : '&times;',
+            title     : 'Remove',
+            className : 'remove',
+            append    : true
+        }, options);
+
+        var self = this;
+        var html = '<a href="javascript:void(0)" class="' + options.className + '" tabindex="-1" title="' + escape_html(options.title) + '">' + options.label + '</a>';
+
+        /**
+         * Appends an element as a child (with raw HTML).
+         *
+         * @param {string} html_container
+         * @param {string} html_element
+         * @return {string}
+         */
+        var append = function(html_container, html_element) {
+            var pos = html_container.search(/(<\/[^>]+>\s*)$/);
+            return html_container.substring(0, pos) + html_element + html_container.substring(pos);
+        };
+
+        this.setup = (function() {
+            var original = self.setup;
+            return function() {
+                // override the item rendering method to add the button to each
+                if (options.append) {
+                    var render_item = self.settings.render.item;
+                    self.settings.render.item = function(data) {
+                        return append(render_item.apply(this, arguments), html);
+                    };
+                }
+
+                original.apply(this, arguments);
+
+                // add event listener
+                this.$control.on('click', '.' + options.className, function(e) {
+                    e.preventDefault();
+                    if (self.isLocked) return;
+
+                    var $item = $(e.currentTarget).parent();
+                    self.setActiveItem($item);
+                    if (self.deleteSelection()) {
+                        self.setCaret(self.items.length);
+                    }
+                });
+
+            };
+        })();
+
+    });
+
+    Selectize.define('restore_on_backspace', function(options) {
+        var self = this;
+
+        options.text = options.text || function(option) {
+            return option[this.settings.labelField];
+        };
+
+        this.onKeyDown = (function() {
+            var original = self.onKeyDown;
+            return function(e) {
+                var index, option;
+                if (e.keyCode === KEY_BACKSPACE && this.$control_input.val() === '' && !this.$activeItems.length) {
+                    index = this.caretPos - 1;
+                    if (index >= 0 && index < this.items.length) {
+                        option = this.options[this.items[index]];
+                        if (this.deleteSelection(e)) {
+                            this.setTextboxValue(options.text.apply(this, [option]));
+                            this.refreshOptions(true);
+                        }
+                        e.preventDefault();
+                        return;
+                    }
+                }
+                return original.apply(this, arguments);
+            };
+        })();
+    });
+
+
+    return Selectize;
+}));
+// ==========================================================================
+
+// Feed Me Plugin for Craft CMS
+
+// ==========================================================================
+
+if (typeof Craft.FeedMe === typeof undefined) {
+    Craft.FeedMe = {};
+}
+
+$(function() {
+
+    // Settings pane toggle for feeds index
+    $(document).on('click', '#feeds .settings', function(e) {
+        e.preventDefault();
+
+        var row = $(this).parents('tr').data('id') + '-settings';
+        var $settingsRow = $('tr[data-settings-id="' + row + '"] .settings-pane');
+
+        $settingsRow.toggle();
+    });
+
+    // Toggle various field when changing element type
+    $(document).on('change', '#elementType', function() {
+        $('.element-select').hide();
+
+        var value = $(this).val().replace(/\\/g, '-');
+        $('.element-select[data-type="' + value + '"]').show();
+
+        // Change the import strategy for Users
+        var $duplicateHandle = $('[name="duplicateHandle"]').parent().find('.checkbox-group');
+
+        if (value === 'craft-elements-User') {
+            $duplicateHandle.find(':nth-child(3) label').html(Craft.t('feed-me', 'Suspend missing users'));
+        } else {
+            $duplicateHandle.find(':nth-child(3) label').html(Craft.t('feed-me', 'Disable missing elements'));
+        }
+        console.log(value)
+    });
+
+    $('#elementType').trigger('change');
+
+    // Toggle the Entry Type field when changing the section select
+    $(document).on('change', '.element-parent-group select', function() {
+        var sections = $(this).parents('.element-sub-group').data('items');
+        var entryType = 'item_' + $(this).val();
+        var entryTypes = sections[entryType];
+
+        var currentValue = $('.element-child-group select').val();
+
+        var newOptions = '<option value="">' + Craft.t('feed-me', 'None') + '</option>';
+        $.each(entryTypes, function(index, value) {
+            if (index) {
+                newOptions += '<option value="' + index + '">' + value + '</option>';
+            }
+        });
+
+        $('.element-child-group select').html(newOptions);
+
+        // Select the first non-empty, or pre-selected
+        if (currentValue) {
+            $('.element-child-group select').val(currentValue);
+        } else {
+            $($('.element-child-group select').children()[1]).attr('selected', true);
+        }
+    });
+
+    $('.element-parent-group select').trigger('change');
+
+
+    //
+    // Field Mapping
+    //
+
+    // For field-mapping, auto-select Title if no unique checkboxes are set
+    if ($('.feedme-uniques').length) {
+        var checked = $('.feedme-uniques input[type="checkbox"]:checked').length;
+
+        if (!checked) {
+            $('.feedme-uniques input[type="checkbox"]:first').prop('checked', true);
+        }
+    }
+
+    // For Assets, only show the upload options if we decide to upload
+    $('.assets-uploads input').on('change', function(e) {
+        var $options = $(this).parents('.field-extra-settings').find('.select');
+        var $label = $(this).parents('.field-extra-settings').find('.asset-label-hide');
+
+        if ($(this).prop('checked')) {
+            $label.css({ opacity: 1, visibility: 'visible' });
+            $options.css({ opacity: 1, visibility: 'visible' });
+        } else {
+            $label.css({ opacity: 0, visibility: 'hidden' });
+            $options.css({ opacity: 0, visibility: 'hidden' });
+        }
+    });
+
+    // On-load, hide/show upload options
+    $('.assets-uploads input').trigger('change');
+
+    // For elements, show the grouping select(s)
+    $('.field-extra-settings .element-create input').on('change', function(e) {
+        var $container = $(this).parents('.field-extra-settings').find('.element-groups');
+
+        if ($(this).prop('checked')) {
+            $container.show();
+        } else {
+            $container.hide();
+        }
+    });
+
+    $('.field-extra-settings .element-create input').trigger('change');
+
+    // Toggle various field when changing element type
+    $('.field-extra-settings .element-group-section select').on('change', function(e) {
+        var $container = $(this).parents('.field-extra-settings').find('.element-group-entrytype');
+        var sections = $container.data('items');
+
+        // var sections = $(this).parents('.element-sub-group').data('items');
+        var entryType = 'item_' + $(this).val();
+        var entryTypes = sections[entryType];
+
+        var newOptions = '';
+        $.each(entryTypes, function(index, value) {
+            if (index) {
+                newOptions += '<option value="' + index + '">' + value + '</option>';
+            }
+        });
+
+        $container.find('select').html(newOptions);
+    });
+
+    $('.field-extra-settings .element-group-section select').trigger('change');
+
+    // Selectize inputs
+    $('.feedme-mapping .selectize select').selectize({
+        allowEmptyOption: true,
+    });
+
+    // Help with sub-element field toggle
+    $('.subelement-toggle label').on('click', function(e) {
+        var $lightswitch = $(this).parents('.subelement-toggle').find('.lightswitch').data('lightswitch');
+
+        $lightswitch.toggle();
+    });
+
+    // Show initially hidden element sub-fields. A little tricky because they're in a table, and all equal siblings
+    $('.subelement-toggle .lightswitch').on('change', function(e) {
+        var $lightswitch = $(this).data('lightswitch');
+        var $tr = $(this).parents('tr');
+        var $directSiblings = $tr.nextUntil(':not(.element-sub-field)');
+
+        $directSiblings.toggle();
+    });
+
+    // If we have any element sub-fields that are being mapped, we want to show the panel to notify users they're mapping stuff
+    $('.element-sub-field').each(function(index, element) {
+        var mappingValue = $(this).find('.col-map select').val();
+        var defaultValue = $(this).find('.col-default input').val();
+
+        var rowValues = [mappingValue, defaultValue];
+        var rowHasValue = false;
+
+        // Check for inputs and selects which have a value
+        $.each(rowValues, function(i, v) {
+            if (v != '' && v != 'noimport' && v !== undefined) {
+                rowHasValue = true;
+            }
+        });
+
+        if (rowHasValue) {
+            var $parentRow = $(this).prevUntil(':not(.element-sub-field)').addBack().prev();
+            var $lightswitch = $parentRow.find('.lightswitch').data('lightswitch');
+
+            $lightswitch.turnOn();
+        }
+    });
+
+
+    //
+    // Logs
+    //
+    $(document).on('click', '.log-detail-link', function(e) {
+        e.preventDefault();
+
+        var key = $(this).data('key');
+
+        $('tr[data-key="' + key + '"]').toggleClass('hidden');
+    });
+
+    // Allow multiple submit actions, that trigger different actions as required
+    $(document).on('click', 'input[data-action]', function(e) {
+        var $form = $(this).parents('form');
+        var action = $(this).data('action');
+
+        $form.find('input[name="action"]').val(action);
+        $form.submit();
+    });
+
+    $(document).on('change', '.log-type-form .select', function(e) {
+        e.preventDefault();
+
+        $(this).parents('form').submit();
+    });
+
+    // A nice loading animation on the success page for feeds
+    new Craft.FeedMe.TaskProgress();
+
+});
+
+
+(function() {
+
+var feedMeSuccessHtml = '<div><span data-icon="check"></span> ' +
+        Craft.t('feed-me', 'Processing complete!') +
+    '</div>' +
+    '<div class="feedme-success-btns">' +
+        '<a class="btn submit" href="' + Craft.getUrl('feed-me/feeds') + '">Back to Feeds</a>' +
+        '<a class="btn" href="' + Craft.getUrl('feed-me/logs') + '">View logs</a>' +
+    '</div>';
+
+Craft.FeedMe.TaskProgress = Garnish.Base.extend({
+    runningTask: null,
+
+    $spinnerScreen: null,
+    $pendingScreen: null,
+    $runningScreen: null,
+
+    init: function() {
+        this.$spinnerScreen = $('.feedme-status-spinner');
+        this.$pendingScreen = $('.feedme-fullpage.fullpage-waiting');
+        this.$runningScreen = $('.feedme-fullpage.fullpage-running');
+
+        this.updateTasks();
+    },
+
+    updateTasks: function() {
+        Craft.postActionRequest('queue/get-job-info', $.proxy(function(taskInfo, textStatus) {
+            if (textStatus == 'success') {
+                this.showTaskInfo(taskInfo[0]);
+            }
+        }, this))
+    },
+
+    showTaskInfo: function(taskInfo) {
+        this.$spinnerScreen.addClass('hidden');
+
+        if (taskInfo) {
+            this.$runningScreen.removeClass('hidden');
+
+            if (this.runningTask) {
+                this.runningTask.updateStatus(taskInfo);
+            } else {
+                this.runningTask = new Craft.FeedMe.TaskProgress.Task(taskInfo);
+            }
+
+            if (taskInfo.status != 'error') {
+                // Keep checking for the task status every 500ms
+                setTimeout($.proxy(this, 'updateTasks'), 500);
+            }
+        } else {
+            if (this.runningTask) {
+                // Task has now completed, show the UI
+                this.runningTask.complete();
+            } else if (this.$pendingScreen.hasClass('cp-triggered')) {
+                // If this case has happened, its often the task has finished so quickly before an Ajax request
+                // to the tasks controller has a chance to fire. But, we track when the user submits the 'run' action
+                // through a flash variable. Technically, its finished - otherwise we end up showing the 'pending'
+                // screen, which is a little confusing to the user. Simply show its completed
+                this.$runningScreen.removeClass('hidden');
+
+                this.$runningScreen.find('.progress-container').html(feedMeSuccessHtml);
+            } else {
+                // Show the pending screen, there are no tasks in queue, and a task isn't currently running
+                this.$pendingScreen.removeClass('hidden');
+            }
+        }
+
+    }
+});
+
+Craft.FeedMe.TaskProgress.Task = Garnish.Base.extend({
+    progressBar: null,
+
+    init: function(info) {
+        this.$statusContainer = $('.feedme-fullpage.fullpage-running .progress-container');
+        this.$statusContainer.empty();
+
+        this.progressBar = new Craft.ProgressBar(this.$statusContainer);
+        this.progressBar.showProgressBar();
+
+        this.updateStatus(info);
+    },
+
+    updateStatus: function(info) {
+        this.progressBar.setProgressPercentage(info.progress);
+
+        if (info.status == 'error') {
+            this.fail();
+        }
+    },
+
+    complete: function() {
+        this.progressBar.setProgressPercentage(100);
+        setTimeout($.proxy(this, 'success'), 300);
+    },
+
+    success: function() {
+        this.$statusContainer.html(feedMeSuccessHtml);
+    },
+
+    fail: function() {
+        this.$statusContainer.html('<div class="error">' + Craft.t('feed-me', 'Processing failed. <a class="go" href="' + Craft.getUrl('feed-me/logs') + '">View logs</a>') + '</div>');
+    },
+
+});
+
+})();
+
+})(jQuery);

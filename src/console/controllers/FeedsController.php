@@ -1,13 +1,11 @@
 <?php
-namespace verbb\feedme\console\controllers;
 
-use verbb\feedme\FeedMe;
-use verbb\feedme\queue\jobs\FeedImport;
+namespace craft\feedme\console\controllers;
 
 use Craft;
-
+use craft\feedme\Plugin;
+use craft\feedme\queue\jobs\FeedImport;
 use yii\console\Controller;
-use yii\helpers\Console;
 
 class FeedsController extends Controller
 {
@@ -34,7 +32,7 @@ class FeedsController extends Controller
         foreach ($ids as $id) {
             echo "Feed processing started for Feed ID $id\n";
 
-            $feed = FeedMe::$plugin->feeds->getFeedById($id);
+            $feed = Plugin::$plugin->feeds->getFeedById($id);
 
             $processedElementIds = [];
 

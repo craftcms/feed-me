@@ -16,13 +16,13 @@ Its important to select a Unique Identifier for your feed to assist with the Imp
 
 ### Default Value
 
-You can set a default value for any field, and depending on the field, this may be in the form of a text field or a select field. You can also provide a default value using shorthand Twig (if you enable `parseTwig` in your [Configuration](docs:get-started/configuration)), referring to other fields in the element you're importing.
+You can set a default value for any field, and depending on the field, this may be in the form of a text field or a select field. You can also provide a default value using shorthand Twig (if you enable `parseTwig` in your [Configuration](../get-started/configuration.md)), referring to other fields in the element you're importing.
 
 :::tip
 Make sure you select the `Use default value` in the "Feed Element" dropdown, otherwise it won't work!
 :::
 
-![Feedme Mapping](/docs/screenshots/feedme-mapping.png)
+![Feedme Mapping](../screenshots/feedme-mapping.png)
 
 You'll see the screenshot above shows three columns. The first is for your Craft field, the second is a dropdown allowing you to select the node in your feed, and the third setting the default value.
 

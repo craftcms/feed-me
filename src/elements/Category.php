@@ -1,15 +1,13 @@
 <?php
-namespace verbb\feedme\elements;
 
-use verbb\feedme\FeedMe;
-use verbb\feedme\base\Element;
-use verbb\feedme\base\ElementInterface;
-
-use Craft;
-use craft\elements\Category as CategoryElement;
-use craft\helpers\Db;
+namespace craft\feedme\elements;
 
 use Cake\Utility\Hash;
+use Craft;
+use craft\elements\Category as CategoryElement;
+use craft\feedme\base\Element;
+use craft\feedme\base\ElementInterface;
+use craft\feedme\Plugin;
 
 class Category extends Element implements ElementInterface
 {
@@ -132,9 +130,9 @@ class Category extends Element implements ElementInterface
             $propagate = isset($this->feed['siteId']) && $this->feed['siteId'] ? false : true;
 
             if (!Craft::$app->getElements()->saveElement($element, true, $propagate)) {
-                FeedMe::error('Category error: Could not create parent - `{e}`.', ['e' => json_encode($element->getErrors())]);
+                Plugin::error('Category error: Could not create parent - `{e}`.', ['e' => json_encode($element->getErrors())]);
             } else {
-                FeedMe::info('Category `#{id}` added.', ['id' => $element->id]);
+                Plugin::info('Category `#{id}` added.', ['id' => $element->id]);
             }
 
             return $element->id;

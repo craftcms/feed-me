@@ -1,12 +1,11 @@
 <?php
-namespace verbb\feedme\models;
 
-use verbb\feedme\FeedMe;
-use verbb\feedme\helpers\DuplicateHelper;
-
-use craft\base\Model;
+namespace craft\feedme\models;
 
 use Cake\Utility\Hash;
+use craft\base\Model;
+use craft\feedme\helpers\DuplicateHelper;
+use craft\feedme\Plugin;
 
 class FeedModel extends Model
 {
@@ -52,45 +51,45 @@ class FeedModel extends Model
 
     public function getDataType()
     {
-        return FeedMe::$plugin->data->getRegisteredDataType($this->feedType);
+        return Plugin::$plugin->data->getRegisteredDataType($this->feedType);
     }
 
     public function getElement()
     {
-        $element = FeedMe::$plugin->elements->getRegisteredElement($this->elementType);
+        $element = Plugin::$plugin->elements->getRegisteredElement($this->elementType);
 
         if ($element) {
             $element->feed = $this;
         }
-        
+
         return $element;
     }
 
     public function getFeedData($usePrimaryElement = true)
     {
-        $feedDataResponse = FeedMe::$plugin->data->getFeedData($this, $usePrimaryElement);
+        $feedDataResponse = Plugin::$plugin->data->getFeedData($this, $usePrimaryElement);
 
         return Hash::get($feedDataResponse, 'data');
     }
 
     public function getFeedNodes($usePrimaryElement = false)
     {
-        $feedDataResponse = FeedMe::$plugin->data->getFeedData($this, $usePrimaryElement);
+        $feedDataResponse = Plugin::$plugin->data->getFeedData($this, $usePrimaryElement);
 
         $feedData = Hash::get($feedDataResponse, 'data');
 
-        $feedDataResponse['data'] = FeedMe::$plugin->data->getFeedNodes($feedData);
+        $feedDataResponse['data'] = Plugin::$plugin->data->getFeedNodes($feedData);
 
         return $feedDataResponse;
     }
 
     public function getFeedMapping($usePrimaryElement = true)
     {
-        $feedDataResponse = FeedMe::$plugin->data->getFeedData($this, $usePrimaryElement);
+        $feedDataResponse = Plugin::$plugin->data->getFeedData($this, $usePrimaryElement);
 
         $feedData = Hash::get($feedDataResponse, 'data');
 
-        $feedDataResponse['data'] = FeedMe::$plugin->data->getFeedMapping($feedData);
+        $feedDataResponse['data'] = Plugin::$plugin->data->getFeedMapping($feedData);
 
         return $feedDataResponse;
     }
@@ -116,4 +115,3 @@ class FeedModel extends Model
     }
 
 }
-  

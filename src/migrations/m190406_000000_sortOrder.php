@@ -1,10 +1,9 @@
 <?php
-namespace verbb\feedme\migrations;
 
-use Craft;
+namespace craft\feedme\migrations;
+
 use craft\db\Migration;
 use craft\db\Query;
-use craft\helpers\MigrationHelper;
 
 class m190406_000000_sortOrder extends Migration
 {
@@ -22,7 +21,7 @@ class m190406_000000_sortOrder extends Migration
                 $this->update('{{%feedme_feeds}}', ['sortOrder' => $i + 1], ['id' => $feed['id']], [], false);
             }
         }
-    
+
         return true;
     }
 

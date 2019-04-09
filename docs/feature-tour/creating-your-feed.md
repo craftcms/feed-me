@@ -30,7 +30,7 @@ When using Google Sheet as your feed type, consult the [Google Sheets API](https
 
 ### Element Type
 
-Select the Element you wish to import your feed content into. For the [Free](/craft-plugins/feed-me/pricing) version, you'll only be able to import into Entries, but [Pro](https://verbb.io/craft-plugins/feed-me/pricing) will allow you to select Assets, Categories, Users, Commerce Products and third-party elements.
+Select the [element type](../content-mapping/element-types.md) you wish to import your feed content into.
 
 ### Sites
 
@@ -57,9 +57,9 @@ A generated, unique string to increase security against imports being run inadve
 
 ### Backup
 
-Enable a backup of your database to be taken on each import. Please note the [performance implications](docs:support/troubleshooting#performance) when switching this on.
+Enable a backup of your database to be taken on each import. Please note the [performance implications](../support/troubleshooting.md#performance) when switching this on.
 
 * * *
 
-Click on the _Save & Continue_ button to be taken to the [Primary Element](docs:feature-tour/primary-element) screen, or press _Save_ to continue editing this screen.
+Click on the _Save & Continue_ button to be taken to the [Primary Element](primary-element.md) screen, or press _Save_ to continue editing this screen.
 

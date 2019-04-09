@@ -1,15 +1,11 @@
 <?php
-namespace verbb\feedme\fields;
 
-use verbb\feedme\FeedMe;
-use verbb\feedme\base\Field;
-use verbb\feedme\base\FieldInterface;
-use verbb\feedme\helpers\DataHelper;
-
-use Craft;
-use craft\db\Query;
+namespace craft\feedme\fields;
 
 use Cake\Utility\Hash;
+use craft\feedme\base\Field;
+use craft\feedme\base\FieldInterface;
+use craft\feedme\Plugin;
 
 class Matrix extends Field implements FieldInterface
 {
@@ -42,7 +38,7 @@ class Matrix extends Field implements FieldInterface
 
         // Before we do anything, we need to extract the data from our feed and normalise it. This is especially
         // complex due to sub-fields, which each can be a variety of fields and formats, compounded by multiple or
-        // Matrix blocks - we don't know! We also need to be careful of the order data is in the feed to be 
+        // Matrix blocks - we don't know! We also need to be careful of the order data is in the feed to be
         // reflected in the field - phew!
         //
         // So, in order to keep data in the order provided in our feed, we start there (as opposed to looping through blocks)
@@ -86,7 +82,7 @@ class Matrix extends Field implements FieldInterface
                 // Swap out the node-path stored in the field-mapping info, because
                 // it'll be generic MatrixBlock/Images not MatrixBlock/0/Images/0 like we need
                 $subFieldInfo['node'] = $nodePath;
-                
+
                 // Parse each field via their own fieldtype service
                 $parsedValue = $this->_parseSubField($this->feedData, $subFieldHandle, $subFieldInfo);
 
@@ -146,7 +142,6 @@ class Matrix extends Field implements FieldInterface
             $preppedData[$blockIndex . '.enabled'] = !$disabled;
             $preppedData[$blockIndex . '.collapsed'] = $collapsed;
             $preppedData[$blockIndex . '.fields.' . $subFieldHandle] = $value;
-
             // $order++;
         }
 
@@ -205,7 +200,7 @@ class Matrix extends Field implements FieldInterface
 
         $subField = Hash::extract($this->field->getBlockTypeFields(), '{n}[handle=' . $subFieldHandle . ']')[0];
 
-        $class = FeedMe::$plugin->fields->getRegisteredField($subFieldClassHandle);
+        $class = Plugin::$plugin->fields->getRegisteredField($subFieldClassHandle);
         $class->feedData = $feedData;
         $class->fieldHandle = $subFieldHandle;
         $class->fieldInfo = $subFieldInfo;

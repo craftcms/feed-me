@@ -1,14 +1,11 @@
 <?php
-namespace verbb\feedme\helpers;
 
-use verbb\feedme\FeedMe;
+namespace craft\feedme\helpers;
 
-use Craft;
-use craft\helpers\DateTimeHelper;
-
-use DateTime;
-use Carbon\Carbon;
 use Cake\Utility\Hash;
+use Carbon\Carbon;
+use craft\feedme\Plugin;
+use craft\helpers\DateTimeHelper;
 
 class DateHelper
 {
@@ -28,7 +25,7 @@ class DateHelper
             $timeIndex = Hash::get($value, 'time');
 
             // Its okay to return this if it was an empty date-time array. This will often be the default
-            // value for an empty stringed date value in the feed. At this point, we want to retain the 
+            // value for an empty stringed date value in the feed. At this point, we want to retain the
             // empty value in the feed to overwrite the date value on the element.
             if (!$dateIndex || !$timeIndex) {
                 return '';
@@ -170,7 +167,7 @@ class DateHelper
                 return DateTimeHelper::toDateTime($dateTimeString, true, false);
             }
         } catch (\Exception $e) {
-            FeedMe::error('Date parse error: `{value}` - `{e}`.', ['value' => $value, 'e' => $e->getMessage()]);
+            Plugin::error('Date parse error: `{value}` - `{e}`.', ['value' => $value, 'e' => $e->getMessage()]);
         }
     }
 
@@ -179,7 +176,7 @@ class DateHelper
         try {
             return DateTimeHelper::toDateTime($value) ?: null;
         } catch (\Exception $e) {
-            FeedMe::error('Time parse error: `{value}` - `{e}`.', ['value' => $value, 'e' => $e->getMessage()]);
+            Plugin::error('Time parse error: `{value}` - `{e}`.', ['value' => $value, 'e' => $e->getMessage()]);
         }
     }
 }

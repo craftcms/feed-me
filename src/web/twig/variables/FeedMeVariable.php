@@ -1,16 +1,12 @@
 <?php
-namespace verbb\feedme\web\twig\variables;
 
-use verbb\feedme\FeedMe;
+namespace craft\feedme\web\twig\variables;
 
 use Craft;
-use craft\elements\User;
+use craft\feedme\Plugin;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\UrlHelper;
-
 use yii\di\ServiceLocator;
-
-use Cake\Utility\Hash;
 
 class FeedMeVariable extends ServiceLocator
 {
@@ -18,26 +14,25 @@ class FeedMeVariable extends ServiceLocator
 
     public function __construct($config = [])
     {
-        $config['components'] = FeedMe::$plugin->getComponents();
+        $config['components'] = Plugin::$plugin->getComponents();
 
         parent::__construct($config);
     }
 
     public function getPluginName()
     {
-        return FeedMe::$plugin->getPluginName();
+        return Plugin::$plugin->getPluginName();
     }
 
     public function getTabs()
     {
-        $settings = FeedMe::$plugin->getSettings();
+        $settings = Plugin::$plugin->getSettings();
         $enabledTabs = $settings->enabledTabs;
 
         $tabs = [
-            'feeds' => [ 'label' => Craft::t('feed-me', 'Feeds'), 'url' => UrlHelper::cpUrl('feed-me/feeds') ],
-            'logs' => [ 'label' => Craft::t('feed-me', 'Logs'), 'url' => UrlHelper::cpUrl('feed-me/logs') ],
-            'help' => [ 'label' => Craft::t('feed-me', 'Help'), 'url' => UrlHelper::cpUrl('feed-me/help') ],
-            'settings' => [ 'label' => Craft::t('feed-me', 'Settings'), 'url' => UrlHelper::cpUrl('feed-me/settings') ],
+            'feeds' => ['label' => Craft::t('feed-me', 'Feeds'), 'url' => UrlHelper::cpUrl('feed-me/feeds')],
+            'logs' => ['label' => Craft::t('feed-me', 'Logs'), 'url' => UrlHelper::cpUrl('feed-me/logs')],
+            'settings' => ['label' => Craft::t('feed-me', 'Settings'), 'url' => UrlHelper::cpUrl('feed-me/settings')],
         ];
 
         if ($enabledTabs === '*' || $enabledTabs === 1 || !is_array($enabledTabs)) {
@@ -51,7 +46,9 @@ class FeedMeVariable extends ServiceLocator
         $selectedTabs = [];
 
         foreach ($enabledTabs as $enabledTab) {
-            $selectedTabs[$enabledTab] = $tabs[$enabledTab];
+            if (isset($tabs[$enabledTab])) {
+                $selectedTabs[$enabledTab] = $tabs[$enabledTab];
+            }
         }
 
         return $selectedTabs;
@@ -85,14 +82,14 @@ class FeedMeVariable extends ServiceLocator
 
     public function feed($options = [])
     {
-        return FeedMe::$plugin->data->getFeedForTemplate($options);
+        return Plugin::$plugin->data->getFeedForTemplate($options);
     }
 
     public function feedHeaders($options = [])
     {
         $options['headers'] = true;
 
-        return FeedMe::$plugin->data->getFeedForTemplate($options);
+        return Plugin::$plugin->data->getFeedForTemplate($options);
     }
 
 
@@ -128,7 +125,7 @@ class FeedMeVariable extends ServiceLocator
         } else if ($field->sources === '*') {
             $sources = Craft::$app->volumes->getAllVolumes();
         }
-        
+
         return $sources;
     }
 
@@ -226,27 +223,27 @@ class FeedMeVariable extends ServiceLocator
 
     public function getAssetFolderBySourceId($id)
     {
-        $folders = Craft::$app->assets->getFolderTreeByVolumeIds(array($id));
+        $folders = Craft::$app->assets->getFolderTreeByVolumeIds([$id]);
 
-        $return = array();
+        $return = [];
 
         $return[''] = Craft::t('feed-me', 'Don\'t Import');
 
         if (is_array($folders)) {
             foreach ($folders as $folder) {
-                $return[] = array(
+                $return[] = [
                     'value' => 'root',
                     'label' => Craft::t('feed-me', 'Root Folder'),
-                );
+                ];
 
                 $children = $folder->getChildren();
 
                 if ($children) {
                     foreach ($children as $childFolder) {
-                        $return[] = array(
+                        $return[] = [
                             'value' => $childFolder['id'],
                             'label' => $childFolder['name'],
-                        );
+                        ];
                     }
                 }
             }

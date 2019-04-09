@@ -1,7 +1,7 @@
 {% extends parentLayout | default('_layouts/cp') %}
 
-{% do view.registerAssetBundle('verbb\\feedme\\web\\assets\\feedme\\FeedMeAsset') %}
-{% set baseAssetsUrl = view.getAssetManager().getPublishedUrl('@verbb/feedme/web/assets/feedme/dist', true) %}
+{% do view.registerAssetBundle('craft\\feedme\\web\\assets\\feedme\\FeedMeAsset') %}
+{% set baseAssetsUrl = view.getAssetManager().getPublishedUrl('@craft/feedme/web/assets/feedme/dist', true) %}
 
 {% if noTabs is not defined %}
     {% set tabs = craft.feedme.getTabs() %}
@@ -17,26 +17,12 @@
     {% endblock %}
 
     <hr>
-    
+
     <div id="plugin-footer">
         <div class="footer-left">
             {% block footerButton %}
 
             {% endblock %}
-        </div>
-
-        <div class="footer-right">
-            <a class="plugin-credit" href="https://verbb.io" target="_blank">
-                <span class="credit-love">Made with <span style="color: #e25555;">&#9829;</span> by</span>
-
-                <div class="credit-pill">
-                    <div class="credit-mask">
-                        <div class="credit-wrap">
-                            {% include 'feed-me/_svg/verbb-logo.svg' %}
-                        </div>
-                    </div>
-                </div>
-            </a>
         </div>
     </div>
 {% endset %}

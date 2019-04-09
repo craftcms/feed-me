@@ -1,15 +1,11 @@
 <?php
-namespace verbb\feedme\services;
 
-use verbb\feedme\FeedMe;
-
-use Craft;
-use craft\base\Component;
-use craft\elements\Entry;
-use craft\models\Section;
-use craft\events\RegisterComponentTypesEvent;
+namespace craft\feedme\services;
 
 use Cake\Utility\Hash;
+use Craft;
+use craft\base\Component;
+use craft\feedme\Plugin;
 
 class Service extends Component
 {
@@ -18,7 +14,7 @@ class Service extends Component
 
     public function getConfig($key, $feedId = null)
     {
-        $settings = FeedMe::$plugin->getSettings();
+        $settings = Plugin::$plugin->getSettings();
 
         // Get the config item from the global settings
         $configItem = Hash::get($settings, $key);

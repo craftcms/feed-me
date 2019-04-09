@@ -1,8 +1,8 @@
 {
-    "name": "verbb/feed-me",
-    "description": "Import content from XML, RSS, CSV or JSON feeds into Entries, Categories, Craft Commerce Products (and variants), and more.",
+    "name": "craftcms/feed-me",
+    "description": "Import content from XML, RSS, CSV or JSON feeds into entries, categories, Craft Commerce products, and more.",
     "type": "craft-plugin",
-    "version": "3.1.17",
+    "version": "4.0.0",
     "keywords": [
         "craft",
         "cms",
@@ -10,22 +10,26 @@
         "craft-plugin",
         "feed me"
     ],
-    "support": {
-        "email": "support@verbb.io",
-        "issues": "https://github.com/verbb/feed-me/issues?state=open",
-        "source": "https://github.com/verbb/feed-me",
-        "docs": "https://github.com/verbb/feed-me",
-        "rss": "https://github.com/verbb/feed-me/commits/v2.atom"
-    },
     "license": "proprietary",
     "authors": [
+        {
+            "name": "Pixel & Tonic",
+            "homepage": "https://pixelandtonic.com/"
+        },
         {
             "name": "Verbb",
             "homepage": "https://verbb.io"
         }
     ],
+    "support": {
+        "email": "support@craftcms.com",
+        "issues": "https://github.com/craftcms/feed-me/issues?state=open",
+        "source": "https://github.com/craftcms/feed-me",
+        "docs": "https://docs.craftcms.com/feed-me/v4/",
+        "rss": "https://github.com/craftcms/feed-me/commits/master.atom"
+    },
     "require": {
-        "craftcms/cms": "^3.1.0",
+        "craftcms/cms": "^3.1.21",
         "cakephp/core": "^3.5",
         "cakephp/utility": "^3.3.12",
         "jakeasmith/http_build_url": "^1.0",
@@ -41,18 +45,17 @@
     },
     "autoload": {
         "psr-4": {
-          "verbb\\feedme\\": "src/"
+          "craft\\feedme\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "verbb\\feedme\\tests\\": "tests/"
+            "craft\\feedme\\tests\\": "tests/"
         }
     },
     "extra": {
         "name": "Feed Me",
         "handle": "feed-me",
-        "changelogUrl": "https://raw.githubusercontent.com/verbb/feed-me/craft-3/CHANGELOG.md",
-        "class": "verbb\\feedme\\FeedMe"
+        "documentationUrl": "https://docs.craftcms.com/feed-me/v4/"
     }
 }

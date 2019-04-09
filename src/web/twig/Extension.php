@@ -1,11 +1,10 @@
 <?php
-namespace verbb\feedme\web\twig;
 
-use Twig_Extension;
-use Twig_SimpleFunction;
-use Twig_SimpleFilter;
+namespace craft\feedme\web\twig;
 
 use Cake\Utility\Hash;
+use Twig_Extension;
+use Twig_SimpleFunction;
 
 class Extension extends Twig_Extension
 {

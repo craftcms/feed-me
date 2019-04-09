@@ -1,14 +1,12 @@
 <?php
-namespace verbb\feedme\datatypes;
 
-use verbb\feedme\FeedMe;
-use verbb\feedme\base\DataType;
-use verbb\feedme\base\DataTypeInterface;
-
-use Craft;
-use craft\helpers\StringHelper;
+namespace craft\feedme\datatypes;
 
 use Cake\Utility\Hash;
+use craft\feedme\base\DataType;
+use craft\feedme\base\DataTypeInterface;
+use craft\feedme\Plugin;
+use craft\helpers\StringHelper;
 use League\Csv\Reader;
 
 class Csv extends DataType implements DataTypeInterface
@@ -25,14 +23,14 @@ class Csv extends DataType implements DataTypeInterface
     public function getFeed($url, $settings, $usePrimaryElement = true)
     {
         $feedId = Hash::get($settings, 'id');
-        $response = FeedMe::$plugin->data->getRawData($url, $feedId);
+        $response = Plugin::$plugin->data->getRawData($url, $feedId);
 
-        $csvColumnDelimiter = FeedMe::$plugin->service->getConfig('csvColumnDelimiter', $settings->id);
+        $csvColumnDelimiter = Plugin::$plugin->service->getConfig('csvColumnDelimiter', $settings->id);
 
         if (!$response['success']) {
             $error = 'Unable to reach ' . $url . '. Message: ' . $response['error'];
 
-            FeedMe::error($error);
+            Plugin::error($error);
 
             return ['success' => false, 'error' => $error];
         }
@@ -77,7 +75,7 @@ class Csv extends DataType implements DataTypeInterface
         } catch (\Exception $e) {
             $error = 'Invalid CSV: ' . $e->getMessage();
 
-            FeedMe::error($error);
+            Plugin::error($error);
 
             return ['success' => false, 'error' => $error];
         }
@@ -86,7 +84,7 @@ class Csv extends DataType implements DataTypeInterface
         if (!is_array($array)) {
             $error = 'Invalid CSV: ' . json_encode($array);
 
-            FeedMe::error($error);
+            Plugin::error($error);
 
             return ['success' => false, 'error' => $error];
         }
@@ -95,7 +93,7 @@ class Csv extends DataType implements DataTypeInterface
         $primaryElement = Hash::get($settings, 'primaryElement');
 
         if ($primaryElement && $usePrimaryElement) {
-            $array = FeedMe::$plugin->data->findPrimaryElement($primaryElement, $array);
+            $array = Plugin::$plugin->data->findPrimaryElement($primaryElement, $array);
         }
 
         return ['success' => true, 'data' => $array];
@@ -117,13 +115,15 @@ class Csv extends DataType implements DataTypeInterface
 
         try {
             $array = $reader->fetchAssoc(0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) {
+        }
 
         try {
             if (!$array) {
                 $array = $reader->fetch();
             }
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) {
+        }
 
         // Support league/csv v9 syntax
         try {
@@ -131,7 +131,8 @@ class Csv extends DataType implements DataTypeInterface
                 $reader->setHeaderOffset(0);
                 $array = $reader->getRecords();
             }
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) {
+        }
 
         return $array;
     }
