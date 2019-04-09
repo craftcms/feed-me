@@ -3,7 +3,7 @@
 This guide will serve as a real-world example of importing Commerce Products into [Craft Commerce](http://craftcommerce.com). We'll be importing two T-Shirt products into Commerce. This guide specifically deals with **single-variant** products.
 
 :::tip
-Looking to import products with multiple Variants? Have a look at the [Importing Commerce Variants](docs:guides/importing-commerce-variants) guide.
+Looking to import products with multiple Variants? Have a look at the [Importing Commerce Variants](importing-commerce-variants.md) guide.
 :::
 
 ### Example Feed Data
@@ -95,7 +95,7 @@ Click the _Save & Continue_ button to set up the primary element.
 
 ## Primary Element
 
-The primary element can be confusing at first, but its vitally important to ensure Feed Me can hone in on the content in your feed correctly. Refer to [Primary Element →](docs:feature-tour/primary-element) for a detailed explanation.
+The primary element can be confusing at first, but its vitally important to ensure Feed Me can hone in on the content in your feed correctly. Refer to [Primary Element →](../feature-tour/primary-element.md) for a detailed explanation.
 
 Enter the following details:
 
@@ -114,7 +114,7 @@ Use the below screenshot as a guide for the data we want to map to our product f
 
 - As these are single variant products, we check the `Is Default` option. This tells Commerce this variant is the default variant for this product.
 - Our unique identifier is the Variant SKU - simply as its unique to each product.
-- We have no custom fields for Products setup - but they would appear underneath the Product Variant Fields as per a regular [Importing into Entries](docs:guides/importing-entries) workflow.
+- We have no custom fields for Products setup - but they would appear underneath the Product Variant Fields as per a regular [Importing into Entries](importing-entries.md) workflow.
 
 Click the _Save & Import_ button to begin importing your content.
 
@@ -125,7 +125,7 @@ Wait for the feed processing to finish. Remember, you can always navigate away f
 ![Feedme Matrix Guide Start](../screenshots/feedme-matrix-guide-start.png)
 
 :::tip
-If you're having issues, or seeing errors at this point, look at the [Troubleshooting](docs:support/troubleshooting) section.
+If you're having issues, or seeing errors at this point, look at the [Troubleshooting](../support/troubleshooting.md) section.
 :::
 
 You should now have 2 brand new products in your Clothing product type.

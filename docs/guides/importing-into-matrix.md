@@ -1,6 +1,6 @@
 # Importing into Matrix
 
-Importing into a Matrix field is like many other [Field Types](docs:content-mapping/field-types), however, this reference provides a practical example of how to structure your feed properly.
+Importing into a Matrix field is like many other [Field Types](../content-mapping/field-types.md), however, this reference provides a practical example of how to structure your feed properly.
 
 In this example, we'll be importing 2 Entries, which have a single Matrix field called Content Builder. The entry itself has a Featured Image `(Assets)` and Description `(Rich Text)` field. Our Page Builder Matrix field has 3 Blocktypes:
 
@@ -253,7 +253,7 @@ Click the _Save & Continue_ button to set up the primary element.
 
 ## Primary Element
 
-The primary element can be confusing at first, but its vitally important to ensure Feed Me can hone in on the content in your feed correctly. Refer to [Primary Element →](docs:feature-tour/primary-element) for a detailed explanation.
+The primary element can be confusing at first, but its vitally important to ensure Feed Me can hone in on the content in your feed correctly. Refer to [Primary Element →](../feature-tour/primary-element.md) for a detailed explanation.
 
 Enter the following details:
 
@@ -277,7 +277,7 @@ Wait for the feed processing to finish. Remember, you can always navigate away f
 ![Feedme Matrix Guide Start](../screenshots/feedme-matrix-guide-start.png)
 
 :::tip
-If you're having issues, or seeing errors at this point, look at the [Troubleshooting](docs:support/troubleshooting) section.
+If you're having issues, or seeing errors at this point, look at the [Troubleshooting](../support/troubleshooting.md) section.
 :::
 
 You should now have 2 brand new Entries with our Matrix data populated.

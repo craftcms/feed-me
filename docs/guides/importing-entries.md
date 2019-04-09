@@ -3,7 +3,7 @@
 Importing Entries is one of the more common tasks for Feed Me, but this same guide applies for any other Element Type you wish to import. This guide will serve as a real-world example for importing real estate property listings.
 
 :::tip
-Looking for a Matrix example? Check out [Import into Matrix](docs:guides/importing-into-matrix).
+Looking for a Matrix example? Check out [Import into Matrix](importing-into-matrix.md).
 :::
 
 ### Example Feed Data
@@ -249,7 +249,7 @@ Click the _Save & Continue_ button to set up the primary element.
 
 ## Primary Element
 
-The primary element can be confusing at first, but its vitally important to ensure Feed Me can hone in on the content in your feed correctly. Refer to [Primary Element →](docs:feature-tour/primary-element) for a detailed explanation.
+The primary element can be confusing at first, but its vitally important to ensure Feed Me can hone in on the content in your feed correctly. Refer to [Primary Element →](../feature-tour/primary-element.md) for a detailed explanation.
 
 Enter the following details:
 
@@ -277,7 +277,7 @@ Wait for the feed processing to finish. Remember, you can always navigate away f
 ![Feedme Start](../screenshots/feedme-start.png)
 
 :::tip
-If you're having issues, or seeing errors at this point, look at the [Troubleshooting](docs:support/troubleshooting) section.
+If you're having issues, or seeing errors at this point, look at the [Troubleshooting](../support/troubleshooting.md) section.
 :::
 
 You should now have 2 brand new entries in your Property Listings section.
