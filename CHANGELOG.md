@@ -1,6 +1,6 @@
 # Changelog
 
-## 4.0.0 (WIP)
+## 4.0.0 - 2019-04-09
 
 ### Changed
 - Feed Me is now available as a single, free edition.
