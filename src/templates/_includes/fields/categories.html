@@ -45,20 +45,8 @@
             { value: 'slug', label: 'Slug' | t('feed-me') },
         ] %}
 
-        {% set supportedFieldTypes = [
-            'craft\\fields\\Color',
-            'craft\\fields\\Dropdown',
-            'craft\\fields\\Email',
-            'craft\\fields\\Lightswitch',
-            'craft\\fields\\Number',
-            'craft\\fields\\PlainText',
-            'craft\\fields\\Url',
-
-            'aelvan\\preparsefield\\fields\\PreparseFieldType',
-        ] %}
-
         {% for field in craft.app.fields.getAllFields() %}
-            {% if className(field) in supportedFieldTypes %}
+            {% if craft.feedme.fieldCanBeUniqueId(field) %}
                 {% set matchAttributes = matchAttributes | merge({ ('field_' ~ field.handle): field.name }) %}
             {% endif %}
         {% endfor %}

@@ -256,6 +256,10 @@ class FeedMeVariable extends ServiceLocator
     {
         $type = $field['type'] ?? 'attribute';
 
+        if (is_object($field)) {
+            $type = get_class($field);
+        }
+
         $supportedFields = [
             'craft\fields\Checkboxes',
             'craft\fields\Color',
