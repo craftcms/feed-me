@@ -7,7 +7,7 @@ use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\helpers\DataHelper;
 use ether\simplemap\models\Map;
-use ether\simplemap\services\MapService;
+use ether\simplemap\services\GeoService;
 use ether\simplemap\SimpleMap as SimpleMapPlugin;
 
 class SimpleMap extends Field implements FieldInterface
@@ -67,7 +67,7 @@ class SimpleMap extends Field implements FieldInterface
         // Check for empty Longitude/Latitude
         if (!isset($preppedData['lat']) || !isset($preppedData['lng'])) {
             if (isset($preppedData['address'])) {
-                $latlng = MapService::getLatLngFromAddress($preppedData['address']);
+                $latlng = GeoService::latLngFromAddress($preppedData['address']);
                 $preppedData['lat'] = $latlng['lat'];
                 $preppedData['lng'] = $latlng['lng'];
             }
