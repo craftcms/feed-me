@@ -8,6 +8,7 @@ use craft\commerce\elements\Product as ProductElement;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\Plugin;
+use craft\helpers\Db;
 
 class CommerceProducts extends Field implements FieldInterface
 {
@@ -48,7 +49,7 @@ class CommerceProducts extends Field implements FieldInterface
         if (is_array($sources)) {
             foreach ($sources as $source) {
                 list($type, $uid) = explode(':', $source);
-                $typeIds[] = $uid;
+                $typeIds[] = Db::idByUid('{{%commerce_producttypes}}', $uid);
             }
         } else if ($sources === '*') {
             $typeIds = null;
