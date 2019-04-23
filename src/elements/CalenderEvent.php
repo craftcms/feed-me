@@ -7,7 +7,6 @@ use Carbon\Carbon;
 use Craft;
 use craft\elements\User as UserElement;
 use craft\feedme\base\Element;
-use craft\feedme\base\ElementInterface;
 use craft\feedme\events\FeedProcessEvent;
 use craft\feedme\Plugin;
 use craft\feedme\services\Process;
@@ -17,7 +16,7 @@ use Solspace\Calendar\Elements\Event as EventElement;
 use Solspace\Calendar\Library\DateHelper;
 use yii\base\Event;
 
-class CalenderEvent extends Element implements ElementInterface
+class CalenderEvent extends Element
 {
     // Properties
     // =========================================================================

@@ -12,7 +12,7 @@ use craft\feedme\helpers\DateHelper;
 use craft\helpers\Db;
 use craft\helpers\StringHelper;
 
-abstract class Element extends Component
+abstract class Element extends Component implements ElementInterface
 {
     // Constants
     // =========================================================================
@@ -140,6 +140,7 @@ abstract class Element extends Component
         $elementsService = Craft::$app->getElements();
 
         foreach ($elementIds as $elementId) {
+            /** @var BaseElement $element */
             $element = $elementsService->getElementById($elementId);
             $element->enabled = false;
 

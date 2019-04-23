@@ -6,9 +6,8 @@ use Cake\Utility\Hash;
 use Craft;
 use craft\commerce\elements\Order as OrderElement;
 use craft\feedme\base\Element;
-use craft\feedme\base\ElementInterface;
 
-class CommerceOrder extends Element implements ElementInterface
+class CommerceOrder extends Element
 {
     // Properties
     // =========================================================================

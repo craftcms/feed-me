@@ -7,11 +7,10 @@ use Craft;
 use craft\elements\Entry as EntryElement;
 use craft\elements\User as UserElement;
 use craft\feedme\base\Element;
-use craft\feedme\base\ElementInterface;
 use craft\feedme\Plugin;
 use craft\models\Section;
 
-class Entry extends Element implements ElementInterface
+class Entry extends Element
 {
     // Properties
     // =========================================================================

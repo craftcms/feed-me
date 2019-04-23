@@ -6,9 +6,8 @@ use Cake\Utility\Hash;
 use Craft;
 use craft\elements\Tag as TagElement;
 use craft\feedme\base\Element;
-use craft\feedme\base\ElementInterface;
 
-class Tag extends Element implements ElementInterface
+class Tag extends Element
 {
     // Properties
     // =========================================================================

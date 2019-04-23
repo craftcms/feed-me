@@ -7,12 +7,11 @@ use Craft;
 use craft\db\Query;
 use craft\elements\User as UserElement;
 use craft\feedme\base\Element;
-use craft\feedme\base\ElementInterface;
 use craft\feedme\Plugin;
 use verbb\comments\Comments;
 use verbb\comments\elements\Comment as CommentElement;
 
-class Comment extends Element implements ElementInterface
+class Comment extends Element
 {
     // Properties
     // =========================================================================

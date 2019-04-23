@@ -7,9 +7,8 @@ use Craft;
 use craft\digitalproducts\elements\Product as ProductElement;
 use craft\digitalproducts\Plugin as DigitalProducts;
 use craft\feedme\base\Element;
-use craft\feedme\base\ElementInterface;
 
-class DigitalProduct extends Element implements ElementInterface
+class DigitalProduct extends Element
 {
     // Properties
     // =========================================================================

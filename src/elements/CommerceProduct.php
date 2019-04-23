@@ -9,7 +9,6 @@ use craft\commerce\elements\Variant as VariantElement;
 use craft\commerce\Plugin as Commerce;
 use craft\db\Query;
 use craft\feedme\base\Element;
-use craft\feedme\base\ElementInterface;
 use craft\feedme\events\FeedProcessEvent;
 use craft\feedme\helpers\BaseHelper;
 use craft\feedme\helpers\DataHelper;
@@ -17,7 +16,7 @@ use craft\feedme\Plugin;
 use craft\feedme\services\Process;
 use yii\base\Event;
 
-class CommerceProduct extends Element implements ElementInterface
+class CommerceProduct extends Element
 {
     // Properties
     // =========================================================================

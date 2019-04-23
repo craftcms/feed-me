@@ -6,7 +6,6 @@ use Cake\Utility\Hash;
 use Craft;
 use craft\elements\Asset as AssetElement;
 use craft\feedme\base\Element;
-use craft\feedme\base\ElementInterface;
 use craft\feedme\events\FeedProcessEvent;
 use craft\feedme\helpers\AssetHelper;
 use craft\feedme\helpers\DuplicateHelper;
@@ -16,7 +15,7 @@ use craft\helpers\UrlHelper;
 use craft\models\VolumeFolder;
 use yii\base\Event;
 
-class Asset extends Element implements ElementInterface
+class Asset extends Element
 {
     // Properties
     // =========================================================================

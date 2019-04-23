@@ -6,10 +6,9 @@ use Cake\Utility\Hash;
 use Craft;
 use craft\elements\Category as CategoryElement;
 use craft\feedme\base\Element;
-use craft\feedme\base\ElementInterface;
 use craft\feedme\Plugin;
 
-class Category extends Element implements ElementInterface
+class Category extends Element
 {
     // Properties
     // =========================================================================
