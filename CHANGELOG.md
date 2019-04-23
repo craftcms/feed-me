@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Changed
+- Improved JSON feed parsing performance. ([#510](https://github.com/craftcms/feed-me/issues/510))
+
 ### Fixed
 - Fixed a bug where imported dates were assumed to be set in the system time zone even if they specified something else.
 
