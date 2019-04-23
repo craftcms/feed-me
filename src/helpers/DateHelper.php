@@ -162,9 +162,7 @@ class DateHelper
             }
 
             if ($date) {
-                $dateTimeString = $date->toDateTimeString();
-
-                return DateTimeHelper::toDateTime($dateTimeString, true, false);
+                return $date;
             }
         } catch (\Exception $e) {
             Plugin::error('Date parse error: `{value}` - `{e}`.', ['value' => $value, 'e' => $e->getMessage()]);

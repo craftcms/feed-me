@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Fixed a bug where imported dates and times would not display in the system time zone in Date/Time fields.
+
 ## 4.0.0 - 2019-04-09
 
 ### Changed
