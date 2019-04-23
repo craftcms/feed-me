@@ -1,4 +1,4 @@
-/*!   - 2019-04-08 */
+/*!   - 2019-04-23 */
 (function($){
 
 /**
@@ -3709,7 +3709,6 @@ $(function() {
         } else {
             $duplicateHandle.find(':nth-child(3) label').html(Craft.t('feed-me', 'Disable missing elements'));
         }
-        console.log(value)
     });
 
     $('#elementType').trigger('change');
