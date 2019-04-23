@@ -7,6 +7,7 @@
 
 ### Fixed
 - Fixed a bug where imported dates were assumed to be set in the system time zone even if they specified something else.
+- Fixed a bug where multi-site elements were only getting saved in the site chosen in the feed settings. ([#521](https://github.com/craftcms/feed-me/issues/521))
 
 ## 4.0.0 - 2019-04-09
 

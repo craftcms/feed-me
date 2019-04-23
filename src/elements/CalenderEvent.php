@@ -153,9 +153,7 @@ class CalenderEvent extends Element implements ElementInterface
             $element->username = $value;
             $element->email = $value;
 
-            $propagate = isset($this->feed['siteId']) && $this->feed['siteId'] ? false : true;
-
-            if (!Craft::$app->getElements()->saveElement($element, true, $propagate)) {
+            if (!Craft::$app->getElements()->saveElement($element)) {
                 Plugin::error('Event error: Could not create author - `{e}`.', ['e' => json_encode($element->getErrors())]);
             } else {
                 Plugin::info('Author `#{id}` added.', ['id' => $element->id]);

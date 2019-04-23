@@ -169,9 +169,7 @@ class Entry extends Element implements ElementInterface
             $element->sectionId = $this->element->sectionId;
             $element->typeId = $this->element->typeId;
 
-            $propagate = isset($this->feed['siteId']) && $this->feed['siteId'] ? false : true;
-
-            if (!Craft::$app->getElements()->saveElement($element, true, $propagate)) {
+            if (!Craft::$app->getElements()->saveElement($element)) {
                 Plugin::error('Entry error: Could not create parent - `{e}`.', ['e' => json_encode($element->getErrors())]);
             } else {
                 Plugin::info('Entry `#{id}` added.', ['id' => $element->id]);
@@ -217,9 +215,7 @@ class Entry extends Element implements ElementInterface
             $element->username = $value;
             $element->email = $value;
 
-            $propagate = isset($this->feed['siteId']) && $this->feed['siteId'] ? false : true;
-
-            if (!Craft::$app->getElements()->saveElement($element, true, $propagate)) {
+            if (!Craft::$app->getElements()->saveElement($element)) {
                 Plugin::error('Entry error: Could not create author - `{e}`.', ['e' => json_encode($element->getErrors())]);
             } else {
                 Plugin::info('Author `#{id}` added.', ['id' => $element->id]);

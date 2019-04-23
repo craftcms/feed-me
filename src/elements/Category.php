@@ -127,9 +127,7 @@ class Category extends Element implements ElementInterface
             $element->title = $value;
             $element->groupId = $this->element->groupId;
 
-            $propagate = isset($this->feed['siteId']) && $this->feed['siteId'] ? false : true;
-
-            if (!Craft::$app->getElements()->saveElement($element, true, $propagate)) {
+            if (!Craft::$app->getElements()->saveElement($element)) {
                 Plugin::error('Category error: Could not create parent - `{e}`.', ['e' => json_encode($element->getErrors())]);
             } else {
                 Plugin::info('Category `#{id}` added.', ['id' => $element->id]);
