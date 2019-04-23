@@ -110,47 +110,44 @@
 
     <hr>
 
-    <div class="field">
-        <div class="heading">
-            <label class="required">{{ "Import strategy" | t('feed-me') }}
-                <span class="info">
-                    <span style="display:inline-block;">
-                        <strong>{{ "Create new element:" | t('feed-me') }}</strong> {{ "Adds new elements if they do not already exist." | t('feed-me') }}
-                    </span>
-                    <span style="display:inline-block;">
-                        <strong>{{ "Update existing elements:" | t('feed-me') }}</strong> {{ "Updates elements that match the Unique Identifier (next step)." | t('feed-me') }}
-                    </span>
-                    <span style="display:inline-block;">
-                        <strong>{{ "Disable missing elements:" | t('feed-me') }}</strong> {{ "Disables any elements that are missing from the feed." | t('feed-me') }}
-                    </span>
-                    <span style="display:inline-block;">
-                        <strong>{{ "Delete missing elements:" | t('feed-me') }}</strong> {{ "Deletes any elements that are missing from the feed. Be careful." | t('feed-me') }}
-                    </span>
-                </span>
-            </label>
+    {{ forms.field({
+        label: "Import strategy" | t('feed-me'),
+        instructions: 'Choose what happens when this feed is run again.' | t('feed-me'),
+        id: 'duplicateHandle',
+    }) }}
 
-            <div class="instructions">
-                <p>{{ "Choose what happens when this feed is run again. Click tooltip above for explanation." | t('feed-me') }}</p>
-            </div>
-        </div>
+    {{ forms.checkboxField({
+        id: 'duplicateHandle',
+        name: 'duplicateHandle[]',
+        label: 'Create new elements'|t('feed-me'),
+        instructions: 'Adds new elements if they do not already exist.'|t('feed-me'),
+        value: 'add',
+        checked: 'add' in (feed.duplicateHandle ?? ['add'])
+    }) }}
 
-        <div class="input ltr">
-            {{ forms.checkboxGroup({
-                label: "Import strategy" | t('feed-me'),
-                instructions: 'Choose what happens when this feed is run again.' | t('feed-me'),
-                id: 'duplicateHandle',
-                name: 'duplicateHandle',
-                options: {
-                    'add': 'Create new elements' | t('feed-me'),
-                    'update': 'Update existing elements' | t('feed-me'),
-                    'disable': 'Disable missing elements' | t('feed-me'),
-                    'delete': 'Delete missing elements' | t('feed-me')
-                },
-                values: feed.duplicateHandle ?? ['add'],
-                required: true,
-            }) }}
-        </div>
-    </div>
+    {{ forms.checkboxField({
+        name: 'duplicateHandle[]',
+        label: 'Update existing elements'|t('feed-me'),
+        instructions: 'Updates elements that match the Unique Identifier (next step).'|t('feed-me'),
+        value: 'update',
+        checked: 'update' in (feed.duplicateHandle ?? [])
+    }) }}
+
+    {{ forms.checkboxField({
+        name: 'duplicateHandle[]',
+        label: 'Disable missing elements'|t('feed-me'),
+        instructions: 'Disables any elements that are missing from the feed.'|t('feed-me'),
+        value: 'disable',
+        checked: 'disable' in (feed.duplicateHandle ?? [])
+    }) }}
+
+    {{ forms.checkboxField({
+        name: 'duplicateHandle[]',
+        label: 'Delete missing elements'|t('feed-me'),
+        instructions: 'Deletes any elements that are missing from the feed. Be careful.'|t('feed-me'),
+        value: 'delete',
+        checked: 'delete' in (feed.duplicateHandle ?? [])
+    }) }}
 
     <hr>
 
