@@ -3702,12 +3702,12 @@ $(function() {
         $('.element-select[data-type="' + value + '"]').show();
 
         // Change the import strategy for Users
-        var $duplicateHandle = $('[name="duplicateHandle"]').parent().find('.checkbox-group');
+        var $disableLabel = $('input[name="duplicateHandle[]"][value="disable"]').next('label');
 
         if (value === 'craft-elements-User') {
-            $duplicateHandle.find(':nth-child(3) label').html(Craft.t('feed-me', 'Suspend missing users'));
+            $disableLabel.text(Craft.t('feed-me', 'Suspend missing users'));
         } else {
-            $duplicateHandle.find(':nth-child(3) label').html(Craft.t('feed-me', 'Disable missing elements'));
+            $disableLabel.text(Craft.t('feed-me', 'Disable missing elements'));
         }
     });
 
