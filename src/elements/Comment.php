@@ -51,20 +51,10 @@ class Comment extends Element
 
     public function getQuery($settings, $params = [])
     {
-        $query = CommentElement::find();
-
-        $criteria = array_merge([
-            'status' => null,
-        ], $params);
-
-        $siteId = Hash::get($settings, 'siteId');
-
-        if ($siteId) {
-            $criteria['siteId'] = $siteId;
-        }
-
-        Craft::configure($query, $criteria);
-
+        $query = CommentElement::find()
+            ->anyStatus()
+            ->siteId(Hash::get($settings, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id);
+        Craft::configure($query, $params);
         return $query;
     }
 

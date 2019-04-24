@@ -48,21 +48,11 @@ class Category extends Element
 
     public function getQuery($settings, $params = [])
     {
-        $query = CategoryElement::find();
-
-        $criteria = array_merge([
-            'status' => null,
-            'groupId' => $settings['elementGroup'][CategoryElement::class],
-        ], $params);
-
-        $siteId = Hash::get($settings, 'siteId');
-
-        if ($siteId) {
-            $criteria['siteId'] = $siteId;
-        }
-
-        Craft::configure($query, $criteria);
-
+        $query = CategoryElement::find()
+            ->anyStatus()
+            ->groupId($settings['elementGroup'][CategoryElement::class])
+            ->siteId(Hash::get($settings, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id);
+        Craft::configure($query, $params);
         return $query;
     }
 

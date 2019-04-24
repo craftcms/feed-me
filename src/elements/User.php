@@ -62,20 +62,10 @@ class User extends Element
 
     public function getQuery($settings, $params = [])
     {
-        $query = UserElement::find();
-
-        $criteria = array_merge([
-            'status' => null,
-        ], $params);
-
-        $siteId = Hash::get($settings, 'siteId');
-
-        if ($siteId) {
-            $criteria['siteId'] = $siteId;
-        }
-
-        Craft::configure($query, $criteria);
-
+        $query = UserElement::find()
+            ->anyStatus()
+            ->siteId(Hash::get($settings, 'siteId'));
+        Craft::configure($query, $params);
         return $query;
     }
 

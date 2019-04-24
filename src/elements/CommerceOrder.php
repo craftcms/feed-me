@@ -47,18 +47,10 @@ class CommerceOrder extends Element
 
     public function getQuery($settings, $params = [])
     {
-        $query = OrderElement::find();
-
-        $criteria = array_merge([], $params);
-
-        $siteId = Hash::get($settings, 'siteId');
-
-        if ($siteId) {
-            $criteria['siteId'] = $siteId;
-        }
-
-        Craft::configure($query, $criteria);
-
+        $query = OrderElement::find()
+            ->anyStatus()
+            ->siteId(Hash::get($settings, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id);
+        Craft::configure($query, $params);
         return $query;
     }
 

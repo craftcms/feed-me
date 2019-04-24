@@ -75,21 +75,11 @@ class CommerceProduct extends Element
 
     public function getQuery($settings, $params = [])
     {
-        $query = ProductElement::find();
-
-        $criteria = array_merge([
-            'status' => null,
-            'typeId' => $settings['elementGroup'][ProductElement::class],
-        ], $params);
-
-        $siteId = Hash::get($settings, 'siteId');
-
-        if ($siteId) {
-            $criteria['siteId'] = $siteId;
-        }
-
-        Craft::configure($query, $criteria);
-
+        $query = ProductElement::find()
+            ->anyStatus()
+            ->typeId($settings['elementGroup'][ProductElement::class])
+            ->siteId(Hash::get($settings, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id);
+        Craft::configure($query, $params);
         return $query;
     }
 

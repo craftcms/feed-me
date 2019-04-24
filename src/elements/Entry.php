@@ -61,22 +61,12 @@ class Entry extends Element
 
     public function getQuery($settings, $params = [])
     {
-        $query = EntryElement::find();
-
-        $criteria = array_merge([
-            'status' => null,
-            'sectionId' => $settings['elementGroup'][EntryElement::class]['section'],
-            'typeId' => $settings['elementGroup'][EntryElement::class]['entryType'],
-        ], $params);
-
-        $siteId = Hash::get($settings, 'siteId');
-
-        if ($siteId) {
-            $criteria['siteId'] = $siteId;
-        }
-
-        Craft::configure($query, $criteria);
-
+        $query = EntryElement::find()
+            ->anyStatus()
+            ->sectionId($settings['elementGroup'][EntryElement::class]['section'])
+            ->typeId($settings['elementGroup'][EntryElement::class]['entryType'])
+            ->siteId(Hash::get($settings, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id);
+        Craft::configure($query, $params);
         return $query;
     }
 

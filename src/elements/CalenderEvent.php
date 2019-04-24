@@ -71,21 +71,11 @@ class CalenderEvent extends Element
 
     public function getQuery($settings, $params = [])
     {
-        $query = EventElement::find();
-
-        $criteria = array_merge([
-            'status' => null,
-            'calendarId' => $settings['elementGroup'][EventElement::class],
-        ], $params);
-
-        $siteId = Hash::get($settings, 'siteId');
-
-        if ($siteId) {
-            $criteria['siteId'] = $siteId;
-        }
-
-        Craft::configure($query, $criteria);
-
+        $query = EventElement::find()
+            ->anyStatus()
+            ->setCalendarId($settings['elementGroup'][EventElement::class])
+            ->siteId(Hash::get($settings, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id);
+        Craft::configure($query, $params);
         return $query;
     }
 

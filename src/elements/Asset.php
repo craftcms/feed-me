@@ -64,22 +64,12 @@ class Asset extends Element
 
     public function getQuery($settings, $params = [])
     {
-        $query = AssetElement::find();
-
-        $criteria = array_merge([
-            'status' => null,
-            'volumeId' => $settings['elementGroup'][AssetElement::class],
-            'includeSubfolders' => true,
-        ], $params);
-
-        $siteId = Hash::get($settings, 'siteId');
-
-        if ($siteId) {
-            $criteria['siteId'] = $siteId;
-        }
-
-        Craft::configure($query, $criteria);
-
+        $query = AssetElement::find()
+            ->anyStatus()
+            ->volumeId($settings['elementGroup'][AssetElement::class])
+            ->includeSubfolders()
+            ->siteId(Hash::get($settings, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id);
+        Craft::configure($query, $params);
         return $query;
     }
 
