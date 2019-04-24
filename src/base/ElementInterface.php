@@ -9,6 +9,11 @@ interface ElementInterface extends ComponentInterface
     // Public Methods
     // =========================================================================
 
+    /**
+     * @return string
+     */
+    public function getElementClass();
+
     public function getGroupsTemplate();
 
     public function getColumnTemplate();
