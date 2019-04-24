@@ -133,10 +133,12 @@ abstract class Element extends Component implements ElementInterface
 
     public function delete($elementIds)
     {
+        /** @var CraftElementInterface|string $class */
+        $class = $this->getElementClass();
         $elementsService = Craft::$app->getElements();
 
         foreach ($elementIds as $elementId) {
-            $elementsService->deleteElementById($elementId);
+            $elementsService->deleteElementById($elementId, $class);
         }
 
         return true;
@@ -144,13 +146,14 @@ abstract class Element extends Component implements ElementInterface
 
     public function disable($elementIds)
     {
+        /** @var CraftElementInterface|string $class */
+        $class = $this->getElementClass();
         $elementsService = Craft::$app->getElements();
 
         foreach ($elementIds as $elementId) {
             /** @var BaseElement $element */
-            $element = $elementsService->getElementById($elementId);
+            $element = $elementsService->getElementById($elementId, $class);
             $element->enabled = false;
-
             $elementsService->saveElement($element);
         }
 
