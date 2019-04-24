@@ -2,6 +2,7 @@
 
 namespace craft\feedme\services;
 
+use Craft;
 use craft\base\Component;
 use craft\errors\MissingComponentException;
 use craft\feedme\base\ElementInterface;
@@ -42,17 +43,24 @@ class Elements extends Component
     {
         parent::init();
 
+        $pluginsService = Craft::$app->getPlugins();
+
         foreach ($this->getRegisteredElements() as $elementClass) {
             $element = $this->createElement($elementClass);
 
             // Does this element exist in Craft right now?
-            if (!class_exists($element::$class)) {
+            $class = $element->getElementClass();
+            if (!class_exists($class)) {
                 continue;
             }
 
-            $handle = $element::$class;
+            // If it belongs to a plugin, is the plugin enabled?
+            $pluginHandle = $pluginsService->getPluginHandleByClass($class);
+            if ($pluginHandle !== null && !$pluginsService->isPluginEnabled($pluginHandle)) {
+                continue;
+            }
 
-            $this->_elements[$handle] = $element;
+            $this->_elements[$class] = $element;
         }
     }
 

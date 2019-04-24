@@ -12,6 +12,7 @@
 - Fixed a bug where imported dates were assumed to be set in the system time zone even if they specified something else.
 - Fixed a bug where multi-site elements were only getting saved in the site chosen in the feed settings. ([#521](https://github.com/craftcms/feed-me/issues/521))
 - Fixed a bug where custom message translations weren’t getting registered for JavaScript.
+- Fixed a PHP error that could occur when editing or creating a feed, if Commerce, Digital Products, Calendar, or Comments were Composer-installed but not enabled.
 
 ## 4.0.0 - 2019-04-09
 
