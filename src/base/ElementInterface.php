@@ -27,6 +27,11 @@ interface ElementInterface extends ComponentInterface
 
     public function disable($elementIds);
 
+    /**
+     * @var int[] $elementIds
+     */
+    public function disableForSite($elementIds);
+
     public function save($data, $settings);
 
     public function afterSave($data, $settings);

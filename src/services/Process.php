@@ -112,9 +112,12 @@ class Process extends Component
 
         // If our duplication handling is to delete - we delete all elements
         // If our duplication handling is to disable - we disable all elements
-        if (DuplicateHelper::isDelete($feed) || DuplicateHelper::isDisable($feed)) {
+        if (
+            DuplicateHelper::isDelete($feed) ||
+            DuplicateHelper::isDisable($feed) ||
+            DuplicateHelper::isDisableForSite($feed))
+        {
             $query = $feed->element->getQuery($feed);
-
             $return['existingElements'] = $query->ids();
         }
 
@@ -284,7 +287,11 @@ class Process extends Component
         }
 
         // Are we only disabling/deleting only, we need to quit right here
-        if (DuplicateHelper::isDisable($feed, true) || DuplicateHelper::isDelete($feed, true)) {
+        if (
+            DuplicateHelper::isDisable($feed, true) ||
+            DuplicateHelper::isDisableForSite($feed, true) ||
+            DuplicateHelper::isDelete($feed, true)
+        ) {
             // If there's an existing element, we want to keep it, otherwise remove it
             if ($existingElement) {
                 $processedElementIds[] = $existingElement->id;
@@ -464,8 +471,13 @@ class Process extends Component
      */
     public function afterProcessFeed($settings, $feed, $processedElementIds)
     {
-        if (DuplicateHelper::isDelete($feed) && DuplicateHelper::isDisable($feed)) {
+        if ((int)DuplicateHelper::isDelete($feed) + (int)DuplicateHelper::isDisable($feed) + (int)DuplicateHelper::isDisableForSite($feed) > 1) {
             Plugin::info("You can't have Delete and Disabled enabled at the same time as an Import Strategy.");
+            return;
+        }
+
+        if (DuplicateHelper::isDisableForSite($feed) && !$feed->siteId) {
+            Plugin::info('You can’t choose “Disable missing elements in the target site” for feeds without a target site.');
             return;
         }
 
@@ -474,11 +486,12 @@ class Process extends Component
         if ($elementsToDeleteDisable) {
             if (DuplicateHelper::isDisable($feed)) {
                 $this->_service->disable($elementsToDeleteDisable);
-
                 $message = 'The following elements have been disabled: ' . json_encode($elementsToDeleteDisable) . '.';
+            } else if (DuplicateHelper::isDisableForSite($feed)) {
+                $this->_service->disableForSite($elementsToDeleteDisable, $feed->siteId);
+                $message = 'The following elements have been disabled for the target site: ' . json_encode($elementsToDeleteDisable) . '.';
             } else {
                 $this->_service->delete($elementsToDeleteDisable);
-
                 $message = 'The following elements have been deleted: ' . json_encode($elementsToDeleteDisable) . '.';
             }
 

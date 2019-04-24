@@ -6,6 +6,8 @@ use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
 use craft\base\Element as BaseElement;
+use craft\base\ElementInterface as CraftElementInterface;
+use craft\elements\db\ElementQuery;
 use craft\feedme\helpers\BaseHelper;
 use craft\feedme\helpers\DataHelper;
 use craft\feedme\helpers\DateHelper;
@@ -150,6 +152,28 @@ abstract class Element extends Component implements ElementInterface
             $element->enabled = false;
 
             $elementsService->saveElement($element);
+        }
+
+        return true;
+    }
+
+    public function disableForSite($elementIds)
+    {
+        /** @var CraftElementInterface|string $class */
+        $class = $this->getElementClass();
+
+        /** @var ElementQuery $query */
+        $query = $class::find()
+            ->id($elementIds)
+            ->siteId($this->feed->siteId)
+            ->anyStatus();
+
+        $elementsService = Craft::$app->getElements();
+
+        foreach ($query->each() as $element) {
+            /** @var BaseElement $element */
+            $element->enabledForSite = false;
+            $elementsService->saveElement($element, false, false);
         }
 
         return true;

@@ -7,6 +7,7 @@ class DuplicateHelper
     const Add = 'add';
     const Update = 'update';
     const Disable = 'disable';
+    const DisableForSite = 'disableForSite';
     const Delete = 'delete';
 
     // Public Methods
@@ -51,6 +52,11 @@ class DuplicateHelper
     public static function isDisable($feedData, $only = false)
     {
         return DuplicateHelper::contains($feedData['duplicateHandle'], DuplicateHelper::Disable, $only);
+    }
+
+    public static function isDisableForSite($feedData, $only = false)
+    {
+        return DuplicateHelper::contains($feedData['duplicateHandle'], DuplicateHelper::DisableForSite, $only);
     }
 
     public static function isDelete($feedData, $only = false)

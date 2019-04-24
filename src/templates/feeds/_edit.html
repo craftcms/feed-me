@@ -144,11 +144,25 @@
 
     {{ forms.checkboxField({
         name: 'duplicateHandle[]',
-        label: 'Disable missing elements'|t('feed-me'),
-        instructions: 'Disables any elements that are missing from the feed.'|t('feed-me'),
+        label: craft.app.isMultiSite
+            ? 'Disable missing elements globally'|t('feed-me')
+            : 'Disable missing elements'|t('feed-me'),
+        instructions: craft.app.isMultiSite
+            ? 'Disables any elements that are missing from the feed, across all sites.'|t('feed-me')
+            : 'Disables any elements that are missing from the feed.'|t('feed-me'),
         value: 'disable',
         checked: 'disable' in (feed.duplicateHandle ?? [])
     }) }}
+
+    {% if craft.app.isMultiSite %}
+        {{ forms.checkboxField({
+            name: 'duplicateHandle[]',
+            label: 'Disable missing elements in the target site'|t('feed-me'),
+            instructions: 'Disables any elements that are missing from the feed, in the feed’s target site only.'|t('feed-me'),
+            value: 'disableForSite',
+            checked: 'disableForSite' in (feed.duplicateHandle ?? [])
+        }) }}
+    {% endif %}
 
     {{ forms.checkboxField({
         name: 'duplicateHandle[]',

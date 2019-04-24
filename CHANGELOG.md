@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Added
+- Added the “Disable missing elements in the target site” Import Strategy option. ([#517](https://github.com/craftcms/feed-me/issues/517))
+
 ### Changed
 - Improved JSON feed parsing performance. ([#510](https://github.com/craftcms/feed-me/issues/510))
 
