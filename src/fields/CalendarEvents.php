@@ -35,7 +35,6 @@ class CalendarEvents extends Field implements FieldInterface
     {
         $value = $this->fetchArrayValue();
 
-        $settings = Hash::get($this->field, 'settings');
         $sources = Hash::get($this->field, 'settings.sources');
         $limit = Hash::get($this->field, 'settings.limit');
         $targetSiteId = Hash::get($this->field, 'settings.targetSiteId');
@@ -47,7 +46,7 @@ class CalendarEvents extends Field implements FieldInterface
 
         if (is_array($sources)) {
             foreach ($sources as $source) {
-                list($type, $uid) = explode(':', $source);
+                list(, $uid) = explode(':', $source);
                 $typeIds[] = $uid;
             }
         } else if ($sources === '*') {

@@ -97,7 +97,6 @@ class User extends Element
     public function afterSave($data, $settings)
     {
         $groupsIds = Hash::get($data, 'groups');
-        $profilePhoto = Hash::get($data, 'photo');
 
         // User status can't be set on the element anymore, only directly on the record.
         if ($this->status) {
@@ -149,7 +148,6 @@ class User extends Element
         $value = $this->fetchArrayValue($feedData, $fieldInfo);
 
         $newGroupsIds = [];
-        $groupIds = [];
 
         foreach ($value as $key => $dataValue) {
             if (is_numeric($dataValue)) {

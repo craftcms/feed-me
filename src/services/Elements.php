@@ -14,7 +14,6 @@ use craft\feedme\elements\Entry;
 use craft\feedme\elements\Tag;
 use craft\feedme\elements\User;
 use craft\feedme\events\RegisterFeedMeElementsEvent;
-use craft\feedme\Plugin;
 use craft\helpers\Component as ComponentHelper;
 
 class Elements extends Component

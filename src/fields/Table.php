@@ -52,7 +52,6 @@ class Table extends Field implements FieldInterface
                 $feedPath = preg_replace('/^(\d+\/)|(\/\d+)/', '', $feedPath);
 
                 $node = Hash::get($columnInfo, 'node');
-                $handle = Hash::get($columnInfo, 'handle');
                 $type = Hash::get($columnInfo, 'type');
 
                 if ($feedPath == $node || $nodePath == $node) {

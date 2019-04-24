@@ -105,8 +105,6 @@ class Matrix extends Field implements FieldInterface
         // otherwise, we get the field class processing all blocks in one go - not what we want.
         foreach ($complexFields as $key => $complexInfo) {
             $parts = explode('.', $key);
-            $blockIndex = $parts[0];
-            $blockHandle = $parts[1];
             $subFieldHandle = $parts[2];
 
             $subFieldInfo = Hash::get($complexInfo, 'info');

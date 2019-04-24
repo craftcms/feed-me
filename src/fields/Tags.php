@@ -37,7 +37,6 @@ class Tags extends Field implements FieldInterface
     {
         $value = $this->fetchArrayValue();
 
-        $settings = Hash::get($this->field, 'settings');
         $source = Hash::get($this->field, 'settings.source');
         $limit = Hash::get($this->field, 'settings.limit');
         $targetSiteId = Hash::get($this->field, 'settings.targetSiteId');
@@ -48,7 +47,7 @@ class Tags extends Field implements FieldInterface
         $node = Hash::get($this->fieldInfo, 'node');
 
         // Get tag group id
-        list($type, $groupUid) = explode(':', $source);
+        list(, $groupUid) = explode(':', $source);
         $groupId = Db::idByUid('{{%taggroups}}', $groupUid);
 
         $foundElements = [];

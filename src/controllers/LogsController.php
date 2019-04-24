@@ -27,7 +27,7 @@ class LogsController extends Controller
 
     public function actionClear()
     {
-        $logEntries = Plugin::$plugin->logs->clear();
+        Plugin::$plugin->logs->clear();
 
         return $this->redirect('feed-me/logs');
     }

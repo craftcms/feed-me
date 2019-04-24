@@ -149,10 +149,6 @@ class Process extends Component
 
     public function processFeed($step, $feed, &$processedElementIds)
     {
-        $existingElement = false;
-        $uniqueMatches = [];
-
-        $contentData = [];
         $attributeData = [];
         $fieldData = [];
 
@@ -538,7 +534,7 @@ class Process extends Component
         $feedSettings = $this->beforeProcessFeed($feed, $feedData);
 
         foreach ($feedData as $key => $data) {
-            $element = $this->processFeed($key, $feedSettings, $processedElementIds);
+            $this->processFeed($key, $feedSettings, $processedElementIds);
         }
 
         // Check if we need to paginate the feed to run again

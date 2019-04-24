@@ -117,8 +117,6 @@ class DataTypes extends Component
 
     public function getRawData($url, $feedId = null)
     {
-        $response = [];
-
         $event = new FeedDataEvent([
             'url' => $url,
         ]);

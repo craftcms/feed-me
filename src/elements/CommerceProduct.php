@@ -169,8 +169,6 @@ class CommerceProduct extends Element
             if (strpos($handle, 'variant-') !== false) {
                 $sku = null;
 
-                $attribute = str_replace('variant-', '', $handle);
-
                 $fieldInfo = Hash::get($feed, 'fieldMapping.variant-sku');
                 $node = Hash::get($fieldInfo, 'node');
 

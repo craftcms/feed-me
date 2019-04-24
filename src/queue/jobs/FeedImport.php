@@ -33,8 +33,6 @@ class FeedImport extends BaseJob implements RetryableJobInterface
 
     public function execute($queue)
     {
-        $errors = [];
-
         try {
             $feedData = $this->feed->getFeedData();
 
@@ -60,7 +58,7 @@ class FeedImport extends BaseJob implements RetryableJobInterface
 
             foreach ($feedData as $key => $data) {
                 try {
-                    $element = Plugin::$plugin->process->processFeed($index, $feedSettings, $this->processedElementIds);
+                    Plugin::$plugin->process->processFeed($index, $feedSettings, $this->processedElementIds);
                 } catch (\Throwable $e) {
                     // We want to catch any issues in each iteration of the loop (and log them), but this allows the
                     // rest of the feed to continue processing.

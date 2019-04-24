@@ -23,7 +23,6 @@ class Assets extends Field implements FieldInterface
     public static $name = 'Assets';
     public static $class = 'craft\fields\Assets';
     public static $elementType = 'craft\elements\Asset';
-    private $_uploadData = [];
 
 
     // Templates
@@ -58,7 +57,7 @@ class Assets extends Field implements FieldInterface
         if (!$folderIds) {
             if (is_array($folders)) {
                 foreach ($folders as $folder) {
-                    list($volume, $uid) = explode(':', $folder);
+                    list(, $uid) = explode(':', $folder);
                     $volumeId = Db::idByUid(Table::VOLUMES, $uid);
 
                     // Get all folders for this volume

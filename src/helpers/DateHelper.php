@@ -46,8 +46,6 @@ class DateHelper
             } elseif ($formatting === 'seconds') {
                 $date = Carbon::createFromTimestamp($value);
             } else {
-                $date = str_replace(['/', '.'], '-', $value);
-
                 if ($formatting === 'america') {
                     preg_match('/([0-9]{1,2})\/([0-9]{1,2})\/([0-9]{4})/', $value, $matches);
 
