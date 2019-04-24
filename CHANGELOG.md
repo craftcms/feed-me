@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 4.1.0 - 2019-04-24
 
 ### Added
 - Added the “Disable missing elements in the target site” Import Strategy option. ([#517](https://github.com/craftcms/feed-me/issues/517))
