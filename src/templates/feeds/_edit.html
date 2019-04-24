@@ -101,7 +101,7 @@
     {% endfor %}
 
     {% if craft.app.isMultiSite() %}
-        {% set sites = [{ label: 'All Sites' | t('feed-me'), value: '' }] %}
+        {% set sites = [{ label: 'Primary Site' | t('feed-me'), value: '' }] %}
 
         {% for site in craft.app.sites.getAllSites() %}
             {% set sites = sites | merge([{ label: site.name, value: site.id }]) %}
@@ -109,7 +109,7 @@
 
         {{ forms.selectField({
             label: "Sites" | t('feed-me'),
-            instructions: 'Choose which site you want to save your feed data to.' | t('feed-me'),
+            instructions: 'Choose which site you want to save your feed data to initially.' | t('feed-me'),
             id: 'siteId',
             name: 'siteId',
             options: sites,
