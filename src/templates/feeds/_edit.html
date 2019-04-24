@@ -2,6 +2,15 @@
 
 {% extends 'feed-me/_layouts' %}
 
+{% do view.registerTranslations('feed-me', [
+    'Suspend missing users',
+    'Suspends any users that are missing from the feed.',
+    'None',
+    'Processing complete!',
+    'Processing failed.',
+    'View logs',
+]) %}
+
 {% set crumbs = [
     { label: craft.feedme.getPluginName | t('feed-me'), url: url('feed-me') },
 ] %}
