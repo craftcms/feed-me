@@ -34,7 +34,7 @@ Select the [element type](../content-mapping/element-types.md) you wish to impor
 
 ### Sites
 
-If you're running _Craft Pro_, and have a Multi Site setup, you'll have an additional field to select which Site to import into. Only the selected Site will have content imported, leaving all others untouched.
+If you have a multi-site Craft installation, you'll have an additional field to select which site the elements should be initially saved in. The content will get propagated to your other sites from there, according to your fields’ Translation Method settings.
 
 ### Import Strategy
 
@@ -49,6 +49,7 @@ Attribute | Description
 `Create new elements` | Adds new elements if they do not already exist. If an element does exist, it simply skips over it, leaving it unchanged.
 `Update existing elements` | Updates elements that match the Unique Identifier (next step). If no existing element to update, it won't create it unless you select `Create new elements`.
 `Disable missing elements` | Disables elements that are not updated by this feed.
+`Disable missing elements in the target site` | Disables elements that are not updated by this feed, but only in the feed’s [target site](#sites).
 `Delete missing elements` | Deletes elements that are not updated by this feed. **Be careful when deleting**.
 
 ### Passkey
