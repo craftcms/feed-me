@@ -37,10 +37,6 @@ class Process extends Component
      */
     private $_service;
     /**
-     * @var FeedModel
-     */
-    private $_feed;
-    /**
      * @var array
      */
     private $_data;
@@ -77,7 +73,6 @@ class Process extends Component
         }
 
         $this->_data = $feedData;
-        $this->_feed = $feed;
         $this->_service = $feed->element;
 
         $return = $feed->attributes;
@@ -134,7 +129,7 @@ class Process extends Component
 
         // Fire an 'onBeforeProcessFeed' event
         $event = new FeedProcessEvent([
-            'feed' => $this->_feed,
+            'feed' => $feed,
             'feedData' => $this->_data,
         ]);
 
@@ -144,8 +139,7 @@ class Process extends Component
             return;
         }
 
-        // Allow event to modify variables
-        $this->_feed = $event->feed;
+        // Allow event to modify the feed data
         $this->_data = $event->feedData;
 
         Plugin::info('Finished preparing for feed processing.');
