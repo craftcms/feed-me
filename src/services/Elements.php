@@ -63,6 +63,7 @@ class Elements extends Component
         if (isset($this->_elements[$handle])) {
             return $this->_elements[$handle];
         }
+        return null;
     }
 
     public function elementsList()
