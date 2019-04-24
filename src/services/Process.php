@@ -33,7 +33,6 @@ class Process extends Component
 
     private $_service = null;
     private $_feed = null;
-    private $_criteria = null;
     private $_data = null;
 
 
