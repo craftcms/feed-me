@@ -118,7 +118,7 @@ class FeedMeVariable extends ServiceLocator
 
         if (is_array($field->sources)) {
             foreach ($field->sources as $source) {
-                list($type, $uid) = explode(':', $source);
+                list(, $uid) = explode(':', $source);
 
                 $sources[] = Craft::$app->volumes->getVolumeByUid($uid);
             }
@@ -135,7 +135,7 @@ class FeedMeVariable extends ServiceLocator
             return;
         }
 
-        list($type, $uid) = explode(':', $field->source);
+        list(, $uid) = explode(':', $field->source);
 
         return Craft::$app->categories->getGroupByUid($uid);
     }
@@ -157,7 +157,7 @@ class FeedMeVariable extends ServiceLocator
                         }
                     }
                 } else {
-                    list($type, $uid) = explode(':', $source);
+                    list(, $uid) = explode(':', $source);
 
                     $sources[] = Craft::$app->sections->getSectionByUid($uid);
                 }
@@ -175,7 +175,7 @@ class FeedMeVariable extends ServiceLocator
             return;
         }
 
-        list($type, $uid) = explode(':', $field->source);
+        list(, $uid) = explode(':', $field->source);
 
         return Craft::$app->tags->getTagGroupByUid($uid);
     }
@@ -255,6 +255,10 @@ class FeedMeVariable extends ServiceLocator
     public function fieldCanBeUniqueId($field)
     {
         $type = $field['type'] ?? 'attribute';
+
+        if (is_object($field)) {
+            $type = get_class($field);
+        }
 
         $supportedFields = [
             'craft\fields\Checkboxes',

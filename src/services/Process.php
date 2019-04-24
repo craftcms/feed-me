@@ -5,9 +5,11 @@ namespace craft\feedme\services;
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
+use craft\feedme\base\ElementInterface;
 use craft\feedme\events\FeedProcessEvent;
 use craft\feedme\helpers\DataHelper;
 use craft\feedme\helpers\DuplicateHelper;
+use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
 use craft\helpers\App;
 use craft\helpers\FileHelper;
@@ -29,17 +31,24 @@ class Process extends Component
     // Properties
     // =========================================================================
 
-    private $_time_start = null;
-
-    private $_service = null;
-    private $_feed = null;
-    private $_criteria = null;
-    private $_data = null;
+    private $_time_start;
+    /**
+     * @var ElementInterface
+     */
+    private $_service;
+    /**
+     * @var array
+     */
+    private $_data;
 
 
     // Public Methods
     // =========================================================================
 
+    /**
+     * @param FeedModel $feed
+     * @param array $feedData
+     */
     public function beforeProcessFeed($feed, $feedData)
     {
         Plugin::$feedName = $feed->name;
@@ -64,7 +73,6 @@ class Process extends Component
         }
 
         $this->_data = $feedData;
-        $this->_feed = $feed;
         $this->_service = $feed->element;
 
         $return = $feed->attributes;
@@ -104,9 +112,12 @@ class Process extends Component
 
         // If our duplication handling is to delete - we delete all elements
         // If our duplication handling is to disable - we disable all elements
-        if (DuplicateHelper::isDelete($feed) || DuplicateHelper::isDisable($feed)) {
+        if (
+            DuplicateHelper::isDelete($feed) ||
+            DuplicateHelper::isDisable($feed) ||
+            DuplicateHelper::isDisableForSite($feed))
+        {
             $query = $feed->element->getQuery($feed);
-
             $return['existingElements'] = $query->ids();
         }
 
@@ -121,7 +132,7 @@ class Process extends Component
 
         // Fire an 'onBeforeProcessFeed' event
         $event = new FeedProcessEvent([
-            'feed' => $this->_feed,
+            'feed' => $feed,
             'feedData' => $this->_data,
         ]);
 
@@ -131,8 +142,7 @@ class Process extends Component
             return;
         }
 
-        // Allow event to modify variables
-        $this->_feed = $event->feed;
+        // Allow event to modify the feed data
         $this->_data = $event->feedData;
 
         Plugin::info('Finished preparing for feed processing.');
@@ -142,10 +152,6 @@ class Process extends Component
 
     public function processFeed($step, $feed, &$processedElementIds)
     {
-        $existingElement = false;
-        $uniqueMatches = [];
-
-        $contentData = [];
         $attributeData = [];
         $fieldData = [];
 
@@ -281,7 +287,11 @@ class Process extends Component
         }
 
         // Are we only disabling/deleting only, we need to quit right here
-        if (DuplicateHelper::isDisable($feed, true) || DuplicateHelper::isDelete($feed, true)) {
+        if (
+            DuplicateHelper::isDisable($feed, true) ||
+            DuplicateHelper::isDisableForSite($feed, true) ||
+            DuplicateHelper::isDelete($feed, true)
+        ) {
             // If there's an existing element, we want to keep it, otherwise remove it
             if ($existingElement) {
                 $processedElementIds[] = $existingElement->id;
@@ -454,10 +464,20 @@ class Process extends Component
         }
     }
 
+    /**
+     * @param array $settings
+     * @param FeedModel $feed
+     * @param int[] $processedElementIds
+     */
     public function afterProcessFeed($settings, $feed, $processedElementIds)
     {
-        if (DuplicateHelper::isDelete($feed) && DuplicateHelper::isDisable($feed)) {
+        if ((int)DuplicateHelper::isDelete($feed) + (int)DuplicateHelper::isDisable($feed) + (int)DuplicateHelper::isDisableForSite($feed) > 1) {
             Plugin::info("You can't have Delete and Disabled enabled at the same time as an Import Strategy.");
+            return;
+        }
+
+        if (DuplicateHelper::isDisableForSite($feed) && !$feed->siteId) {
+            Plugin::info('You can’t choose “Disable missing elements in the target site” for feeds without a target site.');
             return;
         }
 
@@ -466,11 +486,12 @@ class Process extends Component
         if ($elementsToDeleteDisable) {
             if (DuplicateHelper::isDisable($feed)) {
                 $this->_service->disable($elementsToDeleteDisable);
-
                 $message = 'The following elements have been disabled: ' . json_encode($elementsToDeleteDisable) . '.';
+            } else if (DuplicateHelper::isDisableForSite($feed)) {
+                $this->_service->disableForSite($elementsToDeleteDisable, $feed->siteId);
+                $message = 'The following elements have been disabled for the target site: ' . json_encode($elementsToDeleteDisable) . '.';
             } else {
                 $this->_service->delete($elementsToDeleteDisable);
-
                 $message = 'The following elements have been deleted: ' . json_encode($elementsToDeleteDisable) . '.';
             }
 
@@ -496,6 +517,13 @@ class Process extends Component
         $this->trigger(self::EVENT_AFTER_PROCESS_FEED, $event);
     }
 
+    /**
+     * @param FeedModel $feed
+     * @param $limit
+     * @param $offset
+     * @param $processedElementIds
+     * @throws \Exception
+     */
     public function debugFeed($feed, $limit, $offset, $processedElementIds)
     {
         $feed->debug = true;
@@ -519,7 +547,7 @@ class Process extends Component
         $feedSettings = $this->beforeProcessFeed($feed, $feedData);
 
         foreach ($feedData as $key => $data) {
-            $element = $this->processFeed($key, $feedSettings, $processedElementIds);
+            $this->processFeed($key, $feedSettings, $processedElementIds);
         }
 
         // Check if we need to paginate the feed to run again

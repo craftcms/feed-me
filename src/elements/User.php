@@ -8,12 +8,11 @@ use craft\db\Query;
 use craft\elements\Asset as AssetElement;
 use craft\elements\User as UserElement;
 use craft\feedme\base\Element;
-use craft\feedme\base\ElementInterface;
 use craft\feedme\helpers\AssetHelper;
 use craft\helpers\UrlHelper;
 use craft\records\User as UserRecord;
 
-class User extends Element implements ElementInterface
+class User extends Element
 {
     // Properties
     // =========================================================================
@@ -63,20 +62,10 @@ class User extends Element implements ElementInterface
 
     public function getQuery($settings, $params = [])
     {
-        $query = UserElement::find();
-
-        $criteria = array_merge([
-            'status' => null,
-        ], $params);
-
-        $siteId = Hash::get($settings, 'siteId');
-
-        if ($siteId) {
-            $criteria['siteId'] = $siteId;
-        }
-
-        Craft::configure($query, $criteria);
-
+        $query = UserElement::find()
+            ->anyStatus()
+            ->siteId(Hash::get($settings, 'siteId'));
+        Craft::configure($query, $params);
         return $query;
     }
 
@@ -98,7 +87,6 @@ class User extends Element implements ElementInterface
     public function afterSave($data, $settings)
     {
         $groupsIds = Hash::get($data, 'groups');
-        $profilePhoto = Hash::get($data, 'photo');
 
         // User status can't be set on the element anymore, only directly on the record.
         if ($this->status) {
@@ -131,8 +119,6 @@ class User extends Element implements ElementInterface
 
     public function disable($elementIds)
     {
-        $elementsService = Craft::$app->getElements();
-
         foreach ($elementIds as $elementId) {
             // User status can't be set on the element anymore, only directly on the record.
             $record = UserRecord::findOne($elementId);
@@ -152,7 +138,6 @@ class User extends Element implements ElementInterface
         $value = $this->fetchArrayValue($feedData, $fieldInfo);
 
         $newGroupsIds = [];
-        $groupIds = [];
 
         foreach ($value as $key => $dataValue) {
             if (is_numeric($dataValue)) {

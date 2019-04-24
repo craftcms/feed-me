@@ -37,7 +37,6 @@ class Categories extends Field implements FieldInterface
     {
         $value = $this->fetchArrayValue();
 
-        $settings = Hash::get($this->field, 'settings');
         $source = Hash::get($this->field, 'settings.source');
         $branchLimit = Hash::get($this->field, 'settings.branchLimit');
         $targetSiteId = Hash::get($this->field, 'settings.targetSiteId');
@@ -48,7 +47,7 @@ class Categories extends Field implements FieldInterface
         $node = Hash::get($this->fieldInfo, 'node');
 
         // Get source id's for connecting
-        list($type, $groupUid) = explode(':', $source);
+        list(, $groupUid) = explode(':', $source);
         $groupId = Db::idByUid('{{%categorygroups}}', $groupUid);
 
         $foundElements = [];

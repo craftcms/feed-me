@@ -34,7 +34,6 @@ class AssetHelper
             return fclose($fp);
         } else {
             $chunksize = $chunkSize * (1024 * 1024);
-            $data = '';
             $bytesCount = 0;
             $handle = fopen($srcName, 'rb');
             $fp = fopen($dstName, 'w');
@@ -133,7 +132,7 @@ class AssetHelper
 
                 // Decode string and write to file.
                 $decodedImage = base64_decode($encodedString);
-                $result = FileHelper::writeToFile($fetchedImage, $decodedImage);
+                FileHelper::writeToFile($fetchedImage, $decodedImage);
 
                 // Get mime type and create file with proper file extension.
                 $mimeType = FileHelper::getMimeType($fetchedImage, null, false);
@@ -251,7 +250,6 @@ class AssetHelper
         // http://example.com/test?width=1280&cid=5049
         // http://example.com/test?width=1280&cid=5049&un=support%40gdomain.com
 
-        $filename = '';
         $extension = self::getRemoteUrlExtension($url);
 
         // PathInfo can't really deal with query strings, so remove it
@@ -277,8 +275,6 @@ class AssetHelper
 
     public static function getRemoteUrlExtension($url)
     {
-        $extension = '';
-
         $mimes = new MimeTypes;
 
         // PathInfo can't really deal with query strings, so remove it

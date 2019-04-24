@@ -7,7 +7,6 @@ use Carbon\Carbon;
 use Craft;
 use craft\elements\User as UserElement;
 use craft\feedme\base\Element;
-use craft\feedme\base\ElementInterface;
 use craft\feedme\events\FeedProcessEvent;
 use craft\feedme\Plugin;
 use craft\feedme\services\Process;
@@ -17,7 +16,7 @@ use Solspace\Calendar\Elements\Event as EventElement;
 use Solspace\Calendar\Library\DateHelper;
 use yii\base\Event;
 
-class CalenderEvent extends Element implements ElementInterface
+class CalenderEvent extends Element
 {
     // Properties
     // =========================================================================
@@ -72,21 +71,11 @@ class CalenderEvent extends Element implements ElementInterface
 
     public function getQuery($settings, $params = [])
     {
-        $query = EventElement::find();
-
-        $criteria = array_merge([
-            'status' => null,
-            'calendarId' => $settings['elementGroup'][EventElement::class],
-        ], $params);
-
-        $siteId = Hash::get($settings, 'siteId');
-
-        if ($siteId) {
-            $criteria['siteId'] = $siteId;
-        }
-
-        Craft::configure($query, $criteria);
-
+        $query = EventElement::find()
+            ->anyStatus()
+            ->setCalendarId($settings['elementGroup'][EventElement::class])
+            ->siteId(Hash::get($settings, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id);
+        Craft::configure($query, $params);
         return $query;
     }
 
@@ -153,9 +142,7 @@ class CalenderEvent extends Element implements ElementInterface
             $element->username = $value;
             $element->email = $value;
 
-            $propagate = isset($this->feed['siteId']) && $this->feed['siteId'] ? false : true;
-
-            if (!Craft::$app->getElements()->saveElement($element, true, $propagate)) {
+            if (!Craft::$app->getElements()->saveElement($element)) {
                 Plugin::error('Event error: Could not create author - `{e}`.', ['e' => json_encode($element->getErrors())]);
             } else {
                 Plugin::info('Author `#{id}` added.', ['id' => $element->id]);

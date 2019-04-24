@@ -3,10 +3,10 @@
 namespace craft\feedme\web\twig;
 
 use Cake\Utility\Hash;
-use Twig_Extension;
-use Twig_SimpleFunction;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
-class Extension extends Twig_Extension
+class Extension extends AbstractExtension
 {
     // Public Methods
     // =========================================================================
@@ -19,7 +19,7 @@ class Extension extends Twig_Extension
     public function getFunctions(): array
     {
         return [
-            new Twig_SimpleFunction('hash_get', [$this, 'hashGet']),
+            new TwigFunction('hash_get', [$this, 'hashGet']),
         ];
     }
 

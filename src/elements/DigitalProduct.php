@@ -7,9 +7,8 @@ use Craft;
 use craft\digitalproducts\elements\Product as ProductElement;
 use craft\digitalproducts\Plugin as DigitalProducts;
 use craft\feedme\base\Element;
-use craft\feedme\base\ElementInterface;
 
-class DigitalProduct extends Element implements ElementInterface
+class DigitalProduct extends Element
 {
     // Properties
     // =========================================================================
@@ -51,21 +50,11 @@ class DigitalProduct extends Element implements ElementInterface
 
     public function getQuery($settings, $params = [])
     {
-        $query = ProductElement::find();
-
-        $criteria = array_merge([
-            'status' => null,
-            'typeId' => $settings['elementGroup'][ProductElement::class],
-        ], $params);
-
-        $siteId = Hash::get($settings, 'siteId');
-
-        if ($siteId) {
-            $criteria['siteId'] = $siteId;
-        }
-
-        Craft::configure($query, $criteria);
-
+        $query = ProductElement::find()
+            ->anyStatus()
+            ->typeId($settings['elementGroup'][ProductElement::class])
+            ->siteId(Hash::get($settings, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id);
+        Craft::configure($query, $params);
         return $query;
     }
 

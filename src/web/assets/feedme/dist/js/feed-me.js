@@ -1,4 +1,4 @@
-/*!   - 2019-04-08 */
+/*!   - 2019-04-24 */
 (function($){
 
 /**
@@ -3694,6 +3694,12 @@ $(function() {
         $settingsRow.toggle();
     });
 
+    // Change the import strategy for Users
+    var $disableLabel = $('input[name="duplicateHandle[]"][value="disable"]').next('label');
+    var originalDisableLabel = $disableLabel.text();
+    var $disableInstructions = $disableLabel.siblings('.instructions');
+    var originalDisableInstructions = $disableInstructions.text();
+
     // Toggle various field when changing element type
     $(document).on('change', '#elementType', function() {
         $('.element-select').hide();
@@ -3701,15 +3707,13 @@ $(function() {
         var value = $(this).val().replace(/\\/g, '-');
         $('.element-select[data-type="' + value + '"]').show();
 
-        // Change the import strategy for Users
-        var $duplicateHandle = $('[name="duplicateHandle"]').parent().find('.checkbox-group');
-
         if (value === 'craft-elements-User') {
-            $duplicateHandle.find(':nth-child(3) label').html(Craft.t('feed-me', 'Suspend missing users'));
+            $disableLabel.text(Craft.t('feed-me', 'Suspend missing users'));
+            $disableInstructions.text(Craft.t('feed-me', 'Suspends any users that are missing from the feed.'));
         } else {
-            $duplicateHandle.find(':nth-child(3) label').html(Craft.t('feed-me', 'Disable missing elements'));
+            $disableLabel.text(originalDisableLabel);
+            $disableInstructions.text(originalDisableInstructions);
         }
-        console.log(value)
     });
 
     $('#elementType').trigger('change');
@@ -3984,7 +3988,12 @@ Craft.FeedMe.TaskProgress.Task = Garnish.Base.extend({
     },
 
     fail: function() {
-        this.$statusContainer.html('<div class="error">' + Craft.t('feed-me', 'Processing failed. <a class="go" href="' + Craft.getUrl('feed-me/logs') + '">View logs</a>') + '</div>');
+        this.$statusContainer.html(
+            '<div class="error">' +
+            Craft.t('feed-me', 'Processing failed.') + ' ' +
+            '<a class="go" href="' + Craft.getUrl('feed-me/logs') + '">' + Craft.t('feed-me', 'View logs') + '</a>' +
+            '</div>'
+        );
     },
 
 });

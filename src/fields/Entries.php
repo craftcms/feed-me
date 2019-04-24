@@ -37,7 +37,6 @@ class Entries extends Field implements FieldInterface
     {
         $value = $this->fetchArrayValue();
 
-        $settings = Hash::get($this->field, 'settings');
         $sources = Hash::get($this->field, 'settings.sources');
         $limit = Hash::get($this->field, 'settings.limit');
         $targetSiteId = Hash::get($this->field, 'settings.targetSiteId');
@@ -57,7 +56,7 @@ class Entries extends Field implements FieldInterface
                         $sectionIds[] = ($section->type == 'single') ? $section->id : '';
                     }
                 } else {
-                    list($type, $uid) = explode(':', $source);
+                    list(, $uid) = explode(':', $source);
                     $sectionIds[] = Db::idByUid('{{%sections}}', $uid);
                 }
             }

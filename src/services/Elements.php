@@ -2,7 +2,9 @@
 
 namespace craft\feedme\services;
 
+use Craft;
 use craft\base\Component;
+use craft\errors\MissingComponentException;
 use craft\feedme\base\ElementInterface;
 use craft\feedme\elements\Asset;
 use craft\feedme\elements\CalenderEvent;
@@ -14,8 +16,8 @@ use craft\feedme\elements\Entry;
 use craft\feedme\elements\Tag;
 use craft\feedme\elements\User;
 use craft\feedme\events\RegisterFeedMeElementsEvent;
-use craft\feedme\Plugin;
 use craft\helpers\Component as ComponentHelper;
+use yii\base\InvalidConfigException;
 
 class Elements extends Component
 {
@@ -28,6 +30,9 @@ class Elements extends Component
     // Properties
     // =========================================================================
 
+    /**
+     * @var ElementInterface[]
+     */
     private $_elements = [];
 
 
@@ -38,25 +43,37 @@ class Elements extends Component
     {
         parent::init();
 
+        $pluginsService = Craft::$app->getPlugins();
+
         foreach ($this->getRegisteredElements() as $elementClass) {
             $element = $this->createElement($elementClass);
 
             // Does this element exist in Craft right now?
-            if (!class_exists($element::$class)) {
+            $class = $element->getElementClass();
+            if (!class_exists($class)) {
                 continue;
             }
 
-            $handle = $element::$class;
+            // If it belongs to a plugin, is the plugin enabled?
+            $pluginHandle = $pluginsService->getPluginHandleByClass($class);
+            if ($pluginHandle !== null && !$pluginsService->isPluginEnabled($pluginHandle)) {
+                continue;
+            }
 
-            $this->_elements[$handle] = $element;
+            $this->_elements[$class] = $element;
         }
     }
 
+    /**
+     * @param string $handle
+     * @return ElementInterface|null
+     */
     public function getRegisteredElement($handle)
     {
         if (isset($this->_elements[$handle])) {
             return $this->_elements[$handle];
         }
+        return null;
     }
 
     public function elementsList()
@@ -100,22 +117,18 @@ class Elements extends Component
         return $event->elements;
     }
 
+    /**
+     * @param $config
+     * @return ElementInterface
+     * @throws MissingComponentException
+     * @throws InvalidConfigException
+     */
     public function createElement($config)
     {
         if (is_string($config)) {
             $config = ['type' => $config];
         }
 
-        try {
-            $element = ComponentHelper::createComponent($config, ElementInterface::class);
-        } catch (MissingComponentException $e) {
-            $config['errorMessage'] = $e->getMessage();
-            $config['expectedType'] = $config['type'];
-            unset($config['type']);
-
-            $element = new MissingDataType($config);
-        }
-
-        return $element;
+        return ComponentHelper::createComponent($config, ElementInterface::class);
     }
 }

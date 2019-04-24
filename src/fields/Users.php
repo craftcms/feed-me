@@ -37,7 +37,6 @@ class Users extends Field implements FieldInterface
     {
         $value = $this->fetchArrayValue();
 
-        $settings = Hash::get($this->field, 'settings');
         $sources = Hash::get($this->field, 'settings.sources');
         $limit = Hash::get($this->field, 'settings.limit');
         $match = Hash::get($this->fieldInfo, 'options.match', 'email');
@@ -50,7 +49,7 @@ class Users extends Field implements FieldInterface
 
         if (is_array($sources)) {
             foreach ($sources as $source) {
-                list($type, $uid) = explode(':', $source);
+                list(, $uid) = explode(':', $source);
                 $groupIds[] = Db::idByUid('{{%usergroups}}', $uid);
             }
         } else if ($sources === '*') {

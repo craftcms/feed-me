@@ -6,13 +6,16 @@ use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
 use craft\base\Element as BaseElement;
+use craft\base\ElementInterface as CraftElementInterface;
+use craft\elements\db\ElementQuery;
 use craft\feedme\helpers\BaseHelper;
 use craft\feedme\helpers\DataHelper;
 use craft\feedme\helpers\DateHelper;
+use craft\feedme\models\FeedModel;
 use craft\helpers\Db;
 use craft\helpers\StringHelper;
 
-abstract class Element extends Component
+abstract class Element extends Component implements ElementInterface
 {
     // Constants
     // =========================================================================
@@ -24,6 +27,10 @@ abstract class Element extends Component
     // Properties
     // =========================================================================
 
+
+    /**
+     * @var FeedModel
+     */
     public $feed;
 
 
@@ -126,10 +133,12 @@ abstract class Element extends Component
 
     public function delete($elementIds)
     {
+        /** @var CraftElementInterface|string $class */
+        $class = $this->getElementClass();
         $elementsService = Craft::$app->getElements();
 
         foreach ($elementIds as $elementId) {
-            $elementsService->deleteElementById($elementId);
+            $elementsService->deleteElementById($elementId, $class);
         }
 
         return true;
@@ -137,13 +146,37 @@ abstract class Element extends Component
 
     public function disable($elementIds)
     {
+        /** @var CraftElementInterface|string $class */
+        $class = $this->getElementClass();
         $elementsService = Craft::$app->getElements();
 
         foreach ($elementIds as $elementId) {
-            $element = $elementsService->getElementById($elementId);
+            /** @var BaseElement $element */
+            $element = $elementsService->getElementById($elementId, $class);
             $element->enabled = false;
-
             $elementsService->saveElement($element);
+        }
+
+        return true;
+    }
+
+    public function disableForSite($elementIds)
+    {
+        /** @var CraftElementInterface|string $class */
+        $class = $this->getElementClass();
+
+        /** @var ElementQuery $query */
+        $query = $class::find()
+            ->id($elementIds)
+            ->siteId($this->feed->siteId)
+            ->anyStatus();
+
+        $elementsService = Craft::$app->getElements();
+
+        foreach ($query->each() as $element) {
+            /** @var BaseElement $element */
+            $element->enabledForSite = false;
+            $elementsService->saveElement($element, false, false);
         }
 
         return true;

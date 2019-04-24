@@ -6,7 +6,6 @@ use Cake\Utility\Hash;
 use Craft;
 use craft\elements\Asset as AssetElement;
 use craft\feedme\base\Element;
-use craft\feedme\base\ElementInterface;
 use craft\feedme\events\FeedProcessEvent;
 use craft\feedme\helpers\AssetHelper;
 use craft\feedme\helpers\DuplicateHelper;
@@ -16,7 +15,7 @@ use craft\helpers\UrlHelper;
 use craft\models\VolumeFolder;
 use yii\base\Event;
 
-class Asset extends Element implements ElementInterface
+class Asset extends Element
 {
     // Properties
     // =========================================================================
@@ -65,22 +64,12 @@ class Asset extends Element implements ElementInterface
 
     public function getQuery($settings, $params = [])
     {
-        $query = AssetElement::find();
-
-        $criteria = array_merge([
-            'status' => null,
-            'volumeId' => $settings['elementGroup'][AssetElement::class],
-            'includeSubfolders' => true,
-        ], $params);
-
-        $siteId = Hash::get($settings, 'siteId');
-
-        if ($siteId) {
-            $criteria['siteId'] = $siteId;
-        }
-
-        Craft::configure($query, $criteria);
-
+        $query = AssetElement::find()
+            ->anyStatus()
+            ->volumeId($settings['elementGroup'][AssetElement::class])
+            ->includeSubfolders()
+            ->siteId(Hash::get($settings, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id);
+        Craft::configure($query, $params);
         return $query;
     }
 

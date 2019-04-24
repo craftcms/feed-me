@@ -48,7 +48,6 @@ class Fields extends Component
     // =========================================================================
 
     private $_fields = [];
-    private $_fieldsByHandle = [];
 
 
     // Public Methods
@@ -57,11 +56,6 @@ class Fields extends Component
     public function init()
     {
         parent::init();
-
-        // Load all fieldtypes once, used for later
-        // foreach (Craft::$app->fields->getAllFields() as $field) {
-        //     $this->_fieldsByHandle[$field->handle][] = $field;
-        // }
 
         foreach ($this->getRegisteredFields() as $fieldClass) {
             $field = $this->createField($fieldClass);

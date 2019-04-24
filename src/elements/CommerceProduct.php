@@ -9,7 +9,6 @@ use craft\commerce\elements\Variant as VariantElement;
 use craft\commerce\Plugin as Commerce;
 use craft\db\Query;
 use craft\feedme\base\Element;
-use craft\feedme\base\ElementInterface;
 use craft\feedme\events\FeedProcessEvent;
 use craft\feedme\helpers\BaseHelper;
 use craft\feedme\helpers\DataHelper;
@@ -17,7 +16,7 @@ use craft\feedme\Plugin;
 use craft\feedme\services\Process;
 use yii\base\Event;
 
-class CommerceProduct extends Element implements ElementInterface
+class CommerceProduct extends Element
 {
     // Properties
     // =========================================================================
@@ -76,21 +75,11 @@ class CommerceProduct extends Element implements ElementInterface
 
     public function getQuery($settings, $params = [])
     {
-        $query = ProductElement::find();
-
-        $criteria = array_merge([
-            'status' => null,
-            'typeId' => $settings['elementGroup'][ProductElement::class],
-        ], $params);
-
-        $siteId = Hash::get($settings, 'siteId');
-
-        if ($siteId) {
-            $criteria['siteId'] = $siteId;
-        }
-
-        Craft::configure($query, $criteria);
-
+        $query = ProductElement::find()
+            ->anyStatus()
+            ->typeId($settings['elementGroup'][ProductElement::class])
+            ->siteId(Hash::get($settings, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id);
+        Craft::configure($query, $params);
         return $query;
     }
 
@@ -112,9 +101,7 @@ class CommerceProduct extends Element implements ElementInterface
     {
         $this->beforeSave($element, $settings);
 
-        $propagate = isset($settings['siteId']) && $settings['siteId'] ? false : true;
-
-        if (!Craft::$app->getElements()->saveElement($this->element, true, $propagate)) {
+        if (!Craft::$app->getElements()->saveElement($this->element)) {
             $errors = [$this->element->getErrors()];
 
             if ($this->element->getErrors()) {
@@ -171,8 +158,6 @@ class CommerceProduct extends Element implements ElementInterface
         foreach ($contentData as $handle => $value) {
             if (strpos($handle, 'variant-') !== false) {
                 $sku = null;
-
-                $attribute = str_replace('variant-', '', $handle);
 
                 $fieldInfo = Hash::get($feed, 'fieldMapping.variant-sku');
                 $node = Hash::get($fieldInfo, 'node');

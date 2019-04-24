@@ -7,11 +7,10 @@ use Craft;
 use craft\elements\Entry as EntryElement;
 use craft\elements\User as UserElement;
 use craft\feedme\base\Element;
-use craft\feedme\base\ElementInterface;
 use craft\feedme\Plugin;
 use craft\models\Section;
 
-class Entry extends Element implements ElementInterface
+class Entry extends Element
 {
     // Properties
     // =========================================================================
@@ -62,22 +61,12 @@ class Entry extends Element implements ElementInterface
 
     public function getQuery($settings, $params = [])
     {
-        $query = EntryElement::find();
-
-        $criteria = array_merge([
-            'status' => null,
-            'sectionId' => $settings['elementGroup'][EntryElement::class]['section'],
-            'typeId' => $settings['elementGroup'][EntryElement::class]['entryType'],
-        ], $params);
-
-        $siteId = Hash::get($settings, 'siteId');
-
-        if ($siteId) {
-            $criteria['siteId'] = $siteId;
-        }
-
-        Craft::configure($query, $criteria);
-
+        $query = EntryElement::find()
+            ->anyStatus()
+            ->sectionId($settings['elementGroup'][EntryElement::class]['section'])
+            ->typeId($settings['elementGroup'][EntryElement::class]['entryType'])
+            ->siteId(Hash::get($settings, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id);
+        Craft::configure($query, $params);
         return $query;
     }
 
@@ -169,9 +158,7 @@ class Entry extends Element implements ElementInterface
             $element->sectionId = $this->element->sectionId;
             $element->typeId = $this->element->typeId;
 
-            $propagate = isset($this->feed['siteId']) && $this->feed['siteId'] ? false : true;
-
-            if (!Craft::$app->getElements()->saveElement($element, true, $propagate)) {
+            if (!Craft::$app->getElements()->saveElement($element)) {
                 Plugin::error('Entry error: Could not create parent - `{e}`.', ['e' => json_encode($element->getErrors())]);
             } else {
                 Plugin::info('Entry `#{id}` added.', ['id' => $element->id]);
@@ -217,9 +204,7 @@ class Entry extends Element implements ElementInterface
             $element->username = $value;
             $element->email = $value;
 
-            $propagate = isset($this->feed['siteId']) && $this->feed['siteId'] ? false : true;
-
-            if (!Craft::$app->getElements()->saveElement($element, true, $propagate)) {
+            if (!Craft::$app->getElements()->saveElement($element)) {
                 Plugin::error('Entry error: Could not create author - `{e}`.', ['e' => json_encode($element->getErrors())]);
             } else {
                 Plugin::info('Author `#{id}` added.', ['id' => $element->id]);

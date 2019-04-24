@@ -6,10 +6,9 @@ use Cake\Utility\Hash;
 use Craft;
 use craft\elements\Category as CategoryElement;
 use craft\feedme\base\Element;
-use craft\feedme\base\ElementInterface;
 use craft\feedme\Plugin;
 
-class Category extends Element implements ElementInterface
+class Category extends Element
 {
     // Properties
     // =========================================================================
@@ -49,21 +48,11 @@ class Category extends Element implements ElementInterface
 
     public function getQuery($settings, $params = [])
     {
-        $query = CategoryElement::find();
-
-        $criteria = array_merge([
-            'status' => null,
-            'groupId' => $settings['elementGroup'][CategoryElement::class],
-        ], $params);
-
-        $siteId = Hash::get($settings, 'siteId');
-
-        if ($siteId) {
-            $criteria['siteId'] = $siteId;
-        }
-
-        Craft::configure($query, $criteria);
-
+        $query = CategoryElement::find()
+            ->anyStatus()
+            ->groupId($settings['elementGroup'][CategoryElement::class])
+            ->siteId(Hash::get($settings, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id);
+        Craft::configure($query, $params);
         return $query;
     }
 
@@ -127,9 +116,7 @@ class Category extends Element implements ElementInterface
             $element->title = $value;
             $element->groupId = $this->element->groupId;
 
-            $propagate = isset($this->feed['siteId']) && $this->feed['siteId'] ? false : true;
-
-            if (!Craft::$app->getElements()->saveElement($element, true, $propagate)) {
+            if (!Craft::$app->getElements()->saveElement($element)) {
                 Plugin::error('Category error: Could not create parent - `{e}`.', ['e' => json_encode($element->getErrors())]);
             } else {
                 Plugin::info('Category `#{id}` added.', ['id' => $element->id]);

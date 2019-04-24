@@ -7,12 +7,11 @@ use Craft;
 use craft\db\Query;
 use craft\elements\User as UserElement;
 use craft\feedme\base\Element;
-use craft\feedme\base\ElementInterface;
 use craft\feedme\Plugin;
 use verbb\comments\Comments;
 use verbb\comments\elements\Comment as CommentElement;
 
-class Comment extends Element implements ElementInterface
+class Comment extends Element
 {
     // Properties
     // =========================================================================
@@ -52,20 +51,10 @@ class Comment extends Element implements ElementInterface
 
     public function getQuery($settings, $params = [])
     {
-        $query = CommentElement::find();
-
-        $criteria = array_merge([
-            'status' => null,
-        ], $params);
-
-        $siteId = Hash::get($settings, 'siteId');
-
-        if ($siteId) {
-            $criteria['siteId'] = $siteId;
-        }
-
-        Craft::configure($query, $criteria);
-
+        $query = CommentElement::find()
+            ->anyStatus()
+            ->siteId(Hash::get($settings, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id);
+        Craft::configure($query, $params);
         return $query;
     }
 
@@ -176,9 +165,7 @@ class Comment extends Element implements ElementInterface
             $element->username = $value;
             $element->email = $value;
 
-            $propagate = isset($this->feed['siteId']) && $this->feed['siteId'] ? false : true;
-
-            if (!Craft::$app->getElements()->saveElement($element, true, $propagate)) {
+            if (!Craft::$app->getElements()->saveElement($element)) {
                 Plugin::error('Comment error: Could not create author - `{e}`.', ['e' => json_encode($element->getErrors())]);
             } else {
                 Plugin::info('Author `#{id}` added.', ['id' => $element->id]);

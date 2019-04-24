@@ -6,9 +6,8 @@ use Cake\Utility\Hash;
 use Craft;
 use craft\commerce\elements\Order as OrderElement;
 use craft\feedme\base\Element;
-use craft\feedme\base\ElementInterface;
 
-class CommerceOrder extends Element implements ElementInterface
+class CommerceOrder extends Element
 {
     // Properties
     // =========================================================================
@@ -48,18 +47,10 @@ class CommerceOrder extends Element implements ElementInterface
 
     public function getQuery($settings, $params = [])
     {
-        $query = OrderElement::find();
-
-        $criteria = array_merge([], $params);
-
-        $siteId = Hash::get($settings, 'siteId');
-
-        if ($siteId) {
-            $criteria['siteId'] = $siteId;
-        }
-
-        Craft::configure($query, $criteria);
-
+        $query = OrderElement::find()
+            ->anyStatus()
+            ->siteId(Hash::get($settings, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id);
+        Craft::configure($query, $params);
         return $query;
     }
 

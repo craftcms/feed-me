@@ -9,6 +9,11 @@ interface ElementInterface extends ComponentInterface
     // Public Methods
     // =========================================================================
 
+    /**
+     * @return string
+     */
+    public function getElementClass();
+
     public function getGroupsTemplate();
 
     public function getColumnTemplate();
@@ -26,6 +31,11 @@ interface ElementInterface extends ComponentInterface
     public function delete($elementIds);
 
     public function disable($elementIds);
+
+    /**
+     * @var int[] $elementIds
+     */
+    public function disableForSite($elementIds);
 
     public function save($data, $settings);
 

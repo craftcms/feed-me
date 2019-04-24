@@ -102,7 +102,6 @@ class SuperTable extends Field implements FieldInterface
         // otherwise, we get the field class processing all blocks in one go - not what we want.
         foreach ($complexFields as $key => $complexInfo) {
             $parts = explode('.', $key);
-            $blockIndex = $parts[0];
             $subFieldHandle = $parts[1];
 
             $subFieldInfo = Hash::get($complexInfo, 'info');
