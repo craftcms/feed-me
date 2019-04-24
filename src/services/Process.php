@@ -5,9 +5,11 @@ namespace craft\feedme\services;
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
+use craft\feedme\base\ElementInterface;
 use craft\feedme\events\FeedProcessEvent;
 use craft\feedme\helpers\DataHelper;
 use craft\feedme\helpers\DuplicateHelper;
+use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
 use craft\helpers\App;
 use craft\helpers\FileHelper;
@@ -29,16 +31,28 @@ class Process extends Component
     // Properties
     // =========================================================================
 
-    private $_time_start = null;
-
-    private $_service = null;
-    private $_feed = null;
-    private $_data = null;
+    private $_time_start;
+    /**
+     * @var ElementInterface
+     */
+    private $_service;
+    /**
+     * @var FeedModel
+     */
+    private $_feed;
+    /**
+     * @var array
+     */
+    private $_data;
 
 
     // Public Methods
     // =========================================================================
 
+    /**
+     * @param FeedModel $feed
+     * @param array $feedData
+     */
     public function beforeProcessFeed($feed, $feedData)
     {
         Plugin::$feedName = $feed->name;
@@ -453,6 +467,11 @@ class Process extends Component
         }
     }
 
+    /**
+     * @param array $settings
+     * @param FeedModel $feed
+     * @param int[] $processedElementIds
+     */
     public function afterProcessFeed($settings, $feed, $processedElementIds)
     {
         if (DuplicateHelper::isDelete($feed) && DuplicateHelper::isDisable($feed)) {
@@ -495,6 +514,13 @@ class Process extends Component
         $this->trigger(self::EVENT_AFTER_PROCESS_FEED, $event);
     }
 
+    /**
+     * @param FeedModel $feed
+     * @param $limit
+     * @param $offset
+     * @param $processedElementIds
+     * @throws \Exception
+     */
     public function debugFeed($feed, $limit, $offset, $processedElementIds)
     {
         $feed->debug = true;

@@ -17,6 +17,9 @@ trait PluginTrait
     // Static Properties
     // =========================================================================
 
+    /**
+     * @var Plugin
+     */
     public static $plugin;
 
     // Keeping state for logging
@@ -54,36 +57,57 @@ trait PluginTrait
     // Public Methods
     // =========================================================================
 
+    /**
+     * @return DataTypes
+     */
     public function getData()
     {
         return $this->get('data');
     }
 
+    /**
+     * @return Elements
+     */
     public function getElements()
     {
         return $this->get('elements');
     }
 
+    /**
+     * @return Feeds
+     */
     public function getFeeds()
     {
         return $this->get('feeds');
     }
 
+    /**
+     * @return Fields
+     */
     public function getFields()
     {
         return $this->get('fields');
     }
 
+    /**
+     * @return Logs
+     */
     public function getLogs()
     {
         return $this->get('logs');
     }
 
+    /**
+     * @return Process
+     */
     public function getProcess()
     {
         return $this->get('process');
     }
 
+    /**
+     * @return Service
+     */
     public function getService()
     {
         return $this->get('service');

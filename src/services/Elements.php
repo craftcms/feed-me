@@ -28,6 +28,9 @@ class Elements extends Component
     // Properties
     // =========================================================================
 
+    /**
+     * @var ElementInterface[]
+     */
     private $_elements = [];
 
 
@@ -52,6 +55,10 @@ class Elements extends Component
         }
     }
 
+    /**
+     * @param string $handle
+     * @return ElementInterface|null
+     */
     public function getRegisteredElement($handle)
     {
         if (isset($this->_elements[$handle])) {

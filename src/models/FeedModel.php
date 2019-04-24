@@ -4,9 +4,16 @@ namespace craft\feedme\models;
 
 use Cake\Utility\Hash;
 use craft\base\Model;
+use craft\feedme\base\Element;
+use craft\feedme\base\ElementInterface;
 use craft\feedme\helpers\DuplicateHelper;
 use craft\feedme\Plugin;
 
+/**
+ * Class FeedModel
+ *
+ * @property-read ElementInterface|Element|null $element
+ */
 class FeedModel extends Model
 {
     // Properties
@@ -54,11 +61,15 @@ class FeedModel extends Model
         return Plugin::$plugin->data->getRegisteredDataType($this->feedType);
     }
 
+    /**
+     * @return ElementInterface|null
+     */
     public function getElement()
     {
         $element = Plugin::$plugin->elements->getRegisteredElement($this->elementType);
 
         if ($element) {
+            /** @var Element $element */
             $element->feed = $this;
         }
 

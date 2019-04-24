@@ -9,6 +9,7 @@ use craft\base\Element as BaseElement;
 use craft\feedme\helpers\BaseHelper;
 use craft\feedme\helpers\DataHelper;
 use craft\feedme\helpers\DateHelper;
+use craft\feedme\models\FeedModel;
 use craft\helpers\Db;
 use craft\helpers\StringHelper;
 
@@ -24,6 +25,10 @@ abstract class Element extends Component implements ElementInterface
     // Properties
     // =========================================================================
 
+
+    /**
+     * @var FeedModel
+     */
     public $feed;
 
 
