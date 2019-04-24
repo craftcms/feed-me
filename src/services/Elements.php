@@ -3,6 +3,7 @@
 namespace craft\feedme\services;
 
 use craft\base\Component;
+use craft\errors\MissingComponentException;
 use craft\feedme\base\ElementInterface;
 use craft\feedme\elements\Asset;
 use craft\feedme\elements\CalenderEvent;
@@ -15,6 +16,7 @@ use craft\feedme\elements\Tag;
 use craft\feedme\elements\User;
 use craft\feedme\events\RegisterFeedMeElementsEvent;
 use craft\helpers\Component as ComponentHelper;
+use yii\base\InvalidConfigException;
 
 class Elements extends Component
 {
@@ -107,22 +109,18 @@ class Elements extends Component
         return $event->elements;
     }
 
+    /**
+     * @param $config
+     * @return ElementInterface
+     * @throws MissingComponentException
+     * @throws InvalidConfigException
+     */
     public function createElement($config)
     {
         if (is_string($config)) {
             $config = ['type' => $config];
         }
 
-        try {
-            $element = ComponentHelper::createComponent($config, ElementInterface::class);
-        } catch (MissingComponentException $e) {
-            $config['errorMessage'] = $e->getMessage();
-            $config['expectedType'] = $config['type'];
-            unset($config['type']);
-
-            $element = new MissingDataType($config);
-        }
-
-        return $element;
+        return ComponentHelper::createComponent($config, ElementInterface::class);
     }
 }
