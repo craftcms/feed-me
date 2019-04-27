@@ -18,7 +18,7 @@ Event::on(Feeds::class, Feeds::EVENT_BEFORE_SAVE_FEED, function(FeedEvent $event
 });
 ```
 
-### The `beforeSaveFeed` event
+### The `afterSaveFeed` event
 
 Plugins can get notified after a feed has been saved (through the control panel).
 
