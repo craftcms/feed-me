@@ -53,7 +53,7 @@
         required: true,
     }) }}
 
-    {{ forms.textField({
+    {{ forms.autosuggestField({
         label: "Feed URL" | t('feed-me'),
         instructions: "Can be a file on the local file system or from a website url (http://...)." | t('feed-me'),
         id: 'feedUrl',
@@ -61,6 +61,8 @@
         value: feed.feedUrl,
         errors: feed.getErrors('feedUrl'),
         required: true,
+        suggestEnvVars: true,
+        suggestAliases: true,
     }) }}
 
     {{ forms.selectField({

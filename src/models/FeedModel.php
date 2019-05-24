@@ -3,6 +3,7 @@
 namespace craft\feedme\models;
 
 use Cake\Utility\Hash;
+use Craft;
 use craft\base\Model;
 use craft\feedme\base\Element;
 use craft\feedme\base\ElementInterface;
@@ -49,6 +50,11 @@ class FeedModel extends Model
     public function __toString()
     {
         return Craft::t('feed-me', $this->name);
+    }
+
+    public function getFeedUrl(): string
+    {
+        return Craft::parseEnv($this->feedUrl);
     }
 
     public function getDuplicateHandleFriendly()

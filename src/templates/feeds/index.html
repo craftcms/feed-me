@@ -37,16 +37,16 @@
                         <a href="{{ url('feed-me/feeds/' ~ feed.id) }}">{{ feed.name | t('feed-me') }}</a>
 
                         <span class="index-url">
-                            {% if feed.feedUrl | length > 40 %}
-                                {{ feed.feedUrl | slice(0, 40) }}&hellip;
+                            {% if feed.getFeedUrl() | length > 40 %}
+                                {{ feed.getFeedUrl() | slice(0, 40) }}&hellip;
                             {% else %}
-                                {{ feed.feedUrl }}
+                                {{ feed.getFeedUrl() }}
                             {% endif %}
                         </span>
                     </th>
 
                     <td>{{ feed.dataType.name ?? 'Unknown datatype' }}</td>
-                      
+
                     <td>
                         {% if feed.element %}
                             {{ feed.element.name }}
@@ -64,7 +64,7 @@
                     </td>
 
                     <td>{{ feed.duplicateHandleFriendly }}</td>
-                    
+
                     <td><a href="{{ url('feed-me/feeds/run/' ~ feed.id) }}">{{ 'Run Feed' | t('feed-me') }}</a></td>
 
                     <td class="thin action">
