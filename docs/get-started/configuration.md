@@ -49,9 +49,11 @@ return [
 - `queueTtr` - Set the 'time to reserve' time in seconds, to prevent the job being cancelled after 300 seconds (default).
 - `queueMaxRetry` - Set the maxiumum amount of retries the queue job should have before failing.
 - `assetDownloadCurl` - Use curl to download assets from a remote source. Can be used when issues arise using the default implementation.
+- `curlOptions` - Any additionl CURLOPT_XXX options when `assetDownloadCurl` is set to `true`
 - `feedOptions` - Provide an array of any of the above options or [Feed Settings](../feature-tour/feed-overview.md) to set specifically for certain feeds. Use the Feed ID as the key for the array.
 
 #### Example `requestOptions`
+
 See [Guzzle Options](http://docs.guzzlephp.org/en/stable/request-options.html) for the full range:
 
 ```php
@@ -65,6 +67,18 @@ See [Guzzle Options](http://docs.guzzlephp.org/en/stable/request-options.html) f
     'query' => [
         'foo' => 'bar'
     ],
+],
+
+```
+
+#### Example `curlOptions`
+
+See [curl_setopt](https://www.php.net/manual/en/function.curl-setopt.php) for the full range:
+
+```php
+'assetDownloadCurl' => true,
+'curlOptions' => [
+    CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US) AppleWebKit/525.13 (KHTML, like Gecko) Chrome/0.A.B.C Safari/525.13'
 ],
 
 ```
