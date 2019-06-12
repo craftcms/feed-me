@@ -31,5 +31,6 @@ class Settings extends Model
     public $queueTtr = 300;
     public $queueMaxRetry = 5;
     public $assetDownloadCurl = false;
+    public $curlOptions = [];
 
 }
