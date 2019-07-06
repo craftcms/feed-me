@@ -200,7 +200,7 @@ class FeedMeVariable extends ServiceLocator
                 $source = Craft::$app->sections->getEntryTypeById($section->id);
             }
         } else if ($type === 'craft\fields\Tags') {
-            $source = $this->getCategorySourcesByField($field) ?? null;
+            $source = $this->getTagSourcesByField($field) ?? null;
         }
 
         if (!$source || !$source->fieldLayoutId) {

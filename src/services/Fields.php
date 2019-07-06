@@ -185,18 +185,16 @@ class Fields extends Component
         //     $parsedValue = null;
         // }
 
-        if ($this->hasEventHandlers(self::EVENT_AFTER_PARSE_FIELD)) {
-            $this->trigger(self::EVENT_AFTER_PARSE_FIELD, new FieldEvent([
-                'feedData' => $feedData,
-                'fieldHandle' => $fieldHandle,
-                'fieldInfo' => $fieldInfo,
-                'element' => $element,
-                'feed' => $feed,
-                'parsedValue' => $parsedValue,
-            ]));
-        }
-
-        return $parsedValue;
+        $event = new FieldEvent([
+            'feedData' => $feedData,
+            'fieldHandle' => $fieldHandle,
+            'fieldInfo' => $fieldInfo,
+            'element' => $element,
+            'feed' => $feed,
+            'parsedValue' => $parsedValue,
+        ]);
+        $this->trigger(self::EVENT_AFTER_PARSE_FIELD, $event);
+        return $event->parsedValue;
     }
 
 }
