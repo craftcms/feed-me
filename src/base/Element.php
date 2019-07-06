@@ -8,6 +8,7 @@ use craft\base\Component;
 use craft\base\Element as BaseElement;
 use craft\base\ElementInterface as CraftElementInterface;
 use craft\elements\db\ElementQuery;
+use craft\feedme\events\ElementEvent;
 use craft\feedme\helpers\BaseHelper;
 use craft\feedme\helpers\DataHelper;
 use craft\feedme\helpers\DateHelper;
