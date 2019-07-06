@@ -1,12 +1,13 @@
 # Changelog
 
-## Unreleased
+## 4.1.1 - 2019-07-06
 
 ### Changed
 - It’s now possible for `onAfterParseField` event handlers to modify parsed field values by overriding the `$parsedValue` property on the event. ([#516](https://github.com/craftcms/feed-me/issues/516)) 
 
 ### Fixed
 - Fixed an issue that could happen when trying to import tags.
+- Fixed a missing PHP class import. ([#563](https://github.com/craftcms/feed-me/issues/563))
 
 ## 4.1.0 - 2019-04-24
 
