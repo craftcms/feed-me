@@ -145,7 +145,6 @@ class Tags extends Field implements FieldInterface
         $element->groupId = $groupId;
 
         $siteId = Hash::get($this->feed, 'siteId');
-        $propagate = $siteId ? false : true;
 
         if ($siteId) {
             $element->siteId = $siteId;
@@ -153,7 +152,7 @@ class Tags extends Field implements FieldInterface
 
         $element->setScenario(BaseElement::SCENARIO_ESSENTIALS);
 
-        if (!Craft::$app->getElements()->saveElement($element, true, $propagate)) {
+        if (!Craft::$app->getElements()->saveElement($element)) {
             Plugin::error('`{handle}` - Tag error: Could not create - `{e}`.', ['e' => json_encode($element->getErrors()), 'handle' => $this->field->handle]);
         } else {
             Plugin::info('`{handle}` - Tag `#{id}` added.', ['id' => $element->id, 'handle' => $this->field->handle]);

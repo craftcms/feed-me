@@ -115,15 +115,11 @@ abstract class Field extends Component
                 ]
             ]);
 
-            $propagate = isset($this->feed['siteId']) && $this->feed['siteId'] ? false : true;
-
-            if (!$elementsService->saveElement($element, true, $propagate)) {
+            if (!$elementsService->saveElement($element)) {
                 Plugin::error('`{handle}` - Unable to save sub-field: `{e}`.', ['e' => json_encode($element->getErrors()), 'handle' => $this->fieldHandle]);
             }
 
             Plugin::info('`{handle}` - Processed {name} [`#{id}`]({url}) sub-fields with content: `{content}`.', ['name' => $element->displayName(), 'id' => $elementId, 'url' => $element->cpEditUrl, 'handle' => $this->fieldHandle, 'content' => json_encode($fieldContent)]);
         }
     }
-
-
 }

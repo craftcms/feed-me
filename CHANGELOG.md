@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Fixed a bug where multi-site elements were only getting saved in the site chosen in the feed settings. ([#564](https://github.com/craftcms/feed-me/issues/564))
+
 ## 4.1.1 - 2019-07-06
 
 ### Changed

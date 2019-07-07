@@ -172,8 +172,6 @@ class Entries extends Field implements FieldInterface
         $element->typeId = $typeId;
 
         $siteId = Hash::get($this->feed, 'siteId');
-        $propagate = $siteId ? false : true;
-
         $section = Craft::$app->sections->getSectionById($element->sectionId);
 
         if ($siteId) {
@@ -199,7 +197,7 @@ class Entries extends Field implements FieldInterface
 
         $element->setScenario(BaseElement::SCENARIO_ESSENTIALS);
 
-        if (!Craft::$app->getElements()->saveElement($element, true, $propagate)) {
+        if (!Craft::$app->getElements()->saveElement($element)) {
             Plugin::error('`{handle}` - Entry error: Could not create - `{e}`.', ['e' => json_encode($element->getErrors()), 'handle' => $this->field->handle]);
         } else {
             Plugin::info('`{handle}` - Entry `#{id}` added.', ['id' => $element->id, 'handle' => $this->field->handle]);
