@@ -5,6 +5,7 @@
 ### Fixed
 - Fixed a bug where multi-site elements were only getting saved in the site chosen in the feed settings. ([#564](https://github.com/craftcms/feed-me/issues/564))
 - Fixed an error that occurred when choosing a default user photo on case-sensitive file systems.
+- Fixed an error that occurred when importing a user without a photo, if a default user photo had been chosen. ([#562](https://github.com/craftcms/feed-me/issues/562))
 
 ## 4.1.1 - 2019-07-06
 

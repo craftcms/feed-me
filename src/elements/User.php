@@ -186,7 +186,7 @@ class User extends Element
 
         // If we're uploading files, this will need to be an absolute URL. If it is, save until later.
         // We also don't check for existing assets here, so break out instantly.
-        if ($upload && UrlHelper::isAbsoluteUrl($value)) {
+        if ($upload && is_string($value) && UrlHelper::isAbsoluteUrl($value)) {
             $urlToUpload = $value;
 
             // If we're opting to use the already uploaded asset, we can check here
