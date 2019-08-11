@@ -2,7 +2,7 @@
     "name": "craftcms/feed-me",
     "description": "Import content from XML, RSS, CSV or JSON feeds into entries, categories, Craft Commerce products, and more.",
     "type": "craft-plugin",
-    "version": "4.1.1",
+    "version": "4.1.2",
     "keywords": [
         "craft",
         "cms",
@@ -30,13 +30,10 @@
     },
     "require": {
         "craftcms/cms": "^3.1.21",
-        "cakephp/core": "^3.5",
         "cakephp/utility": "^3.3.12",
         "jakeasmith/http_build_url": "^1.0",
         "nesbot/carbon": "^1.22 || ^2.10",
         "league/csv": "^8.2 || ^9.0",
-        "guzzlehttp/guzzle": "~6.3.0",
-        "vlucas/phpdotenv": "^2.4",
         "ralouphie/mimey": "^1.0",
         "seld/jsonlint": "^1.7"
     },

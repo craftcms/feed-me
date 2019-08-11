@@ -33,7 +33,7 @@
         type: 'elementselect',
         options: {
             limit: 1,
-            elementType: 'craft\\elements\\asset',
+            elementType: 'craft\\elements\\Asset',
             selectionLabel: "Default Asset" | t('feed-me'),
         },
     },
@@ -140,7 +140,7 @@
                 {% set template = fieldClass.getMappingTemplate() %}
 
                 {% set variables = { name: field.name, handle: field.handle, feed: feed, feedData: feedData, field: field, fieldClass: fieldClass } %}
-                
+
                 {% include template ignore missing with variables only %}
             {% endfor %}
         </tbody>

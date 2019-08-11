@@ -190,13 +190,11 @@ abstract class Element extends Component implements ElementInterface
             return true;
         }
 
-        $propagate = isset($settings['siteId']) && $settings['siteId'] ? false : true;
-
         if (Craft::$app->getIsMultiSite()) {
             $this->element->enabledForSite = $this->element->enabled;
         }
 
-        if (!Craft::$app->getElements()->saveElement($this->element, true, $propagate)) {
+        if (!Craft::$app->getElements()->saveElement($this->element)) {
             return false;
         }
 

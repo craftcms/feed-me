@@ -186,8 +186,6 @@ class AssetHelper
         $asset->avoidFilenameConflicts = true;
         $asset->setScenario(AssetElement::SCENARIO_CREATE);
 
-        $propagate = isset($feed['siteId']) && $feed['siteId'] ? false : true;
-
         Plugin::info('Creating asset with content `{i}`', [
             'i' => json_encode([
                 'tempFilePath' => $tempFilePath,
@@ -196,12 +194,11 @@ class AssetHelper
                 'volumeId' => $folder->volumeId,
                 'avoidFilenameConflicts' => true,
                 'scenario' => AssetElement::SCENARIO_CREATE,
-                'propagate' => $propagate,
                 'conflict' => $conflict,
             ])
         ]);
 
-        $result = Craft::$app->getElements()->saveElement($asset, true, $propagate);
+        $result = Craft::$app->getElements()->saveElement($asset);
 
         if ($result) {
             // Annoyingly, you have to create the asset field, then move it to the temp directly, then replace the conflicting
