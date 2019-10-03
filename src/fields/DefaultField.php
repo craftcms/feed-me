@@ -44,9 +44,13 @@ class DefaultField extends Field implements FieldInterface
         if ($value !== '') {
             $value = $this->field->normalizeValue($value);
         }
-
+        
         // Lastly, get each field to prepare values how they should
-        $value = $this->field->serializeValue($value);
+        try {
+            $value = $this->field->serializeValue($value);
+        } catch (\Throwable $e) {
+            // Ignore
+        }
 
         return $value;
     }
