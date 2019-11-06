@@ -42,7 +42,7 @@ class Linkit extends Field implements FieldInterface
             $preppedData[$subFieldHandle] = DataHelper::fetchValue($this->feedData, $subFieldInfo);
         }
 
-        if ($preppedData) {
+        if ($preppedData && empty($preppedData['type'])) {
             $preppedData['type'] = 'fruitstudios\linkit\models\Url';
         }
 
