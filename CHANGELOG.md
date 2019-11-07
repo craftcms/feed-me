@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.1.3 - 2019-11-07
+
+### Fixed
+- Fixed support for Linkit
+
 ## 4.1.2 - 2019-08-11
 
 ### Fixed
@@ -11,7 +16,7 @@
 ## 4.1.1 - 2019-07-06
 
 ### Changed
-- It’s now possible for `onAfterParseField` event handlers to modify parsed field values by overriding the `$parsedValue` property on the event. ([#516](https://github.com/craftcms/feed-me/issues/516)) 
+- It’s now possible for `onAfterParseField` event handlers to modify parsed field values by overriding the `$parsedValue` property on the event. ([#516](https://github.com/craftcms/feed-me/issues/516))
 
 ### Fixed
 - Fixed an issue that could happen when trying to import tags.
