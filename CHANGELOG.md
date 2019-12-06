@@ -3,7 +3,7 @@
 ## 4.1.3 - 2019-11-07
 
 ### Fixed
-- Fixed support for Linkit
+- Fixed support for the Linkit plugin. ([#615])(https://github.com/craftcms/feed-me/issues/615)
 
 ## 4.1.2 - 2019-08-11
 
