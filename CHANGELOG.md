@@ -3,10 +3,10 @@
 ## Unreleased
 
 ### Changed
-- Added a fail-safe when assigning default authors to entries to ensure lookup is always done against `elements.id` 
+- Added a fail-safe when assigning default authors to entries to ensure lookup is always done against the user’s ID. ([#627](https://github.com/craftcms/feed-me/issues/627))
 
 ### Fixed
-- Fixed a bug that occurred when importing default values to checkboxes and/or multiselects fields
+- Fixed a bug that occurred when importing default values might not occur when the options were in checkboxes and/or multiselects fields.
 
 ## 4.1.2 - 2019-08-11
 
