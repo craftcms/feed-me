@@ -7,6 +7,7 @@
 
 ### Fixed
 - Fixed a bug that occurred when importing default values might not occur when the options were in checkboxes and/or multiselects fields.
+- Fixed support for the Linkit plugin. ([#615])(https://github.com/craftcms/feed-me/issues/615)
 
 ## 4.1.2 - 2019-08-11
 
@@ -19,7 +20,7 @@
 ## 4.1.1 - 2019-07-06
 
 ### Changed
-- It’s now possible for `onAfterParseField` event handlers to modify parsed field values by overriding the `$parsedValue` property on the event. ([#516](https://github.com/craftcms/feed-me/issues/516)) 
+- It’s now possible for `onAfterParseField` event handlers to modify parsed field values by overriding the `$parsedValue` property on the event. ([#516](https://github.com/craftcms/feed-me/issues/516))
 
 ### Fixed
 - Fixed an issue that could happen when trying to import tags.

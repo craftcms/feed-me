@@ -42,8 +42,18 @@ class Linkit extends Field implements FieldInterface
             $preppedData[$subFieldHandle] = DataHelper::fetchValue($this->feedData, $subFieldInfo);
         }
 
-        if ($preppedData) {
-            $preppedData['type'] = 'fruitstudios\linkit\models\Url';
+        if ($preppedData)
+        {
+            // Handle Link Type
+            $preppedData['type'] = empty($preppedData['type'] ?? '') ? 'fruitstudios\linkit\models\Url' : $preppedData['type'];
+            if(strpos($preppedData['type'], '\\') === false)
+            {
+                $preppedData['type'] = 'fruitstudios\\linkit\\models\\'.ucfirst(strtolower(trim($preppedData['type'])));
+            }
+
+            // Handle Link Target
+            $preppedData['target'] = trim(empty($preppedData['target'] ?? '') ? '' : $preppedData['target']);
+            $preppedData['target'] = $preppedData['target'] && $preppedData['target'] != '_self' ? 1 : '';
         }
 
         // Protect against sending an empty array
