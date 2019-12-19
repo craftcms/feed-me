@@ -217,12 +217,12 @@ class Feeds extends Component
             return null;
         }
 
-        $record['elementGroup'] = Json::decode($record['elementGroup']);
-        $record['duplicateHandle'] = Json::decode($record['duplicateHandle']);
-        $record['fieldMapping'] = Json::decode($record['fieldMapping']);
-        $record['fieldUnique'] = Json::decode($record['fieldUnique']);
-
         $attributes = $record->toArray();
+
+        $attributes['elementGroup'] = Json::decode($attributes['elementGroup']);
+        $attributes['duplicateHandle'] = Json::decode($attributes['duplicateHandle']);
+        $attributes['fieldMapping'] = Json::decode($attributes['fieldMapping']);
+        $attributes['fieldUnique'] = Json::decode($attributes['fieldUnique']);
 
         foreach ($attributes as $attribute => $value) {
             $override = $this->getModelOverrides($attribute, $record['id']);
@@ -249,5 +249,4 @@ class Feeds extends Component
 
         return $feedRecord;
     }
-
 }
