@@ -50,9 +50,11 @@ class FeedImport extends BaseJob implements RetryableJobInterface
                 return;
             }
 
-            $totalSteps = count($feedData);
-
             $feedSettings = Plugin::$plugin->process->beforeProcessFeed($this->feed, $feedData);
+
+            $feedData = $feedSettings['feedData'];
+
+            $totalSteps = count($feedData);
 
             $index = 0;
 

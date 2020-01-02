@@ -1,5 +1,16 @@
 # Changelog
 
+## 4.2.0 - 2020-01-02
+
+### Changed
+- Added a fail-safe when assigning default authors to entries to ensure lookup is always done against the user’s ID. ([#627](https://github.com/craftcms/feed-me/issues/627))
+
+### Fixed
+- Fixed a bug that could occur when importing default values to Checkboxes or Multi-select fields.
+- Fixed support for the Linkit plugin. ([#615](https://github.com/craftcms/feed-me/issues/615))
+- Fixed compatibility with Craft 3.4. ([#643](https://github.com/craftcms/feed-me/issues/643))
+- Fixed a bug where Feed Me wasn’t prepared for the possibility that an event handler for `craft\feedme\services\Process::EVENT_BEFORE_PROCESS_FEED` could alter the total number of feed items to process. ([#619](https://github.com/craftcms/feed-me/pull/619))
+
 ## 4.1.2 - 2019-08-11
 
 ### Fixed
@@ -11,7 +22,7 @@
 ## 4.1.1 - 2019-07-06
 
 ### Changed
-- It’s now possible for `onAfterParseField` event handlers to modify parsed field values by overriding the `$parsedValue` property on the event. ([#516](https://github.com/craftcms/feed-me/issues/516)) 
+- It’s now possible for `onAfterParseField` event handlers to modify parsed field values by overriding the `$parsedValue` property on the event. ([#516](https://github.com/craftcms/feed-me/issues/516))
 
 ### Fixed
 - Fixed an issue that could happen when trying to import tags.
