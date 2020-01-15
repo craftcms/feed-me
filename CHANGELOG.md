@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 4.2.0.1 - 2020-01-15
 
 ### Fixed
 - Fixed a bug that broke local feeds. ([#647](https://github.com/craftcms/feed-me/issues/647))
