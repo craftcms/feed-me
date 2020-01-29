@@ -1,0 +1,59 @@
+{# ------------------------ #}
+{# Available Variables #}
+{# ------------------------ #}
+{# Attributes: #}
+{# type, name, handle, instructions, attribute, default, feed, feedData #}
+{# ------------------------ #}
+{# Fields: #}
+{# name, handle, instructions, feed, feedData, field, fieldClass #}
+{# ------------------------ #}
+
+{% import 'feed-me/_macros' as feedMeMacro %}
+{% import '_includes/forms' as forms %}
+
+{% if field is defined %}
+    {% set default = default ?? {
+        type: 'elementselect',
+        options: {
+            elementType: fieldClass.elementType,
+            selectionLabel: "Default Asset" | t('feed-me'),
+        },
+    } %}
+{% endif %}
+
+{# Get any sub-fields for the element. Also check to go only one level deep #}
+{% if field is defined and isSubElementField is not defined %}
+    {% set elementFields = [] %}
+
+    {# Prevent infinite loop by only allow elements that are not the same as this #}
+    {% for elementField in craft.feedme.getElementLayoutByField(className(field), field) %}
+        {% if craft.feedme.supportedSubField(className(elementField)) %}
+            {% set elementFields = elementFields | merge([ elementField ]) %}
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+{% extends 'feed-me/_includes/fields/_base' %}
+
+{% block extraSettings %}
+
+    <div class="assets-uploads">
+        {{ feedMeMacro.checkbox({
+            label: 'Create asset from URL<span class="asset-label-hide">, if exists:</span>' | t('feed-me') | raw,
+            name: 'options[upload]',
+            value: 1,
+            checked: hash_get(feed.fieldMapping, optionsPath ~ '.upload') ?: '',
+        }) }}
+
+        {{ forms.selectField({
+            name: 'options[conflict]',
+            class: '',
+            options: [
+                { value: 'index', label: 'Use existing asset' },
+                { value: 'replace', label: 'Replace existing asset' },
+                { value: 'create', label: 'Keep both (rename feed data)' },
+            ],
+            value: hash_get(feed.fieldMapping, optionsPath ~ '.conflict') ?: '',
+        }) }}
+    </div>
+{% endblock %}

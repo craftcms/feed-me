@@ -1,0 +1,41 @@
+{# ------------------------ #}
+{# Available Variables #}
+{# ------------------------ #}
+{# Attributes: #}
+{# type, name, handle, instructions, attribute, default, feed, feedData #}
+{# ------------------------ #}
+{# Fields: #}
+{# name, handle, instructions, feed, feedData, field, fieldClass #}
+{# ------------------------ #}
+
+{% import 'feed-me/_macros' as feedMeMacro %}
+{% import '_includes/forms' as forms %}
+
+{% if field is defined %}
+    {% set default = default ?? {
+        type: 'elementselect',
+        options: {
+            elementType: fieldClass.elementType,
+            selectionLabel: "Default Variant" | t('feed-me'),
+        },
+    } %}
+{% endif %}
+
+{% extends 'feed-me/_includes/fields/_base' %}
+
+{% block extraSettings %}
+    <div class="element-match">
+        <span>{{ 'Data provided for this variant is:' | t('feed-me') }}</span>
+
+        {{ forms.selectField({
+            name: 'options[match]',
+            class: '',
+            value: hash_get(feed.fieldMapping, optionsPath ~ '.match') ?: '',
+            options: [
+                { value: 'title', label: 'Title' | t('feed-me') },
+                { value: 'elements.id', label: 'ID' | t('feed-me') },
+                { value: 'sku', label: 'SKU' | t('feed-me') },
+            ],
+        }) }}
+    </div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends parentLayout | default('_layouts/cp') %}
+
+{% do view.registerAssetBundle('craft\\feedme\\web\\assets\\feedme\\FeedMeAsset') %}
+{% set baseAssetsUrl = view.getAssetManager().getPublishedUrl('@craft/feedme/web/assets/feedme/dist', true) %}
+
+{% if noTabs is not defined %}
+    {% set tabs = craft.feedme.getTabs() %}
+{% endif %}
+
+{% if title is not defined %}
+    {% set title = craft.feedme.getPluginName ~ ' ' %}
+{% endif %}
+
+{% set content %}
+    {% block blockContent %}
+
+    {% endblock %}
+
+    <hr>
+
+    <div id="plugin-footer">
+        <div class="footer-left">
+            {% block footerButton %}
+
+            {% endblock %}
+        </div>
+    </div>
+{% endset %}

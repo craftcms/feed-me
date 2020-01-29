@@ -1,0 +1,199 @@
+{% import '_includes/forms' as forms %}
+
+{% extends 'feed-me/_layouts' %}
+
+{% do view.registerTranslations('feed-me', [
+    'Suspend missing users',
+    'Suspends any users that are missing from the feed.',
+    'None',
+    'Processing complete!',
+    'Processing failed.',
+    'View logs',
+]) %}
+
+{% set crumbs = [
+    { label: craft.feedme.getPluginName | t('feed-me'), url: url('feed-me') },
+] %}
+
+{% if feed.id %}
+    {% set crumbs = crumbs | merge([
+        { label: feed.name | t('feed-me'), url: url('feed-me/feeds/' ~ feed.id) },
+    ]) %}
+{% endif %}
+
+{% set title = (feed.id) ? feed.name : 'Create a new feed' | t('feed-me') %}
+{% set noTabs = true %}
+{% set fullPageForm = true %}
+
+{% set buttons %}
+    <div class="buttons">
+        <input type="button" data-action="feed-me/feeds/save-feed" class="btn submit" value="{{ 'Save' | t('feed-me') }}">
+        <input type="button" data-action="feed-me/feeds/save-and-element-feed" class="btn submit" value="{{ 'Save & Continue' | t('feed-me') }}">
+    </div>
+{% endset %}
+
+{% block actionButton %}
+    {{ buttons }}
+{% endblock %}
+
+{% block blockContent %}
+    <input type="hidden" name="action" value="feed-me/feeds/save-feed">
+
+    {% if feed.id %}<input type="hidden" name="feedId" value="{{ feed.id }}">{% endif %}
+
+    {{ forms.textField({
+        first: true,
+        label: "Name" | t('feed-me'),
+        instructions: "What this feed will be called in the CP." | t('feed-me'),
+        id: 'name',
+        name: 'name',
+        value: feed.name,
+        errors: feed.getErrors('name'),
+        autofocus: true,
+        required: true,
+    }) }}
+
+    {{ forms.textField({
+        label: "Feed URL" | t('feed-me'),
+        instructions: "Can be a file on the local file system or from a website url (http://...)." | t('feed-me'),
+        id: 'feedUrl',
+        name: 'feedUrl',
+        value: feed.feedUrl,
+        errors: feed.getErrors('feedUrl'),
+        required: true,
+    }) }}
+
+    {{ forms.selectField({
+        label: "Feed Type" | t('feed-me'),
+        instructions: 'Choose what type of feed you\'re retrieving.' | t('feed-me'),
+        id: 'feedType',
+        name: 'feedType',
+        options: dataTypes,
+        value: feed.feedType,
+        errors: feed.getErrors('feedType'),
+        required: true,
+    }) }}
+
+    <hr>
+
+    {% set elementsList = [] %}
+    {% for elementClass, element in elements %}
+        {% set elementsList = elementsList | merge({ (elementClass): element.name }) %}
+    {% endfor %}
+
+    {{ forms.selectField({
+        label: "Element Type" | t('feed-me'),
+        instructions: 'Choose what element you want to save your feed data to.' | t('feed-me'),
+        id: 'elementType',
+        name: 'elementType',
+        options: [{ label: 'Select', value: '' }] | merge(elementsList),
+        value: feed.elementType,
+        errors: feed.getErrors('elementType'),
+        required: true,
+    }) }}
+
+    {% for elementClass, element in elements %}
+        <div class="element-select" data-type="{{ elementClass | replace('\\', '-') }}">
+            {% set elementType = elementClass %}
+
+            {% include element.groupsTemplate ignore missing %}
+        </div>
+    {% endfor %}
+
+    {% if craft.app.isMultiSite() %}
+        {% set sites = [{ label: 'Primary Site ({name})'|t('feed-me', {name: craft.app.sites.primarySite.name}), value: '' }] %}
+
+        {% for site in craft.app.sites.getAllSites() %}
+            {% set sites = sites | merge([{ label: site.name, value: site.id }]) %}
+        {% endfor %}
+
+        {{ forms.selectField({
+            label: "Target Site" | t('feed-me'),
+            instructions: 'Choose which site you want to save your elements to initially.' | t('feed-me'),
+            id: 'siteId',
+            name: 'siteId',
+            options: sites,
+            value: feed.siteId,
+        }) }}
+    {% endif %}
+
+    <hr>
+
+    {{ forms.field({
+        label: "Import strategy" | t('feed-me'),
+        instructions: 'Choose what happens when this feed is run again.' | t('feed-me'),
+        id: 'duplicateHandle',
+    }) }}
+
+    {{ forms.checkboxField({
+        id: 'duplicateHandle',
+        name: 'duplicateHandle[]',
+        label: 'Create new elements'|t('feed-me'),
+        instructions: 'Adds new elements if they do not already exist.'|t('feed-me'),
+        value: 'add',
+        checked: 'add' in (feed.duplicateHandle ?? ['add'])
+    }) }}
+
+    {{ forms.checkboxField({
+        name: 'duplicateHandle[]',
+        label: 'Update existing elements'|t('feed-me'),
+        instructions: 'Updates elements that match the Unique Identifier (next step).'|t('feed-me'),
+        value: 'update',
+        checked: 'update' in (feed.duplicateHandle ?? [])
+    }) }}
+
+    {{ forms.checkboxField({
+        name: 'duplicateHandle[]',
+        label: craft.app.isMultiSite
+            ? 'Disable missing elements globally'|t('feed-me')
+            : 'Disable missing elements'|t('feed-me'),
+        instructions: craft.app.isMultiSite
+            ? 'Disables any elements that are missing from the feed, across all sites.'|t('feed-me')
+            : 'Disables any elements that are missing from the feed.'|t('feed-me'),
+        value: 'disable',
+        checked: 'disable' in (feed.duplicateHandle ?? [])
+    }) }}
+
+    {% if craft.app.isMultiSite %}
+        {{ forms.checkboxField({
+            name: 'duplicateHandle[]',
+            label: 'Disable missing elements in the target site'|t('feed-me'),
+            instructions: 'Disables any elements that are missing from the feed, in the feed’s target site only.'|t('feed-me'),
+            value: 'disableForSite',
+            checked: 'disableForSite' in (feed.duplicateHandle ?? [])
+        }) }}
+    {% endif %}
+
+    {{ forms.checkboxField({
+        name: 'duplicateHandle[]',
+        label: 'Delete missing elements'|t('feed-me'),
+        instructions: 'Deletes any elements that are missing from the feed. Be careful.'|t('feed-me'),
+        value: 'delete',
+        checked: 'delete' in (feed.duplicateHandle ?? [])
+    }) }}
+
+    <hr>
+
+    {{ forms.textField({
+        label: "Passkey" | t('feed-me'),
+        instructions: "A generated, unique string to increase security against imports being run inadvertently. No need to change this." | t('feed-me'),
+        id: 'passkey',
+        name: 'passkey',
+        value: (feed.passkey) ? feed.passkey : '',
+        errors: feed.getErrors('passkey'),
+        required: true,
+    }) }}
+
+    {{ forms.lightswitchField({
+        first: true,
+        label: 'Backup' | t('feed-me'),
+        instructions: 'Perform a full backup each time this feed is processed.' | t('feed-me'),
+        name: 'backup',
+        on: (feed.id) ? feed.backup : true,
+    }) }}
+
+{% endblock %}
+
+{% block footerButton %}
+    {{ buttons }}
+{% endblock %}

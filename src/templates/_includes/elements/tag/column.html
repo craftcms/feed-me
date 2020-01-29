@@ -1,0 +1,3 @@
+{% set group = craft.app.tags.getTagGroupById(feed.elementGroup[elementType]) %}
+
+{{ group.name ?? '' }}

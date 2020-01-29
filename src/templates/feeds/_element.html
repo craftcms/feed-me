@@ -1,0 +1,95 @@
+{% import '_includes/forms' as forms %}
+
+{% extends 'feed-me/_layouts' %}
+
+{% set crumbs = [
+    { label: craft.feedme.getPluginName | t('feed-me'), url: url('feed-me') },
+    { label: feed.name | t('feed-me'), url: url('feed-me/feeds/' ~ feed.id) },
+    { label: 'Element' | t('feed-me'), url: url('feed-me/feeds/element/' ~ feed.id) },
+] %}
+
+{% set title = feed.name %}
+
+{% set title = (feed.id) ? feed.name : 'Create a new feed' | t('feed-me') %}
+{% set noTabs = true %}
+{% set fullPageForm = true %}
+
+{% set buttons %}
+    {% if primaryElements.success %}
+        <div class="buttons">
+            <input type="button" data-action="feed-me/feeds/save-and-element-feed" class="btn submit" value="{{ 'Save' | t('feed-me') }}">
+            <input type="button" data-action="feed-me/feeds/save-and-map-feed" class="btn submit" value="{{ 'Save & Continue' | t('feed-me') }}">
+        </div>
+    {% endif %}
+{% endset %}
+
+{% block actionButton %}
+    {{ buttons }}
+{% endblock %}
+
+{% block blockContent %}
+    {% if primaryElements.success %}
+        <input type="hidden" name="action" value="feed-me/feeds/save-and-element-feed">
+
+        {% if feed.id %}
+            <input type="hidden" name="feedId" value="{{ feed.id }}">
+        {% endif %}
+
+        {{ forms.selectField({
+            label: "Primary Element" | t('feed-me'),
+            instructions: "The primary element is the repeatable element that contains the data you want to import." | t('feed-me'),
+            id: 'primaryElement',
+            name: 'primaryElement',
+            value: feed.primaryElement,
+            options: primaryElements.data,
+            errors: feed.getErrors('primaryElement'),
+        }) }}
+
+        {% set parsedFeedData = [
+            { label: "No Pagination URL" | t('feed-me'), value: '' },
+        ] %}
+
+        {% for key, data in feedMappingData.data %}
+            {% if data is iterable %}
+                {% set snippet = '' %}
+            {% else %}
+                {% set snippet = data | length > 30 ? data[0:30] ~ '...' : data %}
+            {% endif %}
+
+            {% set parsedFeedData = parsedFeedData | merge([{ label: '<' ~ key ~ '> eg: ' ~ snippet, value: key }]) %}
+        {% endfor %}
+
+        {{ forms.selectField({
+            label: "Pagination URL" | t('feed-me'),
+            instructions: "If your feed is paginated, select the next page's URL." | t('feed-me'),
+            id: 'paginationNode',
+            name: 'paginationNode',
+            value: feed.paginationNode,
+            options: parsedFeedData,
+            errors: feed.getErrors('paginationNode'),
+        }) }}
+
+    {% else %}
+        <div class="feedme-fullpage fullpage-error">
+            <img src="{{ baseAssetsUrl ~ '/img/icon-error.svg' }}">
+            
+            <h2>{{ 'Unable to proceed to next step' | t('feed-me') }}</h2>
+            <p>{{ 'Feed Me is unable to find, or parse your provided data. This usually means your URL cannot be reached from your Craft site, or your {feedType} is invalid. Refer to the specific error below, check the logs, and double-check your settings.' | t('feed-me', { feedType: feed.feedType | upper }) }}</p>
+
+            {% if primaryElements.error %}
+                <div class="fullpage-error-message">
+                    <code>{{ primaryElements.error }}</code>
+                </div>
+            {% endif %}
+
+            <div class="buttons">
+                <a href="{{ url('feed-me/feeds/' ~ feed.id) }}" class="btn submit">&larr; {{ 'Back to feed' | t('feed-me') }}</a>
+                <a href="{{ url('feed-me/logs') }}" class="btn submit">{{ 'Go to logs' | t('feed-me') }}</a>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block footerButton %}
+    {{ buttons }}
+{% endblock %}

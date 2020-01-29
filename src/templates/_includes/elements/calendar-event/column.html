@@ -1,0 +1,4 @@
+{% set calendarId = feed.elementGroup[elementType] %}
+{% set calendar = craft.calendar.calendar({ id: calendarId }) %}
+
+{{ calendar.name ?? '' }}

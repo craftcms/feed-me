@@ -1,0 +1,97 @@
+{# ------------------------ #}
+{# Available Variables #}
+{# ------------------------ #}
+{# Attributes: #}
+{# type, name, handle, instructions, attribute, default, feed, feedData #}
+{# ------------------------ #}
+{# Fields: #}
+{# name, handle, instructions, feed, feedData, field, fieldClass #}
+{# ------------------------ #}
+
+{% import 'feed-me/_macros' as feedMeMacro %}
+{% import '_includes/forms' as forms %}
+
+{# Special case when inside another complex field (Matrix) #}
+{% if parentPath is defined %}
+    {% set prefixPath = parentPath %}
+{% else %}
+    {% set prefixPath = [handle] %}
+{% endif %}
+
+{% set classes = ['complex-field'] %}
+
+<tr class="complex-field complex-field-header">
+    <td class="col-field" colspan="3">
+        <div class="field">
+            <div class="heading">
+                <label class="">{{ name }}</label>
+            </div>
+
+            <div class="additional-mapping-fields">
+                {% namespace 'fieldMapping[' ~ prefixPath | join('][') ~ ']' %}
+                    <input type="text" name="field" value="{{ className(field) }}">
+                {% endnamespace %}
+            </div>
+        </div>
+    </td>
+</tr>
+
+{% set subfields = {
+    type: 'Type',
+    value: 'Value',
+    customText: 'Custom Text',
+    target: 'Target',
+} %}
+
+{% for key, col in subfields %}
+    {% set nameLabel = col %}
+    {% set instructionsHandle = handle ~ '[' ~ key ~ ']' %}
+
+    {% set path = prefixPath | merge ([ 'fields', key ]) %}
+
+    {% set default = {
+        type: 'text'
+    } %}
+
+    {% switch key %}
+
+        {% case 'type' %}
+
+            {% set enabledLinkTypes = field.getEnabledLinkTypes() %}
+            {% set enabledLinkTypeOptions = [
+                { label: "Don't import", value: '' }
+            ] %}
+
+            {% for enabledLinkType in enabledLinkTypes %}
+                {% set enabledLinkTypeOptions = enabledLinkTypeOptions|merge([{ label: enabledLinkType.label, value: enabledLinkType.type }]) %}
+            {% endfor %}
+
+            {% set default = {
+                type: 'select',
+                options: enabledLinkTypeOptions,
+            } %}
+
+        {% case 'target' %}
+
+            {% set default = {
+                type: 'select',
+                options: [
+                    { label: "Don't import", value: '' },
+                    { label: 'Open in new window', value: '1' },
+                    { label: 'Open in existing window', value: '' },
+                ]
+            } %}
+
+    {% endswitch %}
+
+
+    {% embed 'feed-me/_includes/fields/_base' %}
+        {% block additionalFieldSettings %}
+
+        {% endblock %}
+
+        {% block fieldSettings %}
+
+        {% endblock %}
+    {% endembed %}
+{% endfor %}

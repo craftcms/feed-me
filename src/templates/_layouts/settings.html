@@ -1,0 +1,28 @@
+{% extends 'feed-me/_layouts' %}
+
+{% set crumbs = [
+    { label: craft.feedme.getPluginName | t('feed-me'), url: url('feed-me') },
+    { label: "Settings" | t('feed-me'), url: url('feed-me/settings') },
+] %}
+
+{% set selectedTab = 'settings' %}
+{% set selectedItem = craft.app.request.getSegment(3) %}
+
+{% set navItems = {
+    'general-heading': { heading: "Settings" | t('feed-me') },
+    'general': { title: "General" | t('feed-me') },
+} %}
+
+{% block sidebar %}
+    <nav>
+        <ul>
+            {% for id, item in navItems %}
+                {% if item.heading is defined %}
+                    <li class="heading"><span>{{ item.heading }}</span></li>
+                {% else %}
+                    <li><a href="{{ url('feed-me/settings/' ~ id) }}"{% if id == selectedItem %} class="sel"{% endif %}>{{ item.title }}</a></li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </nav>
+{% endblock %}

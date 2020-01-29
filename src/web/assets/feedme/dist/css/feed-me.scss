@@ -1,0 +1,651 @@
+// ==========================================================================
+
+// Feed Me for Craft CMS
+
+// ==========================================================================
+
+@import "base";
+@import "../../../../../../lib/craftcms-sass/mixins";
+
+
+// ==========================================================================
+// Third Party
+// ==========================================================================
+
+@import "font-awesome";
+
+// ==========================================================================
+// Feeds Index
+// ==========================================================================
+
+// .fa {
+//     vertical-align: middle;
+// }
+
+// .fa-icon.direct .fa-external-link,
+// .fa-icon .fa-info-circle,
+// .fa-icon .fa-info-circle,
+// .fa-icon.debug .fa-bug {
+//     color: rgba(0, 0, 0, 0.2);
+// }
+
+// .fa-icon.direct:hover .fa-external-link,
+// .fa-icon:hover .fa-info-circle,
+// .fa-icon.debug:hover .fa-bug {
+//     color: #0d78f2;
+// }
+
+body.ltr .table-feed-me .thin.action {
+    padding-left: 10px;
+}
+
+.table-feed-me .thin.action .icon {
+    color: rgba(0, 0, 0, 0.2);
+
+    &:hover {
+        color: #0d78f2;
+    }
+}
+
+.table-feed-me .element-group-sub {
+    display: block;
+    font-size: 11px;
+    line-height: 1.2;
+    color: rgba(51, 63, 77, 0.5);
+    font-weight: bold;
+}
+
+.table-feed-me .index-url {
+    font-weight: 400;
+    font-size: 12px;
+    color: #8f98a3;
+    display: block;
+    margin-top: 5px;
+}
+
+// Settings Pane
+.table-feed-me .settings-pane {
+    padding: 0;
+    display: none;
+}
+
+// #feeds [data-id="1-settings"] .settings-pane {
+//     display: table-cell;
+// }
+
+.table-feed-me .settings-pane-wrap {
+    background: #f6f7f8;
+    padding: 15px;
+    font-size: 12px;
+    line-height: 1.4;
+    box-shadow: 0 0 0 1px #e4e6e8;
+}
+
+.table-feed-me .settings-pane .icon,
+.table-feed-me .settings-pane .fa {
+    margin-right: 3px;
+    color: rgba(0, 0, 0, 0.2);
+
+    &:hover {
+        color: rgba(0, 0, 0, 0.2);
+    }
+}
+
+#feeds .settings-pane .btn-group {
+    display: inline-flex;
+}
+
+#feeds .settings-pane .btn-group .btn {
+    height: auto;
+}
+
+#feeds .settings-pane .input input {
+    font-size: 12px;
+}
+
+
+
+// ==========================================================================
+// Field-Mapping Step
+// ==========================================================================
+
+.feedme-mapping {
+    // table-layout: fixed;
+    font-size: 13px;
+}
+
+.feedme-mapping th:nth-child(1) {
+    width: 25%;
+}
+
+.feedme-mapping th:nth-child(2) {
+    width: 40%;
+}
+
+.feedme-mapping th:nth-child(3) {
+    width: 25%;
+}
+
+.feedme-mapping td.col-field .field.instructions {
+    line-height: 18px;
+}
+
+.feedme-mapping td.col-map .field .heading {
+    font-size: 11px;
+}
+
+.feedme-mapping td.col-map .field {
+    margin: 5px 0;
+}
+
+.feedme-mapping td.col-field .field > .heading {
+    font-size: 12px;
+    margin-bottom: 0;
+}
+
+.feedme-mapping td {
+    vertical-align: top;
+}
+
+
+
+// Hide the initial select field onload, because we're using Selectize. But - its a nasty UI shift before/after
+// the JS loads, so we're fudging it here for some nicer UI without things shifting all over the page.
+
+.feedme-mapping .select {
+    height: 32px;
+    position: relative;
+    display: inline-block;
+    background-image: linear-gradient(#fff, #fafafa);
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.025), 0 1px 1px rgba(0, 0, 0, 0.1);
+
+    &:after {
+        font-family: 'Craft';
+        speak: none;
+        font-feature-settings: "liga", "dlig";
+        text-rendering: optimizeLegibility;
+        font-weight: normal;
+        font-variant: normal;
+        text-transform: none;
+        line-height: 1;
+        direction: ltr;
+        display: inline-block;
+        text-align: center;
+        font-style: normal;
+        vertical-align: middle;
+        word-wrap: normal !important;
+        user-select: none;
+        position: absolute;
+        z-index: 1;
+        top: calc(50% - 5px);
+        font-size: 10px;
+        content: 'downangle';
+        user-select: none;
+        pointer-events: none;
+        @include right(9px);
+    }
+
+    &.selectize select {
+        opacity: 0;
+    }
+}
+
+// Some extra styles for Selectize, so its a bit more inline with Craft itself
+.feedme-mapping .selectize.select .selectize-control {
+    box-shadow: none;
+    background: none;
+    max-width: 100%;
+
+    &:after {
+        display: none;
+    }
+}
+
+.feedme-mapping .selectize.select .selectize-control .selectize-input {
+    box-shadow: none;
+    background: none;
+    font-size: 13px;
+}
+
+.feedme-mapping .selectize-input input {
+    position: relative !important;
+}
+
+.feedme-mapping .selectize-dropdown [data-selectable],
+.feedme-mapping .selectize-dropdown .optgroup-header {
+    padding: 3px 10px;
+    font-size: 12px;
+}
+
+.feedme-mapping .selectize-dropdown-content {
+    max-height: 600px;
+}
+
+.feedme-mapping .selectize-input div[data-value="noimport"] {
+    color: #b9bfc6;
+}
+
+
+//
+// Extra Field Settings - tiny bit smaller
+//
+
+.feedme-mapping .field-extra-settings {
+    font-size: 11px;
+}
+
+// .feedme-mapping .field-extra-settings input.checkbox + label:before,
+// .feedme-mapping .field-extra-settings div.checkbox:before {
+//     top: 0;
+// }
+
+.feedme-mapping .field-extra-settings .select {
+    height: 22px;
+
+    select {
+        padding: 3px 22px 5px 8px !important;
+        font-size: 11px;
+        line-height: 13px;
+    }
+}
+
+// .feedme-mapping .field-extra-settings .selectize-dropdown [data-selectable],
+// .feedme-mapping .field-extra-settings .selectize-dropdown .optgroup-header {
+//     padding: 3px 8px;
+//     font-size: 11px;
+// }
+
+
+//
+// Assets Uploading
+//
+
+.feedme-mapping .field-extra-settings .assets-uploads .asset-label-hide {
+    visibility: hidden;
+}
+
+.feedme-mapping .field-extra-settings .assets-uploads .checkboxfield {
+    float: left;
+    margin-right: 10px;
+    padding-top: 0;
+    margin-bottom: 3px;
+    z-index: 1;
+}
+
+.feedme-mapping .field-extra-settings .assets-uploads .select {
+    height: auto;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.feedme-mapping .field-extra-settings .assets-create .heading label {
+    color: #29323d;
+    font-weight: normal;
+    float: left;
+    margin-right: 10px;
+}
+
+
+
+
+//
+// Matching Elements
+//
+
+.feedme-mapping .field-extra-settings .element-match {
+    span {
+        float: left;
+        margin-right: 10px;
+        margin-bottom: 0;
+        // padding-top: 2px;
+        z-index: 1;
+    }
+}
+
+
+//
+// Creating Elements
+//
+
+.feedme-mapping .field-extra-settings .element-create {
+    margin-top: 5px;
+}
+
+
+//
+// Element Groups
+//
+
+.feedme-mapping .field-extra-settings .element-groups {
+    margin-top: 5px;
+    display: inline-flex;
+    display: none;
+}
+
+.feedme-mapping .field-extra-settings .element-group {
+    display: inline-flex;
+    margin-right: 10px;
+    align-items: center;
+
+    span {
+        margin: 4px 5px 0 0;
+    }
+}
+
+
+
+//
+// Sub-Element fields
+//
+
+.feedme-mapping .element-sub-field {
+    display: none;
+}
+
+.feedme-mapping .element-sub-field td {
+    background: #fafafa;
+}
+
+.feedme-mapping .element-sub-field .col-field {
+    padding-left: 30px;
+}
+
+.feedme-mapping .element-sub-field .col-default {
+    padding-right: 30px;
+}
+
+.feedme-mapping .element-sub-field td.col-field .field > .heading {
+    font-size: 11px;
+    margin-bottom: 0;
+}
+
+.feedme-mapping .element-sub-field td.col-field .field > .heading > .instructions {
+    margin-top: -2px;
+}
+
+.feedme-mapping .element-sub-field .fa-level-up {
+    float: left;
+    display: block;
+    height: 100%;
+    color: #cacaca;
+    margin-left: -18px;
+    margin-top: 3px;
+    transform: rotate(90deg);
+}
+
+// Toggling
+.subelement-toggle .field {
+    display: flex;
+    flex-direction: row-reverse;
+    text-align: left;
+    justify-content: flex-end;
+    padding-top: 8px;
+
+    .lightswitch.small {
+        width: 25px;
+        height: 16px;
+        margin-bottom: -4px;
+    }
+
+    .lightswitch.small .label {
+        height: 16px;
+    }
+
+    .lightswitch.small .handle {
+        margin: 1px -8px;
+        width: 14px;
+        height: 14px;
+    }
+
+    > .heading > label {
+        font-weight: 400;
+        cursor: pointer;
+        margin-left: 8px;
+        color: #8f98a3;
+    }
+}
+
+
+//
+// Complex fields like Matrix/Table
+//
+
+.feedme-mapping .complex-field td {
+    background: #fafafa;
+}
+
+.feedme-mapping .complex-field .col-field {
+    padding-left: 13px;
+}
+
+.feedme-mapping .complex-field .col-field .field > .heading {
+    font-size: 11px;
+}
+
+.feedme-mapping .complex-field .col-field .field > .heading > .instructions {
+    margin-top: 0;
+    line-height: 12px;
+}
+
+.feedme-mapping .complex-field td.col-map .field {
+    margin-bottom: 0;
+}
+
+.feedme-mapping .complex-field .col-default {
+    padding-right: 13px;
+}
+
+.feedme-mapping .complex-field-header td {
+    background: darken(#fafafa, 4%);
+}
+
+.feedme-mapping .complex-field-header + .complex-field-header {
+    display: none;
+}
+
+.feedme-mapping .complex-field-header .col-field {
+    padding-left: 13px;
+}
+
+.feedme-mapping .complex-field-header .col-field .field > .heading {
+    font-size: 14px;
+}
+
+.feedme-mapping .complex-field-header .field-extra-settings .checkboxfield {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.additional-mapping-fields {
+    display: none;
+}
+
+
+
+
+// ==========================================================================
+// Logs
+// ==========================================================================
+
+.feed-me-logs-table {
+    table-layout: fixed;
+    font-size: 13px;
+}
+
+.feed-me-logs-table th:nth-child(1) {
+    width: 50px;
+}
+
+.feed-me-logs-table th:nth-child(3) {
+    width: 140px;
+}
+
+.feed-me-logs-table .col-label code {
+    font-size: 80% !important;
+    background: lighten(#a4adb6, 28%);
+    border: 1px lighten(#a4adb6, 23%) solid;
+    padding: 3px 3px;
+    border-radius: 2px;
+}
+
+.log-result {
+    display: inline-block;
+    border-radius: 3px;
+    padding: 0 4px;
+    background: #fff;
+    color: #fff !important;
+    margin-right: 5px;
+    font-variant: small-caps;
+    font-size: 12px;
+    font-weight: 300;
+    background: darken(#ebedef, 25%);
+
+    &.type-error {
+        background: #D0021B;
+    }
+}
+
+.log-detail-link {
+    float: right;
+    font-size: 80%;
+}
+
+.log-type-form {
+    display: inline-flex;
+}
+
+.log-type-form .field {
+    display: inline-flex;
+    margin: 0;
+    align-items: center;
+}
+
+.log-type-form .field .heading {
+    margin: 0;
+}
+
+.log-type-form .field .input {
+    margin: 0 1rem;
+}
+
+
+
+// ==========================================================================
+// Full Page Screens for Error/Success
+// ==========================================================================
+
+.feedme-fullpage {
+    text-align: center;
+    max-width: 40em;
+    margin: 24px auto 48px;
+}
+
+.feedme-fullpage h2 {
+    font-size: 18px;
+}
+
+.feedme-fullpage img {
+    width: 70px;
+}
+
+.feedme-fullpage .buttons {
+    display: inline-block;
+    margin-top: 15px;
+}
+
+.feedme-fullpage .progress-container {
+    position: relative;
+    display: block;
+    min-height: 12px;
+    margin-top: 2rem;
+
+    .progressbar {
+        position: absolute;
+        left: 0;
+        width: 100%;
+    }
+}
+
+.feedme-success-btns {
+    margin-top: 2em;
+}
+
+.feedme-success-btns a:first-child {
+    margin-right: 1em;
+}
+
+.feedme-status-spinner {
+    text-align: center;
+    padding: 6rem;
+}
+
+.fullpage-error-message {
+    background: lighten(#ebedef, 3%);
+    border: 1px rgba(0, 0, 20, 0.1) solid;
+    padding: 10px;
+    font-size: 12px;
+    margin: 20px 0 10px 0;
+}
+
+
+
+
+// ==========================================================================
+// Direct Feed Additional Styles
+// ==========================================================================
+
+body.feedme-message .message-container .pane {
+    width: 36em;
+    padding: 2em;
+    margin: 0 auto !important;
+    transform: translate(0, -50%);
+}
+
+body.feedme-message .feedme-fullpage {
+    margin-bottom: 24px;
+}
+
+
+
+
+
+// ==========================================================================
+// Welcome Screen
+// ==========================================================================
+
+.feedme-welcome {
+    text-align: center;
+    margin: 0 auto;
+}
+
+.feedme-welcome h1 {
+    font-size: 28px;
+}
+
+.feedme-welcome .plugin-icon-welcome {
+    margin: 20px 0 30px;
+
+    svg {
+        width: 120px;
+        height: 120px;
+    }
+}
+
+.feedme-welcome .btn-start {
+    font-size: 15px;
+    padding: 14px 28px;
+    height: auto;
+    margin-top: 20px;
+}
+
+.feedme-welcome .or {
+    display: block;
+    padding: 10px;
+    font-style: italic;
+}
+
+.feedme-welcome .btn .fa {
+    margin-left: 5px;
+}
+
+
