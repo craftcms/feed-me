@@ -10,6 +10,7 @@ use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\Plugin;
 use craft\helpers\Db;
+use craft\helpers\StringHelper;
 
 class Entries extends Field implements FieldInterface
 {
@@ -60,7 +61,7 @@ class Entries extends Field implements FieldInterface
                     $sectionIds[] = Db::idByUid('{{%sections}}', $uid);
                 }
             }
-        } else if ($sources === '*') {
+        } elseif ($sources === '*') {
             $sectionIds = null;
         }
 
@@ -89,7 +90,7 @@ class Entries extends Field implements FieldInterface
             if (Craft::$app->getIsMultiSite()) {
                 if ($targetSiteId) {
                     $criteria['siteId'] = Craft::$app->getSites()->getSiteByUid($targetSiteId)->id;
-                } else if ($feedSiteId) {
+                } elseif ($feedSiteId) {
                     $criteria['siteId'] = $feedSiteId;
                 } else {
                     $criteria['siteId'] = Craft::$app->getSites()->getCurrentSite()->id;
@@ -120,10 +121,10 @@ class Entries extends Field implements FieldInterface
 
             Plugin::info('Found `{i}` existing entries: `{j}`', ['i' => count($foundElements), 'j' => json_encode($foundElements)]);
 
-            // Check if we should create the element. But only if title is provided (for the moment)
+            // Check if we should create the element.
             if (count($ids) == 0) {
-                if ($create && $match === 'title') {
-                    $foundElements[] = $this->_createElement($dataValue, $sectionIds);
+                if ($create) {
+                    $foundElements[] = $this->_createElement($dataValue, $match);
                 }
             }
         }
@@ -152,7 +153,7 @@ class Entries extends Field implements FieldInterface
     // Private Methods
     // =========================================================================
 
-    private function _createElement($dataValue, $sources)
+    private function _createElement($dataValue, $match)
     {
         $sectionId = Hash::get($this->fieldInfo, 'options.group.sectionId');
         $typeId = Hash::get($this->fieldInfo, 'options.group.typeId');
@@ -167,32 +168,40 @@ class Entries extends Field implements FieldInterface
         }
 
         $element = new EntryElement();
-        $element->title = $dataValue;
         $element->sectionId = $sectionId;
         $element->typeId = $typeId;
 
         $siteId = Hash::get($this->feed, 'siteId');
         $section = Craft::$app->sections->getSectionById($element->sectionId);
 
-        if ($siteId) {
-            $element->siteId = $siteId;
+        if ($match === 'title') {
+            $element->title = $dataValue;
 
-            // Set the default site status based on the section's settings
-            foreach ($section->getSiteSettings() as $siteSettings) {
-                if ($siteSettings->siteId == $siteId) {
-                    $element->enabledForSite = $siteSettings->enabledByDefault;
+            if ($siteId) {
+                $element->siteId = $siteId;
+
+                // Set the default site status based on the section's settings
+                foreach ($section->getSiteSettings() as $siteSettings) {
+                    if ($siteSettings->siteId == $siteId) {
+                        $element->enabledForSite = $siteSettings->enabledByDefault;
+                        break;
+                    }
+                }
+            } else {
+                // Set the default entry status based on the section's settings
+                foreach ($section->getSiteSettings() as $siteSettings) {
+                    if (!$siteSettings->enabledByDefault) {
+                        $element->enabled = false;
+                    }
+
                     break;
                 }
             }
         } else {
-            // Set the default entry status based on the section's settings
-            foreach ($section->getSiteSettings() as $siteSettings) {
-                if (!$siteSettings->enabledByDefault) {
-                    $element->enabled = false;
-                }
-
-                break;
-            }
+            // If the new element has no title: Create a random title and disable the element.
+            $element->title = '__feed-me__' . strtolower(StringHelper::randomString(10));
+            $element->setFieldValue(str_replace('field_', '', $match), $dataValue);
+            $element->enabled = false;
         }
 
         $element->setScenario(BaseElement::SCENARIO_ESSENTIALS);
@@ -205,5 +214,4 @@ class Entries extends Field implements FieldInterface
 
         return $element->id;
     }
-
 }
