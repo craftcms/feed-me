@@ -5,6 +5,9 @@
 ### Changed
 - Feed importing jobs now use the queue’s default `ttr` and `attempts` settings if the `queueTtr` and `queueMaxRetry` settings haven’t been set in `config/feed-me.php`. ([#662](https://github.com/craftcms/feed-me/issues/662))
 
+### Fixed
+- Fixed a bug that prevented Feed Me from importing related entries with a disabled status.([#645](https://github.com/craftcms/feed-me/issues/645))
+
 ## 4.2.0.1 - 2020-01-15
 
 ### Fixed
