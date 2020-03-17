@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 4.2.1.1 - 2020-03-17
+
 ### Fixed
 - Fixed a typo in the changelog.
 
