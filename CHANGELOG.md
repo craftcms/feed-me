@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 4.2.1 - 2020-03-17
+
 ### Added
 - Added support for the Entries Subset field type. ([#686])(https://github.com/craftcms/feed-me/pull/686)
 
