@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Added
+- Added support for the Entries Subset field type. ([#686])(https://github.com/craftcms/feed-me/pull/686)
+
 ### Changed
 - Feed importing jobs now use the queue’s default `ttr` and `attempts` settings if the `queueTtr` and `queueMaxRetry` settings haven’t been set in `config/feed-me.php`. ([#662](https://github.com/craftcms/feed-me/issues/662))
 
