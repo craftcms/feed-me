@@ -255,11 +255,11 @@ class AssetHelper
         // Can we easily get the extension for this URL?
         $filename = pathinfo($filename, PATHINFO_FILENAME);
 
-        // If there was a query string, append a hash of it so this asset remains unique
+        // If there was a query string, append it so this asset remains unique
         $query = parse_url($url, PHP_URL_QUERY);
 
         if ($query) {
-            $filename = $filename . '-' . static::queryHash($query);
+            $filename = $filename . '-' . $query;
         }
 
         // Clean up the filename
@@ -316,9 +316,14 @@ class AssetHelper
         return $extension;
     }
 
+    /**
+     * @param string $string
+     * @return string
+     * @deprecated since
+     */
     public static function queryHash($string)
     {
-        return base_convert($string, 10, 36);
+        return $string;
     }
 
 }

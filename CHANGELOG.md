@@ -1,6 +1,14 @@
 # Changelog
 
-## Unreleased
+## 4.2.2 -2020-03-26
+
+### Deprecated
+- Deprecated `craft\feedme\helpers\AssetHelper::queryHash()`.
+
+### Fixed
+- Fixed a bug where the “Save” and “Save and continue” buttons were hanging off the bottom of the page. ([#664](https://github.com/craftcms/feed-me/issues/664))
+- Fixed a bug where Feed Me would report that processing was complete when it wasn’t. ([#664](https://github.com/craftcms/feed-me/issues/664))
+- Fixed a PHP error when importing assets from URLs with query strings, on PHP 7.4 or later. ([#682](https://github.com/craftcms/feed-me/issues/682))
 
 ## 4.2.1.1 - 2020-03-17
 
