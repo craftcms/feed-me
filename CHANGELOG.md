@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Fixed
+- Fixed a bug where the “Save” and “Save and continue” buttons were hanging off the bottom of the page. ([#664](https://github.com/craftcms/feed-me/issues/664))
+
 ## 4.2.1.1 - 2020-03-17
 
 ### Fixed
