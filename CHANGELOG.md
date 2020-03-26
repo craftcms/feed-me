@@ -2,6 +2,9 @@
 
 ## 4.2.2 - 2020-03-26
 
+### Changed
+- Feed Me now requires Craft 3.4 or later.
+
 ### Deprecated
 - Deprecated `craft\feedme\helpers\AssetHelper::queryHash()`.
 
