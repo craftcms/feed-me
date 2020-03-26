@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 4.2.2 -2020-03-26
 
 ### Deprecated
 - Deprecated `craft\feedme\helpers\AssetHelper::queryHash()`.
