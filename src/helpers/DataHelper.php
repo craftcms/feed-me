@@ -171,6 +171,12 @@ class DataHelper
                 $newValue = null;
             }
 
+            // If simple arrays of values
+            if (is_array($existingValue) && is_array($newValue)) {
+                sort($existingValue);
+                sort($newValue);
+            }
+
             // Check for simple fields first
             if ($existingValue == $newValue) {
                 unset($trackedChanges[$key]);
