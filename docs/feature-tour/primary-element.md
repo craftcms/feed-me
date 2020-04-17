@@ -50,6 +50,10 @@ Some feeds paginate their content due to their sheer size. This is also a good i
 
 Use this option to select the node in your feed that contains the full URL to the next collection of items. Feed Me will automatically spawn a new queue job to process this new set of data after the first page has finished.
 
+::: warning
+Your pagination URL can’t be nested within an array or numerically-indexed key in your feed.
+```
+
 * * *
 
 Click on the _Save & Continue_ button to be taken to the [Field Mapping](field-mapping.md) screen, or press _Save_ to continue editing this screen.
