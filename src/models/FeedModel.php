@@ -7,7 +7,6 @@ use craft\base\Model;
 use craft\feedme\base\Element;
 use craft\feedme\base\ElementInterface;
 use craft\feedme\helpers\DuplicateHelper;
-use craft\feedme\Plugin;
 
 /**
  * Class FeedModel
@@ -107,7 +106,7 @@ class FeedModel extends Model
 
     public function getNextPagination()
     {
-        if (!$this->paginationUrl) {
+        if (!$this->paginationUrl || !filter_var($this->paginationUrl, FILTER_VALIDATE_URL)) {
             return;
         }
 
