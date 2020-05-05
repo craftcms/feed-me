@@ -1,5 +1,34 @@
 # Changelog
 
+## 4.2.2 - 2020-03-26
+
+### Changed
+- Feed Me now requires Craft 3.4 or later.
+
+### Deprecated
+- Deprecated `craft\feedme\helpers\AssetHelper::queryHash()`.
+
+### Fixed
+- Fixed a bug where the “Save” and “Save and continue” buttons were hanging off the bottom of the page. ([#664](https://github.com/craftcms/feed-me/issues/664))
+- Fixed a bug where Feed Me would report that processing was complete when it wasn’t. ([#664](https://github.com/craftcms/feed-me/issues/664))
+- Fixed a PHP error when importing assets from URLs with query strings, on PHP 7.4 or later. ([#682](https://github.com/craftcms/feed-me/issues/682))
+
+## 4.2.1.1 - 2020-03-17
+
+### Fixed
+- Fixed a typo in the changelog.
+
+## 4.2.1 - 2020-03-17
+
+### Added
+- Added support for the Entries Subset field type. ([#686](https://github.com/craftcms/feed-me/pull/686))
+
+### Changed
+- Feed importing jobs now use the queue’s default `ttr` and `attempts` settings if the `queueTtr` and `queueMaxRetry` settings haven’t been set in `config/feed-me.php`. ([#662](https://github.com/craftcms/feed-me/issues/662))
+
+### Fixed
+- Fixed some bugs with importing and displaying related entries that have a disabled status. ([#645](https://github.com/craftcms/feed-me/issues/645))
+
 ## 4.2.0.1 - 2020-01-15
 
 ### Fixed

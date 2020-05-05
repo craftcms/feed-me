@@ -4,7 +4,7 @@ module.exports = function(grunt) {
         pkg: grunt.file.readJSON('package.json'),
         watch: {
             sass: {
-                files: ['lib/craftcms-sass/_mixins.scss', 'src/web/assets/feedme/dist/css/*.scss'],
+                files: ['src/web/assets/feedme/dist/css/*.scss'],
                 tasks: 'css'
             },
             js: {

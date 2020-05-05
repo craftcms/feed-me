@@ -4,8 +4,7 @@
 
 // ==========================================================================
 
-@import "base";
-@import "../../../../../../lib/craftcms-sass/mixins";
+@import "../../../../../../node_modules/craftcms-sass/mixins";
 
 
 // ==========================================================================
@@ -553,30 +552,12 @@ body.ltr .table-feed-me .thin.action {
     margin-top: 15px;
 }
 
-.feedme-fullpage .progress-container {
-    position: relative;
-    display: block;
-    min-height: 12px;
-    margin-top: 2rem;
-
-    .progressbar {
-        position: absolute;
-        left: 0;
-        width: 100%;
-    }
-}
-
 .feedme-success-btns {
     margin-top: 2em;
 }
 
-.feedme-success-btns a:first-child {
-    margin-right: 1em;
-}
-
-.feedme-status-spinner {
-    text-align: center;
-    padding: 6rem;
+.feedme-success-btns a:not(:first-child) {
+    margin-left: 7px;
 }
 
 .fullpage-error-message {

@@ -6,7 +6,7 @@ Feed Me is a Craft plugin for super-simple importing of content, either once-off
 
 ## Requirements
 
-This plugin requires Craft CMS 3.1.21 or later.
+This plugin requires Craft CMS 3.4.0 or later.
 
 ## Installation
 
