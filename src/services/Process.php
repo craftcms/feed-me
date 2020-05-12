@@ -290,10 +290,12 @@ class Process extends Component
         }
 
         // Are we only disabling/deleting only, we need to quit right here
+        // https://github.com/craftcms/feed-me/issues/696
         if (
             DuplicateHelper::isDisable($feed, true) ||
             DuplicateHelper::isDisableForSite($feed, true) ||
-            DuplicateHelper::isDelete($feed, true)
+            DuplicateHelper::isDelete($feed, true) ||
+            (!DuplicateHelper::isUpdate($feed) && $existingElement)
         ) {
             // If there's an existing element, we want to keep it, otherwise remove it
             if ($existingElement) {
