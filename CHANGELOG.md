@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 4.2.3 - 2020-05-12
 
 ### Fixed
 - Fixed a bug where all elements would be disabled if the “Add” and “Disable” strategies were used together. ([#696](https://github.com/craftcms/feed-me/issues/696)
