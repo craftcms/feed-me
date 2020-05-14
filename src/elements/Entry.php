@@ -163,6 +163,8 @@ class Entry extends Element
             } else {
                 Plugin::info('Entry `#{id}` added.', ['id' => $element->id]);
             }
+            
+            $this->element->newParentId = $element->id;
 
             return $element->id;
         }
