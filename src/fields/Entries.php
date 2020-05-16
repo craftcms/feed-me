@@ -1,5 +1,4 @@
 <?php
-
 namespace craft\feedme\fields;
 
 use Cake\Utility\Hash;
@@ -21,7 +20,6 @@ class Entries extends Field implements FieldInterface
     public static $class = 'craft\fields\Entries';
     public static $elementType = 'craft\elements\Entry';
 
-
     // Templates
     // =========================================================================
 
@@ -29,7 +27,6 @@ class Entries extends Field implements FieldInterface
     {
         return 'feed-me/_includes/fields/entries';
     }
-
 
     // Public Methods
     // =========================================================================
@@ -150,7 +147,6 @@ class Entries extends Field implements FieldInterface
         return $foundElements;
     }
 
-
     // Private Methods
     // =========================================================================
 
@@ -200,7 +196,16 @@ class Entries extends Field implements FieldInterface
             }
         } else {
             // If the new element has no title: Create a random title and disable the element.
-            $element->title = '__feed-me__' . strtolower(StringHelper::randomString(10));
+            $randomString = '__feed-me__' . strtolower(StringHelper::randomString(10));
+            $entryType = $element->getType();
+
+            // If the element has no title field, we only set a random slug.
+            // Otherwise we would not be able to save the element.
+            if ($entryType->hasTitleField) {
+                $element->title = $randomString;
+            } else {
+                $element->slug = $randomString;
+            }
             $element->setFieldValue(str_replace('field_', '', $match), $dataValue);
             $element->enabled = false;
         }
