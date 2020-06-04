@@ -5,7 +5,7 @@
 If you're experiencing slow processing for your feed, try the following:
 
 - Turn off `devMode`. Craft's built-in logging when devMode is switched on will greatly slow down the import process, and causes a high degree of memory overhead.
-- Consider turning on the `checkExistingFieldData` [configuration setting](get-started/configuration.md#configuration-options) to prevent unnecessary content overwriting.
+- Consider turning on the `compareContent` [configuration setting](get-started/configuration.md#configuration-options) to prevent unnecessary content overwriting.
 - Consider selecting the Add Entries option for duplication handling, depending on your requirements.
 - Consider turning off the Backup option for the feed. This will depend on your specific circumstances.
 - Opt for a JSON feed - there is significantly less processing overhead as opposed to XML.
