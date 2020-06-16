@@ -38,8 +38,9 @@
 
 {% set subfields = {
     type: 'Type',
-    value: 'Custom URL',
+    value: 'Value',
     customText: 'Custom Text',
+    target: 'Target',
 } %}
 
 {% for key, col in subfields %}
@@ -48,13 +49,45 @@
 
     {% set path = prefixPath | merge ([ 'fields', key ]) %}
 
-    {% set default = default ?? {
-        type: 'text',
+    {% set default = {
+        type: 'text'
     } %}
+
+    {% switch key %}
+
+        {% case 'type' %}
+
+            {% set enabledLinkTypes = field.getEnabledLinkTypes() %}
+            {% set enabledLinkTypeOptions = [
+                { label: "Don't import", value: '' }
+            ] %}
+
+            {% for enabledLinkType in enabledLinkTypes %}
+                {% set enabledLinkTypeOptions = enabledLinkTypeOptions|merge([{ label: enabledLinkType.label, value: enabledLinkType.type }]) %}
+            {% endfor %}
+
+            {% set default = {
+                type: 'select',
+                options: enabledLinkTypeOptions,
+            } %}
+
+        {% case 'target' %}
+
+            {% set default = {
+                type: 'select',
+                options: [
+                    { label: "Don't import", value: '' },
+                    { label: 'Open in new window', value: '1' },
+                    { label: 'Open in existing window', value: '' },
+                ]
+            } %}
+
+    {% endswitch %}
+
 
     {% embed 'feed-me/_includes/fields/_base' %}
         {% block additionalFieldSettings %}
-            
+
         {% endblock %}
 
         {% block fieldSettings %}

@@ -74,6 +74,9 @@ class DataHelper
 
         // Check if not importing, just using default
         if ($node === 'usedefault' && !$value) {
+            if (!is_array($default)) {
+                $default = [$default];
+            }
             $value = $default;
         }
 

@@ -175,6 +175,7 @@ class Entry extends Element
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
         $match = Hash::get($fieldInfo, 'options.match');
         $create = Hash::get($fieldInfo, 'options.create');
+        $node = Hash::get($fieldInfo, 'node');
 
         // Element lookups must have a value to match against
         if ($value === null || $value === '') {
@@ -183,6 +184,10 @@ class Entry extends Element
 
         if (is_array($value)) {
             $value = $value[0];
+        }
+
+        if ($node === 'usedefault') {
+            $match = 'elements.id';
         }
 
         if ($match === 'fullName') {

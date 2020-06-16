@@ -23,12 +23,13 @@ class FeedImport extends BaseJob implements RetryableJobInterface
 
     public function getTtr()
     {
-        return Plugin::$plugin->getSettings()->queueTtr;
+        return Plugin::$plugin->getSettings()->queueTtr ?? Craft::$app->getQueue()->ttr;
     }
 
     public function canRetry($attempt, $error)
     {
-        return ($attempt < Plugin::$plugin->getSettings()->queueMaxRetry);
+        $attempts = Plugin::$plugin->getSettings()->queueMaxRetry ?? Craft::$app->getQueue()->attempts;
+        return $attempt < $attempts;
     }
 
     public function execute($queue)

@@ -1,5 +1,55 @@
 # Changelog
 
+## 4.2.3 - 2020-05-12
+
+### Fixed
+- Fixed a bug where all elements would be disabled if the “Add” and “Disable” strategies were used together. ([#696](https://github.com/craftcms/feed-me/issues/696)
+
+## 4.2.2 - 2020-03-26
+
+### Changed
+- Feed Me now requires Craft 3.4 or later.
+
+### Deprecated
+- Deprecated `craft\feedme\helpers\AssetHelper::queryHash()`.
+
+### Fixed
+- Fixed a bug where the “Save” and “Save and continue” buttons were hanging off the bottom of the page. ([#664](https://github.com/craftcms/feed-me/issues/664))
+- Fixed a bug where Feed Me would report that processing was complete when it wasn’t. ([#664](https://github.com/craftcms/feed-me/issues/664))
+- Fixed a PHP error when importing assets from URLs with query strings, on PHP 7.4 or later. ([#682](https://github.com/craftcms/feed-me/issues/682))
+
+## 4.2.1.1 - 2020-03-17
+
+### Fixed
+- Fixed a typo in the changelog.
+
+## 4.2.1 - 2020-03-17
+
+### Added
+- Added support for the Entries Subset field type. ([#686](https://github.com/craftcms/feed-me/pull/686))
+
+### Changed
+- Feed importing jobs now use the queue’s default `ttr` and `attempts` settings if the `queueTtr` and `queueMaxRetry` settings haven’t been set in `config/feed-me.php`. ([#662](https://github.com/craftcms/feed-me/issues/662))
+
+### Fixed
+- Fixed some bugs with importing and displaying related entries that have a disabled status. ([#645](https://github.com/craftcms/feed-me/issues/645))
+
+## 4.2.0.1 - 2020-01-15
+
+### Fixed
+- Fixed a bug that broke local feeds. ([#647](https://github.com/craftcms/feed-me/issues/647))
+
+## 4.2.0 - 2020-01-02
+
+### Changed
+- Added a fail-safe when assigning default authors to entries to ensure lookup is always done against the user’s ID. ([#627](https://github.com/craftcms/feed-me/issues/627))
+
+### Fixed
+- Fixed a bug that could occur when importing default values to Checkboxes or Multi-select fields.
+- Fixed support for the Linkit plugin. ([#615](https://github.com/craftcms/feed-me/issues/615))
+- Fixed compatibility with Craft 3.4. ([#643](https://github.com/craftcms/feed-me/issues/643))
+- Fixed a bug where Feed Me wasn’t prepared for the possibility that an event handler for `craft\feedme\services\Process::EVENT_BEFORE_PROCESS_FEED` could alter the total number of feed items to process. ([#619](https://github.com/craftcms/feed-me/pull/619))
+
 ## 4.1.2 - 2019-08-11
 
 ### Fixed
@@ -11,7 +61,7 @@
 ## 4.1.1 - 2019-07-06
 
 ### Changed
-- It’s now possible for `onAfterParseField` event handlers to modify parsed field values by overriding the `$parsedValue` property on the event. ([#516](https://github.com/craftcms/feed-me/issues/516)) 
+- It’s now possible for `onAfterParseField` event handlers to modify parsed field values by overriding the `$parsedValue` property on the event. ([#516](https://github.com/craftcms/feed-me/issues/516))
 
 ### Fixed
 - Fixed an issue that could happen when trying to import tags.

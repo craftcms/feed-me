@@ -28,8 +28,8 @@ class Settings extends Model
     public $sleepTime = 0;
     public $logging = true;
     public $runGcBeforeFeed = false;
-    public $queueTtr = 300;
-    public $queueMaxRetry = 5;
+    public $queueTtr;
+    public $queueMaxRetry;
     public $assetDownloadCurl = false;
 
 }
