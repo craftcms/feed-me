@@ -277,7 +277,7 @@ Wait for the feed processing to finish. Remember, you can always navigate away f
 ![Feedme Start](../screenshots/feedme-start.png)
 
 :::tip
-If you're having issues, or seeing errors at this point, look at the [Troubleshooting](../support/troubleshooting.md) section.
+If you're having issues, or seeing errors at this point, look at the [Troubleshooting](../troubleshooting.md) section.
 :::
 
 You should now have 2 brand new entries in your Property Listings section.

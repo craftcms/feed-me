@@ -9,7 +9,6 @@ module.exports = {
         editLinks: true,
         docsRepo: 'craftcms/feed-me',
         docsDir: 'docs',
-        docsBranch: 'craft-3',
         nav: [
             {
                 text: 'Craft CMS',
