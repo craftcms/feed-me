@@ -58,7 +58,7 @@ A generated, unique string to increase security against imports being run inadve
 
 ### Backup
 
-Enable a backup of your database to be taken on each import. Please note the [performance implications](../support/troubleshooting.md#performance) when switching this on.
+Enable a backup of your database to be taken on each import. Please note the [performance implications](../troubleshooting.md#performance) when switching this on.
 
 * * *
 
