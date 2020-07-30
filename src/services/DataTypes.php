@@ -176,7 +176,7 @@ class DataTypes extends Component
             'response' => $response,
         ]);
 
-        Event::trigger(static::class, self::EVENT_AFTER_FETCH_FEED, $event);
+        $this->trigger(self::EVENT_BEFORE_FETCH_FEED, $event);
 
         return $event->response;
     }
