@@ -35,8 +35,6 @@ use craft\feedme\fields\TypedLink;
 use craft\feedme\fields\Users;
 use craft\helpers\Component as ComponentHelper;
 
-use ilkino\cinemaprogram\fields\VersionTags;
-
 class Fields extends Component
 {
     // Constants

@@ -121,7 +121,7 @@ class DataTypes extends Component
             'url' => $url,
         ]);
 
-        $this->trigger(self::EVENT_BEFORE_FETCH_FEED, $event);
+        Event::trigger(static::class, self::EVENT_BEFORE_FETCH_FEED, $event);
 
         if ($event->response) {
             return $event->response;
@@ -176,7 +176,7 @@ class DataTypes extends Component
             'response' => $response,
         ]);
 
-        $this->trigger(self::EVENT_AFTER_FETCH_FEED, $event);
+        Event::trigger(static::class, self::EVENT_AFTER_FETCH_FEED, $event);
 
         return $event->response;
     }
