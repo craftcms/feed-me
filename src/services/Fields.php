@@ -33,6 +33,9 @@ use craft\feedme\fields\Table;
 use craft\feedme\fields\Tags;
 use craft\feedme\fields\TypedLink;
 use craft\feedme\fields\Users;
+// Custom
+use craft\feedme\fields\VersionTags;
+
 use craft\helpers\Component as ComponentHelper;
 
 class Fields extends Component
