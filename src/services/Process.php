@@ -486,6 +486,18 @@ class Process extends Component
             return;
         }
 
+
+        // Fire an 'onProcessFeed' event
+        $event = new FeedProcessEvent([
+            'feed' => $feed,
+            'processedElementIds' => $processedElementIds,
+        ]);
+
+        $this->trigger(self::EVENT_AFTER_PROCESS_FEED, $event);
+
+        // Allow event to modify variables
+        $processedElementIds = $event->processedElementIds;
+
         $elementsToDeleteDisable = array_diff($settings['existingElements'], $processedElementIds);
 
         if ($elementsToDeleteDisable) {
@@ -513,13 +525,6 @@ class Process extends Component
         $message = 'Processing ' . count($processedElementIds) . ' elements finished in ' . $execution_time . 's';
         Plugin::info($message);
         Plugin::debug($message);
-
-        // Fire an 'onProcessFeed' event
-        $event = new FeedProcessEvent([
-            'feed' => $feed,
-        ]);
-
-        $this->trigger(self::EVENT_AFTER_PROCESS_FEED, $event);
     }
 
     /**
