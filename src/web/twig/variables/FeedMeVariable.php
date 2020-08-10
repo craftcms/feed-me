@@ -68,6 +68,10 @@ class FeedMeVariable extends ServiceLocator
 
         if (is_array($options)) {
             foreach ($options as $key => $value) {
+                if (!isset($value['value'])) {
+                    continue;
+                }
+
                 $values[$value[$index]] = $value[$label];
             }
         }
