@@ -68,7 +68,7 @@ class FeedMeVariable extends ServiceLocator
 
         if (is_array($options)) {
             foreach ($options as $key => $value) {
-                if (!isset($value['value'])) {
+                if (isset($value['optgroup'])) {
                     continue;
                 }
 
