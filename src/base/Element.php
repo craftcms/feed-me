@@ -154,8 +154,11 @@ abstract class Element extends Component implements ElementInterface
         foreach ($elementIds as $elementId) {
             /** @var BaseElement $element */
             $element = $elementsService->getElementById($elementId, $class);
-            $element->enabled = false;
-            $elementsService->saveElement($element);
+
+            if ($element->enabled) {
+                 $element->enabled = false;
+                 $elementsService->saveElement($element);
+            }
         }
 
         return true;
