@@ -3,6 +3,7 @@
     "main": "gruntfile.js",
     "devDependencies": {
         "craftcms-sass": "^3.4.0",
+        "esm": "^3.2.25",
         "grunt": "^1.0.3",
         "grunt-contrib-concat": "latest",
         "grunt-contrib-jshint": "latest",
@@ -18,6 +19,6 @@
     "scripts": {
         "docs:dev": "vuepress dev docs",
         "docs:build": "vuepress build docs -d docs-build",
-        "docs:sitemap": "vuepress-sitemap -H https://docs.craftcms.com/feed-me/v4/"
+        "docs:sitemap": "vuepress-sitemap -d docs-build -H https://docs.craftcms.com/feed-me/v4/"
     }
 }
