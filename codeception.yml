@@ -16,14 +16,16 @@ params:
   - tests/_craft/.env
 modules:
   config:
-    Yii2:
+    \craft\test\Craft:
       configFile: 'tests/_craft/config/test.php'
-  enabled:
-    - Db:
-        dsn: 'mysql:host=localhost;dbname=%TEST_DB_NAME%;'
-        user: '%TEST_DB_USER%'
-        password: '%TEST_DB_PASS%'
-        dump: 'tests/_data/dump.sql'
-        populate: true
-        cleanup: false
-        reconnect: false
+      entryUrl: 'http://plugins.nitro/index.php'
+      projectConfig: {}
+      migrations: []
+      plugins:
+        feedme:
+          class: '\craftcms\feedme\Plugin'
+          handle: feed-me
+      cleanup: true
+      transaction: true
+      dbSetup: {clean: false, setupCraft: false}
+      fullMock: false
