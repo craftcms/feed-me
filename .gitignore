@@ -1,7 +1,7 @@
 # CRAFT ENVIRONMENT
 .env.php
 .env.sh
-.env
+tests/.env
 
 # COMPOSER
 /vendor
@@ -33,3 +33,4 @@
 ## TESTS
 /tests/_craft/storage
 /.sass-cache
+/tests/_craft/.env
