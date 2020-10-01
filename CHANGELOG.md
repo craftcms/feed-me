@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Fixed a bug where pagination would break if a feed provided a root related pagination URL.
+
 ## 4.2.3 - 2020-05-12
 
 ### Fixed
