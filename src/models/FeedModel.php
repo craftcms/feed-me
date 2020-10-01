@@ -107,7 +107,7 @@ class FeedModel extends Model
 
     public function getNextPagination()
     {
-        if (!$this->paginationUrl) {
+        if (!$this->paginationUrl || !filter_var($this->paginationUrl, FILTER_VALIDATE_URL)) {
             return;
         }
 

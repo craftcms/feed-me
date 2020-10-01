@@ -4,6 +4,7 @@
 
 ### Fixed
 - Fixed a bug where pagination would break if a feed provided a root related pagination URL.
+- Fixed a bug where pagination would break if a feed provided an invalid URL.  ([#694](https://github.com/craftcms/feed-me/issues/694)
 
 ## 4.2.3 - 2020-05-12
 
