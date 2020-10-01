@@ -112,10 +112,6 @@ class FeedModel extends Model
             return;
         }
 
-        if (strpos($this->paginationUrl, "/", 0)) {
-            // use the helper to combine the feed URL and the relative pagination URL
-        }
-
         // Set the URL dynamically on the feed, then kick off processing again
         $this->feedUrl = $this->paginationUrl;
 
