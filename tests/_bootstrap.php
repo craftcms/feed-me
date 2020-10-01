@@ -1,28 +1,26 @@
 <?php
+/**
+ * @link https://craftcms.com/
+ * @copyright Copyright (c) Pixel & Tonic, Inc.
+ * @license https://craftcms.github.io/license/
+ */
 
-define('YII_ENV', 'test');
-define('YII_DEBUG', true);
+use craft\test\TestSetup;
 
-// Set path constants
-define('CRAFT_BASE_PATH', __DIR__ . '/_craft');
+ini_set('date.timezone', 'UTC');
+date_default_timezone_set('UTC');
+
+define('CRAFT_TESTS_PATH', __DIR__);
 define('CRAFT_STORAGE_PATH', __DIR__ . '/_craft/storage');
 define('CRAFT_TEMPLATES_PATH', __DIR__ . '/_craft/templates');
 define('CRAFT_CONFIG_PATH', __DIR__ . '/_craft/config');
-define('CRAFT_VENDOR_PATH', __DIR__ . '/../vendor');
+define('CRAFT_MIGRATIONS_PATH', __DIR__ . '/_craft/migrations');
+define('CRAFT_TRANSLATIONS_PATH', __DIR__ . '/_craft/translations');
+define('CRAFT_VENDOR_PATH', dirname(__DIR__) . DIRECTORY_SEPARATOR . 'vendor');
 
-error_reporting(E_ALL);
-ini_set('log_errors', 1);
-ini_set('error_log', CRAFT_STORAGE_PATH . '/logs/phperrors.log');
-ini_set('display_errors', 1);
+$devMode = true;
 
-// Load Composer's autoloader
-require_once CRAFT_VENDOR_PATH . '/autoload.php';
+TestSetup::configureCraft();
 
-// Load dotenv?
-if (file_exists(CRAFT_BASE_PATH . '/.env')) {
-    (new Dotenv\Dotenv(CRAFT_BASE_PATH))->load();
-}
-
-// Load and run Craft
-define('CRAFT_ENVIRONMENT', 'test');
-$app = require CRAFT_VENDOR_PATH . '/craftcms/cms/bootstrap/console.php';
+// Set the @webroot alias so that the cpresources folder is created in the correct directory
+Craft::setAlias('@webroot', __DIR__ . '/_craft/web');

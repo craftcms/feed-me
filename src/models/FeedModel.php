@@ -8,6 +8,7 @@ use craft\feedme\base\Element;
 use craft\feedme\base\ElementInterface;
 use craft\feedme\helpers\DuplicateHelper;
 use craft\feedme\Plugin;
+use craft\helpers\UrlHelper;
 
 /**
  * Class FeedModel
