@@ -217,7 +217,7 @@ class CommerceProduct extends Element
         $complexFields = [];
 
         // Fetch any existing variants on the product, indexes by their SKU
-        if (isset($element->variants[0]['sku'])) {
+        if (!empty($element->variants[0]['sku'])) {
             foreach ($element->variants as $key => $value) {
                 $variants[$value['sku']] = $value;
             }

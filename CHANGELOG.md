@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Fixed
+- Fixed a SQL error that would occur when trying to import Products in Commerce 3.2.8 or higher.
+
 ## 4.2.4 - 2020-10-01
 
 ### Fixed
