@@ -63,7 +63,7 @@ class AssetHelper
         }
     }
 
-    public static function fetchRemoteImage(array $urls, string $fieldInfo, $feed, $field = null, $element = null, $folderId = null, $newFilename = null)
+    public static function fetchRemoteImage(array $urls, $fieldInfo, $feed, $field = null, $element = null, $folderId = null, $newFilename = null)
     {
         $uploadedAssets = [];
 
