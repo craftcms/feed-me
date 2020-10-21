@@ -312,15 +312,4 @@ class AssetHelper
 
         return $extension;
     }
-
-    /**
-     * @param string $string
-     * @return string
-     * @deprecated since
-     */
-    public static function queryHash($string)
-    {
-        return $string;
-    }
-
 }
