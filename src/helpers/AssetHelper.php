@@ -63,7 +63,7 @@ class AssetHelper
         }
     }
 
-    public static function fetchRemoteImage($urls, $fieldInfo, $feed, $field = null, $element = null, $folderId = null)
+    public static function fetchRemoteImage(array $urls, string $fieldInfo, $feed, $field = null, $element = null, $folderId = null, $newFilename = null)
     {
         $uploadedAssets = [];
 
@@ -75,7 +75,7 @@ class AssetHelper
         // user has set to use that instead so we're good to proceed.
         foreach ($urls as $url) {
             try {
-                $filename = self::getRemoteUrlFilename($url);
+                $filename = $newFilename ? self::cleanUpFileName($newFilename) : self::getRemoteUrlFilename($url);
 
                 $fetchedImage = $tempFeedMePath . $filename;
 
@@ -262,10 +262,7 @@ class AssetHelper
             $filename = $filename . '-' . $query;
         }
 
-        // Clean up the filename
-        $filename = str_replace('%20', '_', $filename);
-        $filename = str_replace('_-_', '-', $filename);
-        $filename = AssetsHelper::prepareAssetName($filename, false);
+        self::cleanUpFileName($filename);
 
         return $filename . '.' . $extension;
     }
@@ -314,6 +311,20 @@ class AssetHelper
         }
 
         return $extension;
+    }
+
+    /**
+     * Cleans up a filename.
+     *
+     * @param string $filename
+     * @return string
+     * @since 4.2.5
+     */
+    public static function cleanUpFileName(string $filename) {
+        $filename = str_replace('%20', '_', $filename);
+        $filename = str_replace('_-_', '-', $filename);
+        //TODO Not sure if the above is really needed, leaving for now
+        return AssetsHelper::prepareAssetName($filename, false);
     }
 
     /**

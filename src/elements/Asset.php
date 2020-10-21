@@ -123,9 +123,11 @@ class Asset extends Element
         }
 
         $folderIdInfo = $feed['fieldMapping']['folderId'] ?? [];
+        $fileNameInfo = $feed['fieldMapping']['filename'] ?? [];
 
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
         $folderId = $this->parseFolderId($feedData, $folderIdInfo);
+        $newFilename = $this->fetchSimpleValue($feedData, $fileNameInfo);
 
         $conflict = Hash::get($fieldInfo, 'options.conflict');
 
@@ -149,7 +151,7 @@ class Asset extends Element
         }
 
         // We can't find an existing asset, we need to download from a remote URL, or local path
-        $uploadedElementIds = AssetHelper::fetchRemoteImage([$value], $fieldInfo, $this->feed, null, $this->element, $folderId);
+        $uploadedElementIds = AssetHelper::fetchRemoteImage([$value], $fieldInfo, $this->feed, null, $this->element, $folderId, $newFilename);
 
         if ($uploadedElementIds) {
             $foundElement = AssetElement::find()
