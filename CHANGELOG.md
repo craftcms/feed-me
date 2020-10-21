@@ -4,6 +4,7 @@
 
 ### Fixed
 - Fixed a SQL error that would occur when trying to import Products in Commerce 3.2.8 or higher.
+- Fixed a bug where assets would end up with an incorrect filename when the filename was used for a mapping in the feed settings. ([#750](https://github.com/craftcms/feed-me/issues/750))
 
 ## 4.2.4 - 2020-10-01
 
