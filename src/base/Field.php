@@ -105,7 +105,7 @@ abstract class Field extends Component
 
         // Now, for each element, we need to save the contents
         foreach ($fieldData as $elementId => $fieldContent) {
-            $element = $elementsService->getElementById($elementId);
+            $element = $elementsService->getElementById($elementId, null, Hash::get($this->feed, 'siteId'));
 
             $element->setFieldValues($fieldContent);
 
