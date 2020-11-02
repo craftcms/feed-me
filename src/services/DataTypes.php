@@ -183,10 +183,10 @@ class DataTypes extends Component
 
     public function getFeedData($feedModel, $usePrimaryElement = true)
     {
-        $feedDataResponse = $feedModel->getDataType()->getFeed($feedModel->feedUrl, $feedModel, $usePrimaryElement);
+        $feedDataResponse = $feedModel->getDataType()->getFeed($feedModel->getFeedUrl(), $feedModel, $usePrimaryElement);
 
         $event = new FeedDataEvent([
-            'url' => $feedModel->feedUrl,
+            'url' => $feedModel->getFeedUrl(),
             'response' => $feedDataResponse,
         ]);
 
