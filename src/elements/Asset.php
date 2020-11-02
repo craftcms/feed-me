@@ -142,6 +142,7 @@ class Asset extends Element
                 ->folderId($folderId)
                 ->filename($filename)
                 ->includeSubfolders(true)
+                ->siteId($feed['siteId'])
                 ->one();
 
             if ($foundElement) {
@@ -156,6 +157,7 @@ class Asset extends Element
         if ($uploadedElementIds) {
             $foundElement = AssetElement::find()
                 ->id($uploadedElementIds[0])
+                ->siteId($feed['siteId'])
                 ->one();
 
             if ($foundElement) {
