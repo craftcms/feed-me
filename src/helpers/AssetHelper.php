@@ -32,8 +32,14 @@ class AssetHelper
             $ch = curl_init($srcName);
             $fp = fopen($dstName, 'wb');
 
-            curl_setopt($ch, CURLOPT_FILE, $fp);
-            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+            $defaultOptions = [
+                CURLOPT_FILE => $fp,
+                CURLOPT_FOLLOWLOCATION => 1
+            ];
+
+            // merge default options with config setting, config overrides default.
+            $options = Plugin::$plugin->getSettings()->curlOptions  + $defaultOptions;
+            curl_setopt_array($ch, $options);
 
             curl_exec($ch);
             curl_close($ch);
