@@ -35,7 +35,7 @@ class Dropdown extends Field implements FieldInterface
         $match = Hash::get($this->fieldInfo, 'options.match', 'value');
 
         foreach ($options as $option) {
-            if ($value === $option[$match]) {
+            if (isset($option['value']) && $value === $option[$match]) {
                 return $option['value'];
             }
         }
