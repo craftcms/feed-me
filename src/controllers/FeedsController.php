@@ -45,7 +45,7 @@ class FeedsController extends Controller
             $variables['feed'] = $feed;
         }
 
-        $variables['feedMethods'] = array("get"=>"GET", "post"=>"POST");
+        $variables['feedMethods'] = array('GET' => 'GET', 'POST' => 'POST');
         $variables['dataTypes'] = Plugin::$plugin->data->dataTypesList();
         $variables['elements'] = Plugin::$plugin->elements->getRegisteredElements();
 
