@@ -71,6 +71,17 @@
         required: true,
     }) }}
 
+    {{ forms.selectField({
+        label: "Feed Method" | t('feed-me'),
+        instructions: 'Choose the HTTP request method to use.' | t('feed-me'),
+        id: 'feedMethod',
+        name: 'feedMethod',
+        options: feedMethod,
+        value: feed.feedMethod,
+        errors: feed.getErrors('feedMethod'),
+        required: true,
+    }) }}
+
     <hr>
 
     {% set elementsList = [] %}
