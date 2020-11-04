@@ -45,7 +45,7 @@ class FeedsController extends Controller
             $variables['feed'] = $feed;
         }
 
-        $variables['dataMethods'] = [['get'=>'GET', 'post'=>'POST']];
+        $variables['feedMethods'] = array("get"=>"GET", "post"=>"POST");
         $variables['dataTypes'] = Plugin::$plugin->data->dataTypesList();
         $variables['elements'] = Plugin::$plugin->elements->getRegisteredElements();
 
@@ -318,6 +318,7 @@ class FeedsController extends Controller
         $feed->name = $request->getBodyParam('name', $feed->name);
         $feed->feedUrl = $request->getBodyParam('feedUrl', $feed->feedUrl);
         $feed->feedType = $request->getBodyParam('feedType', $feed->feedType);
+        $feed->feedMethod = $request->getBodyParam('feedMethod', $feed->feedMethod);
         $feed->primaryElement = $request->getBodyParam('primaryElement', $feed->primaryElement);
         $feed->elementType = $request->getBodyParam('elementType', $feed->elementType);
         $feed->elementGroup = $request->getBodyParam('elementGroup', $feed->elementGroup);
