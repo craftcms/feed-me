@@ -7,7 +7,7 @@
     {% set group = craft.app.tags.getTagGroupById(groupId) %}
 {% endif %}
 
-{% set tags = [{ label: 'Don\'t import', value: '' }] %}
+{% set tags = [{ label: 'Don’t import'|t('feed-me'), value: '' }] %}
 {% for tag in craft.tags.all() %}
     {% set tags = tags|merge([{ label: tag.title|slice(0, 40), value: tag.id }]) %}
 {% endfor %}
@@ -25,7 +25,7 @@
     default: {
         type: 'select',
         options: [
-            { label: 'Don\'t import', value: '' },
+            { label: 'Don’t import'|t('feed-me'), value: '' },
             { label: 'Enabled', value: '1' },
             { label: 'Disabled', value: '0' },
         ],

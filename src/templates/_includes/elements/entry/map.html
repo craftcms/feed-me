@@ -27,7 +27,7 @@
 
 {# If a structure, provide the option for a parent #}
 {% if section.type == 'structure' %}
-    {% set entries = [{ label: 'Don\'t import', value: '' }] %}
+    {% set entries = [{ label: 'Don’t import'|t('feed-me'), value: '' }] %}
 
     {% for entry in craft.entries({ sectionId: sectionId }).all() %}
         {% set entries = entries|merge([{ label: entry.title|slice(0, 40), value: entry.id }]) %}
@@ -68,7 +68,7 @@
     default: {
         type: 'select',
         options: [
-            { label: 'Don\'t import', value: '' },
+            { label: 'Don’t import'|t('feed-me'), value: '' },
             { label: 'Enabled', value: '1' },
             { label: 'Disabled', value: '0' },
         ],
@@ -83,7 +83,7 @@
         default: {
             type: 'select',
             options: [
-                { label: 'Don\'t import', value: '' },
+                { label: 'Don’t import'|t('feed-me'), value: '' },
                 { label: 'Enabled', value: '1' },
                 { label: 'Disabled', value: '0' },
             ],

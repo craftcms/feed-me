@@ -7,7 +7,7 @@
     {% set group = craft.app.categories.getGroupById(groupId) %}
 {% endif %}
 
-{% set categories = [{ label: 'Don\'t import', value: '' }] %}
+{% set categories = [{ label: 'Don’t import'|t('feed-me'), value: '' }] %}
 {% for category in craft.categories.all() %}
     {% set categories = categories|merge([{ label: category.title|slice(0, 40), value: category.id }]) %}
 {% endfor %}
@@ -41,7 +41,7 @@
     default: {
         type: 'select',
         options: [
-            { label: 'Don\'t import', value: '' },
+            { label: 'Don’t import'|t('feed-me'), value: '' },
             { label: 'Enabled', value: '1' },
             { label: 'Disabled', value: '0' },
         ],
