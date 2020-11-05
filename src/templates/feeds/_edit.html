@@ -33,7 +33,7 @@
     {{ buttons }}
 {% endblock %}
 
-{% block blockContent %}
+{% block content %}
     <input type="hidden" name="action" value="feed-me/feeds/save-feed">
 
     {% if feed.id %}<input type="hidden" name="feedId" value="{{ feed.id }}">{% endif %}
@@ -189,6 +189,7 @@
         on: (feed.id) ? feed.backup : true,
     }) }}
 
+    {{ parent() }}
 {% endblock %}
 
 {% block footerButton %}

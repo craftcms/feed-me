@@ -4,53 +4,53 @@
 
 {% set fullPageForm = true %}
 
-{% block blockContent %}
+{% block content %}
+    <input type="hidden" name="action" value="plugins/save-plugin-settings">
+    <input type="hidden" name="pluginHandle" value="feed-me">
 
-<input type="hidden" name="action" value="plugins/save-plugin-settings">
-<input type="hidden" name="pluginHandle" value="feed-me">
+    {% namespace 'settings' %}
 
-{% namespace 'settings' %}
+    {{ forms.textField({
+        id: 'pluginName',
+        name: 'pluginName',
+        label: 'Plugin Name' | t('feed-me'),
+        value: settings.pluginName,
+        first: true,
+        autofocus: true,
+        instructions: 'Plugin name for the end user.' | t('feed-me'),
+    }) }}
 
-{{ forms.textField({
-    id: 'pluginName',
-    name: 'pluginName',
-    label: 'Plugin Name' | t('feed-me'),
-    value: settings.pluginName,
-    first: true,
-    autofocus: true,
-    instructions: 'Plugin name for the end user.' | t('feed-me'),
-}) }}
+    {{ forms.textField({
+        id: 'cache',
+        name: 'cache',
+        label: 'Cache Duration' | t('feed-me'),
+        value: settings.cache,
+        instructions: 'Cache duration (in seconds) to cache requests. Note: this only affects calls using the template tag - requests are never cached when triggering directly via the CP.' | t('feed-me'),
+    }) }}
 
-{{ forms.textField({
-    id: 'cache',
-    name: 'cache',
-    label: 'Cache Duration' | t('feed-me'),
-    value: settings.cache,
-    instructions: 'Cache duration (in seconds) to cache requests. Note: this only affects calls using the template tag - requests are never cached when triggering directly via the CP.' | t('feed-me'),
-}) }}
+    <hr>
 
-<hr>
+    {{ forms.checkboxSelectField({
+        id: 'enabledTabs',
+        name: 'enabledTabs',
+        label: 'Enabled Tabs' | t('feed-me'),
+        showAllOption: true,
+        options: {
+            'feeds': 'Feeds' | t('feed-me'),
+            'logs': 'Logs' | t('feed-me'),
+            'settings': 'Settings' | t('feed-me'),
+        },
+        values: settings.enabledTabs,
+        instructions: 'Choose which tabs you would like to be shown.' | t('feed-me'),
+    }) }}
 
-{{ forms.checkboxSelectField({
-    id: 'enabledTabs',
-    name: 'enabledTabs',
-    label: 'Enabled Tabs' | t('feed-me'),
-    showAllOption: true,
-    options: {
-        'feeds': 'Feeds' | t('feed-me'),
-        'logs': 'Logs' | t('feed-me'),
-        'settings': 'Settings' | t('feed-me'),
-    },
-    values: settings.enabledTabs,
-    instructions: 'Choose which tabs you would like to be shown.' | t('feed-me'),
-}) }}
+    <hr>
 
-<hr>
+    <a class="btn" href="{{ actionUrl('feed-me/base/clear-tasks') }}">
+        {{ "Clear pending job queue" | t('feed-me') }}
+    </a>
 
-<a class="btn" href="{{ actionUrl('feed-me/base/clear-tasks') }}">
-    {{ "Clear pending job queue" | t('feed-me') }}
-</a>
+    {% endnamespace %}
 
-{% endnamespace %}
-
+    {{ parent() }}
 {% endblock %}

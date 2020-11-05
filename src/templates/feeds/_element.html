@@ -27,7 +27,7 @@
     {{ buttons }}
 {% endblock %}
 
-{% block blockContent %}
+{% block content %}
     {% if primaryElements.success %}
         <input type="hidden" name="action" value="feed-me/feeds/save-and-element-feed">
 
@@ -72,7 +72,7 @@
     {% else %}
         <div class="feedme-fullpage fullpage-error">
             <img src="{{ baseAssetsUrl ~ '/img/icon-error.svg' }}">
-            
+
             <h2>{{ 'Unable to proceed to next step' | t('feed-me') }}</h2>
             <p>{{ 'Feed Me is unable to find, or parse your provided data. This usually means your URL cannot be reached from your Craft site, or your {feedType} is invalid. Refer to the specific error below, check the logs, and double-check your settings.' | t('feed-me', { feedType: feed.feedType | upper }) }}</p>
 
@@ -88,6 +88,8 @@
             </div>
         </div>
     {% endif %}
+
+    {{ parent() }}
 {% endblock %}
 
 {% block footerButton %}
