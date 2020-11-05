@@ -16,7 +16,7 @@
 }, {
     name: 'Slug',
     handle: 'slug',
-    instructions: 'If not set, the Slug will be automatically created from Title.' | t('feed-me'),
+    instructions: 'If not set, the Slug will be automatically created from Title.'|t('feed-me'),
     default: {
         type: 'text',
     },
@@ -24,7 +24,7 @@
     type: 'date',
     name: 'Start Date',
     handle: 'startDate',
-    instructions: 'Accepts Unix timestamp, or just about any English textual datetime description.' | t('feed-me'),
+    instructions: 'Accepts Unix timestamp, or just about any English textual datetime description.'|t('feed-me'),
     default: {
         type: 'dateTime',
     },
@@ -32,14 +32,14 @@
     type: 'date',
     name: 'End Date',
     handle: 'endDate',
-    instructions: 'Accepts Unix timestamp, or just about any English textual datetime description.' | t('feed-me'),
+    instructions: 'Accepts Unix timestamp, or just about any English textual datetime description.'|t('feed-me'),
     default: {
         type: 'dateTime',
     },
 }, {
     name: 'All Day',
     handle: 'allDay',
-    instructions: 'Whether this event is all day or not.' | t('feed-me'),
+    instructions: 'Whether this event is all day or not.'|t('feed-me'),
     default: {
         type: 'select',
         options: [
@@ -51,7 +51,7 @@
 }, {
     name: 'Enabled',
     handle: 'enabled',
-    instructions: 'Choose either a default status from the list or the imported field that will contain the status.' | t('feed-me'),
+    instructions: 'Choose either a default status from the list or the imported field that will contain the status.'|t('feed-me'),
     default: {
         type: 'select',
         options: [
@@ -64,36 +64,36 @@
     type: 'users',
     name: 'Author',
     handle: 'authorId',
-    instructions: 'Entries will be assigned to the user in this field. If the field does not match any existing member, the default author will be assigned.' | t('feed-me'),
+    instructions: 'Entries will be assigned to the user in this field. If the field does not match any existing member, the default author will be assigned.'|t('feed-me'),
     default: {
         type: 'elementselect',
         options: {
             elementType: 'craft\\elements\\User',
-            selectionLabel: "Default Author" | t('feed-me'),
+            selectionLabel: "Default Author"|t('feed-me'),
             limit: 1,
         },
     },
 }, {
     name: 'Event ID',
     handle: 'id',
-    instructions: '<strong class="error">Warning: </strong>This should only be used for an existing Solspace Event ID.' | t('feed-me'),
+    instructions: '<strong class="error">Warning: </strong>This should only be used for an existing Solspace Event ID.'|t('feed-me'),
     default: {
         type: 'text',
     },
 }] %}
 
-<h2>{{ 'Event Fields' | t('feed-me') }}</h2>
+<h2>{{ 'Event Fields'|t('feed-me') }}</h2>
 
 <table class="feedme-mapping data fullwidth collapsible">
     <thead>
-        <th>{{ 'Field' | t('feed-me') }}</th>
-        <th>{{ 'Feed Element' | t('feed-me') }}</th>
-        <th>{{ 'Default Value' | t('feed-me') }}</th>
+        <th>{{ 'Field'|t('feed-me') }}</th>
+        <th>{{ 'Feed Element'|t('feed-me') }}</th>
+        <th>{{ 'Default Value'|t('feed-me') }}</th>
     </thead>
     <tbody>
         {% for field in fields %}
             {% set template = field.type ?? 'default' %}
-            {% set variables = field | merge({ feed: feed, feedData: feedData, attribute: true }) %}
+            {% set variables = field|merge({ feed: feed, feedData: feedData, attribute: true }) %}
 
             {% include 'feed-me/_includes/fields/' ~ template ignore missing with variables only %}
         {% endfor %}
@@ -107,55 +107,55 @@
         type: 'text',
     },
 }, {
-    name: 'Repeat Interval' | t,
+    name: 'Repeat Interval'|t,
     handle: 'interval',
     default: {
         type: 'text',
     },
 }, {
-    name: 'Repeat Frequency' | t,
+    name: 'Repeat Frequency'|t,
     handle: 'freq',
     default: {
         type: 'text',
     },
 }, {
-    name: 'Repeat Count' | t,
+    name: 'Repeat Count'|t,
     handle: 'count',
     default: {
         type: 'text',
     },
 }, {
-    name: 'Until' | t,
+    name: 'Until'|t,
     handle: 'until',
     default: {
         type: 'text',
     },
 }, {
-    name: 'By Month' | t,
+    name: 'By Month'|t,
     handle: 'byMonth',
     default: {
         type: 'text',
     },
 }, {
-    name: 'By Year Day' | t,
+    name: 'By Year Day'|t,
     handle: 'byYearDay',
     default: {
         type: 'text',
     },
 }, {
-    name: 'By Month Day' | t,
+    name: 'By Month Day'|t,
     handle: 'byMonthDay',
     default: {
         type: 'text',
     },
 }, {
-    name: 'By Day' | t,
+    name: 'By Day'|t,
     handle: 'byDay',
     default: {
         type: 'text',
     },
 }, {
-    name: 'Select Dates' | t,
+    name: 'Select Dates'|t,
     handle: 'selectDates',
     default: {
         type: 'text',
@@ -165,18 +165,18 @@
 
 ] %}
 
-<h2>{{ 'Recurrence Fields' | t('feed-me') }}</h2>
+<h2>{{ 'Recurrence Fields'|t('feed-me') }}</h2>
 
 <table class="feedme-mapping data fullwidth collapsible">
     <thead>
-        <th>{{ 'Field' | t('feed-me') }}</th>
-        <th>{{ 'Feed Element' | t('feed-me') }}</th>
-        <th>{{ 'Default Value' | t('feed-me') }}</th>
+        <th>{{ 'Field'|t('feed-me') }}</th>
+        <th>{{ 'Feed Element'|t('feed-me') }}</th>
+        <th>{{ 'Default Value'|t('feed-me') }}</th>
     </thead>
     <tbody>
         {% for field in recurrenceFields %}
             {% set template = field.type ?? 'default' %}
-            {% set variables = field | merge({ feed: feed, feedData: feedData, attribute: true }) %}
+            {% set variables = field|merge({ feed: feed, feedData: feedData, attribute: true }) %}
 
             {% include 'feed-me/_includes/fields/' ~ template ignore missing with variables only %}
         {% endfor %}
@@ -195,9 +195,9 @@
 
         <table class="feedme-mapping data fullwidth collapsible">
             <thead>
-                <th>{{ 'Field' | t('feed-me') }}</th>
-                <th>{{ 'Feed Element' | t('feed-me') }}</th>
-                <th>{{ 'Default Value' | t('feed-me') }}</th>
+                <th>{{ 'Field'|t('feed-me') }}</th>
+                <th>{{ 'Feed Element'|t('feed-me') }}</th>
+                <th>{{ 'Default Value'|t('feed-me') }}</th>
             </thead>
             <tbody>
                 {% for field in tab.getFields() %}
@@ -205,7 +205,7 @@
                     {% set template = fieldClass.getMappingTemplate() %}
 
                     {% set variables = { name: field.name, handle: field.handle, feed: feed, feedData: feedData, field: field, fieldClass: fieldClass } %}
-                    
+
                     {% include template ignore missing with variables only %}
                 {% endfor %}
             </tbody>
@@ -215,19 +215,19 @@
 
 <hr>
 
-<h2>{{ "Set a unique identifier to match against existing elements" | t('feed-me') }}</h2>
+<h2>{{ "Set a unique identifier to match against existing elements"|t('feed-me') }}</h2>
 
-<p>{{ "Select the fields you want to use to check for existing elements. When selected, Feed Me will look for existing elements that match the fields provided below and either update, or skip depending on your choice of Import Strategy." | t('feed-me') }}</p>
+<p>{{ "Select the fields you want to use to check for existing elements. When selected, Feed Me will look for existing elements that match the fields provided below and either update, or skip depending on your choice of Import Strategy."|t('feed-me') }}</p>
 
 {% set uniqueFields = fields %}
 
 {% for field in recurrenceFields %}
-    {% set uniqueFields = uniqueFields | merge([{ name: field.name, handle: field.handle }]) %}
+    {% set uniqueFields = uniqueFields|merge([{ name: field.name, handle: field.handle }]) %}
 {% endfor %}
 
 {% for tab in tabs %}
     {% for field in tab.getFields() %}
-        {% set uniqueFields = uniqueFields | merge([{ name: field.name, handle: field.handle, type: className(field) }]) %}
+        {% set uniqueFields = uniqueFields|merge([{ name: field.name, handle: field.handle, type: className(field) }]) %}
     {% endfor %}
 {% endfor %}
 

@@ -1,16 +1,16 @@
 {% extends 'feed-me/_layouts' %}
 
 {% set crumbs = [
-    { label: craft.feedme.getPluginName | t('feed-me'), url: url('feed-me') },
-    { label: "Settings" | t('feed-me'), url: url('feed-me/settings') },
+    { label: craft.feedme.getPluginName|t('feed-me'), url: url('feed-me') },
+    { label: "Settings"|t('feed-me'), url: url('feed-me/settings') },
 ] %}
 
 {% set selectedTab = 'settings' %}
 {% set selectedItem = craft.app.request.getSegment(3) %}
 
 {% set navItems = {
-    'general-heading': { heading: "Settings" | t('feed-me') },
-    'general': { title: "General" | t('feed-me') },
+    'general-heading': { heading: "Settings"|t('feed-me') },
+    'general': { title: "General"|t('feed-me') },
 } %}
 
 {% block sidebar %}

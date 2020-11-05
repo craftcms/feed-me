@@ -17,11 +17,11 @@
 }] %}
 
 {% if 'add' in feed.duplicateHandle %}
-    {% set fields = fields | merge([{
+    {% set fields = fields|merge([{
         type: 'assets-create',
         name: 'URL or Path',
         handle: 'urlOrPath',
-        instructions: 'Enter either the path (including filename) or URL to the image for this asset to be created from.' | t('feed-me'),
+        instructions: 'Enter either the path (including filename) or URL to the image for this asset to be created from.'|t('feed-me'),
         required: true,
         default: {
             type: 'text',
@@ -29,15 +29,15 @@
     }]) %}
 {% endif %}
 
-{% set fields = fields | merge([{
+{% set fields = fields|merge([{
     name: 'Filename',
     handle: 'filename',
-    instructions: 'The filename for this asset. If not provided, this will be derived from the path or URL.' | t('feed-me'),
+    instructions: 'The filename for this asset. If not provided, this will be derived from the path or URL.'|t('feed-me'),
 }, {
     name: 'Folder',
     handle: 'folderId',
     type: 'assets-folder',
-    instructions: 'Select the folder name this asset will be uploaded into.' | t('feed-me'),
+    instructions: 'Select the folder name this asset will be uploaded into.'|t('feed-me'),
     default: {
         type: 'select',
         options: folders,
@@ -45,24 +45,24 @@
 }, {
     name: 'Asset ID',
     handle: 'id',
-    instructions: '<strong class="error">Warning: </strong>This should only be used for an existing Craft Asset ID.' | t('feed-me'),
+    instructions: '<strong class="error">Warning: </strong>This should only be used for an existing Craft Asset ID.'|t('feed-me'),
     default: {
         type: 'text',
     },
 }]) %}
 
-<h2>{{ 'Asset Fields' | t('feed-me') }}</h2>
+<h2>{{ 'Asset Fields'|t('feed-me') }}</h2>
 
 <table class="feedme-mapping data fullwidth collapsible">
     <thead>
-        <th>{{ 'Field' | t('feed-me') }}</th>
-        <th>{{ 'Feed Element' | t('feed-me') }}</th>
-        <th>{{ 'Default Value' | t('feed-me') }}</th>
+        <th>{{ 'Field'|t('feed-me') }}</th>
+        <th>{{ 'Feed Element'|t('feed-me') }}</th>
+        <th>{{ 'Default Value'|t('feed-me') }}</th>
     </thead>
     <tbody>
         {% for field in fields %}
             {% set template = field.type ?? 'default' %}
-            {% set variables = field | merge({ feed: feed, feedData: feedData, attribute: true }) %}
+            {% set variables = field|merge({ feed: feed, feedData: feedData, attribute: true }) %}
 
             {% include 'feed-me/_includes/fields/' ~ template ignore missing with variables only %}
         {% endfor %}
@@ -81,9 +81,9 @@
 
         <table class="feedme-mapping data fullwidth collapsible">
             <thead>
-                <th>{{ 'Field' | t('feed-me') }}</th>
-                <th>{{ 'Feed Element' | t('feed-me') }}</th>
-                <th>{{ 'Default Value' | t('feed-me') }}</th>
+                <th>{{ 'Field'|t('feed-me') }}</th>
+                <th>{{ 'Feed Element'|t('feed-me') }}</th>
+                <th>{{ 'Default Value'|t('feed-me') }}</th>
             </thead>
             <tbody>
                 {% for field in tab.getFields() %}
@@ -91,7 +91,7 @@
                     {% set template = fieldClass.getMappingTemplate() %}
 
                     {% set variables = { name: field.name, handle: field.handle, feed: feed, feedData: feedData, field: field, fieldClass: fieldClass } %}
-                    
+
                     {% include template ignore missing with variables only %}
                 {% endfor %}
             </tbody>
@@ -101,13 +101,13 @@
 
 <hr>
 
-<h2>{{ "Set a unique identifier to match against existing elements" | t('feed-me') }}</h2>
+<h2>{{ "Set a unique identifier to match against existing elements"|t('feed-me') }}</h2>
 
-<p>{{ "Select the fields you want to use to check for existing elements. When selected, Feed Me will look for existing elements that match the fields provided below and either update, or skip depending on your choice of Import Strategy." | t('feed-me') }}</p>
+<p>{{ "Select the fields you want to use to check for existing elements. When selected, Feed Me will look for existing elements that match the fields provided below and either update, or skip depending on your choice of Import Strategy."|t('feed-me') }}</p>
 
 {% for tab in tabs %}
     {% for field in tab.getFields() %}
-        {% set fields = fields | merge([{ name: field.name, handle: field.handle, type: className(field) }]) %}
+        {% set fields = fields|merge([{ name: field.name, handle: field.handle, type: className(field) }]) %}
     {% endfor %}
 {% endfor %}
 

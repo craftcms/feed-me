@@ -15,17 +15,17 @@
 
 {% block extraSettings %}
     <div class="element-match">
-        <span>{{ 'Data provided for this element is:' | t('feed-me') }}</span>
+        <span>{{ 'Data provided for this element is:'|t('feed-me') }}</span>
 
         {% set matchAttributes = [
-            { value: 'title', label: 'Title' | t('feed-me') },
-            { value: 'elements.id', label: 'ID' | t('feed-me') },
-            { value: 'slug', label: 'Slug' | t('feed-me') },
+            { value: 'title', label: 'Title'|t('feed-me') },
+            { value: 'elements.id', label: 'ID'|t('feed-me') },
+            { value: 'slug', label: 'Slug'|t('feed-me') },
         ] %}
 
         {% for field in craft.app.fields.getAllFields() %}
             {% if craft.feedme.fieldCanBeUniqueId(field) %}
-                {% set matchAttributes = matchAttributes | merge({ ('field_' ~ field.handle): field.name }) %}
+                {% set matchAttributes = matchAttributes|merge({ ('field_' ~ field.handle): field.name }) %}
             {% endif %}
         {% endfor %}
 

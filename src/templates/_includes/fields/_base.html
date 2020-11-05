@@ -15,10 +15,10 @@
 {# mapping data structure. For normal fields, this is just the handle, but Matrix Table, and others are more complex #}
 {# ie: matrixField.blocks.blockType.fields.field.node - woah! #}
 {% set path = path ?? [handle] %}
-{% set namespacePath = path | join('][') %}
-{% set nodePath = path | join('.') ~ '.node' %}
-{% set defaultPath = path | join('.') ~ '.default' %}
-{% set optionsPath = path | join('.') ~ '.options' %}
+{% set namespacePath = path|join('][') %}
+{% set nodePath = path|join('.') ~ '.node' %}
+{% set defaultPath = path|join('.') ~ '.default' %}
+{% set optionsPath = path|join('.') ~ '.options' %}
 
 {% set namespace = 'fieldMapping[' ~ namespacePath ~ ']' %}
 {% set value = hash_get(feed.fieldMapping, nodePath) %}
@@ -29,10 +29,10 @@
 {% set isSubElementField = isSubElementField ?? null %}
 
 {% if isSubElementField %}
-    {% set classes = classes | merge([ 'element-sub-field' ]) %}
+    {% set classes = classes|merge([ 'element-sub-field' ]) %}
 {% endif %}
 
-<tr class="{{ classes | join(' ') }}">
+<tr class="{{ classes|join(' ') }}">
     <td class="col-field">
         <div class="field">
             {% if isSubElementField %}
@@ -40,11 +40,11 @@
             {% endif %}
 
             <div class="heading">
-                <label class="{{ required ? 'required' }}">{{ nameLabel | t('site') }}</label>
+                <label class="{{ required ? 'required' }}">{{ nameLabel|t('site') }}</label>
 
                 {% if attribute and instructions %}
                     <div class="instructions">
-                        <p>{{ instructions | raw }}</p>
+                        <p>{{ instructions|raw }}</p>
                     </div>
                 {% endif %}
 
@@ -54,11 +54,11 @@
                     </div>
                 {% endif %}
 
-                {% if elementFields | length %}
+                {% if elementFields|length %}
                     <div class="subelement-toggle">
                         {{ forms.lightswitchField({
                             small: true,
-                            label: 'Element fields ({num})' | t('feed-me', { num: elementFields | length }),
+                            label: 'Element fields ({num})'|t('feed-me', { num: elementFields|length }),
                         }) }}
                     </div>
                 {% endif %}
@@ -157,7 +157,7 @@
                             {% set elements = [] %}
 
                             {% for elementId in defaultValue %}
-                                {% set elements = elements | merge([ craft.app.elements.getElementById(elementId) ]) %}
+                                {% set elements = elements|merge([ craft.app.elements.getElementById(elementId) ]) %}
                             {% endfor %}
 
                             {{ forms.elementSelectField({
@@ -180,13 +180,13 @@
 </tr>
 
 {% block elementFields %}
-    {% if field is defined and elementFields | length %}
+    {% if field is defined and elementFields|length %}
         {% for elementField in elementFields %}
             {% set fieldClass = craft.feedme.fields.getRegisteredField(className(elementField)) %}
             {% set template = fieldClass.getMappingTemplate() %}
 
             {% if parentPath is defined %}
-                {% set path = parentPath | merge([ 'fields', elementField.handle ]) %}
+                {% set path = parentPath|merge([ 'fields', elementField.handle ]) %}
             {% else %}
                 {% set path = [ handle, 'fields', elementField.handle ] %}
             {% endif %}

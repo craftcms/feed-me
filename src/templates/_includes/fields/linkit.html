@@ -28,7 +28,7 @@
             </div>
 
             <div class="additional-mapping-fields">
-                {% namespace 'fieldMapping[' ~ prefixPath | join('][') ~ ']' %}
+                {% namespace 'fieldMapping[' ~ prefixPath|join('][') ~ ']' %}
                     <input type="text" name="field" value="{{ className(field) }}">
                 {% endnamespace %}
             </div>
@@ -47,7 +47,7 @@
     {% set nameLabel = col %}
     {% set instructionsHandle = handle ~ '[' ~ key ~ ']' %}
 
-    {% set path = prefixPath | merge ([ 'fields', key ]) %}
+    {% set path = prefixPath|merge ([ 'fields', key ]) %}
 
     {% set default = {
         type: 'text'

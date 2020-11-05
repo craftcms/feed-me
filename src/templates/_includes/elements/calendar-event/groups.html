@@ -3,8 +3,8 @@
 {% set calendars = element.groups %}
 
 {{ forms.selectField({
-    label: 'Calendar' | t('feed-me'),
-    instructions: 'Choose the calendar you want to save your feed data into.' | t('feed-me'),
+    label: 'Calendar'|t('feed-me'),
+    instructions: 'Choose the calendar you want to save your feed data into.'|t('feed-me'),
     id: 'elementGroup-' ~ elementType,
     name: 'elementGroup[' ~ elementType ~ ']',
     options: craft.feedme.getSelectOptions(calendars),

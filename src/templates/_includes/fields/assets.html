@@ -16,7 +16,7 @@
         type: 'elementselect',
         options: {
             elementType: fieldClass.elementType,
-            selectionLabel: "Default Asset" | t('feed-me'),
+            selectionLabel: "Default Asset"|t('feed-me'),
         },
     } %}
 {% endif %}
@@ -28,7 +28,7 @@
     {# Prevent infinite loop by only allow elements that are not the same as this #}
     {% for elementField in craft.feedme.getElementLayoutByField(className(field), field) %}
         {% if craft.feedme.supportedSubField(className(elementField)) %}
-            {% set elementFields = elementFields | merge([ elementField ]) %}
+            {% set elementFields = elementFields|merge([ elementField ]) %}
         {% endif %}
     {% endfor %}
 {% endif %}
@@ -39,7 +39,7 @@
 
     <div class="assets-uploads">
         {{ feedMeMacro.checkbox({
-            label: 'Create asset from URL<span class="asset-label-hide">, if exists:</span>' | t('feed-me') | raw,
+            label: 'Create asset from URL<span class="asset-label-hide">, if exists:</span>'|t('feed-me')|raw,
             name: 'options[upload]',
             value: 1,
             checked: hash_get(feed.fieldMapping, optionsPath ~ '.upload') ?: '',

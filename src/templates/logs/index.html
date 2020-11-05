@@ -3,8 +3,8 @@
 {% import '_includes/forms' as forms %}
 
 {% set crumbs = [
-    { label: craft.feedme.getPluginName | t('feed-me'), url: url('feed-me') },
-    { label: "Logs" | t('feed-me'), url: url('feed-me/logs') }
+    { label: craft.feedme.getPluginName|t('feed-me'), url: url('feed-me') },
+    { label: "Logs"|t('feed-me'), url: url('feed-me/logs') }
 ] %}
 
 {% set selectedTab = 'logs' %}
@@ -12,8 +12,8 @@
 {% block content %}
     <form class="log-type-form">
         {{ forms.selectField({
-            label: 'Show logs for:' | t('feed-me'),
-            instructions: '' | t('feed-me'),
+            label: 'Show logs for:'|t('feed-me'),
+            instructions: ''|t('feed-me'),
             id: 'show',
             name: 'show',
             value: show,
@@ -25,17 +25,17 @@
         }) }}
     </form>
 
-    <a class="btn right" href="{{ actionUrl('feed-me/logs/clear') }}">{{ "Clear logs" | t('feed-me') }}</a>
+    <a class="btn right" href="{{ actionUrl('feed-me/logs/clear') }}">{{ "Clear logs"|t('feed-me') }}</a>
 
     <hr>
 
-    {% if logEntries | length %}
+    {% if logEntries|length %}
         <table class="data fullwidth collapsible feed-me-logs-table">
             <thead>
                 <tr>
-                    <th scope="col">{{ "Type" | t('feed-me') }}</th>
-                    <th scope="col">{{ "Message" | t('feed-me') }}</th>
-                    <th scope="col">{{ "Timestamp" | t('feed-me') }}</th>
+                    <th scope="col">{{ "Type"|t('feed-me') }}</th>
+                    <th scope="col">{{ "Message"|t('feed-me') }}</th>
+                    <th scope="col">{{ "Timestamp"|t('feed-me') }}</th>
                 </tr>
             </thead>
 
@@ -52,25 +52,25 @@
                     {% endif %}
 
                     <tr>
-                        <td class="col-label" data-title="{{ 'Result' | t('feed-me') }}">
+                        <td class="col-label" data-title="{{ 'Result'|t('feed-me') }}">
                             {% if hasChildErrors %}
-                                <span class="log-result type-error">{{ 'error' | t('feed-me') }}</span>
+                                <span class="log-result type-error">{{ 'error'|t('feed-me') }}</span>
                             {% else %}
                                 <span class="log-result type-{{ logEntry.type }}">{{ logEntry.type }}</span>
                             {% endif %}
                         </td>
 
-                        <td class="col-label" data-title="{{ 'Message' | t('feed-me') }}">
-                            {{ logEntry.message | md | striptags('<code><strong><a>') | raw }}
+                        <td class="col-label" data-title="{{ 'Message'|t('feed-me') }}">
+                            {{ logEntry.message|md|striptags('<code><strong><a>')|raw }}
 
                             {% if logEntry.items is defined %}
                                 <a class="log-detail-link" href="#" data-key="{{ logEntry.key }}">Show detail</a>
                             {% endif %}
                         </td>
 
-                        <td data-title="{{ 'Timestamp' | t('feed-me') }}">
+                        <td data-title="{{ 'Timestamp'|t('feed-me') }}">
                             <code>
-                                {{ logEntry.date | date('short') ~ ' ' ~ logEntry.date | time('short') }}
+                                {{ logEntry.date|date('short') ~ ' ' ~ logEntry.date|time('short') }}
                             </code>
                         </td>
                     </tr>
@@ -78,17 +78,17 @@
                     {% if logEntry.items is defined %}
                         {% for subEntry in logEntry.items %}
                             <tr class="hidden sub-items" data-key="{{ subEntry.key }}">
-                                <td class="col-label" data-title="{{ 'Result' | t('feed-me') }}">
+                                <td class="col-label" data-title="{{ 'Result'|t('feed-me') }}">
                                     <span class="log-result type-{{ subEntry.type }}">{{ subEntry.type }}</span>
                                 </td>
 
-                                <td class="col-label" data-title="{{ 'Message' | t('feed-me') }}">
-                                    &rdsh; {{ subEntry.message | md | striptags('<code><strong><a>') | raw }}
+                                <td class="col-label" data-title="{{ 'Message'|t('feed-me') }}">
+                                    &rdsh; {{ subEntry.message|md|striptags('<code><strong><a>')|raw }}
                                 </td>
 
-                                <td data-title="{{ 'Timestamp' | t('feed-me') }}">
+                                <td data-title="{{ 'Timestamp'|t('feed-me') }}">
                                     <code>
-                                        {{ subEntry.date | date('short') ~ ' ' ~ subEntry.date | time('short') }}
+                                        {{ subEntry.date|date('short') ~ ' ' ~ subEntry.date|time('short') }}
                                     </code>
                                 </td>
                             </tr>
@@ -98,7 +98,7 @@
             </tbody>
         </table>
     {% else %}
-        <p>{{ 'No logs recorded yet.' | t('feed-me') }}</p>
+        <p>{{ 'No logs recorded yet.'|t('feed-me') }}</p>
     {% endif %}
 
     {{ parent() }}

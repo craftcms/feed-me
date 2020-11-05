@@ -1,4 +1,4 @@
-{% extends parentLayout | default('_layouts/cp') %}
+{% extends parentLayout|default('_layouts/cp') %}
 
 {% do view.registerAssetBundle('craft\\feedme\\web\\assets\\feedme\\FeedMeAsset') %}
 {% set baseAssetsUrl = view.getAssetManager().getPublishedUrl('@craft/feedme/web/assets/feedme/dist', true) %}

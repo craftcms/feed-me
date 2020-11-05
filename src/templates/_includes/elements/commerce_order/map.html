@@ -73,7 +73,7 @@
 }, {
     label: 'Date Ordered',
     handle: 'dateOrdered',
-    instructions: 'Accepts Unix timestamp, or just about any English textual datetime description.' | t('feed-me'),
+    instructions: 'Accepts Unix timestamp, or just about any English textual datetime description.'|t('feed-me'),
     default: forms.dateTimeField({
         id: 'fieldDefaults-dateOrdered',
         name: 'fieldDefaults[dateOrdered]',
@@ -82,16 +82,16 @@
 }, {
     label: 'Date Paid',
     handle: 'datePaid',
-    instructions: 'Accepts Unix timestamp, or just about any English textual datetime description.' | t('feed-me'),
+    instructions: 'Accepts Unix timestamp, or just about any English textual datetime description.'|t('feed-me'),
     default: forms.dateTimeField({
         id: 'fieldDefaults-datePaid',
         name: 'fieldDefaults[datePaid]',
         value: feed.fieldDefaults.datePaid is defined ? craft.feedme.formatDateTime(feed.fieldDefaults.datePaid) : '',
     })
 }, {
-    label: 'Order ID' | t('feed-me'),
+    label: 'Order ID'|t('feed-me'),
     handle: 'id',
-    instructions: '<strong class="error">Warning: </strong>This should only be used for an existing Craft Commerce Order ID.' | t('feed-me'),
+    instructions: '<strong class="error">Warning: </strong>This should only be used for an existing Craft Commerce Order ID.'|t('feed-me'),
     default: forms.textField({
         id: 'fieldDefaults-id',
         name: 'fieldDefaults[id]',
@@ -99,13 +99,13 @@
     }),
 }] %}
 
-<h2>{{ 'Order Fields' | t('feed-me') }}</h2>
+<h2>{{ 'Order Fields'|t('feed-me') }}</h2>
 
 <table class="feedme-mapping data fullwidth collapsible">
     <thead>
-        <th>{{ 'Field' | t('feed-me') }}</th>
-        <th>{{ 'Feed Element' | t('feed-me') }}</th>
-        <th>{{ 'Default Value' | t('feed-me') }}</th>
+        <th>{{ 'Field'|t('feed-me') }}</th>
+        <th>{{ 'Feed Element'|t('feed-me') }}</th>
+        <th>{{ 'Default Value'|t('feed-me') }}</th>
     </thead>
     <tbody>
         {% for field in fields %}
@@ -156,13 +156,13 @@
     }),
 }] %}
 
-<h2>{{ 'Payment Fields' | t('feed-me') }}</h2>
+<h2>{{ 'Payment Fields'|t('feed-me') }}</h2>
 
 <table class="feedme-mapping data fullwidth collapsible">
     <thead>
-        <th>{{ 'Field' | t('feed-me') }}</th>
-        <th>{{ 'Feed Element' | t('feed-me') }}</th>
-        <th>{{ 'Default Value' | t('feed-me') }}</th>
+        <th>{{ 'Field'|t('feed-me') }}</th>
+        <th>{{ 'Feed Element'|t('feed-me') }}</th>
+        <th>{{ 'Default Value'|t('feed-me') }}</th>
     </thead>
     <tbody>
         {% for field in paymentFields %}
@@ -179,13 +179,13 @@
     handle: 'shippingAddressId',
 }] %}
 
-<h2>{{ 'Address Fields' | t('feed-me') }}</h2>
+<h2>{{ 'Address Fields'|t('feed-me') }}</h2>
 
 <table class="feedme-mapping data fullwidth collapsible">
     <thead>
-        <th>{{ 'Field' | t('feed-me') }}</th>
-        <th>{{ 'Feed Element' | t('feed-me') }}</th>
-        <th>{{ 'Default Value' | t('feed-me') }}</th>
+        <th>{{ 'Field'|t('feed-me') }}</th>
+        <th>{{ 'Feed Element'|t('feed-me') }}</th>
+        <th>{{ 'Default Value'|t('feed-me') }}</th>
     </thead>
     <tbody>
         {% for field in addressFields %}
@@ -204,9 +204,9 @@
 
         <table class="feedme-mapping data fullwidth collapsible">
             <thead>
-                <th>{{ 'Field' | t('feed-me') }}</th>
-                <th>{{ 'Feed Element' | t('feed-me') }}</th>
-                <th>{{ 'Default Value' | t('feed-me') }}</th>
+                <th>{{ 'Field'|t('feed-me') }}</th>
+                <th>{{ 'Feed Element'|t('feed-me') }}</th>
+                <th>{{ 'Default Value'|t('feed-me') }}</th>
             </thead>
             <tbody>
                 {% for fieldtype in tab.getFields() %}
@@ -222,24 +222,24 @@
 
 <hr>
 
-<h2>{{ "Set a unique identifier to match against existing elements" | t('feed-me') }}</h2>
+<h2>{{ "Set a unique identifier to match against existing elements"|t('feed-me') }}</h2>
 
-<p>{{ "Select the fields you want to use to check for existing elements. When selected, Feed Me will look for existing elements that match the fields provided below and either update, or skip depending on your choice of Import Strategy." | t('feed-me') }}</p>
+<p>{{ "Select the fields you want to use to check for existing elements. When selected, Feed Me will look for existing elements that match the fields provided below and either update, or skip depending on your choice of Import Strategy."|t('feed-me') }}</p>
 
 {% set uniqueFields = fields %}
 
 {% for field in paymentFields %}
-    {% set uniqueFields = uniqueFields | merge([{ label: field.label, handle: field.handle }]) %}
+    {% set uniqueFields = uniqueFields|merge([{ label: field.label, handle: field.handle }]) %}
 {% endfor %}
 
 {% for field in addressFields %}
-    {% set uniqueFields = uniqueFields | merge([{ label: field.label, handle: field.handle }]) %}
+    {% set uniqueFields = uniqueFields|merge([{ label: field.label, handle: field.handle }]) %}
 {% endfor %}
 
 {% if orderSettings.fieldLayoutId %}
     {% for tab in craft.app.fields.getLayoutById(orderSettings.fieldLayoutId).getTabs() %}
         {% for field in tab.getFields() %}
-            {% set uniqueFields = uniqueFields | merge([{ label: field.name, handle: field.handle, type: className(field) }]) %}
+            {% set uniqueFields = uniqueFields|merge([{ label: field.name, handle: field.handle, type: className(field) }]) %}
         {% endfor %}
     {% endfor %}
 {% endif %}

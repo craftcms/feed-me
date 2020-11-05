@@ -19,7 +19,7 @@
 }, {
     name: 'Slug',
     handle: 'slug',
-    instructions: 'If not set, the Slug will be automatically created from Title.' | t('feed-me'),
+    instructions: 'If not set, the Slug will be automatically created from Title.'|t('feed-me'),
     default: {
         type: 'text',
     },
@@ -30,14 +30,14 @@
     {% set entries = [{ label: 'Don\'t import', value: '' }] %}
 
     {% for entry in craft.entries({ sectionId: sectionId }).all() %}
-        {% set entries = entries | merge([{ label: entry.title | slice(0, 40), value: entry.id }]) %}
+        {% set entries = entries|merge([{ label: entry.title|slice(0, 40), value: entry.id }]) %}
     {% endfor %}
 
-    {% set fields = fields | merge([{
+    {% set fields = fields|merge([{
         type: 'entries',
         name: 'Parent',
         handle: 'parent',
-        instructions: 'Select a parent entry to import these entries under.' | t('feed-me'),
+        instructions: 'Select a parent entry to import these entries under.'|t('feed-me'),
         default: {
             type: 'select',
             options: entries,
@@ -45,11 +45,11 @@
     }]) %}
 {% endif %}
 
-{% set fields = fields | merge([{
+{% set fields = fields|merge([{
     type: 'date',
     name: 'Post Date',
     handle: 'postDate',
-    instructions: 'Accepts Unix timestamp, or just about any English textual datetime description.' | t('feed-me'),
+    instructions: 'Accepts Unix timestamp, or just about any English textual datetime description.'|t('feed-me'),
     default: {
         type: 'dateTime',
     },
@@ -57,14 +57,14 @@
     type: 'date',
     name: 'Expiry Date',
     handle: 'expiryDate',
-    instructions: 'Accepts Unix timestamp, or just about any English textual datetime description.' | t('feed-me'),
+    instructions: 'Accepts Unix timestamp, or just about any English textual datetime description.'|t('feed-me'),
     default: {
         type: 'dateTime',
     },
 }, {
     name: 'Status',
     handle: 'enabled',
-    instructions: 'Choose either a default status from the list or the imported field that will contain the status.' | t('feed-me'),
+    instructions: 'Choose either a default status from the list or the imported field that will contain the status.'|t('feed-me'),
     default: {
         type: 'select',
         options: [
@@ -76,10 +76,10 @@
 }]) %}
 
 {#{% if craft.app.isMultiSite() %}
-    {% set fields = fields | merge([{
+    {% set fields = fields|merge([{
         name: 'Locale Status',
         handle: 'localeEnabled',
-        instructions: 'Choose whether this entry should be enabled for this locale. This settings is in addition to the overall Entry Status above.' | t('feed-me'),
+        instructions: 'Choose whether this entry should be enabled for this locale. This settings is in addition to the overall Entry Status above.'|t('feed-me'),
         default: {
             type: 'select',
             options: [
@@ -91,40 +91,40 @@
     }]) %}
 {% endif %}#}
 
-{% set fields = fields | merge([{
+{% set fields = fields|merge([{
     type: 'users',
     name: 'Author',
     handle: 'authorId',
-    instructions: 'Entries will be assigned to the user in this field. If the field does not match any existing member, the default author will be assigned.' | t('feed-me'),
+    instructions: 'Entries will be assigned to the user in this field. If the field does not match any existing member, the default author will be assigned.'|t('feed-me'),
     default: {
         type: 'elementselect',
         options: {
             elementType: 'craft\\elements\\User',
-            selectionLabel: "Default Author" | t('feed-me'),
+            selectionLabel: "Default Author"|t('feed-me'),
             limit: 1,
         },
     },
 }, {
     name: 'Entry ID',
     handle: 'id',
-    instructions: '<strong class="error">Warning: </strong>This should only be used for an existing Craft Entry ID.' | t('feed-me'),
+    instructions: '<strong class="error">Warning: </strong>This should only be used for an existing Craft Entry ID.'|t('feed-me'),
     default: {
         type: 'text',
     },
 }]) %}
 
-<h2>{{ 'Entry Fields' | t('feed-me') }}</h2>
+<h2>{{ 'Entry Fields'|t('feed-me') }}</h2>
 
 <table class="feedme-mapping data fullwidth collapsible">
     <thead>
-        <th>{{ 'Field' | t('feed-me') }}</th>
-        <th>{{ 'Feed Element' | t('feed-me') }}</th>
-        <th>{{ 'Default Value' | t('feed-me') }}</th>
+        <th>{{ 'Field'|t('feed-me') }}</th>
+        <th>{{ 'Feed Element'|t('feed-me') }}</th>
+        <th>{{ 'Default Value'|t('feed-me') }}</th>
     </thead>
     <tbody>
         {% for field in fields %}
             {% set template = field.type ?? 'default' %}
-            {% set variables = field | merge({ feed: feed, feedData: feedData, attribute: true }) %}
+            {% set variables = field|merge({ feed: feed, feedData: feedData, attribute: true }) %}
 
             {% include 'feed-me/_includes/fields/' ~ template ignore missing with variables only %}
         {% endfor %}
@@ -143,9 +143,9 @@
 
         <table class="feedme-mapping data fullwidth collapsible">
             <thead>
-                <th>{{ 'Field' | t('feed-me') }}</th>
-                <th>{{ 'Feed Element' | t('feed-me') }}</th>
-                <th>{{ 'Default Value' | t('feed-me') }}</th>
+                <th>{{ 'Field'|t('feed-me') }}</th>
+                <th>{{ 'Feed Element'|t('feed-me') }}</th>
+                <th>{{ 'Default Value'|t('feed-me') }}</th>
             </thead>
             <tbody>
                 {% for field in tab.getFields() %}
@@ -153,7 +153,7 @@
                     {% set template = fieldClass.getMappingTemplate() %}
 
                     {% set variables = { name: field.name, handle: field.handle, feed: feed, feedData: feedData, field: field, fieldClass: fieldClass } %}
-                    
+
                     {% include template ignore missing with variables only %}
                 {% endfor %}
             </tbody>
@@ -163,13 +163,13 @@
 
 <hr>
 
-<h2>{{ "Set a unique identifier to match against existing elements" | t('feed-me') }}</h2>
+<h2>{{ "Set a unique identifier to match against existing elements"|t('feed-me') }}</h2>
 
-<p>{{ "Select the fields you want to use to check for existing elements. When selected, Feed Me will look for existing elements that match the fields provided below and either update, or skip depending on your choice of Import Strategy." | t('feed-me') }}</p>
+<p>{{ "Select the fields you want to use to check for existing elements. When selected, Feed Me will look for existing elements that match the fields provided below and either update, or skip depending on your choice of Import Strategy."|t('feed-me') }}</p>
 
 {% for tab in tabs %}
     {% for field in tab.getFields() %}
-        {% set fields = fields | merge([{ name: field.name, handle: field.handle, type: className(field) }]) %}
+        {% set fields = fields|merge([{ name: field.name, handle: field.handle, type: className(field) }]) %}
     {% endfor %}
 {% endfor %}
 

@@ -2,7 +2,7 @@
 
 {% set noTabs = true %}
 
-{% set title = 'Welcome to {name}!' | t('feed-me', { name: craft.feedme.getPluginName() }) %}
+{% set title = 'Welcome to {name}!'|t('feed-me', { name: craft.feedme.getPluginName() }) %}
 
 {% block content %}
     <div class="feedme-welcome">
@@ -10,13 +10,13 @@
             {{ svg(craft.app.plugins.getPluginIconSvg('feed-me')) }}
         </div>
 
-        <h1>{{ "Thanks for using {name}!" | t('feed-me', { name: craft.feedme.getPluginName() }) }}</h1>
+        <h1>{{ "Thanks for using {name}!"|t('feed-me', { name: craft.feedme.getPluginName() }) }}</h1>
 
-        <p>{{ "Thanks for installing {name}. Get started by creating your first feed." | t('feed-me', { name: craft.feedme.getPluginName() }) }}</p>
+        <p>{{ "Thanks for installing {name}. Get started by creating your first feed."|t('feed-me', { name: craft.feedme.getPluginName() }) }}</p>
 
-        <a class="btn submit btn-start" href="{{ url('feed-me/feeds') }}">{{ "Get Started" | t('feed-me') }}</a>
-        <span class="or">{{ "or" | t('feed-me') }}</span>
-        <a class="btn" href="https://docs.craftcms.com/feed-me/v4/" target="_blank">{{ "Read our Online Documentation" | t('feed-me') }} <i class="fa fa-external-link"></i></a>
+        <a class="btn submit btn-start" href="{{ url('feed-me/feeds') }}">{{ "Get Started"|t('feed-me') }}</a>
+        <span class="or">{{ "or"|t('feed-me') }}</span>
+        <a class="btn" href="https://docs.craftcms.com/feed-me/v4/" target="_blank">{{ "Read our Online Documentation"|t('feed-me') }} <i class="fa fa-external-link"></i></a>
     </div>
 
     {{ parent() }}
