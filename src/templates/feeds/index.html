@@ -14,7 +14,7 @@
 {% endblock %}
 
 {% block content %}
-    <div id="nofeeds"{% if feeds %} class="hidden"{% endif %}>
+    <div id="nofeeds" class="zilch{% if feeds %} hidden{% endif %}">
         <p>{{ "No feeds exist yet." | t('feed-me') }}</p>
     </div>
 
