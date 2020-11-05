@@ -8,6 +8,7 @@
 - Fixed a bug where custom fields would have their content assigned to the primary site instead of the feed’s target site. ([#658](https://github.com/craftcms/feed-me/issues/658))
 - Fixed a bug where Assets would always be imported to the primary site instead of the feed’s target site. ([#725](https://github.com/craftcms/feed-me/pull/725))
 - Fixed a PHP error that would occur when importing from a mapped Dropdown field. ([#732](https://github.com/craftcms/feed-me/pull/732))
+- Fixed a PHP error that would occur when using a JSON feed with named keys. ([#761](https://github.com/craftcms/feed-me/issues/761))
 
 ## 4.2.4 - 2020-10-01
 

@@ -72,7 +72,7 @@ class Process extends Component
             $gc->run(true);
         }
 
-        $this->_data = $feedData;
+        $this->_data = array_values($feedData);
         $this->_service = $feed->element;
 
         $return = $feed->attributes;
