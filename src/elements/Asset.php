@@ -31,17 +31,17 @@ class Asset extends Element
 
     public function getGroupsTemplate()
     {
-        return 'feed-me/_includes/elements/asset/groups';
+        return 'feed-me/_includes/elements/assets/groups';
     }
 
     public function getColumnTemplate()
     {
-        return 'feed-me/_includes/elements/asset/column';
+        return 'feed-me/_includes/elements/assets/column';
     }
 
     public function getMappingTemplate()
     {
-        return 'feed-me/_includes/elements/asset/map';
+        return 'feed-me/_includes/elements/assets/map';
     }
 
 

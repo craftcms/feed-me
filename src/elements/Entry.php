@@ -27,17 +27,17 @@ class Entry extends Element
 
     public function getGroupsTemplate()
     {
-        return 'feed-me/_includes/elements/entry/groups';
+        return 'feed-me/_includes/elements/entries/groups';
     }
 
     public function getColumnTemplate()
     {
-        return 'feed-me/_includes/elements/entry/column';
+        return 'feed-me/_includes/elements/entries/column';
     }
 
     public function getMappingTemplate()
     {
-        return 'feed-me/_includes/elements/entry/map';
+        return 'feed-me/_includes/elements/entries/map';
     }
 
 
