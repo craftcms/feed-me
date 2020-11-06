@@ -26,6 +26,7 @@
 - Fixed a PHP error that would occur when using a JSON feed with named keys. ([#761](https://github.com/craftcms/feed-me/issues/761))
 - Fixed a bug where an existing enabled entry would’nt be disabled if a matching feed item was marked as disabled. ([#760](https://github.com/craftcms/feed-me/pull/760))
 - Fixed a bug where unique identifier checkboxes had extra spacing between them. ([#727](https://github.com/craftcms/feed-me/issues/727))
+- Fixed a SQL error that would occur when importing a node with a missing field and no default value set. ([#527](https://github.com/craftcms/feed-me/issues/527))
 
 ## 4.2.4 - 2020-10-01
 
