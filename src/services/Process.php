@@ -175,6 +175,11 @@ class Process extends Component
             Plugin::error('Error `{i}`.', ['i' => json_encode($step)]);
         }
 
+        if (!is_array($this->_data) || empty($this->_data[0])) {
+            Plugin::info('There is no data in the feed to process.');
+            return;
+        }
+
         Plugin::info('Starting processing of node `#{i}`.', ['i' => ($step + 1)]);
 
         // Set up a model for this Element Type
