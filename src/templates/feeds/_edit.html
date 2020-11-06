@@ -116,6 +116,10 @@
 
     <hr>
 
+    {{ hiddenInput('singleton', feed.singleton ? '1' : '', {
+        id: 'singleton',
+    }) }}
+
     {{ forms.field({
         label: "Import strategy"|t('feed-me'),
         instructions: 'Choose what happens when this feed is run again.'|t('feed-me'),
@@ -123,7 +127,7 @@
     }) }}
 
     {{ forms.checkboxField({
-        id: 'duplicateHandle',
+        id: 'is-create',
         name: 'duplicateHandle[]',
         label: 'Create new elements'|t('feed-me'),
         instructions: 'Adds new elements if they do not already exist.'|t('feed-me'),
@@ -132,6 +136,7 @@
     }) }}
 
     {{ forms.checkboxField({
+        id: 'is-update',
         name: 'duplicateHandle[]',
         label: 'Update existing elements'|t('feed-me'),
         instructions: 'Updates elements that match the Unique Identifier (next step).'|t('feed-me'),
@@ -140,19 +145,21 @@
     }) }}
 
     {{ forms.checkboxField({
+        id: 'is-disable-globally',
         name: 'duplicateHandle[]',
         label: craft.app.isMultiSite
-            ? 'Disable missing elements globally'|t('feed-me')
-            : 'Disable missing elements'|t('feed-me'),
+        ? 'Disable missing elements globally'|t('feed-me')
+        : 'Disable missing elements'|t('feed-me'),
         instructions: craft.app.isMultiSite
-            ? 'Disables any elements that are missing from the feed, across all sites.'|t('feed-me')
-            : 'Disables any elements that are missing from the feed.'|t('feed-me'),
+        ? 'Disables any elements that are missing from the feed, across all sites.'|t('feed-me')
+        : 'Disables any elements that are missing from the feed.'|t('feed-me'),
         value: 'disable',
         checked: 'disable' in (feed.duplicateHandle ?? [])
     }) }}
 
     {% if craft.app.isMultiSite %}
         {{ forms.checkboxField({
+            id: 'is-disable-site',
             name: 'duplicateHandle[]',
             label: 'Disable missing elements in the target site'|t('feed-me'),
             instructions: 'Disables any elements that are missing from the feed, in the feed’s target site only.'|t('feed-me'),
@@ -162,6 +169,7 @@
     {% endif %}
 
     {{ forms.checkboxField({
+        id: 'is-delete',
         name: 'duplicateHandle[]',
         label: 'Delete missing elements'|t('feed-me'),
         instructions: 'Deletes any elements that are missing from the feed. Be careful.'|t('feed-me'),

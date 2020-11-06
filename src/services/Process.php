@@ -95,13 +95,15 @@ class Process extends Component
         }
 
         // Ditch all fields we aren't checking for uniques on. Just simplifies each run (we don't have to check)
-        foreach ($feed['fieldUnique'] as $key => $value) {
-            if ((int)$value === 1) {
-                $return['fieldUnique'][$key] = $value;
+        if (!empty($feed['fieldUnique'])) {
+            foreach ($feed['fieldUnique'] as $key => $value) {
+                if ((int)$value === 1) {
+                    $return['fieldUnique'][$key] = $value;
+                }
             }
         }
 
-        if (!$return['fieldUnique']) {
+        if (empty($feed['singleton']) && empty($return['fieldUnique'])) {
             throw new \Exception(Craft::t('feed-me', 'No unique fields checked.'));
         }
 
@@ -192,31 +194,33 @@ class Process extends Component
         // that are selected as the unique identifier. We prep everything else later on.
         $matchExistingElementData = [];
 
-        foreach ($feed['fieldUnique'] as $fieldHandle => $value) {
-            $mappingInfo = Hash::get($feed['fieldMapping'], $fieldHandle);
+        if (empty($feed['singleton'])) {
+            foreach ($feed['fieldUnique'] as $fieldHandle => $value) {
+                $mappingInfo = Hash::get($feed['fieldMapping'], $fieldHandle);
 
-            if (!$mappingInfo) {
-                continue;
-            }
+                if (!$mappingInfo) {
+                    continue;
+                }
 
-            if (Hash::get($mappingInfo, 'attribute')) {
-                $attributeValue = $this->_service->parseAttribute($feedData, $fieldHandle, $mappingInfo);
+                if (Hash::get($mappingInfo, 'attribute')) {
+                    $attributeValue = $this->_service->parseAttribute($feedData, $fieldHandle, $mappingInfo);
 
-                if ($attributeValue !== null) {
-                    $matchExistingElementData[$fieldHandle] = $attributeValue;
+                    if ($attributeValue !== null) {
+                        $matchExistingElementData[$fieldHandle] = $attributeValue;
+                    }
+                }
+
+                if (Hash::get($mappingInfo, 'field')) {
+                    $fieldValue = Plugin::$plugin->fields->parseField($feed, $element, $feedData, $fieldHandle, $mappingInfo);
+
+                    if ($fieldValue !== null) {
+                        $matchExistingElementData[$fieldHandle] = $fieldValue;
+                    }
                 }
             }
 
-            if (Hash::get($mappingInfo, 'field')) {
-                $fieldValue = Plugin::$plugin->fields->parseField($feed, $element, $feedData, $fieldHandle, $mappingInfo);
-
-                if ($fieldValue !== null) {
-                    $matchExistingElementData[$fieldHandle] = $fieldValue;
-                }
-            }
+            Plugin::info('Match existing element with data `{i}`.', ['i' => json_encode($matchExistingElementData)]);
         }
-
-        Plugin::info('Match existing element with data `{i}`.', ['i' => json_encode($matchExistingElementData)]);
 
 
         //

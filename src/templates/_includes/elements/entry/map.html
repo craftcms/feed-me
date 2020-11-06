@@ -91,7 +91,7 @@
     }]) %}
 {% endif %}#}
 
-{% set fields = fields|merge([{
+{% set fields = fields|push({
     type: 'users',
     name: 'Author',
     handle: 'authorId',
@@ -104,14 +104,18 @@
             limit: 1,
         },
     },
-}, {
-    name: 'Entry ID',
-    handle: 'id',
-    instructions: '<strong class="error">Warning: </strong>This should only be used for an existing Craft Entry ID.'|t('feed-me'),
-    default: {
-        type: 'text',
-    },
-}]) %}
+}) %}
+
+{% if not feed.singleton %}
+    {% set fields = fields|push({
+        name: 'Entry ID',
+        handle: 'id',
+        instructions: '<strong class="error">Warning: </strong>This should only be used for an existing Craft Entry ID.'|t('feed-me'),
+        default: {
+            type: 'text',
+        },
+    }) %}
+{% endif %}
 
 <h2>{{ 'Entry Fields'|t('feed-me') }}</h2>
 
@@ -161,23 +165,25 @@
     {% endfor %}
 {% endif %}
 
-<hr>
+{% if not feed.singleton %}
+    <hr>
 
-<h2 id="entry-uniques-label">{{ "Set a unique identifier to match against existing elements"|t('feed-me') }}</h2>
-<p>{{ "Select the fields you want to use to check for existing elements. When selected, Feed Me will look for existing elements that match the fields provided below and either update, or skip depending on your choice of Import Strategy."|t('feed-me') }}</p>
+    <h2 id="entry-uniques-label">{{ "Set a unique identifier to match against existing elements"|t('feed-me') }}</h2>
+    <p>{{ "Select the fields you want to use to check for existing elements. When selected, Feed Me will look for existing elements that match the fields provided below and either update, or skip depending on your choice of Import Strategy."|t('feed-me') }}</p>
 
-{% for tab in tabs %}
-    {% for field in tab.getFields() %}
-        {% set fields = fields|merge([{ name: field.name, handle: field.handle, type: className(field) }]) %}
+    {% for tab in tabs %}
+        {% for field in tab.getFields() %}
+            {% set fields = fields|merge([{ name: field.name, handle: field.handle, type: className(field) }]) %}
+        {% endfor %}
     {% endfor %}
-{% endfor %}
 
-<fieldset class="feedme-uniques" aria-labelledby="entry-uniques-label">
-    {% for field in fields if field and craft.feedme.fieldCanBeUniqueId(field) %}
-        {{ forms.checkboxField({
-            name: 'fieldUnique[' ~ field.handle ~ ']',
-            label: field.name,
-            checked: feed.fieldUnique[field.handle] ?? '',
-        }) }}
-    {% endfor %}
-</fieldset>
+    <fieldset class="feedme-uniques" aria-labelledby="entry-uniques-label">
+        {% for field in fields if field and craft.feedme.fieldCanBeUniqueId(field) %}
+            {{ forms.checkboxField({
+                name: 'fieldUnique[' ~ field.handle ~ ']',
+                label: field.name,
+                checked: feed.fieldUnique[field.handle] ?? '',
+            }) }}
+        {% endfor %}
+    </fieldset>
+{% endif %}

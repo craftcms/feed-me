@@ -7,6 +7,7 @@ use Craft;
 use craft\elements\Entry as EntryElement;
 use craft\elements\User as UserElement;
 use craft\feedme\base\Element;
+use craft\feedme\models\ElementGroup;
 use craft\feedme\Plugin;
 use craft\models\Section;
 
@@ -45,18 +46,18 @@ class Entry extends Element
 
     public function getGroups()
     {
-        // Get editable sections for user
         $editable = Craft::$app->sections->getEditableSections();
+        $groups = [];
 
-        // Get sections but not singles
-        $sections = [];
         foreach ($editable as $section) {
-            if ($section->type != Section::TYPE_SINGLE) {
-                $sections[] = $section;
-            }
+            $groups[] = new ElementGroup([
+                'id' => $section->id,
+                'model' => $section,
+                'isSingleton' => $section->type === Section::TYPE_SINGLE,
+            ]);
         }
 
-        return $sections;
+        return $groups;
     }
 
     public function getQuery($settings, $params = [])

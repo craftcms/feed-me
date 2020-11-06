@@ -332,6 +332,7 @@ class FeedsController extends Controller
         $feed->elementType = $request->getBodyParam('elementType', $feed->elementType);
         $feed->elementGroup = $request->getBodyParam('elementGroup', $feed->elementGroup);
         $feed->siteId = $request->getBodyParam('siteId', $feed->siteId);
+        $feed->singleton = $request->getBodyParam('singleton', $feed->singleton);
         $feed->duplicateHandle = $request->getBodyParam('duplicateHandle', $feed->duplicateHandle);
         $feed->paginationNode = $request->getBodyParam('paginationNode', $feed->paginationNode);
         $feed->passkey = $request->getBodyParam('passkey', $feed->passkey);

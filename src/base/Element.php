@@ -122,7 +122,7 @@ abstract class Element extends Component implements ElementInterface
 
         // Make sure we have data to match on, otherwise it'll just grab the first found entry
         // without matching against anything. Not what we want at all!
-        if (count($criteria) === 0) {
+        if (empty($settings['singleton']) && count($criteria) === 0) {
             throw new \Exception('Unable to match an existing element. Have you set a unique identifier for ' . json_encode(array_keys($settings['fieldUnique'])) . '? Make sure you are also mapping this in your feed and it has a value.');
         }
 

@@ -29,6 +29,11 @@ class FeedModel extends Model
     public $elementGroup;
     public $siteId;
     public $sortOrder;
+    /**
+     * @var bool
+     * @since 4.3.0
+     */
+    public $singleton = false;
     public $duplicateHandle;
     public $paginationNode;
     public $fieldMapping;

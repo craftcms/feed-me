@@ -1,4 +1,4 @@
-/*!   - 2020-03-26 */
+/*!   - 2020-11-06 */
 (function($){
 
 /**
@@ -3720,9 +3720,10 @@ $(function() {
 
     // Toggle the Entry Type field when changing the section select
     $(document).on('change', '.element-parent-group select', function() {
-        var sections = $(this).parents('.element-sub-group').data('items');
-        var entryType = 'item_' + $(this).val();
-        var entryTypes = sections[entryType];
+        var sections = $(this).parents('.element-sub-group').data('items') || {};
+        var groupId = $(this).val();
+        var entryType = 'item_' + groupId;
+        var entryTypes = sections[entryType] || [];
 
         var currentValue = $('.element-child-group select').val();
 
@@ -3740,6 +3741,28 @@ $(function() {
             $('.element-child-group select').val(currentValue);
         } else {
             $($('.element-child-group select').children()[1]).attr('selected', true);
+        }
+
+        // Show/hide the import settings depending on whether this group is a singleton
+        var elementType = $('#elementType').val();
+        if (
+            Craft.FeedMe.elementTypes[elementType] &&
+            Craft.FeedMe.elementTypes[elementType].groups[groupId] &&
+            Craft.FeedMe.elementTypes[elementType].groups[groupId].isSingleton
+        ) {
+            $('#singleton').val('1');
+            $('#is-create').attr({checked: false, disabled: true});
+            $('#is-update').attr({checked: true, disabled: true});
+            $('#is-disable-globally').attr({checked: false, disabled: true});
+            $('#is-disable-site').attr({checked: false, disabled: true});
+            $('#is-delete').attr({checked: false, disabled: true});
+        } else {
+            $('#singleton').val('');
+            $('#is-create').attr({checked: true, disabled: false});
+            $('#is-update').attr({checked: false, disabled: false});
+            $('#is-disable-globally').attr({checked: false, disabled: false});
+            $('#is-disable-site').attr({checked: false, disabled: false});
+            $('#is-delete').attr({checked: false, disabled: false});
         }
     });
 
