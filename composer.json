@@ -34,7 +34,7 @@
         "jakeasmith/http_build_url": "^1.0",
         "nesbot/carbon": "^1.22 || ^2.10",
         "league/csv": "^8.2 || ^9.0",
-        "ralouphie/mimey": "^1.0",
+        "ralouphie/mimey": "^2.1.0",
         "seld/jsonlint": "^1.7"
     },
     "require-dev": {
