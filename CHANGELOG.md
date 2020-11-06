@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Changed
+- Feed Me now requires Craft 3.5 or later.
 - Enforce stricter validation when setting up a feed to help prevent unwanted behaviors. ([#757](https://github.com/craftcms/feed-me/issues/757))
 - The `php craft feed-me/feeds/run` console command now takes a list of feed IDs to run as a parameter instead of using an `--id` flag. (i.e. `php craft feed-me/feeds/run 1,2`). ([#754](https://github.com/craftcms/feed-me/issues/754))
 - Updated `ralouphie/mimey` to 2.1.0. ([#740](https://github.com/craftcms/feed-me/issues/740))
