@@ -82,24 +82,14 @@ class Entry extends Element
 
         if ($siteId) {
             $this->element->siteId = $siteId;
-
-            // Set the default site status based on the section's settings
-            foreach ($section->getSiteSettings() as $siteSettings) {
-                if ($siteSettings->siteId == $siteId) {
-                    $this->element->enabledForSite = $siteSettings->enabledByDefault;
-                    break;
-                }
-            }
-        } else {
-            // Set the default entry status based on the section's settings
-            foreach ($section->getSiteSettings() as $siteSettings) {
-                if (!$siteSettings->enabledByDefault) {
-                    $this->element->enabled = false;
-                }
-
-                break;
-            }
         }
+
+        // Set the default site status based on the section's settings
+        $enabledForSite = [];
+        foreach ($section->getSiteSettings() as $siteSettings) {
+            $enabledForSite[$siteSettings->siteId] = $siteSettings->enabledByDefault;
+        }
+        $this->element->setEnabledForSite($enabledForSite);
 
         return $this->element;
     }
