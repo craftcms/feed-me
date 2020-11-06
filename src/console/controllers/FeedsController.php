@@ -12,8 +12,14 @@ class FeedsController extends Controller
     // Properties
     // =========================================================================
 
-    public $id;
+    /**
+     * @var
+     */
     public $limit;
+
+    /**
+     * @var
+     */
     public $offset;
 
 
@@ -22,28 +28,41 @@ class FeedsController extends Controller
 
     public function options($actionID): array
     {
-        return ['id', 'limit', 'offset'];
+        return ['limit', 'offset'];
     }
 
-    public function actionRun()
+    /**
+     * Processes a feed(s)
+     *
+     * @param string $feedId A comma-separated list of feed IDs to process
+     * @return bool
+     */
+    public function actionRun($feedId)
     {
-        $ids = explode(',', $this->id);
+        $ids = explode(',', $feedId);
 
-        foreach ($ids as $id) {
-            echo "Feed processing started for Feed ID $id\n";
+        if (is_array($ids)) {
+            foreach ($ids as $id) {
+                $feed = Plugin::$plugin->feeds->getFeedById($id);
 
-            $feed = Plugin::$plugin->feeds->getFeedById($id);
+                if (!$feed) {
+                    echo "No feed found with an ID of $id\n";
+                    continue;
+                }
 
-            $processedElementIds = [];
+                $processedElementIds = [];
 
-            Craft::$app->getQueue()->delay(0)->push(new FeedImport([
-                'feed' => $feed,
-                'limit' => $this->limit,
-                'offset' => $this->offset,
-                'processedElementIds' => $processedElementIds,
-            ]));
+                echo "Feed processing started for feed ID $id\n";
 
-            Craft::$app->getQueue()->run();
+                Craft::$app->getQueue()->delay(0)->push(new FeedImport([
+                    'feed' => $feed,
+                    'limit' => $this->limit,
+                    'offset' => $this->offset,
+                    'processedElementIds' => $processedElementIds,
+                ]));
+
+                Craft::$app->getQueue()->run();
+            }
         }
 
         return true;
