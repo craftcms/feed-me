@@ -141,8 +141,7 @@
 
 <hr>
 
-<h2>{{ "Set a unique identifier to match against existing elements"|t('feed-me') }}</h2>
-
+<h2 id="digital-product-uniques-label">{{ "Set a unique identifier to match against existing elements"|t('feed-me') }}</h2>
 <p>{{ "Select the fields you want to use to check for existing elements. When selected, Feed Me will look for existing elements that match the fields provided below and either update, or skip depending on your choice of Import Strategy."|t('feed-me') }}</p>
 
 {% for tab in tabs %}
@@ -151,7 +150,7 @@
     {% endfor %}
 {% endfor %}
 
-<div class="feedme-uniques">
+<fieldset class="feedme-uniques" aria-labelledby="digital-product-uniques-label">
     {% for field in fields if field and craft.feedme.fieldCanBeUniqueId(field) %}
         {{ forms.checkboxField({
             name: 'fieldUnique[' ~ field.handle ~ ']',
@@ -159,4 +158,4 @@
             checked: feed.fieldUnique[field.handle] ?? '',
         }) }}
     {% endfor %}
-</div>
+</fieldset>
