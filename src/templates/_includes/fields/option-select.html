@@ -22,14 +22,14 @@
 
 {% block extraSettings %}
     <div class="element-match">
-        <span>{{ 'Data provided for this field is:' | t('feed-me') }}</span>
+        <span>{{ 'Data provided for this field is:'|t('feed-me') }}</span>
 
         {{ forms.selectField({
             name: 'options[match]',
             class: '',
             options: [
-                { value: 'value', label: 'Value' | t('feed-me') },
-                { value: 'label', label: 'Label' | t('feed-me') }
+                { value: 'value', label: 'Value'|t('feed-me') },
+                { value: 'label', label: 'Label'|t('feed-me') }
             ],
             value: hash_get(feed.fieldMapping, optionsPath ~ '.match') ?: '',
         }) }}

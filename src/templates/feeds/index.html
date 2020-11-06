@@ -3,125 +3,125 @@
 {% import '_includes/forms' as forms %}
 
 {% set crumbs = [
-    { label: craft.feedme.getPluginName | t('feed-me'), url: url('feed-me') },
-    { label: "Feeds" | t('feed-me'), url: url('feed-me/feeds') },
+    { label: craft.feedme.getPluginName|t('feed-me'), url: url('feed-me') },
+    { label: "Feeds"|t('feed-me'), url: url('feed-me/feeds') },
 ] %}
 
 {% set selectedTab = 'feeds' %}
 
 {% block actionButton %}
-    <a class="btn submit add icon" href="{{ url('feed-me/feeds/new') }}">{{ 'New feed' | t('feed-me') }}</a>
+    <a class="btn submit add icon" href="{{ url('feed-me/feeds/new') }}">{{ 'New feed'|t('feed-me') }}</a>
 {% endblock %}
 
-{% block blockContent %}
+{% block content %}
+    <div id="nofeeds" class="zilch{% if feeds %} hidden{% endif %}">
+        <p>{{ "No feeds exist yet."|t('feed-me') }}</p>
+    </div>
 
-<div id="nofeeds"{% if feeds %} class="hidden"{% endif %}>
-    <p>{{ "No feeds exist yet." | t('feed-me') }}</p>
-</div>
+    {% if feeds|length %}
+        <table id="feeds" class="data fullwidth collapsible table-feed-me">
+            <thead>
+                <th scope="col">{{ "Name"|t('feed-me') }}</th>
+                <th scope="col">{{ "Type"|t('feed-me') }}</th>
+                <th scope="col">{{ "Element Type"|t('feed-me') }}</th>
+                <th scope="col">{{ "Element Group"|t('feed-me') }}</th>
+                <th scope="col">{{ "Strategy"|t('feed-me') }}</th>
+                <th scope="col">{{ "Process"|t('feed-me') }}</th>
+                <th class="thin" colspan="3"></th>
+            </thead>
+            <tbody>
+                {% for feed in feeds %}
+                    <tr data-id="{{ feed.id }}" data-name="{{ feed.name|t('feed-me') }}">
+                        <th scope="row" data-title="Name">
+                            <a href="{{ url('feed-me/feeds/' ~ feed.id) }}">{{ feed.name|t('feed-me') }}</a>
 
-{% if feeds | length %}
-    <table id="feeds" class="data fullwidth collapsible table-feed-me">
-        <thead>
-            <th scope="col">{{ "Name" | t('feed-me') }}</th>
-            <th scope="col">{{ "Type" | t('feed-me') }}</th>
-            <th scope="col">{{ "Element Type" | t('feed-me') }}</th>
-            <th scope="col">{{ "Element Group" | t('feed-me') }}</th>
-            <th scope="col">{{ "Strategy" | t('feed-me') }}</th>
-            <th scope="col">{{ "Process" | t('feed-me') }}</th>
-            <th class="thin" colspan="3"></th>
-        </thead>
-        <tbody>
-            {% for feed in feeds %}
-                <tr data-id="{{ feed.id }}" data-name="{{ feed.name | t('feed-me') }}">
-                    <th scope="row" data-title="Name">
-                        <a href="{{ url('feed-me/feeds/' ~ feed.id) }}">{{ feed.name | t('feed-me') }}</a>
-
-                        <span class="index-url">
-                            {% if feed.feedUrl | length > 40 %}
-                                {{ feed.feedUrl | slice(0, 40) }}&hellip;
-                            {% else %}
-                                {{ feed.feedUrl }}
-                            {% endif %}
-                        </span>
-                    </th>
-
-                    <td>{{ feed.dataType.name ?? 'Unknown datatype' }}</td>
-                      
-                    <td>
-                        {% if feed.element %}
-                            {{ feed.element.name }}
-                        {% else %}
-                            <span class="error">{{ feed.elementType }}</span>
-                        {% endif %}
-                    </td>
-
-                    <td>
-                        {% if feed.element %}
-                            {% include feed.element.columnTemplate ignore missing with { elementType: feed.elementType } %}
-                        {% else %}
-                            <span class="error">{{ 'Element group not found' | t('feed-me') }}</span>
-                        {% endif %}
-                    </td>
-
-                    <td>{{ feed.duplicateHandleFriendly }}</td>
-                    
-                    <td><a href="{{ url('feed-me/feeds/run/' ~ feed.id) }}">{{ 'Run Feed' | t('feed-me') }}</a></td>
-
-                    <td class="thin action">
-                        <a class="settings icon" title="{{ 'Settings' | t('feed-me') }}" role="button"></a>
-                    </td>
-
-                    <td class="thin action">
-                        <a class="move icon" title="{{ 'Reorder' | t('feed-me') }}" role="button"></a>
-                    </td>
-
-                    <td class="thin action">
-                        <a class="delete icon" title="{{ 'Delete' | t('feed-me') }}" role="button"></a>
-                    </td>
-                </tr>
-
-                <tr data-settings-id="{{ feed.id }}-settings">
-                    <td colspan="9" class="settings-pane">
-                        <div class="settings-pane-wrap">
-                            <div class="btn-group" role="group">
-                                {% if craft.app.config.general.devMode %}
-                                    {% set debugUrl = actionUrl('feed-me/feeds/debug', { feedId: feed.id }) %}
-
-                                    <a class="btn" href="{{ debugUrl }}" target="_blank" role="button">
-                                        <i class="fa fa-bug"></i>
-                                        <span class="btn-text">{{ 'Debug' | t('feed-me') }}</span>
-                                    </a>
+                            <span class="index-url">
+                                {% if feed.feedUrl|length > 40 %}
+                                    {{ feed.feedUrl|slice(0, 40) }}&hellip;
+                                {% else %}
+                                    {{ feed.feedUrl }}
                                 {% endif %}
+                            </span>
+                        </th>
 
-                                <a class="btn" href="{{ url('feed-me/feeds/status/' ~ feed.id) }}" role="button">
-                                    <i class="fa fa-info-circle"></i>
-                                    <span class="btn-text">{{ 'Feed Status' | t('feed-me') }}</span>
-                                </a>
+                        <td>{{ feed.dataType.name ?? 'Unknown datatype' }}</td>
 
-                                <a class="btn" href="{{ actionUrl('feed-me/feeds/save-and-duplicate-feed', { 'feedId': feed.id }) }}" role="button">
-                                    <i class="fa fa-clone"></i>
-                                    <span class="btn-text">{{ 'Duplicate Feed' | t('feed-me') }}</span>
-                                </a>
+                        <td>
+                            {% if feed.element %}
+                                {{ feed.element.name }}
+                            {% else %}
+                                <span class="error">{{ feed.elementType }}</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if feed.element %}
+                                {% include feed.element.columnTemplate ignore missing with { elementType: feed.elementType } %}
+                            {% else %}
+                                <span class="error">{{ 'Element group not found'|t('feed-me') }}</span>
+                            {% endif %}
+                        </td>
+
+                        <td>{{ feed.duplicateHandleFriendly }}</td>
+
+                        <td><a href="{{ url('feed-me/feeds/run/' ~ feed.id) }}">{{ 'Run Feed'|t('feed-me') }}</a></td>
+
+                        <td class="thin action">
+                            <a class="settings icon" title="{{ 'Settings'|t('feed-me') }}" role="button"></a>
+                        </td>
+
+                        <td class="thin action">
+                            <a class="move icon" title="{{ 'Reorder'|t('feed-me') }}" role="button"></a>
+                        </td>
+
+                        <td class="thin action">
+                            <a class="delete icon" title="{{ 'Delete'|t('feed-me') }}" role="button"></a>
+                        </td>
+                    </tr>
+
+                    <tr data-settings-id="{{ feed.id }}-settings">
+                        <td colspan="9" class="settings-pane">
+                            <div class="settings-pane-wrap">
+                                <div class="btn-group" role="group">
+                                    {% if craft.app.config.general.devMode %}
+                                        {% set debugUrl = actionUrl('feed-me/feeds/debug', { feedId: feed.id }) %}
+
+                                        <a class="btn" href="{{ debugUrl }}" target="_blank" role="button">
+                                            <i class="fa fa-bug"></i>
+                                            <span class="btn-text">{{ 'Debug'|t('feed-me') }}</span>
+                                        </a>
+                                    {% endif %}
+
+                                    <a class="btn" href="{{ url('feed-me/feeds/status/' ~ feed.id) }}" role="button">
+                                        <i class="fa fa-info-circle"></i>
+                                        <span class="btn-text">{{ 'Feed Status'|t('feed-me') }}</span>
+                                    </a>
+
+                                    <a class="btn" href="{{ actionUrl('feed-me/feeds/save-and-duplicate-feed', { 'feedId': feed.id }) }}" role="button">
+                                        <i class="fa fa-clone"></i>
+                                        <span class="btn-text">{{ 'Duplicate Feed'|t('feed-me') }}</span>
+                                    </a>
+                                </div>
+
+                                {% set cpTrigger = craft.app.config.general.cpTrigger ~ '/' %}
+
+                                {% set directUrl = actionUrl('feed-me/feeds/run-task', { direct: true, feedId: feed.id, passkey: feed.passkey })|replace(cpTrigger, '') %}
+
+                                {{ forms.textField({
+                                    label: 'Direct Feed URL'|t('feed-me'),
+                                    instructions: 'Copy and paste this URL for direct-access to processing this feed. Commonly used when triggering via a Cron Job.'|t('feed-me'),
+                                    readonly: true,
+                                    value: directUrl,
+                                }) }}
                             </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
 
-                            {% set cpTrigger = craft.app.config.general.cpTrigger ~ '/' %}
-
-                            {% set directUrl = actionUrl('feed-me/feeds/run-task', { direct: true, feedId: feed.id, passkey: feed.passkey }) | replace(cpTrigger, '') %}
-
-                            {{ forms.textField({
-                                label: 'Direct Feed URL' | t('feed-me'),
-                                instructions: 'Copy and paste this URL for direct-access to processing this feed. Commonly used when triggering via a Cron Job.' | t('feed-me'),
-                                readonly: true,
-                                value: directUrl,
-                            }) }}
-                        </div>
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-{% endif %}
-
+    {{ parent() }}
 {% endblock %}
 
 {% js %}
@@ -132,7 +132,7 @@
         sortable: true,
         reorderAction: 'feed-me/feeds/reorder-feeds',
         deleteAction: 'feed-me/feeds/delete-feed',
-        confirmDeleteMessage: '{{ "Are you sure you want to delete “{name}”?" | t('feed-me') }}'
+        confirmDeleteMessage: '{{ "Are you sure you want to delete “{name}”?"|t('feed-me') }}'
     });
 {% endjs %}
 

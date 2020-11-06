@@ -9,23 +9,23 @@
 ]) %}
 
 {% set crumbs = [
-    { label: craft.feedme.getPluginName | t('feed-me'), url: url('feed-me') },
+    { label: craft.feedme.getPluginName|t('feed-me'), url: url('feed-me') },
 ] %}
 
 {% if feed.id %}
-    {% set crumbs = crumbs | merge([
-        { label: feed.name | t('feed-me'), url: url('feed-me/feeds/' ~ feed.id) },
+    {% set crumbs = crumbs|merge([
+        { label: feed.name|t('feed-me'), url: url('feed-me/feeds/' ~ feed.id) },
     ]) %}
 {% endif %}
 
-{% set title = (feed.id) ? feed.name : 'Create a new feed' | t('feed-me') %}
+{% set title = (feed.id) ? feed.name : 'Create a new feed'|t('feed-me') %}
 {% set noTabs = true %}
 {% set fullPageForm = true %}
 
 {% set buttons %}
     <div class="buttons">
-        <input type="button" data-action="feed-me/feeds/save-feed" class="btn submit" value="{{ 'Save' | t('feed-me') }}">
-        <input type="button" data-action="feed-me/feeds/save-and-element-feed" class="btn submit" value="{{ 'Save & Continue' | t('feed-me') }}">
+        <input type="button" data-action="feed-me/feeds/save-feed" class="btn submit" value="{{ 'Save'|t('feed-me') }}">
+        <input type="button" data-action="feed-me/feeds/save-and-element-feed" class="btn submit" value="{{ 'Save & Continue'|t('feed-me') }}">
     </div>
 {% endset %}
 
@@ -33,15 +33,15 @@
     {{ buttons }}
 {% endblock %}
 
-{% block blockContent %}
+{% block content %}
     <input type="hidden" name="action" value="feed-me/feeds/save-feed">
 
     {% if feed.id %}<input type="hidden" name="feedId" value="{{ feed.id }}">{% endif %}
 
     {{ forms.textField({
         first: true,
-        label: "Name" | t('feed-me'),
-        instructions: "What this feed will be called in the CP." | t('feed-me'),
+        label: "Name"|t('feed-me'),
+        instructions: "What this feed will be called in the CP."|t('feed-me'),
         id: 'name',
         name: 'name',
         value: feed.name,
@@ -51,8 +51,8 @@
     }) }}
 
     {{ forms.textField({
-        label: "Feed URL" | t('feed-me'),
-        instructions: "Can be a file on the local file system or from a website url (http://...)." | t('feed-me'),
+        label: "Feed URL"|t('feed-me'),
+        instructions: "Can be a file on the local file system or from a website url (http://...)."|t('feed-me'),
         id: 'feedUrl',
         name: 'feedUrl',
         value: feed.feedUrl,
@@ -61,8 +61,8 @@
     }) }}
 
     {{ forms.selectField({
-        label: "Feed Type" | t('feed-me'),
-        instructions: 'Choose what type of feed you\'re retrieving.' | t('feed-me'),
+        label: "Feed Type"|t('feed-me'),
+        instructions: 'Choose what type of feed you’re retrieving.'|t('feed-me'),
         id: 'feedType',
         name: 'feedType',
         options: dataTypes,
@@ -75,22 +75,22 @@
 
     {% set elementsList = [] %}
     {% for elementClass, element in elements %}
-        {% set elementsList = elementsList | merge({ (elementClass): element.name }) %}
+        {% set elementsList = elementsList|merge({ (elementClass): element.name }) %}
     {% endfor %}
 
     {{ forms.selectField({
-        label: "Element Type" | t('feed-me'),
-        instructions: 'Choose what element you want to save your feed data to.' | t('feed-me'),
+        label: "Element Type"|t('feed-me'),
+        instructions: 'Choose what element you want to save your feed data to.'|t('feed-me'),
         id: 'elementType',
         name: 'elementType',
-        options: [{ label: 'Select', value: '' }] | merge(elementsList),
+        options: [{ label: 'Select', value: '' }]|merge(elementsList),
         value: feed.elementType,
         errors: feed.getErrors('elementType'),
         required: true,
     }) }}
 
     {% for elementClass, element in elements %}
-        <div class="element-select" data-type="{{ elementClass | replace('\\', '-') }}">
+        <div class="element-select" data-type="{{ elementClass|replace('\\', '-') }}">
             {% set elementType = elementClass %}
 
             {% include element.groupsTemplate ignore missing %}
@@ -101,12 +101,12 @@
         {% set sites = [{ label: 'Primary Site ({name})'|t('feed-me', {name: craft.app.sites.primarySite.name}), value: '' }] %}
 
         {% for site in craft.app.sites.getAllSites() %}
-            {% set sites = sites | merge([{ label: site.name, value: site.id }]) %}
+            {% set sites = sites|merge([{ label: site.name, value: site.id }]) %}
         {% endfor %}
 
         {{ forms.selectField({
-            label: "Target Site" | t('feed-me'),
-            instructions: 'Choose which site you want to save your elements to initially.' | t('feed-me'),
+            label: "Target Site"|t('feed-me'),
+            instructions: 'Choose which site you want to save your elements to initially.'|t('feed-me'),
             id: 'siteId',
             name: 'siteId',
             options: sites,
@@ -117,8 +117,8 @@
     <hr>
 
     {{ forms.field({
-        label: "Import strategy" | t('feed-me'),
-        instructions: 'Choose what happens when this feed is run again.' | t('feed-me'),
+        label: "Import strategy"|t('feed-me'),
+        instructions: 'Choose what happens when this feed is run again.'|t('feed-me'),
         id: 'duplicateHandle',
     }) }}
 
@@ -172,8 +172,8 @@
     <hr>
 
     {{ forms.textField({
-        label: "Passkey" | t('feed-me'),
-        instructions: "A generated, unique string to increase security against imports being run inadvertently. No need to change this." | t('feed-me'),
+        label: "Passkey"|t('feed-me'),
+        instructions: "A generated, unique string to increase security against imports being run inadvertently. No need to change this."|t('feed-me'),
         id: 'passkey',
         name: 'passkey',
         value: (feed.passkey) ? feed.passkey : '',
@@ -183,12 +183,13 @@
 
     {{ forms.lightswitchField({
         first: true,
-        label: 'Backup' | t('feed-me'),
-        instructions: 'Perform a full backup each time this feed is processed.' | t('feed-me'),
+        label: 'Backup'|t('feed-me'),
+        instructions: 'Perform a full backup each time this feed is processed.'|t('feed-me'),
         name: 'backup',
         on: (feed.id) ? feed.backup : true,
     }) }}
 
+    {{ parent() }}
 {% endblock %}
 
 {% block footerButton %}

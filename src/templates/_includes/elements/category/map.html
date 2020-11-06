@@ -7,9 +7,9 @@
     {% set group = craft.app.categories.getGroupById(groupId) %}
 {% endif %}
 
-{% set categories = [{ label: 'Don\'t import', value: '' }] %}
+{% set categories = [{ label: 'Don’t import'|t('feed-me'), value: '' }] %}
 {% for category in craft.categories.all() %}
-    {% set categories = categories | merge([{ label: category.title | slice(0, 40), value: category.id }]) %}
+    {% set categories = categories|merge([{ label: category.title|slice(0, 40), value: category.id }]) %}
 {% endfor %}
 
 {% set fields = [{
@@ -21,7 +21,7 @@
 }, {
     name: 'Slug',
     handle: 'slug',
-    instructions: 'If not set, the Slug will be automatically created from Title.' | t('feed-me'),
+    instructions: 'If not set, the Slug will be automatically created from Title.'|t('feed-me'),
     default: {
         type: 'text',
     },
@@ -29,19 +29,19 @@
     type: 'categories',
     name: 'Parent',
     handle: 'parent',
-    instructions: 'Select a parent category to import these categories under.' | t('feed-me'),
+    instructions: 'Select a parent category to import these categories under.'|t('feed-me'),
     default: {
         type: 'select',
         options: categories,
-    },    
+    },
 }, {
     name: 'Status',
     handle: 'enabled',
-    instructions: 'Choose either a default status from the list or the imported field that will contain the status.' | t('feed-me'),
+    instructions: 'Choose either a default status from the list or the imported field that will contain the status.'|t('feed-me'),
     default: {
         type: 'select',
         options: [
-            { label: 'Don\'t import', value: '' },
+            { label: 'Don’t import'|t('feed-me'), value: '' },
             { label: 'Enabled', value: '1' },
             { label: 'Disabled', value: '0' },
         ],
@@ -49,24 +49,24 @@
 }, {
     name: 'Category ID',
     handle: 'id',
-    instructions: '<strong class="error">Warning: </strong>This should only be used for an existing Craft Category ID.' | t('feed-me'),
+    instructions: '<strong class="error">Warning: </strong>This should only be used for an existing Craft Category ID.'|t('feed-me'),
     default: {
         type: 'text',
     },
 }] %}
 
-<h2>{{ 'Category Fields' | t('feed-me') }}</h2>
+<h2>{{ 'Category Fields'|t('feed-me') }}</h2>
 
 <table class="feedme-mapping data fullwidth collapsible">
     <thead>
-        <th>{{ 'Field' | t('feed-me') }}</th>
-        <th>{{ 'Feed Element' | t('feed-me') }}</th>
-        <th>{{ 'Default Value' | t('feed-me') }}</th>
+        <th>{{ 'Field'|t('feed-me') }}</th>
+        <th>{{ 'Feed Element'|t('feed-me') }}</th>
+        <th>{{ 'Default Value'|t('feed-me') }}</th>
     </thead>
     <tbody>
         {% for field in fields %}
             {% set template = field.type ?? 'default' %}
-            {% set variables = field | merge({ feed: feed, feedData: feedData, attribute: true }) %}
+            {% set variables = field|merge({ feed: feed, feedData: feedData, attribute: true }) %}
 
             {% include 'feed-me/_includes/fields/' ~ template ignore missing with variables only %}
         {% endfor %}
@@ -85,9 +85,9 @@
 
         <table class="feedme-mapping data fullwidth collapsible">
             <thead>
-                <th>{{ 'Field' | t('feed-me') }}</th>
-                <th>{{ 'Feed Element' | t('feed-me') }}</th>
-                <th>{{ 'Default Value' | t('feed-me') }}</th>
+                <th>{{ 'Field'|t('feed-me') }}</th>
+                <th>{{ 'Feed Element'|t('feed-me') }}</th>
+                <th>{{ 'Default Value'|t('feed-me') }}</th>
             </thead>
             <tbody>
                 {% for field in tab.getFields() %}
@@ -95,7 +95,7 @@
                     {% set template = fieldClass.getMappingTemplate() %}
 
                     {% set variables = { name: field.name, handle: field.handle, feed: feed, feedData: feedData, field: field, fieldClass: fieldClass } %}
-                    
+
                     {% include template ignore missing with variables only %}
                 {% endfor %}
             </tbody>
@@ -105,13 +105,13 @@
 
 <hr>
 
-<h2>{{ "Set a unique identifier to match against existing elements" | t('feed-me') }}</h2>
+<h2>{{ "Set a unique identifier to match against existing elements"|t('feed-me') }}</h2>
 
-<p>{{ "Select the fields you want to use to check for existing elements. When selected, Feed Me will look for existing elements that match the fields provided below and either update, or skip depending on your choice of Import Strategy." | t('feed-me') }}</p>
+<p>{{ "Select the fields you want to use to check for existing elements. When selected, Feed Me will look for existing elements that match the fields provided below and either update, or skip depending on your choice of Import Strategy."|t('feed-me') }}</p>
 
 {% for tab in tabs %}
     {% for field in tab.getFields() %}
-        {% set fields = fields | merge([{ name: field.name, handle: field.handle, type: className(field) }]) %}
+        {% set fields = fields|merge([{ name: field.name, handle: field.handle, type: className(field) }]) %}
     {% endfor %}
 {% endfor %}
 

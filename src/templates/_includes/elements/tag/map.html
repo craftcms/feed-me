@@ -7,9 +7,9 @@
     {% set group = craft.app.tags.getTagGroupById(groupId) %}
 {% endif %}
 
-{% set tags = [{ label: 'Don\'t import', value: '' }] %}
+{% set tags = [{ label: 'Don’t import'|t('feed-me'), value: '' }] %}
 {% for tag in craft.tags.all() %}
-    {% set tags = tags | merge([{ label: tag.title | slice(0, 40), value: tag.id }]) %}
+    {% set tags = tags|merge([{ label: tag.title|slice(0, 40), value: tag.id }]) %}
 {% endfor %}
 
 {% set fields = [{
@@ -17,15 +17,15 @@
     handle: 'title',
     default: {
         type: 'text',
-    }, 
+    },
 }, {
     name: 'Status',
     handle: 'enabled',
-    instructions: 'Choose either a default status from the list or the imported field that will contain the status.' | t('feed-me'),
+    instructions: 'Choose either a default status from the list or the imported field that will contain the status.'|t('feed-me'),
     default: {
         type: 'select',
         options: [
-            { label: 'Don\'t import', value: '' },
+            { label: 'Don’t import'|t('feed-me'), value: '' },
             { label: 'Enabled', value: '1' },
             { label: 'Disabled', value: '0' },
         ],
@@ -33,24 +33,24 @@
 }, {
     name: 'Tag ID',
     handle: 'id',
-    instructions: '<strong class="error">Warning: </strong>This should only be used for an existing Craft Tag ID.' | t('feed-me'),
+    instructions: '<strong class="error">Warning: </strong>This should only be used for an existing Craft Tag ID.'|t('feed-me'),
     default: {
         type: 'text',
     },
 }] %}
 
-<h2>{{ 'Tag Fields' | t('feed-me') }}</h2>
+<h2>{{ 'Tag Fields'|t('feed-me') }}</h2>
 
 <table class="feedme-mapping data fullwidth collapsible">
     <thead>
-        <th>{{ 'Field' | t('feed-me') }}</th>
-        <th>{{ 'Feed Element' | t('feed-me') }}</th>
-        <th>{{ 'Default Value' | t('feed-me') }}</th>
+        <th>{{ 'Field'|t('feed-me') }}</th>
+        <th>{{ 'Feed Element'|t('feed-me') }}</th>
+        <th>{{ 'Default Value'|t('feed-me') }}</th>
     </thead>
     <tbody>
         {% for field in fields %}
             {% set template = field.type ?? 'default' %}
-            {% set variables = field | merge({ feed: feed, feedData: feedData, attribute: true }) %}
+            {% set variables = field|merge({ feed: feed, feedData: feedData, attribute: true }) %}
 
             {% include 'feed-me/_includes/fields/' ~ template ignore missing with variables only %}
         {% endfor %}
@@ -69,9 +69,9 @@
 
         <table class="feedme-mapping data fullwidth collapsible">
             <thead>
-                <th>{{ 'Field' | t('feed-me') }}</th>
-                <th>{{ 'Feed Element' | t('feed-me') }}</th>
-                <th>{{ 'Default Value' | t('feed-me') }}</th>
+                <th>{{ 'Field'|t('feed-me') }}</th>
+                <th>{{ 'Feed Element'|t('feed-me') }}</th>
+                <th>{{ 'Default Value'|t('feed-me') }}</th>
             </thead>
             <tbody>
                 {% for field in tab.getFields() %}
@@ -79,7 +79,7 @@
                     {% set template = fieldClass.getMappingTemplate() %}
 
                     {% set variables = { name: field.name, handle: field.handle, feed: feed, feedData: feedData, field: field, fieldClass: fieldClass } %}
-                    
+
                     {% include template ignore missing with variables only %}
                 {% endfor %}
             </tbody>
@@ -89,13 +89,13 @@
 
 <hr>
 
-<h2>{{ "Set a unique identifier to match against existing elements" | t('feed-me') }}</h2>
+<h2>{{ "Set a unique identifier to match against existing elements"|t('feed-me') }}</h2>
 
-<p>{{ "Select the fields you want to use to check for existing elements. When selected, Feed Me will look for existing elements that match the fields provided below and either update, or skip depending on your choice of Import Strategy." | t('feed-me') }}</p>
+<p>{{ "Select the fields you want to use to check for existing elements. When selected, Feed Me will look for existing elements that match the fields provided below and either update, or skip depending on your choice of Import Strategy."|t('feed-me') }}</p>
 
 {% for tab in tabs %}
     {% for field in tab.getFields() %}
-        {% set fields = fields | merge([{ name: field.name, handle: field.handle, type: className(field) }]) %}
+        {% set fields = fields|merge([{ name: field.name, handle: field.handle, type: className(field) }]) %}
     {% endfor %}
 {% endfor %}
 

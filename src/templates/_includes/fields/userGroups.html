@@ -20,7 +20,7 @@
 {% block extraSettings %}
     <div class="element-create">
         {{ feedMeMacro.checkbox({
-            label: 'Assign user to only these groups (remove from any existing).' | t('feed-me'),
+            label: 'Assign user to only these groups (remove from any existing).'|t('feed-me'),
             name: 'options[removeFromExisting]',
             value: 1,
             checked: hash_get(feed.fieldMapping, optionsPath ~ '.removeFromExisting') ?: '',

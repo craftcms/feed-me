@@ -96,7 +96,6 @@ class Elements extends Component
         $elements = [
             Asset::class,
             Category::class,
-            // CommerceOrder::class,
             CommerceProduct::class,
             Entry::class,
             Tag::class,

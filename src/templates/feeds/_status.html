@@ -1,16 +1,14 @@
 {% extends 'feed-me/_layouts' %}
 
 {% set crumbs = [
-    { label: craft.feedme.getPluginName | t('feed-me'), url: url('feed-me') },
-    { label: feed.name | t('feed-me'), url: url('feed-me/feeds/' ~ feed.id) },
+    { label: craft.feedme.getPluginName|t('feed-me'), url: url('feed-me') },
+    { label: feed.name|t('feed-me'), url: url('feed-me/feeds/' ~ feed.id) },
 ] %}
 
 {% set title = feed.name %}
 
-{% set title = (feed.id) ? feed.name : 'Create a new feed' | t('feed-me') %}
+{% set title = (feed.id) ? feed.name : 'Create a new feed'|t('feed-me') %}
 {% set noTabs = true %}
-
-{% block blockContent %}
 
 {% set triggerClass = '' %}
 {% set queue = craft.app.queue %}
@@ -21,33 +19,35 @@
     {% set triggerClass = 'cp-triggered' %}
 {% endif %}
 
-<div class="feedme-fullpage fullpage-running fullpage-running-cp {{ triggerClass }}">
-    <img src="{{ baseAssetsUrl ~ '/img/icon-success.svg' }}">
+{% block content %}
+    <div class="feedme-fullpage fullpage-running fullpage-running-cp {{ triggerClass }}">
+        <img src="{{ baseAssetsUrl ~ '/img/icon-success.svg' }}">
 
-    <h2>{{ '{name} has been queued up.' | t('feed-me', { name: feed.name }) }}</h2>
-    <p>{{ 'You can navigate away from this page without disrupting your feed processing.' | t('feed-me') }}</p>
+        <h2>{{ '{name} has been queued up.'|t('feed-me', { name: feed.name }) }}</h2>
+        <p>{{ 'You can navigate away from this page without disrupting your feed processing.'|t('feed-me') }}</p>
 
-    <div class="feedme-success-btns">
-        {% apply spaceless %}
-            {% if craft.app.queue is instance of("craft\\queue\\QueueInterface") and craft.app.utilities.checkAuthorization("craft\\utilities\\QueueManager") %}
+        <div class="feedme-success-btns">
+            {% apply spaceless %}
+                {% if craft.app.queue is instance of("craft\\queue\\QueueInterface") and craft.app.utilities.checkAuthorization("craft\\utilities\\QueueManager") %}
+                    {{ tag('a', {
+                        class: ['btn', 'submit'],
+                        href: url('utilities/queue-manager'),
+                        text: 'Go to the Queue Manager'|t('feed-me'),
+                    }) }}
+                {% endif %}
                 {{ tag('a', {
-                    class: ['btn', 'submit'],
-                    href: url('utilities/queue-manager'),
-                    text: 'Go to the Queue Manager'|t('feed-me'),
+                    class: ['btn'],
+                    href: url('feed-me/feeds'),
+                    text: 'View feeds'|t('feed-me'),
                 }) }}
-            {% endif %}
-            {{ tag('a', {
-                class: ['btn'],
-                href: url('feed-me/feeds'),
-                text: 'View feeds'|t('feed-me'),
-            }) }}
-            {{ tag('a', {
-                class: ['btn'],
-                href: url('feed-me/logs'),
-                text: 'View logs'|t('feed-me'),
-            }) }}
-        {% endapply %}
+                {{ tag('a', {
+                    class: ['btn'],
+                    href: url('feed-me/logs'),
+                    text: 'View logs'|t('feed-me'),
+                }) }}
+            {% endapply %}
+        </div>
     </div>
-</div>
 
+    {{ parent() }}
 {% endblock %}
