@@ -4,6 +4,8 @@
 
 ### Added
 - It’s now possible to import Single sections’ entry data. ([#559](https://github.com/craftcms/feed-me/issues/559))
+- It’s now possible to import global set data. ([#670](https://github.com/craftcms/feed-me/issues/670))
+- Added `craft\feedme\elements\GlobalSet`.
 - Added `craft\feedme\models\ElementGroup`.
 - Added `craft\feedme\models\FeedModel::$singleton`.
 

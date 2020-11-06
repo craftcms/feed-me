@@ -1,0 +1,37 @@
+{% import '_includes/forms' as forms %}
+{% import 'feed-me/_macros' as feedMeMacro %}
+
+{% if feed.elementGroup %}
+    {% set globalSetId = feed.elementGroup[feed.elementType].globalSet %}
+    {% set globalSet = craft.app.globals.getSetById(globalSetId) %}
+{% endif %}
+
+{% set tabs = [] %}
+
+{% if globalSet.fieldLayoutId %}
+    {% set tabs = craft.app.fields.getLayoutById(globalSet.fieldLayoutId).getTabs() %}
+
+    {% for tab in tabs %}
+        <hr>
+
+        <h2>{{ tab.name }} Fields</h2>
+
+        <table class="feedme-mapping data fullwidth collapsible">
+            <thead>
+                <th>{{ 'Field'|t('feed-me') }}</th>
+                <th>{{ 'Feed Element'|t('feed-me') }}</th>
+                <th>{{ 'Default Value'|t('feed-me') }}</th>
+            </thead>
+            <tbody>
+                {% for field in tab.getFields() %}
+                    {% set fieldClass = craft.feedme.fields.getRegisteredField(className(field)) %}
+                    {% set template = fieldClass.getMappingTemplate() %}
+
+                    {% set variables = { name: field.name, handle: field.handle, feed: feed, feedData: feedData, field: field, fieldClass: fieldClass } %}
+
+                    {% include template ignore missing with variables only %}
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endfor %}
+{% endif %}

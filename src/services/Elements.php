@@ -13,6 +13,7 @@ use craft\feedme\elements\Comment;
 use craft\feedme\elements\CommerceProduct;
 use craft\feedme\elements\DigitalProduct;
 use craft\feedme\elements\Entry;
+use craft\feedme\elements\GlobalSet;
 use craft\feedme\elements\Tag;
 use craft\feedme\elements\User;
 use craft\feedme\events\RegisterFeedMeElementsEvent;
@@ -100,6 +101,7 @@ class Elements extends Component
             Entry::class,
             Tag::class,
             User::class,
+            GlobalSet::class,
 
             // Third-party
             CalenderEvent::class,
