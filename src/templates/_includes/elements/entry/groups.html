@@ -41,6 +41,7 @@
         name: 'elementGroup[' ~ elementType ~ '][section]',
         options: craft.feedme.getSelectOptions(sections),
         value: sectionId ?? '',
+        errors: feed.getErrors('elementGroup'),
         required: true,
     }) }}
 
@@ -52,6 +53,7 @@
         name: 'elementGroup[' ~ elementType ~ '][entryType]',
         options: craft.feedme.getSelectOptions(sectionEntryTypes),
         value: entryTypeId ?? '',
+        errors: feed.getErrors('elementGroup'),
         required: true,
     }) }}
 </div>

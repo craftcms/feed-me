@@ -137,6 +137,17 @@ class FeedsController extends Controller
     {
         $feed = $this->_getModelFromPost();
 
+        if ($feed->getErrors()) {
+            $this->setFailFlash(Craft::t('feed-me', 'Couldn’t save the feed.'));
+
+            // Send the category group back to the template
+            Craft::$app->getUrlManager()->setRouteParams([
+                'feed' => $feed
+            ]);
+
+            return null;
+        }
+
         return $this->_saveAndRedirect($feed, 'feed-me/feeds/element/', true);
     }
 
@@ -339,22 +350,34 @@ class FeedsController extends Controller
         if (isset($feed->elementGroup[$feed->elementType])) {
             $elementGroup = $feed->elementGroup[$feed->elementType];
 
-            if ($feed->elementType == 'craft\elements\Category') {
-                if (empty($elementGroup)) {
-                    $feed->addError('elementGroup', Craft::t('feed-me', 'Category Group is required'));
-                }
+            if (($feed->elementType === 'craft\elements\Category') && empty($elementGroup)) {
+                $feed->addError('elementGroup', Craft::t('feed-me', 'Category Group is required'));
             }
 
-            if ($feed->elementType == 'craft\elements\Entry') {
+            if ($feed->elementType === 'craft\elements\Entry') {
                 if (empty($elementGroup['section']) || empty($elementGroup['entryType'])) {
                     $feed->addError('elementGroup', Craft::t('feed-me', 'Entry Section and Type are required'));
                 }
             }
 
-            if ($feed->elementType == 'Commerce_Product') {
-                if (empty($elementGroup)) {
-                    $feed->addError('elementGroup', Craft::t('feed-me', 'Commerce Product Type is required'));
-                }
+            if (($feed->elementType === 'craft\commerce\elements\Product') && empty($elementGroup)) {
+                $feed->addError('elementGroup', Craft::t('feed-me', 'Commerce Product Type is required'));
+            }
+
+            if (($feed->elementType === 'craft\digitalproducts\elements\Product') && empty($elementGroup)) {
+                $feed->addError('elementGroup', Craft::t('feed-me', 'Digital Product Group is required'));
+            }
+
+            if (($feed->elementType === 'craft\elements\Asset') && empty($elementGroup)) {
+                $feed->addError('elementGroup', Craft::t('feed-me', 'Asset Volume is required'));
+            }
+
+            if (($feed->elementType === 'craft\elements\Tag') && empty($elementGroup)) {
+                $feed->addError('elementGroup', Craft::t('feed-me', 'Tag Group is required'));
+            }
+
+            if (($feed->elementType === 'Solspace\Calendar\Elements\Event') && empty($elementGroup)) {
+                $feed->addError('elementGroup', Craft::t('feed-me', 'Calendar is required'));
             }
         }
 

@@ -9,5 +9,6 @@
     name: 'elementGroup[' ~ elementType ~ ']',
     options: craft.feedme.getSelectOptions(calendars),
     value: feed.elementGroup[elementType] ?? '',
+    errors: feed.getErrors('elementGroup'),
     required: true,
 }) }}
