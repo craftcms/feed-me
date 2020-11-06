@@ -194,7 +194,7 @@ class DataHelper
                 $existingValue = $groups;
             }
 
-            if (Hash::check($attributes, $key) && $existingValue === $newValue) {
+            if (Hash::check($attributes, $key) && $existingValue == $newValue) {
                 unset($trackedChanges[$key]);
                 continue;
             }
