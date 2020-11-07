@@ -5,7 +5,9 @@ namespace craft\feedme\console\controllers;
 use Craft;
 use craft\feedme\Plugin;
 use craft\feedme\queue\jobs\FeedImport;
+use craft\helpers\Console;
 use yii\console\Controller;
+use yii\console\ExitCode;
 
 class FeedsController extends Controller
 {
@@ -32,40 +34,46 @@ class FeedsController extends Controller
     }
 
     /**
-     * Processes a feed(s)
+     * Queues up feeds to be processed.
      *
      * @param string $feedId A comma-separated list of feed IDs to process
-     * @return bool
+     * @return int
      */
-    public function actionRun($feedId)
+    public function actionQueue($feedId): int
     {
         $ids = explode(',', $feedId);
+        $feeds = Plugin::getInstance()->getFeeds();
+        $queue = Craft::$app->getQueue();
+        $tally = 0;
 
         if (is_array($ids)) {
             foreach ($ids as $id) {
-                $feed = Plugin::$plugin->feeds->getFeedById($id);
+                $feed = $feeds->getFeedById($id);
 
                 if (!$feed) {
-                    echo "No feed found with an ID of $id\n";
+                    $this->stderr("Invalid feed ID: $id" . PHP_EOL, Console::FG_RED);
                     continue;
                 }
 
-                $processedElementIds = [];
+                $this->stdout('Queuing up feed ');
+                $this->stdout($feed->name, Console::FG_CYAN);
+                $this->stdout(' ... ');
 
-                echo "Feed processing started for feed ID $id\n";
-
-                Craft::$app->getQueue()->delay(0)->push(new FeedImport([
+                $queue->push(new FeedImport([
                     'feed' => $feed,
                     'limit' => $this->limit,
                     'offset' => $this->offset,
-                    'processedElementIds' => $processedElementIds,
                 ]));
 
-                Craft::$app->getQueue()->run();
+                $this->stdout('done' . PHP_EOL, Console::FG_GREEN);
+                $tally++;
             }
         }
 
-        return true;
-    }
+        if ($tally) {
+            $this->stdout(($tally === 1 ? '1 feed' : "$tally feeds") . ' queued up to be processed.' . PHP_EOL, Console::FG_GREEN);
+        }
 
+        return ExitCode::OK;
+    }
 }
