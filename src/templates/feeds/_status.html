@@ -10,40 +10,23 @@
 {% set title = (feed.id) ? feed.name : 'Create a new feed'|t('feed-me') %}
 {% set noTabs = true %}
 
-{% set triggerClass = '' %}
-{% set queue = craft.app.queue %}
-
-{% if queue.getHasReservedJobs() %}
-    {% set triggerClass = 'cp-triggered' %}
-{% elseif queue.getHasWaitingJobs() %}
-    {% set triggerClass = 'cp-triggered' %}
-{% endif %}
-
 {% block content %}
-    <div class="feedme-fullpage fullpage-running fullpage-running-cp {{ triggerClass }}">
+    <div class="feedme-fullpage fullpage-running fullpage-running-cp">
         <img src="{{ baseAssetsUrl ~ '/img/icon-success.svg' }}">
 
-        <h2>{{ '{name} has been queued up.'|t('feed-me', { name: feed.name }) }}</h2>
-        <p>{{ 'You can navigate away from this page without disrupting your feed processing.'|t('feed-me') }}</p>
+        <h2>{{ '{name} has been saved.'|t('feed-me', { name: feed.name }) }}</h2>
 
         <div class="feedme-success-btns">
             {% apply spaceless %}
-                {% if craft.app.queue is instance of("craft\\queue\\QueueInterface") and craft.app.utilities.checkAuthorization("craft\\utilities\\QueueManager") %}
-                    {{ tag('a', {
-                        class: ['btn', 'submit'],
-                        href: url('utilities/queue-manager'),
-                        text: 'Go to the Queue Manager'|t('feed-me'),
-                    }) }}
-                {% endif %}
+                {{ tag('a', {
+                    class: ['btn', 'submit'],
+                    href: url('feed-me/feeds/run/' ~ feed.id),
+                    text: 'Process it now'|t('feed-me'),
+                }) }}
                 {{ tag('a', {
                     class: ['btn'],
                     href: url('feed-me/feeds'),
                     text: 'View feeds'|t('feed-me'),
-                }) }}
-                {{ tag('a', {
-                    class: ['btn'],
-                    href: url('feed-me/logs'),
-                    text: 'View logs'|t('feed-me'),
                 }) }}
             {% endapply %}
         </div>

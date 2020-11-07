@@ -30,6 +30,8 @@
 - Fixed a bug where an existing enabled entry would’nt be disabled if a matching feed item was marked as disabled. ([#760](https://github.com/craftcms/feed-me/pull/760))
 - Fixed a bug where unique identifier checkboxes had extra spacing between them. ([#727](https://github.com/craftcms/feed-me/issues/727))
 - Fixed a SQL error that would occur when importing a node with a missing field and no default value set. ([#527](https://github.com/craftcms/feed-me/issues/527))
+- Fixed an error that could occur when using an alternate queue driver. ([#553](https://github.com/craftcms/feed-me/issues/553))
+- Fixed a bug where the final screen after editing a feed would say that the feed was being processed even though it wasn’t. ([#638](https://github.com/craftcms/feed-me/issues/638))
 
 ## 4.2.4 - 2020-10-01
 
