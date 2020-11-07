@@ -12,11 +12,13 @@ class FeedImport extends BaseJob implements RetryableJobInterface
     // Properties
     // =========================================================================
 
+    /**
+     * @var FeedModel
+     */
     public $feed;
     public $limit;
     public $offset;
     public $processedElementIds;
-
 
     // Public Methods
     // =========================================================================

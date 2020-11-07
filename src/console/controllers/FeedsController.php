@@ -15,12 +15,12 @@ class FeedsController extends Controller
     // =========================================================================
 
     /**
-     * @var
+     * @var int|null The total number of feed items to process
      */
     public $limit;
 
     /**
-     * @var
+     * @var int|null The number of items to skip
      */
     public $offset;
 
@@ -30,7 +30,10 @@ class FeedsController extends Controller
 
     public function options($actionID): array
     {
-        return ['limit', 'offset'];
+        $options = parent::options($actionID);
+        $options[] = 'limit';
+        $options[] = 'offset';
+        return $options;
     }
 
     /**

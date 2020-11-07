@@ -114,7 +114,7 @@ class FeedModel extends Model
     public function getNextPagination()
     {
         if (!$this->paginationUrl || !filter_var($this->paginationUrl, FILTER_VALIDATE_URL)) {
-            return;
+            return false;
         }
 
         // Set the URL dynamically on the feed, then kick off processing again
