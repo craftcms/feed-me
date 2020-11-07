@@ -4,7 +4,6 @@ namespace craft\feedme\controllers;
 
 use Cake\Utility\Hash;
 use Craft;
-use craft\feedme\helpers\BaseHelper;
 use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
 use craft\feedme\queue\jobs\FeedImport;
@@ -96,21 +95,8 @@ class FeedsController extends Controller
         $variables['task'] = $this->_runImportTask($feed);
 
         if ($request->getParam('direct')) {
-            // If the user triggers this from the control panel (maybe for testing), triggering a task immediately will
-            // lock up the browser session while it runs. In that case, we use JS to trigger the task (in _direct template)
-            //
-            // However, when triggering via Cron, run the task immediately, as Cron doesn't trigger JS (there's no browser)
-            // Best way to check if its being run from a non-browser, as each server is different, so can't be sure what they trigger with
-            $browser = BaseHelper::getBrowserName($request->getUserAgent());
-
-            if ($browser == 'Other') {
-                Craft::$app->getQueue()->run();
-                return $this->asJson(Craft::t('feed-me', '{name} has completed processing', ['name' => $feed->name]));
-            }
-
             $view = $this->getView();
             $view->setTemplateMode($view::TEMPLATE_MODE_CP);
-
             return $this->renderTemplate('feed-me/feeds/_direct', $variables);
         } else {
             return $this->redirect($return);
