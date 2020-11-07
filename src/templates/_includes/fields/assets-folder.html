@@ -20,7 +20,7 @@
 {% block extraSettings %}
     <div class="element-create">
         {{ feedMeMacro.checkbox({
-            label: 'Create folders if they do not exist' | t('feed-me'),
+            label: 'Create folders if they do not exist'|t('feed-me'),
             name: 'options[create]',
             value: 1,
             checked: hash_get(feed.fieldMapping, optionsPath ~ '.create') ?: '',

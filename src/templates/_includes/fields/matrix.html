@@ -20,7 +20,7 @@
 </div>
 
 {% for blocktype in field.blocktypes %}
-    {% if blocktype.fields | length %}
+    {% if blocktype.fields|length %}
         <tr class="complex-field complex-field-header">
             <td class="col-field">
                 <div class="field">
@@ -34,19 +34,19 @@
                 <div class="field-extra-settings">
                     {% set blockPath = [ handle, 'blocks', blocktype.handle ] %}
 
-                    {% set disabled = hash_get(feed.fieldMapping, blockPath | join('.') ~ '.disabled') ?: '' %}
-                    {% set collapsed = hash_get(feed.fieldMapping, blockPath | join('.') ~ '.collapsed') ?: '' %}
+                    {% set disabled = hash_get(feed.fieldMapping, blockPath|join('.') ~ '.disabled') ?: '' %}
+                    {% set collapsed = hash_get(feed.fieldMapping, blockPath|join('.') ~ '.collapsed') ?: '' %}
 
-                    {% namespace 'fieldMapping[' ~ blockPath | join('][') ~ ']' %}
+                    {% namespace 'fieldMapping[' ~ blockPath|join('][') ~ ']' %}
                         {{ feedMeMacro.checkbox({
-                            label: 'Disabled' | t('feed-me'),
+                            label: 'Disabled'|t('feed-me'),
                             name: 'disabled',
                             value: 1,
                             checked: disabled,
                         }) }}
 
                         {{ feedMeMacro.checkbox({
-                            label: 'Collapsed' | t('feed-me'),
+                            label: 'Collapsed'|t('feed-me'),
                             name: 'collapsed',
                             value: 1,
                             checked: collapsed,

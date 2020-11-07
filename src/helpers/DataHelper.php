@@ -13,7 +13,12 @@ class DataHelper
     // Public Methods
     // =========================================================================
 
-    public static function fetchSimpleValue($feedData, $fieldInfo, $element = null)
+    /**
+     * @param $feedData
+     * @param $fieldInfo
+     * @return array|\ArrayAccess|mixed|string|null
+     */
+    public static function fetchSimpleValue($feedData, $fieldInfo)
     {
         $node = Hash::get($fieldInfo, 'node');
         $default = Hash::get($fieldInfo, 'default');
@@ -34,7 +39,12 @@ class DataHelper
         return $value;
     }
 
-    public static function fetchArrayValue($feedData, $fieldInfo, $element = null)
+    /**
+     * @param $feedData
+     * @param $fieldInfo
+     * @return array|\ArrayAccess|mixed
+     */
+    public static function fetchArrayValue($feedData, $fieldInfo)
     {
         $value = [];
 
@@ -83,7 +93,12 @@ class DataHelper
         return $value;
     }
 
-    public static function fetchValue($feedData, $fieldInfo, $element = null)
+    /**
+     * @param $feedData
+     * @param $fieldInfo
+     * @return array|\ArrayAccess|mixed|null
+     */
+    public static function fetchValue($feedData, $fieldInfo)
     {
         $value = [];
 
@@ -132,6 +147,11 @@ class DataHelper
             $value = $default;
         }
 
+        // If value is still empty at this point, return null.
+        if (empty($value)) {
+            return null;
+        }
+
         return $value;
     }
 
@@ -175,7 +195,7 @@ class DataHelper
             }
 
             // Check for simple fields first
-            if ($existingValue == $newValue) {
+            if (Hash::check($fields, $key) && $existingValue == $newValue) {
                 unset($trackedChanges[$key]);
                 continue;
             }
@@ -194,7 +214,7 @@ class DataHelper
                 $existingValue = $groups;
             }
 
-            if ($existingValue == $newValue) {
+            if (Hash::check($attributes, $key) && $existingValue == $newValue) {
                 unset($trackedChanges[$key]);
                 continue;
             }
@@ -227,6 +247,11 @@ class DataHelper
         }
     }
 
+    /**
+     * @param $array1
+     * @param $array2
+     * @return false
+     */
     public static function arrayCompare($array1, $array2)
     {
         $diff = false;

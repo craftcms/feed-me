@@ -4,7 +4,6 @@ namespace craft\feedme\controllers;
 
 use Cake\Utility\Hash;
 use Craft;
-use craft\feedme\helpers\BaseHelper;
 use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
 use craft\feedme\queue\jobs\FeedImport;
@@ -96,21 +95,8 @@ class FeedsController extends Controller
         $variables['task'] = $this->_runImportTask($feed);
 
         if ($request->getParam('direct')) {
-            // If the user triggers this from the control panel (maybe for testing), triggering a task immediately will
-            // lock up the browser session while it runs. In that case, we use JS to trigger the task (in _direct template)
-            //
-            // However, when triggering via Cron, run the task immediately, as Cron doesn't trigger JS (there's no browser)
-            // Best way to check if its being run from a non-browser, as each server is different, so can't be sure what they trigger with
-            $browser = BaseHelper::getBrowserName($request->getUserAgent());
-
-            if ($browser == 'Other') {
-                Craft::$app->getQueue()->run();
-                return $this->asJson(Craft::t('feed-me', '{name} has completed processing', ['name' => $feed->name]));
-            }
-
             $view = $this->getView();
             $view->setTemplateMode($view::TEMPLATE_MODE_CP);
-
             return $this->renderTemplate('feed-me/feeds/_direct', $variables);
         } else {
             return $this->redirect($return);
@@ -136,6 +122,17 @@ class FeedsController extends Controller
     public function actionSaveAndElementFeed()
     {
         $feed = $this->_getModelFromPost();
+
+        if ($feed->getErrors()) {
+            $this->setFailFlash(Craft::t('feed-me', 'Couldn’t save the feed.'));
+
+            // Send the category group back to the template
+            Craft::$app->getUrlManager()->setRouteParams([
+                'feed' => $feed
+            ]);
+
+            return null;
+        }
 
         return $this->_saveAndRedirect($feed, 'feed-me/feeds/element/', true);
     }
@@ -321,6 +318,7 @@ class FeedsController extends Controller
         $feed->elementType = $request->getBodyParam('elementType', $feed->elementType);
         $feed->elementGroup = $request->getBodyParam('elementGroup', $feed->elementGroup);
         $feed->siteId = $request->getBodyParam('siteId', $feed->siteId);
+        $feed->singleton = $request->getBodyParam('singleton', $feed->singleton);
         $feed->duplicateHandle = $request->getBodyParam('duplicateHandle', $feed->duplicateHandle);
         $feed->paginationNode = $request->getBodyParam('paginationNode', $feed->paginationNode);
         $feed->passkey = $request->getBodyParam('passkey', $feed->passkey);
@@ -339,22 +337,34 @@ class FeedsController extends Controller
         if (isset($feed->elementGroup[$feed->elementType])) {
             $elementGroup = $feed->elementGroup[$feed->elementType];
 
-            if ($feed->elementType == 'craft\elements\Category') {
-                if (empty($elementGroup)) {
-                    $feed->addError('elementGroup', Craft::t('feed-me', 'Category Group is required'));
-                }
+            if (($feed->elementType === 'craft\elements\Category') && empty($elementGroup)) {
+                $feed->addError('elementGroup', Craft::t('feed-me', 'Category Group is required'));
             }
 
-            if ($feed->elementType == 'craft\elements\Entry') {
+            if ($feed->elementType === 'craft\elements\Entry') {
                 if (empty($elementGroup['section']) || empty($elementGroup['entryType'])) {
                     $feed->addError('elementGroup', Craft::t('feed-me', 'Entry Section and Type are required'));
                 }
             }
 
-            if ($feed->elementType == 'Commerce_Product') {
-                if (empty($elementGroup)) {
-                    $feed->addError('elementGroup', Craft::t('feed-me', 'Commerce Product Type is required'));
-                }
+            if (($feed->elementType === 'craft\commerce\elements\Product') && empty($elementGroup)) {
+                $feed->addError('elementGroup', Craft::t('feed-me', 'Commerce Product Type is required'));
+            }
+
+            if (($feed->elementType === 'craft\digitalproducts\elements\Product') && empty($elementGroup)) {
+                $feed->addError('elementGroup', Craft::t('feed-me', 'Digital Product Group is required'));
+            }
+
+            if (($feed->elementType === 'craft\elements\Asset') && empty($elementGroup)) {
+                $feed->addError('elementGroup', Craft::t('feed-me', 'Asset Volume is required'));
+            }
+
+            if (($feed->elementType === 'craft\elements\Tag') && empty($elementGroup)) {
+                $feed->addError('elementGroup', Craft::t('feed-me', 'Tag Group is required'));
+            }
+
+            if (($feed->elementType === 'Solspace\Calendar\Elements\Event') && empty($elementGroup)) {
+                $feed->addError('elementGroup', Craft::t('feed-me', 'Calendar is required'));
             }
         }
 

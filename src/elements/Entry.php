@@ -7,6 +7,7 @@ use Craft;
 use craft\elements\Entry as EntryElement;
 use craft\elements\User as UserElement;
 use craft\feedme\base\Element;
+use craft\feedme\models\ElementGroup;
 use craft\feedme\Plugin;
 use craft\models\Section;
 
@@ -26,17 +27,17 @@ class Entry extends Element
 
     public function getGroupsTemplate()
     {
-        return 'feed-me/_includes/elements/entry/groups';
+        return 'feed-me/_includes/elements/entries/groups';
     }
 
     public function getColumnTemplate()
     {
-        return 'feed-me/_includes/elements/entry/column';
+        return 'feed-me/_includes/elements/entries/column';
     }
 
     public function getMappingTemplate()
     {
-        return 'feed-me/_includes/elements/entry/map';
+        return 'feed-me/_includes/elements/entries/map';
     }
 
 
@@ -45,18 +46,18 @@ class Entry extends Element
 
     public function getGroups()
     {
-        // Get editable sections for user
         $editable = Craft::$app->sections->getEditableSections();
+        $groups = [];
 
-        // Get sections but not singles
-        $sections = [];
         foreach ($editable as $section) {
-            if ($section->type != Section::TYPE_SINGLE) {
-                $sections[] = $section;
-            }
+            $groups[] = new ElementGroup([
+                'id' => $section->id,
+                'model' => $section,
+                'isSingleton' => $section->type === Section::TYPE_SINGLE,
+            ]);
         }
 
-        return $sections;
+        return $groups;
     }
 
     public function getQuery($settings, $params = [])
@@ -81,24 +82,14 @@ class Entry extends Element
 
         if ($siteId) {
             $this->element->siteId = $siteId;
-
-            // Set the default site status based on the section's settings
-            foreach ($section->getSiteSettings() as $siteSettings) {
-                if ($siteSettings->siteId == $siteId) {
-                    $this->element->enabledForSite = $siteSettings->enabledByDefault;
-                    break;
-                }
-            }
-        } else {
-            // Set the default entry status based on the section's settings
-            foreach ($section->getSiteSettings() as $siteSettings) {
-                if (!$siteSettings->enabledByDefault) {
-                    $this->element->enabled = false;
-                }
-
-                break;
-            }
         }
+
+        // Set the default site status based on the section's settings
+        $enabledForSite = [];
+        foreach ($section->getSiteSettings() as $siteSettings) {
+            $enabledForSite[$siteSettings->siteId] = $siteSettings->enabledByDefault;
+        }
+        $this->element->setEnabledForSite($enabledForSite);
 
         return $this->element;
     }

@@ -16,7 +16,7 @@
         type: 'elementselect',
         options: {
             elementType: fieldClass.elementType,
-            selectionLabel: "Default User" | t('feed-me'),
+            selectionLabel: "Default User"|t('feed-me'),
         },
     } %}
 {% endif %}
@@ -28,7 +28,7 @@
     {# Prevent infinite loop by only allow elements that are not the same as this #}
     {% for elementField in craft.feedme.getUserLayoutByField(field) %}
         {% if craft.feedme.supportedSubField(className(elementField)) %}
-            {% set elementFields = elementFields | merge([ elementField ]) %}
+            {% set elementFields = elementFields|merge([ elementField ]) %}
         {% endif %}
     {% endfor %}
 {% endif %}
@@ -37,18 +37,18 @@
 
 {% block extraSettings %}
     <div class="element-match">
-        <span>{{ 'Data provided for this user is:' | t('feed-me') }}</span>
+        <span>{{ 'Data provided for this user is:'|t('feed-me') }}</span>
 
         {% set matchAttributes = [
-            { value: 'email', label: 'Email' | t('feed-me') },
-            { value: 'elements.id', label: 'ID' | t('feed-me') },
-            { value: 'username', label: 'Username' | t('feed-me') },
-            { value: 'fullName', label: 'Full Name' | t('feed-me') },
+            { value: 'email', label: 'Email'|t('feed-me') },
+            { value: 'elements.id', label: 'ID'|t('feed-me') },
+            { value: 'username', label: 'Username'|t('feed-me') },
+            { value: 'fullName', label: 'Full Name'|t('feed-me') },
         ] %}
 
         {% for field in craft.app.fields.getAllFields() %}
             {% if craft.feedme.fieldCanBeUniqueId(field) %}
-                {% set matchAttributes = matchAttributes | merge({ ('field_' ~ field.handle): field.name }) %}
+                {% set matchAttributes = matchAttributes|merge({ ('field_' ~ field.handle): field.name }) %}
             {% endif %}
         {% endfor %}
 
@@ -62,7 +62,7 @@
 
     <div class="element-create">
         {{ feedMeMacro.checkbox({
-            label: 'Create users if they do not exist' | t('feed-me'),
+            label: 'Create users if they do not exist'|t('feed-me'),
             name: 'options[create]',
             value: 1,
             checked: hash_get(feed.fieldMapping, optionsPath ~ '.create') ?: '',

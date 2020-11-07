@@ -32,17 +32,17 @@ class CommerceProduct extends Element
 
     public function getGroupsTemplate()
     {
-        return 'feed-me/_includes/elements/commerce_product/groups';
+        return 'feed-me/_includes/elements/commerce-products/groups';
     }
 
     public function getColumnTemplate()
     {
-        return 'feed-me/_includes/elements/commerce_product/column';
+        return 'feed-me/_includes/elements/commerce-products/column';
     }
 
     public function getMappingTemplate()
     {
-        return 'feed-me/_includes/elements/commerce_product/map';
+        return 'feed-me/_includes/elements/commerce-products/map';
     }
 
 

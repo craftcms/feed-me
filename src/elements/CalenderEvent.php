@@ -34,17 +34,17 @@ class CalenderEvent extends Element
 
     public function getGroupsTemplate()
     {
-        return 'feed-me/_includes/elements/calendar-event/groups';
+        return 'feed-me/_includes/elements/calendar-events/groups';
     }
 
     public function getColumnTemplate()
     {
-        return 'feed-me/_includes/elements/calendar-event/column';
+        return 'feed-me/_includes/elements/calendar-events/column';
     }
 
     public function getMappingTemplate()
     {
-        return 'feed-me/_includes/elements/calendar-event/map';
+        return 'feed-me/_includes/elements/calendar-events/map';
     }
 
 

@@ -62,6 +62,11 @@ class Feeds extends Component
 
     public function saveFeed(FeedModel $model, bool $runValidation = true): bool
     {
+        // If a singleton group was selected, then override the import strategy selection
+        if ($model->singleton) {
+            $model->duplicateHandle = ['update'];
+        }
+
         $isNewModel = !$model->id;
 
         // Fire a 'beforeSaveFeed' event
@@ -93,6 +98,7 @@ class Feeds extends Component
         $record->primaryElement = $model->primaryElement;
         $record->elementType = $model->elementType;
         $record->siteId = $model->siteId;
+        $record->singleton = (bool)$model->singleton;
         $record->duplicateHandle = $model->duplicateHandle;
         $record->paginationNode = $model->paginationNode;
         $record->passkey = $model->passkey;
@@ -198,6 +204,7 @@ class Feeds extends Component
                 'elementGroup',
                 'siteId',
                 'sortOrder',
+                'singleton',
                 'duplicateHandle',
                 'paginationNode',
                 'fieldMapping',

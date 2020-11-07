@@ -31,14 +31,14 @@ curl --silent --compressed "http://your.domain/actions/feed-me/feeds/run-task?di
 
 ### Console command
 
-You can also trigger your feed to process via a console command. Use the parameter `id` to pass in a single ID, or a comma-delimeted set of ids. You can also use `limit` and `offset` parameters
+You can also trigger your feed to process via a console command by passing in a comma-separated list of feed IDs to process. You can also use `limit` and `offset` parameters.
 
 ```
-./craft feed-me/feeds/run --id=1
+./craft feed-me/feeds/run 1
 
-./craft feed-me/feeds/run --id=1,2,3
+./craft feed-me/feeds/run 1,2,3
 
-./craft feed-me/feeds/run --id=1 --limit=1
+./craft feed-me/feeds/run 1 --limit=1
 
-./craft feed-me/feeds/run --id=1 --limit=1 --offset=1
+./craft feed-me/feeds/run 1 --limit=1 --offset=1
 ```

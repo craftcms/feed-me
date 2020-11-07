@@ -3,11 +3,12 @@
 {% set categories = element.groups %}
 
 {{ forms.selectField({
-    label: "Category Group" | t('feed-me'),
-    instructions: 'Choose the category group you want to save your feed data into.' | t('feed-me'),
+    label: "Category Group"|t('feed-me'),
+    instructions: 'Choose the category group you want to save your feed data into.'|t('feed-me'),
     id: 'elementGroup-' ~ elementType,
     name: 'elementGroup[' ~ elementType ~ ']',
     options: craft.feedme.getSelectOptions(categories),
     value: feed.elementGroup[elementType] ?? '',
+    errors: feed.getErrors('elementGroup'),
     required: true,
 }) }}

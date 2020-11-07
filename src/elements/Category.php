@@ -24,17 +24,17 @@ class Category extends Element
 
     public function getGroupsTemplate()
     {
-        return 'feed-me/_includes/elements/category/groups';
+        return 'feed-me/_includes/elements/categories/groups';
     }
 
     public function getColumnTemplate()
     {
-        return 'feed-me/_includes/elements/category/column';
+        return 'feed-me/_includes/elements/categories/column';
     }
 
     public function getMappingTemplate()
     {
-        return 'feed-me/_includes/elements/category/map';
+        return 'feed-me/_includes/elements/categories/map';
     }
 
 

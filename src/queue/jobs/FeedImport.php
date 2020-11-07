@@ -3,6 +3,7 @@
 namespace craft\feedme\queue\jobs;
 
 use Craft;
+use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
 use craft\queue\BaseJob;
 use yii\queue\RetryableJobInterface;
@@ -12,11 +13,18 @@ class FeedImport extends BaseJob implements RetryableJobInterface
     // Properties
     // =========================================================================
 
+    /**
+     * @var FeedModel
+     */
     public $feed;
     public $limit;
     public $offset;
     public $processedElementIds;
-
+    /**
+     * @var bool Whether to continue processing a feed (and subsequent pages) if an error occurs
+     * @since 4.3.0
+     */
+    public $continueOnError = true;
 
     // Public Methods
     // =========================================================================
@@ -63,6 +71,10 @@ class FeedImport extends BaseJob implements RetryableJobInterface
                 try {
                     Plugin::$plugin->process->processFeed($index, $feedSettings, $this->processedElementIds);
                 } catch (\Throwable $e) {
+                    if (!$this->continueOnError) {
+                        throw $e;
+                    }
+
                     // We want to catch any issues in each iteration of the loop (and log them), but this allows the
                     // rest of the feed to continue processing.
                     Plugin::error('`{e} - {f}: {l}`.', ['e' => $e->getMessage(), 'f' => basename($e->getFile()), 'l' => $e->getLine()]);
