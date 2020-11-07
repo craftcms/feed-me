@@ -5,7 +5,7 @@
 ### Added
 - It’s now possible to import Single sections’ entry data. ([#559](https://github.com/craftcms/feed-me/issues/559))
 - It’s now possible to import global set data. ([#670](https://github.com/craftcms/feed-me/issues/670))
-- Added the `feed-me/feeds/queue` command, which accepts a comma-separated list of feed IDs, and queues them up to be processed. ([#754](https://github.com/craftcms/feed-me/issues/754))
+- Added the `feed-me/feeds/queue` command. ([#754](https://github.com/craftcms/feed-me/issues/754), [#626](https://github.com/craftcms/feed-me/issues/626))
 - Added `craft\feedme\elements\GlobalSet`.
 - Added `craft\feedme\models\ElementGroup`.
 - Added `craft\feedme\models\FeedModel::$singleton`.

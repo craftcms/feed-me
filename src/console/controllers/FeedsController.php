@@ -24,6 +24,11 @@ class FeedsController extends Controller
      */
     public $offset;
 
+    /**
+     * @var bool Whether to continue processing a feed (and subsequent pages) if an error occurs
+     * @since 4.3.0
+     */
+    public $continueOnError = false;
 
     // Public Methods
     // =========================================================================
@@ -33,6 +38,7 @@ class FeedsController extends Controller
         $options = parent::options($actionID);
         $options[] = 'limit';
         $options[] = 'offset';
+        $options[] = 'continueOnError';
         return $options;
     }
 
@@ -66,6 +72,7 @@ class FeedsController extends Controller
                     'feed' => $feed,
                     'limit' => $this->limit,
                     'offset' => $this->offset,
+                    'continueOnError' => $this->continueOnError,
                 ]));
 
                 $this->stdout('done' . PHP_EOL, Console::FG_GREEN);
