@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 4.3.0 - 2020-11-06
 
 ### Added
 - It’s now possible to import Single sections’ entry data. ([#559](https://github.com/craftcms/feed-me/issues/559))
