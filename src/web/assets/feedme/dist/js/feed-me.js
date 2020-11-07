@@ -3766,7 +3766,7 @@ $(function() {
         }
     });
 
-    $('.element-parent-group select').trigger('change');
+    $('.element-parent-group select:visible').trigger('change');
 
 
     //
