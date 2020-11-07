@@ -12,25 +12,25 @@
 
 ### Changed
 - Feed Me now requires Craft 3.5 or later.
-- Enforce stricter validation when setting up a feed to help prevent unwanted behaviors. ([#757](https://github.com/craftcms/feed-me/issues/757))
-- Updated `ralouphie/mimey` to 2.1.0. ([#740](https://github.com/craftcms/feed-me/issues/740))
 - Cleaned up log messages when there are no items in a feed to process. ([#585](https://github.com/craftcms/feed-me/issues/585))
 - Elements’ `getGroups()` methods can now return `craft\feedme\models\ElementGroup` objects.
+- Updated ralouphie/mimey to v2.1. ([#740](https://github.com/craftcms/feed-me/issues/740))
 
 ### Removed
 - Removed the `feed-me/feeds/run` command. The new `feed-me/feeds/queue` command can be used instead, in combination with `queue/run`.
 
 ### Fixed
-- Fixed a SQL error that would occur when trying to import Products in Commerce 3.2.8 or higher.
+- Fixed a bug where it was possible to configure feeds with validation issues. ([#757](https://github.com/craftcms/feed-me/issues/757))
+- Fixed a SQL error that occurred when importing products in Commerce 3.2.8 or later.
 - Fixed a bug where assets would end up with an incorrect filename when the filename was used for a mapping in the feed settings. ([#750](https://github.com/craftcms/feed-me/issues/750))
 - Fixed a bug where custom fields would have their content assigned to the primary site instead of the feed’s target site. ([#658](https://github.com/craftcms/feed-me/issues/658))
-- Fixed a bug where Assets would always be imported to the primary site instead of the feed’s target site. ([#725](https://github.com/craftcms/feed-me/pull/725))
-- Fixed a PHP error that would occur when importing from a mapped Dropdown field. ([#732](https://github.com/craftcms/feed-me/pull/732))
-- Fixed a PHP error that would occur when using a JSON feed with named keys. ([#761](https://github.com/craftcms/feed-me/issues/761))
-- Fixed a bug where an existing enabled entry would’nt be disabled if a matching feed item was marked as disabled. ([#760](https://github.com/craftcms/feed-me/pull/760))
+- Fixed a bug where assets would always be imported to the primary site instead of the feed’s target site. ([#725](https://github.com/craftcms/feed-me/pull/725))
+- Fixed a PHP error that occurred when importing content to a mapped Dropdown field. ([#732](https://github.com/craftcms/feed-me/pull/732))
+- Fixed a PHP error that occurred when importing a JSON object, rather than an array. ([#761](https://github.com/craftcms/feed-me/issues/761))
+- Fixed a bug where an existing enabled entry wouldn’t be disabled if a matching feed item was marked as disabled. ([#760](https://github.com/craftcms/feed-me/pull/760))
 - Fixed a bug where unique identifier checkboxes had extra spacing between them. ([#727](https://github.com/craftcms/feed-me/issues/727))
-- Fixed a SQL error that would occur when importing a node with a missing field and no default value set. ([#527](https://github.com/craftcms/feed-me/issues/527))
-- Fixed a bug where an entry’s default status was ignored for a section on a multi-site installation. ([#541](https://github.com/craftcms/feed-me/issues/541))
+- Fixed a SQL error that occurred when importing a feed item with a missing field and no default value set. ([#527](https://github.com/craftcms/feed-me/issues/527))
+- Fixed a bug where an entry’s default status was ignored for a section on multi-site installs. ([#541](https://github.com/craftcms/feed-me/issues/541))
 - Fixed an error that could occur when using an alternate queue driver. ([#553](https://github.com/craftcms/feed-me/issues/553))
 - Fixed a bug where the final screen after editing a feed would say that the feed was being processed even though it wasn’t. ([#638](https://github.com/craftcms/feed-me/issues/638))
 
