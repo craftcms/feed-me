@@ -24,6 +24,7 @@ class FeedModel extends Model
     public $name;
     public $feedUrl;
     public $feedType;
+    public $feedMethod;
     public $primaryElement;
     public $elementType;
     public $elementGroup;
@@ -126,7 +127,7 @@ class FeedModel extends Model
     public function rules()
     {
         return [
-            [['name', 'feedUrl', 'feedType', 'elementType', 'duplicateHandle', 'passkey'], 'required'],
+            [['name', 'feedUrl', 'feedType', 'feedMethod', 'elementType', 'duplicateHandle', 'passkey'], 'required'],
             [['backup'], 'boolean'],
         ];
     }

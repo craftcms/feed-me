@@ -95,6 +95,7 @@ class Feeds extends Component
         $record->name = $model->name;
         $record->feedUrl = $model->feedUrl;
         $record->feedType = $model->feedType;
+        $record->feedMethod = $model->feedMethod;
         $record->primaryElement = $model->primaryElement;
         $record->elementType = $model->elementType;
         $record->siteId = $model->siteId;
@@ -199,6 +200,7 @@ class Feeds extends Component
                 'name',
                 'feedUrl',
                 'feedType',
+                'feedMethod',
                 'primaryElement',
                 'elementType',
                 'elementGroup',

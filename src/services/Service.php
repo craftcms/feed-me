@@ -30,18 +30,32 @@ class Service extends Component
 
         return $configItem;
     }
+    public function getFeedConfig($key, $feedId = null)
+    {
+        $configItem = false;
+        if ($feedId) {
+            $feed = Plugin::$plugin->feeds->getFeedById($feedId);
+            $configItem = Hash::get($feed, $key);
+        }
+        return $configItem;
+    }
+
 
     public function createGuzzleClient($feedId = null)
     {
         $options = $this->getConfig('clientOptions', $feedId);
-
         return Craft::createGuzzleClient($options);
     }
 
     public function getRequestOptions($feedId = null)
     {
         $options = $this->getConfig('requestOptions', $feedId);
+        return $options;
+    }
 
+    public function getRequestMethod($feedId = null)
+    {
+        $options = $this->getFeedConfig('feedMethod', $feedId);
         return $options;
     }
 

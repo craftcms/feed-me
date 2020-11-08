@@ -159,8 +159,9 @@ class DataTypes extends Component
         try {
             $client = Plugin::$plugin->service->createGuzzleClient($feedId);
             $options = Plugin::$plugin->service->getRequestOptions($feedId);
+            $method = Plugin::$plugin->service->getRequestMethod($feedId);
 
-            $resp = $client->request('GET', $url, $options);
+            $resp = $client->request($method, $url, $options);
             $data = (string)$resp->getBody();
 
             // Save headers for later
@@ -288,6 +289,7 @@ class DataTypes extends Component
 
         $url = Hash::get($options, 'url');
         $type = Hash::get($options, 'type');
+        $method = Hash::get($options, 'method');
         $element = Hash::get($options, 'element');
         $cache = Hash::get($options, 'cache', true);
 
@@ -307,6 +309,8 @@ class DataTypes extends Component
         $feed = new FeedModel();
         $feed->feedUrl = $url;
         $feed->feedType = $type;
+        $feed->feedMethod = $method;
+
 
         if ($element) {
             $feed->primaryElement = $element;

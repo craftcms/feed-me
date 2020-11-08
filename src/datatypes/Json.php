@@ -36,6 +36,9 @@ class Json extends DataType implements DataTypeInterface
 
         $data = $response['data'];
 
+        // Remove BOM from UTF-8 if exists
+        $data = str_replace("\xEF\xBB\xBF",'',$data); 
+
         // Parse the JSON string
         try {
             $array = JsonHelper::decode($data);
