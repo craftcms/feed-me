@@ -239,13 +239,13 @@ abstract class Element extends Component implements ElementInterface
         $value = mb_strtolower($value);
 
         if (Craft::$app->getConfig()->getGeneral()->limitAutoSlugsToAscii) {
-            $value = $this->asciiString($value);
+            $value = $this->_asciiString($value);
         }
 
-        return $this->createSlug($value);
+        return $this->_createSlug($value);
     }
 
-    private function createSlug(string $str): string
+    private function _createSlug(string $str): string
     {
         // Remove HTML tags
         $str = StringHelper::stripHtml($str);
@@ -258,7 +258,7 @@ abstract class Element extends Component implements ElementInterface
         return $str;
     }
 
-    private function asciiString($str)
+    private function _asciiString($str)
     {
         $charMap = StringHelper::asciiCharMap(true, Craft::$app->language);
 

@@ -60,12 +60,12 @@ class Logs extends Component
 
         $options = json_encode($options);
 
-        $this->export($options . PHP_EOL);
+        $this->_export($options . PHP_EOL);
     }
 
     public function clear()
     {
-        $this->clearLogFile($this->logFile);
+        $this->_clearLogFile($this->logFile);
     }
 
     public function getLogEntries($type = null): array
@@ -135,7 +135,7 @@ class Logs extends Component
         return true;
     }
 
-    private function export($text)
+    private function _export($text)
     {
         $logPath = dirname($this->logFile);
         FileHelper::createDirectory($logPath, $this->dirMode, true);
@@ -150,7 +150,7 @@ class Logs extends Component
             clearstatcache();
         }
         if ($this->enableRotation && @filesize($this->logFile) > $this->maxFileSize * 1024) {
-            $this->rotateFiles();
+            $this->_rotateFiles();
             @flock($fp, LOCK_UN);
             @fclose($fp);
             $writeResult = @file_put_contents($this->logFile, $text, FILE_APPEND | LOCK_EX);
@@ -180,7 +180,7 @@ class Logs extends Component
         }
     }
 
-    private function rotateFiles()
+    private function _rotateFiles()
     {
         $file = $this->logFile;
         for ($i = $this->maxLogFiles; $i >= 0; --$i) {
@@ -193,15 +193,15 @@ class Logs extends Component
                     continue;
                 }
                 $newFile = $this->logFile . '.' . ($i + 1);
-                $this->rotateByCopy ? $this->rotateByCopy($rotateFile, $newFile) : $this->rotateByRename($rotateFile, $newFile);
+                $this->rotateByCopy ? $this->_rotateByCopy($rotateFile, $newFile) : $this->_rotateByRename($rotateFile, $newFile);
                 if ($i === 0) {
-                    $this->clearLogFile($rotateFile);
+                    $this->_clearLogFile($rotateFile);
                 }
             }
         }
     }
 
-    private function clearLogFile($rotateFile)
+    private function _clearLogFile($rotateFile)
     {
         if ($filePointer = @fopen($rotateFile, 'ab')) {
             @ftruncate($filePointer, 0);
@@ -209,7 +209,7 @@ class Logs extends Component
         }
     }
 
-    private function rotateByCopy($rotateFile, $newFile)
+    private function _rotateByCopy($rotateFile, $newFile)
     {
         @copy($rotateFile, $newFile);
         if ($this->fileMode !== null) {
@@ -217,7 +217,7 @@ class Logs extends Component
         }
     }
 
-    private function rotateByRename($rotateFile, $newFile)
+    private function _rotateByRename($rotateFile, $newFile)
     {
         @rename($rotateFile, $newFile);
     }
