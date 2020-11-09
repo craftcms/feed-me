@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 4.3.1 - 2020-11-09
 
 ### Fixed
 - Fixed a bug where feeds’ import strategy settings would get reset to the default values when editing existing feeds. ([#769](https://github.com/craftcms/feed-me/issues/769))
