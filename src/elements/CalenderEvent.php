@@ -16,41 +16,78 @@ use Solspace\Calendar\Elements\Event as EventElement;
 use Solspace\Calendar\Library\DateHelper;
 use yii\base\Event;
 
+/**
+ *
+ * @property-read string $mappingTemplate
+ * @property-read mixed $groups
+ * @property-write mixed $model
+ * @property-read string $groupsTemplate
+ * @property-read string $columnTemplate
+ */
 class CalenderEvent extends Element
 {
     // Properties
     // =========================================================================
 
+    /**
+     * @var string
+     */
     public static $name = 'Calendar Event';
+
+    /**
+     * @var string
+     */
     public static $class = 'Solspace\Calendar\Elements\Event';
 
+    /**
+     * @var
+     */
     public $element;
+
+    /**
+     * @var array
+     */
     private $rruleInfo = [];
+
+    /**
+     * @var array
+     */
     private $selectDates = [];
 
 
     // Templates
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getGroupsTemplate()
     {
         return 'feed-me/_includes/elements/calendar-events/groups';
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getColumnTemplate()
     {
         return 'feed-me/_includes/elements/calendar-events/column';
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getMappingTemplate()
     {
         return 'feed-me/_includes/elements/calendar-events/map';
     }
 
-
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function init()
     {
         Event::on(Process::class, Process::EVENT_STEP_BEFORE_ELEMENT_SAVE, function(FeedProcessEvent $event) {
@@ -62,6 +99,9 @@ class CalenderEvent extends Element
         });
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getGroups()
     {
         if (Calendar::getInstance()) {
@@ -69,6 +109,9 @@ class CalenderEvent extends Element
         }
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getQuery($settings, $params = [])
     {
         $query = EventElement::find()
@@ -79,6 +122,9 @@ class CalenderEvent extends Element
         return $query;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function setModel($settings)
     {
         $siteId = (int)Hash::get($settings, 'siteId');
@@ -93,21 +139,44 @@ class CalenderEvent extends Element
     // Protected Methods
     // =========================================================================
 
+    /**
+     * @param $feedData
+     * @param $fieldInfo
+     * @return Carbon
+     */
     protected function parseStartDate($feedData, $fieldInfo)
     {
         return $this->_parseDate($feedData, $fieldInfo);
     }
 
+    /**
+     * @param $feedData
+     * @param $fieldInfo
+     * @return Carbon
+     */
     protected function parseEndDate($feedData, $fieldInfo)
     {
         return $this->_parseDate($feedData, $fieldInfo);
     }
 
+    /**
+     * @param $feedData
+     * @param $fieldInfo
+     * @return Carbon
+     */
     protected function parseUntil($feedData, $fieldInfo)
     {
         return $this->_parseDate($feedData, $fieldInfo);
     }
 
+    /**
+     * @param $feedData
+     * @param $fieldInfo
+     * @return int|null
+     * @throws \Throwable
+     * @throws \craft\errors\ElementNotFoundException
+     * @throws \yii\base\Exception
+     */
     protected function parseAuthorId($feedData, $fieldInfo)
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
@@ -154,6 +223,10 @@ class CalenderEvent extends Element
         return null;
     }
 
+    /**
+     * @param $feedData
+     * @param $fieldInfo
+     */
     protected function parseRrule($feedData, $fieldInfo)
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
@@ -183,6 +256,10 @@ class CalenderEvent extends Element
         }
     }
 
+    /**
+     * @param $feedData
+     * @param $fieldInfo
+     */
     protected function parseSelectDates($feedData, $fieldInfo)
     {
         $value = $this->fetchArrayValue($feedData, $fieldInfo);
@@ -193,6 +270,12 @@ class CalenderEvent extends Element
     // Private Methods
     // =========================================================================
 
+    /**
+     * @param $feedData
+     * @param $fieldInfo
+     * @return Carbon
+     * @throws \Exception
+     */
     private function _parseDate($feedData, $fieldInfo)
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
@@ -206,6 +289,9 @@ class CalenderEvent extends Element
         }
     }
 
+    /**
+     * @param $event
+     */
     private function _onBeforeElementSave($event)
     {
         // We prepare rrule info earlier on
@@ -217,9 +303,12 @@ class CalenderEvent extends Element
         }
     }
 
+    /**
+     * @param $event
+     */
     private function _onAfterElementSave($event)
     {
-        if (sizeof($this->selectDates)) {
+        if (count($this->selectDates)) {
             $EventElement = EventElement::find()->id($event->element->id)->one();
             Calendar::getInstance()->selectDates->saveDates($EventElement, $this->selectDates);
         }

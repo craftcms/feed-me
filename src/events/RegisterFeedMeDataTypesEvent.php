@@ -9,5 +9,8 @@ class RegisterFeedMeDataTypesEvent extends Event
     // Properties
     // =========================================================================
 
+    /**
+     * @var array
+     */
     public $dataTypes = [];
 }

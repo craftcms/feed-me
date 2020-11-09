@@ -11,6 +11,9 @@ class LogsController extends Controller
     // Public Methods
     // =========================================================================
 
+    /**
+     * @return \yii\web\Response
+     */
     public function actionLogs()
     {
         $show = Craft::$app->getRequest()->getParam('show');
@@ -25,6 +28,9 @@ class LogsController extends Controller
         ]);
     }
 
+    /**
+     * @return \yii\web\Response
+     */
     public function actionClear()
     {
         Plugin::$plugin->logs->clear();

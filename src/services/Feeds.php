@@ -11,13 +11,19 @@ use craft\feedme\models\FeedModel;
 use craft\feedme\records\FeedRecord;
 use craft\helpers\Json;
 
+/**
+ *
+ * @property-read mixed $totalFeeds
+ */
 class Feeds extends Component
 {
     // Properties
     // =========================================================================
 
+    /**
+     * @var array
+     */
     private $_overrides = [];
-
 
     // Constants
     // =========================================================================
@@ -29,6 +35,10 @@ class Feeds extends Component
     // Public Methods
     // =========================================================================
 
+    /**
+     * @param null $orderBy
+     * @return array|\yii\db\ActiveRecord[]
+     */
     public function getFeeds($orderBy = null)
     {
         $query = $this->_getQuery();
@@ -46,11 +56,18 @@ class Feeds extends Component
         return $results;
     }
 
+    /**
+     * @return int
+     */
     public function getTotalFeeds()
     {
         return count($this->getFeeds());
     }
 
+    /**
+     * @param $feedId
+     * @return FeedModel|null
+     */
     public function getFeedById($feedId)
     {
         $result = $this->_getQuery()
@@ -60,6 +77,11 @@ class Feeds extends Component
         return $this->_createModelFromRecord($result);
     }
 
+    /**
+     * @param FeedModel $model
+     * @param bool $runValidation
+     * @return bool
+     */
     public function saveFeed(FeedModel $model, bool $runValidation = true): bool
     {
         // If a singleton group was selected, then override the import strategy selection
@@ -143,6 +165,11 @@ class Feeds extends Component
         return true;
     }
 
+    /**
+     * @param $feedId
+     * @return int
+     * @throws \yii\db\Exception
+     */
     public function deleteFeedById($feedId)
     {
         return Craft::$app->getDb()->createCommand()
@@ -150,6 +177,10 @@ class Feeds extends Component
             ->execute();
     }
 
+    /**
+     * @param $feed
+     * @return bool
+     */
     public function duplicateFeed($feed)
     {
         $feed->id = null;
@@ -157,6 +188,11 @@ class Feeds extends Component
         return $this->saveFeed($feed);
     }
 
+    /**
+     * @param $handle
+     * @param $feedId
+     * @return mixed|null
+     */
     public function getModelOverrides($handle, $feedId)
     {
         if (!$this->_overrides) {
@@ -166,6 +202,12 @@ class Feeds extends Component
         return $this->_overrides[$handle] ?? null;
     }
 
+    /**
+     * @param array $feedIds
+     * @return bool
+     * @throws \Throwable
+     * @throws \yii\db\Exception
+     */
     public function reorderFeeds(array $feedIds): bool
     {
         $transaction = Craft::$app->getDb()->beginTransaction();
@@ -191,6 +233,9 @@ class Feeds extends Component
     // Private Methods
     // =========================================================================
 
+    /**
+     * @return \craft\db\ActiveQuery
+     */
     private function _getQuery()
     {
         return FeedRecord::find()
@@ -218,6 +263,10 @@ class Feeds extends Component
             ->orderBy(['sortOrder' => SORT_ASC]);
     }
 
+    /**
+     * @param FeedRecord|null $record
+     * @return FeedModel|null
+     */
     private function _createModelFromRecord(FeedRecord $record = null)
     {
         if (!$record) {
@@ -242,6 +291,10 @@ class Feeds extends Component
         return new FeedModel($attributes);
     }
 
+    /**
+     * @param int|null $feedId
+     * @return FeedRecord
+     */
     private function _getFeedRecordById(int $feedId = null): FeedRecord
     {
         if ($feedId !== null) {

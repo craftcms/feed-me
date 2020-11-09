@@ -11,44 +11,75 @@ use craft\feedme\Plugin;
 use verbb\comments\Comments;
 use verbb\comments\elements\Comment as CommentElement;
 
+/**
+ *
+ * @property-read string $mappingTemplate
+ * @property-read array $groups
+ * @property-write mixed $model
+ * @property-read string $groupsTemplate
+ * @property-read string $columnTemplate
+ */
 class Comment extends Element
 {
     // Properties
     // =========================================================================
 
+    /**
+     * @var string
+     */
     public static $name = 'Comment';
+
+    /**
+     * @var string
+     */
     public static $class = 'verbb\comments\elements\Comment';
 
+    /**
+     * @var
+     */
     public $element;
 
 
     // Templates
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getGroupsTemplate()
     {
         return 'feed-me/_includes/elements/comments/groups';
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getColumnTemplate()
     {
         return 'feed-me/_includes/elements/comments/column';
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getMappingTemplate()
     {
         return 'feed-me/_includes/elements/comments/map';
     }
 
-
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getGroups()
     {
         return [];
     }
-
+    /**
+     * @inheritDoc
+     */
     public function getQuery($settings, $params = [])
     {
         $query = CommentElement::find()
@@ -58,6 +89,9 @@ class Comment extends Element
         return $query;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function setModel($settings)
     {
         $this->element = new CommentElement();
@@ -72,10 +106,14 @@ class Comment extends Element
         return $this->element;
     }
 
-
     // Protected Methods
     // =========================================================================
 
+    /**
+     * @param $feedData
+     * @param $fieldInfo
+     * @return array|\ArrayAccess|mixed|string|null
+     */
     protected function parseComment($feedData, $fieldInfo)
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
@@ -85,6 +123,11 @@ class Comment extends Element
         return $value;
     }
 
+    /**
+     * @param $feedData
+     * @param $fieldInfo
+     * @return array|\Carbon\Carbon|\DateTime|false|string|null
+     */
     protected function parseCommentDate($feedData, $fieldInfo)
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
@@ -93,6 +136,11 @@ class Comment extends Element
         return $this->parseDateAttribute($value, $formatting);
     }
 
+    /**
+     * @param $feedData
+     * @param $fieldInfo
+     * @return mixed|null
+     */
     protected function parseOwnerId($feedData, $fieldInfo)
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
@@ -131,6 +179,14 @@ class Comment extends Element
         }
     }
 
+    /**
+     * @param $feedData
+     * @param $fieldInfo
+     * @return int|null
+     * @throws \Throwable
+     * @throws \craft\errors\ElementNotFoundException
+     * @throws \yii\base\Exception
+     */
     protected function parseUserId($feedData, $fieldInfo)
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
@@ -176,5 +232,4 @@ class Comment extends Element
 
         return null;
     }
-
 }

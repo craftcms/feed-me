@@ -10,27 +10,42 @@ use ether\simplemap\models\Map;
 use ether\simplemap\services\MapService;
 use ether\simplemap\SimpleMap as SimpleMapPlugin;
 
+/**
+ *
+ * @property-read string $mappingTemplate
+ */
 class SimpleMap extends Field implements FieldInterface
 {
     // Properties
     // =========================================================================
 
+    /**
+     * @var string
+     */
     public static $name = 'SimpleMap';
-    public static $class = 'ether\simplemap\fields\MapField';
 
+    /**
+     * @var string
+     */
+    public static $class = 'ether\simplemap\fields\MapField';
 
     // Templates
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getMappingTemplate()
     {
         return 'feed-me/_includes/fields/simple-map';
     }
 
-
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function parseField()
     {
         $preppedData = [];
@@ -49,28 +64,24 @@ class SimpleMap extends Field implements FieldInterface
         // then, request that data through Google's geocoding API - making for a hands-free import.
 
         // Check for empty Address
-        if (!isset($preppedData['address'])) {
-            if ((isset($preppedData['lat']) && !empty($preppedData['lat'])) && (isset($preppedData['lng']) && !empty($preppedData['lng']))) {
-                $addressInfo = $this->_getAddressFromLatLng($preppedData['lat'], $preppedData['lng']);
-                $preppedData['address'] = $addressInfo['formatted_address'];
+        if (isset($preppedData['lat'], $preppedData['lng']) && !isset($preppedData['address']) && !empty($preppedData['lat']) && !empty($preppedData['lng'])) {
+            $addressInfo = $this->_getAddressFromLatLng($preppedData['lat'], $preppedData['lng']);
+            $preppedData['address'] = $addressInfo['formatted_address'];
 
-                // Populate address parts
-                if (isset($addressInfo['address_components'])) {
-                    foreach ($addressInfo['address_components'] as $component) {
-                        $preppedData['parts'][$component['types'][0]] = $component['long_name'];
-                        $preppedData['parts'][$component['types'][0] . '_short'] = $component['short_name'];
-                    }
+            // Populate address parts
+            if (isset($addressInfo['address_components'])) {
+                foreach ($addressInfo['address_components'] as $component) {
+                    $preppedData['parts'][$component['types'][0]] = $component['long_name'];
+                    $preppedData['parts'][$component['types'][0] . '_short'] = $component['short_name'];
                 }
             }
         }
 
         // Check for empty Longitude/Latitude
-        if (!isset($preppedData['lat']) || !isset($preppedData['lng'])) {
-            if (isset($preppedData['address'])) {
-                $latlng = MapService::getLatLngFromAddress($preppedData['address']);
-                $preppedData['lat'] = $latlng['lat'];
-                $preppedData['lng'] = $latlng['lng'];
-            }
+        if (!isset($preppedData['lat'], $preppedData['lng']) && isset($preppedData['address'])) {
+            $latlng = MapService::getLatLngFromAddress($preppedData['address']);
+            $preppedData['lat'] = $latlng['lat'];
+            $preppedData['lng'] = $latlng['lng'];
         }
 
         if (isset($preppedData['parts'])) {
@@ -88,6 +99,11 @@ class SimpleMap extends Field implements FieldInterface
     // Private Methods
     // =========================================================================
 
+    /**
+     * @param $lat
+     * @param $lng
+     * @return mixed|null
+     */
     private function _getAddressFromLatLng($lat, $lng)
     {
         $apiKey = SimpleMapPlugin::getInstance()->getSettings()->geoToken;
@@ -113,5 +129,4 @@ class SimpleMap extends Field implements FieldInterface
 
         return $resp['results'][0];
     }
-
 }

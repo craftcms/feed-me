@@ -9,28 +9,47 @@ use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\Plugin;
 
+/**
+ *
+ * @property-read string $mappingTemplate
+ */
 class CommerceProducts extends Field implements FieldInterface
 {
     // Properties
     // =========================================================================
 
+    /**
+     * @var string
+     */
     public static $name = 'CommerceProducts';
-    public static $class = 'craft\commerce\fields\Products';
-    public static $elementType = 'craft\commerce\elements\Product';
 
+    /**
+     * @var string
+     */
+    public static $class = 'craft\commerce\fields\Products';
+
+    /**
+     * @var string
+     */
+    public static $elementType = 'craft\commerce\elements\Product';
 
     // Templates
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getMappingTemplate()
     {
         return 'feed-me/_includes/fields/commerce_products';
     }
 
-
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function parseField()
     {
         $value = $this->fetchArrayValue();
@@ -124,5 +143,4 @@ class CommerceProducts extends Field implements FieldInterface
 
         return $foundElements;
     }
-
 }

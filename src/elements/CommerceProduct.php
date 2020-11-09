@@ -16,39 +16,68 @@ use craft\feedme\Plugin;
 use craft\feedme\services\Process;
 use yii\base\Event;
 
+/**
+ *
+ * @property-read string $mappingTemplate
+ * @property-read mixed $groups
+ * @property-write mixed $model
+ * @property-read string $groupsTemplate
+ * @property-read string $columnTemplate
+ */
 class CommerceProduct extends Element
 {
     // Properties
     // =========================================================================
 
+    /**
+     * @var string
+     */
     public static $name = 'Commerce Product';
+
+    /**
+     * @var string
+     */
     public static $class = 'craft\commerce\elements\Product';
 
+    /**
+     * @var
+     */
     public $element;
 
 
     // Templates
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getGroupsTemplate()
     {
         return 'feed-me/_includes/elements/commerce-products/groups';
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getColumnTemplate()
     {
         return 'feed-me/_includes/elements/commerce-products/column';
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getMappingTemplate()
     {
         return 'feed-me/_includes/elements/commerce-products/map';
     }
 
-
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function init()
     {
         // Hook into the process service on each step - we need to re-arrange the feed mapping
@@ -66,6 +95,9 @@ class CommerceProduct extends Element
         });
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getGroups()
     {
         if (Commerce::getInstance()) {
@@ -73,6 +105,9 @@ class CommerceProduct extends Element
         }
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getQuery($settings, $params = [])
     {
         $query = ProductElement::find()
@@ -83,6 +118,9 @@ class CommerceProduct extends Element
         return $query;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function setModel($settings)
     {
         $this->element = new ProductElement();
@@ -97,6 +135,9 @@ class CommerceProduct extends Element
         return $this->element;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function save($element, $settings)
     {
         $this->beforeSave($element, $settings);
@@ -124,6 +165,9 @@ class CommerceProduct extends Element
     // Private Methods
     // =========================================================================
 
+    /**
+     * @param $event
+     */
     private function _preParseVariants($event)
     {
         $feed = $event->feed;
@@ -146,6 +190,9 @@ class CommerceProduct extends Element
         $event->feed = $feed;
     }
 
+    /**
+     * @param $event
+     */
     private function _checkForVariantMatches($event)
     {
         $feed = $event->feed;
@@ -164,12 +211,12 @@ class CommerceProduct extends Element
 
                 // Because we're trying to find the parent product from a child variant, we just need to get the first
                 // match - then we've got an SKU for a variant that belongs to the product we want.
-                foreach ($feedData as $nodePath => $value) {
+                foreach ($feedData as $nodePath => $innerValue) {
                     $feedPath = preg_replace('/(\/\d+\/)/', '/', $nodePath);
                     $feedPath = preg_replace('/^(\d+\/)|(\/\d+)/', '', $feedPath);
 
                     if ($feedPath === $node) {
-                        $sku = $value;
+                        $sku = $innerValue;
                         break;
                     }
                 }
@@ -187,8 +234,7 @@ class CommerceProduct extends Element
                 $contentData['id'] = $variant->productId ?? 0;
 
                 // Cleanup
-                unset($feed['fieldUnique'][$handle]);
-                unset($contentData[$handle]);
+                unset($feed['fieldUnique'][$handle], $contentData[$handle]);
             }
         }
 
@@ -198,6 +244,9 @@ class CommerceProduct extends Element
         $event->contentData = $contentData;
     }
 
+    /**
+     * @param $event
+     */
     private function _parseVariants($event)
     {
         $feed = $event->feed;
@@ -227,7 +276,7 @@ class CommerceProduct extends Element
         $variantFieldsByNode = [];
 
         foreach (Hash::flatten($variantMapping) as $key => $value) {
-            if (strstr($key, 'node') && $value !== 'noimport' && $value !== 'usedefault') {
+            if (strpos($key, 'node') !== false && $value !== 'noimport' && $value !== 'usedefault') {
                 $variantFieldsByNode[] = $value;
             }
         }
@@ -240,7 +289,7 @@ class CommerceProduct extends Element
                 $feedPath = preg_replace('/(\/\d+\/)/', '/', $nodePath);
                 $feedPath = preg_replace('/^(\d+\/)|(\/\d+)/', '', $feedPath);
 
-                if (!in_array($feedPath, $variantFieldsByNode)) {
+                if (!in_array($feedPath, $variantFieldsByNode, true)) {
                     continue;
                 }
 
@@ -321,11 +370,9 @@ class CommerceProduct extends Element
                 $alteredData = [];
 
                 foreach (Hash::flatten($fieldInfo) as $key => $value) {
-                    $key = str_replace($variantNodePathKey . $variantNumber . '/', '', $key);
-                    $key = str_replace($variantNodePathKey, '', $key);
+                    $key = str_replace([$variantNodePathKey . $variantNumber . '/', $variantNodePathKey], '', $key);
 
-                    $value = str_replace($variantNodePathKey . $variantNumber . '/', '', $value);
-                    $value = str_replace($variantNodePathKey, '', $value);
+                    $value = str_replace([$variantNodePathKey . $variantNumber . '/', $variantNodePathKey], '', $value);
 
                     $alteredData[$key] = $value;
                 }
@@ -398,6 +445,11 @@ class CommerceProduct extends Element
         $event->element = $element;
     }
 
+    /**
+     * @param $sku
+     * @param null $siteId
+     * @return VariantElement
+     */
     private function _getVariantBySku($sku, $siteId = null)
     {
         $variant = VariantElement::find()
@@ -419,6 +471,11 @@ class CommerceProduct extends Element
     // Protected Methods
     // =========================================================================
 
+    /**
+     * @param $feedData
+     * @param $fieldInfo
+     * @return array|\Carbon\Carbon|\DateTime|false|string|null
+     */
     protected function parsePostDate($feedData, $fieldInfo)
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
@@ -427,6 +484,11 @@ class CommerceProduct extends Element
         return $this->parseDateAttribute($value, $formatting);
     }
 
+    /**
+     * @param $feedData
+     * @param $fieldInfo
+     * @return array|\Carbon\Carbon|\DateTime|false|string|null
+     */
     protected function parseExpiryDate($feedData, $fieldInfo)
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
@@ -435,6 +497,11 @@ class CommerceProduct extends Element
         return $this->parseDateAttribute($value, $formatting);
     }
 
+    /**
+     * @param $feedData
+     * @param $fieldInfo
+     * @return bool|mixed|void
+     */
     protected function parseAvailableForPurchase($feedData, $fieldInfo)
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
@@ -442,6 +509,11 @@ class CommerceProduct extends Element
         return BaseHelper::parseBoolean($value);
     }
 
+    /**
+     * @param $feedData
+     * @param $fieldInfo
+     * @return bool|mixed|void
+     */
     protected function parseFreeShipping($feedData, $fieldInfo)
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
@@ -449,6 +521,11 @@ class CommerceProduct extends Element
         return BaseHelper::parseBoolean($value);
     }
 
+    /**
+     * @param $feedData
+     * @param $fieldInfo
+     * @return bool|mixed|void
+     */
     protected function parsePromotable($feedData, $fieldInfo)
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
@@ -456,6 +533,11 @@ class CommerceProduct extends Element
         return BaseHelper::parseBoolean($value);
     }
 
+    /**
+     * @param $feedData
+     * @param $fieldInfo
+     * @return false|mixed
+     */
     protected function parseTaxCategoryId($feedData, $fieldInfo)
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
@@ -484,6 +566,11 @@ class CommerceProduct extends Element
         return false;
     }
 
+    /**
+     * @param $feedData
+     * @param $fieldInfo
+     * @return false|mixed
+     */
     protected function parseShippingCategoryId($feedData, $fieldInfo)
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);

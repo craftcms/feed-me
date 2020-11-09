@@ -20,6 +20,10 @@ use craft\helpers\Component as ComponentHelper;
 use craft\helpers\UrlHelper;
 use yii\base\Event;
 
+/**
+ *
+ * @property-read mixed $registeredDataTypes
+ */
 class DataTypes extends Component
 {
     // Constants
@@ -34,13 +38,22 @@ class DataTypes extends Component
     // Properties
     // =========================================================================
 
+    /**
+     * @var array
+     */
     private $_dataTypes = [];
-    private $_headers = null;
 
+    /**
+     * @var
+     */
+    private $_headers;
 
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function init()
     {
         parent::init();
@@ -60,6 +73,9 @@ class DataTypes extends Component
         }
     }
 
+    /**
+     * @return array
+     */
     public function dataTypesList()
     {
         $list = [];
@@ -71,13 +87,18 @@ class DataTypes extends Component
         return $list;
     }
 
+    /**
+     * @param $handle
+     * @return mixed|null
+     */
     public function getRegisteredDataType($handle)
     {
-        if (isset($this->_dataTypes[$handle])) {
-            return $this->_dataTypes[$handle];
-        }
+        return $this->_dataTypes[$handle] ?? null;
     }
 
+    /**
+     * @return array
+     */
     public function getRegisteredDataTypes()
     {
         $event = new RegisterFeedMeDataTypesEvent([
@@ -96,6 +117,12 @@ class DataTypes extends Component
         return $event->dataTypes;
     }
 
+    /**
+     * @param $config
+     * @return \craft\base\ComponentInterface|MissingDataType
+     * @throws \craft\errors\MissingComponentException
+     * @throws \yii\base\InvalidConfigException
+     */
     public function createDataType($config)
     {
         if (is_string($config)) {
@@ -115,6 +142,12 @@ class DataTypes extends Component
         return $dataType;
     }
 
+    /**
+     * @param $url
+     * @param null $feedId
+     * @return array
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function getRawData($url, $feedId = null)
     {
         $event = new FeedDataEvent([
@@ -181,6 +214,11 @@ class DataTypes extends Component
         return $event->response;
     }
 
+    /**
+     * @param $feedModel
+     * @param bool $usePrimaryElement
+     * @return mixed
+     */
     public function getFeedData($feedModel, $usePrimaryElement = true)
     {
         $feedDataResponse = $feedModel->getDataType()->getFeed($feedModel->feedUrl, $feedModel, $usePrimaryElement);
@@ -195,6 +233,10 @@ class DataTypes extends Component
         return $event->response;
     }
 
+    /**
+     * @param $data
+     * @return array
+     */
     public function getFeedNodes($data)
     {
         if (!is_array($data)) {
@@ -220,6 +262,10 @@ class DataTypes extends Component
         return $nodes;
     }
 
+    /**
+     * @param $data
+     * @return array
+     */
     public function getFeedMapping($data)
     {
         if (!is_array($data)) {
@@ -237,7 +283,7 @@ class DataTypes extends Component
             // The above is used to normalise repeatable nodes. Paths to nodes will look similar to:
             // 0.Assets.Asset.0.Img.0 - we want to change this to Assets/Asset/Img, This is mostly
             // for user-friendliness, we don't need to keep specific details on what is repeatable
-            // or not. Thats for the feed-parsing stage (and is greatly improved from our first iteration!)
+            // or not. That's for the feed-parsing stage (and is greatly improved from our first iteration!)
 
             if (!isset($mappingPaths[$feedPath])) {
                 $mappingPaths[$feedPath] = $value;
@@ -247,6 +293,11 @@ class DataTypes extends Component
         return $mappingPaths;
     }
 
+    /**
+     * @param $element
+     * @param $parsed
+     * @return array|array[]|false
+     */
     public function findPrimaryElement($element, $parsed)
     {
         if (empty($parsed)) {
@@ -258,15 +309,13 @@ class DataTypes extends Component
             return $parsed;
         }
 
-        if (isset($parsed[$element])) {
-            // Ensure we return an array - even if only one element found
-            if (is_array($parsed[$element])) {
-                if (array_key_exists('0', $parsed[$element])) { // is multidimensional
-                    return $parsed[$element];
-                } else {
-                    return [$parsed[$element]];
-                }
+        // Ensure we return an array - even if only one element found
+        if (isset($parsed[$element]) && is_array($parsed[$element])) {
+            if (array_key_exists('0', $parsed[$element])) { // is multidimensional
+                return $parsed[$element];
             }
+
+            return [$parsed[$element]];
         }
 
         foreach ($parsed as $key => $val) {
@@ -282,6 +331,10 @@ class DataTypes extends Component
         return false;
     }
 
+    /**
+     * @param array $options
+     * @return array|\ArrayAccess|mixed|null
+     */
     public function getFeedForTemplate($options = [])
     {
         $pluginSettings = Plugin::$plugin->getSettings();
@@ -339,24 +392,24 @@ class DataTypes extends Component
 
             if ($cachedRequest) {
                 return $cachedRequest;
-            } else {
-                if ($headers) {
-                    $data = $this->_headers;
-                } else {
-                    $data = Hash::get($this->getFeedData($feed), 'data');
-                }
-
-                if ($offset) {
-                    $data = array_slice($data, $offset);
-                }
-
-                if ($limit) {
-                    $data = array_slice($data, 0, $limit);
-                }
-
-                $this->_setCache($cacheId, $data, $cache);
-                return $data;
             }
+
+            if ($headers) {
+                $data = $this->_headers;
+            } else {
+                $data = Hash::get($this->getFeedData($feed), 'data');
+            }
+
+            if ($offset) {
+                $data = array_slice($data, $offset);
+            }
+
+            if ($limit) {
+                $data = array_slice($data, 0, $limit);
+            }
+
+            $this->_setCache($cacheId, $data, $cache);
+            return $data;
         }
     }
 
@@ -364,6 +417,11 @@ class DataTypes extends Component
     // Private
     // =========================================================================
 
+    /**
+     * @param $tree
+     * @param $array
+     * @param string $index
+     */
     private function _parseNodeTree(&$tree, $array, $index = '')
     {
         foreach ($array as $key => $val) {
@@ -379,23 +437,29 @@ class DataTypes extends Component
 
                     $this->_parseNodeTree($tree, $val, $index . '/' . $key);
                 }
-            } else {
-                // Keep diving
-                if (is_array($val)) {
-                    $this->_parseNodeTree($tree, $val, $index);
-                }
+            } else if (is_array($val)) {
+                $this->_parseNodeTree($tree, $val, $index);
             }
         }
     }
 
+    /**
+     * @param $url
+     * @param $value
+     * @param $duration
+     * @return bool
+     */
     private function _setCache($url, $value, $duration)
     {
         return Craft::$app->cache->set(base64_encode(urlencode($url)), $value, $duration, null);
     }
 
+    /**
+     * @param $url
+     * @return mixed
+     */
     private function _getCache($url)
     {
         return Craft::$app->cache->get(base64_encode(urlencode($url)));
     }
-
 }

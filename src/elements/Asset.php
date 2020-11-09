@@ -15,30 +15,57 @@ use craft\helpers\UrlHelper;
 use craft\models\VolumeFolder;
 use yii\base\Event;
 
+/**
+ *
+ * @property-read string $mappingTemplate
+ * @property-read mixed $groups
+ * @property-write mixed $model
+ * @property-read string $groupsTemplate
+ * @property-read string $columnTemplate
+ */
 class Asset extends Element
 {
     // Properties
     // =========================================================================
 
+    /**
+     * @var string
+     */
     public static $name = 'Asset';
-    public static $class = 'craft\elements\Asset';
 
+    /**
+     * @var string
+     */
+    public static $class = AssetElement::class;
+
+    /**
+     * @var
+     */
     public $element;
 
 
     // Templates
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getGroupsTemplate()
     {
         return 'feed-me/_includes/elements/assets/groups';
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getColumnTemplate()
     {
         return 'feed-me/_includes/elements/assets/column';
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getMappingTemplate()
     {
         return 'feed-me/_includes/elements/assets/map';
@@ -48,6 +75,9 @@ class Asset extends Element
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function init()
     {
         // If we are adding a new asset, it has to be done before the content is populated on the element.
@@ -57,11 +87,17 @@ class Asset extends Element
         });
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getGroups()
     {
         return Craft::$app->volumes->getAllVolumes();
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getQuery($settings, $params = [])
     {
         $query = AssetElement::find()
@@ -73,6 +109,9 @@ class Asset extends Element
         return $query;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function setModel($settings)
     {
         $this->element = new AssetElement();
@@ -87,6 +126,9 @@ class Asset extends Element
         return $this->element;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function beforeSave($element, $settings)
     {
         parent::beforeSave($element, $settings);
@@ -105,6 +147,10 @@ class Asset extends Element
     // Private Methods
     // =========================================================================
 
+    /**
+     * @param $event
+     * @throws \yii\base\Exception
+     */
     private function _handleImageCreation($event)
     {
         $feed = $event->feed;
@@ -167,6 +213,10 @@ class Asset extends Element
         }
     }
 
+    /**
+     * @param $value
+     * @return string
+     */
     private function _getFilename($value)
     {
         // If this is an absolute URL, we're uploading the asset. Parse it to just get the filename
@@ -182,6 +232,11 @@ class Asset extends Element
     // Protected Methods
     // =========================================================================
 
+    /**
+     * @param $feedData
+     * @param $fieldInfo
+     * @return string
+     */
     protected function parseFilename($feedData, $fieldInfo)
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
@@ -189,6 +244,13 @@ class Asset extends Element
         return $this->_getFilename($value);
     }
 
+    /**
+     * @param $feedData
+     * @param $fieldInfo
+     * @return int|string|null
+     * @throws \craft\errors\AssetConflictException
+     * @throws \craft\errors\VolumeObjectExistsException
+     */
     protected function parseFolderId($feedData, $fieldInfo)
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
@@ -210,7 +272,9 @@ class Asset extends Element
 
         if ($folder) {
             return $folder->id;
-        } else if ($create) {
+        }
+
+        if ($create) {
             $lastCreatedFolder = null;
 
             // Process all folders (create them)
@@ -245,5 +309,4 @@ class Asset extends Element
         // If we've provided a bad folder, just return the root - we always need a folderId
         return $rootFolder->id;
     }
-
 }

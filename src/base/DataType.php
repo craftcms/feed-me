@@ -6,21 +6,36 @@ use Cake\Utility\Hash;
 use craft\base\Component;
 use craft\helpers\UrlHelper;
 
+/**
+ *
+ * @property-read mixed $name
+ * @property-read mixed $class
+ */
 abstract class DataType extends Component
 {
     // Public
     // =========================================================================
 
+    /**
+     * @return mixed
+     */
     public function getName()
     {
         return $this::$name;
     }
 
+    /**
+     * @return false|string
+     */
     public function getClass()
     {
         return get_class($this);
     }
 
+    /**
+     * @param $array
+     * @param $feed
+     */
     public function setupPaginationUrl($array, $feed)
     {
         if (!$feed->paginationNode) {

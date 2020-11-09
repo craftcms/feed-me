@@ -13,23 +13,60 @@ class Logs extends Component
     // Properties
     // =========================================================================
 
+    /**
+     * @var bool
+     */
     public $enableRotation = true;
+
+    /**
+     * @var int
+     */
     public $maxFileSize = 6656; // 6.5MB limit for support
+
+    /**
+     * @var int
+     */
     public $maxLogFiles = 20;
+
+    /**
+     * @var
+     */
     public $fileMode;
+
+    /**
+     * @var int
+     */
     public $dirMode = 0775;
+
+    /**
+     * @var bool
+     */
     public $rotateByCopy = true;
+
+    /**
+     * @var
+     */
     public $logFile;
 
 
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function init()
     {
         $this->logFile = Craft::$app->path->getLogPath() . '/feedme.log';
     }
 
+    /**
+     * @param $method
+     * @param $message
+     * @param array $params
+     * @param array $options
+     * @throws \Exception
+     */
     public function log($method, $message, $params = [], $options = [])
     {
         $dateTime = new \DateTime();
@@ -60,14 +97,22 @@ class Logs extends Component
 
         $options = json_encode($options);
 
-        $this->export($options . PHP_EOL);
+        $this->_export($options . PHP_EOL);
     }
 
+    /**
+     *
+     */
     public function clear()
     {
-        $this->clearLogFile($this->logFile);
+        $this->_clearLogFile($this->logFile);
     }
 
+    /**
+     * @param null $type
+     * @return array
+     * @throws \yii\base\Exception
+     */
     public function getLogEntries($type = null): array
     {
         $logEntries = [];
@@ -97,12 +142,8 @@ class Logs extends Component
                         $json['date'] = \DateTime::createFromFormat('Y-m-d H:i:s', $json['date'])->format('Y-m-d H:i:s');
                     }
 
-                    // Backward compatiblity
-                    if (isset($json['key'])) {
-                        $key = $json['key'];
-                    } else {
-                        $key = count($logEntries);
-                    }
+                    // Backward compatibility
+                    $key = $json['key'] ?? count($logEntries);
 
                     if (isset($logEntries[$key])) {
                         $logEntries[$key]['items'][] = $json;
@@ -119,10 +160,13 @@ class Logs extends Component
         return $logEntries;
     }
 
-
     // Private Methods
     // =========================================================================
 
+    /**
+     * @param $type
+     * @return bool
+     */
     private function _canLog($type)
     {
         $logging = Plugin::$plugin->service->getConfig('logging');
@@ -139,12 +183,16 @@ class Logs extends Component
         return true;
     }
 
-    private function export($text)
+    /**
+     * @param $text
+     * @throws \yii\base\Exception
+     */
+    private function _export($text)
     {
         $logPath = dirname($this->logFile);
         FileHelper::createDirectory($logPath, $this->dirMode, true);
 
-        if (($fp = @fopen($this->logFile, 'a')) === false) {
+        if (($fp = @fopen($this->logFile, 'ab')) === false) {
             throw new \Exception("Unable to append to log file: {$this->logFile}");
         }
         @flock($fp, LOCK_EX);
@@ -154,7 +202,7 @@ class Logs extends Component
             clearstatcache();
         }
         if ($this->enableRotation && @filesize($this->logFile) > $this->maxFileSize * 1024) {
-            $this->rotateFiles();
+            $this->_rotateFiles();
             @flock($fp, LOCK_UN);
             @fclose($fp);
             $writeResult = @file_put_contents($this->logFile, $text, FILE_APPEND | LOCK_EX);
@@ -184,7 +232,10 @@ class Logs extends Component
         }
     }
 
-    private function rotateFiles()
+    /**
+     *
+     */
+    private function _rotateFiles()
     {
         $file = $this->logFile;
         for ($i = $this->maxLogFiles; $i >= 0; --$i) {
@@ -197,23 +248,30 @@ class Logs extends Component
                     continue;
                 }
                 $newFile = $this->logFile . '.' . ($i + 1);
-                $this->rotateByCopy ? $this->rotateByCopy($rotateFile, $newFile) : $this->rotateByRename($rotateFile, $newFile);
+                $this->rotateByCopy ? $this->_rotateByCopy($rotateFile, $newFile) : $this->_rotateByRename($rotateFile, $newFile);
                 if ($i === 0) {
-                    $this->clearLogFile($rotateFile);
+                    $this->_clearLogFile($rotateFile);
                 }
             }
         }
     }
 
-    private function clearLogFile($rotateFile)
+    /**
+     * @param $rotateFile
+     */
+    private function _clearLogFile($rotateFile)
     {
-        if ($filePointer = @fopen($rotateFile, 'a')) {
+        if ($filePointer = @fopen($rotateFile, 'ab')) {
             @ftruncate($filePointer, 0);
             @fclose($filePointer);
         }
     }
 
-    private function rotateByCopy($rotateFile, $newFile)
+    /**
+     * @param $rotateFile
+     * @param $newFile
+     */
+    private function _rotateByCopy($rotateFile, $newFile)
     {
         @copy($rotateFile, $newFile);
         if ($this->fileMode !== null) {
@@ -221,7 +279,11 @@ class Logs extends Component
         }
     }
 
-    private function rotateByRename($rotateFile, $newFile)
+    /**
+     * @param $rotateFile
+     * @param $newFile
+     */
+    private function _rotateByRename($rotateFile, $newFile)
     {
         @rename($rotateFile, $newFile);
     }

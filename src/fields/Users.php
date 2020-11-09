@@ -11,28 +11,48 @@ use craft\feedme\base\FieldInterface;
 use craft\feedme\Plugin;
 use craft\helpers\Db;
 
+/**
+ *
+ * @property-read string $mappingTemplate
+ */
 class Users extends Field implements FieldInterface
 {
     // Properties
     // =========================================================================
 
+    /**
+     * @var string
+     */
     public static $name = 'Users';
+
+    /**
+     * @var string
+     */
     public static $class = 'craft\fields\Users';
+
+    /**
+     * @var string
+     */
     public static $elementType = 'craft\elements\User';
 
 
     // Templates
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getMappingTemplate()
     {
         return 'feed-me/_includes/fields/users';
     }
 
-
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function parseField()
     {
         $value = $this->fetchArrayValue();
@@ -101,10 +121,8 @@ class Users extends Field implements FieldInterface
             Plugin::info('Found `{i}` existing users: `{j}`', ['i' => count($foundElements), 'j' => json_encode($foundElements)]);
 
             // Check if we should create the element. But only if email is provided (for the moment)
-            if (count($ids) == 0) {
-                if ($create && $match === 'email') {
-                    $foundElements[] = $this->_createElement($dataValue, $groupIds);
-                }
+            if ((count($ids) == 0) && $create && $match === 'email') {
+                $foundElements[] = $this->_createElement($dataValue, $groupIds);
             }
         }
 
@@ -113,7 +131,7 @@ class Users extends Field implements FieldInterface
             $foundElements = array_chunk($foundElements, $limit)[0];
         }
 
-        // Check for any sub-fields for the lement
+        // Check for any sub-fields for the element
         if ($fields) {
             $this->populateElementFields($foundElements);
         }
@@ -128,11 +146,17 @@ class Users extends Field implements FieldInterface
         return $foundElements;
     }
 
-
-
     // Private Methods
     // =========================================================================
 
+    /**
+     * @param $dataValue
+     * @param $groupId
+     * @return int|null
+     * @throws \Throwable
+     * @throws \craft\errors\ElementNotFoundException
+     * @throws \yii\base\Exception
+     */
     private function _createElement($dataValue, $groupId)
     {
         $element = new UserElement();
@@ -159,5 +183,4 @@ class Users extends Field implements FieldInterface
 
         return $element->id;
     }
-
 }

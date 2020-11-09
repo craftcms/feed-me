@@ -9,5 +9,8 @@ class RegisterFeedMeElementsEvent extends Event
     // Properties
     // =========================================================================
 
+    /**
+     * @var array
+     */
     public $elements = [];
 }

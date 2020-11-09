@@ -7,27 +7,42 @@ use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\Plugin;
 
+/**
+ *
+ * @property-read string $mappingTemplate
+ */
 class SuperTable extends Field implements FieldInterface
 {
     // Properties
     // =========================================================================
 
+    /**
+     * @var string
+     */
     public static $name = 'SuperTable';
-    public static $class = 'verbb\supertable\fields\SuperTableField';
 
+    /**
+     * @var string
+     */
+    public static $class = 'verbb\supertable\fields\SuperTableField';
 
     // Templates
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getMappingTemplate()
     {
         return 'feed-me/_includes/fields/super-table';
     }
 
-
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function parseField()
     {
         $preppedData = [];
@@ -56,7 +71,7 @@ class SuperTable extends Field implements FieldInterface
 
                 if (!is_numeric($blockIndex)) {
                     // Try to check if its only one-level deep (only importing one block type)
-                    // which is particuarly common for JSON.
+                    // which is particularly common for JSON.
                     $blockIndex = Hash::get($nodePathSegments, 2);
 
                     if (!is_numeric($blockIndex)) {
@@ -84,12 +99,8 @@ class SuperTable extends Field implements FieldInterface
                 $parsedValue = $this->_parseSubField($this->feedData, $subFieldHandle, $subFieldInfo);
 
                 // Finish up with the content, also sort out cases where there's array content
-                if (isset($fieldData[$key])) {
-                    if (is_array($fieldData[$key])) {
-                        $fieldData[$key] = array_merge_recursive($fieldData[$key], $parsedValue);
-                    } else {
-                        $fieldData[$key] = $parsedValue;
-                    }
+                if (isset($fieldData[$key]) && is_array($fieldData[$key])) {
+                    $fieldData[$key] = array_merge_recursive($fieldData[$key], $parsedValue);
                 } else {
                     $fieldData[$key] = $parsedValue;
                 }
@@ -127,7 +138,7 @@ class SuperTable extends Field implements FieldInterface
             $blockIndex = 'new' . ($handles[0] + 1);
             $subFieldHandle = $handles[1];
 
-            // Prepare an array thats ready for Matrix to import it
+            // Prepare an array that's ready for Matrix to import it
             $preppedData[$blockIndex . '.type'] = $blockTypeId;
             $preppedData[$blockIndex . '.order'] = $order;
             $preppedData[$blockIndex . '.enabled'] = true;
@@ -141,10 +152,14 @@ class SuperTable extends Field implements FieldInterface
         return $preppedData;
     }
 
-
     // Private Methods
     // =========================================================================
 
+    /**
+     * @param $nodePath
+     * @param $fields
+     * @return array
+     */
     private function _getFieldMappingInfoForNodePath($nodePath, $fields)
     {
         $feedPath = preg_replace('/(\/\d+\/)/', '/', $nodePath);
@@ -179,6 +194,12 @@ class SuperTable extends Field implements FieldInterface
         }
     }
 
+    /**
+     * @param $feedData
+     * @param $subFieldHandle
+     * @param $subFieldInfo
+     * @return mixed
+     */
     private function _parseSubField($feedData, $subFieldHandle, $subFieldInfo)
     {
         $subFieldClassHandle = Hash::get($subFieldInfo, 'field');
@@ -194,8 +215,6 @@ class SuperTable extends Field implements FieldInterface
         $class->feed = $this->feed;
 
         // Get our content, parsed by this fields service function
-        $parsedValue = $class->parseField();
-
-        return $parsedValue;
+        return $class->parseField();
     }
 }

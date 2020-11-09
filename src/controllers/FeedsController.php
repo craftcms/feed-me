@@ -16,12 +16,18 @@ class FeedsController extends Controller
     // Properties
     // =========================================================================
 
+    /**
+     * @var string[]
+     */
     protected $allowAnonymous = ['run-task'];
 
 
     // Public Methods
     // =========================================================================
 
+    /**
+     * @return \yii\web\Response
+     */
     public function actionFeedsIndex()
     {
         $variables['feeds'] = Plugin::$plugin->feeds->getFeeds();
@@ -29,6 +35,11 @@ class FeedsController extends Controller
         return $this->renderTemplate('feed-me/feeds/index', $variables);
     }
 
+    /**
+     * @param null $feedId
+     * @param null $feed
+     * @return \yii\web\Response
+     */
     public function actionEditFeed($feedId = null, $feed = null)
     {
         $variables = [];
@@ -50,6 +61,11 @@ class FeedsController extends Controller
         return $this->renderTemplate('feed-me/feeds/_edit', $variables);
     }
 
+    /**
+     * @param null $feedId
+     * @param null $postData
+     * @return \yii\web\Response
+     */
     public function actionElementFeed($feedId = null, $postData = null)
     {
         $variables = [];
@@ -67,6 +83,11 @@ class FeedsController extends Controller
         return $this->renderTemplate('feed-me/feeds/_element', $variables);
     }
 
+    /**
+     * @param null $feedId
+     * @param null $postData
+     * @return \yii\web\Response
+     */
     public function actionMapFeed($feedId = null, $postData = null)
     {
         $variables = [];
@@ -83,6 +104,11 @@ class FeedsController extends Controller
         return $this->renderTemplate('feed-me/feeds/_map', $variables);
     }
 
+    /**
+     * @param null $feedId
+     * @return \yii\web\Response
+     * @throws \yii\base\Exception
+     */
     public function actionRunFeed($feedId = null)
     {
         $request = Craft::$app->getRequest();
@@ -98,11 +124,15 @@ class FeedsController extends Controller
             $view = $this->getView();
             $view->setTemplateMode($view::TEMPLATE_MODE_CP);
             return $this->renderTemplate('feed-me/feeds/_direct', $variables);
-        } else {
-            return $this->redirect($return);
         }
+
+        return $this->redirect($return);
     }
 
+    /**
+     * @param null $feedId
+     * @return \yii\web\Response
+     */
     public function actionStatusFeed($feedId = null)
     {
         $feed = Plugin::$plugin->feeds->getFeedById($feedId);
@@ -112,6 +142,9 @@ class FeedsController extends Controller
         return $this->renderTemplate('feed-me/feeds/_status', $variables);
     }
 
+    /**
+     * @return \yii\web\Response|null
+     */
     public function actionSaveFeed()
     {
         $feed = $this->_getModelFromPost();
@@ -119,6 +152,9 @@ class FeedsController extends Controller
         return $this->_saveAndRedirect($feed, 'feed-me/feeds/', true);
     }
 
+    /**
+     * @return \yii\web\Response|null
+     */
     public function actionSaveAndElementFeed()
     {
         $feed = $this->_getModelFromPost();
@@ -137,6 +173,9 @@ class FeedsController extends Controller
         return $this->_saveAndRedirect($feed, 'feed-me/feeds/element/', true);
     }
 
+    /**
+     * @return \yii\web\Response|null
+     */
     public function actionSaveAndMapFeed()
     {
         $feed = $this->_getModelFromPost();
@@ -144,6 +183,9 @@ class FeedsController extends Controller
         return $this->_saveAndRedirect($feed, 'feed-me/feeds/map/', true);
     }
 
+    /**
+     * @return \yii\web\Response|null
+     */
     public function actionSaveAndReviewFeed()
     {
         $feed = $this->_getModelFromPost();
@@ -151,6 +193,10 @@ class FeedsController extends Controller
         return $this->_saveAndRedirect($feed, 'feed-me/feeds/status/', true);
     }
 
+    /**
+     * @return \yii\web\Response
+     * @throws \craft\errors\MissingComponentException
+     */
     public function actionSaveAndDuplicateFeed()
     {
         $request = Craft::$app->getRequest();
@@ -165,6 +211,10 @@ class FeedsController extends Controller
         return $this->redirect('feed-me/feeds');
     }
 
+    /**
+     * @return \yii\web\Response
+     * @throws \yii\web\BadRequestHttpException
+     */
     public function actionDeleteFeed()
     {
         $this->requirePostRequest();
@@ -178,6 +228,10 @@ class FeedsController extends Controller
         return $this->asJson(['success' => true]);
     }
 
+    /**
+     * @throws \yii\base\Exception
+     * @throws \yii\base\ExitException
+     */
     public function actionRunTask()
     {
         $request = Craft::$app->getRequest();
@@ -191,6 +245,10 @@ class FeedsController extends Controller
         Craft::$app->end();
     }
 
+    /**
+     * @return false|string
+     * @throws \Exception
+     */
     public function actionDebug()
     {
         $request = Craft::$app->getRequest();
@@ -211,6 +269,11 @@ class FeedsController extends Controller
         return ob_get_clean();
     }
 
+    /**
+     * @return \yii\web\Response
+     * @throws \Throwable
+     * @throws \yii\web\BadRequestHttpException
+     */
     public function actionReorderFeeds()
     {
         $this->requirePostRequest();
@@ -227,6 +290,11 @@ class FeedsController extends Controller
     // Private Methods
     // =========================================================================
 
+    /**
+     * @param $feed
+     * @return bool
+     * @throws \craft\errors\MissingComponentException
+     */
     private function _runImportTask($feed)
     {
         $request = Craft::$app->getRequest();
@@ -278,6 +346,13 @@ class FeedsController extends Controller
         }
     }
 
+    /**
+     * @param $feed
+     * @param $redirect
+     * @param false $withId
+     * @return \yii\web\Response|null
+     * @throws \craft\errors\MissingComponentException
+     */
     private function _saveAndRedirect($feed, $redirect, $withId = false)
     {
         if (!Plugin::$plugin->feeds->saveFeed($feed)) {
@@ -293,12 +368,16 @@ class FeedsController extends Controller
         Craft::$app->getSession()->setNotice(Craft::t('feed-me', 'Feed saved.'));
 
         if ($withId) {
-            $redirect = $redirect . $feed->id;
+            $redirect .= $feed->id;
         }
 
         return $this->redirect($redirect);
     }
 
+    /**
+     * @return FeedModel
+     * @throws \yii\web\BadRequestHttpException
+     */
     private function _getModelFromPost()
     {
         $this->requirePostRequest();
@@ -370,5 +449,4 @@ class FeedsController extends Controller
 
         return $feed;
     }
-
 }
