@@ -1,4 +1,4 @@
-/*!   - 2020-11-06 */
+/*!   - 2020-11-09 */
 (function($){
 
 /**
@@ -3750,13 +3750,15 @@ $(function() {
             Craft.FeedMe.elementTypes[elementType].groups[groupId] &&
             Craft.FeedMe.elementTypes[elementType].groups[groupId].isSingleton
         ) {
-            $('#singleton').val('1');
-            $('#is-create').attr({checked: false, disabled: true});
-            $('#is-update').attr({checked: true, disabled: true});
-            $('#is-disable-globally').attr({checked: false, disabled: true});
-            $('#is-disable-site').attr({checked: false, disabled: true});
-            $('#is-delete').attr({checked: false, disabled: true});
-        } else {
+            if (!$('#singleton').val()) {
+                $('#singleton').val('1');
+                $('#is-create').attr({checked: false, disabled: true});
+                $('#is-update').attr({checked: true, disabled: true});
+                $('#is-disable-globally').attr({checked: false, disabled: true});
+                $('#is-disable-site').attr({checked: false, disabled: true});
+                $('#is-delete').attr({checked: false, disabled: true});
+            }
+        } else if ($('#singleton').val()) {
             $('#singleton').val('');
             $('#is-create').attr({checked: true, disabled: false});
             $('#is-update').attr({checked: false, disabled: false});
