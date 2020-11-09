@@ -3,8 +3,8 @@
 ## Unreleased
 
 ### Fixed
-- Fixed a bug where Assets with upper-case file extensions wouldn’t import on case-sensitive file systems. ([#691](https://github.com/craftcms/feed-me/issues/691))
-- Fixed a bug that broke Asset importing in 4.3.0.
+- Fixed a bug where assets with uppercase file extensions wouldn’t import on case-sensitive file systems. ([#691](https://github.com/craftcms/feed-me/issues/691))
+- Fixed a bug that broke asset importing in 4.3.0.
 
 ## 4.3.0 - 2020-11-06
 
