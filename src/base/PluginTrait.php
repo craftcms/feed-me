@@ -40,7 +40,7 @@ trait PluginTrait
         Plugin::$plugin->getLogs()->log(__METHOD__, $message, $params, $options);
     }
 
-    public static function debug($message, $params = [])
+    public static function debug($message)
     {
         if (Craft::$app->getRequest()->getIsConsoleRequest()) {
             return;

@@ -9,6 +9,10 @@ use craft\feedme\base\FieldInterface;
 use craft\feedme\Plugin;
 use Solspace\Calendar\Elements\Event as EventElement;
 
+/**
+ *
+ * @property-read string $mappingTemplate
+ */
 class CalendarEvents extends Field implements FieldInterface
 {
     // Properties

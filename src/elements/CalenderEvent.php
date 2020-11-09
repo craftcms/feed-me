@@ -16,6 +16,14 @@ use Solspace\Calendar\Elements\Event as EventElement;
 use Solspace\Calendar\Library\DateHelper;
 use yii\base\Event;
 
+/**
+ *
+ * @property-read string $mappingTemplate
+ * @property-read mixed $groups
+ * @property-write mixed $model
+ * @property-read string $groupsTemplate
+ * @property-read string $columnTemplate
+ */
 class CalenderEvent extends Element
 {
     // Properties
@@ -219,7 +227,7 @@ class CalenderEvent extends Element
 
     private function _onAfterElementSave($event)
     {
-        if (sizeof($this->selectDates)) {
+        if (count($this->selectDates)) {
             $EventElement = EventElement::find()->id($event->element->id)->one();
             Calendar::getInstance()->selectDates->saveDates($EventElement, $this->selectDates);
         }

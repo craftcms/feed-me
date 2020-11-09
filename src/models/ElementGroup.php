@@ -2,14 +2,7 @@
 
 namespace craft\feedme\models;
 
-use Cake\Utility\Hash;
-use Craft;
 use craft\base\Model;
-use craft\elements\Entry as EntryElement;
-use craft\elements\User as UserElement;
-use craft\feedme\base\Element;
-use craft\feedme\Plugin;
-use craft\models\Section;
 
 /**
  * Class ElementGroup

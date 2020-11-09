@@ -10,6 +10,10 @@ use craft\feedme\Plugin;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Localization;
 
+/**
+ *
+ * @property-read string $mappingTemplate
+ */
 class Table extends Field implements FieldInterface
 {
     // Properties
@@ -91,8 +95,9 @@ class Table extends Field implements FieldInterface
         // Make sure each column has values, even if null
         foreach ($preppedData as $key => $columnData) {
             if (count($columnData) != count($columns)) {
-                for ($i = 1; $i <= count($columns); $i++) {
-                    if (!isset($preppedData[$key]['col' . $i])) {
+                for ($i = 1, $iMax = count($columns); $i <= $iMax; $i++) {
+                    $indexVar = 'col' . $i;
+                    if (!isset($preppedData[$key][$indexVar])) {
                         $preppedData[$key]['col' . $i] = null;
                     }
                 }
@@ -115,21 +120,27 @@ class Table extends Field implements FieldInterface
     {
         if ($type == 'checkbox') {
             return BaseHelper::parseBoolean($value);
-        } else if ($type == 'color') {
+        }
+
+        if ($type == 'color') {
             return BaseHelper::parseColor($value);
-        } else if ($type == 'date') {
+        }
+
+        if ($type == 'date') {
             $parsedValue = DateTimeHelper::toDateTime($value) ?: null;
 
             return $this->field->serializeValue($parsedValue);
-        } else if ($type == 'lightswitch') {
+        }
+
+        if ($type == 'lightswitch') {
             return BaseHelper::parseBoolean($value);
-        } else if ($type == 'multiline') {
+        }
 
-        } else if ($type == 'number') {
+        if ($type == 'number') {
             return Localization::normalizeNumber($value);
-        } else if ($type == 'singleline') {
+        }
 
-        } else if ($type == 'time') {
+        if ($type == 'time') {
             $parsedValue = DateTimeHelper::toDateTime($value) ?: null;
 
             return $this->field->serializeValue($parsedValue);
@@ -142,5 +153,4 @@ class Table extends Field implements FieldInterface
 
         return $value;
     }
-
 }

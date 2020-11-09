@@ -11,6 +11,14 @@ use craft\feedme\models\ElementGroup;
 use craft\feedme\Plugin;
 use craft\models\Section;
 
+/**
+ *
+ * @property-read string $mappingTemplate
+ * @property-read array $groups
+ * @property-write mixed $model
+ * @property-read string $groupsTemplate
+ * @property-read string $columnTemplate
+ */
 class Entry extends Element
 {
     // Properties

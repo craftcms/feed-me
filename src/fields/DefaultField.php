@@ -5,6 +5,10 @@ namespace craft\feedme\fields;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 
+/**
+ *
+ * @property-read string $mappingTemplate
+ */
 class DefaultField extends Field implements FieldInterface
 {
     // Properties
@@ -40,7 +44,7 @@ class DefaultField extends Field implements FieldInterface
         }
 
         // If its exactly an empty string, that's okay and allowed. Normalising this will set it to
-        // null, which means it won't get imported. Some times we want to have emptry strings
+        // null, which means it won't get imported. Some times we want to have empty strings
         if ($value !== '') {
             $value = $this->field->normalizeValue($value);
         }

@@ -6,6 +6,10 @@ use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\helpers\Localization;
 
+/**
+ *
+ * @property-read string $mappingTemplate
+ */
 class Number extends Field implements FieldInterface
 {
     // Properties

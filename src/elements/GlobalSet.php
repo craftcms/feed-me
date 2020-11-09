@@ -5,15 +5,19 @@ namespace craft\feedme\elements;
 use Cake\Utility\Hash;
 use Craft;
 use craft\elements\GlobalSet as GlobalSetElement;
-use craft\elements\User as UserElement;
 use craft\feedme\base\Element;
 use craft\feedme\models\ElementGroup;
-use craft\feedme\Plugin;
 
 /**
  * Class GlobalSet
  *
  * @since 4.3.0
+ *
+ * @property-read string $mappingTemplate
+ * @property-read array $groups
+ * @property-write mixed $model
+ * @property-read string $groupsTemplate
+ * @property-read string $columnTemplate
  */
 class GlobalSet extends Element
 {

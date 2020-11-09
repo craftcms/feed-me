@@ -35,6 +35,10 @@ use craft\feedme\fields\TypedLink;
 use craft\feedme\fields\Users;
 use craft\helpers\Component as ComponentHelper;
 
+/**
+ *
+ * @property-read array $registeredFields
+ */
 class Fields extends Component
 {
     // Constants
@@ -74,11 +78,7 @@ class Fields extends Component
 
     public function getRegisteredField($handle)
     {
-        if (isset($this->_fields[$handle])) {
-            return $this->_fields[$handle];
-        } else {
-            return $this->createField(DefaultField::class);
-        }
+        return $this->_fields[$handle] ?? $this->createField(DefaultField::class);
     }
 
     public function fieldsList()

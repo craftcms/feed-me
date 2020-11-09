@@ -26,7 +26,7 @@ class GetHelp extends Model
     public function attributeLabels()
     {
         return [
-            'fromEmail' => Craft::t('app', 'Your Email'),
+            'fromEmail' => Craft::t('feed-me', 'Your Email'),
         ];
     }
 

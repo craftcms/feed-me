@@ -97,12 +97,8 @@ class Logs extends Component
                         $json['date'] = \DateTime::createFromFormat('Y-m-d H:i:s', $json['date'])->format('Y-m-d H:i:s');
                     }
 
-                    // Backward compatiblity
-                    if (isset($json['key'])) {
-                        $key = $json['key'];
-                    } else {
-                        $key = count($logEntries);
-                    }
+                    // Backward compatibility
+                    $key = $json['key'] ?? count($logEntries);
 
                     if (isset($logEntries[$key])) {
                         $logEntries[$key]['items'][] = $json;
@@ -144,7 +140,7 @@ class Logs extends Component
         $logPath = dirname($this->logFile);
         FileHelper::createDirectory($logPath, $this->dirMode, true);
 
-        if (($fp = @fopen($this->logFile, 'a')) === false) {
+        if (($fp = @fopen($this->logFile, 'ab')) === false) {
             throw new \Exception("Unable to append to log file: {$this->logFile}");
         }
         @flock($fp, LOCK_EX);
@@ -207,7 +203,7 @@ class Logs extends Component
 
     private function clearLogFile($rotateFile)
     {
-        if ($filePointer = @fopen($rotateFile, 'a')) {
+        if ($filePointer = @fopen($rotateFile, 'ab')) {
             @ftruncate($filePointer, 0);
             @fclose($filePointer);
         }

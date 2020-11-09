@@ -11,6 +11,10 @@ use craft\feedme\models\FeedModel;
 use craft\feedme\records\FeedRecord;
 use craft\helpers\Json;
 
+/**
+ *
+ * @property-read mixed $totalFeeds
+ */
 class Feeds extends Component
 {
     // Properties

@@ -45,7 +45,7 @@ class AssetHelper
         $newChunkSize = $chunkSize * (1024 * 1024);
         $bytesCount = 0;
         $handle = fopen($srcName, 'rb');
-        $fp = fopen($dstName, 'w');
+        $fp = fopen($dstName, 'wb');
 
         if ($handle === false) {
             return false;
@@ -80,6 +80,8 @@ class AssetHelper
      * @param null $folderId
      * @param null $newFilename
      * @return array
+     * @throws \yii\base\Exception
+     * @throws \yii\base\Exception
      */
     public static function fetchRemoteImage(array $urls, $fieldInfo, $feed, $field = null, $element = null, $folderId = null, $newFilename = null)
     {
@@ -111,7 +113,7 @@ class AssetHelper
                     $fetchedImage = $cachedImage[0];
                 }
 
-                $result = self::createAsset($fetchedImage, $filename, $folderId, $feed, $field, $element, $conflict);
+                $result = self::createAsset($fetchedImage, $filename, $folderId, $field, $element, $conflict);
 
                 if ($result) {
                     $uploadedAssets[] = $result;
@@ -138,10 +140,13 @@ class AssetHelper
      * @param null $element
      * @param null $folderId
      * @return array
+     * @throws \yii\base\Exception
+     * @throws \yii\base\Exception
      */
     public static function createBase64Image($base64, $fieldInfo, $feed, $field = null, $element = null, $folderId = null)
     {
         $uploadedAssets = [];
+        $fetchedImageWithExtension = '';
 
         $conflict = Hash::get($fieldInfo, 'options.conflict');
 
@@ -168,7 +173,7 @@ class AssetHelper
                 $fetchedImageWithExtension = $tempFeedMePath . $filename;
                 FileHelper::writeToFile($fetchedImageWithExtension, $decodedImage);
 
-                $result = self::createAsset($fetchedImageWithExtension, $filename, $folderId, $feed, $field, $element, $conflict);
+                $result = self::createAsset($fetchedImageWithExtension, $filename, $folderId, $field, $element, $conflict);
 
                 if ($result) {
                     $uploadedAssets[] = $result;
@@ -188,7 +193,6 @@ class AssetHelper
      * @param string $tempFilePath
      * @param string $filename
      * @param int $folderId
-     * @param $feed
      * @param string $field
      * @param string $element
      * @param string $conflict
@@ -200,7 +204,7 @@ class AssetHelper
      * @throws \craft\errors\FileException
      * @throws \yii\base\Exception
      */
-    private static function createAsset($tempFilePath, $filename, $folderId, $feed, $field, $element, $conflict)
+    private static function createAsset($tempFilePath, $filename, $folderId, $field, $element, $conflict)
     {
         $assets = Craft::$app->getAssets();
 

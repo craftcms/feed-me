@@ -12,6 +12,14 @@ use craft\feedme\helpers\AssetHelper;
 use craft\helpers\UrlHelper;
 use craft\records\User as UserRecord;
 
+/**
+ *
+ * @property-read string $mappingTemplate
+ * @property-read bool $groups
+ * @property-write mixed $model
+ * @property-read string $groupsTemplate
+ * @property-read string $columnTemplate
+ */
 class User extends Element
 {
     // Properties

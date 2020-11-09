@@ -40,9 +40,7 @@ class Service extends Component
 
     public function getRequestOptions($feedId = null)
     {
-        $options = $this->getConfig('requestOptions', $feedId);
-
-        return $options;
+        return $this->getConfig('requestOptions', $feedId);
     }
 
     public function formatDateTime($dateTime)

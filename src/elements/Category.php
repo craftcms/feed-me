@@ -8,6 +8,14 @@ use craft\elements\Category as CategoryElement;
 use craft\feedme\base\Element;
 use craft\feedme\Plugin;
 
+/**
+ *
+ * @property-read string $mappingTemplate
+ * @property-read mixed $groups
+ * @property-write mixed $model
+ * @property-read string $groupsTemplate
+ * @property-read string $columnTemplate
+ */
 class Category extends Element
 {
     // Properties

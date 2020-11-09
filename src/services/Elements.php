@@ -20,6 +20,10 @@ use craft\feedme\events\RegisterFeedMeElementsEvent;
 use craft\helpers\Component as ComponentHelper;
 use yii\base\InvalidConfigException;
 
+/**
+ *
+ * @property-read ElementInterface[] $registeredElements
+ */
 class Elements extends Component
 {
     // Constants
@@ -71,10 +75,7 @@ class Elements extends Component
      */
     public function getRegisteredElement($handle)
     {
-        if (isset($this->_elements[$handle])) {
-            return $this->_elements[$handle];
-        }
-        return null;
+        return $this->_elements[$handle] ?? null;
     }
 
     public function elementsList()
@@ -120,7 +121,7 @@ class Elements extends Component
 
     /**
      * @param $config
-     * @return ElementInterface
+     * @return \craft\base\ComponentInterface|ElementInterface
      * @throws MissingComponentException
      * @throws InvalidConfigException
      */

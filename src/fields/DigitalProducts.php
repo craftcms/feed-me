@@ -9,6 +9,10 @@ use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\Plugin;
 
+/**
+ *
+ * @property-read string $mappingTemplate
+ */
 class DigitalProducts extends Field implements FieldInterface
 {
     // Properties

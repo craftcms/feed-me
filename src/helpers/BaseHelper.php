@@ -21,56 +21,56 @@ class BaseHelper
         }
 
         // Also check for translated values of boolean-like terms
-        if (strtolower($value) === Craft::t('app', 'yes')) {
+        if (strtolower($value) === Craft::t('feed-me', 'yes')) {
             $result = true;
         }
 
-        if (strtolower($value) === Craft::t('app', 'on')) {
+        if (strtolower($value) === Craft::t('feed-me', 'on')) {
             $result = true;
         }
 
-        if (strtolower($value) === Craft::t('app', 'open')) {
+        if (strtolower($value) === Craft::t('feed-me', 'open')) {
             $result = true;
         }
 
-        if (strtolower($value) === Craft::t('app', 'enabled')) {
+        if (strtolower($value) === Craft::t('feed-me', 'enabled')) {
             $result = true;
         }
 
-        if (strtolower($value) === Craft::t('app', 'live')) {
+        if (strtolower($value) === Craft::t('feed-me', 'live')) {
             $result = true;
         }
 
-        if (strtolower($value) === Craft::t('app', 'active')) {
+        if (strtolower($value) === Craft::t('feed-me', 'active')) {
             $result = true;
         }
 
-        if (strtolower($value) === Craft::t('app', 'y')) {
+        if (strtolower($value) === Craft::t('feed-me', 'y')) {
             $result = true;
         }
 
 
-        if (strtolower($value) === Craft::t('app', 'no')) {
+        if (strtolower($value) === Craft::t('feed-me', 'no')) {
             $result = false;
         }
 
-        if (strtolower($value) === Craft::t('app', 'off')) {
+        if (strtolower($value) === Craft::t('feed-me', 'off')) {
             $result = false;
         }
 
-        if (strtolower($value) === Craft::t('app', 'closed')) {
+        if (strtolower($value) === Craft::t('feed-me', 'closed')) {
             $result = false;
         }
 
-        if (strtolower($value) === Craft::t('app', 'disabled')) {
+        if (strtolower($value) === Craft::t('feed-me', 'disabled')) {
             $result = false;
         }
 
-        if (strtolower($value) === Craft::t('app', 'inactive')) {
+        if (strtolower($value) === Craft::t('feed-me', 'inactive')) {
             $result = false;
         }
 
-        if (strtolower($value) === Craft::t('app', 'n')) {
+        if (strtolower($value) === Craft::t('feed-me', 'n')) {
             $result = false;
         }
 
@@ -104,15 +104,25 @@ class BaseHelper
     {
         if (strpos($userAgent, 'Opera') || strpos($userAgent, 'OPR/')) {
             return 'Opera';
-        } else if (strpos($userAgent, 'Edge')) {
+        }
+
+        if (strpos($userAgent, 'Edge')) {
             return 'Edge';
-        } else if (strpos($userAgent, 'Chrome')) {
+        }
+
+        if (strpos($userAgent, 'Chrome')) {
             return 'Chrome';
-        } else if (strpos($userAgent, 'Safari')) {
+        }
+
+        if (strpos($userAgent, 'Safari')) {
             return 'Safari';
-        } else if (strpos($userAgent, 'Firefox')) {
+        }
+
+        if (strpos($userAgent, 'Firefox')) {
             return 'Firefox';
-        } else if (strpos($userAgent, 'MSIE') || strpos($userAgent, 'Trident/7')) {
+        }
+
+        if (strpos($userAgent, 'MSIE') || strpos($userAgent, 'Trident/7')) {
             return 'Internet Explorer';
         }
 

@@ -29,6 +29,9 @@ use yii\base\Event;
  * @property-read Fields $fields
  * @property-read Logs $logs
  * @property-read Process $process
+ * @property-read void $settingsResponse
+ * @property-read mixed $pluginName
+ * @property-read mixed $cpNavItem
  * @property-read Service $service
  */
 class Plugin extends \craft\base\Plugin

@@ -8,6 +8,14 @@ use craft\digitalproducts\elements\Product as ProductElement;
 use craft\digitalproducts\Plugin as DigitalProducts;
 use craft\feedme\base\Element;
 
+/**
+ *
+ * @property-read string $mappingTemplate
+ * @property-read mixed $groups
+ * @property-write mixed $model
+ * @property-read string $groupsTemplate
+ * @property-read string $columnTemplate
+ */
 class DigitalProduct extends Element
 {
     // Properties

@@ -8,11 +8,13 @@ use craft\feedme\base\Element;
 use craft\feedme\base\ElementInterface;
 use craft\feedme\helpers\DuplicateHelper;
 use craft\feedme\Plugin;
-use craft\helpers\UrlHelper;
 
 /**
  * Class FeedModel
  *
+ * @property-read mixed $duplicateHandleFriendly
+ * @property-read mixed $dataType
+ * @property-read bool $nextPagination
  * @property-read ElementInterface|Element|null $element
  */
 class FeedModel extends Model
@@ -59,7 +61,7 @@ class FeedModel extends Model
 
     public function getDuplicateHandleFriendly()
     {
-        return DuplicateHelper::getFrieldly($this->duplicateHandle);
+        return DuplicateHelper::getFriendly($this->duplicateHandle);
     }
 
     public function getDataType()

@@ -16,6 +16,12 @@ use craft\feedme\models\FeedModel;
 use craft\helpers\Db;
 use craft\helpers\StringHelper;
 
+/**
+ *
+ * @property-read mixed $name
+ * @property-read mixed $elementClass
+ * @property-read mixed $class
+ */
 abstract class Element extends Component implements ElementInterface
 {
     // Constants

@@ -98,9 +98,9 @@ class FeedsController extends Controller
             $view = $this->getView();
             $view->setTemplateMode($view::TEMPLATE_MODE_CP);
             return $this->renderTemplate('feed-me/feeds/_direct', $variables);
-        } else {
-            return $this->redirect($return);
         }
+
+        return $this->redirect($return);
     }
 
     public function actionStatusFeed($feedId = null)
@@ -293,7 +293,7 @@ class FeedsController extends Controller
         Craft::$app->getSession()->setNotice(Craft::t('feed-me', 'Feed saved.'));
 
         if ($withId) {
-            $redirect = $redirect . $feed->id;
+            $redirect .= $feed->id;
         }
 
         return $this->redirect($redirect);

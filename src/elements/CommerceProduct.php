@@ -16,6 +16,14 @@ use craft\feedme\Plugin;
 use craft\feedme\services\Process;
 use yii\base\Event;
 
+/**
+ *
+ * @property-read string $mappingTemplate
+ * @property-read mixed $groups
+ * @property-write mixed $model
+ * @property-read string $groupsTemplate
+ * @property-read string $columnTemplate
+ */
 class CommerceProduct extends Element
 {
     // Properties
@@ -164,12 +172,12 @@ class CommerceProduct extends Element
 
                 // Because we're trying to find the parent product from a child variant, we just need to get the first
                 // match - then we've got an SKU for a variant that belongs to the product we want.
-                foreach ($feedData as $nodePath => $value) {
+                foreach ($feedData as $nodePath => $innerValue) {
                     $feedPath = preg_replace('/(\/\d+\/)/', '/', $nodePath);
                     $feedPath = preg_replace('/^(\d+\/)|(\/\d+)/', '', $feedPath);
 
                     if ($feedPath === $node) {
-                        $sku = $value;
+                        $sku = $innerValue;
                         break;
                     }
                 }
@@ -187,8 +195,7 @@ class CommerceProduct extends Element
                 $contentData['id'] = $variant->productId ?? 0;
 
                 // Cleanup
-                unset($feed['fieldUnique'][$handle]);
-                unset($contentData[$handle]);
+                unset($feed['fieldUnique'][$handle], $contentData[$handle]);
             }
         }
 
@@ -227,7 +234,7 @@ class CommerceProduct extends Element
         $variantFieldsByNode = [];
 
         foreach (Hash::flatten($variantMapping) as $key => $value) {
-            if (strstr($key, 'node') && $value !== 'noimport' && $value !== 'usedefault') {
+            if (strpos($key, 'node') !== false && $value !== 'noimport' && $value !== 'usedefault') {
                 $variantFieldsByNode[] = $value;
             }
         }
@@ -240,7 +247,7 @@ class CommerceProduct extends Element
                 $feedPath = preg_replace('/(\/\d+\/)/', '/', $nodePath);
                 $feedPath = preg_replace('/^(\d+\/)|(\/\d+)/', '', $feedPath);
 
-                if (!in_array($feedPath, $variantFieldsByNode)) {
+                if (!in_array($feedPath, $variantFieldsByNode, true)) {
                     continue;
                 }
 
@@ -321,11 +328,9 @@ class CommerceProduct extends Element
                 $alteredData = [];
 
                 foreach (Hash::flatten($fieldInfo) as $key => $value) {
-                    $key = str_replace($variantNodePathKey . $variantNumber . '/', '', $key);
-                    $key = str_replace($variantNodePathKey, '', $key);
+                    $key = str_replace([$variantNodePathKey . $variantNumber . '/', $variantNodePathKey], '', $key);
 
-                    $value = str_replace($variantNodePathKey . $variantNumber . '/', '', $value);
-                    $value = str_replace($variantNodePathKey, '', $value);
+                    $value = str_replace([$variantNodePathKey . $variantNumber . '/', $variantNodePathKey], '', $value);
 
                     $alteredData[$key] = $value;
                 }

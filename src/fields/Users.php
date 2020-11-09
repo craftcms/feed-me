@@ -11,6 +11,10 @@ use craft\feedme\base\FieldInterface;
 use craft\feedme\Plugin;
 use craft\helpers\Db;
 
+/**
+ *
+ * @property-read string $mappingTemplate
+ */
 class Users extends Field implements FieldInterface
 {
     // Properties
@@ -101,10 +105,8 @@ class Users extends Field implements FieldInterface
             Plugin::info('Found `{i}` existing users: `{j}`', ['i' => count($foundElements), 'j' => json_encode($foundElements)]);
 
             // Check if we should create the element. But only if email is provided (for the moment)
-            if (count($ids) == 0) {
-                if ($create && $match === 'email') {
-                    $foundElements[] = $this->_createElement($dataValue, $groupIds);
-                }
+            if ((count($ids) == 0) && $create && $match === 'email') {
+                $foundElements[] = $this->_createElement($dataValue, $groupIds);
             }
         }
 
@@ -113,7 +115,7 @@ class Users extends Field implements FieldInterface
             $foundElements = array_chunk($foundElements, $limit)[0];
         }
 
-        // Check for any sub-fields for the lement
+        // Check for any sub-fields for the element
         if ($fields) {
             $this->populateElementFields($foundElements);
         }

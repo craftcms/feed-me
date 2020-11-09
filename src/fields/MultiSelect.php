@@ -6,6 +6,10 @@ use Cake\Utility\Hash;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 
+/**
+ *
+ * @property-read string $mappingTemplate
+ */
 class MultiSelect extends Field implements FieldInterface
 {
     // Properties

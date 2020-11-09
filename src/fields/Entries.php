@@ -11,6 +11,10 @@ use craft\feedme\base\FieldInterface;
 use craft\feedme\Plugin;
 use craft\helpers\Db;
 
+/**
+ *
+ * @property-read string $mappingTemplate
+ */
 class Entries extends Field implements FieldInterface
 {
     // Properties
@@ -122,10 +126,8 @@ class Entries extends Field implements FieldInterface
             Plugin::info('Found `{i}` existing entries: `{j}`', ['i' => count($foundElements), 'j' => json_encode($foundElements)]);
 
             // Check if we should create the element. But only if title is provided (for the moment)
-            if (count($ids) == 0) {
-                if ($create && $match === 'title') {
-                    $foundElements[] = $this->_createElement($dataValue, $sectionIds);
-                }
+            if ((count($ids) == 0) && $create && $match === 'title') {
+                $foundElements[] = $this->_createElement($dataValue);
             }
         }
 
@@ -134,7 +136,7 @@ class Entries extends Field implements FieldInterface
             $foundElements = array_chunk($foundElements, $limit)[0];
         }
 
-        // Check for any sub-fields for the lement
+        // Check for any sub-fields for the element
         if ($fields) {
             $this->populateElementFields($foundElements);
         }
@@ -153,7 +155,7 @@ class Entries extends Field implements FieldInterface
     // Private Methods
     // =========================================================================
 
-    private function _createElement($dataValue, $sources)
+    private function _createElement($dataValue)
     {
         $sectionId = Hash::get($this->fieldInfo, 'options.group.sectionId');
         $typeId = Hash::get($this->fieldInfo, 'options.group.typeId');

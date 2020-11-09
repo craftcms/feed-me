@@ -7,6 +7,10 @@ use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\Plugin;
 
+/**
+ *
+ * @property-read string $mappingTemplate
+ */
 class Matrix extends Field implements FieldInterface
 {
     // Properties
@@ -59,7 +63,7 @@ class Matrix extends Field implements FieldInterface
 
                 if (!is_numeric($blockIndex)) {
                     // Try to check if its only one-level deep (only importing one block type)
-                    // which is particuarly common for JSON.
+                    // which is particularly common for JSON.
                     $blockIndex = Hash::get($nodePathSegments, 2);
 
                     if (!is_numeric($blockIndex)) {
@@ -87,12 +91,8 @@ class Matrix extends Field implements FieldInterface
                 $parsedValue = $this->_parseSubField($this->feedData, $subFieldHandle, $subFieldInfo);
 
                 // Finish up with the content, also sort out cases where there's array content
-                if (isset($fieldData[$key])) {
-                    if (is_array($fieldData[$key])) {
-                        $fieldData[$key] = array_merge_recursive($fieldData[$key], $parsedValue);
-                    } else {
-                        $fieldData[$key] = $parsedValue;
-                    }
+                if (isset($fieldData[$key]) && is_array($fieldData[$key])) {
+                    $fieldData[$key] = array_merge_recursive($fieldData[$key], $parsedValue);
                 } else {
                     $fieldData[$key] = $parsedValue;
                 }
@@ -134,7 +134,7 @@ class Matrix extends Field implements FieldInterface
             $disabled = Hash::get($this->fieldInfo, 'blocks.' . $blockHandle . '.disabled', false);
             $collapsed = Hash::get($this->fieldInfo, 'blocks.' . $blockHandle . '.collapsed', false);
 
-            // Prepare an array thats ready for Matrix to import it
+            // Prepare an array that's ready for Matrix to import it
             $preppedData[$blockIndex . '.type'] = $blockHandle;
             // $preppedData[$blockIndex . '.order'] = $order;
             $preppedData[$blockIndex . '.enabled'] = !$disabled;
@@ -207,8 +207,6 @@ class Matrix extends Field implements FieldInterface
         $class->feed = $this->feed;
 
         // Get our content, parsed by this fields service function
-        $parsedValue = $class->parseField();
-
-        return $parsedValue;
+        return $class->parseField();
     }
 }

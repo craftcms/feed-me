@@ -8,6 +8,10 @@ use craft\feedme\Plugin;
 use craft\queue\BaseJob;
 use yii\queue\RetryableJobInterface;
 
+/**
+ *
+ * @property-read mixed $ttr
+ */
 class FeedImport extends BaseJob implements RetryableJobInterface
 {
     // Properties
@@ -85,7 +89,7 @@ class FeedImport extends BaseJob implements RetryableJobInterface
 
             // Check if we need to paginate the feed to run again
             if ($this->feed->getNextPagination()) {
-                Craft::$app->getQueue()->delay(0)->push(new FeedImport([
+                Craft::$app->getQueue()->delay(0)->push(new self([
                     'feed' => $this->feed,
                     'limit' => $this->limit,
                     'offset' => $this->offset,

@@ -6,6 +6,11 @@ use Cake\Utility\Hash;
 use craft\base\Component;
 use craft\helpers\UrlHelper;
 
+/**
+ *
+ * @property-read mixed $name
+ * @property-read mixed $class
+ */
 abstract class DataType extends Component
 {
     // Public

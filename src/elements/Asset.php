@@ -15,13 +15,21 @@ use craft\helpers\UrlHelper;
 use craft\models\VolumeFolder;
 use yii\base\Event;
 
+/**
+ *
+ * @property-read string $mappingTemplate
+ * @property-read mixed $groups
+ * @property-write mixed $model
+ * @property-read string $groupsTemplate
+ * @property-read string $columnTemplate
+ */
 class Asset extends Element
 {
     // Properties
     // =========================================================================
 
     public static $name = 'Asset';
-    public static $class = 'craft\elements\Asset';
+    public static $class = AssetElement::class;
 
     public $element;
 
@@ -210,7 +218,9 @@ class Asset extends Element
 
         if ($folder) {
             return $folder->id;
-        } else if ($create) {
+        }
+
+        if ($create) {
             $lastCreatedFolder = null;
 
             // Process all folders (create them)

@@ -11,6 +11,14 @@ use craft\feedme\Plugin;
 use verbb\comments\Comments;
 use verbb\comments\elements\Comment as CommentElement;
 
+/**
+ *
+ * @property-read string $mappingTemplate
+ * @property-read array $groups
+ * @property-write mixed $model
+ * @property-read string $groupsTemplate
+ * @property-read string $columnTemplate
+ */
 class Comment extends Element
 {
     // Properties

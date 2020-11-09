@@ -38,7 +38,7 @@ class DateHelper
             $date = null;
 
             // Because US-based dates can be unpredictable, we need to be able to handle them
-            // Typically Carbon will see dates formatted with slashes are American, but thats often not the case
+            // Typically Carbon will see dates formatted with slashes are American, but that's often not the case
             if ($formatting === 'auto') {
                 $date = Carbon::parse($value);
             } elseif ($formatting === 'milliseconds') {

@@ -7,6 +7,14 @@ use Craft;
 use craft\elements\Tag as TagElement;
 use craft\feedme\base\Element;
 
+/**
+ *
+ * @property-read string $mappingTemplate
+ * @property-read mixed $groups
+ * @property-write mixed $model
+ * @property-read string $groupsTemplate
+ * @property-read string $columnTemplate
+ */
 class Tag extends Element
 {
     // Properties
