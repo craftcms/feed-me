@@ -214,8 +214,8 @@ class AssetHelper
         $asset = new AssetElement();
         $asset->tempFilePath = $tempFilePath;
         $asset->filename = $filename;
+        $asset->newFolderId = $folder->id;
         $asset->volumeId = $folder->volumeId;
-        $asset->folderId = $asset->newFolderId = $folder->id;
         $asset->avoidFilenameConflicts = true;
         $asset->setScenario(AssetElement::SCENARIO_CREATE);
 
