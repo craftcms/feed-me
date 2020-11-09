@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.3.1 - 2020-11-09
+
+### Fixed
+- Fixed a bug where feeds’ import strategy settings would get reset to the default values when editing existing feeds. ([#769](https://github.com/craftcms/feed-me/issues/769))
+- Fixed a bug where assets with uppercase file extensions wouldn’t import on case-sensitive file systems. ([#691](https://github.com/craftcms/feed-me/issues/691))
+- Fixed a bug that broke asset importing in 4.3.0.
+
 ## 4.3.0 - 2020-11-06
 
 ### Added

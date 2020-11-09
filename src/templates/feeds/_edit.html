@@ -132,7 +132,8 @@
         label: 'Create new elements'|t('feed-me'),
         instructions: 'Adds new elements if they do not already exist.'|t('feed-me'),
         value: 'add',
-        checked: 'add' in (feed.duplicateHandle ?? ['add'])
+        checked: not feed.singleton and 'add' in (feed.duplicateHandle ?? ['add']),
+        disabled: feed.singleton,
     }) }}
 
     {{ forms.checkboxField({
@@ -141,7 +142,8 @@
         label: 'Update existing elements'|t('feed-me'),
         instructions: 'Updates elements that match the Unique Identifier (next step).'|t('feed-me'),
         value: 'update',
-        checked: 'update' in (feed.duplicateHandle ?? [])
+        checked: feed.singleton or 'update' in (feed.duplicateHandle ?? []),
+        disabled: feed.singleton,
     }) }}
 
     {{ forms.checkboxField({
@@ -154,7 +156,8 @@
         ? 'Disables any elements that are missing from the feed, across all sites.'|t('feed-me')
         : 'Disables any elements that are missing from the feed.'|t('feed-me'),
         value: 'disable',
-        checked: 'disable' in (feed.duplicateHandle ?? [])
+        checked: not feed.singleton and 'disable' in (feed.duplicateHandle ?? []),
+        disabled: feed.singleton,
     }) }}
 
     {% if craft.app.isMultiSite %}
@@ -164,7 +167,8 @@
             label: 'Disable missing elements in the target site'|t('feed-me'),
             instructions: 'Disables any elements that are missing from the feed, in the feed’s target site only.'|t('feed-me'),
             value: 'disableForSite',
-            checked: 'disableForSite' in (feed.duplicateHandle ?? [])
+            checked: not feed.singleton and 'disableForSite' in (feed.duplicateHandle ?? []),
+            disabled: feed.singleton,
         }) }}
     {% endif %}
 
@@ -174,7 +178,8 @@
         label: 'Delete missing elements'|t('feed-me'),
         instructions: 'Deletes any elements that are missing from the feed. Be careful.'|t('feed-me'),
         value: 'delete',
-        checked: 'delete' in (feed.duplicateHandle ?? [])
+        checked: not feed.singleton and 'delete' in (feed.duplicateHandle ?? []),
+        disabled: feed.singleton,
     }) }}
 
     <hr>

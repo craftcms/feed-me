@@ -8,6 +8,7 @@ use craft\elements\Asset as AssetElement;
 use craft\feedme\Plugin;
 use craft\helpers\Assets as AssetsHelper;
 use craft\helpers\FileHelper;
+use craft\helpers\StringHelper;
 use craft\helpers\UrlHelper;
 use Mimey\MimeTypes;
 
@@ -213,8 +214,8 @@ class AssetHelper
         $asset = new AssetElement();
         $asset->tempFilePath = $tempFilePath;
         $asset->filename = $filename;
+        $asset->newFolderId = $folder->id;
         $asset->volumeId = $folder->volumeId;
-        $asset->folderId = $asset->newFolderId = $folder->id;
         $asset->avoidFilenameConflicts = true;
         $asset->setScenario(AssetElement::SCENARIO_CREATE);
 
@@ -312,10 +313,10 @@ class AssetHelper
         $extension = UrlHelper::stripQueryString($url);
 
         // Can we easily get the extension for this URL?
-        $extension = pathinfo($extension, PATHINFO_EXTENSION);
+        $extension = StringHelper::toLowerCase(pathinfo($extension, PATHINFO_EXTENSION));
 
         // We might now have a perfectly acceptable extension, but is it real and allowed by Craft?
-        if (!in_array($extension, Craft::$app->getConfig()->getGeneral()->allowedFileExtensions)) {
+        if (!in_array($extension, Craft::$app->getConfig()->getGeneral()->allowedFileExtensions, true)) {
             $extension = '';
         }
 
@@ -347,6 +348,6 @@ class AssetHelper
             }
         }
 
-        return $extension;
+        return StringHelper::toLowerCase($extension);
     }
 }
