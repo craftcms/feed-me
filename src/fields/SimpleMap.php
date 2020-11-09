@@ -19,22 +19,33 @@ class SimpleMap extends Field implements FieldInterface
     // Properties
     // =========================================================================
 
+    /**
+     * @var string
+     */
     public static $name = 'SimpleMap';
-    public static $class = 'ether\simplemap\fields\MapField';
 
+    /**
+     * @var string
+     */
+    public static $class = 'ether\simplemap\fields\MapField';
 
     // Templates
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getMappingTemplate()
     {
         return 'feed-me/_includes/fields/simple-map';
     }
 
-
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function parseField()
     {
         $preppedData = [];
@@ -88,6 +99,11 @@ class SimpleMap extends Field implements FieldInterface
     // Private Methods
     // =========================================================================
 
+    /**
+     * @param $lat
+     * @param $lng
+     * @return mixed|null
+     */
     private function _getAddressFromLatLng($lat, $lng)
     {
         $apiKey = SimpleMapPlugin::getInstance()->getSettings()->geoToken;
@@ -113,5 +129,4 @@ class SimpleMap extends Field implements FieldInterface
 
         return $resp['results'][0];
     }
-
 }

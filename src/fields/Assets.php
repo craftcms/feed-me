@@ -24,23 +24,39 @@ class Assets extends Field implements FieldInterface
     // Properties
     // =========================================================================
 
+    /**
+     * @var string
+     */
     public static $name = 'Assets';
+
+    /**
+     * @var string
+     */
     public static $class = 'craft\fields\Assets';
+
+    /**
+     * @var string
+     */
     public static $elementType = 'craft\elements\Asset';
 
 
     // Templates
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getMappingTemplate()
     {
         return 'feed-me/_includes/fields/assets';
     }
 
-
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function parseField()
     {
         $value = $this->fetchArrayValue();
@@ -188,5 +204,4 @@ class Assets extends Field implements FieldInterface
 
         return $foundElements;
     }
-
 }

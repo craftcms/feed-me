@@ -20,23 +20,39 @@ class Tags extends Field implements FieldInterface
     // Properties
     // =========================================================================
 
+    /**
+     * @var string
+     */
     public static $name = 'Tags';
+
+    /**
+     * @var string
+     */
     public static $class = 'craft\fields\Tags';
+
+    /**
+     * @var string
+     */
     public static $elementType = 'craft\elements\Tag';
 
 
     // Templates
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getMappingTemplate()
     {
         return 'feed-me/_includes/fields/tags';
     }
 
-
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function parseField()
     {
         $value = $this->fetchArrayValue();
@@ -140,6 +156,14 @@ class Tags extends Field implements FieldInterface
     // Private Methods
     // =========================================================================
 
+    /**
+     * @param $dataValue
+     * @param $groupId
+     * @return int|null
+     * @throws \Throwable
+     * @throws \craft\errors\ElementNotFoundException
+     * @throws \yii\base\Exception
+     */
     private function _createElement($dataValue, $groupId)
     {
         $element = new TagElement();
@@ -162,5 +186,4 @@ class Tags extends Field implements FieldInterface
 
         return $element->id;
     }
-
 }

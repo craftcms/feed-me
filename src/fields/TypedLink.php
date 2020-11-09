@@ -16,22 +16,33 @@ class TypedLink extends Field implements FieldInterface
     // Properties
     // =========================================================================
 
+    /**
+     * @var string
+     */
     public static $name = 'TypedLink';
-    public static $class = 'typedlinkfield\fields\LinkField';
 
+    /**
+     * @var string
+     */
+    public static $class = 'typedlinkfield\fields\LinkField';
 
     // Templates
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getMappingTemplate()
     {
         return 'feed-me/_includes/fields/typed-link';
     }
 
-
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function parseField()
     {
         $preppedData = [];
@@ -53,5 +64,4 @@ class TypedLink extends Field implements FieldInterface
 
         return $preppedData;
     }
-
 }

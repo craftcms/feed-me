@@ -11,6 +11,10 @@ class BaseHelper
     // Public Methods
     // =========================================================================
 
+    /**
+     * @param $value
+     * @return bool|mixed|void
+     */
     public static function parseBoolean($value)
     {
         $result = filter_var($value, FILTER_VALIDATE_BOOLEAN);
@@ -77,6 +81,10 @@ class BaseHelper
         return $result;
     }
 
+    /**
+     * @param $value
+     * @return ColorData|string|null
+     */
     public static function parseColor($value)
     {
         if ($value instanceof ColorData) {
@@ -100,6 +108,10 @@ class BaseHelper
         return ColorValidator::normalizeColor($value);
     }
 
+    /**
+     * @param $userAgent
+     * @return string
+     */
     public static function getBrowserName($userAgent)
     {
         if (strpos($userAgent, 'Opera') || strpos($userAgent, 'OPR/')) {

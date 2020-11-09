@@ -44,6 +44,9 @@ class Elements extends Component
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function init()
     {
         parent::init();
@@ -78,6 +81,9 @@ class Elements extends Component
         return $this->_elements[$handle] ?? null;
     }
 
+    /**
+     * @return array
+     */
     public function elementsList()
     {
         $list = [];
@@ -89,6 +95,9 @@ class Elements extends Component
         return $list;
     }
 
+    /**
+     * @return array|ElementInterface[]
+     */
     public function getRegisteredElements()
     {
         if (count($this->_elements)) {
@@ -121,9 +130,9 @@ class Elements extends Component
 
     /**
      * @param $config
-     * @return \craft\base\ComponentInterface|ElementInterface
-     * @throws MissingComponentException
+     * @return \craft\base\ComponentInterface
      * @throws InvalidConfigException
+     * @throws MissingComponentException
      */
     public function createElement($config)
     {

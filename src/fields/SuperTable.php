@@ -16,22 +16,33 @@ class SuperTable extends Field implements FieldInterface
     // Properties
     // =========================================================================
 
+    /**
+     * @var string
+     */
     public static $name = 'SuperTable';
-    public static $class = 'verbb\supertable\fields\SuperTableField';
 
+    /**
+     * @var string
+     */
+    public static $class = 'verbb\supertable\fields\SuperTableField';
 
     // Templates
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getMappingTemplate()
     {
         return 'feed-me/_includes/fields/super-table';
     }
 
-
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function parseField()
     {
         $preppedData = [];
@@ -141,10 +152,14 @@ class SuperTable extends Field implements FieldInterface
         return $preppedData;
     }
 
-
     // Private Methods
     // =========================================================================
 
+    /**
+     * @param $nodePath
+     * @param $fields
+     * @return array
+     */
     private function _getFieldMappingInfoForNodePath($nodePath, $fields)
     {
         $feedPath = preg_replace('/(\/\d+\/)/', '/', $nodePath);
@@ -179,6 +194,12 @@ class SuperTable extends Field implements FieldInterface
         }
     }
 
+    /**
+     * @param $feedData
+     * @param $subFieldHandle
+     * @param $subFieldInfo
+     * @return mixed
+     */
     private function _parseSubField($feedData, $subFieldHandle, $subFieldInfo)
     {
         $subFieldClassHandle = Hash::get($subFieldInfo, 'field');

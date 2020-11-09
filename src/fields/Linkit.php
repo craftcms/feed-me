@@ -16,22 +16,34 @@ class Linkit extends Field implements FieldInterface
     // Properties
     // =========================================================================
 
+    /**
+     * @var string
+     */
     public static $name = 'Linkit';
+
+    /**
+     * @var string
+     */
     public static $class = 'fruitstudios\linkit\fields\LinkitField';
 
 
     // Templates
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getMappingTemplate()
     {
         return 'feed-me/_includes/fields/linkit';
     }
 
-
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function parseField()
     {
         $preppedData = [];
@@ -67,5 +79,4 @@ class Linkit extends Field implements FieldInterface
 
         return $preppedData;
     }
-
 }

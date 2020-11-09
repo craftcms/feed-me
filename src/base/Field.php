@@ -20,32 +20,67 @@ abstract class Field extends Component
     // Properties
     // =========================================================================
 
+    /**
+     * @var
+     */
     public $feedData;
+
+    /**
+     * @var
+     */
     public $fieldHandle;
+
+    /**
+     * @var
+     */
     public $fieldInfo;
+
+    /**
+     * @var
+     */
     public $field;
+
+    /**
+     * @var
+     */
     public $feed;
+
+    /**
+     * @var
+     */
     public $element;
 
 
     // Public Methods
     // =========================================================================
 
+    /**
+     * @return mixed
+     */
     public function getName()
     {
         return $this::$name;
     }
 
+    /**
+     * @return false|string
+     */
     public function getClass()
     {
         return get_class($this);
     }
 
+    /**
+     * @return mixed
+     */
     public function getFieldClass()
     {
         return $this::$class;
     }
 
+    /**
+     * @return mixed
+     */
     public function getElementType()
     {
         return $this::$elementType;
@@ -64,16 +99,25 @@ abstract class Field extends Component
     // Public Methods
     // =========================================================================
 
+    /**
+     * @return array|\ArrayAccess|mixed|string|null
+     */
     public function fetchSimpleValue()
     {
         return DataHelper::fetchSimpleValue($this->feedData, $this->fieldInfo);
     }
 
+    /**
+     * @return array|\ArrayAccess|mixed
+     */
     public function fetchArrayValue()
     {
         return DataHelper::fetchArrayValue($this->feedData, $this->fieldInfo);
     }
 
+    /**
+     * @return array|\ArrayAccess|mixed|null
+     */
     public function fetchValue()
     {
         return DataHelper::fetchValue($this->feedData, $this->fieldInfo);
@@ -82,6 +126,12 @@ abstract class Field extends Component
     // Protected Methods
     // =========================================================================
 
+    /**
+     * @param $elementIds
+     * @throws \Throwable
+     * @throws \craft\errors\ElementNotFoundException
+     * @throws \yii\base\Exception
+     */
     protected function populateElementFields($elementIds)
     {
         $elementsService = Craft::$app->getElements();

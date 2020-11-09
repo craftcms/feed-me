@@ -31,11 +31,16 @@ class Process extends Component
     // Properties
     // =========================================================================
 
+    /**
+     * @var
+     */
     private $_time_start;
+
     /**
      * @var ElementInterface
      */
     private $_service;
+
     /**
      * @var array
      */
@@ -48,7 +53,6 @@ class Process extends Component
     /**
      * @param FeedModel $feed
      * @param array $feedData
-     * @return array|void
      * @return array|void
      * @throws \Exception
      */
@@ -158,6 +162,13 @@ class Process extends Component
         return $return;
     }
 
+    /**
+     * @param $step
+     * @param $feed
+     * @param $processedElementIds
+     * @return mixed|void
+     * @throws \Exception
+     */
     public function processFeed($step, $feed, &$processedElementIds)
     {
         $attributeData = [];
@@ -391,7 +402,6 @@ class Process extends Component
         // We need to keep these separate to apply to the element but required when matching against existing elements
         $contentData = $attributeData + $fieldData;
 
-
         //
         // It's time to actually save the element!
         //
@@ -482,9 +492,9 @@ class Process extends Component
     }
 
     /**
-     * @param array $settings
-     * @param FeedModel $feed
-     * @param int[] $processedElementIds
+     * @param $settings
+     * @param $feed
+     * @param $processedElementIds
      */
     public function afterProcessFeed($settings, $feed, $processedElementIds)
     {
@@ -535,7 +545,7 @@ class Process extends Component
     }
 
     /**
-     * @param FeedModel $feed
+     * @param $feed
      * @param $limit
      * @param $offset
      * @param $processedElementIds
@@ -580,6 +590,11 @@ class Process extends Component
     // Private Methods
     // =========================================================================
 
+    /**
+     * @param $feed
+     * @throws \craft\errors\ShellCommandException
+     * @throws \yii\base\Exception
+     */
     private function _backupBeforeFeed($feed)
     {
         $logKey = StringHelper::randomString(20);
@@ -625,9 +640,14 @@ class Process extends Component
         Plugin::info('Finished database backup successfully.', [], ['key' => $logKey]);
     }
 
-    // Function to weed out fields that are set to 'noimport'. More complex than usual by the fact
-    // that complex fields (Table, Matrix) have multiple fields, some of which aren't mapped. This is why all nested fields
-    // should be templated through the 'fields' index, and this function will take care of things from there.
+    /**
+     * Function to weed out fields that are set to 'noimport'. More complex than usual by the fact
+     * that complex fields (Table, Matrix) have multiple fields, some of which aren't mapped. This is why all nested fields
+     * should be templated through the 'fields' index, and this function will take care of things from there.
+     *
+     * @param $fields
+     * @return array
+     */
     private function _filterUnmappedFields($fields)
     {
         if (!is_array($fields)) {

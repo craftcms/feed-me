@@ -14,22 +14,33 @@ class DefaultField extends Field implements FieldInterface
     // Properties
     // =========================================================================
 
+    /**
+     * @var string
+     */
     public static $name = 'Default';
-    public static $class = 'craft\fields\Default';
 
+    /**
+     * @var string
+     */
+    public static $class = 'craft\fields\Default';
 
     // Templates
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getMappingTemplate()
     {
         return 'feed-me/_includes/fields/default';
     }
 
-
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function parseField()
     {
         $value = $this->fetchValue();

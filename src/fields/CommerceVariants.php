@@ -18,23 +18,38 @@ class CommerceVariants extends Field implements FieldInterface
     // Properties
     // =========================================================================
 
+    /**
+     * @var string
+     */
     public static $name = 'CommerceVariants';
-    public static $class = 'craft\commerce\fields\Variants';
-    public static $elementType = 'craft\commerce\elements\Variant';
 
+    /**
+     * @var string
+     */
+    public static $class = 'craft\commerce\fields\Variants';
+
+    /**
+     * @var string
+     */
+    public static $elementType = 'craft\commerce\elements\Variant';
 
     // Templates
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getMappingTemplate()
     {
         return 'feed-me/_includes/fields/commerce_variants';
     }
 
-
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function parseField()
     {
         $value = $this->fetchArrayValue();
@@ -128,5 +143,4 @@ class CommerceVariants extends Field implements FieldInterface
 
         return $foundElements;
     }
-
 }

@@ -15,22 +15,33 @@ class MultiSelect extends Field implements FieldInterface
     // Properties
     // =========================================================================
 
+    /**
+     * @var string
+     */
     public static $name = 'MultiSelect';
-    public static $class = 'craft\fields\MultiSelect';
 
+    /**
+     * @var string
+     */
+    public static $class = 'craft\fields\MultiSelect';
 
     // Templates
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getMappingTemplate()
     {
         return 'feed-me/_includes/fields/option-select';
     }
 
-
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function parseField()
     {
         $value = $this->fetchArrayValue();
@@ -50,5 +61,4 @@ class MultiSelect extends Field implements FieldInterface
 
         return $preppedData;
     }
-
 }

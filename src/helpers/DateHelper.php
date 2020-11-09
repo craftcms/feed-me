@@ -12,6 +12,12 @@ class DateHelper
     // Public Methods
     // =========================================================================
 
+    /**
+     * @param $value
+     * @param string $formatting
+     * @return array|Carbon|\DateTime|false|string
+     * @throws \Exception
+     */
     public static function parseString($value, $formatting = 'auto')
     {
         // Check for null or empty strings
@@ -167,6 +173,10 @@ class DateHelper
         }
     }
 
+    /**
+     * @param $value
+     * @return \DateTime|false|null
+     */
     public static function parseTimeString($value)
     {
         try {

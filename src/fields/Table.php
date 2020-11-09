@@ -19,22 +19,33 @@ class Table extends Field implements FieldInterface
     // Properties
     // =========================================================================
 
+    /**
+     * @var string
+     */
     public static $name = 'Table';
-    public static $class = 'craft\fields\Table';
 
+    /**
+     * @var string
+     */
+    public static $class = 'craft\fields\Table';
 
     // Templates
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getMappingTemplate()
     {
         return 'feed-me/_includes/fields/table';
     }
 
-
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function parseField()
     {
         $parsedData = [];
@@ -112,10 +123,15 @@ class Table extends Field implements FieldInterface
         return $preppedData;
     }
 
-
     // Private Methods
     // =========================================================================
 
+    /**
+     * @param $type
+     * @param $value
+     * @return bool|\craft\fields\data\ColorData|mixed|string|void|null
+     * @throws \Exception
+     */
     private function _handleSubField($type, $value)
     {
         if ($type == 'checkbox') {

@@ -52,12 +52,17 @@ class Fields extends Component
     // Properties
     // =========================================================================
 
+    /**
+     * @var array
+     */
     private $_fields = [];
-
 
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function init()
     {
         parent::init();
@@ -76,11 +81,18 @@ class Fields extends Component
         }
     }
 
+    /**
+     * @param $handle
+     * @return \craft\base\ComponentInterface|MissingDataType|mixed
+     */
     public function getRegisteredField($handle)
     {
         return $this->_fields[$handle] ?? $this->createField(DefaultField::class);
     }
 
+    /**
+     * @return array
+     */
     public function fieldsList()
     {
         $list = [];
@@ -92,6 +104,9 @@ class Fields extends Component
         return $list;
     }
 
+    /**
+     * @return array
+     */
     public function getRegisteredFields()
     {
         if (count($this->_fields)) {
@@ -134,6 +149,12 @@ class Fields extends Component
         return $event->fields;
     }
 
+    /**
+     * @param $config
+     * @return \craft\base\ComponentInterface|MissingDataType
+     * @throws \craft\errors\MissingComponentException
+     * @throws \yii\base\InvalidConfigException
+     */
     public function createField($config)
     {
         if (is_string($config)) {
@@ -153,6 +174,14 @@ class Fields extends Component
         return $field;
     }
 
+    /**
+     * @param $feed
+     * @param $element
+     * @param $feedData
+     * @param $fieldHandle
+     * @param $fieldInfo
+     * @return mixed
+     */
     public function parseField($feed, $element, $feedData, $fieldHandle, $fieldInfo)
     {
         if ($this->hasEventHandlers(self::EVENT_BEFORE_PARSE_FIELD)) {
@@ -198,5 +227,4 @@ class Fields extends Component
         $this->trigger(self::EVENT_AFTER_PARSE_FIELD, $event);
         return $event->parsedValue;
     }
-
 }

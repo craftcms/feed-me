@@ -8,12 +8,17 @@ use craft\web\Controller;
 
 class BaseController extends Controller
 {
+    /**
+     * @var string[]
+     */
     protected $allowAnonymous = ['actionClearTasks'];
-
 
     // Public Methods
     // =========================================================================
 
+    /**
+     * @return \yii\web\Response
+     */
     public function actionSettings()
     {
         $settings = Plugin::$plugin->getSettings();
@@ -23,6 +28,10 @@ class BaseController extends Controller
         ]);
     }
 
+    /**
+     * @return \yii\web\Response
+     * @throws \yii\db\Exception
+     */
     public function actionClearTasks()
     {
         // Function to clear (delete) all stuck tasks.

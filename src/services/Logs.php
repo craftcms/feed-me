@@ -13,23 +13,60 @@ class Logs extends Component
     // Properties
     // =========================================================================
 
+    /**
+     * @var bool
+     */
     public $enableRotation = true;
+
+    /**
+     * @var int
+     */
     public $maxFileSize = 6656; // 6.5MB limit for support
+
+    /**
+     * @var int
+     */
     public $maxLogFiles = 20;
+
+    /**
+     * @var
+     */
     public $fileMode;
+
+    /**
+     * @var int
+     */
     public $dirMode = 0775;
+
+    /**
+     * @var bool
+     */
     public $rotateByCopy = true;
+
+    /**
+     * @var
+     */
     public $logFile;
 
 
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function init()
     {
         $this->logFile = Craft::$app->path->getLogPath() . '/feedme.log';
     }
 
+    /**
+     * @param $method
+     * @param $message
+     * @param array $params
+     * @param array $options
+     * @throws \Exception
+     */
     public function log($method, $message, $params = [], $options = [])
     {
         $dateTime = new \DateTime();
@@ -63,11 +100,19 @@ class Logs extends Component
         $this->_export($options . PHP_EOL);
     }
 
+    /**
+     *
+     */
     public function clear()
     {
         $this->_clearLogFile($this->logFile);
     }
 
+    /**
+     * @param null $type
+     * @return array
+     * @throws \yii\base\Exception
+     */
     public function getLogEntries($type = null): array
     {
         $logEntries = [];
@@ -115,10 +160,13 @@ class Logs extends Component
         return $logEntries;
     }
 
-
     // Private Methods
     // =========================================================================
 
+    /**
+     * @param $type
+     * @return bool
+     */
     private function _canLog($type)
     {
         $logging = Plugin::$plugin->service->getConfig('logging');
@@ -135,6 +183,10 @@ class Logs extends Component
         return true;
     }
 
+    /**
+     * @param $text
+     * @throws \yii\base\Exception
+     */
     private function _export($text)
     {
         $logPath = dirname($this->logFile);
@@ -180,6 +232,9 @@ class Logs extends Component
         }
     }
 
+    /**
+     *
+     */
     private function _rotateFiles()
     {
         $file = $this->logFile;
@@ -201,6 +256,9 @@ class Logs extends Component
         }
     }
 
+    /**
+     * @param $rotateFile
+     */
     private function _clearLogFile($rotateFile)
     {
         if ($filePointer = @fopen($rotateFile, 'ab')) {
@@ -209,6 +267,10 @@ class Logs extends Component
         }
     }
 
+    /**
+     * @param $rotateFile
+     * @param $newFile
+     */
     private function _rotateByCopy($rotateFile, $newFile)
     {
         @copy($rotateFile, $newFile);
@@ -217,6 +279,10 @@ class Logs extends Component
         }
     }
 
+    /**
+     * @param $rotateFile
+     * @param $newFile
+     */
     private function _rotateByRename($rotateFile, $newFile)
     {
         @rename($rotateFile, $newFile);

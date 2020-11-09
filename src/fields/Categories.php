@@ -20,23 +20,38 @@ class Categories extends Field implements FieldInterface
     // Properties
     // =========================================================================
 
+    /**
+     * @var string
+     */
     public static $name = 'Categories';
-    public static $class = 'craft\fields\Categories';
-    public static $elementType = 'craft\elements\Category';
 
+    /**
+     * @var string
+     */
+    public static $class = 'craft\fields\Categories';
+
+    /**
+     * @var string
+     */
+    public static $elementType = 'craft\elements\Category';
 
     // Templates
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getMappingTemplate()
     {
         return 'feed-me/_includes/fields/categories';
     }
 
-
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function parseField()
     {
         $value = $this->fetchArrayValue();
@@ -136,7 +151,6 @@ class Categories extends Field implements FieldInterface
         return $foundElements;
     }
 
-
     // Private Methods
     // =========================================================================
 
@@ -162,5 +176,4 @@ class Categories extends Field implements FieldInterface
 
         return $element->id;
     }
-
 }

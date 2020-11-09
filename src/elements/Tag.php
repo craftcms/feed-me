@@ -20,39 +20,63 @@ class Tag extends Element
     // Properties
     // =========================================================================
 
+    /**
+     * @var string
+     */
     public static $name = 'Tag';
+
+    /**
+     * @var string
+     */
     public static $class = 'craft\elements\Tag';
 
+    /**
+     * @var
+     */
     public $element;
 
 
     // Templates
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getGroupsTemplate()
     {
         return 'feed-me/_includes/elements/tag/groups';
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getColumnTemplate()
     {
         return 'feed-me/_includes/elements/tag/column';
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getMappingTemplate()
     {
         return 'feed-me/_includes/elements/tag/map';
     }
 
-
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getGroups()
     {
         return Craft::$app->tags->getAllTagGroups();
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getQuery($settings, $params = [])
     {
         $query = TagElement::find()
@@ -63,6 +87,9 @@ class Tag extends Element
         return $query;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function setModel($settings)
     {
         $this->element = new TagElement();
@@ -76,5 +103,4 @@ class Tag extends Element
 
         return $this->element;
     }
-
 }

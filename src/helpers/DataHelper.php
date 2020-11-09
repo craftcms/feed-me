@@ -155,6 +155,11 @@ class DataHelper
         return $value;
     }
 
+    /**
+     * @param $value
+     * @param $element
+     * @return mixed|string
+     */
     public static function parseFieldDataForElement($value, $element)
     {
         if (is_string($value) && strpos($value, '{') !== false) {
@@ -170,6 +175,11 @@ class DataHelper
         return $value;
     }
 
+    /**
+     * @param $content
+     * @param $element
+     * @return bool
+     */
     public static function compareElementContent($content, $element)
     {
         if (!$element) {
@@ -290,5 +300,4 @@ class DataHelper
 
         return $diff;
     }
-
 }

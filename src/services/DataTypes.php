@@ -38,13 +38,22 @@ class DataTypes extends Component
     // Properties
     // =========================================================================
 
+    /**
+     * @var array
+     */
     private $_dataTypes = [];
-    private $_headers;
 
+    /**
+     * @var
+     */
+    private $_headers;
 
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function init()
     {
         parent::init();
@@ -64,6 +73,9 @@ class DataTypes extends Component
         }
     }
 
+    /**
+     * @return array
+     */
     public function dataTypesList()
     {
         $list = [];
@@ -75,11 +87,18 @@ class DataTypes extends Component
         return $list;
     }
 
+    /**
+     * @param $handle
+     * @return mixed|null
+     */
     public function getRegisteredDataType($handle)
     {
         return $this->_dataTypes[$handle] ?? null;
     }
 
+    /**
+     * @return array
+     */
     public function getRegisteredDataTypes()
     {
         $event = new RegisterFeedMeDataTypesEvent([
@@ -98,6 +117,12 @@ class DataTypes extends Component
         return $event->dataTypes;
     }
 
+    /**
+     * @param $config
+     * @return \craft\base\ComponentInterface|MissingDataType
+     * @throws \craft\errors\MissingComponentException
+     * @throws \yii\base\InvalidConfigException
+     */
     public function createDataType($config)
     {
         if (is_string($config)) {
@@ -117,6 +142,12 @@ class DataTypes extends Component
         return $dataType;
     }
 
+    /**
+     * @param $url
+     * @param null $feedId
+     * @return array
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function getRawData($url, $feedId = null)
     {
         $event = new FeedDataEvent([
@@ -183,6 +214,11 @@ class DataTypes extends Component
         return $event->response;
     }
 
+    /**
+     * @param $feedModel
+     * @param bool $usePrimaryElement
+     * @return mixed
+     */
     public function getFeedData($feedModel, $usePrimaryElement = true)
     {
         $feedDataResponse = $feedModel->getDataType()->getFeed($feedModel->feedUrl, $feedModel, $usePrimaryElement);
@@ -197,6 +233,10 @@ class DataTypes extends Component
         return $event->response;
     }
 
+    /**
+     * @param $data
+     * @return array
+     */
     public function getFeedNodes($data)
     {
         if (!is_array($data)) {
@@ -222,6 +262,10 @@ class DataTypes extends Component
         return $nodes;
     }
 
+    /**
+     * @param $data
+     * @return array
+     */
     public function getFeedMapping($data)
     {
         if (!is_array($data)) {
@@ -249,6 +293,11 @@ class DataTypes extends Component
         return $mappingPaths;
     }
 
+    /**
+     * @param $element
+     * @param $parsed
+     * @return array|array[]|false
+     */
     public function findPrimaryElement($element, $parsed)
     {
         if (empty($parsed)) {
@@ -282,6 +331,10 @@ class DataTypes extends Component
         return false;
     }
 
+    /**
+     * @param array $options
+     * @return array|\ArrayAccess|mixed|null
+     */
     public function getFeedForTemplate($options = [])
     {
         $pluginSettings = Plugin::$plugin->getSettings();
@@ -364,6 +417,11 @@ class DataTypes extends Component
     // Private
     // =========================================================================
 
+    /**
+     * @param $tree
+     * @param $array
+     * @param string $index
+     */
     private function _parseNodeTree(&$tree, $array, $index = '')
     {
         foreach ($array as $key => $val) {
@@ -385,14 +443,23 @@ class DataTypes extends Component
         }
     }
 
+    /**
+     * @param $url
+     * @param $value
+     * @param $duration
+     * @return bool
+     */
     private function _setCache($url, $value, $duration)
     {
         return Craft::$app->cache->set(base64_encode(urlencode($url)), $value, $duration, null);
     }
 
+    /**
+     * @param $url
+     * @return mixed
+     */
     private function _getCache($url)
     {
         return Craft::$app->cache->get(base64_encode(urlencode($url)));
     }
-
 }

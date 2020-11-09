@@ -9,6 +9,11 @@ interface DataTypeInterface extends ComponentInterface
     // Public Methods
     // =========================================================================
 
+    /**
+     * @param $url
+     * @param $settings
+     * @param bool $usePrimaryElement
+     * @return mixed
+     */
     public function getFeed($url, $settings, $usePrimaryElement = true);
-
 }

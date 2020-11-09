@@ -9,8 +9,23 @@ class FeedProcessEvent extends CancelableEvent
     // Properties
     // =========================================================================
 
+    /**
+     * @var
+     */
     public $feed;
+
+    /**
+     * @var
+     */
     public $feedData;
+
+    /**
+     * @var
+     */
     public $contentData;
+
+    /**
+     * @var
+     */
     public $element;
 }

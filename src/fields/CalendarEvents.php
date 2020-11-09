@@ -18,23 +18,38 @@ class CalendarEvents extends Field implements FieldInterface
     // Properties
     // =========================================================================
 
+    /**
+     * @var string
+     */
     public static $name = 'CalendarEvents';
-    public static $class = 'Solspace\Calendar\FieldTypes\EventFieldType';
-    public static $elementType = 'Solspace\Calendar\Elements\Event';
 
+    /**
+     * @var string
+     */
+    public static $class = 'Solspace\Calendar\FieldTypes\EventFieldType';
+
+    /**
+     * @var string
+     */
+    public static $elementType = 'Solspace\Calendar\Elements\Event';
 
     // Templates
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getMappingTemplate()
     {
         return 'feed-me/_includes/fields/calendar-events';
     }
 
-
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function parseField()
     {
         $value = $this->fetchArrayValue();
@@ -128,5 +143,4 @@ class CalendarEvents extends Field implements FieldInterface
 
         return $foundElements;
     }
-
 }

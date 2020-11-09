@@ -15,22 +15,33 @@ class Checkboxes extends Field implements FieldInterface
     // Properties
     // =========================================================================
 
+    /**
+     * @var string
+     */
     public static $name = 'Checkboxes';
-    public static $class = 'craft\fields\Checkboxes';
 
+    /**
+     * @var string
+     */
+    public static $class = 'craft\fields\Checkboxes';
 
     // Templates
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getMappingTemplate()
     {
         return 'feed-me/_includes/fields/option-select';
     }
 
-
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function parseField()
     {
         $value = $this->fetchArrayValue();
@@ -50,5 +61,4 @@ class Checkboxes extends Field implements FieldInterface
 
         return $preppedData;
     }
-
 }

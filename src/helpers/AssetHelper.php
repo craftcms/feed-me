@@ -81,7 +81,6 @@ class AssetHelper
      * @param null $newFilename
      * @return array
      * @throws \yii\base\Exception
-     * @throws \yii\base\Exception
      */
     public static function fetchRemoteImage(array $urls, $fieldInfo, $feed, $field = null, $element = null, $folderId = null, $newFilename = null)
     {
@@ -141,7 +140,6 @@ class AssetHelper
      * @param null $folderId
      * @return array
      * @throws \yii\base\Exception
-     * @throws \yii\base\Exception
      */
     public static function createBase64Image($base64, $fieldInfo, $feed, $field = null, $element = null, $folderId = null)
     {
@@ -196,7 +194,6 @@ class AssetHelper
      * @param string $field
      * @param string $element
      * @param string $conflict
-     *
      * @return int
      * @throws \Throwable
      * @throws \craft\errors\AssetLogicException
@@ -309,6 +306,10 @@ class AssetHelper
         return $filename . '.' . $extension;
     }
 
+    /**
+     * @param $url
+     * @return string
+     */
     public static function getRemoteUrlExtension($url)
     {
         $mimes = new MimeTypes;

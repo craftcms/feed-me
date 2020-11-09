@@ -16,22 +16,33 @@ class Date extends Field implements FieldInterface
     // Properties
     // =========================================================================
 
+    /**
+     * @var string
+     */
     public static $name = 'Date';
-    public static $class = 'craft\fields\Date';
 
+    /**
+     * @var string
+     */
+    public static $class = 'craft\fields\Date';
 
     // Templates
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getMappingTemplate()
     {
         return 'feed-me/_includes/fields/date';
     }
 
-
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function parseField()
     {
         $value = $this->fetchValue();
@@ -46,5 +57,4 @@ class Date extends Field implements FieldInterface
 
         return $value;
     }
-
 }

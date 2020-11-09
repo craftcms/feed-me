@@ -9,6 +9,9 @@ class FeedRecord extends ActiveRecord
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public static function tableName()
     {
         return '{{%feedme_feeds}}';

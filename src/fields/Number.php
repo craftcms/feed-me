@@ -15,22 +15,33 @@ class Number extends Field implements FieldInterface
     // Properties
     // =========================================================================
 
+    /**
+     * @var string
+     */
     public static $name = 'Number';
-    public static $class = 'craft\fields\Number';
 
+    /**
+     * @var string
+     */
+    public static $class = 'craft\fields\Number';
 
     // Templates
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getMappingTemplate()
     {
         return 'feed-me/_includes/fields/default';
     }
 
-
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function parseField()
     {
         $value = $this->fetchValue();
@@ -38,9 +49,12 @@ class Number extends Field implements FieldInterface
         return $this->parseValue($value);
     }
 
+    /**
+     * @param $value
+     * @return mixed
+     */
     public function parseValue($value)
     {
         return Localization::normalizeNumber($value);
     }
-
 }

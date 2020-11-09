@@ -20,23 +20,38 @@ class Entries extends Field implements FieldInterface
     // Properties
     // =========================================================================
 
+    /**
+     * @var string
+     */
     public static $name = 'Entries';
-    public static $class = 'craft\fields\Entries';
-    public static $elementType = 'craft\elements\Entry';
 
+    /**
+     * @var string
+     */
+    public static $class = 'craft\fields\Entries';
+
+    /**
+     * @var string
+     */
+    public static $elementType = 'craft\elements\Entry';
 
     // Templates
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getMappingTemplate()
     {
         return 'feed-me/_includes/fields/entries';
     }
 
-
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function parseField()
     {
         $value = $this->fetchArrayValue();
@@ -155,6 +170,13 @@ class Entries extends Field implements FieldInterface
     // Private Methods
     // =========================================================================
 
+    /**
+     * @param $dataValue
+     * @return int|null
+     * @throws \Throwable
+     * @throws \craft\errors\ElementNotFoundException
+     * @throws \yii\base\Exception
+     */
     private function _createElement($dataValue)
     {
         $sectionId = Hash::get($this->fieldInfo, 'options.group.sectionId');
@@ -208,5 +230,4 @@ class Entries extends Field implements FieldInterface
 
         return $element->id;
     }
-
 }

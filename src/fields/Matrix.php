@@ -16,22 +16,33 @@ class Matrix extends Field implements FieldInterface
     // Properties
     // =========================================================================
 
+    /**
+     * @var string
+     */
     public static $name = 'Matrix';
-    public static $class = 'craft\fields\Matrix';
 
+    /**
+     * @var string
+     */
+    public static $class = 'craft\fields\Matrix';
 
     // Templates
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getMappingTemplate()
     {
         return 'feed-me/_includes/fields/matrix';
     }
 
-
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function parseField()
     {
         $preppedData = [];
@@ -152,6 +163,11 @@ class Matrix extends Field implements FieldInterface
     // Private Methods
     // =========================================================================
 
+    /**
+     * @param $nodePath
+     * @param $blocks
+     * @return array
+     */
     private function _getFieldMappingInfoForNodePath($nodePath, $blocks)
     {
         foreach ($blocks as $blockHandle => $blockInfo) {
@@ -192,6 +208,12 @@ class Matrix extends Field implements FieldInterface
         }
     }
 
+    /**
+     * @param $feedData
+     * @param $subFieldHandle
+     * @param $subFieldInfo
+     * @return mixed
+     */
     private function _parseSubField($feedData, $subFieldHandle, $subFieldInfo)
     {
         $subFieldClassHandle = Hash::get($subFieldInfo, 'field');
