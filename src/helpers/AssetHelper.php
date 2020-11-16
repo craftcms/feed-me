@@ -240,13 +240,15 @@ class AssetHelper
             if ($asset->conflictingFilename !== null && $conflict === AssetElement::SCENARIO_REPLACE) {
                 $conflictingAsset = AssetElement::findOne(['folderId' => $folder->id, 'filename' => $asset->conflictingFilename]);
 
-                Plugin::info('Replacing existing asset `#{i}` with `#{j}`', ['i' => $conflictingAsset->id, 'j' => $asset->id]);
+                if ($conflictingAsset) {
+                    Plugin::info('Replacing existing asset `#{i}` with `#{j}`', ['i' => $conflictingAsset->id, 'j' => $asset->id]);
 
-                $tempPath = $asset->getCopyOfFile();
-                $assets->replaceAssetFile($conflictingAsset, $tempPath, $conflictingAsset->filename);
-                Craft::$app->getElements()->deleteElement($asset);
+                    $tempPath = $asset->getCopyOfFile();
+                    $assets->replaceAssetFile($conflictingAsset, $tempPath, $conflictingAsset->filename);
+                    Craft::$app->getElements()->deleteElement($asset);
 
-                return $conflictingAsset->id;
+                    return $conflictingAsset->id;
+                }
             }
 
             return $asset->id;
