@@ -14,6 +14,9 @@ class FeedMeAsset extends AssetBundle
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function init()
     {
         $this->sourcePath = "@craft/feedme/web/assets/feedme/dist";

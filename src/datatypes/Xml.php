@@ -14,12 +14,18 @@ class Xml extends DataType implements DataTypeInterface
     // Properties
     // =========================================================================
 
+    /**
+     * @var string
+     */
     public static $name = 'XML';
 
 
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getFeed($url, $settings, $usePrimaryElement = true)
     {
         $feedId = Hash::get($settings, 'id');
@@ -76,5 +82,4 @@ class Xml extends DataType implements DataTypeInterface
 
         return ['success' => true, 'data' => $array];
     }
-
 }

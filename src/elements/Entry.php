@@ -11,39 +11,68 @@ use craft\feedme\models\ElementGroup;
 use craft\feedme\Plugin;
 use craft\models\Section;
 
+/**
+ *
+ * @property-read string $mappingTemplate
+ * @property-read array $groups
+ * @property-write mixed $model
+ * @property-read string $groupsTemplate
+ * @property-read string $columnTemplate
+ */
 class Entry extends Element
 {
     // Properties
     // =========================================================================
 
+    /**
+     * @var string
+     */
     public static $name = 'Entry';
+
+    /**
+     * @var string
+     */
     public static $class = 'craft\elements\Entry';
 
+    /**
+     * @var
+     */
     public $element;
 
 
     // Templates
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getGroupsTemplate()
     {
         return 'feed-me/_includes/elements/entries/groups';
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getColumnTemplate()
     {
         return 'feed-me/_includes/elements/entries/column';
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getMappingTemplate()
     {
         return 'feed-me/_includes/elements/entries/map';
     }
 
-
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getGroups()
     {
         $editable = Craft::$app->sections->getEditableSections();
@@ -60,6 +89,9 @@ class Entry extends Element
         return $groups;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getQuery($settings, $params = [])
     {
         $query = EntryElement::find()
@@ -71,6 +103,9 @@ class Entry extends Element
         return $query;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function setModel($settings)
     {
         $this->element = new EntryElement();
@@ -94,10 +129,14 @@ class Entry extends Element
         return $this->element;
     }
 
-
     // Protected Methods
     // =========================================================================
 
+    /**
+     * @param $feedData
+     * @param $fieldInfo
+     * @return array|\Carbon\Carbon|\DateTime|false|string|null
+     */
     protected function parsePostDate($feedData, $fieldInfo)
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
@@ -106,6 +145,11 @@ class Entry extends Element
         return $this->parseDateAttribute($value, $formatting);
     }
 
+    /**
+     * @param $feedData
+     * @param $fieldInfo
+     * @return array|\Carbon\Carbon|\DateTime|false|string|null
+     */
     protected function parseExpiryDate($feedData, $fieldInfo)
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
@@ -114,6 +158,14 @@ class Entry extends Element
         return $this->parseDateAttribute($value, $formatting);
     }
 
+    /**
+     * @param $feedData
+     * @param $fieldInfo
+     * @return int|null
+     * @throws \Throwable
+     * @throws \craft\errors\ElementNotFoundException
+     * @throws \yii\base\Exception
+     */
     protected function parseParent($feedData, $fieldInfo)
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
@@ -161,6 +213,14 @@ class Entry extends Element
         return null;
     }
 
+    /**
+     * @param $feedData
+     * @param $fieldInfo
+     * @return int|null
+     * @throws \Throwable
+     * @throws \craft\errors\ElementNotFoundException
+     * @throws \yii\base\Exception
+     */
     protected function parseAuthorId($feedData, $fieldInfo)
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);

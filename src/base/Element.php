@@ -16,6 +16,12 @@ use craft\feedme\models\FeedModel;
 use craft\helpers\Db;
 use craft\helpers\StringHelper;
 
+/**
+ *
+ * @property-read mixed $name
+ * @property-read mixed $elementClass
+ * @property-read mixed $class
+ */
 abstract class Element extends Component implements ElementInterface
 {
     // Constants
@@ -38,21 +44,36 @@ abstract class Element extends Component implements ElementInterface
     // Public Methods
     // =========================================================================
 
+    /**
+     * @return mixed
+     */
     public function getName()
     {
         return $this::$name;
     }
 
+    /**
+     * @return false|string
+     */
     public function getClass()
     {
         return get_class($this);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getElementClass()
     {
         return $this::$class;
     }
 
+    /**
+     * @param $feedData
+     * @param $fieldHandle
+     * @param $fieldInfo
+     * @return array|\ArrayAccess|mixed|string|null
+     */
     public function parseAttribute($feedData, $fieldHandle, $fieldInfo)
     {
         if ($this->hasEventHandlers(self::EVENT_BEFORE_PARSE_ATTRIBUTE)) {
@@ -85,11 +106,21 @@ abstract class Element extends Component implements ElementInterface
         return $parsedValue;
     }
 
+    /**
+     * @param $feedData
+     * @param $fieldInfo
+     * @return array|\ArrayAccess|mixed|string|null
+     */
     public function fetchSimpleValue($feedData, $fieldInfo)
     {
         return DataHelper::fetchSimpleValue($feedData, $fieldInfo);
     }
 
+    /**
+     * @param $feedData
+     * @param $fieldInfo
+     * @return array|\ArrayAccess|mixed
+     */
     public function fetchArrayValue($feedData, $fieldInfo)
     {
         return DataHelper::fetchArrayValue($feedData, $fieldInfo);
@@ -99,6 +130,9 @@ abstract class Element extends Component implements ElementInterface
     // Interface Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function matchExistingElement($data, $settings)
     {
         $criteria = [];
@@ -132,6 +166,9 @@ abstract class Element extends Component implements ElementInterface
         return $this->getQuery($settings, $criteria)->one();
     }
 
+    /**
+     * @inheritDoc
+     */
     public function delete($elementIds)
     {
         /** @var CraftElementInterface|string $class */
@@ -145,6 +182,9 @@ abstract class Element extends Component implements ElementInterface
         return true;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function disable($elementIds)
     {
         /** @var CraftElementInterface|string $class */
@@ -161,6 +201,9 @@ abstract class Element extends Component implements ElementInterface
         return true;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function disableForSite($elementIds)
     {
         /** @var CraftElementInterface|string $class */
@@ -183,6 +226,9 @@ abstract class Element extends Component implements ElementInterface
         return true;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function save($element, $settings)
     {
         // Setup some stuff before the element saves, and also give a chance to prevent saving
@@ -197,6 +243,9 @@ abstract class Element extends Component implements ElementInterface
         return true;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function beforeSave($element, $settings)
     {
         $this->element = $element;
@@ -205,15 +254,22 @@ abstract class Element extends Component implements ElementInterface
         return true;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function afterSave($data, $settings)
     {
 
     }
 
-
     // Protected Methods
     // =========================================================================
 
+    /**
+     * @param $feedData
+     * @param $fieldInfo
+     * @return array|\ArrayAccess|mixed|string|null
+     */
     protected function parseTitle($feedData, $fieldInfo)
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
@@ -226,6 +282,11 @@ abstract class Element extends Component implements ElementInterface
         return $value;
     }
 
+    /**
+     * @param $feedData
+     * @param $fieldInfo
+     * @return string
+     */
     protected function parseSlug($feedData, $fieldInfo)
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
@@ -233,13 +294,45 @@ abstract class Element extends Component implements ElementInterface
         $value = mb_strtolower($value);
 
         if (Craft::$app->getConfig()->getGeneral()->limitAutoSlugsToAscii) {
-            $value = $this->asciiString($value);
+            $value = $this->_asciiString($value);
         }
 
-        return $this->createSlug($value);
+        return $this->_createSlug($value);
     }
 
-    private function createSlug(string $str): string
+    /**
+     * @param $feedData
+     * @param $fieldInfo
+     * @return bool|mixed|void
+     */
+    protected function parseEnabled($feedData, $fieldInfo)
+    {
+        $value = $this->fetchSimpleValue($feedData, $fieldInfo);
+
+        return BaseHelper::parseBoolean($value);
+    }
+
+    /**
+     * @param $value
+     * @param $formatting
+     * @return array|\Carbon\Carbon|\DateTime|false|string|null
+     */
+    protected function parseDateAttribute($value, $formatting)
+    {
+        $dateValue = DateHelper::parseString($value, $formatting);
+
+        if (!is_null($dateValue)) {
+            return $dateValue;
+        }
+
+        return null;
+    }
+
+    /**
+     * @param string $str
+     * @return string
+     */
+    private function _createSlug(string $str): string
     {
         // Remove HTML tags
         $str = StringHelper::stripHtml($str);
@@ -252,7 +345,11 @@ abstract class Element extends Component implements ElementInterface
         return $str;
     }
 
-    private function asciiString($str)
+    /**
+     * @param $str
+     * @return string
+     */
+    private function _asciiString($str)
     {
         $charMap = StringHelper::asciiCharMap(true, Craft::$app->language);
 
@@ -266,23 +363,4 @@ abstract class Element extends Component implements ElementInterface
 
         return $asciiStr;
     }
-
-    protected function parseEnabled($feedData, $fieldInfo)
-    {
-        $value = $this->fetchSimpleValue($feedData, $fieldInfo);
-
-        return BaseHelper::parseBoolean($value);
-    }
-
-    protected function parseDateAttribute($value, $formatting)
-    {
-        $dateValue = DateHelper::parseString($value, $formatting);
-
-        if (!is_null($dateValue)) {
-            return $dateValue;
-        }
-
-        return null;
-    }
-
 }

@@ -12,6 +12,12 @@ class DateHelper
     // Public Methods
     // =========================================================================
 
+    /**
+     * @param $value
+     * @param string $formatting
+     * @return array|Carbon|\DateTime|false|string
+     * @throws \Exception
+     */
     public static function parseString($value, $formatting = 'auto')
     {
         // Check for null or empty strings
@@ -38,7 +44,7 @@ class DateHelper
             $date = null;
 
             // Because US-based dates can be unpredictable, we need to be able to handle them
-            // Typically Carbon will see dates formatted with slashes are American, but thats often not the case
+            // Typically Carbon will see dates formatted with slashes are American, but that's often not the case
             if ($formatting === 'auto') {
                 $date = Carbon::parse($value);
             } elseif ($formatting === 'milliseconds') {
@@ -167,6 +173,10 @@ class DateHelper
         }
     }
 
+    /**
+     * @param $value
+     * @return \DateTime|false|null
+     */
     public static function parseTimeString($value)
     {
         try {

@@ -12,6 +12,11 @@ class Service extends Component
     // Public Methods
     // =========================================================================
 
+    /**
+     * @param $key
+     * @param null $feedId
+     * @return array|\ArrayAccess|mixed|null
+     */
     public function getConfig($key, $feedId = null)
     {
         $settings = Plugin::$plugin->getSettings();
@@ -31,6 +36,10 @@ class Service extends Component
         return $configItem;
     }
 
+    /**
+     * @param null $feedId
+     * @return \GuzzleHttp\Client
+     */
     public function createGuzzleClient($feedId = null)
     {
         $options = $this->getConfig('clientOptions', $feedId);
@@ -38,13 +47,19 @@ class Service extends Component
         return Craft::createGuzzleClient($options);
     }
 
+    /**
+     * @param null $feedId
+     * @return array|\ArrayAccess|mixed|null
+     */
     public function getRequestOptions($feedId = null)
     {
-        $options = $this->getConfig('requestOptions', $feedId);
-
-        return $options;
+        return $this->getConfig('requestOptions', $feedId);
     }
 
+    /**
+     * @param $dateTime
+     * @return mixed
+     */
     public function formatDateTime($dateTime)
     {
         return DateTimeHelper::toDateTime($dateTime);

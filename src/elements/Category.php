@@ -8,44 +8,76 @@ use craft\elements\Category as CategoryElement;
 use craft\feedme\base\Element;
 use craft\feedme\Plugin;
 
+/**
+ *
+ * @property-read string $mappingTemplate
+ * @property-read mixed $groups
+ * @property-write mixed $model
+ * @property-read string $groupsTemplate
+ * @property-read string $columnTemplate
+ */
 class Category extends Element
 {
     // Properties
     // =========================================================================
 
+    /**
+     * @var string
+     */
     public static $name = 'Category';
+
+    /**
+     * @var string
+     */
     public static $class = 'craft\elements\Category';
 
+    /**
+     * @var
+     */
     public $element;
 
 
     // Templates
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getGroupsTemplate()
     {
         return 'feed-me/_includes/elements/categories/groups';
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getColumnTemplate()
     {
         return 'feed-me/_includes/elements/categories/column';
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getMappingTemplate()
     {
         return 'feed-me/_includes/elements/categories/map';
     }
 
-
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getGroups()
     {
         return Craft::$app->categories->getEditableGroups();
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getQuery($settings, $params = [])
     {
         $query = CategoryElement::find()
@@ -56,6 +88,9 @@ class Category extends Element
         return $query;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function setModel($settings)
     {
         $this->element = new CategoryElement();
@@ -70,6 +105,9 @@ class Category extends Element
         return $this->element;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function afterSave($data, $settings)
     {
         $parent = Hash::get($data, 'parent');
@@ -84,6 +122,14 @@ class Category extends Element
     // Protected Methods
     // =========================================================================
 
+    /**
+     * @param $feedData
+     * @param $fieldInfo
+     * @return int|null
+     * @throws \Throwable
+     * @throws \craft\errors\ElementNotFoundException
+     * @throws \yii\base\Exception
+     */
     protected function parseParent($feedData, $fieldInfo)
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
@@ -127,5 +173,4 @@ class Category extends Element
 
         return null;
     }
-
 }

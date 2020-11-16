@@ -9,6 +9,13 @@ class FeedDataEvent extends Event
     // Properties
     // =========================================================================
 
+    /**
+     * @var
+     */
     public $url;
+
+    /**
+     * @var
+     */
     public $response;
 }

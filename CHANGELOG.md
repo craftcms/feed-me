@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.3.2 - 2020-11-15
+
+### Fixed
+- Fixed a PHP error that could occur when importing assets. ([#355](https://github.com/craftcms/feed-me/issues/355)), ([#747](https://github.com/craftcms/feed-me/issues/747))
+
 ## 4.3.1 - 2020-11-09
 
 ### Fixed

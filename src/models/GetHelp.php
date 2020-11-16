@@ -10,26 +10,62 @@ class GetHelp extends Model
     // Properties
     // =========================================================================
 
+    /**
+     * @var
+     */
     public $fromEmail;
-    public $feedIssue;
-    public $message;
-    public $attachLogs = false;
-    public $attachSettings = false;
-    public $attachFeed = false;
-    public $attachFields = false;
-    public $attachment;
 
+    /**
+     * @var
+     */
+    public $feedIssue;
+
+    /**
+     * @var
+     */
+    public $message;
+
+    /**
+     * @var bool
+     */
+    public $attachLogs = false;
+
+    /**
+     * @var bool
+     */
+    public $attachSettings = false;
+
+    /**
+     * @var bool
+     */
+    public $attachFeed = false;
+
+    /**
+     * @var bool
+     */
+    public $attachFields = false;
+
+    /**
+     * @var
+     */
+    public $attachment;
 
     // Public Methods
     // =========================================================================
 
+    /**
+     * @var
+     */
     public function attributeLabels()
     {
         return [
-            'fromEmail' => Craft::t('app', 'Your Email'),
+            'fromEmail' => Craft::t('feed-me', 'Your Email'),
         ];
     }
 
+    /**
+     * @var
+     */
     public function rules()
     {
         return [

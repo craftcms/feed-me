@@ -33,6 +33,9 @@ class FeedsController extends Controller
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function options($actionID): array
     {
         $options = parent::options($actionID);

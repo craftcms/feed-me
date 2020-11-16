@@ -29,6 +29,9 @@ use yii\base\Event;
  * @property-read Fields $fields
  * @property-read Logs $logs
  * @property-read Process $process
+ * @property-read void $settingsResponse
+ * @property-read mixed $pluginName
+ * @property-read mixed $cpNavItem
  * @property-read Service $service
  */
 class Plugin extends \craft\base\Plugin
@@ -50,6 +53,9 @@ class Plugin extends \craft\base\Plugin
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function init()
     {
         parent::init();
@@ -62,6 +68,9 @@ class Plugin extends \craft\base\Plugin
         $this->_registerVariables();
     }
 
+    /**
+     * @inheritDoc
+     */
     public function afterInstall()
     {
         if (Craft::$app->getRequest()->getIsConsoleRequest()) {
@@ -71,16 +80,25 @@ class Plugin extends \craft\base\Plugin
         Craft::$app->controller->redirect(UrlHelper::cpUrl('feed-me/welcome'))->send();
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getSettingsResponse()
     {
         Craft::$app->controller->redirect(UrlHelper::cpUrl('feed-me/settings'));
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getPluginName()
     {
         return Craft::t('feed-me', $this->getSettings()->pluginName);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getCpNavItem()
     {
         $navItem = parent::getCpNavItem();
@@ -92,20 +110,28 @@ class Plugin extends \craft\base\Plugin
     // Protected Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     protected function createSettingsModel(): Settings
     {
         return new Settings();
     }
 
-
     // Private Methods
     // =========================================================================
 
+    /**
+     *
+     */
     private function _registerTwigExtensions()
     {
         Craft::$app->view->registerTwigExtension(new Extension);
     }
 
+    /**
+     *
+     */
     private function _registerCpRoutes()
     {
         Event::on(UrlManager::class, UrlManager::EVENT_REGISTER_CP_URL_RULES, function(RegisterUrlRulesEvent $event) {
@@ -123,6 +149,9 @@ class Plugin extends \craft\base\Plugin
         });
     }
 
+    /**
+     *
+     */
     private function _registerVariables()
     {
         Event::on(CraftVariable::class, CraftVariable::EVENT_INIT, function(Event $event) {

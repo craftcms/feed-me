@@ -9,8 +9,13 @@ interface FieldInterface extends ComponentInterface
     // Public Methods
     // =========================================================================
 
+    /**
+     * @return mixed
+     */
     public function getMappingTemplate();
 
+    /**
+     * @return mixed
+     */
     public function parseField();
-
 }

@@ -8,6 +8,10 @@ use craft\feedme\Plugin;
 use craft\queue\BaseJob;
 use yii\queue\RetryableJobInterface;
 
+/**
+ *
+ * @property-read mixed $ttr
+ */
 class FeedImport extends BaseJob implements RetryableJobInterface
 {
     // Properties
@@ -17,9 +21,22 @@ class FeedImport extends BaseJob implements RetryableJobInterface
      * @var FeedModel
      */
     public $feed;
+
+    /**
+     * @var
+     */
     public $limit;
+
+    /**
+     * @var
+     */
     public $offset;
+
+    /**
+     * @var
+     */
     public $processedElementIds;
+
     /**
      * @var bool Whether to continue processing a feed (and subsequent pages) if an error occurs
      * @since 4.3.0
@@ -29,17 +46,26 @@ class FeedImport extends BaseJob implements RetryableJobInterface
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getTtr()
     {
         return Plugin::$plugin->getSettings()->queueTtr ?? Craft::$app->getQueue()->ttr;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function canRetry($attempt, $error)
     {
         $attempts = Plugin::$plugin->getSettings()->queueMaxRetry ?? Craft::$app->getQueue()->attempts;
         return $attempt < $attempts;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function execute($queue)
     {
         try {
@@ -85,7 +111,7 @@ class FeedImport extends BaseJob implements RetryableJobInterface
 
             // Check if we need to paginate the feed to run again
             if ($this->feed->getNextPagination()) {
-                Craft::$app->getQueue()->delay(0)->push(new FeedImport([
+                Craft::$app->getQueue()->delay(0)->push(new self([
                     'feed' => $this->feed,
                     'limit' => $this->limit,
                     'offset' => $this->offset,
@@ -106,6 +132,9 @@ class FeedImport extends BaseJob implements RetryableJobInterface
     // Protected Methods
     // =========================================================================
 
+    /**
+     * @return string
+     */
     protected function defaultDescription(): string
     {
         return Craft::t('feed-me', 'Running {name} feed.', ['name' => $this->feed->name]);

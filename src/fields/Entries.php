@@ -11,28 +11,47 @@ use craft\feedme\base\FieldInterface;
 use craft\feedme\Plugin;
 use craft\helpers\Db;
 
+/**
+ *
+ * @property-read string $mappingTemplate
+ */
 class Entries extends Field implements FieldInterface
 {
     // Properties
     // =========================================================================
 
+    /**
+     * @var string
+     */
     public static $name = 'Entries';
-    public static $class = 'craft\fields\Entries';
-    public static $elementType = 'craft\elements\Entry';
 
+    /**
+     * @var string
+     */
+    public static $class = 'craft\fields\Entries';
+
+    /**
+     * @var string
+     */
+    public static $elementType = 'craft\elements\Entry';
 
     // Templates
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getMappingTemplate()
     {
         return 'feed-me/_includes/fields/entries';
     }
 
-
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function parseField()
     {
         $value = $this->fetchArrayValue();
@@ -122,10 +141,8 @@ class Entries extends Field implements FieldInterface
             Plugin::info('Found `{i}` existing entries: `{j}`', ['i' => count($foundElements), 'j' => json_encode($foundElements)]);
 
             // Check if we should create the element. But only if title is provided (for the moment)
-            if (count($ids) == 0) {
-                if ($create && $match === 'title') {
-                    $foundElements[] = $this->_createElement($dataValue, $sectionIds);
-                }
+            if ((count($ids) == 0) && $create && $match === 'title') {
+                $foundElements[] = $this->_createElement($dataValue);
             }
         }
 
@@ -134,7 +151,7 @@ class Entries extends Field implements FieldInterface
             $foundElements = array_chunk($foundElements, $limit)[0];
         }
 
-        // Check for any sub-fields for the lement
+        // Check for any sub-fields for the element
         if ($fields) {
             $this->populateElementFields($foundElements);
         }
@@ -153,7 +170,14 @@ class Entries extends Field implements FieldInterface
     // Private Methods
     // =========================================================================
 
-    private function _createElement($dataValue, $sources)
+    /**
+     * @param $dataValue
+     * @return int|null
+     * @throws \Throwable
+     * @throws \craft\errors\ElementNotFoundException
+     * @throws \yii\base\Exception
+     */
+    private function _createElement($dataValue)
     {
         $sectionId = Hash::get($this->fieldInfo, 'options.group.sectionId');
         $typeId = Hash::get($this->fieldInfo, 'options.group.typeId');
@@ -206,5 +230,4 @@ class Entries extends Field implements FieldInterface
 
         return $element->id;
     }
-
 }
