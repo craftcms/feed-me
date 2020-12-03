@@ -6,6 +6,7 @@ use Craft;
 use craft\feedme\Plugin;
 use craft\feedme\queue\jobs\FeedImport;
 use craft\helpers\Console;
+use craft\queue\Queue;
 use yii\console\Controller;
 use yii\console\ExitCode;
 
@@ -30,8 +31,23 @@ class FeedsController extends Controller
      */
     public $continueOnError = false;
 
+    /**
+     * @var bool Whether to process all feeds
+     */
+    public $all = false;
+
+    /**
+     * @var Queue The queue processing jobs
+     */
+    protected $queue;
+
     // Public Methods
     // =========================================================================
+
+    public function __construct()
+    {
+        $this->queue = Craft::$app->getQueue();
+    }
 
     /**
      * @inheritDoc
@@ -42,6 +58,7 @@ class FeedsController extends Controller
         $options[] = 'limit';
         $options[] = 'offset';
         $options[] = 'continueOnError';
+        $options[] = 'all';
         return $options;
     }
 
@@ -55,10 +72,17 @@ class FeedsController extends Controller
     {
         $ids = explode(',', $feedId);
         $feeds = Plugin::getInstance()->getFeeds();
-        $queue = Craft::$app->getQueue();
         $tally = 0;
 
-        if (is_array($ids)) {
+        if ($this->all) {
+            foreach($feeds as $feed) {
+                $this->queueFeed($feed);
+
+                $tally++;
+            }
+        }
+
+        if (! $this->all && is_array($ids)) {
             foreach ($ids as $id) {
                 $feed = $feeds->getFeedById($id);
 
@@ -67,18 +91,8 @@ class FeedsController extends Controller
                     continue;
                 }
 
-                $this->stdout('Queuing up feed ');
-                $this->stdout($feed->name, Console::FG_CYAN);
-                $this->stdout(' ... ');
+                $this->queueFeed($feed);
 
-                $queue->push(new FeedImport([
-                    'feed' => $feed,
-                    'limit' => $this->limit,
-                    'offset' => $this->offset,
-                    'continueOnError' => $this->continueOnError,
-                ]));
-
-                $this->stdout('done' . PHP_EOL, Console::FG_GREEN);
                 $tally++;
             }
         }
@@ -88,5 +102,26 @@ class FeedsController extends Controller
         }
 
         return ExitCode::OK;
+    }
+
+    /**
+     * Push a feed to the queue to be processed.
+     *
+     * @param $feed
+     */
+    protected function queueFeed($feed): void
+    {
+        $this->stdout('Queuing up feed ');
+        $this->stdout($feed->name, Console::FG_CYAN);
+        $this->stdout(' ... ');
+
+        $this->queue->push(new FeedImport([
+            'feed' => $feed,
+            'limit' => $this->limit,
+            'offset' => $this->offset,
+            'continueOnError' => $this->continueOnError,
+        ]));
+
+        $this->stdout('done' . PHP_EOL, Console::FG_GREEN);
     }
 }
