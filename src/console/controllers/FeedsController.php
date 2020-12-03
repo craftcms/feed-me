@@ -83,7 +83,7 @@ class FeedsController extends Controller
 
         if ($this->all) {
             foreach($feeds->getFeeds() as $feed) {
-                $this->queueFeed($feed);
+                $this->queueFeed($feed, null, null, $this->continueOnError);
 
                 $tally++;
             }
@@ -100,7 +100,7 @@ class FeedsController extends Controller
                     continue;
                 }
 
-                $this->queueFeed($feed);
+                $this->queueFeed($feed, $this->limit, $this->offset, $this->continueOnError);
 
                 $tally++;
             }
@@ -116,9 +116,12 @@ class FeedsController extends Controller
     /**
      * Push a feed to the queue to be processed.
      *
-     * @param $feed
+     * @param      $feed
+     * @param null $limit
+     * @param null $offset
+     * @param bool $continueOnError
      */
-    protected function queueFeed($feed): void
+    protected function queueFeed($feed, $limit = null, $offset = null, $continueOnError = false): void
     {
         $this->stdout('Queuing up feed ');
         $this->stdout($feed->name, Console::FG_CYAN);
@@ -126,9 +129,9 @@ class FeedsController extends Controller
 
         $this->queue->push(new FeedImport([
             'feed' => $feed,
-            'limit' => $this->limit,
-            'offset' => $this->offset,
-            'continueOnError' => $this->continueOnError,
+            'limit' => $limit,
+            'offset' => $offset,
+            'continueOnError' => $continueOnError,
         ]));
 
         $this->stdout('done' . PHP_EOL, Console::FG_GREEN);
