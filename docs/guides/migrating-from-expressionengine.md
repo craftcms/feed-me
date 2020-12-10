@@ -5,7 +5,7 @@ Migrating from ExpressionEngine to Craft is relatively straightforward in most c
 This guide is also aimed at ExpressionEngine 2.x. We will not be offering a guide for ExpressionEngine 3.x.
 
 :::tip
-We are unable to offer any dedicated support for exporting out of ExpressionEngine. Its essentially up to you how you get your data, and this guide is for reference only.
+We are unable to offer any dedicated support for exporting out of ExpressionEngine. It is up to you how you get your data, and this guide is for reference only.
 :::
 
 ### Create export from ExpressionEngine
