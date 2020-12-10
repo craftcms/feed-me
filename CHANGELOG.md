@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Fixed a PHP error that occurred when importing a JSON object, rather than an array (again). ([#761](https://github.com/craftcms/feed-me/issues/761))
+
 ## 4.3.2 - 2020-11-15
 
 ### Fixed
