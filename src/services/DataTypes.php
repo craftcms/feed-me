@@ -165,7 +165,7 @@ class DataTypes extends Component
         $url = Craft::getAlias($url);
 
         // If the path starts with / but not //
-        if (strpos($url, '/') === 0 && !UrlHelper::isProtocolRelativeUrl($url)) {
+        if (file_exists($url)) {
             error_clear_last();
 
             $filepath = realpath($url);
