@@ -161,11 +161,10 @@ class DataTypes extends Component
         }
 
         $url = $event->url;
-
         $url = Craft::getAlias($url);
 
-        // If the path starts with / but not //
-        if (strpos($url, '/') === 0 && !UrlHelper::isProtocolRelativeUrl($url)) {
+        // Does this look like a local filesystem path?
+        if (@file_exists($url)) {
             error_clear_last();
 
             $filepath = realpath($url);
