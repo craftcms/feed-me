@@ -79,7 +79,7 @@ class Process extends Component
             $gc->run(true);
         }
 
-        $this->_data = array_values($feedData);
+        $this->_data = $feedData;
         $this->_service = $feed->element;
 
         $return = $feed->attributes;
@@ -138,6 +138,8 @@ class Process extends Component
 
             $this->_data[$key] = Hash::flatten($nodeData, '/');
         }
+
+        $this->_data = array_values($feedData);
 
         // Fire an 'onBeforeProcessFeed' event
         $event = new FeedProcessEvent([

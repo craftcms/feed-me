@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.3.3 - 2020-12-10
+
+### Fixed
+- Fixed a PHP error that occurred when importing a JSON object, rather than an array (again). ([#761](https://github.com/craftcms/feed-me/issues/761))
+- Fixed a MySQL error that could occur when importing values of zero.  ([#779](https://github.com/craftcms/feed-me/issues/779))
+- Fixed a bug where local filesystem feeds would not run on Windows. ([#655](https://github.com/craftcms/feed-me/issues/655))
+
 ## 4.3.2 - 2020-11-15
 
 ### Fixed
