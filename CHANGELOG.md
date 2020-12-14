@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+### Fixed
 - Fixed a bug that prevented some feeds from importing. ([#786](https://github.com/craftcms/feed-me/issues/786))
 - Fixed a PHP error that would occur when importing into a custom field named `variants`. ([#616](https://github.com/craftcms/feed-me/issues/616))
 
