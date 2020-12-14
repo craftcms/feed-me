@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 4.3.4 - 2020-12-14
 
 ### Fixed
 - Fixed a bug that prevented some feeds from importing. ([#786](https://github.com/craftcms/feed-me/issues/786))
