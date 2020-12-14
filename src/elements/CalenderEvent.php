@@ -90,12 +90,18 @@ class CalenderEvent extends Element
      */
     public function init()
     {
+        parent::init();
+
         Event::on(Process::class, Process::EVENT_STEP_BEFORE_ELEMENT_SAVE, function(FeedProcessEvent $event) {
-            $this->_onBeforeElementSave($event);
+            if ($event->feed['elementType'] === EventElement::class) {
+                $this->_onBeforeElementSave($event);
+            }
         });
 
         Event::on(Process::class, Process::EVENT_STEP_AFTER_ELEMENT_SAVE, function(FeedProcessEvent $event) {
-            $this->_onAfterElementSave($event);
+            if ($event->feed['elementType'] === EventElement::class) {
+                $this->_onAfterElementSave($event);
+            }
         });
     }
 

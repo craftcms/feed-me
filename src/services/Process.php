@@ -139,7 +139,7 @@ class Process extends Component
             $this->_data[$key] = Hash::flatten($nodeData, '/');
         }
 
-        $this->_data = array_values($feedData);
+        $this->_data = array_values($this->_data);
 
         // Fire an 'onBeforeProcessFeed' event
         $event = new FeedProcessEvent([
