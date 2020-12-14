@@ -80,18 +80,26 @@ class CommerceProduct extends Element
      */
     public function init()
     {
+        parent::init();
+
         // Hook into the process service on each step - we need to re-arrange the feed mapping
         Event::on(Process::class, Process::EVENT_STEP_BEFORE_PARSE_CONTENT, function(FeedProcessEvent $event) {
-            $this->_preParseVariants($event);
+            if ($event->feed['elementType'] === ProductElement::class) {
+                $this->_preParseVariants($event);
+            }
         });
 
         Event::on(Process::class, Process::EVENT_STEP_BEFORE_ELEMENT_MATCH, function(FeedProcessEvent $event) {
-            $this->_checkForVariantMatches($event);
+            if ($event->feed['elementType'] === ProductElement::class) {
+                $this->_checkForVariantMatches($event);
+            }
         });
 
         // Hook into the before element save event, because we need to do lots to prepare variant data
         Event::on(Process::class, Process::EVENT_STEP_BEFORE_ELEMENT_SAVE, function(FeedProcessEvent $event) {
-            $this->_parseVariants($event);
+            if ($event->feed['elementType'] === ProductElement::class) {
+                $this->_parseVariants($event);
+            }
         });
     }
 
