@@ -11,28 +11,47 @@ use craft\feedme\base\FieldInterface;
 use craft\feedme\Plugin;
 use craft\helpers\Db;
 
+/**
+ *
+ * @property-read string $mappingTemplate
+ */
 class Categories extends Field implements FieldInterface
 {
     // Properties
     // =========================================================================
 
+    /**
+     * @var string
+     */
     public static $name = 'Categories';
-    public static $class = 'craft\fields\Categories';
-    public static $elementType = 'craft\elements\Category';
 
+    /**
+     * @var string
+     */
+    public static $class = 'craft\fields\Categories';
+
+    /**
+     * @var string
+     */
+    public static $elementType = 'craft\elements\Category';
 
     // Templates
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getMappingTemplate()
     {
         return 'feed-me/_includes/fields/categories';
     }
 
-
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function parseField()
     {
         $value = $this->fetchArrayValue();
@@ -107,10 +126,8 @@ class Categories extends Field implements FieldInterface
             Plugin::info('Found `{i}` existing categories: `{j}`', ['i' => count($foundElements), 'j' => json_encode($foundElements)]);
 
             // Check if we should create the element. But only if title is provided (for the moment)
-            if (count($ids) == 0) {
-                if ($create && $match === 'title') {
-                    $foundElements[] = $this->_createElement($dataValue, $groupId);
-                }
+            if ((count($ids) == 0) && $create && $match === 'title') {
+                $foundElements[] = $this->_createElement($dataValue, $groupId);
             }
         }
 
@@ -119,7 +136,7 @@ class Categories extends Field implements FieldInterface
             $foundElements = array_chunk($foundElements, $branchLimit)[0];
         }
 
-        // Check for any sub-fields for the lement
+        // Check for any sub-fields for the element
         if ($fields) {
             $this->populateElementFields($foundElements);
         }
@@ -133,7 +150,6 @@ class Categories extends Field implements FieldInterface
 
         return $foundElements;
     }
-
 
     // Private Methods
     // =========================================================================
@@ -160,5 +176,4 @@ class Categories extends Field implements FieldInterface
 
         return $element->id;
     }
-
 }

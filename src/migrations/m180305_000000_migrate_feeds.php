@@ -34,13 +34,11 @@ class m180305_000000_migrate_feeds extends Migration
                 $feedId = $feed['id'];
 
                 // Convert the Element Type
-                if (isset($feed['elementType'])) {
-                    if (isset($this->elements[$feed['elementType']])) {
-                        $oldElementType = $feed['elementType'];
-                        $newElementType = $this->elements[$oldElementType];
+                if (isset($feed['elementType'], $this->elements[$feed['elementType']])) {
+                    $oldElementType = $feed['elementType'];
+                    $newElementType = $this->elements[$oldElementType];
 
-                        $this->update($table, ['elementType' => $newElementType], ['id' => $feedId]);
-                    }
+                    $this->update($table, ['elementType' => $newElementType], ['id' => $feedId]);
                 }
 
                 // Convert the Element Group

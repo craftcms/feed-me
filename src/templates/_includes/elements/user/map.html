@@ -34,7 +34,7 @@
         options: {
             limit: 1,
             elementType: 'craft\\elements\\Asset',
-            selectionLabel: "Default Asset" | t('feed-me'),
+            selectionLabel: "Default Asset"|t('feed-me'),
         },
     },
 }, {
@@ -52,11 +52,11 @@
 }, {
     name: 'Status',
     handle: 'status',
-    instructions: 'Choose either a default status from the list or the imported field that will contain the status.' | t('feed-me'),
+    instructions: 'Choose either a default status from the list or the imported field that will contain the status.'|t('feed-me'),
     default: {
         type: 'select',
         options: [
-            { label: 'Don\'t import', value: '' },
+            { label: 'Don’t import'|t('feed-me'), value: '' },
             { label: 'Active', value: 'active' },
             { label: 'Locked', value: 'locked' },
             { label: 'Suspended', value: 'suspended' },
@@ -66,24 +66,24 @@
 }, {
     name: 'User ID',
     handle: 'id',
-    instructions: '<strong class="error">Warning: </strong>This should only be used for an existing Craft User ID.' | t('feed-me'),
+    instructions: '<strong class="error">Warning: </strong>This should only be used for an existing Craft User ID.'|t('feed-me'),
     default: {
         type: 'text',
     },
 }] %}
 
-<h2>{{ 'User Fields' | t('feed-me') }}</h2>
+<h2>{{ 'User Fields'|t('feed-me') }}</h2>
 
 <table class="feedme-mapping data fullwidth collapsible">
     <thead>
-        <th>{{ 'Field' | t('feed-me') }}</th>
-        <th>{{ 'Feed Element' | t('feed-me') }}</th>
-        <th>{{ 'Default Value' | t('feed-me') }}</th>
+        <th>{{ 'Field'|t('feed-me') }}</th>
+        <th>{{ 'Feed Element'|t('feed-me') }}</th>
+        <th>{{ 'Default Value'|t('feed-me') }}</th>
     </thead>
     <tbody>
         {% for field in fields %}
             {% set template = field.type ?? 'default' %}
-            {% set variables = field | merge({ feed: feed, feedData: feedData, attribute: true }) %}
+            {% set variables = field|merge({ feed: feed, feedData: feedData, attribute: true }) %}
 
             {% include 'feed-me/_includes/fields/' ~ template ignore missing with variables only %}
         {% endfor %}
@@ -95,7 +95,7 @@
 {% set groupFields = [{
     name: 'User Groups',
     handle: 'groups',
-    instructions: 'Select the groups this user should be assigned to.' | t('feed-me'),
+    instructions: 'Select the groups this user should be assigned to.'|t('feed-me'),
     type: 'userGroups',
     default: {
         type: 'checkboxGroup',
@@ -103,18 +103,18 @@
     },
 }] %}
 
-<h2>{{ 'User Groups' | t('feed-me') }}</h2>
+<h2>{{ 'User Groups'|t('feed-me') }}</h2>
 
 <table class="feedme-mapping data fullwidth collapsible">
     <thead>
-        <th>{{ 'Field' | t('feed-me') }}</th>
-        <th>{{ 'Feed Element' | t('feed-me') }}</th>
-        <th>{{ 'Default Value' | t('feed-me') }}</th>
+        <th>{{ 'Field'|t('feed-me') }}</th>
+        <th>{{ 'Feed Element'|t('feed-me') }}</th>
+        <th>{{ 'Default Value'|t('feed-me') }}</th>
     </thead>
     <tbody>
         {% for field in groupFields %}
             {% set template = field.type ?? 'default' %}
-            {% set variables = field | merge({ feed: feed, feedData: feedData, attribute: true }) %}
+            {% set variables = field|merge({ feed: feed, feedData: feedData, attribute: true }) %}
 
             {% include 'feed-me/_includes/fields/' ~ template ignore missing with variables only %}
         {% endfor %}
@@ -130,9 +130,9 @@
 
     <table class="feedme-mapping data fullwidth collapsible">
         <thead>
-            <th>{{ 'Field' | t('feed-me') }}</th>
-            <th>{{ 'Feed Element' | t('feed-me') }}</th>
-            <th>{{ 'Default Value' | t('feed-me') }}</th>
+            <th>{{ 'Field'|t('feed-me') }}</th>
+            <th>{{ 'Feed Element'|t('feed-me') }}</th>
+            <th>{{ 'Default Value'|t('feed-me') }}</th>
         </thead>
         <tbody>
             {% for field in tab.getFields() %}
@@ -149,17 +149,16 @@
 
 <hr>
 
-<h2>{{ "Set a unique identifier to match against existing elements" | t('feed-me') }}</h2>
-
-<p>{{ "Select the fields you want to use to check for existing elements. When selected, Feed Me will look for existing elements that match the fields provided below and either update, or skip depending on your choice of Import Strategy." | t('feed-me') }}</p>
+<h2 id="user-uniques-label">{{ "Set a unique identifier to match against existing elements"|t('feed-me') }}</h2>
+<p>{{ "Select the fields you want to use to check for existing elements. When selected, Feed Me will look for existing elements that match the fields provided below and either update, or skip depending on your choice of Import Strategy."|t('feed-me') }}</p>
 
 {% for tab in tabs %}
     {% for field in tab.getFields() %}
-        {% set fields = fields | merge([{ name: field.name, handle: field.handle, type: className(field) }]) %}
+        {% set fields = fields|merge([{ name: field.name, handle: field.handle, type: className(field) }]) %}
     {% endfor %}
 {% endfor %}
 
-<div class="feedme-uniques">
+<fieldset class="feedme-uniques" aria-labelledby="user-uniques-label">
     {% for field in fields if field and craft.feedme.fieldCanBeUniqueId(field) %}
         {{ forms.checkboxField({
             name: 'fieldUnique[' ~ field.handle ~ ']',
@@ -167,4 +166,4 @@
             checked: feed.fieldUnique[field.handle] ?? '',
         }) }}
     {% endfor %}
-</div>
+</fieldset>

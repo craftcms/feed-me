@@ -28,7 +28,7 @@
             </div>
 
             <div class="additional-mapping-fields">
-                {% namespace 'fieldMapping[' ~ prefixPath | join('][') ~ ']' %}
+                {% namespace 'fieldMapping[' ~ prefixPath|join('][') ~ ']' %}
                     <input type="text" name="field" value="{{ className(field) }}">
                 {% endnamespace %}
             </div>
@@ -40,7 +40,7 @@
     {% set nameLabel = craft.smartMap.labelFromHandle(key) %}
     {% set instructionsHandle = handle ~ '[' ~ key ~ ']' %}
 
-    {% set path = prefixPath | merge ([ 'fields', key ]) %}
+    {% set path = prefixPath|merge ([ 'fields', key ]) %}
 
     {% set default = default ?? {
         type: 'text',
@@ -48,7 +48,7 @@
 
     {% embed 'feed-me/_includes/fields/_base' %}
         {% block additionalFieldSettings %}
-            
+
         {% endblock %}
 
         {% block fieldSettings %}

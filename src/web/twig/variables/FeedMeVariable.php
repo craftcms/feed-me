@@ -8,6 +8,11 @@ use craft\helpers\DateTimeHelper;
 use craft\helpers\UrlHelper;
 use yii\di\ServiceLocator;
 
+/**
+ *
+ * @property-read mixed $pluginName
+ * @property-read array[]|array $tabs
+ */
 class FeedMeVariable extends ServiceLocator
 {
     public $config;
@@ -68,6 +73,10 @@ class FeedMeVariable extends ServiceLocator
 
         if (is_array($options)) {
             foreach ($options as $key => $value) {
+                if (isset($value['optgroup'])) {
+                    continue;
+                }
+
                 $values[$value[$index]] = $value[$label];
             }
         }
@@ -192,7 +201,7 @@ class FeedMeVariable extends ServiceLocator
         if ($type === 'craft\fields\Assets') {
             $source = $this->getAssetSourcesByField($field)[0] ?? null;
         } else if ($type === 'craft\fields\Categories') {
-            $source = $this->getCategorySourcesByField($field) ?? null;
+            $source = $this->getCategorySourcesByField($field);
         } else if ($type === 'craft\fields\Entries') {
             $section = $this->getEntrySourcesByField($field)[0] ?? null;
 
@@ -200,7 +209,7 @@ class FeedMeVariable extends ServiceLocator
                 $source = Craft::$app->sections->getEntryTypeById($section->id);
             }
         } else if ($type === 'craft\fields\Tags') {
-            $source = $this->getTagSourcesByField($field) ?? null;
+            $source = $this->getTagSourcesByField($field);
         }
 
         if (!$source || !$source->fieldLayoutId) {
@@ -210,7 +219,7 @@ class FeedMeVariable extends ServiceLocator
         return Craft::$app->fields->getFieldsByLayoutId($source->fieldLayoutId);
     }
 
-    public function getUserLayoutByField($field)
+    public function getUserLayoutByField()
     {
         $layoutId = Craft::$app->fields->getLayoutByType(UserElement::class)->id;
 
@@ -281,7 +290,7 @@ class FeedMeVariable extends ServiceLocator
 
         $supported = array_merge($supportedFields, $supportedValues);
 
-        if (in_array($type, $supported)) {
+        if (in_array($type, $supported, true)) {
             return true;
         }
 
@@ -311,7 +320,7 @@ class FeedMeVariable extends ServiceLocator
             'craft\fields\Redactor',
         ];
 
-        return in_array($class, $supportedSubFields);
+        return in_array($class, $supportedSubFields, true);
     }
 
 }

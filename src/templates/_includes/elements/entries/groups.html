@@ -7,10 +7,10 @@
 {# Create a section-indexed array of element types #}
 {% set entryTypes = [] %}
 {% for section in sections %}
-    {% set options = craft.feedme.getSelectOptions(section.getEntryTypes()) %}
+    {% set options = craft.feedme.getSelectOptions(section.model.getEntryTypes()) %}
 
     {# We have to prefix the index, otherwise Twig doesn't maintain numbered index correctly #}
-    {% set entryTypes = entryTypes | merge({ ('item_' ~ section.id): options }) %}
+    {% set entryTypes = entryTypes|merge({ ('item_' ~ section.id): options }) %}
 {% endfor %}
 
 {% set sectionId = null %}
@@ -29,29 +29,31 @@
         {% set sectionEntryTypes = section.getEntryTypes() %}
     {% endif %}
 {% elseif sections[0] is defined %}
-    {% set sectionEntryTypes = sections[0].getEntryTypes() ?? null %}
+    {% set sectionEntryTypes = sections[0].model.getEntryTypes() ?? null %}
 {% endif %}
 
-<div class="element-sub-group" data-items="{{ entryTypes | json_encode }}">
+<div class="element-sub-group" data-items="{{ entryTypes|json_encode }}">
     {{ forms.selectField({
-        label: "Section" | t('feed-me'),
-        instructions: 'Choose the Section you want to save your feed data to.' | t('feed-me'),
+        label: "Section"|t('feed-me'),
+        instructions: 'Choose the Section you want to save your feed data to.'|t('feed-me'),
         class: 'element-parent-group',
         id: 'elementGroup-' ~ elementType ~ '-section',
         name: 'elementGroup[' ~ elementType ~ '][section]',
-        options: craft.feedme.getSelectOptions(sections),
+        options: craft.feedme.getSelectOptions(sections|map(s => s.model)),
         value: sectionId ?? '',
+        errors: feed.getErrors('elementGroup'),
         required: true,
     }) }}
 
     {{ forms.selectField({
-        label: "Entry Type" | t('feed-me'),
-        instructions: 'Choose the Entry Type you want to save your feed data into.' | t('feed-me'),
+        label: "Entry Type"|t('feed-me'),
+        instructions: 'Choose the Entry Type you want to save your feed data into.'|t('feed-me'),
         class: 'element-child-group',
         id: 'elementGroup-' ~ elementType ~ '-entryType',
         name: 'elementGroup[' ~ elementType ~ '][entryType]',
         options: craft.feedme.getSelectOptions(sectionEntryTypes),
         value: entryTypeId ?? '',
+        errors: feed.getErrors('elementGroup'),
         required: true,
     }) }}
 </div>

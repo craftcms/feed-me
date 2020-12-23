@@ -28,7 +28,7 @@
             </div>
 
             <div class="additional-mapping-fields">
-                {% namespace 'fieldMapping[' ~ prefixPath | join('][') ~ ']' %}
+                {% namespace 'fieldMapping[' ~ prefixPath|join('][') ~ ']' %}
                     <input type="text" name="field" value="{{ className(field) }}">
                 {% endnamespace %}
             </div>
@@ -47,7 +47,7 @@
     {% set nameLabel = col %}
     {% set instructionsHandle = handle ~ '[' ~ key ~ ']' %}
 
-    {% set path = prefixPath | merge ([ 'fields', key ]) %}
+    {% set path = prefixPath|merge ([ 'fields', key ]) %}
 
     {% set default = {
         type: 'text'
@@ -59,7 +59,7 @@
 
             {% set enabledLinkTypes = field.getEnabledLinkTypes() %}
             {% set enabledLinkTypeOptions = [
-                { label: "Don't import", value: '' }
+                { label: 'Don’t import'|t('feed-me'), value: '' }
             ] %}
 
             {% for enabledLinkType in enabledLinkTypes %}
@@ -76,7 +76,7 @@
             {% set default = {
                 type: 'select',
                 options: [
-                    { label: "Don't import", value: '' },
+                    { label: 'Don’t import'|t('feed-me'), value: '' },
                     { label: 'Open in new window', value: '1' },
                     { label: 'Open in existing window', value: '' },
                 ]

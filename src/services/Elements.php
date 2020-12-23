@@ -13,12 +13,17 @@ use craft\feedme\elements\Comment;
 use craft\feedme\elements\CommerceProduct;
 use craft\feedme\elements\DigitalProduct;
 use craft\feedme\elements\Entry;
+use craft\feedme\elements\GlobalSet;
 use craft\feedme\elements\Tag;
 use craft\feedme\elements\User;
 use craft\feedme\events\RegisterFeedMeElementsEvent;
 use craft\helpers\Component as ComponentHelper;
 use yii\base\InvalidConfigException;
 
+/**
+ *
+ * @property-read ElementInterface[] $registeredElements
+ */
 class Elements extends Component
 {
     // Constants
@@ -39,6 +44,9 @@ class Elements extends Component
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function init()
     {
         parent::init();
@@ -70,12 +78,12 @@ class Elements extends Component
      */
     public function getRegisteredElement($handle)
     {
-        if (isset($this->_elements[$handle])) {
-            return $this->_elements[$handle];
-        }
-        return null;
+        return $this->_elements[$handle] ?? null;
     }
 
+    /**
+     * @return array
+     */
     public function elementsList()
     {
         $list = [];
@@ -87,6 +95,9 @@ class Elements extends Component
         return $list;
     }
 
+    /**
+     * @return array|ElementInterface[]
+     */
     public function getRegisteredElements()
     {
         if (count($this->_elements)) {
@@ -96,11 +107,11 @@ class Elements extends Component
         $elements = [
             Asset::class,
             Category::class,
-            // CommerceOrder::class,
             CommerceProduct::class,
             Entry::class,
             Tag::class,
             User::class,
+            GlobalSet::class,
 
             // Third-party
             CalenderEvent::class,
@@ -119,9 +130,9 @@ class Elements extends Component
 
     /**
      * @param $config
-     * @return ElementInterface
-     * @throws MissingComponentException
+     * @return \craft\base\ComponentInterface
      * @throws InvalidConfigException
+     * @throws MissingComponentException
      */
     public function createElement($config)
     {

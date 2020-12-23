@@ -3,103 +3,103 @@
 {% import '_includes/forms' as forms %}
 
 {% set crumbs = [
-    { label: craft.feedme.getPluginName | t('feed-me'), url: url('feed-me') },
-    { label: "Logs" | t('feed-me'), url: url('feed-me/logs') }
+    { label: craft.feedme.getPluginName|t('feed-me'), url: url('feed-me') },
+    { label: "Logs"|t('feed-me'), url: url('feed-me/logs') }
 ] %}
 
 {% set selectedTab = 'logs' %}
 
-{% block blockContent %}
+{% block content %}
+    <form class="log-type-form">
+        {{ forms.selectField({
+            label: 'Show logs for:'|t('feed-me'),
+            instructions: ''|t('feed-me'),
+            id: 'show',
+            name: 'show',
+            value: show,
+            options: [
+                { label: 'All', value: '' },
+                { label: 'Info', value: 'info' },
+                { label: 'Errors', value: 'error' },
+            ],
+        }) }}
+    </form>
 
-<form class="log-type-form">
-    {{ forms.selectField({
-        label: 'Show logs for:' | t('feed-me'),
-        instructions: '' | t('feed-me'),
-        id: 'show',
-        name: 'show',
-        value: show,
-        options: [
-            { label: 'All', value: '' },
-            { label: 'Info', value: 'info' },
-            { label: 'Errors', value: 'error' },
-        ],
-    }) }}
-</form>
+    <a class="btn right" href="{{ actionUrl('feed-me/logs/clear') }}">{{ "Clear logs"|t('feed-me') }}</a>
 
-<a class="btn right" href="{{ actionUrl('feed-me/logs/clear') }}">{{ "Clear logs" | t('feed-me') }}</a>
+    <hr>
 
-<hr>
-
-{% if logEntries | length %}
-    <table class="data fullwidth collapsible feed-me-logs-table">
-        <thead>
-            <tr>
-                <th scope="col">{{ "Type" | t('feed-me') }}</th>
-                <th scope="col">{{ "Message" | t('feed-me') }}</th>
-                <th scope="col">{{ "Timestamp" | t('feed-me') }}</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            {% for logEntry in logEntries %}
-                {% set hasChildErrors = false %}
-
-                {% if logEntry.items is defined %}
-                    {% for subEntry in logEntry.items %}
-                        {% if subEntry.type == 'error' %}
-                            {% set hasChildErrors = true %}
-                        {% endif %}
-                    {% endfor %}
-                {% endif %}
-
+    {% if logEntries|length %}
+        <table class="data fullwidth collapsible feed-me-logs-table">
+            <thead>
                 <tr>
-                    <td class="col-label" data-title="{{ 'Result' | t('feed-me') }}">
-                        {% if hasChildErrors %}
-                            <span class="log-result type-error">{{ 'error' | t('feed-me') }}</span>
-                        {% else %}
-                            <span class="log-result type-{{ logEntry.type }}">{{ logEntry.type }}</span>
-                        {% endif %}
-                    </td>
-
-                    <td class="col-label" data-title="{{ 'Message' | t('feed-me') }}">
-                        {{ logEntry.message | md | striptags('<code><strong><a>') | raw }}
-
-                        {% if logEntry.items is defined %}
-                            <a class="log-detail-link" href="#" data-key="{{ logEntry.key }}">Show detail</a>
-                        {% endif %}
-                    </td>
-
-                    <td data-title="{{ 'Timestamp' | t('feed-me') }}">
-                        <code>
-                            {{ logEntry.date | date('short') ~ ' ' ~ logEntry.date | time('short') }}
-                        </code>
-                    </td>
+                    <th scope="col">{{ "Type"|t('feed-me') }}</th>
+                    <th scope="col">{{ "Message"|t('feed-me') }}</th>
+                    <th scope="col">{{ "Timestamp"|t('feed-me') }}</th>
                 </tr>
+            </thead>
 
-                {% if logEntry.items is defined %}
-                    {% for subEntry in logEntry.items %}
-                        <tr class="hidden sub-items" data-key="{{ subEntry.key }}">
-                            <td class="col-label" data-title="{{ 'Result' | t('feed-me') }}">
-                                <span class="log-result type-{{ subEntry.type }}">{{ subEntry.type }}</span>
-                            </td>
+            <tbody>
+                {% for logEntry in logEntries %}
+                    {% set hasChildErrors = false %}
 
-                            <td class="col-label" data-title="{{ 'Message' | t('feed-me') }}">
-                                &rdsh; {{ subEntry.message | md | striptags('<code><strong><a>') | raw }}
-                            </td>
+                    {% if logEntry.items is defined %}
+                        {% for subEntry in logEntry.items %}
+                            {% if subEntry.type == 'error' %}
+                                {% set hasChildErrors = true %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
 
-                            <td data-title="{{ 'Timestamp' | t('feed-me') }}">
-                                <code>
-                                    {{ subEntry.date | date('short') ~ ' ' ~ subEntry.date | time('short') }}
-                                </code>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                {% endif %}
-            {% endfor %}
-        </tbody>
-    </table>
-{% else %}
-    <p>{{ 'No logs recorded yet.' | t('feed-me') }}</p>
-{% endif %}
+                    <tr>
+                        <td class="col-label" data-title="{{ 'Result'|t('feed-me') }}">
+                            {% if hasChildErrors %}
+                                <span class="log-result type-error">{{ 'error'|t('feed-me') }}</span>
+                            {% else %}
+                                <span class="log-result type-{{ logEntry.type }}">{{ logEntry.type }}</span>
+                            {% endif %}
+                        </td>
 
+                        <td class="col-label" data-title="{{ 'Message'|t('feed-me') }}">
+                            {{ logEntry.message|md|striptags('<code><strong><a>')|raw }}
+
+                            {% if logEntry.items is defined %}
+                                <a class="log-detail-link" href="#" data-key="{{ logEntry.key }}">Show detail</a>
+                            {% endif %}
+                        </td>
+
+                        <td data-title="{{ 'Timestamp'|t('feed-me') }}">
+                            <code>
+                                {{ logEntry.date|date('short') ~ ' ' ~ logEntry.date|time('short') }}
+                            </code>
+                        </td>
+                    </tr>
+
+                    {% if logEntry.items is defined %}
+                        {% for subEntry in logEntry.items %}
+                            <tr class="hidden sub-items" data-key="{{ subEntry.key }}">
+                                <td class="col-label" data-title="{{ 'Result'|t('feed-me') }}">
+                                    <span class="log-result type-{{ subEntry.type }}">{{ subEntry.type }}</span>
+                                </td>
+
+                                <td class="col-label" data-title="{{ 'Message'|t('feed-me') }}">
+                                    &rdsh; {{ subEntry.message|md|striptags('<code><strong><a>')|raw }}
+                                </td>
+
+                                <td data-title="{{ 'Timestamp'|t('feed-me') }}">
+                                    <code>
+                                        {{ subEntry.date|date('short') ~ ' ' ~ subEntry.date|time('short') }}
+                                    </code>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>{{ 'No logs recorded yet.'|t('feed-me') }}</p>
+    {% endif %}
+
+    {{ parent() }}
 {% endblock %}

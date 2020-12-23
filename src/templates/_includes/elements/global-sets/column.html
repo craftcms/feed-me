@@ -1,0 +1,9 @@
+{% set globalSetId = feed.elementGroup[elementType].globalSet %}
+
+{% if globalSetId %}
+    {% set globalSet = craft.app.globals.getSetById(globalSetId) %}
+
+    {% if globalSet %}
+        <span class="element-group">{{ globalSet.name }}</span>
+    {% endif %}
+{% endif %}

@@ -1,4 +1,4 @@
-{% extends parentLayout | default('_layouts/cp') %}
+{% extends parentLayout|default('_layouts/cp') %}
 
 {% do view.registerAssetBundle('craft\\feedme\\web\\assets\\feedme\\FeedMeAsset') %}
 {% set baseAssetsUrl = view.getAssetManager().getPublishedUrl('@craft/feedme/web/assets/feedme/dist', true) %}
@@ -11,18 +11,14 @@
     {% set title = craft.feedme.getPluginName ~ ' ' %}
 {% endif %}
 
-{% set content %}
-    {% block blockContent %}
+{% block content %}
+    {% if block('footerButton') is defined %}
+        <hr>
 
-    {% endblock %}
-
-    <hr>
-
-    <div id="plugin-footer">
-        <div class="footer-left">
-            {% block footerButton %}
-
-            {% endblock %}
+        <div id="plugin-footer">
+            <div class="footer-left">
+                {{ block('footerButton') }}
+            </div>
         </div>
-    </div>
-{% endset %}
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,17 @@
+{% import '_includes/forms' as forms %}
+
+{% set globalSetId = feed.elementGroup[elementType].globalSet ?? null %}
+
+<div class="element-sub-group">
+    {{ forms.selectField({
+        label: 'Global Set'|t('feed-me'),
+        instructions: 'Choose the global set you want to save your feed data to.'|t('feed-me'),
+        class: 'element-parent-group',
+        id: 'elementGroup-' ~ elementType ~ '-global-set',
+        name: 'elementGroup[' ~ elementType ~ '][globalSet]',
+        options: craft.feedme.getSelectOptions(element.groups|map(s => s.model)),
+        value: globalSetId,
+        errors: feed.getErrors('elementGroup'),
+        required: true,
+    }) }}
+</div>

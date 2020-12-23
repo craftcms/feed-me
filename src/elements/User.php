@@ -12,40 +12,73 @@ use craft\feedme\helpers\AssetHelper;
 use craft\helpers\UrlHelper;
 use craft\records\User as UserRecord;
 
+/**
+ *
+ * @property-read string $mappingTemplate
+ * @property-read bool $groups
+ * @property-write mixed $model
+ * @property-read string $groupsTemplate
+ * @property-read string $columnTemplate
+ */
 class User extends Element
 {
     // Properties
     // =========================================================================
 
+    /**
+     * @var string
+     */
     public static $name = 'User';
+
+    /**
+     * @var string
+     */
     public static $class = 'craft\elements\User';
 
+    /**
+     * @var
+     */
     public $element;
+
+    /**
+     * @var
+     */
     public $status;
 
 
     // Templates
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getGroupsTemplate()
     {
         return 'feed-me/_includes/elements/user/groups';
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getColumnTemplate()
     {
         return 'feed-me/_includes/elements/user/column';
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getMappingTemplate()
     {
         return 'feed-me/_includes/elements/user/map';
     }
 
-
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getGroups()
     {
         $result = false;
@@ -60,6 +93,9 @@ class User extends Element
         return $result;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getQuery($settings, $params = [])
     {
         $query = UserElement::find()
@@ -69,6 +105,9 @@ class User extends Element
         return $query;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function setModel($settings)
     {
         $this->element = new UserElement();
@@ -84,6 +123,9 @@ class User extends Element
         return $this->element;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function afterSave($data, $settings)
     {
         $groupsIds = Hash::get($data, 'groups');
@@ -117,6 +159,9 @@ class User extends Element
         }
     }
 
+    /**
+     * @inheritDoc
+     */
     public function disable($elementIds)
     {
         foreach ($elementIds as $elementId) {
@@ -129,10 +174,14 @@ class User extends Element
         return true;
     }
 
-
     // Protected Methods
     // =========================================================================
 
+    /**
+     * @param $feedData
+     * @param $fieldInfo
+     * @return array
+     */
     protected function parseGroups($feedData, $fieldInfo)
     {
         $value = $this->fetchArrayValue($feedData, $fieldInfo);
@@ -174,6 +223,12 @@ class User extends Element
         return $groupIds;
     }
 
+    /**
+     * @param $feedData
+     * @param $fieldInfo
+     * @return int|mixed|string|null
+     * @throws \yii\base\Exception
+     */
     protected function parsePhotoId($feedData, $fieldInfo)
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
@@ -226,6 +281,11 @@ class User extends Element
         }
     }
 
+    /**
+     * @param $feedData
+     * @param $fieldInfo
+     * @return null
+     */
     protected function parseStatus($feedData, $fieldInfo)
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
@@ -235,11 +295,16 @@ class User extends Element
         return null;
     }
 
-
-
     // Private Methods
     // =========================================================================
 
+    /**
+     * @param $user
+     * @return int
+     * @throws \Throwable
+     * @throws \craft\errors\VolumeException
+     * @throws \yii\base\Exception
+     */
     private function _prepareUserPhotosFolder($user)
     {
         $assetsService = Craft::$app->getAssets();
@@ -256,5 +321,4 @@ class User extends Element
 
         return $assetsService->ensureFolderByFullPathAndVolume($subpath, $volume);
     }
-
 }

@@ -14,12 +14,18 @@ class Csv extends DataType implements DataTypeInterface
     // Properties
     // =========================================================================
 
+    /**
+     * @var string
+     */
     public static $name = 'CSV';
 
 
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getFeed($url, $settings, $usePrimaryElement = true)
     {
         $feedId = Hash::get($settings, 'id');
@@ -103,6 +109,10 @@ class Csv extends DataType implements DataTypeInterface
     // Private Methods
     // =========================================================================
 
+    /**
+     * @param $reader
+     * @return array
+     */
     private function _getRows($reader)
     {
         $array = [];
@@ -137,6 +147,10 @@ class Csv extends DataType implements DataTypeInterface
         return $array;
     }
 
+    /**
+     * @param $array
+     * @return bool
+     */
     private function _isArrayEmpty($array)
     {
         foreach ($array as $key => $val) {

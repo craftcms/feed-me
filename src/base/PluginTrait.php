@@ -22,25 +22,44 @@ trait PluginTrait
      */
     public static $plugin;
 
-    // Keeping state for logging
+    /**
+     * @var string $feedName Keeping state for logging
+     */
     public static $feedName;
+
+    /**
+     * @var
+     */
     public static $stepKey;
 
 
     // Static Methods
     // =========================================================================
 
+    /**
+     * @param $message
+     * @param array $params
+     * @param array $options
+     */
     public static function error($message, $params = [], $options = [])
     {
         Plugin::$plugin->getLogs()->log(__METHOD__, $message, $params, $options);
     }
 
+    /**
+     * @param $message
+     * @param array $params
+     * @param array $options
+     */
     public static function info($message, $params = [], $options = [])
     {
         Plugin::$plugin->getLogs()->log(__METHOD__, $message, $params, $options);
     }
 
-    public static function debug($message, $params = [])
+    /**
+     * @param $message
+     */
+    public static function debug($message)
     {
         if (Craft::$app->getRequest()->getIsConsoleRequest()) {
             return;
@@ -117,6 +136,9 @@ trait PluginTrait
     // Private Methods
     // =========================================================================
 
+    /**
+     *
+     */
     private function _setPluginComponents()
     {
         $this->setComponents([
@@ -129,5 +151,4 @@ trait PluginTrait
             'service' => Service::class,
         ]);
     }
-
 }

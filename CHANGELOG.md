@@ -1,5 +1,75 @@
 # Changelog
 
+## 4.3.4 - 2020-12-14
+
+### Fixed
+- Fixed a bug that prevented some feeds from importing. ([#786](https://github.com/craftcms/feed-me/issues/786))
+- Fixed a PHP error that would occur when importing into a custom field named `variants`. ([#616](https://github.com/craftcms/feed-me/issues/616))
+
+## 4.3.3 - 2020-12-10
+
+### Fixed
+- Fixed a PHP error that occurred when importing a JSON object, rather than an array (again). ([#761](https://github.com/craftcms/feed-me/issues/761))
+- Fixed a MySQL error that could occur when importing values of zero.  ([#779](https://github.com/craftcms/feed-me/issues/779))
+- Fixed a bug where local filesystem feeds would not run on Windows. ([#655](https://github.com/craftcms/feed-me/issues/655))
+
+## 4.3.2 - 2020-11-15
+
+### Fixed
+- Fixed a PHP error that could occur when importing assets. ([#355](https://github.com/craftcms/feed-me/issues/355)), ([#747](https://github.com/craftcms/feed-me/issues/747))
+
+## 4.3.1 - 2020-11-09
+
+### Fixed
+- Fixed a bug where feeds’ import strategy settings would get reset to the default values when editing existing feeds. ([#769](https://github.com/craftcms/feed-me/issues/769))
+- Fixed a bug where assets with uppercase file extensions wouldn’t import on case-sensitive file systems. ([#691](https://github.com/craftcms/feed-me/issues/691))
+- Fixed a bug that broke asset importing in 4.3.0.
+
+## 4.3.0 - 2020-11-06
+
+### Added
+- It’s now possible to import Single sections’ entry data. ([#559](https://github.com/craftcms/feed-me/issues/559))
+- It’s now possible to import global set data. ([#670](https://github.com/craftcms/feed-me/issues/670))
+- Added the `feed-me/feeds/queue` command. ([#754](https://github.com/craftcms/feed-me/issues/754), [#626](https://github.com/craftcms/feed-me/issues/626))
+- Added `craft\feedme\elements\GlobalSet`.
+- Added `craft\feedme\models\ElementGroup`.
+- Added `craft\feedme\models\FeedModel::$singleton`.
+
+### Changed
+- Feed Me now requires Craft 3.5 or later.
+- Cleaned up log messages when there are no items in a feed to process. ([#585](https://github.com/craftcms/feed-me/issues/585))
+- Elements’ `getGroups()` methods can now return `craft\feedme\models\ElementGroup` objects.
+- Updated ralouphie/mimey to v2.1. ([#740](https://github.com/craftcms/feed-me/issues/740))
+
+### Removed
+- Removed the `feed-me/feeds/run` command. The new `feed-me/feeds/queue` command can be used instead, in combination with `queue/run`.
+
+### Fixed
+- Fixed a bug where it was possible to configure feeds with validation issues. ([#757](https://github.com/craftcms/feed-me/issues/757))
+- Fixed a SQL error that occurred when importing products in Commerce 3.2.8 or later.
+- Fixed a bug where assets would end up with an incorrect filename when the filename was used for a mapping in the feed settings. ([#750](https://github.com/craftcms/feed-me/issues/750))
+- Fixed a bug where custom fields would have their content assigned to the primary site instead of the feed’s target site. ([#658](https://github.com/craftcms/feed-me/issues/658))
+- Fixed a bug where assets would always be imported to the primary site instead of the feed’s target site. ([#725](https://github.com/craftcms/feed-me/pull/725))
+- Fixed a PHP error that occurred when importing content to a mapped Dropdown field. ([#732](https://github.com/craftcms/feed-me/pull/732))
+- Fixed a PHP error that occurred when importing a JSON object, rather than an array. ([#761](https://github.com/craftcms/feed-me/issues/761))
+- Fixed a bug where an existing enabled entry wouldn’t be disabled if a matching feed item was marked as disabled. ([#760](https://github.com/craftcms/feed-me/pull/760))
+- Fixed a bug where unique identifier checkboxes had extra spacing between them. ([#727](https://github.com/craftcms/feed-me/issues/727))
+- Fixed a SQL error that occurred when importing a feed item with a missing field and no default value set. ([#527](https://github.com/craftcms/feed-me/issues/527))
+- Fixed a bug where an entry’s default status was ignored for a section on multi-site installs. ([#541](https://github.com/craftcms/feed-me/issues/541))
+- Fixed an error that could occur when using an alternate queue driver. ([#553](https://github.com/craftcms/feed-me/issues/553))
+- Fixed a bug where the final screen after editing a feed would say that the feed was being processed even though it wasn’t. ([#638](https://github.com/craftcms/feed-me/issues/638))
+
+## 4.2.4 - 2020-10-01
+
+### Fixed
+- Fixed a bug where pagination would break if a feed provided a root relative pagination URL.
+- Fixed a bug where pagination would break if a feed provided an invalid URL.  ([#694](https://github.com/craftcms/feed-me/issues/694))
+
+## 4.2.3 - 2020-05-12
+
+### Fixed
+- Fixed a bug where all elements would be disabled if the “Add” and “Disable” strategies were used together. ([#696](https://github.com/craftcms/feed-me/issues/696))
+
 ## 4.2.2 - 2020-03-26
 
 ### Changed

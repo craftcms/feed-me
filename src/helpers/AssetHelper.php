@@ -8,6 +8,7 @@ use craft\elements\Asset as AssetElement;
 use craft\feedme\Plugin;
 use craft\helpers\Assets as AssetsHelper;
 use craft\helpers\FileHelper;
+use craft\helpers\StringHelper;
 use craft\helpers\UrlHelper;
 use Mimey\MimeTypes;
 
@@ -16,6 +17,13 @@ class AssetHelper
     // Public Methods
     // =========================================================================
 
+    /**
+     * @param $srcName
+     * @param $dstName
+     * @param int $chunkSize
+     * @param bool $returnbytes
+     * @return bool|int
+     */
     public static function downloadFile($srcName, $dstName, $chunkSize = 1, $returnbytes = true)
     {
         $assetDownloadCurl = Plugin::$plugin->getSettings()->assetDownloadCurl;
@@ -32,38 +40,49 @@ class AssetHelper
             curl_close($ch);
 
             return fclose($fp);
-        } else {
-            $chunksize = $chunkSize * (1024 * 1024);
-            $bytesCount = 0;
-            $handle = fopen($srcName, 'rb');
-            $fp = fopen($dstName, 'w');
-
-            if ($handle === false) {
-                return false;
-            }
-
-            while (!feof($handle)) {
-                $data = fread($handle, $chunksize);
-                fwrite($fp, $data, strlen($data));
-
-                if ($returnbytes) {
-                    $bytesCount += strlen($data);
-                }
-            }
-
-            $status = fclose($handle);
-
-            fclose($fp);
-
-            if ($returnbytes && $status) {
-                return $bytesCount;
-            }
-
-            return $status;
         }
+
+        $newChunkSize = $chunkSize * (1024 * 1024);
+        $bytesCount = 0;
+        $handle = fopen($srcName, 'rb');
+        $fp = fopen($dstName, 'wb');
+
+        if ($handle === false) {
+            return false;
+        }
+
+        while (!feof($handle)) {
+            $data = fread($handle, $newChunkSize);
+            fwrite($fp, $data, strlen($data));
+
+            if ($returnbytes) {
+                $bytesCount += strlen($data);
+            }
+        }
+
+        $status = fclose($handle);
+
+        fclose($fp);
+
+        if ($returnbytes && $status) {
+            return $bytesCount;
+        }
+
+        return $status;
     }
 
-    public static function fetchRemoteImage($urls, $fieldInfo, $feed, $field = null, $element = null, $folderId = null)
+    /**
+     * @param array $urls
+     * @param $fieldInfo
+     * @param $feed
+     * @param null $field
+     * @param null $element
+     * @param null $folderId
+     * @param null $newFilename
+     * @return array
+     * @throws \yii\base\Exception
+     */
+    public static function fetchRemoteImage(array $urls, $fieldInfo, $feed, $field = null, $element = null, $folderId = null, $newFilename = null)
     {
         $uploadedAssets = [];
 
@@ -75,7 +94,7 @@ class AssetHelper
         // user has set to use that instead so we're good to proceed.
         foreach ($urls as $url) {
             try {
-                $filename = self::getRemoteUrlFilename($url);
+                $filename = $newFilename ? AssetsHelper::prepareAssetName($newFilename, false) : self::getRemoteUrlFilename($url);
 
                 $fetchedImage = $tempFeedMePath . $filename;
 
@@ -88,12 +107,12 @@ class AssetHelper
                 Plugin::info('Fetching remote image `{i}` - `{j}`', ['i' => $url, 'j' => $filename]);
 
                 if (!$cachedImage) {
-                    AssetHelper::downloadFile($url, $fetchedImage);
+                    self::downloadFile($url, $fetchedImage);
                 } else {
                     $fetchedImage = $cachedImage[0];
                 }
 
-                $result = self::createAsset($fetchedImage, $filename, $folderId, $feed, $field, $element, $conflict);
+                $result = self::createAsset($fetchedImage, $filename, $folderId, $field, $element, $conflict);
 
                 if ($result) {
                     $uploadedAssets[] = $result;
@@ -112,9 +131,20 @@ class AssetHelper
         return $uploadedAssets;
     }
 
+    /**
+     * @param $base64
+     * @param $fieldInfo
+     * @param $feed
+     * @param null $field
+     * @param null $element
+     * @param null $folderId
+     * @return array
+     * @throws \yii\base\Exception
+     */
     public static function createBase64Image($base64, $fieldInfo, $feed, $field = null, $element = null, $folderId = null)
     {
         $uploadedAssets = [];
+        $fetchedImageWithExtension = '';
 
         $conflict = Hash::get($fieldInfo, 'options.conflict');
 
@@ -137,11 +167,11 @@ class AssetHelper
                 // Get mime type and create file with proper file extension.
                 $mimeType = FileHelper::getMimeType($fetchedImage, null, false);
                 $extensions = FileHelper::getExtensionsByMimeType($mimeType);
-                $filename = $filename . '.' . $extensions[0];
+                $filename .= '.' . $extensions[0];
                 $fetchedImageWithExtension = $tempFeedMePath . $filename;
                 FileHelper::writeToFile($fetchedImageWithExtension, $decodedImage);
 
-                $result = self::createAsset($fetchedImageWithExtension, $filename, $folderId, $feed, $field, $element, $conflict);
+                $result = self::createAsset($fetchedImageWithExtension, $filename, $folderId, $field, $element, $conflict);
 
                 if ($result) {
                     $uploadedAssets[] = $result;
@@ -164,10 +194,14 @@ class AssetHelper
      * @param string $field
      * @param string $element
      * @param string $conflict
-     *
      * @return int
+     * @throws \Throwable
+     * @throws \craft\errors\AssetLogicException
+     * @throws \craft\errors\ElementNotFoundException
+     * @throws \craft\errors\FileException
+     * @throws \yii\base\Exception
      */
-    private static function createAsset($tempFilePath, $filename, $folderId, $feed, $field, $element, $conflict)
+    private static function createAsset($tempFilePath, $filename, $folderId, $field, $element, $conflict)
     {
         $assets = Craft::$app->getAssets();
 
@@ -206,16 +240,18 @@ class AssetHelper
             if ($asset->conflictingFilename !== null && $conflict === AssetElement::SCENARIO_REPLACE) {
                 $conflictingAsset = AssetElement::findOne(['folderId' => $folder->id, 'filename' => $asset->conflictingFilename]);
 
-                Plugin::info('Replacing existing asset `#{i}` with `#{j}`', ['i' => $conflictingAsset->id, 'j' => $asset->id]);
+                if ($conflictingAsset) {
+                    Plugin::info('Replacing existing asset `#{i}` with `#{j}`', ['i' => $conflictingAsset->id, 'j' => $asset->id]);
 
-                $tempPath = $asset->getCopyOfFile();
-                $assets->replaceAssetFile($conflictingAsset, $tempPath, $conflictingAsset->filename);
-                Craft::$app->getElements()->deleteElement($asset);
+                    $tempPath = $asset->getCopyOfFile();
+                    $assets->replaceAssetFile($conflictingAsset, $tempPath, $conflictingAsset->filename);
+                    Craft::$app->getElements()->deleteElement($asset);
 
-                return $conflictingAsset->id;
-            } else {
-                return $asset->id;
+                    return $conflictingAsset->id;
+                }
             }
+
+            return $asset->id;
         }
 
         return false;
@@ -223,6 +259,7 @@ class AssetHelper
 
     /**
      * @return string
+     * @throws \yii\base\Exception
      */
     private static function createTempFeedMePath()
     {
@@ -235,6 +272,10 @@ class AssetHelper
         return $tempFeedMePath;
     }
 
+    /**
+     * @param $url
+     * @return string
+     */
     public static function getRemoteUrlFilename($url)
     {
         // Function to extract a filename from a URL path. It does not query the actual URL however.
@@ -259,17 +300,18 @@ class AssetHelper
         $query = parse_url($url, PHP_URL_QUERY);
 
         if ($query) {
-            $filename = $filename . '-' . $query;
+            $filename .= '-' . $query;
         }
 
-        // Clean up the filename
-        $filename = str_replace('%20', '_', $filename);
-        $filename = str_replace('_-_', '-', $filename);
         $filename = AssetsHelper::prepareAssetName($filename, false);
 
         return $filename . '.' . $extension;
     }
 
+    /**
+     * @param $url
+     * @return string
+     */
     public static function getRemoteUrlExtension($url)
     {
         $mimes = new MimeTypes;
@@ -278,10 +320,10 @@ class AssetHelper
         $extension = UrlHelper::stripQueryString($url);
 
         // Can we easily get the extension for this URL?
-        $extension = pathinfo($extension, PATHINFO_EXTENSION);
+        $extension = StringHelper::toLowerCase(pathinfo($extension, PATHINFO_EXTENSION));
 
         // We might now have a perfectly acceptable extension, but is it real and allowed by Craft?
-        if (!in_array($extension, Craft::$app->getConfig()->getGeneral()->allowedFileExtensions)) {
+        if (!in_array($extension, Craft::$app->getConfig()->getGeneral()->allowedFileExtensions, true)) {
             $extension = '';
         }
 
@@ -313,17 +355,6 @@ class AssetHelper
             }
         }
 
-        return $extension;
+        return StringHelper::toLowerCase($extension);
     }
-
-    /**
-     * @param string $string
-     * @return string
-     * @deprecated since
-     */
-    public static function queryHash($string)
-    {
-        return $string;
-    }
-
 }

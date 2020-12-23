@@ -28,7 +28,7 @@
             </div>
 
             <div class="additional-mapping-fields">
-                {% namespace 'fieldMapping[' ~ prefixPath | join('][') ~ ']' %}
+                {% namespace 'fieldMapping[' ~ prefixPath|join('][') ~ ']' %}
                     <input type="text" name="field" value="{{ className(field) }}">
                 {% endnamespace %}
             </div>
@@ -40,11 +40,11 @@
     {% set nameLabel = col.heading %}
     {% set instructionsHandle = handle ~ '[' ~ col.handle ~ ']' %}
 
-    {% set path = prefixPath | merge ([ 'fields', index ]) %}
+    {% set path = prefixPath|merge ([ 'fields', index ]) %}
 
     {% embed 'feed-me/_includes/fields/_base' %}
         {% block additionalFieldSettings %}
-            {% namespace 'fieldMapping[' ~ path | join('][') ~ ']' %}
+            {% namespace 'fieldMapping[' ~ path|join('][') ~ ']' %}
                 <input type="text" name="handle" value="{{ col.handle }}">
                 <input type="text" name="type" value="{{ col.type }}">
             {% endnamespace %}

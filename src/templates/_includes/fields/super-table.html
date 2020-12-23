@@ -21,14 +21,14 @@
 {% set classes = ['complex-field'] %}
 
 <div class="additional-mapping-fields">
-    {% namespace 'fieldMapping[' ~ prefixPath | join('][') ~ ']' %}
+    {% namespace 'fieldMapping[' ~ prefixPath|join('][') ~ ']' %}
         <input type="text" name="field" value="{{ className(field) }}">
         <input type="text" name="blockTypeId" value="{{ field.getBlockTypes()[0] ?? '' }}">
     {% endnamespace %}
 </div>
 
 {% for blocktype in field.blocktypes %}
-    {% if blocktype.fields | length %}
+    {% if blocktype.fields|length %}
         <tr class="complex-field complex-field-header">
             <td class="col-field">
                 <div class="field">
@@ -49,7 +49,7 @@
             {% set nameLabel = blocktypefield.name %}
             {% set instructionsHandle = handle ~ '[' ~ blocktypefield.handle ~ ']' %}
 
-            {% set parentPath = prefixPath | merge ([ 'fields', blocktypefield.handle ]) %}
+            {% set parentPath = prefixPath|merge ([ 'fields', blocktypefield.handle ]) %}
 
             {% set fieldClass = craft.feedme.fields.getRegisteredField(className(blocktypefield)) %}
             {% set template = fieldClass.getMappingTemplate() %}

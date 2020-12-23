@@ -11,18 +11,36 @@ use craft\feedme\Plugin;
 use craft\helpers\Db;
 use craft\helpers\StringHelper;
 
+/**
+ *
+ * @property-read string $mappingTemplate
+ */
 class Entries extends Field implements FieldInterface
 {
     // Properties
     // =========================================================================
 
+    /**
+     * @var string
+     */
     public static $name = 'Entries';
+
+    /**
+     * @var string
+     */
     public static $class = 'craft\fields\Entries';
+
+    /**
+     * @var string
+     */
     public static $elementType = 'craft\elements\Entry';
 
     // Templates
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getMappingTemplate()
     {
         return 'feed-me/_includes/fields/entries';
@@ -31,6 +49,9 @@ class Entries extends Field implements FieldInterface
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function parseField()
     {
         $value = $this->fetchArrayValue();
@@ -132,7 +153,7 @@ class Entries extends Field implements FieldInterface
             $foundElements = array_chunk($foundElements, $limit)[0];
         }
 
-        // Check for any sub-fields for the lement
+        // Check for any sub-fields for the element
         if ($fields) {
             $this->populateElementFields($foundElements);
         }
@@ -150,6 +171,14 @@ class Entries extends Field implements FieldInterface
     // Private Methods
     // =========================================================================
 
+    /**
+     * @param $dataValue
+     * @param string $match
+     * @throws \Throwable
+     * @throws \craft\errors\ElementNotFoundException
+     * @throws \yii\base\Exception
+     * @return int|null
+     */
     private function _createElement($dataValue, $match)
     {
         $sectionId = Hash::get($this->fieldInfo, 'options.group.sectionId');

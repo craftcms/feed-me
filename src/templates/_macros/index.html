@@ -12,7 +12,7 @@
             {%- if config.name is defined %} name="{{ config.name }}"{% endif %}
             {%- if config.checked is defined and config.checked %} checked{% endif %}>
 
-        <label for="{{ id }}">{{ label | raw }}</label>
+        <label for="{{ id }}">{{ label|raw }}</label>
     </div>
 
     {% endspaceless -%}

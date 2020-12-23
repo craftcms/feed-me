@@ -12,6 +12,9 @@ use craft\feedme\Plugin;
 /**
  * Class FeedModel
  *
+ * @property-read mixed $duplicateHandleFriendly
+ * @property-read mixed $dataType
+ * @property-read bool $nextPagination
  * @property-read ElementInterface|Element|null $element
  */
 class FeedModel extends Model
@@ -19,43 +22,137 @@ class FeedModel extends Model
     // Properties
     // =========================================================================
 
+    /**
+     * @var
+     */
     public $id;
+
+    /**
+     * @var
+     */
     public $name;
+
+    /**
+     * @var
+     */
     public $feedUrl;
+
+    /**
+     * @var
+     */
     public $feedType;
+
+    /**
+     * @var
+     */
     public $primaryElement;
+
+    /**
+     * @var
+     */
     public $elementType;
+
+    /**
+     * @var
+     */
     public $elementGroup;
+
+    /**
+     * @var
+     */
     public $siteId;
+
+    /**
+     * @var
+     */
     public $sortOrder;
+
+    /**
+     * @var bool
+     * @since 4.3.0
+     */
+    public $singleton = false;
+
+    /**
+     * @var
+     */
     public $duplicateHandle;
+
+    /**
+     * @var
+     */
     public $paginationNode;
+
+    /**
+     * @var
+     */
     public $fieldMapping;
+
+    /**
+     * @var
+     */
     public $fieldUnique;
+
+    /**
+     * @var
+     */
     public $passkey;
+
+    /**
+     * @var
+     */
     public $backup;
+
+    /**
+     * @var
+     */
     public $dateCreated;
+
+    /**
+     * @var
+     */
     public $dateUpdated;
+
+    /**
+     * @var
+     */
     public $uid;
 
     // Model-only properties
+
+    /**
+     * @var
+     */
     public $debug;
+
+    /**
+     * @var
+     */
     public $paginationUrl;
 
 
     // Public Methods
     // =========================================================================
 
+    /**
+     * @return mixed
+     */
     public function __toString()
     {
         return Craft::t('feed-me', $this->name);
     }
 
+    /**
+     * @return string
+     */
     public function getDuplicateHandleFriendly()
     {
-        return DuplicateHelper::getFrieldly($this->duplicateHandle);
+        return DuplicateHelper::getFriendly($this->duplicateHandle);
     }
 
+    /**
+     * @return mixed|null
+     */
     public function getDataType()
     {
         return Plugin::$plugin->data->getRegisteredDataType($this->feedType);
@@ -76,6 +173,10 @@ class FeedModel extends Model
         return $element;
     }
 
+    /**
+     * @param bool $usePrimaryElement
+     * @return array|\ArrayAccess|mixed|null
+     */
     public function getFeedData($usePrimaryElement = true)
     {
         $feedDataResponse = Plugin::$plugin->data->getFeedData($this, $usePrimaryElement);
@@ -83,6 +184,10 @@ class FeedModel extends Model
         return Hash::get($feedDataResponse, 'data');
     }
 
+    /**
+     * @param false $usePrimaryElement
+     * @return mixed
+     */
     public function getFeedNodes($usePrimaryElement = false)
     {
         $feedDataResponse = Plugin::$plugin->data->getFeedData($this, $usePrimaryElement);
@@ -94,6 +199,10 @@ class FeedModel extends Model
         return $feedDataResponse;
     }
 
+    /**
+     * @param bool $usePrimaryElement
+     * @return mixed
+     */
     public function getFeedMapping($usePrimaryElement = true)
     {
         $feedDataResponse = Plugin::$plugin->data->getFeedData($this, $usePrimaryElement);
@@ -105,10 +214,13 @@ class FeedModel extends Model
         return $feedDataResponse;
     }
 
+    /**
+     * @return bool
+     */
     public function getNextPagination()
     {
-        if (!$this->paginationUrl) {
-            return;
+        if (!$this->paginationUrl || !filter_var($this->paginationUrl, FILTER_VALIDATE_URL)) {
+            return false;
         }
 
         // Set the URL dynamically on the feed, then kick off processing again
@@ -117,6 +229,9 @@ class FeedModel extends Model
         return true;
     }
 
+    /**
+     * @var
+     */
     public function rules()
     {
         return [

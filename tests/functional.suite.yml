@@ -8,5 +8,6 @@
 actor: FunctionalTester
 modules:
     enabled:
-        - Yii2
+        - Asserts
         - \Helper\Functional
+        - \craft\test\Craft

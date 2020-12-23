@@ -17,7 +17,7 @@ This overview shows the following:
 ### Settings Pane
 Clicking on the settings cog icon will expand additional settings for each feed.
 - **Feed Status** - Takes you to an overview screen showing the process of your feed if currently running.
-- **Debug Feed** - Opens in a new window and runs the [Debug action](../support/troubleshooting/debugging.md).
+- **Debug Feed** - Opens in a new window and runs the [Debug action](../troubleshooting.md#debugging).
 - **Direct Feed URL** - Can be used in your [Cron job setup](trigger-import-via-cron.md) to directly trigger the job.
 - **Duplicate Feed** - Duplicates this feed and all settings into a new feed.
 

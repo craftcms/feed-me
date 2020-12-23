@@ -6,27 +6,43 @@ use Cake\Utility\Hash;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 
+/**
+ *
+ * @property-read string $mappingTemplate
+ */
 class Dropdown extends Field implements FieldInterface
 {
     // Properties
     // =========================================================================
 
+    /**
+     * @var string
+     */
     public static $name = 'Dropdown';
+
+    /**
+     * @var string
+     */
     public static $class = 'craft\fields\Dropdown';
 
 
     // Templates
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getMappingTemplate()
     {
         return 'feed-me/_includes/fields/option-select';
     }
 
-
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function parseField()
     {
         $value = $this->fetchValue();
@@ -35,12 +51,11 @@ class Dropdown extends Field implements FieldInterface
         $match = Hash::get($this->fieldInfo, 'options.match', 'value');
 
         foreach ($options as $option) {
-            if ($value === $option[$match]) {
+            if (isset($option['value']) && $value === $option[$match]) {
                 return $option['value'];
             }
         }
 
         return null;
     }
-
 }

@@ -16,7 +16,7 @@
         type: 'elementselect',
         options: {
             elementType: fieldClass.elementType,
-            selectionLabel: "Default Tag" | t('feed-me'),
+            selectionLabel: "Default Tag"|t('feed-me'),
         },
     } %}
 {% endif %}
@@ -28,7 +28,7 @@
     {# Prevent infinite loop by only allow elements that are not the same as this #}
     {% for elementField in craft.feedme.getElementLayoutByField(className(field), field) %}
         {% if craft.feedme.supportedSubField(className(elementField)) %}
-            {% set elementFields = elementFields | merge([ elementField ]) %}
+            {% set elementFields = elementFields|merge([ elementField ]) %}
         {% endif %}
     {% endfor %}
 {% endif %}
@@ -38,7 +38,7 @@
 {% block extraSettings %}
     <div class="element-create">
         {{ feedMeMacro.checkbox({
-            label: 'Create tags if they do not exist' | t('feed-me'),
+            label: 'Create tags if they do not exist'|t('feed-me'),
             name: 'options[create]',
             value: 1,
             checked: hash_get(feed.fieldMapping, optionsPath ~ '.create') ?: '',

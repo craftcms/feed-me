@@ -15,12 +15,18 @@ class Json extends DataType implements DataTypeInterface
     // Properties
     // =========================================================================
 
+    /**
+     * @var string
+     */
     public static $name = 'JSON';
 
 
     // Public Methods
     // =========================================================================
 
+    /**
+     * @inheritDoc
+     */
     public function getFeed($url, $settings, $usePrimaryElement = true)
     {
         $feedId = Hash::get($settings, 'id');
