@@ -1,5 +1,11 @@
 # Changelog
 
+## UNRELEASED
+
+### Added
+
+- Added support for [Google Maps](https://github.com/doublesecretagency/craft-googlemaps).
+
 ## 4.3.4 - 2020-12-14
 
 ### Fixed
