@@ -106,6 +106,20 @@ This examples uses remote URLs, but you can also provide a local path to the fil
 For example, `to-upload/feed-me.png` would be a folder in your web root named `to-upload` with the file `feed-me.png` inside it.
 :::
 
+### Folders
+
+This example does not require setting folders; however, if you need here is what you need to do.
+
+- If you have a folder information in your incoming data such us `about` or `about/teams` you can set the incoming element to map to folders. 
+- You can set a default folder input setting to manage any assets that don't have folder information passed forward.
+
+:::tip
+If you are including folder data and have some images that should be added to your container root you need to have their folder value set to the id of the Craft container they are importing into. So if your container ID is `1` then any file not added to a subfolder should have `1` as the folder value for those assets in the incoming feed.
+:::
+
+
+
+
 ![Feedme Guide Mapping](../screenshots/feedme-guide-asset-field-mapping.png)
 
 Choose **Save & Import** to begin importing your content.
