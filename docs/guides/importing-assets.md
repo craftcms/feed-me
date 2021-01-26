@@ -108,23 +108,25 @@ For example, `to-upload/feed-me.png` would be a folder in your web root named `t
 
 ### Folders
 
-This example does not require setting folders; however, if you need here is what you need to do.
+This example imports images into the top level of the selected volume, but you may also designate the subfolder each asset gets imported to.
 
-- If you have a folder information in your incoming data such us `about` or `about/teams` you can set the incoming element to map to folders. 
-- You can set a default folder input setting to manage any assets that don't have folder information passed forward.
+#### Import All Assets to a Subfolder
 
-:::tip
-If you are including folder data and have some images that should be added to your container root you need to have their folder value set to the id of the Craft container they are importing into. So if your container ID is `1` then any file not added to a subfolder should have `1` as the folder value for those assets in the incoming feed.
+To import all the feed’s assets to the same folder, select **Use default value** in the folder’s **Feed Element** column, then select your desired subfolder in the **Default Value** column.
+
+#### Specify an Existing Subfolder for Each Asset
+
+Your feed can include a folder ID for each item which you can then use to determine where each imported asset ends up. Select that field from the **Field Element** column and optionally set a folder in the **Default Value** column as a fallback in case the feed’s folder ID is missing. (Invalid IDs will result in an error.)
+
+::: tip
+Every folder has an ID whether it’s the top level or a subfolder, and you can find it in the database or inspecting the markup in the Assets section of the control panel. (Look for the `data-folder-id` attribute on menu elements.)
 :::
-
-
-
 
 ![Feedme Guide Mapping](../screenshots/feedme-guide-asset-field-mapping.png)
 
 Choose **Save & Import** to begin importing your content.
 
-## Importing your Content
+## Importing Your Content
 
 Wait for the feed processing to finish. Remember, you can always navigate away from this confirmation screen.
 
