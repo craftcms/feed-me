@@ -232,7 +232,10 @@ class User extends Element
     protected function parsePhotoId($feedData, $fieldInfo)
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
-
+        if ($value == '') {
+            return null;
+        }
+        
         $upload = Hash::get($fieldInfo, 'options.upload');
         $conflict = Hash::get($fieldInfo, 'options.conflict');
 
