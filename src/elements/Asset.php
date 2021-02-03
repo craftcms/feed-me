@@ -255,13 +255,14 @@ class Asset extends Element
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
         $create = Hash::get($fieldInfo, 'options.create');
-
+        $node = Hash::get($fieldInfo, 'node');
+        
         $assets = Craft::$app->getAssets();
 
         $volumeId = $this->element->volumeId;
         $rootFolder = $assets->getRootFolderByVolumeId($volumeId);
 
-        if (is_numeric($value)) {
+        if ($node == 'usedefault' && is_numeric($value)) {
             return $value;
         }
 
