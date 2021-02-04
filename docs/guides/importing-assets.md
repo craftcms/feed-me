@@ -2,7 +2,7 @@
 
 Unlike other elements, Assets are a little bit special in how they are processed. Mostly, this is around clarity on the process of 'creating' an asset, in essense, this is uploading an image into Craft from a remote URL or local path. Both these options are supported in Feed Me.
 
-Not only can you use Asset importing to create/upload image files, you can also use it to update them, changing things like custom fields, Title's or even filenames.
+Not only can you use Asset importing to create/upload image files, you can also use it to update them, changing things like custom fields, Titles, or even filenames.
 
 This guide will serve as a real-world example for importing a collection of remote images into Craft.
 
