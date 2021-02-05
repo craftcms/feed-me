@@ -10,7 +10,6 @@ use craft\helpers\Assets as AssetsHelper;
 use craft\helpers\FileHelper;
 use craft\helpers\StringHelper;
 use craft\helpers\UrlHelper;
-use Mimey\MimeTypes;
 
 class AssetHelper
 {
@@ -314,8 +313,6 @@ class AssetHelper
      */
     public static function getRemoteUrlExtension($url)
     {
-        $mimes = new MimeTypes;
-
         // PathInfo can't really deal with query strings, so remove it
         $extension = UrlHelper::stripQueryString($url);
 
@@ -350,7 +347,7 @@ class AssetHelper
 
                 if (isset($contentType[0])) {
                     // Convert MIME type to extension
-                    $extension = $mimes->getExtension($contentType[0]);
+                    $extension = MimeTypeHelper::getExtension($contentType[0]);
                 }
             }
         }

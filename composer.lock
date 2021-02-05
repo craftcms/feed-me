@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8b3b9b7f74e7453e04b9de39a0226c7c",
+    "content-hash": "00e36a2e0540796b51c1e8eae642b469",
     "packages": [
         {
             "name": "cakephp/core",
@@ -3222,50 +3222,6 @@
                 "source": "https://github.com/ralouphie/getallheaders/tree/develop"
             },
             "time": "2019-03-08T08:55:37+00:00"
-        },
-        {
-            "name": "ralouphie/mimey",
-            "version": "2.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/ralouphie/mimey.git",
-                "reference": "8f74e6da73f9df7bd965e4e123f3d8fb9acb89ba"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/ralouphie/mimey/zipball/8f74e6da73f9df7bd965e4e123f3d8fb9acb89ba",
-                "reference": "8f74e6da73f9df7bd965e4e123f3d8fb9acb89ba",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^5.4|^7.0"
-            },
-            "require-dev": {
-                "php-coveralls/php-coveralls": "^1.1",
-                "phpunit/phpunit": "^4.8 || ^5.7 || ^6.5"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Mimey\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Ralph Khattar",
-                    "email": "ralph.khattar@gmail.com"
-                }
-            ],
-            "description": "PHP package for converting file extensions to MIME types and vice versa.",
-            "support": {
-                "issues": "https://github.com/ralouphie/mimey/issues",
-                "source": "https://github.com/ralouphie/mimey/tree/develop"
-            },
-            "time": "2019-03-08T08:49:03+00:00"
         },
         {
             "name": "sebastian/diff",
