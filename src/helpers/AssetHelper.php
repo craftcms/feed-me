@@ -350,7 +350,7 @@ class AssetHelper
 
                 if (isset($contentType[0])) {
                     // Convert MIME type to extension
-                    $extension = $mimes->getExtension($contentType[0]);
+                    $extension = FileHelper::getExtensionByMimeType($contentType[0]);
                 }
             }
         }
