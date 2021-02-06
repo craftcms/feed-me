@@ -2,8 +2,12 @@
 
 ## Unreleased
 
+### Removed
+- Removed the ralouphie/mimey library.
+
 ### Fixed
 - Fixed a bug where CSV files without a header row weren’t getting loaded properly when using league/csv 9.x. ([#798](https://github.com/craftcms/feed-me/issues/798))
+- Fixed some PHP 8 compatibility issues. ([#802](https://github.com/craftcms/feed-me/issues/802))
 
 ## 4.3.4 - 2020-12-14
 
