@@ -8,6 +8,7 @@ use craft\feedme\base\DataTypeInterface;
 use craft\feedme\Plugin;
 use craft\helpers\StringHelper;
 use League\Csv\Reader;
+use League\Csv\Statement;
 
 class Csv extends DataType implements DataTypeInterface
 {
@@ -115,36 +116,36 @@ class Csv extends DataType implements DataTypeInterface
      */
     private function _getRows($reader)
     {
-        $array = [];
-
         // We try to first fetch the first row in the CSV which we figure is the headers. But if its not
         // it'll throw an error saying the first row of the CSV isn't valid, and not unique, etc.
         // So, in that case, just fail silently, and move on to the 'traditional' method which are just numbers.
         //
         // You really should provide your CSVs with headers though.
 
+        // Support for league/csv v8 with a header
         try {
-            $array = $reader->fetchAssoc(0);
+            return $reader->fetchAssoc(0);
         } catch (\Throwable $e) {
         }
 
+        // Support for league/csv v8 without a header
         try {
-            if (!$array) {
-                $array = $reader->fetch();
-            }
+            return $reader->fetch();
         } catch (\Throwable $e) {
         }
 
-        // Support league/csv v9 syntax
+        $stmt = Statement::create();
+
+        // Support for league/csv v9 with a header
         try {
-            if (!$array) {
-                $reader->setHeaderOffset(0);
-                $array = $reader->getRecords();
-            }
+            $reader->setHeaderOffset(0);
+            return $stmt->process($reader);
         } catch (\Throwable $e) {
         }
 
-        return $array;
+        // Support for league/csv v9 without a header
+        $reader->setHeaderOffset(null);
+        return $stmt->process($reader);
     }
 
     /**
