@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 4.3.5 - 2021-02-05
 
 ### Removed
 - Removed the ralouphie/mimey library.
