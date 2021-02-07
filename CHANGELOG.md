@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 4.3.5.1 - 2021-02-07
 
 ### Fixed
 - Fixed a PHP error that would occur when importing Assets. ([#804](https://github.com/craftcms/feed-me/issues/804))
