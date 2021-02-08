@@ -11,7 +11,7 @@ use craft\feedme\helpers\DataHelper;
  *
  * @property-read string $mappingTemplate
  */
-class TypedLink extends Field implements FieldInterface
+class LinkField extends Field implements FieldInterface
 {
     // Properties
     // =========================================================================
@@ -19,12 +19,12 @@ class TypedLink extends Field implements FieldInterface
     /**
      * @var string
      */
-    public static $name = 'TypedLink';
+    public static $name = 'LinkField';
 
     /**
      * @var string
      */
-    public static $class = 'typedlinkfield\fields\LinkField';
+    public static $class = 'lenz\linkfield\fields\LinkField';
 
     // Templates
     // =========================================================================
@@ -34,7 +34,7 @@ class TypedLink extends Field implements FieldInterface
      */
     public function getMappingTemplate()
     {
-        return 'feed-me/_includes/fields/typed-link';
+        return 'feed-me/_includes/fields/link-field';
     }
 
     // Public Methods

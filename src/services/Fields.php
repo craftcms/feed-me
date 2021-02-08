@@ -21,6 +21,7 @@ use craft\feedme\fields\Dropdown;
 use craft\feedme\fields\Entries;
 use craft\feedme\fields\EntriesSubset;
 use craft\feedme\fields\Lightswitch;
+use craft\feedme\fields\LinkField;
 use craft\feedme\fields\Linkit;
 use craft\feedme\fields\Matrix;
 use craft\feedme\fields\MultiSelect;
@@ -31,7 +32,6 @@ use craft\feedme\fields\SmartMap;
 use craft\feedme\fields\SuperTable;
 use craft\feedme\fields\Table;
 use craft\feedme\fields\Tags;
-use craft\feedme\fields\TypedLink;
 use craft\feedme\fields\Users;
 use craft\helpers\Component as ComponentHelper;
 
@@ -140,7 +140,7 @@ class Fields extends Component
                 SimpleMap::class,
                 SmartMap::class,
                 SuperTable::class,
-                TypedLink::class,
+                LinkField::class,
             ],
         ]);
 
