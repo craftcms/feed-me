@@ -3,7 +3,7 @@
 ## Unreleased
 
 ### Fixed
-- Fixed a bug where Solspace Calendar events would not import when using some recurring rules.
+- Fixed a bug where Solspace Calendar events would not import when using some recurring rules. ([#806](https://github.com/craftcms/feed-me/pull/806))
 
 ## 4.3.5.1 - 2021-02-07
 
