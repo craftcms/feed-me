@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.3.5.2 - Unreleased
+
+### Fixed
+- Fixed `CalendarEvent` imports breaking on RRULEs with extra rules that aren't common.
+
 ## 4.3.5.1 - 2021-02-07
 
 ### Fixed
