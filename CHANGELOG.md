@@ -1,9 +1,9 @@
 # Changelog
 
-## 4.3.5.2 - Unreleased
+## Unreleased
 
 ### Fixed
-- Fixed `CalendarEvent` imports breaking on RRULEs with extra rules that aren't common.
+- Fixed a bug where Solspace Calendar events would not import when using some recurring rules.
 
 ## 4.3.5.1 - 2021-02-07
 
