@@ -33,7 +33,6 @@ class FeedMeVariable
         $tabs = array(
             'feeds' => array( 'label' => Craft::t('Feeds'), 'url' => UrlHelper::getUrl('feedme/feeds') ),
             'logs' => array( 'label' => Craft::t('Logs'), 'url' => UrlHelper::getUrl('feedme/logs') ),
-            'help' => array( 'label' => Craft::t('Help'), 'url' => UrlHelper::getUrl('feedme/help') ),
             'settings' => array( 'label' => Craft::t('Settings'), 'url' => UrlHelper::getUrl('feedme/settings') ),
         );
 
@@ -49,7 +48,9 @@ class FeedMeVariable
 
         if (is_array($enabledTabs)) {
             foreach ($enabledTabs as $enabledTab) {
-                $selectedTabs[$enabledTab] = $tabs[$enabledTab];
+                if (isset($tabs[$enabledTab])) {
+                    $selectedTabs[$enabledTab] = $tabs[$enabledTab];
+                }
             }
         }
 
@@ -135,16 +136,6 @@ class FeedMeVariable
         }
 
         return $result;
-    }
-
-    public function isProEdition()
-    {
-        return craft()->feedMe_license->isProEdition();
-    }
-
-    public function getEdition()
-    {
-        return craft()->feedMe_license->getEdition();
     }
 
     //

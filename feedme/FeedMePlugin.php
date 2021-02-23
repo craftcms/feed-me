@@ -19,7 +19,7 @@ class FeedMePlugin extends BasePlugin
 
     public function getVersion()
     {
-        return '2.0.17';
+        return '2.1.0';
     }
 
     public function getSchemaVersion()
@@ -29,27 +29,27 @@ class FeedMePlugin extends BasePlugin
 
     public function getDeveloper()
     {
-        return 'Verbb';
+        return 'Pixel & Tonic';
     }
 
     public function getDeveloperUrl()
     {
-        return 'https://verbb.io';
+        return 'https://pixelandtonic.com';
     }
 
     public function getPluginUrl()
     {
-        return 'https://github.com/verbb/feed-me';
+        return 'https://github.com/craftcms/feed-me';
     }
 
     public function getDocumentationUrl()
     {
-        return 'https://verbb.io/craft-plugins/feed-me/docs';
+        return 'https://github.com/craftcms/feed-me/blob/main/README.md';
     }
 
     public function getReleaseFeedUrl()
     {
-        return 'https://raw.githubusercontent.com/verbb/feed-me/craft-2/changelog.json';
+        return 'https://raw.githubusercontent.com/craftcms/feed-me/craft-2/changelog.json';
     }
 
     public function hasCpSection()
@@ -74,7 +74,6 @@ class FeedMePlugin extends BasePlugin
             'feedme/feeds/status/(?P<feedId>\d+)' => array('action' => 'feedMe/feeds/statusFeed'),
             'feedme/logs' => array('action' => 'feedMe/logs/logs'),
             'feedme/settings/general' => array('action' => 'feedMe/settings'),
-            'feedme/settings/license' => array('action' => 'feedMe/license/edit'),
         );
     }
 
@@ -115,10 +114,6 @@ class FeedMePlugin extends BasePlugin
         Craft::import('plugins.feedme.FeedMe.FieldTypes.*');
         Craft::import('plugins.feedme.FeedMe.License.*');
         Craft::import('plugins.feedme.FeedMe.Helpers.*');
-
-        if (craft()->request->isCpRequest()) {
-            craft()->feedMe_license->ping();
-        }
     }
 
 
@@ -140,20 +135,14 @@ class FeedMePlugin extends BasePlugin
     // Native Element Type Support
     public function registerFeedMeElementTypes()
     {
-        if (craft()->feedMe_license->isProEdition()) {
-            return array(
-                new AssetFeedMeElementType(),
-                new CategoryFeedMeElementType(),
-                new Commerce_OrderFeedMeElementType(),
-                new Commerce_ProductFeedMeElementType(),
-                new EntryFeedMeElementType(),
-                new UserFeedMeElementType(),
-            );
-        } else {
-            return array(
-                new EntryFeedMeElementType(),
-            );
-        }
+        return array(
+            new AssetFeedMeElementType(),
+            new CategoryFeedMeElementType(),
+            new Commerce_OrderFeedMeElementType(),
+            new Commerce_ProductFeedMeElementType(),
+            new EntryFeedMeElementType(),
+            new UserFeedMeElementType(),
+        );
     }
 
     // Native Field Type Support

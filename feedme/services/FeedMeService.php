@@ -30,10 +30,6 @@ class FeedMeService extends BaseApplicationComponent
         // Check for third-party element type support
         $elementsToLoad = craft()->plugins->call('registerFeedMeElementTypes');
 
-        if (!craft()->feedMe_license->isProEdition()) {
-            $elementsToLoad = array('FeedMe' => $elementsToLoad['FeedMe']);
-        }
-
         foreach ($elementsToLoad as $plugin => $elementClasses) {
             foreach ($elementClasses as $elementClass) {
                 if ($elementClass && $elementClass instanceof BaseFeedMeElementType) {
@@ -52,10 +48,6 @@ class FeedMeService extends BaseApplicationComponent
 
         // Check for third-party data type support
         $dataToLoad = craft()->plugins->call('registerFeedMeDataTypes');
-
-        if (!craft()->feedMe_license->isProEdition()) {
-            $dataToLoad = array('FeedMe' => $dataToLoad['FeedMe']);
-        }
 
         foreach ($dataToLoad as $plugin => $dataClasses) {
             foreach ($dataClasses as $dataClass) {

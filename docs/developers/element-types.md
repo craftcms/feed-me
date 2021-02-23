@@ -1,3 +1,0 @@
-# Element Types
-
-Documentation TBA.

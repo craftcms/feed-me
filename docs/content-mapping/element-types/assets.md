@@ -1,3 +1,0 @@
-# Assets
-
-Documentation TBA.

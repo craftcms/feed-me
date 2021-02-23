@@ -198,7 +198,7 @@ class EntryFeedMeElementType extends BaseFeedMeElementType
                     break;
                 case 'postDate':
                 case 'expiryDate':
-                    // https://github.com/verbb/feed-me/issues/388
+                    // https://github.com/craftcms/feed-me/issues/388
                     // Force postDate and expiryDate fields to have the defined Craft timezone set when going through the date helper
                     $element->$handle = FeedMeDateHelper::parseString($dataValue, null, true);
                     break;

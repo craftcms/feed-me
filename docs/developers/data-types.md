@@ -1,3 +1,0 @@
-# Data Types
-
-Documentation TBA.

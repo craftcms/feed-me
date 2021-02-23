@@ -1,7 +1,17 @@
 [
     {
+        "version": "2.1.0",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/2.1.0.zip",
+        "date": "2021-02-23T00:00:00+10:00",
+        "notes": [
+            "[Improved] Updated the branding to match Feed Me 4.",
+            "[Improved] Removed licensing checks. All former Feed Me Pro edition features are universally available now.",
+            "[Improved] Removed the Help tab."
+        ]
+    },
+    {
         "version": "2.0.17",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/2.0.17.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/2.0.17.zip",
         "date": "2018-11-28T00:00:00+10:00",
         "notes": [
             "[Fixed] Fix config setting handle.",
@@ -10,7 +20,7 @@
     },
     {
         "version": "2.0.16",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/2.0.16.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/2.0.16.zip",
         "date": "2018-10-26T00:00:00+10:00",
         "notes": [
             "[Fixed] Fix backups not being deleted when past their defined limit."
@@ -18,7 +28,7 @@
     },
     {
         "version": "2.0.15",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/2.0.15.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/2.0.15.zip",
         "date": "2018-10-24T01:00:00+10:00",
         "notes": [
             "[Fixed] Fix broken resources on some environments."
@@ -26,7 +36,7 @@
     },
     {
         "version": "2.0.14",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/2.0.14.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/2.0.14.zip",
         "date": "2018-10-24T00:00:00+10:00",
         "notes": [
             "[Fixed] Assets - when uploading, make sure to finishing preparing the model.",
@@ -40,7 +50,7 @@
     },
     {
         "version": "2.0.13",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/2.0.13.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/2.0.13.zip",
         "date": "2018-08-17T00:00:00+10:00",
         "notes": [
             "[Added] Add additional boolean helpers for y/n values. (thanks @nottinghamcollege).",
@@ -53,7 +63,7 @@
     },
     {
         "version": "2.0.12",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/2.0.12.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/2.0.12.zip",
         "date": "2018-07-19T00:00:00+10:00",
         "notes": [
             "[Added] Add `licenseKey` config setting.",
@@ -79,7 +89,7 @@
     },
     {
         "version": "2.0.11",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/2.0.11.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/2.0.11.zip",
         "date": "2017-12-15T00:00:00+10:00",
         "notes": [
             "[Fixed] Fixed incorrectly setting `localeEnabled` behaviour for entries.",
@@ -88,7 +98,7 @@
     },
     {
         "version": "2.0.10",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/2.0.10.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/2.0.10.zip",
         "date": "2017-12-14T00:00:00+10:00",
         "notes": [
             "[Added] Add `backupLimit` config option to control the number of backups to retain (when backups are in use).",
@@ -100,14 +110,14 @@
             "[Fixed] Fix for CP becoming unresponsive when running a feed from the control panel directly.",
             "[Fixed] Fix to ensure local-testing works as expected without a license.",
             "[Fixed] Fix for Commerce Products default values not being properly sorted into variant data.",
-            "[Fixed] Fixed an issue when triggering feeds from CLI. Thanks to [@joshangell](https://github.com/verbb/feed-me/pull/262).",
+            "[Fixed] Fixed an issue when triggering feeds from CLI. Thanks to [@joshangell](https://github.com/craftcms/feed-me/pull/262).",
             "[Fixed] Fix for date attributes not checking for falsey values before returning current date.",
             "[Fixed] Fix for locale entries not having their status set as per the default section status."
         ]
     },
     {
         "version": "2.0.9",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/2.0.9.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/2.0.9.zip",
         "date": "2017-10-19T00:00:00+10:00",
         "notes": [
             "[Fixed] Fixed icon mask.",
@@ -116,7 +126,7 @@
     },
     {
         "version": "2.0.8",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/2.0.8.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/2.0.8.zip",
         "date": "2017-10-18T00:00:00+10:00",
         "notes": [
             "[Added] Verbb marketing (new plugin icon, readme, etc).",
@@ -162,7 +172,7 @@
     },
     {
         "version": "2.0.7",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/2.0.7.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/2.0.7.zip",
         "date": "2017-06-23T00:00:00+10:00",
         "notes": [
             "[Added] Assets - Added folder option for dynamic sub-folders (via feed), or by selecting specific default folders within selected source.",
@@ -194,7 +204,7 @@
         ]
     }, {
         "version": "2.0.6",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/2.0.6.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/2.0.6.zip",
         "date": "2017-05-20T00:00:00+10:00",
         "notes": [
             "[Added] Allow option-select fields (Dropdown, Checkboxes, etc) to specify whether data is provided as its value or label",
@@ -208,7 +218,7 @@
         ]
     }, {
         "version": "2.0.5",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/2.0.5.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/2.0.5.zip",
         "date": "2017-05-13T00:00:00+10:00",
         "notes": [
             "[Added] Added `checkExistingFieldData` for all fields to first check an existing element (if any) has content matching exactly what is to be imported. It will be skipped if it matches. Controlled by config setting, and off by default.",
@@ -222,7 +232,7 @@
         ]
     }, {
         "version": "2.0.4",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/2.0.4.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/2.0.4.zip",
         "date": "2017-05-04T00:00:00+10:00",
         "notes": [
             "[Added] Allow Twig shorthand variables to be used in default fields. This allows you to reference other fields or element attributes in the feed.",
@@ -235,7 +245,7 @@
         ]
     }, {
         "version": "2.0.3",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/2.0.3.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/2.0.3.zip",
         "date": "2017-05-01T00:00:00+10:00",
         "notes": [
             "[Added] Added Locale Status to entries, to properly control individual locale status.",
@@ -256,7 +266,7 @@
         ]
     }, {
         "version": "2.0.2",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/2.0.2.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/2.0.2.zip",
         "date": "2017-03-30T00:00:00+10:00",
         "notes": [
             "[Added] Provide `all` locale option instead of always requiring one.",
@@ -268,7 +278,7 @@
             "[Improved] Long URLs are now truncated on feeds index in the CP.",
             "[Improved] Improved assets-uploading without extension.",
             "[Fixed] Properly support third-party element types.",
-            "[Fixed] Properly support third-party data types (thanks to [@timeverts](https://github.com/verbb/feed-me/pull/172)).",
+            "[Fixed] Properly support third-party data types (thanks to [@timeverts](https://github.com/craftcms/feed-me/pull/172)).",
             "[Fixed] Fixed default value for dropdown field (when no value matches).",
             "[Fixed] Better error-handling when importing into specific locale.",
             "[Fixed] Ensure default start/date are correctly parsed entries/commerce.",
@@ -282,7 +292,7 @@
         ]
     }, {
         "version": "2.0.1",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/2.0.1.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/2.0.1.zip",
         "date": "2017-03-01T00:00:00+10:00",
         "notes": [
             "[Fixed] Products - Fix existing element-matching on core attributes (matching against title, etc)",
@@ -293,7 +303,7 @@
         ]
     }, {
         "version": "2.0.0",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/2.0.0.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/2.0.0.zip",
         "date": "2017-02-25T00:00:00+10:00",
         "notes": [
             "# Feed Me 2.0 is a major update",
@@ -379,7 +389,7 @@
     },
     {
         "version": "1.4.12",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/1.4.12.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/1.4.12.zip",
         "date": "2016-07-06T01:00:00+10:00",
         "notes": [
             "[Improved] Altered terminology around Duplication Handling to hopefully be more clearer.",
@@ -390,7 +400,7 @@
     },
     {
         "version": "1.4.11",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/1.4.11.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/1.4.11.zip",
         "date": "2016-04-25T19:30:00+10:00",
         "notes": [
             "[Fixed] Fixed issue with XML parsing and special characters encoding incorrectly."
@@ -398,7 +408,7 @@
     },
     {
         "version": "1.4.10",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/1.4.10.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/1.4.10.zip",
         "date": "2016-04-14T06:30:00+10:00",
         "notes": [
             "[Fixed] Fixed issue for repeatable fields containing empty values (table fields).",
@@ -408,7 +418,7 @@
     },
     {
         "version": "1.4.9",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/1.4.9.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/1.4.9.zip",
         "date": "2016-03-15T22:25:00+10:00",
         "notes": [
             "[Fixed] Fixed issue with utf8 encoding for feeds.",
@@ -417,7 +427,7 @@
     },
     {
         "version": "1.4.8",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/1.4.8.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/1.4.8.zip",
         "date": "2016-03-03T10:00:00+10:00",
         "notes": [
             "[Added] Fix for json parsing when special characters in feed content.",
@@ -426,16 +436,16 @@
     },
     {
         "version": "1.4.7",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/1.4.7.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/1.4.7.zip",
         "date": "2016-02-29T01:00:00+10:00",
         "notes": [
             "[Added] Added support for locales - set which locale you want your feed to go to.",
-            "[Added] Added support for non-http protocols for feeds (ftp://, file://, etc) [#29](https://github.com/verbb/feed-me/issues/29)"
+            "[Added] Added support for non-http protocols for feeds (ftp://, file://, etc) [#29](https://github.com/craftcms/feed-me/issues/29)"
         ]
     },
     {
         "version": "1.4.6",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/1.4.6.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/1.4.6.zip",
         "date": "2016-01-20T13:00:00+10:00",
         "notes": [
             "[Fixed] Fixed an issue where an error would be incorrectly thrown when Add duplication handling is used."
@@ -443,7 +453,7 @@
     },
     {
         "version": "1.4.5",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/1.4.5.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/1.4.5.zip",
         "date": "2016-01-13T18:15:00+10:00",
         "notes": [
             "[Fixed] Fixed issue with plugin release feed url."
@@ -451,15 +461,15 @@
     },
     {
         "version": "1.4.4",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/1.4.4.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/1.4.4.zip",
         "date": "2015-12-28T13:10:00+10:00",
         "notes": [
-            "[Fixed] Fixed issue with irregular nested elements. See [#24](https://github.com/verbb/feed-me/issues/24#issuecomment-167106972)."
+            "[Fixed] Fixed issue with irregular nested elements. See [#24](https://github.com/craftcms/feed-me/issues/24#issuecomment-167106972)."
         ]
     },
     {
         "version": "1.4.3",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/1.4.3.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/1.4.3.zip",
         "date": "2015-12-01T19:35:00+10:00",
         "notes": [
             "[Fixed] Check for both numeric and string single-string arrays. Particularly an issue for JSON feeds."
@@ -467,7 +477,7 @@
     },
     {
         "version": "1.4.2",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/1.4.2.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/1.4.2.zip",
         "date": "2015-11-28T00:35:00+10:00",
         "notes": [
             "[Improved] Minor improvements for plugin icons."
@@ -475,7 +485,7 @@
     },
     {
         "version": "1.4.1",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/1.4.1.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/1.4.1.zip",
         "date": "2015-11-27T09:45:00+10:00",
         "notes": [
             "[Fixed] Fix css/js resources filename, which did not commit properly."
@@ -483,7 +493,7 @@
     },
     {
         "version": "1.4.0",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/1.4.0.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/1.4.0.zip",
         "date": "2015-11-26T00:00:00+10:00",
         "notes": [
             "[Added] Craft 2.5 support, including release feed and icons.",
@@ -499,13 +509,13 @@
             "# Third-Party Hooks",
             "[Added] Added `registerFeedMeMappingOptions` for third-party fieldtypes to control the options for mapping feed nodes to field data.",
             "[Added] Added `postForFeedMeFieldType` for third-party fieldtypes to modify entry data before being saved to entry.",
-            "[Added] Added documentation for hooks. Refer to [Wiki](https://github.com/verbb/feed-me/wiki/Hooks).",
+            "[Added] Added documentation for hooks. Refer to [Wiki](https://github.com/craftcms/feed-me/wiki/Hooks).",
             "[Improved] Modified third-party hooks `prepForFeedMeFieldType` so it actually works! Thanks go to [@lindseydiloreto](https://github.com/lindseydiloreto)."
         ]
     },
     {
         "version": "1.3.6",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/1.3.6.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/1.3.6.zip",
         "date": "2015-11-26T00:00:00+10:00",
         "notes": [
         "Removed `file_get_contents` as default method of fetching feed data in favour of Curl.",
@@ -517,7 +527,7 @@
     },
     {
         "version": "1.3.5",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/1.3.5.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/1.3.5.zip",
         "date": "2015-11-26T00:00:00+10:00",
         "notes": [
         "Minor fix for logging. When Delete duplication option was set, import success was never recorded in the logs."
@@ -525,7 +535,7 @@
     },
     {
         "version": "1.3.4",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/1.3.4.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/1.3.4.zip",
         "date": "2015-11-26T00:00:00+10:00",
         "notes": [
         "Minor fix for template mapping. Caused an issue when using a JSON feed and came across a empty nested array."
@@ -533,7 +543,7 @@
     },
     {
         "version": "1.3.3",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/1.3.3.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/1.3.3.zip",
         "date": "2015-11-26T00:00:00+10:00",
         "notes": [
         "Minor fix for log reporting which wasn't displaying errors in a useful way."
@@ -541,7 +551,7 @@
     },
     {
         "version": "1.3.2",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/1.3.2.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/1.3.2.zip",
         "date": "2015-11-26T00:00:00+10:00",
         "notes": [
         "Alterations to logging information to provide better feedback. Thanks to [@russback](https://github.com/russback)."
@@ -549,7 +559,7 @@
     },
     {
         "version": "1.3.1",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/1.3.1.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/1.3.1.zip",
         "date": "2015-11-26T00:00:00+10:00",
         "notes": [
         "Fix for info/notice log messages not saving when `devMode` is off."
@@ -557,7 +567,7 @@
     },
     {
         "version": "1.3.0",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/1.3.0.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/1.3.0.zip",
         "date": "2015-11-26T00:00:00+10:00",
         "notes": [
         "Refactored direct processing to utalize Craft's tasks service, rather than using pure PHP processing. This greatly improves performance as PHP processing would run out of memory extremely quickly."
@@ -565,7 +575,7 @@
     },
     {
         "version": "1.2.9",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/1.2.9.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/1.2.9.zip",
         "date": "2015-11-26T00:00:00+10:00",
         "notes": [
         "Added support for [SuperTable](https://github.com/engram-design/SuperTable).",
@@ -579,7 +589,7 @@
     },
     {
         "version": "1.2.8",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/1.2.8.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/1.2.8.zip",
         "date": "2015-11-26T00:00:00+10:00",
         "notes": [
         "Move changelog - so much change!",
@@ -589,7 +599,7 @@
     },
     {
         "version": "1.2.7",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/1.2.7.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/1.2.7.zip",
         "date": "2015-11-26T00:00:00+10:00",
         "notes": [
         "Fix where entries would not import if mapping element fields had more values that their field limit.",
@@ -600,7 +610,7 @@
     },
     {
         "version": "1.2.6",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/1.2.6.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/1.2.6.zip",
         "date": "2015-11-26T00:00:00+10:00",
         "notes": [
         "Fix for matching fields containing special characters.",
@@ -611,7 +621,7 @@
     },
     {
         "version": "1.2.5",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/1.2.5.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/1.2.5.zip",
         "date": "2015-11-26T00:00:00+10:00",
         "notes": [
         "Refactoring for performance improvements.",
@@ -622,7 +632,7 @@
     },
     {
         "version": "1.2.4",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/1.2.4.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/1.2.4.zip",
         "date": "2015-11-26T00:00:00+10:00",
         "notes": [
         "Added support to fallback on cURL when `file_get_contents()` is not available. Can occur on some hosts where `allow_url_fopen = 0`."
@@ -630,7 +640,7 @@
     },
     {
         "version": "1.2.3",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/1.2.3.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/1.2.3.zip",
         "date": "2015-11-26T00:00:00+10:00",
         "notes": [
         "Primary Element is no longer required - important for JSON feeds.",
@@ -641,7 +651,7 @@
     },
     {
         "version": "1.2.2",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/1.2.2.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/1.2.2.zip",
         "date": "2015-11-26T00:00:00+10:00",
         "notes": [
         "JSON feed support."
@@ -649,7 +659,7 @@
     },
     {
         "version": "1.2.1",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/1.2.1.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/1.2.1.zip",
         "date": "2015-11-26T00:00:00+10:00",
         "notes": [
         "Matrix support.",
@@ -661,7 +671,7 @@
     },
     {
         "version": "1.2",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/1.2.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/1.2.zip",
         "date": "2015-11-26T00:00:00+10:00",
         "notes": [
         "Lots of fixes and improvements for direct-processing. Includes URL parameter, passkey and non-Task processing.",
@@ -674,7 +684,7 @@
     },
     {
         "version": "1.1",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/1.1.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/1.1.zip",
         "date": "2015-11-26T00:00:00+10:00",
         "notes": [
         "Prep for Table/Matrix mapping.",
@@ -685,7 +695,7 @@
     },
     {
         "version": "1.0",
-        "downloadUrl": "https://github.com/verbb/feed-me/archive/1.0.zip",
+        "downloadUrl": "https://github.com/craftcms/feed-me/archive/1.0.zip",
         "date": "2015-11-26T00:00:00+10:00",
         "notes": [
         "Initial release."
