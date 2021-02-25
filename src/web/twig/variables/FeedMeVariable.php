@@ -318,6 +318,7 @@ class FeedMeVariable extends ServiceLocator
             'craft\fields\PositionSelect',
             'craft\fields\Radio',
             'craft\fields\Redactor',
+            'craft\redactor\Field',
         ];
 
         return in_array($class, $supportedSubFields, true);
