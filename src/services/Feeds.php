@@ -195,11 +195,11 @@ class Feeds extends Component
      */
     public function getModelOverrides($handle, $feedId)
     {
-        if (!$this->_overrides) {
-            $this->_overrides = Hash::get(Craft::$app->getConfig()->getConfigFromFile('feed-me'), 'feedOptions.' . $feedId);
+        if (empty($this->_overrides[$feedId])) {
+            $this->_overrides[$feedId] = Hash::get(Craft::$app->getConfig()->getConfigFromFile('feed-me'), 'feedOptions.' . $feedId);
         }
 
-        return $this->_overrides[$handle] ?? null;
+        return $this->_overrides[$feedId][$handle] ?? null;
     }
 
     /**
