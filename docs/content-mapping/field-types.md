@@ -507,6 +507,7 @@ Accepts single or multiple values.
 
 The following third-party fields are supported.
 
+- [Google Maps](https://github.com/doublesecretagency/craft-googlemaps)
 - [Smart Map](https://github.com/doublesecretagency/craft-smartmap)
 - [Simple Map](https://github.com/ethercreative/simplemap)
 - [Super Table](https://verbb.io/craft-plugins/super-table)

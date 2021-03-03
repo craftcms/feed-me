@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Added
+- Added support for the [Google Maps](https://plugins.craftcms.com/google-maps) plugin.
+
 ### Fixed
 - Fixed a bug where Solspace Calendar events would not import when using some recurring rules. ([#806](https://github.com/craftcms/feed-me/pull/806))
 - Fixed a bug where using the `feedOptions` config setting could unintentionally overwrite the wrong feed’s settings. ([#792](https://github.com/craftcms/feed-me/issues/792))
