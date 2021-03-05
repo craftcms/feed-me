@@ -4,6 +4,7 @@
 
 ### Added
 - Added support for the [Google Maps](https://plugins.craftcms.com/google-maps) plugin.
+- Added a `--all` option to the `feed-me/feeds/queue` console command to push all feeds into the queue. ([#783](https://github.com/craftcms/feed-me/pull/783))
 
 ### Changed
 - Feed labels are now sorted alphabetically on the feed’s field mapping settings page. ([#812](https://github.com/craftcms/feed-me/pull/812))

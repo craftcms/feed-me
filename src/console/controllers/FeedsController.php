@@ -6,8 +6,6 @@ use Craft;
 use craft\feedme\Plugin;
 use craft\feedme\queue\jobs\FeedImport;
 use craft\helpers\Console;
-use craft\queue\Queue;
-use yii\base\Module;
 use yii\console\Controller;
 use yii\console\ExitCode;
 
@@ -17,45 +15,28 @@ class FeedsController extends Controller
     // =========================================================================
 
     /**
-     * @var int|null The total number of feed items to process
+     * @var int|null The total number of feed items to process.
      */
     public $limit;
 
     /**
-     * @var int|null The number of items to skip
+     * @var int|null The number of items to skip.
      */
     public $offset;
 
     /**
-     * @var bool Whether to continue processing a feed (and subsequent pages) if an error occurs
+     * @var bool Whether to continue processing a feed (and subsequent pages) if an error occurs.
      * @since 4.3.0
      */
     public $continueOnError = false;
 
     /**
-     * @var bool Whether to process all feeds
+     * @var bool Whether to process all feeds. If this is true, the limit and offset params are ignored.
      */
     public $all = false;
 
-    /**
-     * @var Queue The queue processing jobs
-     */
-    protected $queue;
-
     // Public Methods
     // =========================================================================
-
-    /**
-     * @param string $id the ID of this controller.
-     * @param Module $module the module that this controller belongs to.
-     * @param array $config name-value pairs that will be used to initialize the object properties.
-     */
-    public function __construct($id, $module, $config = [])
-    {
-        $this->queue = Craft::$app->getQueue();
-
-        parent::__construct($id, $module, $config);
-    }
 
     /**
      * @inheritDoc
@@ -84,12 +65,9 @@ class FeedsController extends Controller
         if ($this->all) {
             foreach($feeds->getFeeds() as $feed) {
                 $this->queueFeed($feed, null, null, $this->continueOnError);
-
                 $tally++;
             }
-        }
-
-        if (! $this->all && $feedId) {
+        } else if ($feedId) {
             $ids = explode(',', $feedId);
 
             foreach ($ids as $id) {
@@ -101,13 +79,14 @@ class FeedsController extends Controller
                 }
 
                 $this->queueFeed($feed, $this->limit, $this->offset, $this->continueOnError);
-
                 $tally++;
             }
         }
 
         if ($tally) {
             $this->stdout(($tally === 1 ? '1 feed' : "$tally feeds") . ' queued up to be processed.' . PHP_EOL, Console::FG_GREEN);
+        } else {
+            $this->stdout('Could not determine the feeds to process.' . PHP_EOL, Console::FG_GREEN);
         }
 
         return ExitCode::OK;
@@ -127,7 +106,7 @@ class FeedsController extends Controller
         $this->stdout($feed->name, Console::FG_CYAN);
         $this->stdout(' ... ');
 
-        $this->queue->push(new FeedImport([
+        Craft::$app->getQueue()->push(new FeedImport([
             'feed' => $feed,
             'limit' => $limit,
             'offset' => $offset,
