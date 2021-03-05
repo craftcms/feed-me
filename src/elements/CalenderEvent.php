@@ -26,6 +26,17 @@ use yii\base\Event;
  */
 class CalenderEvent extends Element
 {
+    const RRULE_MAP = [
+        'BYMONTH' => 'byMonth',
+        'BYYEARDAY' => 'byYearDay',
+        'BYMONTHDAY' => 'byMonthDay',
+        'BYDAY' => 'byDay',
+        'UNTIL' => 'until',
+        'INTERVAL' => 'interval',
+        'FREQ' => 'freq',
+        'COUNT' => 'count',
+    ];
+
     // Properties
     // =========================================================================
 
@@ -241,15 +252,11 @@ class CalenderEvent extends Element
             $rules = RfcParser::parseRRule($value);
 
             foreach ($rules as $ruleKey => $ruleValue) {
-                $attributes = [
-                    'BYMONTH' => 'byMonth',
-                    'BYYEARDAY' => 'byYearDay',
-                    'BYMONTHDAY' => 'byMonthDay',
-                    'BYDAY' => 'byDay',
-                ];
+                if (!array_key_exists($ruleKey, self::RRULE_MAP)) {
+                    continue;
+                }
 
-                $attribute = $attributes[$ruleKey] ?? strtolower($ruleKey);
-
+                $attribute = self::RRULE_MAP[$ruleKey];
                 if ($ruleKey === 'UNTIL') {
                     $ruleValue = new Carbon($ruleValue->format('Y-m-d H:i:s'), DateHelper::UTC);
                 }

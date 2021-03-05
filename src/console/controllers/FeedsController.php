@@ -15,20 +15,25 @@ class FeedsController extends Controller
     // =========================================================================
 
     /**
-     * @var int|null The total number of feed items to process
+     * @var int|null The total number of feed items to process.
      */
     public $limit;
 
     /**
-     * @var int|null The number of items to skip
+     * @var int|null The number of items to skip.
      */
     public $offset;
 
     /**
-     * @var bool Whether to continue processing a feed (and subsequent pages) if an error occurs
+     * @var bool Whether to continue processing a feed (and subsequent pages) if an error occurs.
      * @since 4.3.0
      */
     public $continueOnError = false;
+
+    /**
+     * @var bool Whether to process all feeds. If this is true, the limit and offset params are ignored.
+     */
+    public $all = false;
 
     // Public Methods
     // =========================================================================
@@ -42,23 +47,29 @@ class FeedsController extends Controller
         $options[] = 'limit';
         $options[] = 'offset';
         $options[] = 'continueOnError';
+        $options[] = 'all';
         return $options;
     }
 
     /**
      * Queues up feeds to be processed.
      *
-     * @param string $feedId A comma-separated list of feed IDs to process
+     * @param string|null $feedId A comma-separated list of feed IDs to process
      * @return int
      */
-    public function actionQueue($feedId): int
+    public function actionQueue($feedId = null): int
     {
-        $ids = explode(',', $feedId);
         $feeds = Plugin::getInstance()->getFeeds();
-        $queue = Craft::$app->getQueue();
         $tally = 0;
 
-        if (is_array($ids)) {
+        if ($this->all) {
+            foreach($feeds->getFeeds() as $feed) {
+                $this->queueFeed($feed, null, null, $this->continueOnError);
+                $tally++;
+            }
+        } else if ($feedId) {
+            $ids = explode(',', $feedId);
+
             foreach ($ids as $id) {
                 $feed = $feeds->getFeedById($id);
 
@@ -67,26 +78,41 @@ class FeedsController extends Controller
                     continue;
                 }
 
-                $this->stdout('Queuing up feed ');
-                $this->stdout($feed->name, Console::FG_CYAN);
-                $this->stdout(' ... ');
-
-                $queue->push(new FeedImport([
-                    'feed' => $feed,
-                    'limit' => $this->limit,
-                    'offset' => $this->offset,
-                    'continueOnError' => $this->continueOnError,
-                ]));
-
-                $this->stdout('done' . PHP_EOL, Console::FG_GREEN);
+                $this->queueFeed($feed, $this->limit, $this->offset, $this->continueOnError);
                 $tally++;
             }
         }
 
         if ($tally) {
             $this->stdout(($tally === 1 ? '1 feed' : "$tally feeds") . ' queued up to be processed.' . PHP_EOL, Console::FG_GREEN);
+        } else {
+            $this->stdout('Could not determine the feeds to process.' . PHP_EOL, Console::FG_GREEN);
         }
 
         return ExitCode::OK;
+    }
+
+    /**
+     * Push a feed to the queue to be processed.
+     *
+     * @param      $feed
+     * @param null $limit
+     * @param null $offset
+     * @param bool $continueOnError
+     */
+    protected function queueFeed($feed, $limit = null, $offset = null, $continueOnError = false): void
+    {
+        $this->stdout('Queuing up feed ');
+        $this->stdout($feed->name, Console::FG_CYAN);
+        $this->stdout(' ... ');
+
+        Craft::$app->getQueue()->push(new FeedImport([
+            'feed' => $feed,
+            'limit' => $limit,
+            'offset' => $offset,
+            'continueOnError' => $continueOnError,
+        ]));
+
+        $this->stdout('done' . PHP_EOL, Console::FG_GREEN);
     }
 }

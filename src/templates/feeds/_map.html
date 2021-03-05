@@ -34,10 +34,7 @@
             <input type="hidden" name="feedId" value="{{ feed.id }}">
         {% endif %}
 
-        {% set parsedFeedData = [
-            { label: 'Don’t import'|t('feed-me'), value: 'noimport' },
-            { label: "Use default value", value: 'usedefault' }
-        ] %}
+        {% set parsedFeedData = [] %}
 
         {% for key, data in feedMappingData.data %}
             {% if data is iterable %}
@@ -48,6 +45,13 @@
 
             {% set parsedFeedData = parsedFeedData|merge([{ label: '<' ~ key ~ '> eg: ' ~ snippet, value: key }]) %}
         {% endfor %}
+
+        {% set parsedFeedData = parsedFeedData|sort((a, b) => b.label < a.label) %}
+
+        {% set parsedFeedData = [
+            { label: 'Don’t import'|t('feed-me'), value: 'noimport' },
+            { label: 'Use default value', value: 'usedefault' }
+        ]|merge(parsedFeedData) %}
 
         {% include feed.element.getMappingTemplate() with { feedData: parsedFeedData } %}
 

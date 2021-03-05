@@ -20,6 +20,7 @@ use craft\feedme\fields\DigitalProducts;
 use craft\feedme\fields\Dropdown;
 use craft\feedme\fields\Entries;
 use craft\feedme\fields\EntriesSubset;
+use craft\feedme\fields\GoogleMaps;
 use craft\feedme\fields\Lightswitch;
 use craft\feedme\fields\Linkit;
 use craft\feedme\fields\Matrix;
@@ -136,6 +137,7 @@ class Fields extends Component
                 CalendarEvents::class,
                 DigitalProducts::class,
                 EntriesSubset::class,
+                GoogleMaps::class,
                 Linkit::class,
                 SimpleMap::class,
                 SmartMap::class,

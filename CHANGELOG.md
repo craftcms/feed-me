@@ -1,5 +1,18 @@
 # Changelog
 
+## 4.3.6 - 2021-03-05
+
+### Added
+- Added support for the [Google Maps](https://plugins.craftcms.com/google-maps) plugin.
+- Added a `--all` option to the `feed-me/feeds/queue` console command to push all feeds into the queue. ([#783](https://github.com/craftcms/feed-me/pull/783))
+
+### Changed
+- Feed labels are now sorted alphabetically on the feed’s field mapping settings page. ([#812](https://github.com/craftcms/feed-me/pull/812))
+
+### Fixed
+- Fixed a bug where Solspace Calendar events would not import when using some recurring rules. ([#806](https://github.com/craftcms/feed-me/pull/806))
+- Fixed a bug where using the `feedOptions` config setting could unintentionally overwrite the wrong feed’s settings. ([#792](https://github.com/craftcms/feed-me/issues/792))
+
 ## 4.3.5.1 - 2021-02-07
 
 ### Fixed
