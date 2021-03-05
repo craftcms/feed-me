@@ -1,5 +1,10 @@
 # Changelog
 
+## Unchanged
+
+### Added
+- Added a `--all` option to the `feed-me/feeds/queue` console command to push all feeds into the queue. ([#355](https://github.com/craftcms/feed-me/issues/355)), ([#783](https://github.com/craftcms/feed-me/pull/783))
+
 ## 4.3.2 - 2020-11-15
 
 ### Fixed
