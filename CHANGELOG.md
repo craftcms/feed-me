@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 4.3.6 - 2021-03-05
 
 ### Added
 - Added support for the [Google Maps](https://plugins.craftcms.com/google-maps) plugin.
