@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Changed
+- Feed labels are now sorted alphabetically on the feed’s field mapping settings page. ([#812](https://github.com/craftcms/feed-me/pull/812))
+
 ### Fixed
 - Fixed a bug where Solspace Calendar events would not import when using some recurring rules. ([#806](https://github.com/craftcms/feed-me/pull/806))
 
