@@ -219,6 +219,11 @@ class FeedModel extends Model
      */
     public function getNextPagination()
     {
+        //check if the pagination url provided is just a page number
+        if ($this->_generateNextPaginationFromPageNumber()) {
+            return true;
+        }
+
         if (!$this->paginationUrl || !filter_var($this->paginationUrl, FILTER_VALIDATE_URL)) {
             return false;
         }
@@ -238,6 +243,50 @@ class FeedModel extends Model
             [['name', 'feedUrl', 'feedType', 'elementType', 'duplicateHandle', 'passkey'], 'required'],
             [['backup'], 'boolean'],
         ];
+    }
+
+    private function _generateNextPaginationFromPageNumber() {
+        if (is_numeric($this->paginationUrl)) {
+            $nextPage = $this->paginationUrl + 1;
+            if($nextPage > 13) {
+                return false;
+            }
+
+            $this->feedUrl = $this->_setPageQueryString($this->feedUrl, "page", $nextPage);
+            return true;
+        }
+    }
+
+    private function _setPageQueryString($url, $param, $value)
+    {
+        //remove query string if it already exists
+        $pieces = parse_url($url);
+        if (!isset($pieces['query']) || !$pieces['query']) {
+            return $this->_addQueryString($url, $param, $value);
+        }
+
+        $query = [];
+        parse_str($pieces['query'], $query);
+        if (!isset($query[$param])) {
+            return $this->_addQueryString($url, $param, $value);
+        }
+
+        unset($query[$param]);
+        $pieces['query'] = http_build_query($query);
+
+        $url = http_build_url($pieces);
+        return $this->_addQueryString($url, $param, $value);
+    }
+
+    private function _addQueryString($url, $param, $value)
+    {
+        $url = preg_replace('/(.*)(?|&)'. $param .'=[^&]+?(&)(.*)/i', '$1$2$4', $url .'&');
+        $url = substr($url, 0, -1);
+        if (strpos($url, '?') === false) {
+            return ($url .'?'. $param .'='. $value);
+        } else {
+            return ($url .'&'. $param .'='. $value);
+        }
     }
 
 }
