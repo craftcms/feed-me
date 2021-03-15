@@ -60,13 +60,23 @@
         {% endfor %}
 
         {{ forms.selectField({
-            label: "Pagination URL"|t('feed-me'),
-            instructions: 'If your feed is paginated, select the next page’s URL.'|t('feed-me'),
+            label: "Pagination URL or Page Number"|t('feed-me'),
+            instructions: 'If your feed is paginated, select the next page’s URL, or the current page number.'|t('feed-me'),
             id: 'paginationNode',
             name: 'paginationNode',
             value: feed.paginationNode,
             options: parsedFeedData,
             errors: feed.getErrors('paginationNode'),
+        }) }}
+
+        {{ forms.selectField({
+            label: "Pagination Total Pages"|t('feed-me'),
+            instructions: 'If your feed is paginated using page numbers, select the field containing the total pages. This is required if your feed uses page numbers.'|t('feed-me'),
+            id: 'paginationTotalNode',
+            name: 'paginationTotalNode',
+            value: feed.paginationTotalNode,
+            options: parsedFeedData,
+            errors: feed.getErrors('paginationTotalNode'),
         }) }}
 
     {% else %}
