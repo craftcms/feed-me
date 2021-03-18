@@ -122,6 +122,7 @@ class Feeds extends Component
         $record->siteId = $model->siteId;
         $record->singleton = (bool)$model->singleton;
         $record->duplicateHandle = $model->duplicateHandle;
+        $record->updateSearchIndexes = $model->updateSearchIndexes;
         $record->paginationNode = $model->paginationNode;
         $record->passkey = $model->passkey;
         $record->backup = $model->backup;
@@ -251,6 +252,7 @@ class Feeds extends Component
                 'sortOrder',
                 'singleton',
                 'duplicateHandle',
+                'updateSearchIndexes',
                 'paginationNode',
                 'fieldMapping',
                 'fieldUnique',

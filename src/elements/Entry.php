@@ -201,7 +201,7 @@ class Entry extends Element
             $element->sectionId = $this->element->sectionId;
             $element->typeId = $this->element->typeId;
 
-            if (!Craft::$app->getElements()->saveElement($element)) {
+            if (!Craft::$app->getElements()->saveElement($element, true, true, $this->feed->updateSearchIndexes)) {
                 Plugin::error('Entry error: Could not create parent - `{e}`.', ['e' => json_encode($element->getErrors())]);
             } else {
                 Plugin::info('Entry `#{id}` added.', ['id' => $element->id]);
@@ -260,7 +260,7 @@ class Entry extends Element
             $element->username = $value;
             $element->email = $value;
 
-            if (!Craft::$app->getElements()->saveElement($element)) {
+            if (!Craft::$app->getElements()->saveElement($element, true, true, $this->feed->updateSearchIndexes)) {
                 Plugin::error('Entry error: Could not create author - `{e}`.', ['e' => json_encode($element->getErrors())]);
             } else {
                 Plugin::info('Author `#{id}` added.', ['id' => $element->id]);

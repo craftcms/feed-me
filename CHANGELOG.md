@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- Added support for disabling updating search indexing on a per feed basis. ([#649](https://github.com/craftcms/feed-me/issues/649))
+
 ## 4.3.6 - 2021-03-05
 
 ### Added

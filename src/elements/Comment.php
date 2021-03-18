@@ -221,7 +221,7 @@ class Comment extends Element
             $element->username = $value;
             $element->email = $value;
 
-            if (!Craft::$app->getElements()->saveElement($element)) {
+            if (!Craft::$app->getElements()->saveElement($element, true, true, $this->feed->updateSearchIndexes)) {
                 Plugin::error('Comment error: Could not create author - `{e}`.', ['e' => json_encode($element->getErrors())]);
             } else {
                 Plugin::info('Author `#{id}` added.', ['id' => $element->id]);

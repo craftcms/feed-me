@@ -79,6 +79,12 @@ class FeedModel extends Model
     public $duplicateHandle;
 
     /**
+     * @var bool
+     * @since 4.4.0
+     */
+    public $updateSearchIndexes = true;
+
+    /**
      * @var
      */
     public $paginationNode;

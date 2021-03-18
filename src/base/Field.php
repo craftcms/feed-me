@@ -6,6 +6,7 @@ use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
 use craft\feedme\helpers\DataHelper;
+use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
 
 /**
@@ -41,7 +42,7 @@ abstract class Field extends Component
     public $field;
 
     /**
-     * @var
+     * @var FeedModel
      */
     public $feed;
 
@@ -170,7 +171,7 @@ abstract class Field extends Component
                 ]
             ]);
 
-            if (!$elementsService->saveElement($element)) {
+            if (!$elementsService->saveElement($element, true, true, $this->feed->updateSearchIndexes)) {
                 Plugin::error('`{handle}` - Unable to save sub-field: `{e}`.', ['e' => json_encode($element->getErrors()), 'handle' => $this->fieldHandle]);
             }
 

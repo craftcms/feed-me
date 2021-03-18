@@ -178,7 +178,7 @@ class Tags extends Field implements FieldInterface
 
         $element->setScenario(BaseElement::SCENARIO_ESSENTIALS);
 
-        if (!Craft::$app->getElements()->saveElement($element)) {
+        if (!Craft::$app->getElements()->saveElement($element, true, true, $this->feed->updateSearchIndexes)) {
             Plugin::error('`{handle}` - Tag error: Could not create - `{e}`.', ['e' => json_encode($element->getErrors()), 'handle' => $this->field->handle]);
         } else {
             Plugin::info('`{handle}` - Tag `#{id}` added.', ['id' => $element->id, 'handle' => $this->field->handle]);
