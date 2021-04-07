@@ -9,6 +9,8 @@ module.exports = {
         editLinks: true,
         docsRepo: 'craftcms/feed-me',
         docsDir: 'docs',
+        smallerSidebarHeadings: true,
+        widerSidebar: false,
         nav: [
             {
                 text: 'Craft CMS',
@@ -109,9 +111,9 @@ module.exports = {
                 return content.replace(/[_`]/g, '')
             }
         },
-        extendMarkdown(md) {
-            require("vuepress-theme-craftdocs/markup")(md);
-            md.use(require("markdown-it-deflist"));
-        },
+        // extendMarkdown(md) {
+        //     require("vuepress-theme-craftdocs/markup")(md);
+        //     md.use(require("markdown-it-deflist"));
+        // },
     },
 }
