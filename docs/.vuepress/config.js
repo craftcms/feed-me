@@ -111,9 +111,9 @@ module.exports = {
                 return content.replace(/[_`]/g, '')
             }
         },
-        // extendMarkdown(md) {
-        //     require("vuepress-theme-craftdocs/markup")(md);
-        //     md.use(require("markdown-it-deflist"));
-        // },
+        extendMarkdown(md) {
+            require("vuepress-theme-craftdocs/markup")(md);
+            md.use(require("markdown-it-deflist"));
+        },
     },
 }
