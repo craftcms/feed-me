@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Fixed a bug that could occur if the feed value wasn't a `string` when importing into a dropdown field. ([#853](https://github.com/craftcms/feed-me/issues/853))
+
 ## 4.3.6 - 2021-03-05
 
 ### Added
