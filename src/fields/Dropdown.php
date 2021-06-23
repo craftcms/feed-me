@@ -58,4 +58,12 @@ class Dropdown extends Field implements FieldInterface
 
         return null;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function fetchValue()
+    {
+        return (string) parent::fetchValue();
+    }
 }
