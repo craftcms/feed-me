@@ -171,7 +171,7 @@ abstract class Field extends Component
                 ]
             ]);
 
-            if (!$elementsService->saveElement($element, true, true, $this->feed->updateSearchIndexes)) {
+            if (!$elementsService->saveElement($element, true, true, Hash::get($this->feed, 'updateSearchIndexes'))) {
                 Plugin::error('`{handle}` - Unable to save sub-field: `{e}`.', ['e' => json_encode($element->getErrors()), 'handle' => $this->fieldHandle]);
             }
 
