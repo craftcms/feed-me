@@ -111,7 +111,7 @@ class AssetHelper
                     $fetchedImage = $cachedImage[0];
                 }
 
-                $result = self::createAsset($fetchedImage, $filename, $folderId, $field, $element, $conflict, $feed->updateSearchIndexes);
+                $result = self::createAsset($fetchedImage, $filename, $folderId, $field, $element, $conflict, Hash::get($feed, 'updateSearchIndexes'));
 
                 if ($result) {
                     $uploadedAssets[] = $result;
@@ -170,7 +170,7 @@ class AssetHelper
                 $fetchedImageWithExtension = $tempFeedMePath . $filename;
                 FileHelper::writeToFile($fetchedImageWithExtension, $decodedImage);
 
-                $result = self::createAsset($fetchedImageWithExtension, $filename, $folderId, $field, $element, $conflict, $feed->updateSearchIndexes);
+                $result = self::createAsset($fetchedImageWithExtension, $filename, $folderId, $field, $element, $conflict, Hash::get($feed, 'updateSearchIndexes'));
 
                 if ($result) {
                     $uploadedAssets[] = $result;
