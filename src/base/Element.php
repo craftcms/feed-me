@@ -195,7 +195,7 @@ abstract class Element extends Component implements ElementInterface
             /** @var BaseElement $element */
             $element = $elementsService->getElementById($elementId, $class);
             $element->enabled = false;
-            $elementsService->saveElement($element, true, true, $this->feed->updateSearchIndexes);
+            $elementsService->saveElement($element, true, true, Hash::get($this->feed, 'updateSearchIndexes'));
         }
 
         return true;
@@ -220,7 +220,7 @@ abstract class Element extends Component implements ElementInterface
         foreach ($query->each() as $element) {
             /** @var BaseElement $element */
             $element->enabledForSite = false;
-            $elementsService->saveElement($element, false, false, $this->feed->updateSearchIndexes);
+            $elementsService->saveElement($element, false, false, Hash::get($this->feed, 'updateSearchIndexes'));
         }
 
         return true;
@@ -236,7 +236,7 @@ abstract class Element extends Component implements ElementInterface
             return true;
         }
 
-        if (!Craft::$app->getElements()->saveElement($this->element, true, true, $this->feed->updateSearchIndexes)) {
+        if (!Craft::$app->getElements()->saveElement($this->element, true, true, Hash::get($this->feed, 'updateSearchIndexes'))) {
             return false;
         }
 

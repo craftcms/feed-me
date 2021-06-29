@@ -162,7 +162,7 @@ class Category extends Element
             $element->title = $value;
             $element->groupId = $this->element->groupId;
 
-            if (!Craft::$app->getElements()->saveElement($element, true, true, $this->feed->updateSearchIndexes)) {
+            if (!Craft::$app->getElements()->saveElement($element, true, true, Hash::get($this->feed, 'updateSearchIndexes'))) {
                 Plugin::error('Category error: Could not create parent - `{e}`.', ['e' => json_encode($element->getErrors())]);
             } else {
                 Plugin::info('Category `#{id}` added.', ['id' => $element->id]);
