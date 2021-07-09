@@ -369,6 +369,19 @@ class Process extends Component
         // Set the attributes for the element
         $element->setAttributes($attributeData, false);
 
+        // We can opt-out of populating certain fields
+        $skipFieldHandles = Plugin::$plugin->service->getConfig('skipFieldHandles', $feed['id']);
+
+        if ($skipFieldHandles) {
+            $feed['fieldMapping'] = array_filter($feed['fieldMapping'], function ($fieldInfo, $fieldHandle) use ($skipFieldHandles) {
+                $skip = in_array($fieldHandle, $skipFieldHandles);
+                if ($skip) {
+                    Plugin::info('Skipped `{field}` due to config setting.', ['field' => $fieldHandle]);
+                }
+                return !$skip;
+            }, ARRAY_FILTER_USE_BOTH);
+        }
+        
         // Then, do the same for custom fields. Again, this should be done after populating the element attributes
         foreach ($feed['fieldMapping'] as $fieldHandle => $fieldInfo) {
             if (Hash::get($fieldInfo, 'field')) {
