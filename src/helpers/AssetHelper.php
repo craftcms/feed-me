@@ -346,6 +346,8 @@ class AssetHelper
                 $contentType = $response->getHeader('Content-Type');
 
                 if (isset($contentType[0])) {
+                    // Because some servers cram unnecessary things it the Content-Type header.
+                    $contentType = explode(';', $contentType[0]);
                     // Convert MIME type to extension
                     $extension = FileHelper::getExtensionByMimeType($contentType[0]);
                 }
