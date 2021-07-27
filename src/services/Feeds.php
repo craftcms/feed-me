@@ -123,6 +123,7 @@ class Feeds extends Component
         $record->singleton = (bool)$model->singleton;
         $record->duplicateHandle = $model->duplicateHandle;
         $record->paginationNode = $model->paginationNode;
+        $record->paginationTotalNode = $model->paginationTotalNode;
         $record->passkey = $model->passkey;
         $record->backup = $model->backup;
 
@@ -252,6 +253,7 @@ class Feeds extends Component
                 'singleton',
                 'duplicateHandle',
                 'paginationNode',
+                'paginationTotalNode',
                 'fieldMapping',
                 'fieldUnique',
                 'passkey',

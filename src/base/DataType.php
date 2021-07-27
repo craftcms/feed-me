@@ -41,10 +41,16 @@ abstract class DataType extends Component
         if (!$feed->paginationNode) {
             return;
         }
-
         // Find the URL value in the feed
         $flatten = Hash::flatten($array, '/');
         $url = Hash::get($flatten, $feed->paginationNode);
+        $totalPages = Hash::get($flatten, $feed->paginationTotalNode);
+
+        //check if the pagination url provided is just a page number
+        $pagedUrl = $this->_generateNextPaginationFromPageNumber($feed->feedUrl, $url, $totalPages);
+        if($pagedUrl) {
+            $url = $pagedUrl;
+        }
 
         // if the feed provides a root relative URL, make it whole again based on the feed.
         if ($url && UrlHelper::isRootRelativeUrl($url)) {
@@ -53,6 +59,26 @@ abstract class DataType extends Component
 
         // Replace the mapping value with the actual URL
         $feed->paginationUrl = $url;
+    }
+
+    /**
+     * Generates the next page url if the next page provided in the field is a page number
+     * instead of a url. In this case, the total pages field needs to be provided as well.
+     * @param $feedUrl
+     * @param $url
+     * @param $totalPages
+     */
+    private function _generateNextPaginationFromPageNumber($feedUrl, $url, $totalPages) {
+        if (is_numeric($url) && is_numeric($totalPages)) {
+            $nextPage = $url + 1;
+            if($nextPage > $totalPages) {
+                return null;
+            }
+
+            $feedUrl = UrlHelper::removeParam($feedUrl, "page");
+            return UrlHelper::urlWithParams($feedUrl, array("page" => $nextPage));
+        }
+        return null;
     }
 
 }

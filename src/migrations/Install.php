@@ -41,6 +41,7 @@ class Install extends Migration
             'singleton' => $this->boolean()->notNull()->defaultValue(false),
             'duplicateHandle' => $this->text(),
             'paginationNode' => $this->text(),
+            'paginationTotalNode' => $this->text(),
             'fieldMapping' => $this->text(),
             'fieldUnique' => $this->text(),
             'passkey' => $this->string()->notNull(),

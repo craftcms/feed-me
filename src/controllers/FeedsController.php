@@ -400,6 +400,7 @@ class FeedsController extends Controller
         $feed->singleton = $request->getBodyParam('singleton', $feed->singleton);
         $feed->duplicateHandle = $request->getBodyParam('duplicateHandle', $feed->duplicateHandle);
         $feed->paginationNode = $request->getBodyParam('paginationNode', $feed->paginationNode);
+        $feed->paginationTotalNode = $request->getBodyParam('paginationTotalNode', $feed->paginationTotalNode);
         $feed->passkey = $request->getBodyParam('passkey', $feed->passkey);
         $feed->backup = (bool)$request->getBodyParam('backup', $feed->backup);
 

@@ -86,6 +86,11 @@ class FeedModel extends Model
     /**
      * @var
      */
+    public $paginationTotalNode;
+
+    /**
+     * @var
+     */
     public $fieldMapping;
 
     /**
