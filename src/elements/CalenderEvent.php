@@ -228,7 +228,7 @@ class CalenderEvent extends Element
             $element->username = $value;
             $element->email = $value;
 
-            if (!Craft::$app->getElements()->saveElement($element)) {
+            if (!Craft::$app->getElements()->saveElement($element, true, true, Hash::get($this->feed, 'updateSearchIndexes'))) {
                 Plugin::error('Event error: Could not create author - `{e}`.', ['e' => json_encode($element->getErrors())]);
             } else {
                 Plugin::info('Author `#{id}` added.', ['id' => $element->id]);
