@@ -40,6 +40,7 @@ class Install extends Migration
             'sortOrder' => $this->smallInteger()->unsigned(),
             'singleton' => $this->boolean()->notNull()->defaultValue(false),
             'duplicateHandle' => $this->text(),
+            'updateSearchIndexes' => $this->boolean()->notNull()->defaultValue(true),
             'paginationNode' => $this->text(),
             'fieldMapping' => $this->text(),
             'fieldUnique' => $this->text(),
