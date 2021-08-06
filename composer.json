@@ -29,7 +29,7 @@
         "rss": "https://github.com/craftcms/feed-me/commits/master.atom"
     },
     "require": {
-        "craftcms/cms": "^3.5.0",
+        "craftcms/cms": "^3.7.0",
         "cakephp/utility": "^3.3.12",
         "jakeasmith/http_build_url": "^1.0",
         "nesbot/carbon": "^1.22 || ^2.10",
