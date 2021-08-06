@@ -48,7 +48,9 @@
 
         {% for field in craft.app.fields.getAllFields() %}
             {% if craft.feedme.fieldCanBeUniqueId(field) %}
-                {% set matchAttributes = matchAttributes|merge({ ('field_' ~ field.handle): field.name }) %}
+                {# Check for columnSuffix (since 3.7) #}
+                {% set suffix = field['columnSuffix'] is defined and field.columnSuffix|length  ? '_' ~ field.columnSuffix : '' %}
+                {% set matchAttributes = matchAttributes|merge({ ('field_' ~ field.handle ~ suffix): field.name }) %}
             {% endif %}
         {% endfor %}
 
