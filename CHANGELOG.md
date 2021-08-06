@@ -5,6 +5,10 @@
 ### Added
 - Added support for disabling updating search indexing on a per feed basis. ([#649](https://github.com/craftcms/feed-me/issues/649))
 
+### Fixed
+- Fixed a bug that could occur if the feed value wasn't a `string` when importing into a dropdown field. ([#853](https://github.com/craftcms/feed-me/issues/853))
+- Fixed a PHP error that could occur when trying to import a remote asset.
+
 ## 4.3.6 - 2021-03-05
 
 ### Added

@@ -14,7 +14,7 @@
         "markdown-it-deflist": "^2.0.3",
         "vuepress": "^1.5.2",
         "vuepress-plugin-sitemap": "^2.0.0",
-        "vuepress-theme-craftdocs": "^2.0.7"
+        "vuepress-theme-craftdocs": "^2.0.8"
     },
     "scripts": {
         "docs:dev": "vuepress dev docs",

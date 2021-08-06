@@ -9,6 +9,8 @@ module.exports = {
         editLinks: true,
         docsRepo: 'craftcms/feed-me',
         docsDir: 'docs',
+        smallerSidebarHeadings: true,
+        widerSidebar: false,
         nav: [
             {
                 text: 'Craft CMS',
