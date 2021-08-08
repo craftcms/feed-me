@@ -291,8 +291,6 @@ abstract class Element extends Component implements ElementInterface
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
 
-        $value = mb_strtolower($value);
-
         if (Craft::$app->getConfig()->getGeneral()->limitAutoSlugsToAscii) {
             $value = $this->_asciiString($value);
         }
