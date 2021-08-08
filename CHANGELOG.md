@@ -3,7 +3,10 @@
 ## Unreleased
 
 ### Added
-- Added support for disabling updating search indexing on a per feed basis. ([#649](https://github.com/craftcms/feed-me/issues/649))
+- Added support for disabling updating search indexing on a per-feed basis. ([#649](https://github.com/craftcms/feed-me/issues/649))
+
+### Changed
+- Feed Me now requires Craft 3.7 or later.
 
 ### Fixed
 - Fixed a bug that could occur when matching content on Entries, Categories and Users fields. ([#864](https://github.com/craftcms/feed-me/issues/864))
