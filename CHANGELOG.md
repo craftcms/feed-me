@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Fixed 
+- Fixed a bug where mapped values could get stripped of leading zeros when doing content comparisons.
+
 ## 4.4.0 - 2021-08-08
 
 ### Added
