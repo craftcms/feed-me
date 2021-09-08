@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Changed
+- The `feedId` is now passed as a parameter into the `beforeFetchFeed` and `afterFetchFeed` events.
+
 ### Fixed 
 - Fixed a bug where mapped values could get stripped of leading zeros when doing content comparisons.
 
