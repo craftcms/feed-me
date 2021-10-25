@@ -30,7 +30,7 @@
     },
     "require": {
         "craftcms/cms": "^3.7.0",
-        "cakephp/utility": "^3.3.12",
+        "cakephp/utility": "^3.3.12,<3.9.5",
         "jakeasmith/http_build_url": "^1.0",
         "nesbot/carbon": "^1.22 || ^2.10",
         "league/csv": "^8.2 || ^9.0",
