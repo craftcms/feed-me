@@ -265,8 +265,9 @@ class Asset extends Element
             return $value;
         }
 
+        $path = rtrim($value,"/");
         $folder = $assets->findFolder([
-            'name' => $value,
+            'name' => $path,
             'volumeId' => $volumeId,
         ]);
 
@@ -279,6 +280,13 @@ class Asset extends Element
 
             // Process all folders (create them)
             foreach (explode('/', $value) as $key => $folderName) {
+                $critieria = [
+                    'name' => $folderName,
+                    'volumeId' => $volumeId,
+                ];
+                if ($lastCreatedFolder) {
+                    $critieria['parentId'] = $lastCreatedFolder->id;
+                }
                 $existingFolder = $assets->findFolder([
                     'name' => $folderName,
                     'volumeId' => $volumeId,
