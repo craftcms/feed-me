@@ -280,17 +280,14 @@ class Asset extends Element
 
             // Process all folders (create them)
             foreach (explode('/', $value) as $key => $folderName) {
-                $critieria = [
+                $criteria = [
                     'name' => $folderName,
                     'volumeId' => $volumeId,
                 ];
                 if ($lastCreatedFolder) {
-                    $critieria['parentId'] = $lastCreatedFolder->id;
+                    $criteria['parentId'] = $lastCreatedFolder->id;
                 }
-                $existingFolder = $assets->findFolder([
-                    'name' => $folderName,
-                    'volumeId' => $volumeId,
-                ]);
+                $existingFolder = $assets->findFolder($criteria);
 
                 if ($existingFolder) {
                     $lastCreatedFolder = $existingFolder;
