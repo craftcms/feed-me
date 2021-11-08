@@ -267,7 +267,7 @@ class Asset extends Element
 
         $path = rtrim($value,"/");
         $folder = $assets->findFolder([
-            'name' => $path,
+            'path' => $path,
             'volumeId' => $volumeId,
         ]);
 
