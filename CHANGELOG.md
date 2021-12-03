@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 4.4.1 - 2021-12-03
 
 ### Changed
 - The `feedId` is now passed as a parameter into the `beforeFetchFeed` and `afterFetchFeed` events.
