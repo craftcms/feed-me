@@ -120,11 +120,8 @@
         id: 'singleton',
     }) }}
 
-    {{ forms.field({
-        label: "Import strategy"|t('feed-me'),
-        instructions: 'Choose what happens when this feed is run again.'|t('feed-me'),
-        id: 'duplicateHandle',
-    }) }}
+    <h2>{{ 'Import strategy'|t('feed-me') }}</h2>
+    <p>{{ 'Choose what happens when this feed is run again.'|t('feed-me') }}</p>
 
     {{ forms.checkboxField({
         id: 'is-create',
