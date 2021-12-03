@@ -7,7 +7,7 @@
 
 ### Fixed 
 - Fixed a bug where mapped values could get stripped of leading zeros when doing content comparisons.
-- Fixed a bug where creating or editing a feed would render an error. ([#1065](https://github.com/craftcms/feed-me/issues/1065))
+- Fixed a bug where creating or editing a feed would render an error if you were on Craft 3.7.24 or later. ([#1065](https://github.com/craftcms/feed-me/issues/1065))
 
 ## 4.4.0 - 2021-08-08
 
