@@ -4,6 +4,7 @@
 
 ### Changed
 - The `feedId` is now passed as a parameter into the `beforeFetchFeed` and `afterFetchFeed` events.
+- `craft\services\Process::processFeed()` now accepts a `$feedData` parameter that can be used to override the feed data.
 
 ### Fixed 
 - Fixed a bug where mapped values could get stripped of leading zeros when doing content comparisons.
