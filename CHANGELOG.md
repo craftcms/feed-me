@@ -7,6 +7,7 @@
 
 ### Fixed 
 - Fixed a bug where mapped values could get stripped of leading zeros when doing content comparisons.
+- Fixed a bug where creating or editing a feed would render an error.
 
 ## 4.4.0 - 2021-08-08
 
