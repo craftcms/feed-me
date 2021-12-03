@@ -51,6 +51,7 @@ Attribute | Description
 `Disable missing elements` | Disables elements that are not updated by this feed.
 `Disable missing elements in the target site` | Disables elements that are not updated by this feed, but only in the feed’s [target site](#target-site).
 `Delete missing elements` | Deletes elements that are not updated by this feed. **Be careful when deleting**.
+`Update search indexes` | Whether search indexes should be updated.
 
 ### Passkey
 

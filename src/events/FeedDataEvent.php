@@ -17,5 +17,10 @@ class FeedDataEvent extends Event
     /**
      * @var
      */
+    public $feedId;
+
+    /**
+     * @var
+     */
     public $response;
 }

@@ -12,7 +12,7 @@ Do not use this when importing new data. If you’re importing your content from
 
 ### Unique Identifiers
 
-Its important to select a Unique Identifier for your feed to assist with the Import Strategy you’ve chosen. When comparing against existing entries, it will compare the fields you select here with the data in your feed. Most commonly, this would be the Title for the element, but is also a good idea to be against a unique ID.
+It's important to select a Unique Identifier for your feed to assist with the Import Strategy you’ve chosen. When comparing against existing entries, it will compare the fields you select here with the data in your feed. Most commonly, this would be the Title for the element, but is also a good idea to be against a unique ID.
 
 ::: danger
 Updating content based on a Unique Identifier will not work for content stored in Matrix and other nested, Matrix-like fields such as Super Table and Neo.

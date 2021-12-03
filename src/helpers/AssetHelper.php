@@ -111,7 +111,7 @@ class AssetHelper
                     $fetchedImage = $cachedImage[0];
                 }
 
-                $result = self::createAsset($fetchedImage, $filename, $folderId, $field, $element, $conflict);
+                $result = self::createAsset($fetchedImage, $filename, $folderId, $field, $element, $conflict, Hash::get($feed, 'updateSearchIndexes'));
 
                 if ($result) {
                     $uploadedAssets[] = $result;
@@ -170,7 +170,7 @@ class AssetHelper
                 $fetchedImageWithExtension = $tempFeedMePath . $filename;
                 FileHelper::writeToFile($fetchedImageWithExtension, $decodedImage);
 
-                $result = self::createAsset($fetchedImageWithExtension, $filename, $folderId, $field, $element, $conflict);
+                $result = self::createAsset($fetchedImageWithExtension, $filename, $folderId, $field, $element, $conflict, Hash::get($feed, 'updateSearchIndexes'));
 
                 if ($result) {
                     $uploadedAssets[] = $result;
@@ -193,6 +193,7 @@ class AssetHelper
      * @param string $field
      * @param string $element
      * @param string $conflict
+     * @param bool $updateSearchIndexes
      * @return int
      * @throws \Throwable
      * @throws \craft\errors\AssetLogicException
@@ -200,7 +201,7 @@ class AssetHelper
      * @throws \craft\errors\FileException
      * @throws \yii\base\Exception
      */
-    private static function createAsset($tempFilePath, $filename, $folderId, $field, $element, $conflict)
+    private static function createAsset($tempFilePath, $filename, $folderId, $field, $element, $conflict, $updateSearchIndexes)
     {
         $assets = Craft::$app->getAssets();
 
@@ -231,7 +232,7 @@ class AssetHelper
             ])
         ]);
 
-        $result = Craft::$app->getElements()->saveElement($asset);
+        $result = Craft::$app->getElements()->saveElement($asset, true, true, $updateSearchIndexes);
 
         if ($result) {
             // Annoyingly, you have to create the asset field, then move it to the temp directly, then replace the conflicting
@@ -346,6 +347,8 @@ class AssetHelper
                 $contentType = $response->getHeader('Content-Type');
 
                 if (isset($contentType[0])) {
+                    // Because some servers cram unnecessary things it the Content-Type header.
+                    $contentType = explode(';', $contentType[0]);
                     // Convert MIME type to extension
                     $extension = FileHelper::getExtensionByMimeType($contentType[0]);
                 }

@@ -200,13 +200,13 @@ class DataHelper
                 $newValue = Db::prepareDateForDb($newValue);
             }
 
-            // If an empty 'date' value, its the same as null
+            // If an empty 'date' value, it's the same as null
             if (is_array($newValue) && isset($newValue['date']) && $newValue['date'] === '') {
                 $newValue = null;
             }
 
             // Check for simple fields first
-            if (Hash::check($fields, $key) && $existingValue == $newValue) {
+            if (self::_compareSimpleValues($fields, $key, $existingValue, $newValue)) {
                 unset($trackedChanges[$key]);
                 continue;
             }
@@ -225,7 +225,7 @@ class DataHelper
                 $existingValue = $groups;
             }
 
-            if (Hash::check($attributes, $key) && $existingValue == $newValue) {
+            if (self::_compareSimpleValues($fields, $key, $existingValue, $newValue)) {
                 unset($trackedChanges[$key]);
                 continue;
             }
@@ -300,5 +300,20 @@ class DataHelper
         }
 
         return $diff;
+    }
+
+    /**
+     * @param $fields
+     * @param $key
+     * @param $firstValue
+     * @param $secondValue
+     * @return bool
+     */
+    private static function _compareSimpleValues($fields, $key, $firstValue, $secondValue): bool
+    {
+        /** @noinspection TypeUnsafeComparisonInspection */
+        // String length comparison to take into account "637" and "0637"
+        // Should probably do a strict check, but doing this for backwards compatibility.
+        return Hash::check($fields, $key) && ($firstValue == $secondValue && mb_strlen($firstValue) === mb_strlen($secondValue));
     }
 }

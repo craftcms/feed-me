@@ -1,5 +1,29 @@
 # Changelog
 
+## 4.4.1 - 2021-12-03
+
+### Changed
+- The `feedId` is now passed as a parameter into the `beforeFetchFeed` and `afterFetchFeed` events.
+- `craft\services\Process::processFeed()` now accepts a `$feedData` parameter that can be used to override the feed data.
+
+### Fixed 
+- Fixed a bug where mapped values could get stripped of leading zeros when doing content comparisons.
+- Fixed a bug where creating or editing a feed would render an error if you were on Craft 3.7.24 or later. ([#1065](https://github.com/craftcms/feed-me/issues/1065))
+
+## 4.4.0 - 2021-08-08
+
+### Added
+- Added support for disabling updating search indexing on a per-feed basis. ([#649](https://github.com/craftcms/feed-me/issues/649))
+
+### Changed
+- Feed Me now requires Craft 3.7 or later.
+
+### Fixed
+- Fixed a bug that could occur when matching content on Entries, Categories and Users fields. ([#864](https://github.com/craftcms/feed-me/issues/864))
+- Fixed a bug that could occur if the feed value wasn’t a `string` when importing into a dropdown field. ([#853](https://github.com/craftcms/feed-me/issues/853))
+- Fixed a PHP error that could occur when trying to import a remote asset.
+- Fixed a bug where Feed Me was not respecting Craft’s `allowUppercaseInSlug` config setting. ([#853](https://github.com/craftcms/feed-me/issues/865))
+
 ## 4.3.6 - 2021-03-05
 
 ### Added

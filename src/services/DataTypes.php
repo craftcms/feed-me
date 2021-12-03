@@ -152,6 +152,7 @@ class DataTypes extends Component
     {
         $event = new FeedDataEvent([
             'url' => $url,
+            'feedId' => $feedId
         ]);
 
         Event::trigger(static::class, self::EVENT_BEFORE_FETCH_FEED, $event);
@@ -205,6 +206,7 @@ class DataTypes extends Component
 
         $event = new FeedDataEvent([
             'url' => $url,
+            'feedId' => $feedId,
             'response' => $response,
         ]);
 

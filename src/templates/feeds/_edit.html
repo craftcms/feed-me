@@ -120,11 +120,8 @@
         id: 'singleton',
     }) }}
 
-    {{ forms.field({
-        label: "Import strategy"|t('feed-me'),
-        instructions: 'Choose what happens when this feed is run again.'|t('feed-me'),
-        id: 'duplicateHandle',
-    }) }}
+    <h2>{{ 'Import strategy'|t('feed-me') }}</h2>
+    <p>{{ 'Choose what happens when this feed is run again.'|t('feed-me') }}</p>
 
     {{ forms.checkboxField({
         id: 'is-create',
@@ -179,6 +176,15 @@
         instructions: 'Deletes any elements that are missing from the feed. Be careful.'|t('feed-me'),
         value: 'delete',
         checked: not feed.singleton and 'delete' in (feed.duplicateHandle ?? []),
+        disabled: feed.singleton,
+    }) }}
+
+    {{ forms.checkboxField({
+        id: 'is-update-search-indexes',
+        name: 'updateSearchIndexes',
+        label: 'Update search indexes'|t('feed-me'),
+        instructions: 'Whether search indexes should be updated.'|t('feed-me'),
+        checked: not feed.singleton and feed.updateSearchIndexes,
         disabled: feed.singleton,
     }) }}
 
