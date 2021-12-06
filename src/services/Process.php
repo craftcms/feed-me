@@ -168,10 +168,11 @@ class Process extends Component
      * @param $step
      * @param $feed
      * @param $processedElementIds
+     * @param $feedData
      * @return mixed|void
      * @throws \Exception
      */
-    public function processFeed($step, $feed, &$processedElementIds)
+    public function processFeed($step, $feed, &$processedElementIds, $feedData = null)
     {
         $attributeData = [];
         $fieldData = [];
@@ -204,7 +205,7 @@ class Process extends Component
         $element = $this->_service->setModel($feed);
 
         // From the raw data in our feed, we need to fix it up so its Craft-ready for the element and fields
-        $feedData = $this->_data[$step];
+        $feedData = $feedData ?? $this->_data[$step];
 
         // We need to first find a potentially existing element, and to do that, we need to prep just the fields
         // that are selected as the unique identifier. We prep everything else later on.

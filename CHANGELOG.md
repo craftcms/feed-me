@@ -1,12 +1,14 @@
 # Changelog
 
-## Unreleased
+## 4.4.1 - 2021-12-03
 
 ### Changed
 - The `feedId` is now passed as a parameter into the `beforeFetchFeed` and `afterFetchFeed` events.
+- `craft\services\Process::processFeed()` now accepts a `$feedData` parameter that can be used to override the feed data.
 
 ### Fixed 
 - Fixed a bug where mapped values could get stripped of leading zeros when doing content comparisons.
+- Fixed a bug where creating or editing a feed would render an error if you were on Craft 3.7.24 or later. ([#1065](https://github.com/craftcms/feed-me/issues/1065))
 
 ## 4.4.0 - 2021-08-08
 
