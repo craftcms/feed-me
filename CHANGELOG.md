@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 4.4.1.1 - 2021-12-06
 
 ### Fixed
 - Fixed a PHP error that could occur when importing some feeds. ([#1067](https://github.com/craftcms/feed-me/issues/1067)) ([#1041](https://github.com/craftcms/feed-me/issues/1041))
