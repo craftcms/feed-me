@@ -149,7 +149,8 @@ class DataHelper
 
         // We want to preserve 0 and '0', but if it's empty, return null.
         // https://github.com/craftcms/feed-me/issues/779
-        if (!is_numeric($value) && empty($value)) {
+        // Give empty strings the chance to overwrite their current values, too
+        if ($value !== "" && !is_numeric($value) && empty($value)) {
             return null;
         }
 
