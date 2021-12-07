@@ -312,8 +312,23 @@ class DataHelper
     private static function _compareSimpleValues($fields, $key, $firstValue, $secondValue): bool
     {
         /** @noinspection TypeUnsafeComparisonInspection */
-        // String length comparison to take into account "637" and "0637"
         // Should probably do a strict check, but doing this for backwards compatibility.
-        return Hash::check($fields, $key) && ($firstValue == $secondValue && mb_strlen($firstValue) === mb_strlen($secondValue));
+        if (Hash::check($fields, $key) && ($firstValue == $secondValue)) {
+            // If this is a string, check the lengths
+            if (is_string($firstValue) && is_string($secondValue)) {
+                // String length comparison to take into account "637" and "0637"
+                if (mb_strlen($firstValue) == mb_strlen($secondValue)) {
+                    return true;
+                }
+
+                return false;
+            }
+
+            // An array, but loosely equal
+            return true;
+        }
+
+        // Didn't match
+        return false;
     }
 }
