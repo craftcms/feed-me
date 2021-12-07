@@ -103,7 +103,8 @@ class Matrix extends Field implements FieldInterface
 
                 // Finish up with the content, also sort out cases where there's array content
                 if (isset($fieldData[$key]) && is_array($fieldData[$key])) {
-                    $fieldData[$key] = array_merge_recursive($fieldData[$key], $parsedValue);
+                    $fieldData[$key] = is_array($parsedValue) ? array_merge_recursive($fieldData[$key], $parsedValue)
+                        : $fieldData[$key];
                 } else {
                     $fieldData[$key] = $parsedValue;
                 }
