@@ -104,6 +104,7 @@ class FeedImport extends BaseJob implements RetryableJobInterface
                     // We want to catch any issues in each iteration of the loop (and log them), but this allows the
                     // rest of the feed to continue processing.
                     Plugin::error('`{e} - {f}: {l}`.', ['e' => $e->getMessage(), 'f' => basename($e->getFile()), 'l' => $e->getLine()]);
+                    Craft::$app->getErrorHandler()->logException($e);
                 }
 
                 $this->setProgress($queue, $index++ / $totalSteps);
@@ -125,6 +126,7 @@ class FeedImport extends BaseJob implements RetryableJobInterface
             // Even though we catch errors on each step of the loop, make sure to catch errors that can be anywhere
             // else in this function, just to be super-safe and not cause the queue job to die.
             Plugin::error('`{e} - {f}: {l}`.', ['e' => $e->getMessage(), 'f' => basename($e->getFile()), 'l' => $e->getLine()]);
+            Craft::$app->getErrorHandler()->logException($e);
         }
     }
 

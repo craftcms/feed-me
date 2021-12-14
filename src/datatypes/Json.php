@@ -3,6 +3,7 @@
 namespace craft\feedme\datatypes;
 
 use Cake\Utility\Hash;
+use Craft;
 use craft\feedme\base\DataType;
 use craft\feedme\base\DataTypeInterface;
 use craft\feedme\Plugin;
@@ -50,6 +51,7 @@ class Json extends DataType implements DataTypeInterface
             $e = (new JsonParser())->lint($data) ?: $e;
             $error = 'Invalid JSON: ' . $e->getMessage();
             Plugin::error($error);
+            Craft::$app->getErrorHandler()->logException($e);
             return ['success' => false, 'error' => $error];
         }
 

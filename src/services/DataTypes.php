@@ -202,6 +202,7 @@ class DataTypes extends Component
             $response = ['success' => true, 'data' => $data];
         } catch (\Exception $e) {
             $response = ['success' => false, 'error' => $e->getMessage()];
+            Craft::$app->getErrorHandler()->logException($e);
         }
 
         $event = new FeedDataEvent([

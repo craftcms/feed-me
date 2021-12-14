@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+- Exceptions are now logged in `web.log`/`console.log` in addition to Feed Me logs.
+
 ## 4.4.1.1 - 2021-12-06
 
 ### Fixed
