@@ -2,13 +2,11 @@
 
 ## Unreleased
 
-### Fixed
-- Fixed a bug that would prevent relating products in Products field. ([#1058](https://github.com/craftcms/feed-me/issues/1058))
-
-## Unreleased
-
 ### Changed
 - Exceptions are now logged in `web.log`/`console.log` in addition to Feed Me logs.
+
+### Fixed
+- Fixed a bug that would prevent relating products in Products field. ([#1058](https://github.com/craftcms/feed-me/issues/1058))
 
 ## 4.4.1.1 - 2021-12-06
 
