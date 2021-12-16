@@ -1,4 +1,9 @@
-# Changelog
+# Release Notes for Feed Me 4.x
+
+## Unreleased
+
+### Fixed
+- Fixed a bug that would prevent relating products in Products field. ([#1058](https://github.com/craftcms/feed-me/issues/1058))
 
 ## Unreleased
 
