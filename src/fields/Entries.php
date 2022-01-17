@@ -1,5 +1,4 @@
 <?php
-
 namespace craft\feedme\fields;
 
 use Cake\Utility\Hash;
@@ -10,6 +9,7 @@ use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\Plugin;
 use craft\helpers\Db;
+use craft\helpers\StringHelper;
 
 /**
  *
@@ -79,7 +79,7 @@ class Entries extends Field implements FieldInterface
                     $sectionIds[] = Db::idByUid('{{%sections}}', $uid);
                 }
             }
-        } else if ($sources === '*') {
+        } elseif ($sources === '*') {
             $sectionIds = null;
         }
 
@@ -108,7 +108,7 @@ class Entries extends Field implements FieldInterface
             if (Craft::$app->getIsMultiSite()) {
                 if ($targetSiteId) {
                     $criteria['siteId'] = Craft::$app->getSites()->getSiteByUid($targetSiteId)->id;
-                } else if ($feedSiteId) {
+                } elseif ($feedSiteId) {
                     $criteria['siteId'] = $feedSiteId;
                 } else {
                     $criteria['siteId'] = Craft::$app->getSites()->getCurrentSite()->id;
@@ -140,9 +140,11 @@ class Entries extends Field implements FieldInterface
 
             Plugin::info('Found `{i}` existing entries: `{j}`', ['i' => count($foundElements), 'j' => json_encode($foundElements)]);
 
-            // Check if we should create the element. But only if title is provided (for the moment)
-            if ((count($ids) == 0) && $create && $match === 'title') {
-                $foundElements[] = $this->_createElement($dataValue);
+            // Check if we should create the element.
+            if (count($ids) == 0) {
+                if ($create) {
+                    $foundElements[] = $this->_createElement($dataValue, $match);
+                }
             }
         }
 
@@ -166,18 +168,18 @@ class Entries extends Field implements FieldInterface
         return $foundElements;
     }
 
-
     // Private Methods
     // =========================================================================
 
     /**
      * @param $dataValue
-     * @return int|null
+     * @param string $match
      * @throws \Throwable
      * @throws \craft\errors\ElementNotFoundException
      * @throws \yii\base\Exception
+     * @return int|null
      */
-    private function _createElement($dataValue)
+    private function _createElement($dataValue, $match)
     {
         $sectionId = Hash::get($this->fieldInfo, 'options.group.sectionId');
         $typeId = Hash::get($this->fieldInfo, 'options.group.typeId');
@@ -192,32 +194,49 @@ class Entries extends Field implements FieldInterface
         }
 
         $element = new EntryElement();
-        $element->title = $dataValue;
         $element->sectionId = $sectionId;
         $element->typeId = $typeId;
 
         $siteId = Hash::get($this->feed, 'siteId');
         $section = Craft::$app->sections->getSectionById($element->sectionId);
 
-        if ($siteId) {
-            $element->siteId = $siteId;
+        if ($match === 'title') {
+            $element->title = $dataValue;
 
-            // Set the default site status based on the section's settings
-            foreach ($section->getSiteSettings() as $siteSettings) {
-                if ($siteSettings->siteId == $siteId) {
-                    $element->enabledForSite = $siteSettings->enabledByDefault;
+            if ($siteId) {
+                $element->siteId = $siteId;
+
+                // Set the default site status based on the section's settings
+                foreach ($section->getSiteSettings() as $siteSettings) {
+                    if ($siteSettings->siteId == $siteId) {
+                        $element->enabledForSite = $siteSettings->enabledByDefault;
+                        break;
+                    }
+                }
+            } else {
+                // Set the default entry status based on the section's settings
+                foreach ($section->getSiteSettings() as $siteSettings) {
+                    if (!$siteSettings->enabledByDefault) {
+                        $element->enabled = false;
+                    }
+
                     break;
                 }
             }
         } else {
-            // Set the default entry status based on the section's settings
-            foreach ($section->getSiteSettings() as $siteSettings) {
-                if (!$siteSettings->enabledByDefault) {
-                    $element->enabled = false;
-                }
+            // If the new element has no title: Create a random title and disable the element.
+            $randomString = '__feed-me__' . strtolower(StringHelper::randomString(10));
+            $entryType = $element->getType();
 
-                break;
+            // If the element has no title field, we only set a random slug.
+            // Otherwise we would not be able to save the element.
+            if ($entryType->hasTitleField) {
+                $element->title = $randomString;
+            } else {
+                $element->slug = $randomString;
             }
+            $element->setFieldValue(str_replace('field_', '', $match), $dataValue);
+            $element->enabled = false;
         }
 
         $element->setScenario(BaseElement::SCENARIO_ESSENTIALS);
