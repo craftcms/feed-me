@@ -28,6 +28,12 @@
         instructions: 'Cache duration (in seconds) to cache requests. Note: this only affects calls using the template tag - requests are never cached when triggering directly via the CP.'|t('feed-me'),
     }) }}
 
+    {{ forms.lightswitchField({
+        label: 'Empty strings overwrite previous values'|t('feed-me'),
+        name: 'emptyStringReplace',
+        on: settings.emptyStringReplace
+    }) }}
+
     <hr>
 
     {{ forms.checkboxSelectField({
