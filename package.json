@@ -6,7 +6,7 @@
         "esm": "^3.2.25",
         "grunt": "^1.0.3",
         "grunt-contrib-concat": "latest",
-        "grunt-contrib-jshint": "latest",
+        "grunt-contrib-jshint": "3.1.0",
         "grunt-contrib-sass": "latest",
         "grunt-contrib-uglify": "latest",
         "grunt-contrib-watch": "^1.1.0",
