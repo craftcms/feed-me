@@ -165,6 +165,10 @@ class SuperTable extends Field implements FieldInterface
         $feedPath = preg_replace('/(\/\d+\/)/', '/', $nodePath);
         $feedPath = preg_replace('/^(\d+\/)|(\/\d+)/', '', $feedPath);
 
+        if (!$fields) {
+            return null;
+        }
+
         foreach ($fields as $subFieldHandle => $subFieldInfo) {
             $node = Hash::get($subFieldInfo, 'node');
 
