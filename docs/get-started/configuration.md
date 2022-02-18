@@ -36,7 +36,7 @@ return [
 
 - `pluginName` - Optionally change the name of the plugin.
 - `cache` - For template calls, change the default cache time.
-- `requestOptions` - Any additionl options to be sent with requests when fetching your feed content [Guzzle Options](http://docs.guzzlephp.org/en/stable/request-options.html). See an example below.
+- `requestOptions` - Any additional options to be sent with requests when fetching your feed content [Guzzle Options](http://docs.guzzlephp.org/en/stable/request-options.html). See an example below.
 - `skipUpdateFieldHandle` - A provided field handle attached to your elements (often a Lightswitch or similar). If this field has a value during processing, Feed Me will skip the element.
 - `backupLimit` - Set a limit to the number of backups to keep.
 - `dataDelimiter` - Feed Me will try and split content based on this delimiter. Useful for CSVs.
