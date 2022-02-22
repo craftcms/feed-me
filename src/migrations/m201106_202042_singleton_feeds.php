@@ -14,7 +14,9 @@ class m201106_202042_singleton_feeds extends Migration
      */
     public function safeUp()
     {
-        $this->addColumn('{{%feedme_feeds}}', 'singleton', $this->boolean()->notNull()->defaultValue(false)->after('sortOrder'));
+        if (!$this->db->columnExists('{{%feedme_feeds}}', 'singleton')) {
+            $this->addColumn('{{%feedme_feeds}}', 'singleton', $this->boolean()->notNull()->defaultValue(false)->after('sortOrder'));
+        }
     }
 
     /**
