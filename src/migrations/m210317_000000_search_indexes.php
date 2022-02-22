@@ -14,7 +14,10 @@ class m210317_000000_search_indexes extends Migration
      */
     public function safeUp()
     {
-        $this->addColumn('{{%feedme_feeds}}', 'updateSearchIndexes', $this->boolean()->notNull()->defaultValue(true)->after('duplicateHandle'));
+        if (!$this->db->columnExists('{{%feedme_feeds}}', 'updateSearchIndexes')) {
+            $this->addColumn('{{%feedme_feeds}}', 'updateSearchIndexes', $this->boolean()->notNull()->defaultValue(true)->after('duplicateHandle'));
+        }
+
         $this->update('{{%feedme_feeds}}', array('updateSearchIndexes' => true));
     }
 
