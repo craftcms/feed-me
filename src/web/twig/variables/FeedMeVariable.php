@@ -203,10 +203,11 @@ class FeedMeVariable extends ServiceLocator
         } else if ($type === 'craft\fields\Categories') {
             $source = $this->getCategorySourcesByField($field);
         } else if ($type === 'craft\fields\Entries') {
+            /** @var Section $section */
             $section = $this->getEntrySourcesByField($field)[0] ?? null;
 
             if ($section) {
-                $source = Craft::$app->sections->getEntryTypeById($section->id);
+                $source = $section->getEntryTypes()[0] ?? null;
             }
         } else if ($type === 'craft\fields\Tags') {
             $source = $this->getTagSourcesByField($field);
