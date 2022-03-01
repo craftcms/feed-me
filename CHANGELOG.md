@@ -7,6 +7,7 @@
 
 ### Fixed
 - Fixed a bug that would prevent relating products in Products field. ([#1058](https://github.com/craftcms/feed-me/issues/1058))
+- Fixed a bug that would prevent changing element status on multisite when the target site was set to default. ([#606](https://github.com/craftcms/feed-me/issues/606))
 
 ## 4.4.1.1 - 2021-12-06
 
