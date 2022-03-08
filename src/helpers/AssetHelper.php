@@ -124,6 +124,7 @@ class AssetHelper
                 } else {
                     Plugin::error('Asset error: `{url}` - `{e}`.', ['url' => $url, 'e' => $e->getMessage()]);
                 }
+                Craft::$app->getErrorHandler()->logException($e);
             }
         }
 
@@ -179,6 +180,7 @@ class AssetHelper
                 }
             } catch (\Throwable $e) {
                 Plugin::error('Base64 error: `{url}` - `{e}`.', ['url' => $fetchedImageWithExtension, 'e' => $e->getMessage()]);
+                Craft::$app->getErrorHandler()->logException($e);
                 echo $e->getMessage();
             }
         }

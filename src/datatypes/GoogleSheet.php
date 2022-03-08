@@ -3,6 +3,7 @@
 namespace craft\feedme\datatypes;
 
 use Cake\Utility\Hash;
+use Craft;
 use craft\feedme\base\DataType;
 use craft\feedme\base\DataTypeInterface;
 use craft\feedme\Plugin;
@@ -59,6 +60,7 @@ class GoogleSheet extends DataType implements DataTypeInterface
             $error = 'Invalid data: ' . $e->getMessage();
 
             Plugin::error($error);
+            Craft::$app->getErrorHandler()->logException($e);
 
             return ['success' => false, 'error' => $error];
         }

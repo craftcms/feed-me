@@ -57,6 +57,7 @@ class Xml extends DataType implements DataTypeInterface
             }
 
             Plugin::error($error);
+            Craft::$app->getErrorHandler()->logException($e);
 
             return ['success' => false, 'error' => $error];
         }

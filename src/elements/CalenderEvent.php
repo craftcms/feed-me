@@ -266,6 +266,7 @@ class CalenderEvent extends Element
             }
         } catch (\Throwable $e) {
             Plugin::error($e->getMessage());
+            Craft::$app->getErrorHandler()->logException($e);
         }
     }
 

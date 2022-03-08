@@ -4,6 +4,7 @@ namespace craft\feedme\helpers;
 
 use Cake\Utility\Hash;
 use Carbon\Carbon;
+use Craft;
 use craft\feedme\Plugin;
 use craft\helpers\DateTimeHelper;
 
@@ -170,6 +171,7 @@ class DateHelper
             }
         } catch (\Exception $e) {
             Plugin::error('Date parse error: `{value}` - `{e}`.', ['value' => $value, 'e' => $e->getMessage()]);
+            Craft::$app->getErrorHandler()->logException($e);
         }
     }
 
@@ -183,6 +185,7 @@ class DateHelper
             return DateTimeHelper::toDateTime($value) ?: null;
         } catch (\Exception $e) {
             Plugin::error('Time parse error: `{value}` - `{e}`.', ['value' => $value, 'e' => $e->getMessage()]);
+            Craft::$app->getErrorHandler()->logException($e);
         }
     }
 }
