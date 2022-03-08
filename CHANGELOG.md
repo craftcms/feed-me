@@ -1,6 +1,6 @@
 # Release Notes for Feed Me 4.x
 
-## Unreleased
+## 4.4.2 - 2022-03-07
 
 ### Changed
 - Exceptions are now logged in `web.log`/`console.log` in addition to Feed Me logs.
