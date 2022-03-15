@@ -1,5 +1,11 @@
 # Release Notes for Feed Me 4.x
 
+## Unreleased
+
+### Fixed
+
+- Fixed a bug where importing in Multi-select containing Optgroup would fail.
+
 ## 4.4.2 - 2022-03-07
 
 ### Changed
