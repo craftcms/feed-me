@@ -52,6 +52,10 @@ class MultiSelect extends Field implements FieldInterface
         $match = Hash::get($this->fieldInfo, 'options.match', 'value');
 
         foreach ($options as $option) {
+            // Exclude optgroup from available values to match against
+            if (isset($option['optgroup'])) {
+                continue;
+            }
             foreach ($value as $dataValue) {
                 if ($dataValue === $option[$match]) {
                     $preppedData[] = $option['value'];
