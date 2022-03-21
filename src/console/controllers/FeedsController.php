@@ -63,11 +63,11 @@ class FeedsController extends Controller
         $tally = 0;
 
         if ($this->all) {
-            foreach($feeds->getFeeds() as $feed) {
+            foreach ($feeds->getFeeds() as $feed) {
                 $this->queueFeed($feed, null, null, $this->continueOnError);
                 $tally++;
             }
-        } else if ($feedId) {
+        } elseif ($feedId) {
             $ids = explode(',', $feedId);
 
             foreach ($ids as $id) {

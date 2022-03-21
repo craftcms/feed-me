@@ -35,7 +35,7 @@ class Settings extends Model
     public $requestOptions = [
         'headers' => [
             'User-Agent' => 'Feed Me',
-        ]
+        ],
     ];
 
     /**

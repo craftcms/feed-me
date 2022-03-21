@@ -164,7 +164,7 @@ class FeedsController extends Controller
 
             // Send the category group back to the template
             Craft::$app->getUrlManager()->setRouteParams([
-                'feed' => $feed
+                'feed' => $feed,
             ]);
 
             return null;

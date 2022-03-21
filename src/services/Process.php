@@ -124,8 +124,7 @@ class Process extends Component
         if (
             DuplicateHelper::isDelete($feed) ||
             DuplicateHelper::isDisable($feed) ||
-            DuplicateHelper::isDisableForSite($feed))
-        {
+            DuplicateHelper::isDisableForSite($feed)) {
             $query = $feed->element->getQuery($feed);
             $return['existingElements'] = $query->ids();
         }
@@ -517,7 +516,7 @@ class Process extends Component
             if (DuplicateHelper::isDisable($feed)) {
                 $this->_service->disable($elementsToDeleteDisable);
                 $message = 'The following elements have been disabled: ' . json_encode($elementsToDeleteDisable) . '.';
-            } else if (DuplicateHelper::isDisableForSite($feed)) {
+            } elseif (DuplicateHelper::isDisableForSite($feed)) {
                 $this->_service->disableForSite($elementsToDeleteDisable);
                 $message = 'The following elements have been disabled for the target site: ' . json_encode($elementsToDeleteDisable) . '.';
             } else {
@@ -612,7 +611,7 @@ class Process extends Component
             // Check for any existing backups, if more than our limit, we need to kill some off...
             $currentBackups = FileHelper::findFiles($backupPath, [
                 'only' => ['feedme-*.sql'],
-                'recursive' => false
+                'recursive' => false,
             ]);
 
             // Remove all the previous backups, except the amount we want to limit

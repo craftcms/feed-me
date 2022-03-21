@@ -140,5 +140,4 @@ class BaseHelper
 
         return 'Other';
     }
-
 }

@@ -25,7 +25,7 @@ class m190201_000000_update_asset_feeds extends Migration
                 $this->update('{{%feedme_feeds}}', [
                     'fieldMapping' => Json::encode($fieldMapping),
                 ], [
-                    'id' => $feed['id']
+                    'id' => $feed['id'],
                 ]);
             }
         }

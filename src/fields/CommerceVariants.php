@@ -68,7 +68,7 @@ class CommerceVariants extends Field implements FieldInterface
                 list(, $uid) = explode(':', $source);
                 $typeIds[] = $uid;
             }
-        } else if ($sources === '*') {
+        } elseif ($sources === '*') {
             $typeIds = null;
         }
 
@@ -106,7 +106,7 @@ class CommerceVariants extends Field implements FieldInterface
             if (Craft::$app->getIsMultiSite()) {
                 if ($targetSiteId) {
                     $criteria['siteId'] = Craft::$app->getSites()->getSiteByUid($targetSiteId)->id;
-                } else if ($feedSiteId) {
+                } elseif ($feedSiteId) {
                     $criteria['siteId'] = $feedSiteId;
                 } else {
                     $criteria['siteId'] = Craft::$app->getSites()->getCurrentSite()->id;

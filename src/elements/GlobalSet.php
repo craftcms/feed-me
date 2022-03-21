@@ -100,4 +100,3 @@ class GlobalSet extends Element
         return $this->element = new GlobalSetElement();
     }
 }
-

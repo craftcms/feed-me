@@ -48,11 +48,10 @@ abstract class DataType extends Component
 
         // if the feed provides a root relative URL, make it whole again based on the feed.
         if ($url && UrlHelper::isRootRelativeUrl($url)) {
-            $url = UrlHelper::hostInfo($feed->feedUrl).$url;
+            $url = UrlHelper::hostInfo($feed->feedUrl) . $url;
         }
 
         // Replace the mapping value with the actual URL
         $feed->paginationUrl = $url;
     }
-
 }

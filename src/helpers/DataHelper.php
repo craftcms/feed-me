@@ -169,7 +169,6 @@ class DataHelper
             try {
                 $value = Craft::$app->getView()->renderObjectTemplate($value, $element);
             } catch (\Throwable $e) {
-
             }
         }
 

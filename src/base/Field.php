@@ -168,7 +168,7 @@ abstract class Field extends Component
             Plugin::debug([
                 $this->fieldHandle => [
                     $elementId => $fieldContent,
-                ]
+                ],
             ]);
 
             if (!$elementsService->saveElement($element, true, true, Hash::get($this->feed, 'updateSearchIndexes'))) {

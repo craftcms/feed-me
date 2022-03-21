@@ -126,7 +126,7 @@ class Plugin extends \craft\base\Plugin
      */
     private function _registerTwigExtensions()
     {
-        Craft::$app->view->registerTwigExtension(new Extension);
+        Craft::$app->view->registerTwigExtension(new Extension());
     }
 
     /**
@@ -158,5 +158,4 @@ class Plugin extends \craft\base\Plugin
             $event->sender->set('feedme', FeedMeVariable::class);
         });
     }
-
 }

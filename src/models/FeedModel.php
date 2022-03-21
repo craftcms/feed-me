@@ -245,5 +245,4 @@ class FeedModel extends Model
             [['backup'], 'boolean'],
         ];
     }
-
 }

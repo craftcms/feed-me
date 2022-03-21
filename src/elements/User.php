@@ -140,10 +140,10 @@ class User extends Element
             $record->pending = false;
 
             switch ($this->status) {
-                case 'locked';
+                case 'locked':
                     $record->locked = true;
                     break;
-                case 'suspended';
+                case 'suspended':
                     $record->suspended = true;
                     break;
                 case 'pending':

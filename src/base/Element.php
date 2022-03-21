@@ -259,7 +259,6 @@ abstract class Element extends Component implements ElementInterface
      */
     public function afterSave($data, $settings)
     {
-
     }
 
     // Protected Methods

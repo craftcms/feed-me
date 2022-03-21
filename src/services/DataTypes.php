@@ -17,7 +17,6 @@ use craft\feedme\events\RegisterFeedMeDataTypesEvent;
 use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
 use craft\helpers\Component as ComponentHelper;
-use craft\helpers\UrlHelper;
 use yii\base\Event;
 
 /**
@@ -152,7 +151,7 @@ class DataTypes extends Component
     {
         $event = new FeedDataEvent([
             'url' => $url,
-            'feedId' => $feedId
+            'feedId' => $feedId,
         ]);
 
         Event::trigger(static::class, self::EVENT_BEFORE_FETCH_FEED, $event);
@@ -180,7 +179,7 @@ class DataTypes extends Component
 
             if ($error) {
                 $response = ['success' => false, 'error' => $error['message']];
-            } else if (!$data) {
+            } elseif (!$data) {
                 $response = ['success' => false, 'error' => 'Unable to parse data.'];
             } else {
                 $response = ['success' => true, 'data' => $data];
@@ -439,7 +438,7 @@ class DataTypes extends Component
 
                     $this->_parseNodeTree($tree, $val, $index . '/' . $key);
                 }
-            } else if (is_array($val)) {
+            } elseif (is_array($val)) {
                 $this->_parseNodeTree($tree, $val, $index);
             }
         }
