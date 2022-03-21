@@ -2,8 +2,10 @@
 
 ## Unreleased
 
-### Fixed
+### Added
+- It’s now possible to set the plugin to use a custom queue, by overriding `craft\feedme\Plugin::$queue` via `craft\services\Plugins::$pluginConfigs`, in `config/app.php`. ([craftcms/cms#5492](https://github.com/craftcms/cms/issues/5492)) 
 
+### Fixed
 - Fixed a bug where importing in Multi-select containing Optgroup would fail.
 
 ## 4.4.2 - 2022-03-07

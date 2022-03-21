@@ -11,6 +11,9 @@ use craft\helpers\Json;
 use craft\helpers\StringHelper;
 use craft\web\Controller;
 
+/**
+ * @property Plugin $module
+ */
 class FeedsController extends Controller
 {
     // Properties
@@ -315,7 +318,7 @@ class FeedsController extends Controller
             Craft::$app->getSession()->setNotice(Craft::t('feed-me', 'Feed processing started.'));
 
             // Create the import task
-            Craft::$app->getQueue()->delay(0)->push(new FeedImport([
+            $this->module->queue->push(new FeedImport([
                 'feed' => $feed,
                 'limit' => $limit,
                 'offset' => $offset,
@@ -334,7 +337,7 @@ class FeedsController extends Controller
 
             // Create the import task only if provided the correct passkey
             if ($proceed) {
-                Craft::$app->getQueue()->delay(0)->push(new FeedImport([
+                $this->module->queue->push(new FeedImport([
                     'feed' => $feed,
                     'limit' => $limit,
                     'offset' => $offset,

@@ -9,6 +9,9 @@ use craft\helpers\Console;
 use yii\console\Controller;
 use yii\console\ExitCode;
 
+/**
+ * @property Plugin $module
+ */
 class FeedsController extends Controller
 {
     // Properties
@@ -106,7 +109,7 @@ class FeedsController extends Controller
         $this->stdout($feed->name, Console::FG_CYAN);
         $this->stdout(' ... ');
 
-        Craft::$app->getQueue()->push(new FeedImport([
+        $this->module->queue->push(new FeedImport([
             'feed' => $feed,
             'limit' => $limit,
             'offset' => $offset,
