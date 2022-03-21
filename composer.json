@@ -53,5 +53,11 @@
         "name": "Feed Me",
         "handle": "feed-me",
         "documentationUrl": "https://docs.craftcms.com/feed-me/v4/"
+    },
+    "config": {
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true,
+            "craftcms/plugin-installer": true
+        }
     }
 }
