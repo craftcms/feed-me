@@ -8,6 +8,8 @@ use Craft;
 use craft\feedme\base\DataType;
 use craft\feedme\base\DataTypeInterface;
 use craft\feedme\Plugin;
+use craft\helpers\Json;
+use Exception;
 
 class Xml extends DataType implements DataTypeInterface
 {
@@ -17,7 +19,7 @@ class Xml extends DataType implements DataTypeInterface
     /**
      * @var string
      */
-    public static $name = 'XML';
+    public static string $name = 'XML';
 
 
     // Public Methods
@@ -26,7 +28,7 @@ class Xml extends DataType implements DataTypeInterface
     /**
      * @inheritDoc
      */
-    public function getFeed($url, $settings, $usePrimaryElement = true)
+    public function getFeed($url, $settings, bool $usePrimaryElement = true): array
     {
         $feedId = Hash::get($settings, 'id');
         $response = Plugin::$plugin->data->getRawData($url, $feedId);
@@ -48,7 +50,7 @@ class Xml extends DataType implements DataTypeInterface
 
             $array = XmlParser::build($data);
             $array = XmlParser::toArray($array);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Get a more useful error from parsing - if available
             if ($parseErrors = libxml_get_errors()) {
                 $error = Craft::t('feed-me', 'Invalid XML: {e}: Line #{l}.', ['e' => $parseErrors[0]->message, 'l' => $parseErrors[0]->line]);
@@ -62,9 +64,9 @@ class Xml extends DataType implements DataTypeInterface
             return ['success' => false, 'error' => $error];
         }
 
-        // Make sure its indeed an array!
+        // Make sure it's indeed an array!
         if (!is_array($array)) {
-            $error = 'Invalid XML: ' . json_encode($array);
+            $error = 'Invalid XML: ' . Json::encode($array);
 
             Plugin::error($error);
 

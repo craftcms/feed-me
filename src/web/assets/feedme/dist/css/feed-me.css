@@ -2496,7 +2496,7 @@ body.rtl .feedme-mapping .select:after { left: 9px; }
 
 .feedme-fullpage h2 { font-size: 18px; }
 
-.feedme-fullpage img { width: 70px; }
+.feedme-fullpage img { width: 70px; margin: auto; }
 
 .feedme-fullpage .buttons { display: inline-block; margin-top: 15px; }
 

@@ -8,6 +8,8 @@ use craft\commerce\elements\Variant as VariantElement;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\Plugin;
+use craft\commerce\fields\Variants;
+use craft\helpers\Json;
 
 /**
  *
@@ -21,17 +23,17 @@ class CommerceVariants extends Field implements FieldInterface
     /**
      * @var string
      */
-    public static $name = 'CommerceVariants';
+    public static string $name = 'CommerceVariants';
 
     /**
      * @var string
      */
-    public static $class = 'craft\commerce\fields\Variants';
+    public static string $class = Variants::class;
 
     /**
      * @var string
      */
-    public static $elementType = 'craft\commerce\elements\Variant';
+    public static string $elementType = VariantElement::class;
 
     // Templates
     // =========================================================================
@@ -39,7 +41,7 @@ class CommerceVariants extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function getMappingTemplate()
+    public function getMappingTemplate(): string
     {
         return 'feed-me/_includes/fields/commerce_variants';
     }
@@ -50,7 +52,7 @@ class CommerceVariants extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function parseField()
+    public function parseField(): mixed
     {
         $value = $this->fetchArrayValue();
 
@@ -65,7 +67,7 @@ class CommerceVariants extends Field implements FieldInterface
 
         if (is_array($sources)) {
             foreach ($sources as $source) {
-                list(, $uid) = explode(':', $source);
+                [, $uid] = explode(':', $source);
                 $typeIds[] = $uid;
             }
         } else if ($sources === '*') {
@@ -120,13 +122,13 @@ class CommerceVariants extends Field implements FieldInterface
 
             Craft::configure($query, $criteria);
 
-            Plugin::info('Search for existing variant with query `{i}`', ['i' => json_encode($criteria)]);
+            Plugin::info('Search for existing variant with query `{i}`', ['i' => Json::encode($criteria)]);
 
             $ids = $query->ids();
 
             $foundElements = array_merge($foundElements, $ids);
 
-            Plugin::info('Found `{i}` existing variants: `{j}`', ['i' => count($foundElements), 'j' => json_encode($foundElements)]);
+            Plugin::info('Found `{i}` existing variants: `{j}`', ['i' => count($foundElements), 'j' => Json::encode($foundElements)]);
         }
 
         // Check for field limit - only return the specified amount

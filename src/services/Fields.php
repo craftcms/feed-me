@@ -35,6 +35,9 @@ use craft\feedme\fields\Tags;
 use craft\feedme\fields\TypedLink;
 use craft\feedme\fields\Users;
 use craft\helpers\Component as ComponentHelper;
+use yii\base\InvalidConfigException;
+use craft\errors\MissingComponentException;
+use craft\base\ComponentInterface;
 
 /**
  *
@@ -45,9 +48,9 @@ class Fields extends Component
     // Constants
     // =========================================================================
 
-    const EVENT_REGISTER_FEED_ME_FIELDS = 'registerFeedMeFields';
-    const EVENT_BEFORE_PARSE_FIELD = 'onBeforeParseField';
-    const EVENT_AFTER_PARSE_FIELD = 'onAfterParseField';
+    public const EVENT_REGISTER_FEED_ME_FIELDS = 'registerFeedMeFields';
+    public const EVENT_BEFORE_PARSE_FIELD = 'onBeforeParseField';
+    public const EVENT_AFTER_PARSE_FIELD = 'onAfterParseField';
 
 
     // Properties
@@ -56,7 +59,7 @@ class Fields extends Component
     /**
      * @var array
      */
-    private $_fields = [];
+    private array $_fields = [];
 
     // Public Methods
     // =========================================================================
@@ -64,7 +67,7 @@ class Fields extends Component
     /**
      * @inheritDoc
      */
-    public function init()
+    public function init(): void
     {
         parent::init();
 
@@ -84,9 +87,10 @@ class Fields extends Component
 
     /**
      * @param $handle
-     * @return \craft\base\ComponentInterface|MissingDataType|mixed
+     * @return ComponentInterface|MissingDataType|mixed
+     * @throws InvalidConfigException
      */
-    public function getRegisteredField($handle)
+    public function getRegisteredField($handle): mixed
     {
         return $this->_fields[$handle] ?? $this->createField(DefaultField::class);
     }
@@ -94,7 +98,7 @@ class Fields extends Component
     /**
      * @return array
      */
-    public function fieldsList()
+    public function fieldsList(): array
     {
         $list = [];
 
@@ -108,7 +112,7 @@ class Fields extends Component
     /**
      * @return array
      */
-    public function getRegisteredFields()
+    public function getRegisteredFields(): array
     {
         if (count($this->_fields)) {
             return $this->_fields;
@@ -153,11 +157,10 @@ class Fields extends Component
 
     /**
      * @param $config
-     * @return \craft\base\ComponentInterface|MissingDataType
-     * @throws \craft\errors\MissingComponentException
-     * @throws \yii\base\InvalidConfigException
+     * @return ComponentInterface|MissingDataType
+     * @throws InvalidConfigException
      */
-    public function createField($config)
+    public function createField($config): ComponentInterface|MissingDataType
     {
         if (is_string($config)) {
             $config = ['type' => $config];
@@ -184,7 +187,7 @@ class Fields extends Component
      * @param $fieldInfo
      * @return mixed
      */
-    public function parseField($feed, $element, $feedData, $fieldHandle, $fieldInfo)
+    public function parseField($feed, $element, $feedData, $fieldHandle, $fieldInfo): mixed
     {
         if ($this->hasEventHandlers(self::EVENT_BEFORE_PARSE_FIELD)) {
             $this->trigger(self::EVENT_BEFORE_PARSE_FIELD, new FieldEvent([
@@ -196,8 +199,6 @@ class Fields extends Component
             ]));
         }
 
-        $parsedValue = null;
-
         $fieldClassHandle = Hash::get($fieldInfo, 'field');
 
         // Find the class to deal with the attribute
@@ -205,7 +206,7 @@ class Fields extends Component
         $class->feedData = $feedData;
         $class->fieldHandle = $fieldHandle;
         $class->fieldInfo = $fieldInfo;
-        $class->field = Craft::$app->fields->getFieldByHandle($fieldHandle);
+        $class->field = Craft::$app->getFields()->getFieldByHandle($fieldHandle);
         $class->element = $element;
         $class->feed = $feed;
 

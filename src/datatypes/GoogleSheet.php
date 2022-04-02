@@ -8,6 +8,8 @@ use craft\feedme\base\DataType;
 use craft\feedme\base\DataTypeInterface;
 use craft\feedme\Plugin;
 use craft\helpers\Json as JsonHelper;
+use Exception;
+use craft\helpers\Json;
 
 class GoogleSheet extends DataType implements DataTypeInterface
 {
@@ -17,7 +19,7 @@ class GoogleSheet extends DataType implements DataTypeInterface
     /**
      * @var string
      */
-    public static $name = 'Google Sheet';
+    public static string $name = 'Google Sheet';
 
 
     // Public Methods
@@ -26,7 +28,7 @@ class GoogleSheet extends DataType implements DataTypeInterface
     /**
      * @inheritDoc
      */
-    public function getFeed($url, $settings, $usePrimaryElement = true)
+    public function getFeed($url, $settings, bool $usePrimaryElement = true): array
     {
         $feedId = Hash::get($settings, 'id');
         $response = Plugin::$plugin->data->getRawData($url, $feedId);
@@ -56,7 +58,7 @@ class GoogleSheet extends DataType implements DataTypeInterface
                     $array[$i][$key] = $column;
                 }
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $error = 'Invalid data: ' . $e->getMessage();
 
             Plugin::error($error);
@@ -65,9 +67,9 @@ class GoogleSheet extends DataType implements DataTypeInterface
             return ['success' => false, 'error' => $error];
         }
 
-        // Make sure its indeed an array!
+        // Make sure it's indeed an array!
         if (!is_array($array)) {
-            $error = 'Invalid data: ' . json_encode($array);
+            $error = 'Invalid data: ' . Json::encode($array);
 
             Plugin::error($error);
 

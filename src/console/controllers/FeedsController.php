@@ -17,23 +17,23 @@ class FeedsController extends Controller
     /**
      * @var int|null The total number of feed items to process.
      */
-    public $limit;
+    public ?int $limit = null;
 
     /**
      * @var int|null The number of items to skip.
      */
-    public $offset;
+    public ?int $offset = null;
 
     /**
      * @var bool Whether to continue processing a feed (and subsequent pages) if an error occurs.
      * @since 4.3.0
      */
-    public $continueOnError = false;
+    public bool $continueOnError = false;
 
     /**
      * @var bool Whether to process all feeds. If this is true, the limit and offset params are ignored.
      */
-    public $all = false;
+    public bool $all = false;
 
     // Public Methods
     // =========================================================================
@@ -57,7 +57,7 @@ class FeedsController extends Controller
      * @param string|null $feedId A comma-separated list of feed IDs to process
      * @return int
      */
-    public function actionQueue($feedId = null): int
+    public function actionQueue(string $feedId = null): int
     {
         $feeds = Plugin::getInstance()->getFeeds();
         $tally = 0;
@@ -100,7 +100,7 @@ class FeedsController extends Controller
      * @param null $offset
      * @param bool $continueOnError
      */
-    protected function queueFeed($feed, $limit = null, $offset = null, $continueOnError = false): void
+    protected function queueFeed($feed, $limit = null, $offset = null, bool $continueOnError = false): void
     {
         $this->stdout('Queuing up feed ');
         $this->stdout($feed->name, Console::FG_CYAN);

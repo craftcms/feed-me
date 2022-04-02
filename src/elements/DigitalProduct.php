@@ -7,6 +7,9 @@ use Craft;
 use craft\digitalproducts\elements\Product as ProductElement;
 use craft\digitalproducts\Plugin as DigitalProducts;
 use craft\feedme\base\Element;
+use DateTime;
+use Carbon\Carbon;
+use craft\base\ElementInterface;
 
 /**
  *
@@ -24,17 +27,17 @@ class DigitalProduct extends Element
     /**
      * @var string
      */
-    public static $name = 'Digital Product';
+    public static string $name = 'Digital Product';
 
     /**
      * @var string
      */
-    public static $class = 'craft\digitalproducts\elements\Product';
+    public static string $class = 'craft\digitalproducts\elements\Product';
 
     /**
-     * @var
+     * @var ElementInterface|null
      */
-    public $element;
+    public ?ElementInterface $element = null;
 
 
     // Templates
@@ -43,7 +46,7 @@ class DigitalProduct extends Element
     /**
      * @inheritDoc
      */
-    public function getGroupsTemplate()
+    public function getGroupsTemplate(): string
     {
         return 'feed-me/_includes/elements/digital-products/groups';
     }
@@ -51,7 +54,7 @@ class DigitalProduct extends Element
     /**
      * @inheritDoc
      */
-    public function getColumnTemplate()
+    public function getColumnTemplate(): string
     {
         return 'feed-me/_includes/elements/digital-products/column';
     }
@@ -59,7 +62,7 @@ class DigitalProduct extends Element
     /**
      * @inheritDoc
      */
-    public function getMappingTemplate()
+    public function getMappingTemplate(): string
     {
         return 'feed-me/_includes/elements/digital-products/map';
     }
@@ -70,20 +73,22 @@ class DigitalProduct extends Element
     /**
      * @inheritDoc
      */
-    public function getGroups()
+    public function getGroups(): array
     {
         if (DigitalProducts::getInstance()) {
             return DigitalProducts::getInstance()->getProductTypes()->getEditableProductTypes();
         }
+
+        return [];
     }
 
     /**
      * @inheritDoc
      */
-    public function getQuery($settings, $params = [])
+    public function getQuery($settings, array $params = []): mixed
     {
         $query = ProductElement::find()
-            ->anyStatus()
+            ->status(null)
             ->typeId($settings['elementGroup'][ProductElement::class])
             ->siteId(Hash::get($settings, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id);
         Craft::configure($query, $params);
@@ -93,7 +98,7 @@ class DigitalProduct extends Element
     /**
      * @inheritDoc
      */
-    public function setModel($settings)
+    public function setModel($settings): ElementInterface
     {
         $this->element = new ProductElement();
         $this->element->typeId = $settings['elementGroup'][ProductElement::class];
@@ -114,9 +119,10 @@ class DigitalProduct extends Element
     /**
      * @param $feedData
      * @param $fieldInfo
-     * @return array|\Carbon\Carbon|\DateTime|false|string|null
+     * @return array|Carbon|DateTime|false|string|null
+     * @throws \Exception
      */
-    protected function parsePostDate($feedData, $fieldInfo)
+    protected function parsePostDate($feedData, $fieldInfo): DateTime|bool|array|Carbon|string|null
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
         $formatting = Hash::get($fieldInfo, 'options.match');
@@ -127,9 +133,10 @@ class DigitalProduct extends Element
     /**
      * @param $feedData
      * @param $fieldInfo
-     * @return array|\Carbon\Carbon|\DateTime|false|string|null
+     * @return array|Carbon|DateTime|false|string|null
+     * @throws \Exception
      */
-    protected function parseExpiryDate($feedData, $fieldInfo)
+    protected function parseExpiryDate($feedData, $fieldInfo): DateTime|bool|array|Carbon|string|null
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
         $formatting = Hash::get($fieldInfo, 'options.match');

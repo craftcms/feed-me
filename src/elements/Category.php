@@ -7,6 +7,11 @@ use Craft;
 use craft\elements\Category as CategoryElement;
 use craft\feedme\base\Element;
 use craft\feedme\Plugin;
+use yii\base\Exception;
+use craft\errors\ElementNotFoundException;
+use Throwable;
+use craft\helpers\Json;
+use craft\base\ElementInterface;
 
 /**
  *
@@ -24,17 +29,17 @@ class Category extends Element
     /**
      * @var string
      */
-    public static $name = 'Category';
+    public static string $name = 'Category';
 
     /**
      * @var string
      */
-    public static $class = 'craft\elements\Category';
+    public static string $class = CategoryElement::class;
 
     /**
-     * @var
+     * @var ElementInterface|null
      */
-    public $element;
+    public ?ElementInterface $element = null;
 
 
     // Templates
@@ -43,7 +48,7 @@ class Category extends Element
     /**
      * @inheritDoc
      */
-    public function getGroupsTemplate()
+    public function getGroupsTemplate(): string
     {
         return 'feed-me/_includes/elements/categories/groups';
     }
@@ -51,7 +56,7 @@ class Category extends Element
     /**
      * @inheritDoc
      */
-    public function getColumnTemplate()
+    public function getColumnTemplate(): string
     {
         return 'feed-me/_includes/elements/categories/column';
     }
@@ -59,7 +64,7 @@ class Category extends Element
     /**
      * @inheritDoc
      */
-    public function getMappingTemplate()
+    public function getMappingTemplate(): string
     {
         return 'feed-me/_includes/elements/categories/map';
     }
@@ -70,7 +75,7 @@ class Category extends Element
     /**
      * @inheritDoc
      */
-    public function getGroups()
+    public function getGroups(): array
     {
         return Craft::$app->categories->getEditableGroups();
     }
@@ -78,10 +83,10 @@ class Category extends Element
     /**
      * @inheritDoc
      */
-    public function getQuery($settings, $params = [])
+    public function getQuery($settings, array $params = []): mixed
     {
         $query = CategoryElement::find()
-            ->anyStatus()
+            ->status(null)
             ->groupId($settings['elementGroup'][CategoryElement::class])
             ->siteId(Hash::get($settings, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id);
         Craft::configure($query, $params);
@@ -91,7 +96,7 @@ class Category extends Element
     /**
      * @inheritDoc
      */
-    public function setModel($settings)
+    public function setModel($settings): ElementInterface
     {
         $this->element = new CategoryElement();
         $this->element->groupId = $settings['elementGroup'][CategoryElement::class];
@@ -108,7 +113,7 @@ class Category extends Element
     /**
      * @inheritDoc
      */
-    public function afterSave($data, $settings)
+    public function afterSave($data, $settings): void
     {
         $parent = Hash::get($data, 'parent');
 
@@ -126,11 +131,11 @@ class Category extends Element
      * @param $feedData
      * @param $fieldInfo
      * @return int|null
-     * @throws \Throwable
-     * @throws \craft\errors\ElementNotFoundException
-     * @throws \yii\base\Exception
+     * @throws Throwable
+     * @throws ElementNotFoundException
+     * @throws Exception
      */
-    protected function parseParent($feedData, $fieldInfo)
+    protected function parseParent($feedData, $fieldInfo): ?int
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
 
@@ -163,7 +168,7 @@ class Category extends Element
             $element->groupId = $this->element->groupId;
 
             if (!Craft::$app->getElements()->saveElement($element, true, true, Hash::get($this->feed, 'updateSearchIndexes'))) {
-                Plugin::error('Category error: Could not create parent - `{e}`.', ['e' => json_encode($element->getErrors())]);
+                Plugin::error('Category error: Could not create parent - `{e}`.', ['e' => Json::encode($element->getErrors())]);
             } else {
                 Plugin::info('Category `#{id}` added.', ['id' => $element->id]);
             }

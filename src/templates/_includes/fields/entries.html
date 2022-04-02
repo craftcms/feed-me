@@ -89,11 +89,13 @@
             </div>
 
             {% set entryTypes = [] %}
-            {% for section in sources if section %}
-                {% set options = craft.feedme.getSelectOptions(section.getEntryTypes(), 'name', 'id', false) %}
+            {% for section in sources %}
+                {% if section %}
+                    {% set options = craft.feedme.getSelectOptions(section.getEntryTypes(), 'name', 'id', false) %}
 
-                {# We have to prefix the index, otherwise Twig doesn't maintain numbered index correctly #}
-                {% set entryTypes = entryTypes|merge({ ('item_' ~ section.id): options }) %}
+                    {# We have to prefix the index, otherwise Twig doesn't maintain numbered index correctly #}
+                    {% set entryTypes = entryTypes|merge({ ('item_' ~ section.id): options }) %}
+                {% endif %}
             {% endfor %}
 
             {% if sources and sources[0] %}

@@ -10,6 +10,8 @@ use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\Plugin;
 use craft\helpers\Db;
+use craft\fields\Categories as CategoriesField;
+use craft\helpers\Json;
 
 /**
  *
@@ -23,17 +25,17 @@ class Categories extends Field implements FieldInterface
     /**
      * @var string
      */
-    public static $name = 'Categories';
+    public static string $name = 'Categories';
 
     /**
      * @var string
      */
-    public static $class = 'craft\fields\Categories';
+    public static string $class = CategoriesField::class;
 
     /**
      * @var string
      */
-    public static $elementType = 'craft\elements\Category';
+    public static string $elementType = CategoryElement::class;
 
     // Templates
     // =========================================================================
@@ -41,7 +43,7 @@ class Categories extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function getMappingTemplate()
+    public function getMappingTemplate(): string
     {
         return 'feed-me/_includes/fields/categories';
     }
@@ -52,7 +54,7 @@ class Categories extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function parseField()
+    public function parseField(): mixed
     {
         $value = $this->fetchArrayValue();
 
@@ -66,7 +68,7 @@ class Categories extends Field implements FieldInterface
         $node = Hash::get($this->fieldInfo, 'node');
 
         // Get source id's for connecting
-        list(, $groupUid) = explode(':', $source);
+        [, $groupUid] = explode(':', $source);
         $groupId = Db::idByUid('{{%categorygroups}}', $groupUid);
 
         $foundElements = [];
@@ -117,13 +119,13 @@ class Categories extends Field implements FieldInterface
 
             Craft::configure($query, $criteria);
 
-            Plugin::info('Search for existing category with query `{i}`', ['i' => json_encode($criteria)]);
+            Plugin::info('Search for existing category with query `{i}`', ['i' => Json::encode($criteria)]);
 
             $ids = $query->ids();
 
             $foundElements = array_merge($foundElements, $ids);
 
-            Plugin::info('Found `{i}` existing categories: `{j}`', ['i' => count($foundElements), 'j' => json_encode($foundElements)]);
+            Plugin::info('Found `{i}` existing categories: `{j}`', ['i' => count($foundElements), 'j' => Json::encode($foundElements)]);
 
             // Check if we should create the element. But only if title is provided (for the moment)
             if ((count($ids) == 0) && $create && $match === 'title') {
@@ -154,7 +156,7 @@ class Categories extends Field implements FieldInterface
     // Private Methods
     // =========================================================================
 
-    private function _createElement($dataValue, $groupId)
+    private function _createElement($dataValue, $groupId): ?int
     {
         $element = new CategoryElement();
         $element->title = $dataValue;
@@ -169,7 +171,7 @@ class Categories extends Field implements FieldInterface
         $element->setScenario(BaseElement::SCENARIO_ESSENTIALS);
 
         if (!Craft::$app->getElements()->saveElement($element, true, true, Hash::get($this->feed, 'updateSearchIndexes'))) {
-            Plugin::error('`{handle}` - Category error: Could not create - `{e}`.', ['e' => json_encode($element->getErrors()), 'handle' => $this->field->handle]);
+            Plugin::error('`{handle}` - Category error: Could not create - `{e}`.', ['e' => Json::encode($element->getErrors()), 'handle' => $this->field->handle]);
         } else {
             Plugin::info('`{handle}` - Category `#{id}` added.', ['id' => $element->id, 'handle' => $this->field->handle]);
         }

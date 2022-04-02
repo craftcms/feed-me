@@ -19,12 +19,12 @@ class SmartMap extends Field implements FieldInterface
     /**
      * @var string
      */
-    public static $name = 'SmartMap';
+    public static string $name = 'SmartMap';
 
     /**
      * @var string
      */
-    public static $class = 'doublesecretagency\smartmap\fields\Address';
+    public static string $class = 'doublesecretagency\smartmap\fields\Address';
 
     // Templates
     // =========================================================================
@@ -32,7 +32,7 @@ class SmartMap extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function getMappingTemplate()
+    public function getMappingTemplate(): string
     {
         return 'feed-me/_includes/fields/smart-map';
     }
@@ -43,7 +43,7 @@ class SmartMap extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function parseField()
+    public function parseField(): mixed
     {
         $preppedData = [];
 

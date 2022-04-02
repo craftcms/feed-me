@@ -14,6 +14,9 @@ use craft\helpers\Assets as AssetsHelper;
 use craft\helpers\UrlHelper;
 use craft\models\VolumeFolder;
 use yii\base\Event;
+use craft\errors\AssetConflictException;
+use yii\base\Exception;
+use craft\base\ElementInterface;
 
 /**
  *
@@ -31,17 +34,17 @@ class Asset extends Element
     /**
      * @var string
      */
-    public static $name = 'Asset';
+    public static string $name = 'Asset';
 
     /**
      * @var string
      */
-    public static $class = AssetElement::class;
+    public static string $class = AssetElement::class;
 
     /**
-     * @var
+     * @var ElementInterface|null
      */
-    public $element;
+    public ?ElementInterface $element = null;
 
 
     // Templates
@@ -50,7 +53,7 @@ class Asset extends Element
     /**
      * @inheritDoc
      */
-    public function getGroupsTemplate()
+    public function getGroupsTemplate(): string
     {
         return 'feed-me/_includes/elements/assets/groups';
     }
@@ -58,7 +61,7 @@ class Asset extends Element
     /**
      * @inheritDoc
      */
-    public function getColumnTemplate()
+    public function getColumnTemplate(): string
     {
         return 'feed-me/_includes/elements/assets/column';
     }
@@ -66,7 +69,7 @@ class Asset extends Element
     /**
      * @inheritDoc
      */
-    public function getMappingTemplate()
+    public function getMappingTemplate(): string
     {
         return 'feed-me/_includes/elements/assets/map';
     }
@@ -78,7 +81,7 @@ class Asset extends Element
     /**
      * @inheritDoc
      */
-    public function init()
+    public function init(): void
     {
         // If we are adding a new asset, it has to be done before the content is populated on the element.
         // We of course, want content to be populated on the newly-created element, not one that won't be uploaded
@@ -90,7 +93,7 @@ class Asset extends Element
     /**
      * @inheritDoc
      */
-    public function getGroups()
+    public function getGroups(): array
     {
         return Craft::$app->volumes->getAllVolumes();
     }
@@ -98,10 +101,10 @@ class Asset extends Element
     /**
      * @inheritDoc
      */
-    public function getQuery($settings, $params = [])
+    public function getQuery($settings, array $params = []): mixed
     {
         $query = AssetElement::find()
-            ->anyStatus()
+            ->status(null)
             ->volumeId($settings['elementGroup'][AssetElement::class])
             ->includeSubfolders()
             ->siteId(Hash::get($settings, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id);
@@ -112,7 +115,7 @@ class Asset extends Element
     /**
      * @inheritDoc
      */
-    public function setModel($settings)
+    public function setModel($settings): ElementInterface
     {
         $this->element = new AssetElement();
         $this->element->volumeId = $settings['elementGroup'][AssetElement::class];
@@ -126,10 +129,7 @@ class Asset extends Element
         return $this->element;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function beforeSave($element, $settings)
+    public function beforeSave($element, $settings): bool
     {
         parent::beforeSave($element, $settings);
 
@@ -149,9 +149,9 @@ class Asset extends Element
 
     /**
      * @param $event
-     * @throws \yii\base\Exception
+     * @throws Exception
      */
-    private function _handleImageCreation($event)
+    private function _handleImageCreation($event): void
     {
         $feed = $event->feed;
         $feedData = $event->feedData;
@@ -208,7 +208,6 @@ class Asset extends Element
 
             if ($foundElement) {
                 $event->element = $foundElement;
-                return;
             }
         }
     }
@@ -217,7 +216,7 @@ class Asset extends Element
      * @param $value
      * @return string
      */
-    private function _getFilename($value)
+    private function _getFilename($value): string
     {
         // If this is an absolute URL, we're uploading the asset. Parse it to just get the filename
         if (UrlHelper::isAbsoluteUrl($value)) {
@@ -237,7 +236,7 @@ class Asset extends Element
      * @param $fieldInfo
      * @return string
      */
-    protected function parseFilename($feedData, $fieldInfo)
+    protected function parseFilename($feedData, $fieldInfo): string
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
 
@@ -247,11 +246,12 @@ class Asset extends Element
     /**
      * @param $feedData
      * @param $fieldInfo
-     * @return int|string|null
-     * @throws \craft\errors\AssetConflictException
-     * @throws \craft\errors\VolumeObjectExistsException
+     * @return int|null
+     * @throws \craft\errors\AssetException
+     * @throws \craft\errors\FsException
+     * @throws \craft\errors\FsObjectExistsException
      */
-    protected function parseFolderId($feedData, $fieldInfo)
+    protected function parseFolderId($feedData, $fieldInfo): ?int
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
         $create = Hash::get($fieldInfo, 'options.create');
@@ -278,7 +278,7 @@ class Asset extends Element
             $lastCreatedFolder = null;
 
             // Process all folders (create them)
-            foreach (explode('/', $value) as $key => $folderName) {
+            foreach (explode('/', $value) as $folderName) {
                 $existingFolder = $assets->findFolder([
                     'name' => $folderName,
                     'volumeId' => $volumeId,

@@ -7,6 +7,7 @@ use Craft;
 use craft\elements\GlobalSet as GlobalSetElement;
 use craft\feedme\base\Element;
 use craft\feedme\models\ElementGroup;
+use craft\base\ElementInterface;
 
 /**
  * Class GlobalSet
@@ -24,22 +25,22 @@ class GlobalSet extends Element
     /**
      * @var string
      */
-    public static $name = 'Global Set';
+    public static string $name = 'Global Set';
 
     /**
      * @var string
      */
-    public static $class = GlobalSetElement::class;
+    public static string $class = GlobalSetElement::class;
 
     /**
-     * @var
+     * @var ElementInterface|null
      */
-    public $element;
+    public ?ElementInterface $element = null;
 
     /**
      * @inheritDoc
      */
-    public function getGroupsTemplate()
+    public function getGroupsTemplate(): string
     {
         return 'feed-me/_includes/elements/global-sets/groups';
     }
@@ -47,7 +48,7 @@ class GlobalSet extends Element
     /**
      * @inheritDoc
      */
-    public function getColumnTemplate()
+    public function getColumnTemplate(): string
     {
         return 'feed-me/_includes/elements/global-sets/column';
     }
@@ -55,7 +56,7 @@ class GlobalSet extends Element
     /**
      * @inheritDoc
      */
-    public function getMappingTemplate()
+    public function getMappingTemplate(): string
     {
         return 'feed-me/_includes/elements/global-sets/map';
     }
@@ -63,7 +64,7 @@ class GlobalSet extends Element
     /**
      * @inheritDoc
      */
-    public function getGroups()
+    public function getGroups(): array
     {
         $editable = Craft::$app->getGlobals()->getEditableSets();
         $groups = [];
@@ -82,10 +83,10 @@ class GlobalSet extends Element
     /**
      * @inheritDoc
      */
-    public function getQuery($settings, $params = [])
+    public function getQuery($settings, array $params = []): mixed
     {
         $query = GlobalSetElement::find()
-            ->anyStatus()
+            ->status(null)
             ->id($settings['elementGroup'][GlobalSetElement::class]['globalSet'])
             ->siteId(Hash::get($settings, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id);
         Craft::configure($query, $params);
@@ -95,7 +96,7 @@ class GlobalSet extends Element
     /**
      * @inheritDoc
      */
-    public function setModel($settings)
+    public function setModel($settings): ElementInterface
     {
         return $this->element = new GlobalSetElement();
     }

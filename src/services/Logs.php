@@ -7,6 +7,9 @@ use craft\base\Component;
 use craft\feedme\Plugin;
 use craft\helpers\App;
 use craft\helpers\FileHelper;
+use Exception;
+use DateTime;
+use craft\helpers\Json;
 
 class Logs extends Component
 {
@@ -16,37 +19,37 @@ class Logs extends Component
     /**
      * @var bool
      */
-    public $enableRotation = true;
+    public bool $enableRotation = true;
 
     /**
      * @var int
      */
-    public $maxFileSize = 6656; // 6.5MB limit for support
+    public int $maxFileSize = 6656; // 6.5MB limit for support
 
     /**
      * @var int
      */
-    public $maxLogFiles = 20;
+    public int $maxLogFiles = 20;
 
     /**
      * @var
      */
-    public $fileMode;
+    public mixed $fileMode = null;
 
     /**
      * @var int
      */
-    public $dirMode = 0775;
+    public int $dirMode = 0775;
 
     /**
      * @var bool
      */
-    public $rotateByCopy = true;
+    public bool $rotateByCopy = true;
 
     /**
      * @var
      */
-    public $logFile;
+    public mixed $logFile = null;
 
 
     // Public Methods
@@ -55,7 +58,7 @@ class Logs extends Component
     /**
      * @inheritDoc
      */
-    public function init()
+    public function init(): void
     {
         $this->logFile = Craft::$app->path->getLogPath() . '/feedme.log';
     }
@@ -65,11 +68,11 @@ class Logs extends Component
      * @param $message
      * @param array $params
      * @param array $options
-     * @throws \Exception
+     * @throws Exception
      */
-    public function log($method, $message, $params = [], $options = [])
+    public function log($method, $message, array $params = [], array $options = []): void
     {
-        $dateTime = new \DateTime();
+        $dateTime = new DateTime();
         $type = explode('::', $method)[1];
         $message = Craft::t('feed-me', $message, $params);
 
@@ -95,7 +98,7 @@ class Logs extends Component
             $options['key'] = Plugin::$stepKey;
         }
 
-        $options = json_encode($options);
+        $options = Json::encode($options);
 
         $this->_export($options . PHP_EOL);
     }
@@ -103,7 +106,7 @@ class Logs extends Component
     /**
      *
      */
-    public function clear()
+    public function clear(): void
     {
         $this->_clearLogFile($this->logFile);
     }
@@ -120,15 +123,13 @@ class Logs extends Component
         App::maxPowerCaptain();
 
         if (@file_exists(Craft::$app->path->getLogPath())) {
-            $logEntries = [];
-
             if (@file_exists($this->logFile)) {
                 // Split the log file's contents up into arrays where every line is a new item
                 $contents = @file_get_contents($this->logFile);
                 $lines = explode("\n", $contents);
 
                 foreach ($lines as $line) {
-                    $json = json_decode($line, true);
+                    $json = Json::decode($line);
 
                     if (!$json) {
                         continue;
@@ -139,7 +140,7 @@ class Logs extends Component
                     }
 
                     if (isset($json['date'])) {
-                        $json['date'] = \DateTime::createFromFormat('Y-m-d H:i:s', $json['date'])->format('Y-m-d H:i:s');
+                        $json['date'] = DateTime::createFromFormat('Y-m-d H:i:s', $json['date'])->format('Y-m-d H:i:s');
                     }
 
                     // Backward compatibility
@@ -167,7 +168,7 @@ class Logs extends Component
      * @param $type
      * @return bool
      */
-    private function _canLog($type)
+    private function _canLog($type): bool
     {
         $logging = Plugin::$plugin->service->getConfig('logging');
 
@@ -187,13 +188,13 @@ class Logs extends Component
      * @param $text
      * @throws \yii\base\Exception
      */
-    private function _export($text)
+    private function _export($text): void
     {
         $logPath = dirname($this->logFile);
         FileHelper::createDirectory($logPath, $this->dirMode, true);
 
         if (($fp = @fopen($this->logFile, 'ab')) === false) {
-            throw new \Exception("Unable to append to log file: {$this->logFile}");
+            throw new Exception("Unable to append to log file: {$this->logFile}");
         }
         @flock($fp, LOCK_EX);
         if ($this->enableRotation) {
@@ -208,21 +209,21 @@ class Logs extends Component
             $writeResult = @file_put_contents($this->logFile, $text, FILE_APPEND | LOCK_EX);
             if ($writeResult === false) {
                 $error = error_get_last();
-                throw new \Exception("Unable to export log through file!: {$error['message']}");
+                throw new Exception("Unable to export log through file!: {$error['message']}");
             }
             $textSize = strlen($text);
             if ($writeResult < $textSize) {
-                throw new \Exception("Unable to export whole log through file! Wrote $writeResult out of $textSize bytes.");
+                throw new Exception("Unable to export whole log through file! Wrote $writeResult out of $textSize bytes.");
             }
         } else {
             $writeResult = @fwrite($fp, $text);
             if ($writeResult === false) {
                 $error = error_get_last();
-                throw new \Exception("Unable to export log through file!: {$error['message']}");
+                throw new Exception("Unable to export log through file!: {$error['message']}");
             }
             $textSize = strlen($text);
             if ($writeResult < $textSize) {
-                throw new \Exception("Unable to export whole log through file! Wrote $writeResult out of $textSize bytes.");
+                throw new Exception("Unable to export whole log through file! Wrote $writeResult out of $textSize bytes.");
             }
             @flock($fp, LOCK_UN);
             @fclose($fp);
@@ -235,7 +236,7 @@ class Logs extends Component
     /**
      *
      */
-    private function _rotateFiles()
+    private function _rotateFiles(): void
     {
         $file = $this->logFile;
         for ($i = $this->maxLogFiles; $i >= 0; --$i) {
@@ -259,7 +260,7 @@ class Logs extends Component
     /**
      * @param $rotateFile
      */
-    private function _clearLogFile($rotateFile)
+    private function _clearLogFile($rotateFile): void
     {
         if ($filePointer = @fopen($rotateFile, 'ab')) {
             @ftruncate($filePointer, 0);
@@ -271,7 +272,7 @@ class Logs extends Component
      * @param $rotateFile
      * @param $newFile
      */
-    private function _rotateByCopy($rotateFile, $newFile)
+    private function _rotateByCopy($rotateFile, $newFile): void
     {
         @copy($rotateFile, $newFile);
         if ($this->fileMode !== null) {
@@ -283,7 +284,7 @@ class Logs extends Component
      * @param $rotateFile
      * @param $newFile
      */
-    private function _rotateByRename($rotateFile, $newFile)
+    private function _rotateByRename($rotateFile, $newFile): void
     {
         @rename($rotateFile, $newFile);
     }

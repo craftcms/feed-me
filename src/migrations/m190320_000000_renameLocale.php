@@ -3,20 +3,19 @@
 namespace craft\feedme\migrations;
 
 use craft\db\Migration;
-use craft\helpers\MigrationHelper;
 
 class m190320_000000_renameLocale extends Migration
 {
-    public function safeUp()
+    public function safeUp(): bool
     {
         if ($this->db->columnExists('{{%feedme_feeds}}', 'locale')) {
-            MigrationHelper::renameColumn('{{%feedme_feeds}}', 'locale', 'siteId', $this);
+            $this->renameColumn('{{%feedme_feeds}}', 'locale', 'siteId');
         }
 
         return true;
     }
 
-    public function safeDown()
+    public function safeDown(): bool
     {
         echo "m190320_000000_renameLocale cannot be reverted.\n";
 

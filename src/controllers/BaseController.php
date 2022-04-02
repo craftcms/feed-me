@@ -5,21 +5,23 @@ namespace craft\feedme\controllers;
 use Craft;
 use craft\feedme\Plugin;
 use craft\web\Controller;
+use yii\db\Exception;
+use yii\web\Response;
 
 class BaseController extends Controller
 {
     /**
      * @var string[]
      */
-    protected $allowAnonymous = ['actionClearTasks'];
+    protected int|bool|array $allowAnonymous = ['actionClearTasks'];
 
     // Public Methods
     // =========================================================================
 
     /**
-     * @return \yii\web\Response
+     * @return Response
      */
-    public function actionSettings()
+    public function actionSettings(): Response
     {
         $settings = Plugin::$plugin->getSettings();
 
@@ -29,10 +31,10 @@ class BaseController extends Controller
     }
 
     /**
-     * @return \yii\web\Response
-     * @throws \yii\db\Exception
+     * @return Response
+     * @throws Exception
      */
-    public function actionClearTasks()
+    public function actionClearTasks(): Response
     {
         // Function to clear (delete) all stuck tasks.
         Craft::$app->getDb()->createCommand()

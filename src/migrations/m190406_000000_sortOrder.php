@@ -7,7 +7,7 @@ use craft\db\Query;
 
 class m190406_000000_sortOrder extends Migration
 {
-    public function safeUp()
+    public function safeUp(): bool
     {
         if (!$this->db->columnExists('{{%feedme_feeds}}', 'sortOrder')) {
             $this->addColumn('{{%feedme_feeds}}', 'sortOrder', $this->smallInteger()->unsigned()->after('siteId'));
@@ -25,7 +25,7 @@ class m190406_000000_sortOrder extends Migration
         return true;
     }
 
-    public function safeDown()
+    public function safeDown(): bool
     {
         echo "m190406_000000_sortOrder cannot be reverted.\n";
 

@@ -9,14 +9,14 @@ class Install extends Migration
     // Public Methods
     // =========================================================================
 
-    public function safeUp()
+    public function safeUp(): bool
     {
         $this->createTables();
 
         return true;
     }
 
-    public function safeDown()
+    public function safeDown(): bool
     {
         $this->removeTables();
 
@@ -26,7 +26,7 @@ class Install extends Migration
     // Protected Methods
     // =========================================================================
 
-    protected function createTables()
+    protected function createTables(): void
     {
         $this->createTable('{{%feedme_feeds}}', [
             'id' => $this->primaryKey(),
@@ -53,7 +53,7 @@ class Install extends Migration
         ]);
     }
 
-    protected function removeTables()
+    protected function removeTables(): void
     {
         $this->dropTableIfExists('{{%feedme_feeds}}');
     }

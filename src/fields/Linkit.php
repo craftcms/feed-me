@@ -19,12 +19,12 @@ class Linkit extends Field implements FieldInterface
     /**
      * @var string
      */
-    public static $name = 'Linkit';
+    public static string $name = 'Linkit';
 
     /**
      * @var string
      */
-    public static $class = 'fruitstudios\linkit\fields\LinkitField';
+    public static string $class = 'fruitstudios\linkit\fields\LinkitField';
 
 
     // Templates
@@ -33,7 +33,7 @@ class Linkit extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function getMappingTemplate()
+    public function getMappingTemplate(): string
     {
         return 'feed-me/_includes/fields/linkit';
     }
@@ -44,7 +44,7 @@ class Linkit extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function parseField()
+    public function parseField(): mixed
     {
         $preppedData = [];
 
@@ -62,7 +62,7 @@ class Linkit extends Field implements FieldInterface
         {
             // Handle Link Type
             $preppedData['type'] = empty($preppedData['type'] ?? '') ? 'fruitstudios\linkit\models\Url' : $preppedData['type'];
-            if(strpos($preppedData['type'], '\\') === false)
+            if(!str_contains($preppedData['type'], '\\'))
             {
                 $preppedData['type'] = 'fruitstudios\\linkit\\models\\'.ucfirst(strtolower(trim($preppedData['type'])));
             }

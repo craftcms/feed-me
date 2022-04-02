@@ -90,7 +90,7 @@
     </tbody>
 </table>
 
-{% set groups = feed.element.getGroups() %}
+{% set groups = feed.getElement().getGroups() %}
 
 {% set groupFields = [{
     name: 'User Groups',
@@ -121,7 +121,7 @@
     </tbody>
 </table>
 
-{% set tabs = craft.users.one.getFieldLayout().getTabs() %}
+{% set tabs = craft.app.fields.getLayoutByType('craft\\elements\\User').getTabs() %}
 
 {% for tab in tabs %}
     <hr>
@@ -135,7 +135,8 @@
             <th>{{ 'Default Value'|t('feed-me') }}</th>
         </thead>
         <tbody>
-            {% for field in tab.getFields() %}
+            {% for layoutField in tab.getFields() %}
+                {% set field = layoutField.getField() %}
                 {% set fieldClass = craft.feedme.fields.getRegisteredField(className(field)) %}
                 {% set template = fieldClass.getMappingTemplate() %}
 
@@ -153,17 +154,20 @@
 <p>{{ "Select the fields you want to use to check for existing elements. When selected, Feed Me will look for existing elements that match the fields provided below and either update, or skip depending on your choice of Import Strategy."|t('feed-me') }}</p>
 
 {% for tab in tabs %}
-    {% for field in tab.getFields() %}
+    {% for layoutField in tab.getFields() %}
+        {% set field = layoutField.getField() %}
         {% set fields = fields|merge([{ name: field.name, handle: field.handle, type: className(field) }]) %}
     {% endfor %}
 {% endfor %}
 
 <fieldset class="feedme-uniques" aria-labelledby="user-uniques-label">
-    {% for field in fields if field and craft.feedme.fieldCanBeUniqueId(field) %}
-        {{ forms.checkboxField({
-            name: 'fieldUnique[' ~ field.handle ~ ']',
-            label: field.name,
-            checked: feed.fieldUnique[field.handle] ?? '',
-        }) }}
+    {% for field in fields %}
+        {% if field and craft.feedme.fieldCanBeUniqueId(field) %}
+            {{ forms.checkboxField({
+                name: 'fieldUnique[' ~ field.handle ~ ']',
+                label: field.name,
+                checked: feed.fieldUnique[field.handle] ?? '',
+            }) }}
+        {% endif %}
     {% endfor %}
 </fieldset>

@@ -19,6 +19,7 @@ use craft\feedme\elements\User;
 use craft\feedme\events\RegisterFeedMeElementsEvent;
 use craft\helpers\Component as ComponentHelper;
 use yii\base\InvalidConfigException;
+use craft\base\ComponentInterface;
 
 /**
  *
@@ -29,7 +30,7 @@ class Elements extends Component
     // Constants
     // =========================================================================
 
-    const EVENT_REGISTER_FEED_ME_ELEMENTS = 'registerFeedMeElements';
+    public const EVENT_REGISTER_FEED_ME_ELEMENTS = 'registerFeedMeElements';
 
 
     // Properties
@@ -38,7 +39,7 @@ class Elements extends Component
     /**
      * @var ElementInterface[]
      */
-    private $_elements = [];
+    private array $_elements = [];
 
 
     // Public Methods
@@ -47,7 +48,7 @@ class Elements extends Component
     /**
      * @inheritDoc
      */
-    public function init()
+    public function init(): void
     {
         parent::init();
 
@@ -76,7 +77,7 @@ class Elements extends Component
      * @param string $handle
      * @return ElementInterface|null
      */
-    public function getRegisteredElement($handle)
+    public function getRegisteredElement(string $handle): ?ElementInterface
     {
         return $this->_elements[$handle] ?? null;
     }
@@ -84,7 +85,7 @@ class Elements extends Component
     /**
      * @return array
      */
-    public function elementsList()
+    public function elementsList(): array
     {
         $list = [];
 
@@ -96,9 +97,9 @@ class Elements extends Component
     }
 
     /**
-     * @return array|ElementInterface[]
+     * @return array
      */
-    public function getRegisteredElements()
+    public function getRegisteredElements(): array
     {
         if (count($this->_elements)) {
             return $this->_elements;
@@ -130,11 +131,11 @@ class Elements extends Component
 
     /**
      * @param $config
-     * @return \craft\base\ComponentInterface
+     * @return ComponentInterface
      * @throws InvalidConfigException
      * @throws MissingComponentException
      */
-    public function createElement($config)
+    public function createElement($config): ComponentInterface
     {
         if (is_string($config)) {
             $config = ['type' => $config];

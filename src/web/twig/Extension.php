@@ -28,5 +28,7 @@ class Extension extends AbstractExtension
         if (is_array($array)) {
             return Hash::get($array, $value);
         }
+
+        return null;
     }
 }

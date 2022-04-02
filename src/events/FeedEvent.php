@@ -12,10 +12,10 @@ class FeedEvent extends Event
     /**
      * @var
      */
-    public $feed;
+    public mixed $feed = null;
 
     /**
      * @var bool
      */
-    public $isNew = false;
+    public bool $isNew = false;
 }

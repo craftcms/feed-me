@@ -53,7 +53,7 @@
             { label: 'Use default value', value: 'usedefault' }
         ]|merge(parsedFeedData) %}
 
-        {% include feed.element.getMappingTemplate() with { feedData: parsedFeedData } %}
+        {% include feed.getElement().getMappingTemplate() with { feedData: parsedFeedData } %}
 
     {% else %}
         <div class="feedme-fullpage fullpage-error">

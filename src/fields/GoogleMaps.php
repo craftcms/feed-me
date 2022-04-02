@@ -19,12 +19,12 @@ class GoogleMaps extends Field implements FieldInterface
     /**
      * @var string
      */
-    public static $name = 'GoogleMaps';
+    public static string $name = 'GoogleMaps';
 
     /**
      * @var string
      */
-    public static $class = 'doublesecretagency\googlemaps\fields\AddressField';
+    public static string $class = 'doublesecretagency\googlemaps\fields\AddressField';
 
     // Templates
     // =========================================================================
@@ -32,7 +32,7 @@ class GoogleMaps extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function getMappingTemplate()
+    public function getMappingTemplate(): string
     {
         return 'feed-me/_includes/fields/google-maps';
     }
@@ -43,7 +43,7 @@ class GoogleMaps extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function parseField()
+    public function parseField(): mixed
     {
         $preppedData = [];
 

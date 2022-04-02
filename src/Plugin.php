@@ -3,6 +3,7 @@
 namespace craft\feedme;
 
 use Craft;
+use craft\base\Model;
 use craft\events\RegisterUrlRulesEvent;
 use craft\feedme\base\PluginTrait;
 use craft\feedme\models\Settings;
@@ -36,12 +37,12 @@ use yii\base\Event;
  */
 class Plugin extends \craft\base\Plugin
 {
-    // Public Properties
+    // Properties
     // =========================================================================
 
-    public $schemaVersion = '4.4.0';
-    public $hasCpSettings = true;
-    public $hasCpSection = true;
+    public string $schemaVersion = '4.4.0';
+    public bool $hasCpSettings = true;
+    public bool $hasCpSection = true;
 
 
     // Traits
@@ -56,7 +57,7 @@ class Plugin extends \craft\base\Plugin
     /**
      * @inheritDoc
      */
-    public function init()
+    public function init(): void
     {
         parent::init();
 
@@ -71,7 +72,7 @@ class Plugin extends \craft\base\Plugin
     /**
      * @inheritDoc
      */
-    public function afterInstall()
+    public function afterInstall(): void
     {
         if (Craft::$app->getRequest()->getIsConsoleRequest()) {
             return;
@@ -83,15 +84,12 @@ class Plugin extends \craft\base\Plugin
     /**
      * @inheritDoc
      */
-    public function getSettingsResponse()
+    public function getSettingsResponse(): mixed
     {
-        Craft::$app->controller->redirect(UrlHelper::cpUrl('feed-me/settings'));
+        return Craft::$app->controller->redirect(UrlHelper::cpUrl('feed-me/settings'));
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getPluginName()
+    public function getPluginName(): string
     {
         return Craft::t('feed-me', $this->getSettings()->pluginName);
     }
@@ -99,7 +97,7 @@ class Plugin extends \craft\base\Plugin
     /**
      * @inheritDoc
      */
-    public function getCpNavItem()
+    public function getCpNavItem(): ?array
     {
         $navItem = parent::getCpNavItem();
         $navItem['label'] = $this->getPluginName();
@@ -113,7 +111,7 @@ class Plugin extends \craft\base\Plugin
     /**
      * @inheritDoc
      */
-    protected function createSettingsModel(): Settings
+    protected function createSettingsModel(): ?Model
     {
         return new Settings();
     }
@@ -124,7 +122,7 @@ class Plugin extends \craft\base\Plugin
     /**
      *
      */
-    private function _registerTwigExtensions()
+    private function _registerTwigExtensions(): void
     {
         Craft::$app->view->registerTwigExtension(new Extension);
     }
@@ -132,7 +130,7 @@ class Plugin extends \craft\base\Plugin
     /**
      *
      */
-    private function _registerCpRoutes()
+    private function _registerCpRoutes(): void
     {
         Event::on(UrlManager::class, UrlManager::EVENT_REGISTER_CP_URL_RULES, function(RegisterUrlRulesEvent $event) {
             $event->rules = array_merge($event->rules, [
@@ -152,7 +150,7 @@ class Plugin extends \craft\base\Plugin
     /**
      *
      */
-    private function _registerVariables()
+    private function _registerVariables(): void
     {
         Event::on(CraftVariable::class, CraftVariable::EVENT_INIT, function(Event $event) {
             $event->sender->set('feedme', FeedMeVariable::class);

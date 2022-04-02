@@ -19,7 +19,7 @@ class Json extends DataType implements DataTypeInterface
     /**
      * @var string
      */
-    public static $name = 'JSON';
+    public static string $name = 'JSON';
 
 
     // Public Methods
@@ -28,7 +28,7 @@ class Json extends DataType implements DataTypeInterface
     /**
      * @inheritDoc
      */
-    public function getFeed($url, $settings, $usePrimaryElement = true)
+    public function getFeed($url, $settings, bool $usePrimaryElement = true): array
     {
         $feedId = Hash::get($settings, 'id');
         $response = Plugin::$plugin->data->getRawData($url, $feedId);

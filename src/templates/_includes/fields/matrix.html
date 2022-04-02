@@ -56,7 +56,7 @@
             </td>
         </tr>
 
-        {% for blocktypefield in blocktype.fields %}
+        {% for blocktypefield in blocktype.getCustomFields() %}
             {% set nameLabel = blocktype.name ~ ': ' ~ blocktypefield.name %}
             {% set instructionsHandle = handle ~ '[' ~ blocktype.handle ~ '][' ~ blocktypefield.handle ~ ']' %}
 

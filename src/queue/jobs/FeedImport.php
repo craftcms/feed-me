@@ -7,6 +7,7 @@ use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
 use craft\queue\BaseJob;
 use yii\queue\RetryableJobInterface;
+use Throwable;
 
 /**
  *
@@ -20,28 +21,28 @@ class FeedImport extends BaseJob implements RetryableJobInterface
     /**
      * @var FeedModel
      */
-    public $feed;
+    public FeedModel $feed;
 
     /**
-     * @var
+     * @var int|null
      */
-    public $limit;
+    public ?int $limit = null;
 
     /**
-     * @var
+     * @var int|null
      */
-    public $offset;
+    public ?int $offset = null;
 
     /**
-     * @var
+     * @var array|null
      */
-    public $processedElementIds;
+    public ?array $processedElementIds = null;
 
     /**
      * @var bool Whether to continue processing a feed (and subsequent pages) if an error occurs
      * @since 4.3.0
      */
-    public $continueOnError = true;
+    public bool $continueOnError = true;
 
     // Public Methods
     // =========================================================================
@@ -57,7 +58,7 @@ class FeedImport extends BaseJob implements RetryableJobInterface
     /**
      * @inheritDoc
      */
-    public function canRetry($attempt, $error)
+    public function canRetry($attempt, $error): bool
     {
         $attempts = Plugin::$plugin->getSettings()->queueMaxRetry ?? Craft::$app->getQueue()->attempts;
         return $attempt < $attempts;
@@ -66,7 +67,7 @@ class FeedImport extends BaseJob implements RetryableJobInterface
     /**
      * @inheritDoc
      */
-    public function execute($queue)
+    public function execute($queue): void
     {
         try {
             $feedData = $this->feed->getFeedData();
@@ -93,10 +94,10 @@ class FeedImport extends BaseJob implements RetryableJobInterface
 
             $index = 0;
 
-            foreach ($feedData as $key => $data) {
+            foreach ($feedData as $data) {
                 try {
                     Plugin::$plugin->process->processFeed($index, $feedSettings, $this->processedElementIds);
-                } catch (\Throwable $e) {
+                } catch (Throwable $e) {
                     if (!$this->continueOnError) {
                         throw $e;
                     }
@@ -122,7 +123,7 @@ class FeedImport extends BaseJob implements RetryableJobInterface
                 // Only perform the afterProcessFeed function after any/all pagination is done
                 Plugin::$plugin->process->afterProcessFeed($feedSettings, $this->feed, $this->processedElementIds);
             }
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             // Even though we catch errors on each step of the loop, make sure to catch errors that can be anywhere
             // else in this function, just to be super-safe and not cause the queue job to die.
             Plugin::error('`{e} - {f}: {l}`.', ['e' => $e->getMessage(), 'f' => basename($e->getFile()), 'l' => $e->getLine()]);

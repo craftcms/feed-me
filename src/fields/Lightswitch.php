@@ -5,6 +5,7 @@ namespace craft\feedme\fields;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\helpers\BaseHelper;
+use craft\fields\Lightswitch as LightswitchField;
 
 /**
  *
@@ -18,12 +19,12 @@ class Lightswitch extends Field implements FieldInterface
     /**
      * @var string
      */
-    public static $name = 'Lightswitch';
+    public static string $name = 'Lightswitch';
 
     /**
      * @var string
      */
-    public static $class = 'craft\fields\Lightswitch';
+    public static string $class = LightswitchField::class;
 
     // Templates
     // =========================================================================
@@ -31,7 +32,7 @@ class Lightswitch extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function getMappingTemplate()
+    public function getMappingTemplate(): string
     {
         return 'feed-me/_includes/fields/lightswitch';
     }
@@ -42,16 +43,13 @@ class Lightswitch extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function parseField()
+    public function parseField(): mixed
     {
         $value = $this->fetchValue();
 
         return $this->parseValue($value);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function parseValue($value)
     {
         return BaseHelper::parseBoolean($value);

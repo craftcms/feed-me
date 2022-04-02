@@ -10,6 +10,14 @@ use craft\feedme\base\Element;
 use craft\feedme\Plugin;
 use verbb\comments\Comments;
 use verbb\comments\elements\Comment as CommentElement;
+use yii\base\Exception;
+use craft\errors\ElementNotFoundException;
+use Throwable;
+use DateTime;
+use Carbon\Carbon;
+use ArrayAccess;
+use craft\helpers\Json;
+use craft\base\ElementInterface;
 
 /**
  *
@@ -27,17 +35,17 @@ class Comment extends Element
     /**
      * @var string
      */
-    public static $name = 'Comment';
+    public static string $name = 'Comment';
 
     /**
      * @var string
      */
-    public static $class = 'verbb\comments\elements\Comment';
+    public static string $class = CommentElement::class;
 
     /**
-     * @var
+     * @var ElementInterface|null
      */
-    public $element;
+    public ?ElementInterface $element = null;
 
 
     // Templates
@@ -46,7 +54,7 @@ class Comment extends Element
     /**
      * @inheritDoc
      */
-    public function getGroupsTemplate()
+    public function getGroupsTemplate(): string
     {
         return 'feed-me/_includes/elements/comments/groups';
     }
@@ -54,7 +62,7 @@ class Comment extends Element
     /**
      * @inheritDoc
      */
-    public function getColumnTemplate()
+    public function getColumnTemplate(): string
     {
         return 'feed-me/_includes/elements/comments/column';
     }
@@ -62,7 +70,7 @@ class Comment extends Element
     /**
      * @inheritDoc
      */
-    public function getMappingTemplate()
+    public function getMappingTemplate(): string
     {
         return 'feed-me/_includes/elements/comments/map';
     }
@@ -73,17 +81,17 @@ class Comment extends Element
     /**
      * @inheritDoc
      */
-    public function getGroups()
+    public function getGroups(): array
     {
         return [];
     }
     /**
      * @inheritDoc
      */
-    public function getQuery($settings, $params = [])
+    public function getQuery($settings, array $params = []): mixed
     {
         $query = CommentElement::find()
-            ->anyStatus()
+            ->status(null)
             ->siteId(Hash::get($settings, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id);
         Craft::configure($query, $params);
         return $query;
@@ -92,7 +100,7 @@ class Comment extends Element
     /**
      * @inheritDoc
      */
-    public function setModel($settings)
+    public function setModel($settings): ElementInterface
     {
         $this->element = new CommentElement();
         $this->element->structureId = Comments::getInstance()->getSettings()->structureId;
@@ -112,9 +120,9 @@ class Comment extends Element
     /**
      * @param $feedData
      * @param $fieldInfo
-     * @return array|\ArrayAccess|mixed|string|null
+     * @return array|ArrayAccess|mixed|string|null
      */
-    protected function parseComment($feedData, $fieldInfo)
+    protected function parseComment($feedData, $fieldInfo): mixed
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
 
@@ -126,9 +134,10 @@ class Comment extends Element
     /**
      * @param $feedData
      * @param $fieldInfo
-     * @return array|\Carbon\Carbon|\DateTime|false|string|null
+     * @return array|Carbon|DateTime|false|string|null
+     * @throws \Exception
      */
-    protected function parseCommentDate($feedData, $fieldInfo)
+    protected function parseCommentDate($feedData, $fieldInfo): DateTime|bool|array|Carbon|string|null
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
         $formatting = Hash::get($fieldInfo, 'options.match');
@@ -141,7 +150,7 @@ class Comment extends Element
      * @param $fieldInfo
      * @return mixed|null
      */
-    protected function parseOwnerId($feedData, $fieldInfo)
+    protected function parseOwnerId($feedData, $fieldInfo): mixed
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
         $match = Hash::get($fieldInfo, 'options.match');
@@ -177,17 +186,19 @@ class Comment extends Element
         if ($elementId) {
             return $elementId;
         }
+
+        return null;
     }
 
     /**
      * @param $feedData
      * @param $fieldInfo
      * @return int|null
-     * @throws \Throwable
-     * @throws \craft\errors\ElementNotFoundException
-     * @throws \yii\base\Exception
+     * @throws Throwable
+     * @throws ElementNotFoundException
+     * @throws Exception
      */
-    protected function parseUserId($feedData, $fieldInfo)
+    protected function parseUserId($feedData, $fieldInfo): ?int
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
         $match = Hash::get($fieldInfo, 'options.match');
@@ -222,7 +233,7 @@ class Comment extends Element
             $element->email = $value;
 
             if (!Craft::$app->getElements()->saveElement($element, true, true, Hash::get($this->feed, 'updateSearchIndexes'))) {
-                Plugin::error('Comment error: Could not create author - `{e}`.', ['e' => json_encode($element->getErrors())]);
+                Plugin::error('Comment error: Could not create author - `{e}`.', ['e' => Json::encode($element->getErrors())]);
             } else {
                 Plugin::info('Author `#{id}` added.', ['id' => $element->id]);
             }

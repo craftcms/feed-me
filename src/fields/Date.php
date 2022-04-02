@@ -6,6 +6,7 @@ use Cake\Utility\Hash;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\helpers\DateHelper;
+use craft\fields\Date as DateField;
 
 /**
  *
@@ -19,12 +20,12 @@ class Date extends Field implements FieldInterface
     /**
      * @var string
      */
-    public static $name = 'Date';
+    public static string $name = 'Date';
 
     /**
      * @var string
      */
-    public static $class = 'craft\fields\Date';
+    public static string $class = DateField::class;
 
     // Templates
     // =========================================================================
@@ -32,7 +33,7 @@ class Date extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function getMappingTemplate()
+    public function getMappingTemplate(): string
     {
         return 'feed-me/_includes/fields/date';
     }
@@ -43,7 +44,7 @@ class Date extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function parseField()
+    public function parseField(): mixed
     {
         $value = $this->fetchValue();
 

@@ -4,9 +4,24 @@ namespace craft\feedme\web\twig\variables;
 
 use Craft;
 use craft\feedme\Plugin;
+use craft\elements\User as UserElement;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\UrlHelper;
 use yii\di\ServiceLocator;
+use craft\fields\PlainText;
+use craft\fields\Number;
+use craft\fields\Lightswitch;
+use craft\fields\Dropdown;
+use craft\fields\Date;
+use craft\fields\Color;
+use craft\fields\Checkboxes;
+use craft\fields\Url;
+use craft\fields\RadioButtons;
+use craft\fields\MultiSelect;
+use craft\fields\Email;
+use craft\models\TagGroup;
+use craft\models\CategoryGroup;
+use DateTime;
 
 /**
  *
@@ -15,7 +30,7 @@ use yii\di\ServiceLocator;
  */
 class FeedMeVariable extends ServiceLocator
 {
-    public $config;
+    public mixed $config = null;
 
     public function __construct($config = [])
     {
@@ -24,12 +39,12 @@ class FeedMeVariable extends ServiceLocator
         parent::__construct($config);
     }
 
-    public function getPluginName()
+    public function getPluginName(): string
     {
         return Plugin::$plugin->getPluginName();
     }
 
-    public function getTabs()
+    public function getTabs(): array
     {
         $settings = Plugin::$plugin->getSettings();
         $enabledTabs = $settings->enabledTabs;
@@ -59,7 +74,7 @@ class FeedMeVariable extends ServiceLocator
         return $selectedTabs;
     }
 
-    public function getSelectOptions($options, $label = 'name', $index = 'id', $includeNone = true)
+    public function getSelectOptions($options, $label = 'name', $index = 'id', $includeNone = true): array
     {
         $values = [];
 
@@ -72,7 +87,7 @@ class FeedMeVariable extends ServiceLocator
         }
 
         if (is_array($options)) {
-            foreach ($options as $key => $value) {
+            foreach ($options as $value) {
                 if (isset($value['optgroup'])) {
                     continue;
                 }
@@ -106,7 +121,7 @@ class FeedMeVariable extends ServiceLocator
     // Fields + Field Mapping
     //
 
-    public function formatDateTime($dateTime)
+    public function formatDateTime($dateTime): DateTime|bool
     {
         return DateTimeHelper::toDateTime($dateTime);
     }
@@ -117,17 +132,17 @@ class FeedMeVariable extends ServiceLocator
     // support multiple sources (Entries, Users), whilst others can only have one (Tags, Categories)
     //
 
-    public function getAssetSourcesByField($field)
+    public function getAssetSourcesByField($field): ?array
     {
         $sources = [];
 
         if (!$field) {
-            return;
+            return null;
         }
 
         if (is_array($field->sources)) {
             foreach ($field->sources as $source) {
-                list(, $uid) = explode(':', $source);
+                [, $uid] = explode(':', $source);
 
                 $sources[] = Craft::$app->volumes->getVolumeByUid($uid);
             }
@@ -138,53 +153,53 @@ class FeedMeVariable extends ServiceLocator
         return $sources;
     }
 
-    public function getCategorySourcesByField($field)
+    public function getCategorySourcesByField($field): ?CategoryGroup
     {
         if (!$field) {
-            return;
+            return null;
         }
 
-        list(, $uid) = explode(':', $field->source);
+        [, $uid] = explode(':', $field->source);
 
         return Craft::$app->categories->getGroupByUid($uid);
     }
 
-    public function getEntrySourcesByField($field)
+    public function getEntrySourcesByField($field): ?array
     {
         $sources = [];
 
         if (!$field) {
-            return;
+            return null;
         }
 
         if (is_array($field->sources)) {
             foreach ($field->sources as $source) {
                 if ($source == 'singles') {
-                    foreach (Craft::$app->sections->getAllSections() as $section) {
+                    foreach (Craft::$app->getSections()->getAllSections() as $section) {
                         if ($section->type == 'single') {
                             $sources[] = $section;
                         }
                     }
                 } else {
-                    list(, $uid) = explode(':', $source);
+                    [, $uid] = explode(':', $source);
 
-                    $sources[] = Craft::$app->sections->getSectionByUid($uid);
+                    $sources[] = Craft::$app->getSections()->getSectionByUid($uid);
                 }
             }
         } else if ($field->sources === '*') {
-            $sources = Craft::$app->sections->getAllSections();
+            $sources = Craft::$app->getSections()->getAllSections();
         }
 
         return $sources;
     }
 
-    public function getTagSourcesByField($field)
+    public function getTagSourcesByField($field): ?TagGroup
     {
         if (!$field) {
-            return;
+            return null;
         }
 
-        list(, $uid) = explode(':', $field->source);
+        [, $uid] = explode(':', $field->source);
 
         return Craft::$app->tags->getTagGroupByUid($uid);
     }
@@ -194,7 +209,7 @@ class FeedMeVariable extends ServiceLocator
     // Helper functions for element fields in getting their inner-element field layouts
     //
 
-    public function getElementLayoutByField($type, $field)
+    public function getElementLayoutByField($type, $field): ?array
     {
         $source = null;
 
@@ -206,54 +221,60 @@ class FeedMeVariable extends ServiceLocator
             $section = $this->getEntrySourcesByField($field)[0] ?? null;
 
             if ($section) {
-                $source = Craft::$app->sections->getEntryTypeById($section->id);
+                $source = Craft::$app->getSections()->getEntryTypeById($section->id);
             }
         } else if ($type === 'craft\fields\Tags') {
             $source = $this->getTagSourcesByField($field);
         }
 
         if (!$source || !$source->fieldLayoutId) {
-            return;
+            return null;
         }
 
-        return Craft::$app->fields->getFieldsByLayoutId($source->fieldLayoutId);
+        if (($fieldLayout = Craft::$app->getFields()->getLayoutById($source->fieldLayoutId)) === null) {
+            return $fieldLayout->getCustomFields();
+        }
+
+        return null;
     }
 
-    public function getUserLayoutByField()
+    public function getUserLayoutByField(): ?array
     {
-        $layoutId = Craft::$app->fields->getLayoutByType(UserElement::class)->id;
+        $layoutId = Craft::$app->getFields()->getLayoutByType(UserElement::class)->id;
 
         if (!$layoutId) {
             return null;
         }
 
-        return Craft::$app->fields->getFieldsByLayoutId($layoutId);
+        if (($fieldLayout = Craft::$app->getFields()->getLayoutById($layoutId)) === null) {
+            return $fieldLayout->getCustomFields();
+        }
+
+        return null;
     }
 
-    public function getAssetFolderBySourceId($id)
+    public function getAssetFolderBySourceId($id): array
     {
-        $folders = Craft::$app->assets->getFolderTreeByVolumeIds([$id]);
+        $folders = Craft::$app->getAssets()->getFolderTreeByVolumeIds([$id]);
 
         $return = [];
 
         $return[''] = Craft::t('feed-me', 'Don\'t Import');
 
-        if (is_array($folders)) {
-            foreach ($folders as $folder) {
-                $return[] = [
-                    'value' => 'root',
-                    'label' => Craft::t('feed-me', 'Root Folder'),
-                ];
+        foreach ($folders as $folder) {
+            $return[] = [
+                'value' => 'root',
+                'label' => Craft::t('feed-me', 'Root Folder'),
+            ];
 
-                $children = $folder->getChildren();
+            $children = $folder->getChildren();
 
-                if ($children) {
-                    foreach ($children as $childFolder) {
-                        $return[] = [
-                            'value' => $childFolder['id'],
-                            'label' => $childFolder['name'],
-                        ];
-                    }
+            if ($children) {
+                foreach ($children as $childFolder) {
+                    $return[] = [
+                        'value' => $childFolder['id'],
+                        'label' => $childFolder['name'],
+                    ];
                 }
             }
         }
@@ -261,7 +282,7 @@ class FeedMeVariable extends ServiceLocator
         return $return;
     }
 
-    public function fieldCanBeUniqueId($field)
+    public function fieldCanBeUniqueId($field): bool
     {
         $type = $field['type'] ?? 'attribute';
 
@@ -270,17 +291,17 @@ class FeedMeVariable extends ServiceLocator
         }
 
         $supportedFields = [
-            'craft\fields\Checkboxes',
-            'craft\fields\Color',
-            'craft\fields\Date',
-            'craft\fields\Dropdown',
-            'craft\fields\Email',
-            'craft\fields\Lightswitch',
-            'craft\fields\MultiSelect',
-            'craft\fields\Number',
-            'craft\fields\PlainText',
-            'craft\fields\RadioButtons',
-            'craft\fields\Url',
+            Checkboxes::class,
+            Color::class,
+            Date::class,
+            Dropdown::class,
+            Email::class,
+            Lightswitch::class,
+            MultiSelect::class,
+            Number::class,
+            PlainText::class,
+            RadioButtons::class,
+            Url::class,
         ];
 
         $supportedValues = [
@@ -304,20 +325,18 @@ class FeedMeVariable extends ServiceLocator
         return false;
     }
 
-    public function supportedSubField($class)
+    public function supportedSubField($class): bool
     {
         $supportedSubFields = [
-            'craft\fields\Checkboxes',
-            'craft\fields\Color',
-            'craft\fields\Date',
-            'craft\fields\Dropdown',
-            'craft\fields\Lightswitch',
-            'craft\fields\Multiselect',
-            'craft\fields\Number',
-            'craft\fields\PlainText',
-            'craft\fields\PositionSelect',
-            'craft\fields\Radio',
-            'craft\fields\Redactor',
+            Checkboxes::class,
+            Color::class,
+            Date::class,
+            Dropdown::class,
+            Lightswitch::class,
+            MultiSelect::class,
+            Number::class,
+            PlainText::class,
+            RadioButtons::class,
         ];
 
         return in_array($class, $supportedSubFields, true);

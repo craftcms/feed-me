@@ -6,7 +6,7 @@ use craft\db\Migration;
 
 class m181113_000000_add_paginationNode extends Migration
 {
-    public function safeUp()
+    public function safeUp(): bool
     {
         if (!$this->db->columnExists('{{%feedme_feeds}}', 'paginationNode')) {
             $this->addColumn('{{%feedme_feeds}}', 'paginationNode', $this->text()->after('duplicateHandle'));
@@ -15,7 +15,7 @@ class m181113_000000_add_paginationNode extends Migration
         return true;
     }
 
-    public function safeDown()
+    public function safeDown(): bool
     {
         echo "m181113_000000_add_paginationNode cannot be reverted.\n";
 

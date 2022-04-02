@@ -17,8 +17,13 @@ use craft\feedme\events\RegisterFeedMeDataTypesEvent;
 use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
 use craft\helpers\Component as ComponentHelper;
-use craft\helpers\UrlHelper;
 use yii\base\Event;
+use ArrayAccess;
+use Exception;
+use GuzzleHttp\Exception\GuzzleException;
+use yii\base\InvalidConfigException;
+use craft\errors\MissingComponentException;
+use craft\base\ComponentInterface;
 
 /**
  *
@@ -29,10 +34,10 @@ class DataTypes extends Component
     // Constants
     // =========================================================================
 
-    const EVENT_REGISTER_FEED_ME_DATA_TYPES = 'registerFeedMeDataTypes';
-    const EVENT_BEFORE_FETCH_FEED = 'onBeforeFetchFeed';
-    const EVENT_AFTER_FETCH_FEED = 'onAfterFetchFeed';
-    const EVENT_AFTER_PARSE_FEED = 'onAfterParseFeed';
+    public const EVENT_REGISTER_FEED_ME_DATA_TYPES = 'registerFeedMeDataTypes';
+    public const EVENT_BEFORE_FETCH_FEED = 'onBeforeFetchFeed';
+    public const EVENT_AFTER_FETCH_FEED = 'onAfterFetchFeed';
+    public const EVENT_AFTER_PARSE_FEED = 'onAfterParseFeed';
 
 
     // Properties
@@ -41,12 +46,12 @@ class DataTypes extends Component
     /**
      * @var array
      */
-    private $_dataTypes = [];
+    private array $_dataTypes = [];
 
     /**
      * @var
      */
-    private $_headers;
+    private mixed $_headers = null;
 
     // Public Methods
     // =========================================================================
@@ -54,7 +59,7 @@ class DataTypes extends Component
     /**
      * @inheritDoc
      */
-    public function init()
+    public function init(): void
     {
         parent::init();
 
@@ -76,7 +81,7 @@ class DataTypes extends Component
     /**
      * @return array
      */
-    public function dataTypesList()
+    public function dataTypesList(): array
     {
         $list = [];
 
@@ -91,7 +96,7 @@ class DataTypes extends Component
      * @param $handle
      * @return mixed|null
      */
-    public function getRegisteredDataType($handle)
+    public function getRegisteredDataType($handle): mixed
     {
         return $this->_dataTypes[$handle] ?? null;
     }
@@ -99,7 +104,7 @@ class DataTypes extends Component
     /**
      * @return array
      */
-    public function getRegisteredDataTypes()
+    public function getRegisteredDataTypes(): array
     {
         $event = new RegisterFeedMeDataTypesEvent([
             'dataTypes' => [
@@ -119,11 +124,10 @@ class DataTypes extends Component
 
     /**
      * @param $config
-     * @return \craft\base\ComponentInterface|MissingDataType
-     * @throws \craft\errors\MissingComponentException
-     * @throws \yii\base\InvalidConfigException
+     * @return ComponentInterface|MissingDataType
+     * @throws InvalidConfigException
      */
-    public function createDataType($config)
+    public function createDataType($config): ComponentInterface|MissingDataType
     {
         if (is_string($config)) {
             $config = ['type' => $config];
@@ -146,9 +150,9 @@ class DataTypes extends Component
      * @param $url
      * @param null $feedId
      * @return array
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
-    public function getRawData($url, $feedId = null)
+    public function getRawData($url, $feedId = null): array
     {
         $event = new FeedDataEvent([
             'url' => $url,
@@ -200,7 +204,7 @@ class DataTypes extends Component
             $this->_headers = $resp->getHeaders();
 
             $response = ['success' => true, 'data' => $data];
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $response = ['success' => false, 'error' => $e->getMessage()];
             Craft::$app->getErrorHandler()->logException($e);
         }
@@ -221,7 +225,7 @@ class DataTypes extends Component
      * @param bool $usePrimaryElement
      * @return mixed
      */
-    public function getFeedData($feedModel, $usePrimaryElement = true)
+    public function getFeedData($feedModel, bool $usePrimaryElement = true): mixed
     {
         $feedDataResponse = $feedModel->getDataType()->getFeed($feedModel->feedUrl, $feedModel, $usePrimaryElement);
 
@@ -239,7 +243,7 @@ class DataTypes extends Component
      * @param $data
      * @return array
      */
-    public function getFeedNodes($data)
+    public function getFeedNodes($data): array
     {
         if (!is_array($data)) {
             return [];
@@ -268,7 +272,7 @@ class DataTypes extends Component
      * @param $data
      * @return array
      */
-    public function getFeedMapping($data)
+    public function getFeedMapping($data): array
     {
         if (!is_array($data)) {
             return [];
@@ -276,7 +280,7 @@ class DataTypes extends Component
 
         $mappingPaths = [];
 
-        // Go through entire feed and grab all nodes - that way, its normalised across the entire feed
+        // Go through entire feed and grab all nodes - that way, it's normalised across the entire feed
         // as some nodes don't exist on the first primary element, but do throughout the feed.
         foreach (Hash::flatten($data, '/') as $nodePath => $value) {
             $feedPath = preg_replace('/(\/\d+\/)/', '/', $nodePath);
@@ -298,9 +302,9 @@ class DataTypes extends Component
     /**
      * @param $element
      * @param $parsed
-     * @return array|array[]|false
+     * @return array|bool
      */
-    public function findPrimaryElement($element, $parsed)
+    public function findPrimaryElement($element, $parsed): array|bool
     {
         if (empty($parsed)) {
             return false;
@@ -320,7 +324,7 @@ class DataTypes extends Component
             return [$parsed[$element]];
         }
 
-        foreach ($parsed as $key => $val) {
+        foreach ($parsed as $val) {
             if (is_array($val)) {
                 $return = $this->findPrimaryElement($element, $val);
 
@@ -335,9 +339,9 @@ class DataTypes extends Component
 
     /**
      * @param array $options
-     * @return array|\ArrayAccess|mixed|null
+     * @return array|ArrayAccess|mixed|null
      */
-    public function getFeedForTemplate($options = [])
+    public function getFeedForTemplate(array $options = []): mixed
     {
         $pluginSettings = Plugin::$plugin->getSettings();
 
@@ -413,6 +417,8 @@ class DataTypes extends Component
             $this->_setCache($cacheId, $data, $cache);
             return $data;
         }
+
+        return [];
     }
 
 
@@ -424,7 +430,7 @@ class DataTypes extends Component
      * @param $array
      * @param string $index
      */
-    private function _parseNodeTree(&$tree, $array, $index = '')
+    private function _parseNodeTree(&$tree, $array, string $index = ''): void
     {
         foreach ($array as $key => $val) {
             if (!is_numeric($key)) {
@@ -449,18 +455,18 @@ class DataTypes extends Component
      * @param $url
      * @param $value
      * @param $duration
-     * @return bool
+     * @return void
      */
-    private function _setCache($url, $value, $duration)
+    private function _setCache($url, $value, $duration): void
     {
-        return Craft::$app->cache->set(base64_encode(urlencode($url)), $value, $duration, null);
+        Craft::$app->cache->set(base64_encode(urlencode($url)), $value, $duration, null);
     }
 
     /**
      * @param $url
      * @return mixed
      */
-    private function _getCache($url)
+    private function _getCache($url): mixed
     {
         return Craft::$app->cache->get(base64_encode(urlencode($url)));
     }

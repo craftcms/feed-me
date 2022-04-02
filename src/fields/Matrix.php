@@ -6,6 +6,7 @@ use Cake\Utility\Hash;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\Plugin;
+use craft\fields\Matrix as MatrixField;
 
 /**
  *
@@ -19,12 +20,12 @@ class Matrix extends Field implements FieldInterface
     /**
      * @var string
      */
-    public static $name = 'Matrix';
+    public static string $name = 'Matrix';
 
     /**
      * @var string
      */
-    public static $class = 'craft\fields\Matrix';
+    public static string $class = MatrixField::class;
 
     // Templates
     // =========================================================================
@@ -32,7 +33,7 @@ class Matrix extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function getMappingTemplate()
+    public function getMappingTemplate(): string
     {
         return 'feed-me/_includes/fields/matrix';
     }
@@ -43,7 +44,7 @@ class Matrix extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function parseField()
+    public function parseField(): mixed
     {
         $preppedData = [];
         $fieldData = [];
@@ -87,7 +88,7 @@ class Matrix extends Field implements FieldInterface
                 // Check for complex fields (think Table, Super Table, etc), essentially anything that has
                 // sub-fields, and doesn't have data directly mapped to the field itself. It needs to be
                 // accumulated here (so its in the right order), but grouped based on the field and block
-                // its in. A little bit annoying, but no better ideas...
+                // its in. A bit annoying, but no better ideas...
                 if ($isComplexField) {
                     $complexFields[$key]['info'] = $subFieldInfo;
                     $complexFields[$key]['data'][$nodePath] = $value;
@@ -135,7 +136,7 @@ class Matrix extends Field implements FieldInterface
         // $order = 0;
 
         // New, we've got a collection of prepared data, but its formatted a little rough, due to catering for
-        // sub-field data that could be arrays or single values. Lets build our Matrix-ready data
+        // sub-field data that could be arrays or single values. Let's build our Matrix-ready data
         foreach ($fieldData as $blockSubFieldHandle => $value) {
             $handles = explode('.', $blockSubFieldHandle);
             $blockIndex = 'new' . ($handles[0] + 1);
@@ -154,9 +155,7 @@ class Matrix extends Field implements FieldInterface
             // $order++;
         }
 
-        $preppedData = Hash::expand($preppedData);
-
-        return $preppedData;
+        return Hash::expand($preppedData);
     }
 
 
@@ -166,9 +165,9 @@ class Matrix extends Field implements FieldInterface
     /**
      * @param $nodePath
      * @param $blocks
-     * @return array
+     * @return array|null
      */
-    private function _getFieldMappingInfoForNodePath($nodePath, $blocks)
+    private function _getFieldMappingInfoForNodePath($nodePath, $blocks): ?array
     {
         foreach ($blocks as $blockHandle => $blockInfo) {
             $fields = Hash::get($blockInfo, 'fields');
@@ -182,7 +181,7 @@ class Matrix extends Field implements FieldInterface
                 $nestedFieldNodes = Hash::extract($subFieldInfo, 'fields.{*}.node');
 
                 if ($nestedFieldNodes) {
-                    foreach ($nestedFieldNodes as $key => $nestedFieldNode) {
+                    foreach ($nestedFieldNodes as $nestedFieldNode) {
                         if ($feedPath == $nestedFieldNode) {
                             return [
                                 'blockHandle' => $blockHandle,
@@ -206,6 +205,8 @@ class Matrix extends Field implements FieldInterface
                 }
             }
         }
+
+        return null;
     }
 
     /**
@@ -214,7 +215,7 @@ class Matrix extends Field implements FieldInterface
      * @param $subFieldInfo
      * @return mixed
      */
-    private function _parseSubField($feedData, $subFieldHandle, $subFieldInfo)
+    private function _parseSubField($feedData, $subFieldHandle, $subFieldInfo): mixed
     {
         $subFieldClassHandle = Hash::get($subFieldInfo, 'field');
 

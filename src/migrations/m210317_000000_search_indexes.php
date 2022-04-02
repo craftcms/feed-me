@@ -12,17 +12,21 @@ class m210317_000000_search_indexes extends Migration
     /**
      * @inheritdoc
      */
-    public function safeUp()
+    public function safeUp(): bool
     {
         $this->addColumn('{{%feedme_feeds}}', 'updateSearchIndexes', $this->boolean()->notNull()->defaultValue(true)->after('duplicateHandle'));
         $this->update('{{%feedme_feeds}}', array('updateSearchIndexes' => true));
+
+        return true;
     }
 
     /**
      * @inheritdoc
      */
-    public function safeDown()
+    public function safeDown(): bool
     {
         $this->dropColumn('{{%feedme_feeds}}', 'updateSearchIndexes');
+
+        return true;
     }
 }

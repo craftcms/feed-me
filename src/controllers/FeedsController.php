@@ -10,6 +10,12 @@ use craft\feedme\queue\jobs\FeedImport;
 use craft\helpers\Json;
 use craft\helpers\StringHelper;
 use craft\web\Controller;
+use yii\web\BadRequestHttpException;
+use craft\errors\MissingComponentException;
+use yii\web\Response;
+use Throwable;
+use Exception;
+use yii\base\ExitException;
 
 class FeedsController extends Controller
 {
@@ -19,16 +25,16 @@ class FeedsController extends Controller
     /**
      * @var string[]
      */
-    protected $allowAnonymous = ['run-task'];
+    protected int|bool|array $allowAnonymous = ['run-task'];
 
 
     // Public Methods
     // =========================================================================
 
     /**
-     * @return \yii\web\Response
+     * @return Response
      */
-    public function actionFeedsIndex()
+    public function actionFeedsIndex(): Response
     {
         $variables['feeds'] = Plugin::$plugin->feeds->getFeeds();
 
@@ -38,9 +44,9 @@ class FeedsController extends Controller
     /**
      * @param null $feedId
      * @param null $feed
-     * @return \yii\web\Response
+     * @return Response
      */
-    public function actionEditFeed($feedId = null, $feed = null)
+    public function actionEditFeed($feedId = null, $feed = null): Response
     {
         $variables = [];
 
@@ -64,9 +70,9 @@ class FeedsController extends Controller
     /**
      * @param null $feedId
      * @param null $postData
-     * @return \yii\web\Response
+     * @return Response
      */
-    public function actionElementFeed($feedId = null, $postData = null)
+    public function actionElementFeed($feedId = null, $postData = null): Response
     {
         $variables = [];
 
@@ -86,9 +92,9 @@ class FeedsController extends Controller
     /**
      * @param null $feedId
      * @param null $postData
-     * @return \yii\web\Response
+     * @return Response
      */
-    public function actionMapFeed($feedId = null, $postData = null)
+    public function actionMapFeed($feedId = null, $postData = null): Response
     {
         $variables = [];
 
@@ -106,10 +112,10 @@ class FeedsController extends Controller
 
     /**
      * @param null $feedId
-     * @return \yii\web\Response
+     * @return Response
      * @throws \yii\base\Exception
      */
-    public function actionRunFeed($feedId = null)
+    public function actionRunFeed($feedId = null): Response
     {
         $request = Craft::$app->getRequest();
 
@@ -131,9 +137,9 @@ class FeedsController extends Controller
 
     /**
      * @param null $feedId
-     * @return \yii\web\Response
+     * @return Response
      */
-    public function actionStatusFeed($feedId = null)
+    public function actionStatusFeed($feedId = null): Response
     {
         $feed = Plugin::$plugin->feeds->getFeedById($feedId);
 
@@ -143,9 +149,11 @@ class FeedsController extends Controller
     }
 
     /**
-     * @return \yii\web\Response|null
+     * @return Response|null
+     * @throws BadRequestHttpException
+     * @throws MissingComponentException
      */
-    public function actionSaveFeed()
+    public function actionSaveFeed(): ?Response
     {
         $feed = $this->_getModelFromPost();
 
@@ -153,9 +161,11 @@ class FeedsController extends Controller
     }
 
     /**
-     * @return \yii\web\Response|null
+     * @return Response|null
+     * @throws BadRequestHttpException
+     * @throws MissingComponentException
      */
-    public function actionSaveAndElementFeed()
+    public function actionSaveAndElementFeed(): ?Response
     {
         $feed = $this->_getModelFromPost();
 
@@ -174,9 +184,11 @@ class FeedsController extends Controller
     }
 
     /**
-     * @return \yii\web\Response|null
+     * @return Response|null
+     * @throws BadRequestHttpException
+     * @throws MissingComponentException
      */
-    public function actionSaveAndMapFeed()
+    public function actionSaveAndMapFeed(): ?Response
     {
         $feed = $this->_getModelFromPost();
 
@@ -184,9 +196,11 @@ class FeedsController extends Controller
     }
 
     /**
-     * @return \yii\web\Response|null
+     * @return Response|null
+     * @throws BadRequestHttpException
+     * @throws MissingComponentException
      */
-    public function actionSaveAndReviewFeed()
+    public function actionSaveAndReviewFeed(): ?Response
     {
         $feed = $this->_getModelFromPost();
 
@@ -194,10 +208,10 @@ class FeedsController extends Controller
     }
 
     /**
-     * @return \yii\web\Response
-     * @throws \craft\errors\MissingComponentException
+     * @return Response
+     * @throws MissingComponentException
      */
-    public function actionSaveAndDuplicateFeed()
+    public function actionSaveAndDuplicateFeed(): Response
     {
         $request = Craft::$app->getRequest();
 
@@ -212,10 +226,11 @@ class FeedsController extends Controller
     }
 
     /**
-     * @return \yii\web\Response
-     * @throws \yii\web\BadRequestHttpException
+     * @return Response
+     * @throws BadRequestHttpException
+     * @throws \yii\db\Exception
      */
-    public function actionDeleteFeed()
+    public function actionDeleteFeed(): Response
     {
         $this->requirePostRequest();
 
@@ -230,9 +245,9 @@ class FeedsController extends Controller
 
     /**
      * @throws \yii\base\Exception
-     * @throws \yii\base\ExitException
+     * @throws ExitException
      */
-    public function actionRunTask()
+    public function actionRunTask(): void
     {
         $request = Craft::$app->getRequest();
 
@@ -247,9 +262,9 @@ class FeedsController extends Controller
 
     /**
      * @return false|string
-     * @throws \Exception
+     * @throws Exception
      */
-    public function actionDebug()
+    public function actionDebug(): bool|string
     {
         $request = Craft::$app->getRequest();
 
@@ -270,11 +285,11 @@ class FeedsController extends Controller
     }
 
     /**
-     * @return \yii\web\Response
-     * @throws \Throwable
-     * @throws \yii\web\BadRequestHttpException
+     * @return Response
+     * @throws Throwable
+     * @throws BadRequestHttpException
      */
-    public function actionReorderFeeds()
+    public function actionReorderFeeds(): Response
     {
         $this->requirePostRequest();
         $this->requireAcceptsJson();
@@ -292,10 +307,10 @@ class FeedsController extends Controller
 
     /**
      * @param $feed
-     * @return bool
-     * @throws \craft\errors\MissingComponentException
+     * @return bool|null
+     * @throws MissingComponentException
      */
-    private function _runImportTask($feed)
+    private function _runImportTask($feed): ?bool
     {
         $request = Craft::$app->getRequest();
 
@@ -344,16 +359,18 @@ class FeedsController extends Controller
 
             return $proceed;
         }
+
+        return null;
     }
 
     /**
      * @param $feed
      * @param $redirect
      * @param false $withId
-     * @return \yii\web\Response|null
-     * @throws \craft\errors\MissingComponentException
+     * @return Response|null
+     * @throws MissingComponentException
      */
-    private function _saveAndRedirect($feed, $redirect, $withId = false)
+    private function _saveAndRedirect($feed, $redirect, bool $withId = false): ?Response
     {
         if (!Plugin::$plugin->feeds->saveFeed($feed)) {
             Craft::$app->getSession()->setError(Craft::t('feed-me', 'Unable to save feed.'));
@@ -376,9 +393,9 @@ class FeedsController extends Controller
 
     /**
      * @return FeedModel
-     * @throws \yii\web\BadRequestHttpException
+     * @throws BadRequestHttpException
      */
-    private function _getModelFromPost()
+    private function _getModelFromPost(): FeedModel
     {
         $this->requirePostRequest();
 
