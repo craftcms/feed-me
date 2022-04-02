@@ -9,7 +9,6 @@ use craft\feedme\base\ElementInterface;
 use craft\feedme\elements\Asset;
 use craft\feedme\elements\CalenderEvent;
 use craft\feedme\elements\Category;
-use craft\feedme\elements\Comment;
 use craft\feedme\elements\CommerceProduct;
 use craft\feedme\elements\DigitalProduct;
 use craft\feedme\elements\Entry;
@@ -116,7 +115,6 @@ class Elements extends Component
 
             // Third-party
             CalenderEvent::class,
-            Comment::class,
             DigitalProduct::class,
         ];
 
