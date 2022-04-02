@@ -52,7 +52,7 @@ class FeedImport extends BaseJob implements RetryableJobInterface
      */
     public function getTtr()
     {
-        return Plugin::$plugin->getSettings()->queueTtr ?? Craft::$app->getQueue()->ttr;
+        return Plugin::$plugin->getSettings()->queueTtr ?? Plugin::getInstance()->queue->ttr;
     }
 
     /**
@@ -60,7 +60,7 @@ class FeedImport extends BaseJob implements RetryableJobInterface
      */
     public function canRetry($attempt, $error): bool
     {
-        $attempts = Plugin::$plugin->getSettings()->queueMaxRetry ?? Craft::$app->getQueue()->attempts;
+        $attempts = Plugin::$plugin->getSettings()->queueMaxRetry ?? Plugin::getInstance()->queue->attempts;
         return $attempt < $attempts;
     }
 
@@ -113,7 +113,7 @@ class FeedImport extends BaseJob implements RetryableJobInterface
 
             // Check if we need to paginate the feed to run again
             if ($this->feed->getNextPagination()) {
-                Craft::$app->getQueue()->delay(0)->push(new self([
+                Plugin::getInstance()->queue->push(new self([
                     'feed' => $this->feed,
                     'limit' => $this->limit,
                     'offset' => $this->offset,

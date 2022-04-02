@@ -77,7 +77,7 @@ class Users extends Field implements FieldInterface
                 [, $uid] = explode(':', $source);
                 $groupIds[] = Db::idByUid('{{%usergroups}}', $uid);
             }
-        } else if ($sources === '*') {
+        } elseif ($sources === '*') {
             $groupIds = null;
         }
 

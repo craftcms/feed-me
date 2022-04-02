@@ -359,7 +359,6 @@ class CommerceProduct extends Element
 
         foreach ($complexFields as $variantNumber => $complexInfo) {
             foreach ($complexInfo as $fieldHandle => $fieldInfo) {
-
                 $variantNodePathKey = null;
 
                 // Refrain from looking at the whole nodepath, really just want to find the first bits

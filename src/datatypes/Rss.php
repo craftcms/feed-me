@@ -14,5 +14,3 @@ class Rss extends Xml
 
     // Same as XML data type.
 }
-
-

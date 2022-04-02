@@ -91,7 +91,7 @@ class Assets extends Field implements FieldInterface
 
                     $folderIds = array_merge($folderIds, $ids);
                 }
-            } else if ($folders === '*') {
+            } elseif ($folders === '*') {
                 $folderIds = null;
             }
         }
@@ -123,7 +123,7 @@ class Assets extends Field implements FieldInterface
             if (Craft::$app->getIsMultiSite()) {
                 if ($targetSiteId) {
                     $criteria['siteId'] = Craft::$app->getSites()->getSiteByUid($targetSiteId)->id;
-                } else if ($feedSiteId) {
+                } elseif ($feedSiteId) {
                     $criteria['siteId'] = $feedSiteId;
                 } else {
                     $criteria['siteId'] = Craft::$app->getSites()->getCurrentSite()->id;

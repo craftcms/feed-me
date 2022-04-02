@@ -14,5 +14,3 @@ class Atom extends Xml
 
     // Same as XML data type.
 }
-
-

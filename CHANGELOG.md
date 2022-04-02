@@ -2,12 +2,21 @@
 
 ## Unreleased
 
+### Added
+- It’s now possible to set the plugin to use a custom queue, by overriding `craft\feedme\Plugin::$queue` via `craft\services\Plugins::$pluginConfigs`, in `config/app.php`. ([craftcms/cms#5492](https://github.com/craftcms/cms/issues/5492)) 
+
+### Fixed
+- Fixed a bug where importing in Multi-select containing Optgroup would fail.
+
+## 4.4.2 - 2022-03-07
+
 ### Changed
 - Exceptions are now logged in `web.log`/`console.log` in addition to Feed Me logs.
 
 ### Fixed
 - Fixed a bug that would prevent relating products in Products field. ([#1058](https://github.com/craftcms/feed-me/issues/1058))
 - Fixed a bug that would prevent changing element status on multisite when the target site was set to default. ([#606](https://github.com/craftcms/feed-me/issues/606))
+- Fixed a bug where mapping fields for an entry fieldtype wasn't showing the correct available fields. ([#1098](https://github.com/craftcms/feed-me/pull/1098), ([#692](https://github.com/craftcms/feed-me/issues/692)), ([#825](https://github.com/craftcms/feed-me/issues/825))
 
 ## 4.4.1.1 - 2021-12-06
 

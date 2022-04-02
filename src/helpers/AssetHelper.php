@@ -239,7 +239,7 @@ class AssetHelper
                 'avoidFilenameConflicts' => true,
                 'scenario' => AssetElement::SCENARIO_CREATE,
                 'conflict' => $conflict,
-            ])
+            ]),
         ]);
 
         $result = Craft::$app->getElements()->saveElement($asset, true, true, $updateSearchIndexes);

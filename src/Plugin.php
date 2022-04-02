@@ -20,6 +20,8 @@ use craft\helpers\UrlHelper;
 use craft\web\twig\variables\CraftVariable;
 use craft\web\UrlManager;
 use yii\base\Event;
+use yii\di\Instance;
+use yii\queue\Queue;
 
 /**
  * Class Plugin
@@ -45,6 +47,11 @@ class Plugin extends \craft\base\Plugin
     public bool $hasCpSettings = true;
     public bool $hasCpSection = true;
 
+    /**
+     * @var Queue|array|string
+     * @since 4.5.0
+     */
+    public $queue = 'queue';
 
     // Traits
     // =========================================================================
@@ -63,6 +70,8 @@ class Plugin extends \craft\base\Plugin
         parent::init();
 
         self::$plugin = $this;
+
+        $this->queue = Instance::ensure($this->queue, Queue::class);
 
         $this->_setPluginComponents();
         $this->_registerCpRoutes();
@@ -125,7 +134,7 @@ class Plugin extends \craft\base\Plugin
      */
     private function _registerTwigExtensions(): void
     {
-        Craft::$app->view->registerTwigExtension(new Extension);
+        Craft::$app->view->registerTwigExtension(new Extension());
     }
 
     /**
@@ -157,5 +166,4 @@ class Plugin extends \craft\base\Plugin
             $event->sender->set('feedme', FeedMeVariable::class);
         });
     }
-
 }

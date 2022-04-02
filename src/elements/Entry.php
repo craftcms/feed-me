@@ -281,4 +281,3 @@ class Entry extends Element
         return null;
     }
 }
-

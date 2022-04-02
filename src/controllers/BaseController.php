@@ -43,5 +43,4 @@ class BaseController extends Controller
 
         return $this->redirect('feed-me/settings/general');
     }
-
 }

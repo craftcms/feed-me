@@ -339,6 +339,4 @@ class CalenderEvent extends Element
             Calendar::getInstance()->selectDates->saveDates($EventElement, $this->selectDates);
         }
     }
-
-
 }

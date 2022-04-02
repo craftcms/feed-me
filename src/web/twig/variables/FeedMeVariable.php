@@ -7,6 +7,7 @@ use craft\feedme\Plugin;
 use craft\elements\User as UserElement;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\UrlHelper;
+use craft\models\Section;
 use yii\di\ServiceLocator;
 use craft\fields\PlainText;
 use craft\fields\Number;
@@ -146,7 +147,7 @@ class FeedMeVariable extends ServiceLocator
 
                 $sources[] = Craft::$app->volumes->getVolumeByUid($uid);
             }
-        } else if ($field->sources === '*') {
+        } elseif ($field->sources === '*') {
             $sources = Craft::$app->volumes->getAllVolumes();
         }
 
@@ -215,15 +216,16 @@ class FeedMeVariable extends ServiceLocator
 
         if ($type === 'craft\fields\Assets') {
             $source = $this->getAssetSourcesByField($field)[0] ?? null;
-        } else if ($type === 'craft\fields\Categories') {
+        } elseif ($type === 'craft\fields\Categories') {
             $source = $this->getCategorySourcesByField($field);
-        } else if ($type === 'craft\fields\Entries') {
+        } elseif ($type === 'craft\fields\Entries') {
+            /** @var Section $section */
             $section = $this->getEntrySourcesByField($field)[0] ?? null;
 
             if ($section) {
                 $source = Craft::$app->getSections()->getEntryTypeById($section->id);
             }
-        } else if ($type === 'craft\fields\Tags') {
+        } elseif ($type === 'craft\fields\Tags') {
             $source = $this->getTagSourcesByField($field);
         }
 
@@ -341,5 +343,4 @@ class FeedMeVariable extends ServiceLocator
 
         return in_array($class, $supportedSubFields, true);
     }
-
 }
