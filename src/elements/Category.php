@@ -31,11 +31,6 @@ class Category extends Element
      */
     public static $class = 'craft\elements\Category';
 
-    /**
-     * @var
-     */
-    public $element;
-
 
     // Templates
     // =========================================================================

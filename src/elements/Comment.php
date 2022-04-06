@@ -34,11 +34,6 @@ class Comment extends Element
      */
     public static $class = 'verbb\comments\elements\Comment';
 
-    /**
-     * @var
-     */
-    public $element;
-
 
     // Templates
     // =========================================================================

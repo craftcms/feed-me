@@ -39,11 +39,6 @@ class CommerceProduct extends Element
      */
     public static $class = 'craft\commerce\elements\Product';
 
-    /**
-     * @var
-     */
-    public $element;
-
 
     // Templates
     // =========================================================================

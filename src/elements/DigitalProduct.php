@@ -31,11 +31,6 @@ class DigitalProduct extends Element
      */
     public static $class = 'craft\digitalproducts\elements\Product';
 
-    /**
-     * @var
-     */
-    public $element;
-
 
     // Templates
     // =========================================================================

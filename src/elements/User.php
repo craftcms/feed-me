@@ -38,11 +38,6 @@ class User extends Element
     /**
      * @var
      */
-    public $element;
-
-    /**
-     * @var
-     */
     public $status;
 
 

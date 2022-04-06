@@ -38,11 +38,6 @@ class Asset extends Element
      */
     public static $class = AssetElement::class;
 
-    /**
-     * @var
-     */
-    public $element;
-
 
     // Templates
     // =========================================================================

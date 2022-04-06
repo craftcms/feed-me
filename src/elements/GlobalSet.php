@@ -32,11 +32,6 @@ class GlobalSet extends Element
     public static $class = GlobalSetElement::class;
 
     /**
-     * @var
-     */
-    public $element;
-
-    /**
      * @inheritDoc
      */
     public function getGroupsTemplate()

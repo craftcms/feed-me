@@ -30,11 +30,6 @@ class Tag extends Element
      */
     public static $class = 'craft\elements\Tag';
 
-    /**
-     * @var
-     */
-    public $element;
-
 
     // Templates
     // =========================================================================

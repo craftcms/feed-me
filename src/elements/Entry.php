@@ -34,11 +34,6 @@ class Entry extends Element
      */
     public static $class = 'craft\elements\Entry';
 
-    /**
-     * @var
-     */
-    public $element;
-
 
     // Templates
     // =========================================================================

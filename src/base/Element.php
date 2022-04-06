@@ -40,6 +40,11 @@ abstract class Element extends Component implements ElementInterface
      */
     public $feed;
 
+    /**
+     * @var CraftElementInterface
+     */
+    public $element;
+
 
     // Public Methods
     // =========================================================================
