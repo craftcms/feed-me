@@ -5,6 +5,8 @@ namespace craft\feedme\services;
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
+use craft\base\ComponentInterface;
+use craft\errors\MissingComponentException;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\events\FieldEvent;
 use craft\feedme\events\RegisterFeedMeFieldsEvent;
@@ -24,6 +26,7 @@ use craft\feedme\fields\GoogleMaps;
 use craft\feedme\fields\Lightswitch;
 use craft\feedme\fields\Linkit;
 use craft\feedme\fields\Matrix;
+use craft\feedme\fields\MissingField;
 use craft\feedme\fields\MultiSelect;
 use craft\feedme\fields\Number;
 use craft\feedme\fields\RadioButtons;
@@ -35,6 +38,7 @@ use craft\feedme\fields\Tags;
 use craft\feedme\fields\TypedLink;
 use craft\feedme\fields\Users;
 use craft\helpers\Component as ComponentHelper;
+use yii\base\InvalidConfigException;
 
 /**
  *
@@ -84,7 +88,7 @@ class Fields extends Component
 
     /**
      * @param $handle
-     * @return \craft\base\ComponentInterface|MissingDataType|mixed
+     * @return ComponentInterface|MissingDataType|mixed
      */
     public function getRegisteredField($handle)
     {
@@ -153,9 +157,8 @@ class Fields extends Component
 
     /**
      * @param $config
-     * @return \craft\base\ComponentInterface|MissingDataType
-     * @throws \craft\errors\MissingComponentException
-     * @throws \yii\base\InvalidConfigException
+     * @return FieldInterface
+     * @throws InvalidConfigException
      */
     public function createField($config)
     {
@@ -170,9 +173,10 @@ class Fields extends Component
             $config['expectedType'] = $config['type'];
             unset($config['type']);
 
-            $field = new MissingDataType($config);
+            $field = new MissingField($config);
         }
 
+        /** @var FieldInterface $field */
         return $field;
     }
 

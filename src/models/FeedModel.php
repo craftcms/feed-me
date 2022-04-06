@@ -3,6 +3,7 @@
 namespace craft\feedme\models;
 
 use Cake\Utility\Hash;
+use Craft;
 use craft\base\Model;
 use craft\feedme\base\Element;
 use craft\feedme\base\ElementInterface;

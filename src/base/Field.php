@@ -60,11 +60,12 @@ abstract class Field extends Component
      */
     public function getName()
     {
-        return $this::$name;
+        /** @phpstan-ignore-next-line */
+        return static::$name;
     }
 
     /**
-     * @return false|string
+     * @return string
      */
     public function getClass()
     {
@@ -76,7 +77,8 @@ abstract class Field extends Component
      */
     public function getFieldClass()
     {
-        return $this::$class;
+        /** @phpstan-ignore-next-line */
+        return static::$class;
     }
 
     /**
@@ -84,7 +86,8 @@ abstract class Field extends Component
      */
     public function getElementType()
     {
-        return $this::$elementType;
+        /** @phpstan-ignore-next-line */
+        return static::$elementType;
     }
 
 

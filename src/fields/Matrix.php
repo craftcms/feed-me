@@ -166,7 +166,7 @@ class Matrix extends Field implements FieldInterface
     /**
      * @param $nodePath
      * @param $blocks
-     * @return array
+     * @return array|null
      */
     private function _getFieldMappingInfoForNodePath($nodePath, $blocks)
     {
@@ -206,6 +206,8 @@ class Matrix extends Field implements FieldInterface
                 }
             }
         }
+
+        return null;
     }
 
     /**

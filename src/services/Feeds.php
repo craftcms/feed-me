@@ -6,6 +6,7 @@ use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
 use craft\db\Query;
+use craft\feedme\errors\FeedException;
 use craft\feedme\events\FeedEvent;
 use craft\feedme\models\FeedModel;
 use craft\feedme\records\FeedRecord;
@@ -303,7 +304,7 @@ class Feeds extends Component
             $feedRecord = FeedRecord::findOne(['id' => $feedId]);
 
             if (!$feedRecord) {
-                throw new Exception(Craft::t('feed-me', 'No feed exists with the ID “{id}”.', ['id' => $feedId]));
+                throw new FeedException(Craft::t('feed-me', 'No feed exists with the ID “{id}”.', ['id' => $feedId]));
             }
         } else {
             $feedRecord = new FeedRecord();

@@ -347,6 +347,8 @@ class FeedsController extends Controller
 
             return $proceed;
         }
+
+        return false;
     }
 
     /**

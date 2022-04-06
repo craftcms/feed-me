@@ -16,7 +16,7 @@ class DateHelper
     /**
      * @param $value
      * @param string $formatting
-     * @return array|Carbon|\DateTime|false|string
+     * @return array|Carbon|\DateTime|false|string|null
      * @throws \Exception
      */
     public static function parseString($value, $formatting = 'auto')
@@ -173,6 +173,8 @@ class DateHelper
             Plugin::error('Date parse error: `{value}` - `{e}`.', ['value' => $value, 'e' => $e->getMessage()]);
             Craft::$app->getErrorHandler()->logException($e);
         }
+
+        return null;
     }
 
     /**

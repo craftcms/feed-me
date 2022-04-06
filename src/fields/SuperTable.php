@@ -158,7 +158,7 @@ class SuperTable extends Field implements FieldInterface
     /**
      * @param $nodePath
      * @param $fields
-     * @return array
+     * @return array|null
      */
     private function _getFieldMappingInfoForNodePath($nodePath, $fields)
     {
@@ -192,6 +192,8 @@ class SuperTable extends Field implements FieldInterface
                 ];
             }
         }
+
+        return null;
     }
 
     /**

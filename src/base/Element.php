@@ -49,7 +49,8 @@ abstract class Element extends Component implements ElementInterface
      */
     public function getName()
     {
-        return $this::$name;
+        /** @phpstan-ignore-next-line */
+        return static::$name;
     }
 
     /**
@@ -65,7 +66,8 @@ abstract class Element extends Component implements ElementInterface
      */
     public function getElementClass()
     {
-        return $this::$class;
+        /** @phpstan-ignore-next-line */
+        return static::$class;
     }
 
     /**

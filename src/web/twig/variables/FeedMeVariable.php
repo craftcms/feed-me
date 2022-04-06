@@ -3,6 +3,7 @@
 namespace craft\feedme\web\twig\variables;
 
 use Craft;
+use craft\elements\User;
 use craft\feedme\Plugin;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\UrlHelper;
@@ -223,7 +224,7 @@ class FeedMeVariable extends ServiceLocator
 
     public function getUserLayoutByField()
     {
-        $layoutId = Craft::$app->fields->getLayoutByType(UserElement::class)->id;
+        $layoutId = Craft::$app->fields->getLayoutByType(User::class)->id;
 
         if (!$layoutId) {
             return null;
