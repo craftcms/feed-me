@@ -2,7 +2,6 @@
 
 namespace craft\feedme\console\controllers;
 
-use Craft;
 use craft\feedme\Plugin;
 use craft\feedme\queue\jobs\FeedImport;
 use craft\helpers\Console;
