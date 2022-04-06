@@ -35,6 +35,8 @@ use yii\queue\Queue;
  * @property-read mixed $pluginName
  * @property-read mixed $cpNavItem
  * @property-read Service $service
+ * @property-read Settings $settings
+ * @method Settings getSettings()
  */
 class Plugin extends \craft\base\Plugin
 {
