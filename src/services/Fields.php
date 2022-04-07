@@ -161,7 +161,7 @@ class Fields extends Component
      * @return FieldInterface
      * @throws InvalidConfigException
      */
-    public function createField($config): ComponentInterface|MissingDataType
+    public function createField($config): FieldInterface
     {
         if (is_string($config)) {
             $config = ['type' => $config];

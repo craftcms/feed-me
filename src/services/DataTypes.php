@@ -128,7 +128,7 @@ class DataTypes extends Component
      * @return DataTypeInterface
      * @throws InvalidConfigException
      */
-    public function createDataType($config): ComponentInterface|MissingDataType
+    public function createDataType($config): DataTypeInterface
     {
         if (is_string($config)) {
             $config = ['type' => $config];
