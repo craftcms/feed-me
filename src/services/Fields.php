@@ -39,8 +39,6 @@ use craft\feedme\fields\TypedLink;
 use craft\feedme\fields\Users;
 use craft\helpers\Component as ComponentHelper;
 use yii\base\InvalidConfigException;
-use craft\errors\MissingComponentException;
-use craft\base\ComponentInterface;
 
 /**
  *

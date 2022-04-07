@@ -25,9 +25,6 @@ use ArrayAccess;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use yii\base\InvalidConfigException;
-use craft\errors\MissingComponentException;
-use craft\base\ComponentInterface;
-use yii\base\InvalidConfigException;
 
 /**
  *

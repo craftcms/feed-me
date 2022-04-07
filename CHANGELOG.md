@@ -1,6 +1,6 @@
 # Release Notes for Feed Me 4.x
 
-## Unreleased
+## 4.4.3 - 2022-04-06
 
 ### Added
 - It’s now possible to set the plugin to use a custom queue, by overriding `craft\feedme\Plugin::$queue` via `craft\services\Plugins::$pluginConfigs`, in `config/app.php`. ([craftcms/cms#5492](https://github.com/craftcms/cms/issues/5492)) 
