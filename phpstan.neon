@@ -15,4 +15,5 @@ parameters:
         - src/fields/CommerceVariants.php
         - src/fields/DigitalProducts.php
         - src/fields/SimpleMap.php
+        - src/fields/SuperTable.php
         - src/fiesds/CommerceProducts.php
