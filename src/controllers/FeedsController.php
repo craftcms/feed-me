@@ -4,18 +4,18 @@ namespace craft\feedme\controllers;
 
 use Cake\Utility\Hash;
 use Craft;
+use craft\errors\MissingComponentException;
 use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
 use craft\feedme\queue\jobs\FeedImport;
 use craft\helpers\Json;
 use craft\helpers\StringHelper;
 use craft\web\Controller;
-use yii\web\BadRequestHttpException;
-use craft\errors\MissingComponentException;
-use yii\web\Response;
-use Throwable;
 use Exception;
+use Throwable;
 use yii\base\ExitException;
+use yii\web\BadRequestHttpException;
+use yii\web\Response;
 
 /**
  * @property Plugin $module

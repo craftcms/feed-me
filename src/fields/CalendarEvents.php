@@ -7,8 +7,8 @@ use Craft;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\Plugin;
-use Solspace\Calendar\Elements\Event as EventElement;
 use craft\helpers\Json;
+use Solspace\Calendar\Elements\Event as EventElement;
 
 /**
  *

@@ -7,9 +7,9 @@ use Craft;
 use craft\feedme\base\DataType;
 use craft\feedme\base\DataTypeInterface;
 use craft\feedme\Plugin;
+use craft\helpers\Json;
 use craft\helpers\Json as JsonHelper;
 use Exception;
-use craft\helpers\Json;
 
 class GoogleSheet extends DataType implements DataTypeInterface
 {

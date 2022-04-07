@@ -6,9 +6,9 @@ use Cake\Utility\Hash;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\helpers\DataHelper;
+use craft\helpers\Json;
 use ether\simplemap\services\MapService;
 use ether\simplemap\SimpleMap as SimpleMapPlugin;
-use craft\helpers\Json;
 
 /**
  *

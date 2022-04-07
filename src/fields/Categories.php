@@ -9,8 +9,8 @@ use craft\elements\Category as CategoryElement;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\Plugin;
-use craft\helpers\Db;
 use craft\fields\Categories as CategoriesField;
+use craft\helpers\Db;
 use craft\helpers\Json;
 
 /**

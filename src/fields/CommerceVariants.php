@@ -5,10 +5,10 @@ namespace craft\feedme\fields;
 use Cake\Utility\Hash;
 use Craft;
 use craft\commerce\elements\Variant as VariantElement;
+use craft\commerce\fields\Variants;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\Plugin;
-use craft\commerce\fields\Variants;
 use craft\helpers\Json;
 
 /**

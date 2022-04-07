@@ -5,21 +5,21 @@ namespace craft\feedme\elements;
 use Cake\Utility\Hash;
 use Carbon\Carbon;
 use Craft;
+use craft\base\ElementInterface;
 use craft\elements\User as UserElement;
+use craft\errors\ElementNotFoundException;
 use craft\feedme\base\Element;
 use craft\feedme\events\FeedProcessEvent;
 use craft\feedme\Plugin;
 use craft\feedme\services\Process;
+use craft\helpers\Json;
+use Exception;
 use RRule\RfcParser;
 use Solspace\Calendar\Calendar;
 use Solspace\Calendar\Elements\Event as EventElement;
 use Solspace\Calendar\Library\DateHelper;
-use yii\base\Event;
-use Exception;
 use Throwable;
-use craft\errors\ElementNotFoundException;
-use craft\helpers\Json;
-use craft\base\ElementInterface;
+use yii\base\Event;
 
 /**
  *

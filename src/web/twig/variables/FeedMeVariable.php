@@ -3,26 +3,26 @@
 namespace craft\feedme\web\twig\variables;
 
 use Craft;
-use craft\feedme\Plugin;
 use craft\elements\User as UserElement;
+use craft\feedme\Plugin;
+use craft\fields\Checkboxes;
+use craft\fields\Color;
+use craft\fields\Date;
+use craft\fields\Dropdown;
+use craft\fields\Email;
+use craft\fields\Lightswitch;
+use craft\fields\MultiSelect;
+use craft\fields\Number;
+use craft\fields\PlainText;
+use craft\fields\RadioButtons;
+use craft\fields\Url;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\UrlHelper;
-use craft\models\Section;
-use yii\di\ServiceLocator;
-use craft\fields\PlainText;
-use craft\fields\Number;
-use craft\fields\Lightswitch;
-use craft\fields\Dropdown;
-use craft\fields\Date;
-use craft\fields\Color;
-use craft\fields\Checkboxes;
-use craft\fields\Url;
-use craft\fields\RadioButtons;
-use craft\fields\MultiSelect;
-use craft\fields\Email;
-use craft\models\TagGroup;
 use craft\models\CategoryGroup;
+use craft\models\Section;
+use craft\models\TagGroup;
 use DateTime;
+use yii\di\ServiceLocator;
 
 /**
  *
@@ -187,7 +187,7 @@ class FeedMeVariable extends ServiceLocator
                     $sources[] = Craft::$app->getSections()->getSectionByUid($uid);
                 }
             }
-        } else if ($field->sources === '*') {
+        } elseif ($field->sources === '*') {
             $sources = Craft::$app->getSections()->getAllSections();
         }
 

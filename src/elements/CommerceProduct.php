@@ -3,7 +3,9 @@
 namespace craft\feedme\elements;
 
 use Cake\Utility\Hash;
+use Carbon\Carbon;
 use Craft;
+use craft\base\ElementInterface;
 use craft\commerce\elements\Product as ProductElement;
 use craft\commerce\elements\Variant as VariantElement;
 use craft\commerce\Plugin as Commerce;
@@ -14,12 +16,10 @@ use craft\feedme\helpers\BaseHelper;
 use craft\feedme\helpers\DataHelper;
 use craft\feedme\Plugin;
 use craft\feedme\services\Process;
-use yii\base\Event;
-use DateTime;
-use Carbon\Carbon;
-use Exception;
 use craft\helpers\Json;
-use craft\base\ElementInterface;
+use DateTime;
+use Exception;
+use yii\base\Event;
 
 /**
  *

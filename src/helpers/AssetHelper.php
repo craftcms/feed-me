@@ -4,20 +4,19 @@ namespace craft\feedme\helpers;
 
 use Cake\Utility\Hash;
 use Craft;
+use craft\base\ElementInterface;
+use craft\base\Field;
 use craft\elements\Asset as AssetElement;
+use craft\errors\ElementNotFoundException;
 use craft\feedme\Plugin;
+use craft\fields\Assets;
 use craft\helpers\Assets as AssetsHelper;
-use craft\helpers\Json;
 use craft\helpers\FileHelper;
+use craft\helpers\Json;
 use craft\helpers\StringHelper;
 use craft\helpers\UrlHelper;
 use Throwable;
 use yii\base\Exception;
-use craft\errors\FileException;
-use craft\errors\ElementNotFoundException;
-use craft\base\Field;
-use craft\fields\Assets;
-use craft\base\ElementInterface;
 
 class AssetHelper
 {

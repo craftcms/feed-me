@@ -7,11 +7,11 @@ use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\helpers\BaseHelper;
 use craft\feedme\Plugin;
+use craft\fields\data\ColorData;
+use craft\fields\Table as TableField;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Localization;
 use Exception;
-use craft\fields\data\ColorData;
-use craft\fields\Table as TableField;
 
 /**
  *

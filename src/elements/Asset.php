@@ -4,6 +4,7 @@ namespace craft\feedme\elements;
 
 use Cake\Utility\Hash;
 use Craft;
+use craft\base\ElementInterface;
 use craft\elements\Asset as AssetElement;
 use craft\feedme\base\Element;
 use craft\feedme\events\FeedProcessEvent;
@@ -14,9 +15,7 @@ use craft\helpers\Assets as AssetsHelper;
 use craft\helpers\UrlHelper;
 use craft\models\VolumeFolder;
 use yii\base\Event;
-use craft\errors\AssetConflictException;
 use yii\base\Exception;
-use craft\base\ElementInterface;
 
 /**
  *

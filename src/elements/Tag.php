@@ -4,9 +4,9 @@ namespace craft\feedme\elements;
 
 use Cake\Utility\Hash;
 use Craft;
+use craft\base\ElementInterface;
 use craft\elements\Tag as TagElement;
 use craft\feedme\base\Element;
-use craft\base\ElementInterface;
 
 /**
  *

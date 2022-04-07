@@ -2,10 +2,10 @@
 
 namespace craft\feedme\services;
 
+use ArrayAccess;
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
-use craft\base\ComponentInterface;
 use craft\errors\MissingComponentException;
 use craft\feedme\base\DataTypeInterface;
 use craft\feedme\datatypes\Atom;
@@ -20,10 +20,9 @@ use craft\feedme\events\RegisterFeedMeDataTypesEvent;
 use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
 use craft\helpers\Component as ComponentHelper;
-use yii\base\Event;
-use ArrayAccess;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
+use yii\base\Event;
 use yii\base\InvalidConfigException;
 
 /**

@@ -2,6 +2,7 @@
 
 namespace craft\feedme\base;
 
+use ArrayAccess;
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
@@ -14,11 +15,10 @@ use craft\feedme\helpers\DataHelper;
 use craft\feedme\helpers\DateHelper;
 use craft\feedme\models\FeedModel;
 use craft\helpers\Db;
+use craft\helpers\Json;
 use craft\helpers\StringHelper;
 use DateTime;
-use ArrayAccess;
 use Exception;
-use craft\helpers\Json;
 
 /**
  *

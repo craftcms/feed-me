@@ -5,6 +5,7 @@ namespace craft\feedme\services;
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
+use craft\db\ActiveQuery;
 use craft\db\Query;
 use craft\feedme\errors\FeedException;
 use craft\feedme\events\FeedEvent;
@@ -12,7 +13,6 @@ use craft\feedme\models\FeedModel;
 use craft\feedme\records\FeedRecord;
 use craft\helpers\Json;
 use Exception;
-use craft\db\ActiveQuery;
 use Throwable;
 
 /**

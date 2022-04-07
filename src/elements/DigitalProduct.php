@@ -3,13 +3,13 @@
 namespace craft\feedme\elements;
 
 use Cake\Utility\Hash;
+use Carbon\Carbon;
 use Craft;
+use craft\base\ElementInterface;
 use craft\digitalproducts\elements\Product as ProductElement;
 use craft\digitalproducts\Plugin as DigitalProducts;
 use craft\feedme\base\Element;
 use DateTime;
-use Carbon\Carbon;
-use craft\base\ElementInterface;
 
 /**
  *

@@ -8,10 +8,10 @@ use craft\feedme\base\DataType;
 use craft\feedme\base\DataTypeInterface;
 use craft\feedme\Plugin;
 use craft\helpers\StringHelper;
+use Exception;
 use League\Csv\Reader;
 use League\Csv\Statement;
 use Throwable;
-use Exception;
 
 class Csv extends DataType implements DataTypeInterface
 {

@@ -2,17 +2,16 @@
 
 namespace craft\feedme\base;
 
+use ArrayAccess;
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
-use craft\feedme\helpers\DataHelper;
-use craft\feedme\models\FeedModel;
-use craft\feedme\Plugin;
-use yii\base\Exception;
 use craft\errors\ElementNotFoundException;
-use Throwable;
-use ArrayAccess;
+use craft\feedme\helpers\DataHelper;
+use craft\feedme\Plugin;
 use craft\helpers\Json;
+use Throwable;
+use yii\base\Exception;
 
 /**
  *

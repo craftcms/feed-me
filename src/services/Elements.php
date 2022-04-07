@@ -4,6 +4,7 @@ namespace craft\feedme\services;
 
 use Craft;
 use craft\base\Component;
+use craft\base\ComponentInterface;
 use craft\errors\MissingComponentException;
 use craft\feedme\base\ElementInterface;
 use craft\feedme\elements\Asset;
@@ -18,7 +19,6 @@ use craft\feedme\elements\User;
 use craft\feedme\events\RegisterFeedMeElementsEvent;
 use craft\helpers\Component as ComponentHelper;
 use yii\base\InvalidConfigException;
-use craft\base\ComponentInterface;
 
 /**
  *

@@ -2,6 +2,7 @@
 
 namespace craft\feedme\models;
 
+use ArrayAccess;
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Model;
@@ -10,7 +11,6 @@ use craft\feedme\base\ElementInterface;
 use craft\feedme\helpers\DuplicateHelper;
 use craft\feedme\Plugin;
 use DateTime;
-use ArrayAccess;
 
 /**
  * Class FeedModel

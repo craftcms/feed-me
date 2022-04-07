@@ -5,6 +5,7 @@ namespace craft\feedme\services;
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
+use craft\errors\ShellCommandException;
 use craft\feedme\base\ElementInterface;
 use craft\feedme\events\FeedProcessEvent;
 use craft\feedme\helpers\DataHelper;
@@ -13,10 +14,9 @@ use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
 use craft\helpers\App;
 use craft\helpers\FileHelper;
+use craft\helpers\Json;
 use craft\helpers\StringHelper;
 use yii\base\Exception;
-use craft\errors\ShellCommandException;
-use craft\helpers\Json;
 
 class Process extends Component
 {
@@ -519,7 +519,7 @@ class Process extends Component
             if (DuplicateHelper::isDisable($feed)) {
                 $this->_service->disable($elementsToDeleteDisable);
                 $message = 'The following elements have been disabled: ' . Json::encode($elementsToDeleteDisable) . '.';
-            } else if (DuplicateHelper::isDisableForSite($feed)) {
+            } elseif (DuplicateHelper::isDisableForSite($feed)) {
                 $this->_service->disableForSite($elementsToDeleteDisable);
                 $message = 'The following elements have been disabled for the target site: ' . Json::encode($elementsToDeleteDisable) . '.';
             } else {

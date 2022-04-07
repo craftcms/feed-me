@@ -6,8 +6,8 @@ use Craft;
 use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
 use craft\queue\BaseJob;
-use yii\queue\RetryableJobInterface;
 use Throwable;
+use yii\queue\RetryableJobInterface;
 
 /**
  *

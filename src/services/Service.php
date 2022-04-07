@@ -2,14 +2,14 @@
 
 namespace craft\feedme\services;
 
+use ArrayAccess;
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
 use craft\feedme\Plugin;
 use craft\helpers\DateTimeHelper;
-use ArrayAccess;
-use GuzzleHttp\Client;
 use DateTime;
+use GuzzleHttp\Client;
 
 class Service extends Component
 {

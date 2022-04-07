@@ -4,8 +4,8 @@ namespace craft\feedme\fields;
 
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
-use craft\helpers\Localization;
 use craft\fields\Number as NumberField;
+use craft\helpers\Localization;
 
 /**
  *
