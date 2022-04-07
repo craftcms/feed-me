@@ -61,7 +61,7 @@ class Linkit extends Field implements FieldInterface
         if ($preppedData) {
             // Handle Link Type
             $preppedData['type'] = empty($preppedData['type'] ?? '') ? 'fruitstudios\linkit\models\Url' : $preppedData['type'];
-            if(!str_contains($preppedData['type'], '\\'))
+            if(!str_contains($preppedData['type'], '\\')) {
                 $preppedData['type'] = 'fruitstudios\\linkit\\models\\' . ucfirst(strtolower(trim($preppedData['type'])));
             }
 
