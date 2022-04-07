@@ -31,12 +31,6 @@ class Tag extends Element
      */
     public static string $class = TagElement::class;
 
-    /**
-     * @var ElementInterface|null
-     */
-    public ?ElementInterface $element = null;
-
-
     // Templates
     // =========================================================================
 

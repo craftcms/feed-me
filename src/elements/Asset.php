@@ -41,12 +41,6 @@ class Asset extends Element
      */
     public static string $class = AssetElement::class;
 
-    /**
-     * @var ElementInterface|null
-     */
-    public ?ElementInterface $element = null;
-
-
     // Templates
     // =========================================================================
 

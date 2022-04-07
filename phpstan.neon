@@ -1,0 +1,18 @@
+includes:
+    - vendor/craftcms/phpstan/phpstan.neon
+
+parameters:
+    level: 1
+    paths:
+        - src
+    excludePaths:
+        - src/elements/CalenderEvent.php
+        - src/elements/Comment.php
+        - src/elements/CommerceProduct.php
+        - src/elements/DigitalProduct.php
+        - src/fields/CalendarEvents.php
+        - src/fields/CommerceProducts.php
+        - src/fields/CommerceVariants.php
+        - src/fields/DigitalProducts.php
+        - src/fields/SimpleMap.php
+        - src/fiesds/CommerceProducts.php

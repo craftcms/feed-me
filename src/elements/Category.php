@@ -36,12 +36,6 @@ class Category extends Element
      */
     public static string $class = CategoryElement::class;
 
-    /**
-     * @var ElementInterface|null
-     */
-    public ?ElementInterface $element = null;
-
-
     // Templates
     // =========================================================================
 

@@ -5,11 +5,14 @@ namespace craft\feedme\services;
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
+use craft\base\ComponentInterface;
+use craft\errors\MissingComponentException;
 use craft\feedme\base\DataTypeInterface;
 use craft\feedme\datatypes\Atom;
 use craft\feedme\datatypes\Csv;
 use craft\feedme\datatypes\GoogleSheet;
 use craft\feedme\datatypes\Json;
+use craft\feedme\datatypes\MissingDataType;
 use craft\feedme\datatypes\Rss;
 use craft\feedme\datatypes\Xml;
 use craft\feedme\events\FeedDataEvent;
@@ -24,6 +27,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use yii\base\InvalidConfigException;
 use craft\errors\MissingComponentException;
 use craft\base\ComponentInterface;
+use yii\base\InvalidConfigException;
 
 /**
  *
@@ -124,7 +128,7 @@ class DataTypes extends Component
 
     /**
      * @param $config
-     * @return ComponentInterface|MissingDataType
+     * @return DataTypeInterface
      * @throws InvalidConfigException
      */
     public function createDataType($config): ComponentInterface|MissingDataType
@@ -143,6 +147,7 @@ class DataTypes extends Component
             $dataType = new MissingDataType($config);
         }
 
+        /** @var DataTypeInterface $dataType */
         return $dataType;
     }
 

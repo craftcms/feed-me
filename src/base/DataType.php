@@ -21,7 +21,8 @@ abstract class DataType extends Component
      */
     public function getName(): string
     {
-        return $this::$name;
+        /** @phpstan-ignore-next-line */
+        return static::$name;
     }
 
     /**

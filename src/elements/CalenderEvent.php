@@ -56,11 +56,6 @@ class CalenderEvent extends Element
     public static string $class = 'Solspace\Calendar\Elements\Event';
 
     /**
-     * @var ElementInterface|null
-     */
-    public ?ElementInterface $element = null;
-
-    /**
      * @var array
      */
     private array $rruleInfo = [];

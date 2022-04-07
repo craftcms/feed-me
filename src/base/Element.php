@@ -44,6 +44,11 @@ abstract class Element extends Component implements ElementInterface
      */
     public ?FeedModel $feed = null;
 
+    /**
+     * @var CraftElementInterface
+     */
+    public $element;
+
 
     // Public Methods
     // =========================================================================
@@ -53,7 +58,8 @@ abstract class Element extends Component implements ElementInterface
      */
     public function getName(): string
     {
-        return $this::$name;
+        /** @phpstan-ignore-next-line */
+        return static::$name;
     }
 
     /**
@@ -69,7 +75,8 @@ abstract class Element extends Component implements ElementInterface
      */
     public function getElementClass(): string
     {
-        return $this::$class;
+        /** @phpstan-ignore-next-line */
+        return static::$class;
     }
 
     /**

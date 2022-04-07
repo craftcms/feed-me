@@ -256,11 +256,7 @@ class DataHelper
             Plugin::info('Data to update for `{i}`: `{j}`.', ['i' => $key, 'j' => Json::encode($newValue)]);
         }
 
-        if (empty($trackedChanges)) {
-            return true;
-        }
-
-        return false;
+        return empty($trackedChanges);
     }
 
     /**

@@ -40,15 +40,9 @@ class User extends Element
     public static string $class = UserElement::class;
 
     /**
-     * @var ElementInterface|null
-     */
-    public ?ElementInterface $element = null;
-
-    /**
      * @var
      */
     public mixed $status = null;
-
 
     // Templates
     // =========================================================================

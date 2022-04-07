@@ -5,6 +5,8 @@ namespace craft\feedme\services;
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
+use craft\base\ComponentInterface;
+use craft\errors\MissingComponentException;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\events\FieldEvent;
 use craft\feedme\events\RegisterFeedMeFieldsEvent;
@@ -24,6 +26,7 @@ use craft\feedme\fields\GoogleMaps;
 use craft\feedme\fields\Lightswitch;
 use craft\feedme\fields\Linkit;
 use craft\feedme\fields\Matrix;
+use craft\feedme\fields\MissingField;
 use craft\feedme\fields\MultiSelect;
 use craft\feedme\fields\Number;
 use craft\feedme\fields\RadioButtons;
@@ -157,7 +160,7 @@ class Fields extends Component
 
     /**
      * @param $config
-     * @return ComponentInterface|MissingDataType
+     * @return FieldInterface
      * @throws InvalidConfigException
      */
     public function createField($config): ComponentInterface|MissingDataType
@@ -173,9 +176,10 @@ class Fields extends Component
             $config['expectedType'] = $config['type'];
             unset($config['type']);
 
-            $field = new MissingDataType($config);
+            $field = new MissingField($config);
         }
 
+        /** @var FieldInterface $field */
         return $field;
     }
 

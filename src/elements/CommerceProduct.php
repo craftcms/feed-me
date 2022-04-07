@@ -44,12 +44,6 @@ class CommerceProduct extends Element
      */
     public static string $class = ProductElement::class;
 
-    /**
-     * @var ElementInterface|null
-     */
-    public ?ElementInterface $element = null;
-
-
     // Templates
     // =========================================================================
 

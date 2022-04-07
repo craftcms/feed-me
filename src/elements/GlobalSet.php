@@ -33,11 +33,6 @@ class GlobalSet extends Element
     public static string $class = GlobalSetElement::class;
 
     /**
-     * @var ElementInterface|null
-     */
-    public ?ElementInterface $element = null;
-
-    /**
      * @inheritDoc
      */
     public function getGroupsTemplate(): string

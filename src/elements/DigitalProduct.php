@@ -34,12 +34,6 @@ class DigitalProduct extends Element
      */
     public static string $class = 'craft\digitalproducts\elements\Product';
 
-    /**
-     * @var ElementInterface|null
-     */
-    public ?ElementInterface $element = null;
-
-
     // Templates
     // =========================================================================
 

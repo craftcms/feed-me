@@ -41,12 +41,6 @@ class Entry extends Element
      */
     public static string $class = EntryElement::class;
 
-    /**
-     * @var ElementInterface|null
-     */
-    public ?ElementInterface $element = null;
-
-
     // Templates
     // =========================================================================
 
