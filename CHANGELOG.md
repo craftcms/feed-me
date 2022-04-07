@@ -1,5 +1,13 @@
 # Release Notes for Feed Me 4.x
 
+## Unreleased
+
+### Added
+- Added Craft 4 compatibility.
+
+### Removed
+- Removed built-in support for the Verbb Comments plugin, which provides its own Feed Me driver.
+
 ## 4.4.3 - 2022-04-06
 
 ### Added
