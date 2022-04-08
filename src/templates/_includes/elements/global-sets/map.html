@@ -23,7 +23,7 @@
                 <th>{{ 'Default Value'|t('feed-me') }}</th>
             </thead>
             <tbody>
-                {% for layoutField in tab.getFields() %}
+                {% for layoutField in tab.getElements()|filter(e => e is instance of('craft\\fieldlayoutelements\\CustomField')) %}
                     {% set field = layoutField.getField() %}
                     {% set fieldClass = craft.feedme.fields.getRegisteredField(className(field)) %}
                     {% set template = fieldClass.getMappingTemplate() %}
