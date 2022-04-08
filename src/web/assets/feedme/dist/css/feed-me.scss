@@ -606,6 +606,8 @@ body.feedme-message .feedme-fullpage {
 
 .feedme-welcome .plugin-icon-welcome {
     margin: 20px 0 30px;
+    display: flex;
+    align-items: center;
 
     svg {
         width: 120px;
@@ -629,5 +631,3 @@ body.feedme-message .feedme-fullpage {
 .feedme-welcome .btn .fa {
     margin-left: 5px;
 }
-
-
