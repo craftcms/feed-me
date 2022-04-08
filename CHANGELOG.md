@@ -1,6 +1,6 @@
 # Release Notes for Feed Me 4.x
 
-## Unreleased
+## 5.0.0-beta.1 - 2022-04-07
 
 ### Added
 - Added Craft 4 compatibility.
