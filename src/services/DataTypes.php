@@ -5,7 +5,6 @@ namespace craft\feedme\services;
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
-use craft\base\ComponentInterface;
 use craft\errors\MissingComponentException;
 use craft\feedme\base\DataTypeInterface;
 use craft\feedme\datatypes\Atom;
