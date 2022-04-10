@@ -5,6 +5,7 @@ on:
     branches:
       - develop
       - main
+      - '5.0'
   pull_request:
 jobs:
   call-workflow:
