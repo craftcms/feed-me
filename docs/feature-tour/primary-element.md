@@ -52,8 +52,6 @@ Use this option to select the node in your feed that contains the full URL to th
 
 ::: warning
 Your pagination URL can’t be nested within an array or numerically-indexed key in your feed.
-```
+:::
 
-* * *
-
-Click on the _Save & Continue_ button to be taken to the [Field Mapping](field-mapping.md) screen, or press _Save_ to continue editing this screen.
+Press _Save & Continue_ to be taken to the [Field Mapping](field-mapping.md) screen, or press _Save_ to continue editing this screen.
