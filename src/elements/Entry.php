@@ -123,7 +123,6 @@ class Entry extends Element
             ) {
                 $enabledForSite[$siteSettings->siteId] = $siteSettings->enabledByDefault;
             }
-
         }
         $this->element->setEnabledForSite($enabledForSite);
 
