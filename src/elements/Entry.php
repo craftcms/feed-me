@@ -117,7 +117,13 @@ class Entry extends Element
         // Set the default site status based on the section's settings
         $enabledForSite = [];
         foreach ($section->getSiteSettings() as $siteSettings) {
-            $enabledForSite[$siteSettings->siteId] = $siteSettings->enabledByDefault;
+            if (
+                $section->propagationMethod !== Section::PROPAGATION_METHOD_CUSTOM ||
+                $siteSettings->siteId == $siteId
+            ) {
+                $enabledForSite[$siteSettings->siteId] = $siteSettings->enabledByDefault;
+            }
+
         }
         $this->element->setEnabledForSite($enabledForSite);
 

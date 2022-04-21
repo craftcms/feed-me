@@ -1,5 +1,10 @@
 # Release Notes for Feed Me 4.x
 
+## Unreleased
+
+### Changed
+- Entries imported within sections whose Propagation Method is set to “Let each entry choose which sites it should be saved to” are no longer created for all of the section's supported sites. ([#1084](https://github.com/craftcms/feed-me/issues/1084))
+
 ## 4.4.3 - 2022-04-06
 
 ### Added
