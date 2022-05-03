@@ -197,7 +197,7 @@ class Entry extends Element
         $element = $query->one();
 
         if ($element) {
-            $this->element->setParent($element);
+            $this->element->setParentId($element->id);
 
             return $element->id;
         }
