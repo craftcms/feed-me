@@ -140,24 +140,4 @@ trait PluginTrait
     {
         return $this->get('service');
     }
-
-
-    // Private Methods
-    // =========================================================================
-
-    /**
-     *
-     */
-    private function _setPluginComponents(): void
-    {
-        $this->setComponents([
-            'data' => DataTypes::class,
-            'elements' => Elements::class,
-            'feeds' => Feeds::class,
-            'fields' => Fields::class,
-            'logs' => Logs::class,
-            'process' => Process::class,
-            'service' => Service::class,
-        ]);
-    }
 }

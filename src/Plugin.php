@@ -41,8 +41,25 @@ use yii\queue\Queue;
  */
 class Plugin extends \craft\base\Plugin
 {
-    // Properties
-    // =========================================================================
+    use PluginTrait;
+
+    /**
+     * @inheritdoc
+     */
+    public static function config(): array
+    {
+        return [
+            'components' => [
+                'data' => ['class' => DataTypes::class],
+                'elements' => ['class' => Elements::class],
+                'feeds' => ['class' => Feeds::class],
+                'fields' => ['class' => Fields::class],
+                'logs' => ['class' => Logs::class],
+                'process' => ['class' => Process::class],
+                'service' => ['class' => Service::class],
+            ],
+        ];
+    }
 
     public string $minVersionRequired = '4.4.2';
     public string $schemaVersion = '4.4.0';
@@ -55,15 +72,6 @@ class Plugin extends \craft\base\Plugin
      */
     public $queue = 'queue';
 
-    // Traits
-    // =========================================================================
-
-    use PluginTrait;
-
-
-    // Public Methods
-    // =========================================================================
-
     /**
      * @inheritDoc
      */
@@ -75,7 +83,6 @@ class Plugin extends \craft\base\Plugin
 
         $this->queue = Instance::ensure($this->queue, Queue::class);
 
-        $this->_setPluginComponents();
         $this->_registerCpRoutes();
         $this->_registerTwigExtensions();
         $this->_registerVariables();
@@ -117,9 +124,6 @@ class Plugin extends \craft\base\Plugin
         return $navItem;
     }
 
-    // Protected Methods
-    // =========================================================================
-
     /**
      * @inheritDoc
      */
@@ -127,9 +131,6 @@ class Plugin extends \craft\base\Plugin
     {
         return new Settings();
     }
-
-    // Private Methods
-    // =========================================================================
 
     /**
      *
