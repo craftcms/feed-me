@@ -4,6 +4,7 @@ namespace craft\feedme\base;
 
 use ArrayAccess;
 use Cake\Utility\Hash;
+use Carbon\Carbon;
 use Craft;
 use craft\base\Component;
 use craft\base\Element as BaseElement;
@@ -326,8 +327,11 @@ abstract class Element extends Component implements ElementInterface
     protected function parseDateAttribute($value, $formatting): ?DateTime
     {
         $dateValue = DateHelper::parseString($value, $formatting);
+        if ($dateValue instanceof Carbon) {
+            $dateValue = $dateValue->toDateTime();
+        }
 
-        if (!is_null($dateValue)) {
+        if (!empty($dateValue)) {
             return $dateValue;
         }
 
