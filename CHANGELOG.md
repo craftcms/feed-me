@@ -1,14 +1,12 @@
 # Release Notes for Feed Me 4.x
 
-## 5.0.0-beta.2 - 2022-04-21
-
-### Changed
-- Entries imported within sections whose Propagation Method is set to “Let each entry choose which sites it should be saved to” are no longer created for all of the section's supported sites. ([#1084](https://github.com/craftcms/feed-me/issues/1084))
-
-## 5.0.0-beta.1 - 2022-04-07
+## 5.0.0 - 2022-05-03
 
 ### Added
 - Added Craft 4 compatibility.
+
+### Changed
+- The `data`, `elements`, `feeds`, `fields`, `logs`, `process`, and `service` components can now be configured via `craft\services\Plugins::$pluginConfigs`.
 
 ### Removed
 - Removed built-in support for the Verbb Comments plugin, which provides its own Feed Me driver.
