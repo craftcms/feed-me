@@ -130,7 +130,6 @@ class Entries extends Field implements FieldInterface
             }
 
             $criteria['status'] = null;
-            // $criteria['enabledForSite'] = false;
             $criteria['sectionId'] = $sectionIds;
             $criteria['limit'] = $limit;
             $criteria['where'] = ['=', $columnName, $dataValue];
