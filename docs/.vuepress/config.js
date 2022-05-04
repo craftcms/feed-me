@@ -17,8 +17,10 @@ module.exports = {
                 items: [
                     { text: 'Craft 2 Documentation', link: 'https://craftcms.com/docs/2.x/' },
                     { text: 'Craft 3 Documentation', link: 'https://craftcms.com/docs/3.x/' },
+                    { text: 'Craft 4 Documentation', link: 'https://craftcms.com/docs/4.x/' },
                     { text: 'Craft 2 Class Reference', link: 'https://docs.craftcms.com/api/v2/' },
                     { text: 'Craft 3 Class Reference', link: 'https://docs.craftcms.com/api/v3/' },
+                    { text: 'Craft 4 Class Reference', link: 'https://docs.craftcms.com/api/v4/' },
                 ]
             },
             {
@@ -26,7 +28,11 @@ module.exports = {
                 items: [
                     { text: 'Commerce 1 Documentation', link: 'https://craftcms.com/docs/commerce/1.x/' },
                     { text: 'Commerce 2 Documentation', link: 'https://craftcms.com/docs/commerce/2.x/' },
+                    { text: 'Commerce 3 Documentation', link: 'https://craftcms.com/docs/commerce/3.x/' },
+                    { text: 'Commerce 4 Documentation', link: 'https://craftcms.com/docs/commerce/4.x/' },
                     { text: 'Commerce 2 Class Reference', link: 'https://docs.craftcms.com/commerce/api/v2/' },
+                    { text: 'Commerce 3 Class Reference', link: 'https://docs.craftcms.com/commerce/api/v3/' },
+                    { text: 'Commerce 4 Class Reference', link: 'https://docs.craftcms.com/commerce/api/v4/' },
                     { text: 'Feed Me Documentation', link: '/' },
                 ]
             },
