@@ -369,6 +369,20 @@ class Process extends Component
         // Set the attributes for the element
         $element->setAttributes($attributeData, false);
 
+        if (isset($attributeData['enabled'])) {
+            // Set the site-specific status as well, but retain all other site statuses
+            $enabledForSite = [];
+            foreach (Craft::$app->getSites()->getAllSiteIds(true) as $siteId) {
+                $status = $element->getEnabledForSite($siteId);
+                if ($status !== null) {
+                    $enabledForSite[$siteId] = $status;
+                }
+            }
+
+            $enabledForSite[$element->siteId] = $attributeData['enabled'];
+            $element->setEnabledForSite($enabledForSite);
+        }
+
         // Then, do the same for custom fields. Again, this should be done after populating the element attributes
         foreach ($feed['fieldMapping'] as $fieldHandle => $fieldInfo) {
             if (Hash::get($fieldInfo, 'field')) {
