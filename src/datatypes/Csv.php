@@ -162,7 +162,11 @@ class Csv extends DataType implements DataTypeInterface
     private function _isArrayEmpty($array): bool
     {
         foreach ($array as $val) {
-            if (trim($val) !== '') {
+            if (is_string($val)) {
+                if (trim($val) !== '') {
+                    return false;
+                }
+            } elseif ($val) {
                 return false;
             }
         }
