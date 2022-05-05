@@ -20,9 +20,9 @@ class Settings extends Model
     public int $cache = 60;
 
     /**
-     * @var string
+     * @var string|int|array
      */
-    public string $enabledTabs = '*';
+    public string|int|array $enabledTabs = '*';
 
     /**
      * @var array
