@@ -1,5 +1,10 @@
 # Release Notes for Feed Me 4.x
 
+## Unreleased
+
+### Fixed
+- Fixed a bug where elements’ per-site statuses weren’t getting set for feeds that specified a status. ([#822](https://github.com/craftcms/feed-me/issues/822))
+
 ## 5.0.0 - 2022-05-03
 
 ### Added
