@@ -11,6 +11,11 @@
 ### Removed
 - Removed built-in support for the Verbb Comments plugin, which provides its own Feed Me driver.
 
+## 4.5.1 - 2022-05-05
+
+### Fixed
+- Fixed a bug where elements’ per-site statuses weren’t getting set for feeds that specified a status. ([#822](https://github.com/craftcms/feed-me/issues/822))
+
 ## 4.5.0 - 2022-04-21
 
 ### Changed
