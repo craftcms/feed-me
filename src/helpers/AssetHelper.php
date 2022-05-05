@@ -17,6 +17,7 @@ use craft\helpers\StringHelper;
 use craft\helpers\UrlHelper;
 use Throwable;
 use yii\base\Exception;
+use yii\base\InvalidArgumentException;
 
 class AssetHelper
 {
@@ -198,9 +199,9 @@ class AssetHelper
     /**
      * @param string $tempFilePath
      * @param string $filename
-     * @param int $folderId
-     * @param Assets $field
-     * @param ElementInterface $element
+     * @param int|null $folderId
+     * @param Assets|null $field
+     * @param ElementInterface|null $element
      * @param string $conflict
      * @param bool $updateSearchIndexes
      * @return bool|int
@@ -210,11 +211,14 @@ class AssetHelper
      * @throws \craft\errors\VolumeException
      * @throws \yii\base\InvalidConfigException
      */
-    private static function createAsset(string $tempFilePath, string $filename, int $folderId, Assets $field, ElementInterface $element, string $conflict, bool $updateSearchIndexes): bool|int
+    private static function createAsset(string $tempFilePath, string $filename, ?int $folderId, ?Assets $field, ?ElementInterface $element, string $conflict, bool $updateSearchIndexes): bool|int
     {
         $assets = Craft::$app->getAssets();
 
         if (!$folderId) {
+            if (!$field) {
+                throw new InvalidArgumentException('$folderId and $field cannot both be null.');
+            }
             $folderId = $field->resolveDynamicPathToFolderId($element);
         }
 

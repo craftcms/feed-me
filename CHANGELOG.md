@@ -4,7 +4,7 @@
 
 ### Fixed
 - Fixed a bug where elements’ per-site statuses weren’t getting set for feeds that specified a status. ([#822](https://github.com/craftcms/feed-me/issues/822))
-- Fixed a PHP error that occurred if the `enabledTabs` setting was set to an array in `config/feed-me.php`. ([#1131](https://github.com/craftcms/feed-me/issues/1131))
+- Fixed various PHP errors. ([#1130](https://github.com/craftcms/feed-me/issues/1130), [#1131](https://github.com/craftcms/feed-me/issues/1131))
 
 ## 5.0.0 - 2022-05-03
 
