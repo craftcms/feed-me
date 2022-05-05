@@ -12,5 +12,5 @@ class RegisterFeedMeDataTypesEvent extends Event
     /**
      * @var array
      */
-    public $dataTypes = [];
+    public array $dataTypes = [];
 }

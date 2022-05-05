@@ -6,10 +6,15 @@ use Cake\Utility\Hash;
 use Craft;
 use craft\base\Element as BaseElement;
 use craft\elements\User as UserElement;
+use craft\errors\ElementNotFoundException;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\Plugin;
+use craft\fields\Users as UsersField;
 use craft\helpers\Db;
+use craft\helpers\Json;
+use Throwable;
+use yii\base\Exception;
 
 /**
  *
@@ -23,17 +28,17 @@ class Users extends Field implements FieldInterface
     /**
      * @var string
      */
-    public static $name = 'Users';
+    public static string $name = 'Users';
 
     /**
      * @var string
      */
-    public static $class = 'craft\fields\Users';
+    public static string $class = UsersField::class;
 
     /**
      * @var string
      */
-    public static $elementType = 'craft\elements\User';
+    public static string $elementType = UserElement::class;
 
 
     // Templates
@@ -42,7 +47,7 @@ class Users extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function getMappingTemplate()
+    public function getMappingTemplate(): string
     {
         return 'feed-me/_includes/fields/users';
     }
@@ -53,7 +58,7 @@ class Users extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function parseField()
+    public function parseField(): mixed
     {
         $value = $this->fetchArrayValue();
 
@@ -69,7 +74,7 @@ class Users extends Field implements FieldInterface
 
         if (is_array($sources)) {
             foreach ($sources as $source) {
-                list(, $uid) = explode(':', $source);
+                [, $uid] = explode(':', $source);
                 $groupIds[] = Db::idByUid('{{%usergroups}}', $uid);
             }
         } elseif ($sources === '*') {
@@ -112,13 +117,13 @@ class Users extends Field implements FieldInterface
 
             Craft::configure($query, $criteria);
 
-            Plugin::info('Search for existing user with query `{i}`', ['i' => json_encode($criteria)]);
+            Plugin::info('Search for existing user with query `{i}`', ['i' => Json::encode($criteria)]);
 
             $ids = $query->ids();
 
             $foundElements = array_merge($foundElements, $ids);
 
-            Plugin::info('Found `{i}` existing users: `{j}`', ['i' => count($foundElements), 'j' => json_encode($foundElements)]);
+            Plugin::info('Found `{i}` existing users: `{j}`', ['i' => count($foundElements), 'j' => Json::encode($foundElements)]);
 
             // Check if we should create the element. But only if email is provided (for the moment)
             if ((count($ids) == 0) && $create && $match === 'email') {
@@ -153,11 +158,11 @@ class Users extends Field implements FieldInterface
      * @param $dataValue
      * @param $groupId
      * @return int|null
-     * @throws \Throwable
-     * @throws \craft\errors\ElementNotFoundException
-     * @throws \yii\base\Exception
+     * @throws Throwable
+     * @throws ElementNotFoundException
+     * @throws Exception
      */
-    private function _createElement($dataValue, $groupId)
+    private function _createElement($dataValue, $groupId): ?int
     {
         $element = new UserElement();
         $element->username = $dataValue;
@@ -176,7 +181,7 @@ class Users extends Field implements FieldInterface
         $element->setScenario(BaseElement::SCENARIO_ESSENTIALS);
 
         if (!Craft::$app->getElements()->saveElement($element, true, true, Hash::get($this->feed, 'updateSearchIndexes'))) {
-            Plugin::error('`{handle}` - User error: Could not create - `{e}`.', ['e' => json_encode($element->getErrors()), 'handle' => $this->field->handle]);
+            Plugin::error('`{handle}` - User error: Could not create - `{e}`.', ['e' => Json::encode($element->getErrors()), 'handle' => $this->field->handle]);
         } else {
             Plugin::info('`{handle}` - User `#{id}` added.', ['id' => $element->id, 'handle' => $this->field->handle]);
         }

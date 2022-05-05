@@ -7,8 +7,11 @@ use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\helpers\BaseHelper;
 use craft\feedme\Plugin;
+use craft\fields\data\ColorData;
+use craft\fields\Table as TableField;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Localization;
+use Exception;
 
 /**
  *
@@ -22,12 +25,12 @@ class Table extends Field implements FieldInterface
     /**
      * @var string
      */
-    public static $name = 'Table';
+    public static string $name = 'Table';
 
     /**
      * @var string
      */
-    public static $class = 'craft\fields\Table';
+    public static string $class = TableField::class;
 
     // Templates
     // =========================================================================
@@ -35,7 +38,7 @@ class Table extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function getMappingTemplate()
+    public function getMappingTemplate(): string
     {
         return 'feed-me/_includes/fields/table';
     }
@@ -46,7 +49,7 @@ class Table extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function parseField()
+    public function parseField(): mixed
     {
         $parsedData = [];
         $preppedData = [];
@@ -62,7 +65,7 @@ class Table extends Field implements FieldInterface
             foreach ($columns as $columnHandle => $columnInfo) {
 
                 // Strip out array numbers in the feed path like: MatrixBlock/0/Images/0. We use this to get the field
-                // its supposed to match up with, which is stored in the DB like MatrixBlock/Images
+                // it's supposed to match up with, which is stored in the DB like MatrixBlock/Images
                 $feedPath = preg_replace('/(\/\d+\/)/', '/', $nodePath);
                 $feedPath = preg_replace('/^(\d+\/)|(\/\d+)/', '', $feedPath);
 
@@ -116,7 +119,7 @@ class Table extends Field implements FieldInterface
         }
 
         // Fix keys for columns to be in correct order
-        foreach ($preppedData as $key => &$columnData) {
+        foreach ($preppedData as &$columnData) {
             ksort($columnData, SORT_NATURAL);
         }
 
@@ -129,8 +132,8 @@ class Table extends Field implements FieldInterface
     /**
      * @param $type
      * @param $value
-     * @return bool|\craft\fields\data\ColorData|mixed|string|void|null
-     * @throws \Exception
+     * @return bool|ColorData|mixed|string|void|null
+     * @throws Exception
      */
     private function _handleSubField($type, $value)
     {

@@ -3,13 +3,20 @@
 namespace craft\feedme\elements;
 
 use Cake\Utility\Hash;
+use Carbon\Carbon;
 use Craft;
+use craft\base\ElementInterface;
 use craft\elements\Entry as EntryElement;
 use craft\elements\User as UserElement;
+use craft\errors\ElementNotFoundException;
 use craft\feedme\base\Element;
 use craft\feedme\models\ElementGroup;
 use craft\feedme\Plugin;
+use craft\helpers\Json;
 use craft\models\Section;
+use DateTime;
+use Throwable;
+use yii\base\Exception;
 
 /**
  *
@@ -27,13 +34,12 @@ class Entry extends Element
     /**
      * @var string
      */
-    public static $name = 'Entry';
+    public static string $name = 'Entry';
 
     /**
      * @var string
      */
-    public static $class = 'craft\elements\Entry';
-
+    public static string $class = EntryElement::class;
 
     // Templates
     // =========================================================================
@@ -41,7 +47,7 @@ class Entry extends Element
     /**
      * @inheritDoc
      */
-    public function getGroupsTemplate()
+    public function getGroupsTemplate(): string
     {
         return 'feed-me/_includes/elements/entries/groups';
     }
@@ -49,7 +55,7 @@ class Entry extends Element
     /**
      * @inheritDoc
      */
-    public function getColumnTemplate()
+    public function getColumnTemplate(): string
     {
         return 'feed-me/_includes/elements/entries/column';
     }
@@ -57,7 +63,7 @@ class Entry extends Element
     /**
      * @inheritDoc
      */
-    public function getMappingTemplate()
+    public function getMappingTemplate(): string
     {
         return 'feed-me/_includes/elements/entries/map';
     }
@@ -68,9 +74,9 @@ class Entry extends Element
     /**
      * @inheritDoc
      */
-    public function getGroups()
+    public function getGroups(): array
     {
-        $editable = Craft::$app->sections->getEditableSections();
+        $editable = Craft::$app->getSections()->getEditableSections();
         $groups = [];
 
         foreach ($editable as $section) {
@@ -87,10 +93,10 @@ class Entry extends Element
     /**
      * @inheritDoc
      */
-    public function getQuery($settings, $params = [])
+    public function getQuery($settings, array $params = []): mixed
     {
         $query = EntryElement::find()
-            ->anyStatus()
+            ->status(null)
             ->sectionId($settings['elementGroup'][EntryElement::class]['section'])
             ->typeId($settings['elementGroup'][EntryElement::class]['entryType'])
             ->siteId(Hash::get($settings, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id);
@@ -101,13 +107,13 @@ class Entry extends Element
     /**
      * @inheritDoc
      */
-    public function setModel($settings)
+    public function setModel($settings): ElementInterface
     {
         $this->element = new EntryElement();
         $this->element->sectionId = $settings['elementGroup'][EntryElement::class]['section'];
         $this->element->typeId = $settings['elementGroup'][EntryElement::class]['entryType'];
 
-        $section = Craft::$app->sections->getSectionById($this->element->sectionId);
+        $section = Craft::$app->getSections()->getSectionById($this->element->sectionId);
         $siteId = Hash::get($settings, 'siteId');
 
         if ($siteId) {
@@ -135,9 +141,10 @@ class Entry extends Element
     /**
      * @param $feedData
      * @param $fieldInfo
-     * @return array|\Carbon\Carbon|\DateTime|false|string|null
+     * @return array|Carbon|DateTime|false|string|null
+     * @throws \Exception
      */
-    protected function parsePostDate($feedData, $fieldInfo)
+    protected function parsePostDate($feedData, $fieldInfo): DateTime|bool|array|Carbon|string|null
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
         $formatting = Hash::get($fieldInfo, 'options.match');
@@ -148,9 +155,10 @@ class Entry extends Element
     /**
      * @param $feedData
      * @param $fieldInfo
-     * @return array|\Carbon\Carbon|\DateTime|false|string|null
+     * @return array|Carbon|DateTime|false|string|null
+     * @throws \Exception
      */
-    protected function parseExpiryDate($feedData, $fieldInfo)
+    protected function parseExpiryDate($feedData, $fieldInfo): DateTime|bool|array|Carbon|string|null
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
         $formatting = Hash::get($fieldInfo, 'options.match');
@@ -162,11 +170,11 @@ class Entry extends Element
      * @param $feedData
      * @param $fieldInfo
      * @return int|null
-     * @throws \Throwable
-     * @throws \craft\errors\ElementNotFoundException
-     * @throws \yii\base\Exception
+     * @throws Throwable
+     * @throws ElementNotFoundException
+     * @throws Exception
      */
-    protected function parseParent($feedData, $fieldInfo)
+    protected function parseParent($feedData, $fieldInfo): ?int
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
 
@@ -189,7 +197,7 @@ class Entry extends Element
         $element = $query->one();
 
         if ($element) {
-            $this->element->newParentId = $element->id;
+            $this->element->setParentId($element->id);
 
             return $element->id;
         }
@@ -202,7 +210,7 @@ class Entry extends Element
             $element->typeId = $this->element->typeId;
 
             if (!Craft::$app->getElements()->saveElement($element, true, true, Hash::get($this->feed, 'updateSearchIndexes'))) {
-                Plugin::error('Entry error: Could not create parent - `{e}`.', ['e' => json_encode($element->getErrors())]);
+                Plugin::error('Entry error: Could not create parent - `{e}`.', ['e' => Json::encode($element->getErrors())]);
             } else {
                 Plugin::info('Entry `#{id}` added.', ['id' => $element->id]);
             }
@@ -217,11 +225,11 @@ class Entry extends Element
      * @param $feedData
      * @param $fieldInfo
      * @return int|null
-     * @throws \Throwable
-     * @throws \craft\errors\ElementNotFoundException
-     * @throws \yii\base\Exception
+     * @throws Throwable
+     * @throws ElementNotFoundException
+     * @throws Exception
      */
-    protected function parseAuthorId($feedData, $fieldInfo)
+    protected function parseAuthorId($feedData, $fieldInfo): ?int
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
         $match = Hash::get($fieldInfo, 'options.match');
@@ -261,7 +269,7 @@ class Entry extends Element
             $element->email = $value;
 
             if (!Craft::$app->getElements()->saveElement($element, true, true, Hash::get($this->feed, 'updateSearchIndexes'))) {
-                Plugin::error('Entry error: Could not create author - `{e}`.', ['e' => json_encode($element->getErrors())]);
+                Plugin::error('Entry error: Could not create author - `{e}`.', ['e' => Json::encode($element->getErrors())]);
             } else {
                 Plugin::info('Author `#{id}` added.', ['id' => $element->id]);
             }

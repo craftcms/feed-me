@@ -4,11 +4,11 @@ namespace craft\feedme\helpers;
 
 class DuplicateHelper
 {
-    const Add = 'add';
-    const Update = 'update';
-    const Disable = 'disable';
-    const DisableForSite = 'disableForSite';
-    const Delete = 'delete';
+    public const Add = 'add';
+    public const Update = 'update';
+    public const Disable = 'disable';
+    public const DisableForSite = 'disableForSite';
+    public const Delete = 'delete';
 
     // Public Methods
     // =========================================================================
@@ -17,7 +17,7 @@ class DuplicateHelper
      * @param $handles
      * @return string
      */
-    public static function getFriendly($handles)
+    public static function getFriendly($handles): string
     {
         $array = [];
 
@@ -34,7 +34,7 @@ class DuplicateHelper
      * @param false $only
      * @return bool
      */
-    public static function contains($handles, $handle, $only = false)
+    public static function contains($handles, $handle, bool $only = false): bool
     {
         if (in_array($handle, $handles, true)) {
             if ($only) {
@@ -54,7 +54,7 @@ class DuplicateHelper
      * @param false $only
      * @return bool
      */
-    public static function isAdd($feedData, $only = false)
+    public static function isAdd($feedData, bool $only = false): bool
     {
         return self::contains($feedData['duplicateHandle'], self::Add, $only);
     }
@@ -64,7 +64,7 @@ class DuplicateHelper
      * @param false $only
      * @return bool
      */
-    public static function isUpdate($feedData, $only = false)
+    public static function isUpdate($feedData, bool $only = false): bool
     {
         return self::contains($feedData['duplicateHandle'], self::Update, $only);
     }
@@ -74,7 +74,7 @@ class DuplicateHelper
      * @param false $only
      * @return bool
      */
-    public static function isDisable($feedData, $only = false)
+    public static function isDisable($feedData, bool $only = false): bool
     {
         return self::contains($feedData['duplicateHandle'], self::Disable, $only);
     }
@@ -84,7 +84,7 @@ class DuplicateHelper
      * @param false $only
      * @return bool
      */
-    public static function isDisableForSite($feedData, $only = false)
+    public static function isDisableForSite($feedData, bool $only = false): bool
     {
         return self::contains($feedData['duplicateHandle'], self::DisableForSite, $only);
     }
@@ -94,7 +94,7 @@ class DuplicateHelper
      * @param false $only
      * @return bool
      */
-    public static function isDelete($feedData, $only = false)
+    public static function isDelete($feedData, bool $only = false): bool
     {
         return self::contains($feedData['duplicateHandle'], self::Delete, $only);
     }

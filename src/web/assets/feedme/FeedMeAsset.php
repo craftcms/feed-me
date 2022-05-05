@@ -17,7 +17,7 @@ class FeedMeAsset extends AssetBundle
     /**
      * @inheritDoc
      */
-    public function init()
+    public function init(): void
     {
         $this->sourcePath = "@craft/feedme/web/assets/feedme/dist";
 
@@ -26,7 +26,7 @@ class FeedMeAsset extends AssetBundle
         ];
 
         $this->js = [
-            'js/feed-me' . $this->dotJs(),
+            'js/feed-me.js',
         ];
 
         $this->css = [
@@ -39,7 +39,7 @@ class FeedMeAsset extends AssetBundle
     /**
      * @inheritdoc
      */
-    public function registerAssetFiles($view)
+    public function registerAssetFiles($view): void
     {
         parent::registerAssetFiles($view);
 
@@ -47,13 +47,11 @@ class FeedMeAsset extends AssetBundle
         foreach (Plugin::getInstance()->getElements()->getRegisteredElements() as $elementClass => $element) {
             $groups = [];
             $elementGroups = $element->getGroups();
-            if (is_array($elementGroups)) {
-                foreach ($elementGroups as $group) {
-                    if ($group instanceof ElementGroup) {
-                        $groups[$group->id] = [
-                            'isSingleton' => $group->isSingleton,
-                        ];
-                    }
+            foreach ($elementGroups as $group) {
+                if ($group instanceof ElementGroup) {
+                    $groups[$group->id] = [
+                        'isSingleton' => $group->isSingleton,
+                    ];
                 }
             }
             $elementTypeInfo[$elementClass] = [

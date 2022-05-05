@@ -2,11 +2,15 @@
 
 namespace craft\feedme\helpers;
 
+use ArrayAccess;
 use Cake\Utility\Hash;
 use Craft;
 use craft\feedme\Plugin;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Db;
+use craft\helpers\Json;
+use DateTime;
+use Throwable;
 
 class DataHelper
 {
@@ -16,9 +20,9 @@ class DataHelper
     /**
      * @param $feedData
      * @param $fieldInfo
-     * @return array|\ArrayAccess|mixed|string|null
+     * @return array|ArrayAccess|mixed|string|null
      */
-    public static function fetchSimpleValue($feedData, $fieldInfo)
+    public static function fetchSimpleValue($feedData, $fieldInfo): mixed
     {
         $node = Hash::get($fieldInfo, 'node');
         $default = Hash::get($fieldInfo, 'default');
@@ -42,9 +46,9 @@ class DataHelper
     /**
      * @param $feedData
      * @param $fieldInfo
-     * @return array|\ArrayAccess|mixed
+     * @return array|ArrayAccess|mixed
      */
-    public static function fetchArrayValue($feedData, $fieldInfo)
+    public static function fetchArrayValue($feedData, $fieldInfo): mixed
     {
         $value = [];
 
@@ -53,12 +57,12 @@ class DataHelper
 
         $dataDelimiter = Plugin::$plugin->service->getConfig('dataDelimiter');
 
-        // Some fields require array, or multiple values like Elements, Checkboxes, etc, and we need to parse them differently.
-        // Firstly, field mapping is setup like `MatrixBlock/Images` but actual feed is structured like `MatrixBlock/0/Images/0`.
+        // Some fields require array, or multiple values like Elements, Checkboxes, etc., and we need to parse them differently.
+        // Firstly, field mapping is set up like `MatrixBlock/Images` but actual feed is structured like `MatrixBlock/0/Images/0`.
         // We strip out the numbers to first find the node we've mapped to, then iterate over possible multiple values in the feed.
         foreach ($feedData as $nodePath => $nodeValue) {
             // Strip out array numbers in the feed path like: MatrixBlock/0/Images/0. We use this to get the field
-            // its supposed to match up with, which is stored in the DB like MatrixBlock/Images
+            // it's supposed to match up with, which is stored in the DB like MatrixBlock/Images
             $feedPath = preg_replace('/(\/\d+\/)/', '/', $nodePath);
             $feedPath = preg_replace('/^(\d+\/)|(\/\d+)/', '', $feedPath);
 
@@ -69,7 +73,7 @@ class DataHelper
 
                 // Allow pipes '|' to denote multiple items, but even if it doesn't contain one, explode will create
                 // an array, so ensure to merge with the current results.
-                if (is_string($nodeValue) && strpos($nodeValue, $dataDelimiter) !== false) {
+                if (is_string($nodeValue) && str_contains($nodeValue, $dataDelimiter)) {
                     $delimitedValues = explode($dataDelimiter, $nodeValue);
 
                     // Trim values in case whitespace was used between delimiter
@@ -96,9 +100,9 @@ class DataHelper
     /**
      * @param $feedData
      * @param $fieldInfo
-     * @return array|\ArrayAccess|mixed|null
+     * @return array|ArrayAccess|mixed|null
      */
-    public static function fetchValue($feedData, $fieldInfo)
+    public static function fetchValue($feedData, $fieldInfo): mixed
     {
         $value = [];
 
@@ -107,12 +111,12 @@ class DataHelper
 
         $dataDelimiter = Plugin::$plugin->service->getConfig('dataDelimiter');
 
-        // Some fields require array, or multiple values like Elements, Checkboxes, etc, and we need to parse them differently.
-        // Firstly, field mapping is setup like `MatrixBlock/Images` but actual feed is structured like `MatrixBlock/0/Images/0`.
+        // Some fields require array, or multiple values like Elements, Checkboxes, etc., and we need to parse them differently.
+        // Firstly, field mapping is set up like `MatrixBlock/Images` but actual feed is structured like `MatrixBlock/0/Images/0`.
         // We strip out the numbers to first find the node we've mapped to, then iterate over possible multiple values in the feed.
         foreach ($feedData as $nodePath => $nodeValue) {
             // Strip out array numbers in the feed path like: MatrixBlock/0/Images/0. We use this to get the field
-            // its supposed to match up with, which is stored in the DB like MatrixBlock/Images
+            // it's supposed to match up with, which is stored in the DB like MatrixBlock/Images
             $feedPath = preg_replace('/(\/\d+\/)/', '/', $nodePath);
             $feedPath = preg_replace('/^(\d+\/)|(\/\d+)/', '', $feedPath);
 
@@ -123,7 +127,7 @@ class DataHelper
 
                 // Allow pipes '|' to denote multiple items, but even if it doesn't contain one, explode will create
                 // an array, so ensure to merge with the current results.
-                if (is_string($nodeValue) && strpos($nodeValue, $dataDelimiter) !== false) {
+                if (is_string($nodeValue) && str_contains($nodeValue, $dataDelimiter)) {
                     $delimitedValues = explode($dataDelimiter, $nodeValue);
 
                     // Trim values in case whitespace was used between delimiter
@@ -137,7 +141,7 @@ class DataHelper
         }
 
         // Help to normalise things if an array with only one item. Probably a better idea to offload this to each
-        // attribute of field definition, as its quite an assumption at this point...
+        // attribute of field definition, as it's quite an assumption at this point...
         if (count($value) === 1) {
             $value = $value[0];
         }
@@ -161,14 +165,14 @@ class DataHelper
      * @param $element
      * @return mixed|string
      */
-    public static function parseFieldDataForElement($value, $element)
+    public static function parseFieldDataForElement($value, $element): mixed
     {
-        if (is_string($value) && strpos($value, '{') !== false) {
+        if (is_string($value) && str_contains($value, '{')) {
             // Make sure to wrap in try/catch, as if this is a literal '{' in content somewhere
             // it won't be a field handle tag, causing the Twig Lexer to freak out. We ignore those errors
             try {
                 $value = Craft::$app->getView()->renderObjectTemplate($value, $element);
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
             }
         }
 
@@ -178,9 +182,9 @@ class DataHelper
     /**
      * @param $content
      * @param $element
-     * @return bool
+     * @return bool|null
      */
-    public static function compareElementContent($content, $element)
+    public static function compareElementContent($content, $element): ?bool
     {
         if (!$element) {
             return false;
@@ -195,7 +199,7 @@ class DataHelper
             $existingValue = Hash::get($fields, $key);
 
             // If date value, make sure to cast it as a string to compare
-            if ($newValue instanceof \DateTime || DateTimeHelper::isIso8601($newValue)) {
+            if ($newValue instanceof DateTime || DateTimeHelper::isIso8601($newValue)) {
                 $newValue = Db::prepareDateForDb($newValue);
             }
 
@@ -249,7 +253,7 @@ class DataHelper
             Plugin::debug($key . ' - new');
             Plugin::debug($newValue);
 
-            Plugin::info('Data to update for `{i}`: `{j}`.', ['i' => $key, 'j' => json_encode($newValue)]);
+            Plugin::info('Data to update for `{i}`: `{j}`.', ['i' => $key, 'j' => Json::encode($newValue)]);
         }
 
         return empty($trackedChanges);
@@ -258,9 +262,9 @@ class DataHelper
     /**
      * @param $array1
      * @param $array2
-     * @return false
+     * @return bool|array
      */
-    public static function arrayCompare($array1, $array2)
+    public static function arrayCompare($array1, $array2): bool|array
     {
         $diff = false;
 
@@ -314,11 +318,7 @@ class DataHelper
             // If this is a string, check the lengths
             if (is_string($firstValue) && is_string($secondValue)) {
                 // String length comparison to take into account "637" and "0637"
-                if (mb_strlen($firstValue) == mb_strlen($secondValue)) {
-                    return true;
-                }
-
-                return false;
+                return mb_strlen($firstValue) == mb_strlen($secondValue);
             }
 
             // An array, but loosely equal

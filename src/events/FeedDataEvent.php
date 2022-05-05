@@ -10,17 +10,17 @@ class FeedDataEvent extends Event
     // =========================================================================
 
     /**
-     * @var
+     * @var string|null
      */
-    public $url;
+    public ?string $url = null;
+
+    /**
+     * @var int|null
+     */
+    public ?int $feedId = null;
 
     /**
      * @var
      */
-    public $feedId;
-
-    /**
-     * @var
-     */
-    public $response;
+    public mixed $response = null;
 }

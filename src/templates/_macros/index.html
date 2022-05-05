@@ -1,5 +1,5 @@
 {% macro checkbox(config) %}
-    {%- spaceless %}
+    {%- apply spaceless %}
 
     {% set value = (config.value is defined ? config.value : 1) %}
     {% set id = (config.id is defined and config.id ? config.id : 'checkbox' ~ random()) %}
@@ -15,5 +15,5 @@
         <label for="{{ id }}">{{ label|raw }}</label>
     </div>
 
-    {% endspaceless -%}
+    {% endapply -%}
 {% endmacro %}

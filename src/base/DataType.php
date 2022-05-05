@@ -19,16 +19,16 @@ abstract class DataType extends Component
     /**
      * @return mixed
      */
-    public function getName()
+    public function getName(): string
     {
         /** @phpstan-ignore-next-line */
         return static::$name;
     }
 
     /**
-     * @return false|string
+     * @return string
      */
-    public function getClass()
+    public function getClass(): string
     {
         return get_class($this);
     }
@@ -37,7 +37,7 @@ abstract class DataType extends Component
      * @param $array
      * @param $feed
      */
-    public function setupPaginationUrl($array, $feed)
+    public function setupPaginationUrl($array, $feed): void
     {
         if (!$feed->paginationNode) {
             return;

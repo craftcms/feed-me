@@ -44,19 +44,19 @@
                             </span>
                         </th>
 
-                        <td>{{ feed.dataType.name ?? 'Unknown datatype' }}</td>
+                        <td>{{ feed.getDataType().name ?? 'Unknown datatype' }}</td>
 
                         <td>
-                            {% if feed.element %}
-                                {{ feed.element.name }}
+                            {% if feed.getElement() %}
+                                {{ feed.getElement().name }}
                             {% else %}
                                 <span class="error">{{ feed.elementType }}</span>
                             {% endif %}
                         </td>
 
                         <td>
-                            {% if feed.element %}
-                                {% include feed.element.columnTemplate ignore missing with { elementType: feed.elementType } %}
+                            {% if feed.getElement() %}
+                                {% include feed.getElement().columnTemplate ignore missing with { elementType: feed.elementType } %}
                             {% else %}
                                 <span class="error">{{ 'Element group not found'|t('feed-me') }}</span>
                             {% endif %}

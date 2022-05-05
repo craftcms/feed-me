@@ -545,6 +545,7 @@ body.ltr .table-feed-me .thin.action {
 
 .feedme-fullpage img {
     width: 70px;
+    margin: auto;
 }
 
 .feedme-fullpage .buttons {
@@ -605,6 +606,8 @@ body.feedme-message .feedme-fullpage {
 
 .feedme-welcome .plugin-icon-welcome {
     margin: 20px 0 30px;
+    display: flex;
+    align-items: center;
 
     svg {
         width: 120px;
@@ -628,5 +631,3 @@ body.feedme-message .feedme-fullpage {
 .feedme-welcome .btn .fa {
     margin-left: 5px;
 }
-
-

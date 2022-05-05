@@ -12,76 +12,76 @@ interface ElementInterface extends ComponentInterface
     /**
      * @return string
      */
-    public function getElementClass();
+    public function getElementClass(): string;
 
     /**
      * @return mixed
      */
-    public function getGroupsTemplate();
+    public function getGroupsTemplate(): string;
 
     /**
      * @return mixed
      */
-    public function getColumnTemplate();
+    public function getColumnTemplate(): string;
 
     /**
      * @return mixed
      */
-    public function getMappingTemplate();
+    public function getMappingTemplate(): string;
 
     /**
      * @return mixed
      */
-    public function getGroups();
+    public function getGroups(): array;
 
     /**
      * @param $settings
      * @param array $params
      * @return mixed
      */
-    public function getQuery($settings, $params = []);
+    public function getQuery($settings, array $params = []): mixed;
 
     /**
      * @param $settings
      * @return mixed
      */
-    public function setModel($settings);
+    public function setModel($settings): \craft\base\ElementInterface;
 
     /**
      * @param $data
      * @param $settings
      * @return mixed
      */
-    public function matchExistingElement($data, $settings);
+    public function matchExistingElement($data, $settings): mixed;
 
     /**
      * @param $elementIds
      * @return mixed
      */
-    public function delete($elementIds);
+    public function delete($elementIds): mixed;
 
     /**
      * @param $elementIds
      * @return mixed
      */
-    public function disable($elementIds);
+    public function disable($elementIds): bool;
 
     /**
      * @var int[] $elementIds
      */
-    public function disableForSite($elementIds);
+    public function disableForSite(array $elementIds): bool;
 
     /**
      * @param $data
      * @param $settings
      * @return mixed
      */
-    public function save($data, $settings);
+    public function save($data, $settings): mixed;
 
     /**
      * @param $data
      * @param $settings
-     * @return mixed
+     * @return void
      */
-    public function afterSave($data, $settings);
+    public function afterSave($data, $settings): void;
 }

@@ -10,7 +10,7 @@ class Atom extends Xml
     /**
      * @var string
      */
-    public static $name = 'ATOM';
+    public static string $name = 'ATOM';
 
     // Same as XML data type.
 }

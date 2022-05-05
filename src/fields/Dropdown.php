@@ -5,6 +5,7 @@ namespace craft\feedme\fields;
 use Cake\Utility\Hash;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
+use craft\fields\Dropdown as DropdownField;
 
 /**
  *
@@ -18,12 +19,12 @@ class Dropdown extends Field implements FieldInterface
     /**
      * @var string
      */
-    public static $name = 'Dropdown';
+    public static string $name = 'Dropdown';
 
     /**
      * @var string
      */
-    public static $class = 'craft\fields\Dropdown';
+    public static string $class = DropdownField::class;
 
 
     // Templates
@@ -32,7 +33,7 @@ class Dropdown extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function getMappingTemplate()
+    public function getMappingTemplate(): string
     {
         return 'feed-me/_includes/fields/option-select';
     }
@@ -43,7 +44,7 @@ class Dropdown extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function parseField()
+    public function parseField(): mixed
     {
         $value = $this->fetchValue();
 
@@ -62,7 +63,7 @@ class Dropdown extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function fetchValue()
+    public function fetchValue(): mixed
     {
         return (string) parent::fetchValue();
     }

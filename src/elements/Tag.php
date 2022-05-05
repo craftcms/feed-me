@@ -4,6 +4,7 @@ namespace craft\feedme\elements;
 
 use Cake\Utility\Hash;
 use Craft;
+use craft\base\ElementInterface;
 use craft\elements\Tag as TagElement;
 use craft\feedme\base\Element;
 
@@ -23,13 +24,12 @@ class Tag extends Element
     /**
      * @var string
      */
-    public static $name = 'Tag';
+    public static string $name = 'Tag';
 
     /**
      * @var string
      */
-    public static $class = 'craft\elements\Tag';
-
+    public static string $class = TagElement::class;
 
     // Templates
     // =========================================================================
@@ -37,7 +37,7 @@ class Tag extends Element
     /**
      * @inheritDoc
      */
-    public function getGroupsTemplate()
+    public function getGroupsTemplate(): string
     {
         return 'feed-me/_includes/elements/tag/groups';
     }
@@ -45,7 +45,7 @@ class Tag extends Element
     /**
      * @inheritDoc
      */
-    public function getColumnTemplate()
+    public function getColumnTemplate(): string
     {
         return 'feed-me/_includes/elements/tag/column';
     }
@@ -53,7 +53,7 @@ class Tag extends Element
     /**
      * @inheritDoc
      */
-    public function getMappingTemplate()
+    public function getMappingTemplate(): string
     {
         return 'feed-me/_includes/elements/tag/map';
     }
@@ -64,7 +64,7 @@ class Tag extends Element
     /**
      * @inheritDoc
      */
-    public function getGroups()
+    public function getGroups(): array
     {
         return Craft::$app->tags->getAllTagGroups();
     }
@@ -72,10 +72,10 @@ class Tag extends Element
     /**
      * @inheritDoc
      */
-    public function getQuery($settings, $params = [])
+    public function getQuery($settings, array $params = []): mixed
     {
         $query = TagElement::find()
-            ->anyStatus()
+            ->status(null)
             ->groupId($settings['elementGroup'][TagElement::class])
             ->siteId(Hash::get($settings, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id);
         Craft::configure($query, $params);
@@ -85,7 +85,7 @@ class Tag extends Element
     /**
      * @inheritDoc
      */
-    public function setModel($settings)
+    public function setModel($settings): ElementInterface
     {
         $this->element = new TagElement();
         $this->element->groupId = $settings['elementGroup'][TagElement::class];

@@ -12,10 +12,10 @@ interface FieldInterface extends ComponentInterface
     /**
      * @return mixed
      */
-    public function getMappingTemplate();
+    public function getMappingTemplate(): string;
 
     /**
      * @return mixed
      */
-    public function parseField();
+    public function parseField(): mixed;
 }

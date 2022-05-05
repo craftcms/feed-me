@@ -85,7 +85,7 @@ class BaseHelper
      * @param $value
      * @return ColorData|string|null
      */
-    public static function parseColor($value)
+    public static function parseColor($value): string|ColorData|null
     {
         if ($value instanceof ColorData) {
             return $value;
@@ -112,7 +112,7 @@ class BaseHelper
      * @param $userAgent
      * @return string
      */
-    public static function getBrowserName($userAgent)
+    public static function getBrowserName($userAgent): string
     {
         if (strpos($userAgent, 'Opera') || strpos($userAgent, 'OPR/')) {
             return 'Opera';

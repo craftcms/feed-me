@@ -2,11 +2,14 @@
 
 namespace craft\feedme\services;
 
+use ArrayAccess;
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
 use craft\feedme\Plugin;
 use craft\helpers\DateTimeHelper;
+use DateTime;
+use GuzzleHttp\Client;
 
 class Service extends Component
 {
@@ -16,9 +19,9 @@ class Service extends Component
     /**
      * @param $key
      * @param null $feedId
-     * @return array|\ArrayAccess|mixed|null
+     * @return array|ArrayAccess|mixed|null
      */
-    public function getConfig($key, $feedId = null)
+    public function getConfig($key, $feedId = null): mixed
     {
         $settings = Plugin::$plugin->getSettings();
 
@@ -39,9 +42,9 @@ class Service extends Component
 
     /**
      * @param null $feedId
-     * @return \GuzzleHttp\Client
+     * @return Client
      */
-    public function createGuzzleClient($feedId = null)
+    public function createGuzzleClient($feedId = null): Client
     {
         $options = $this->getConfig('clientOptions', $feedId);
 
@@ -50,18 +53,19 @@ class Service extends Component
 
     /**
      * @param null $feedId
-     * @return array|\ArrayAccess|mixed|null
+     * @return array|ArrayAccess|mixed|null
      */
-    public function getRequestOptions($feedId = null)
+    public function getRequestOptions($feedId = null): mixed
     {
         return $this->getConfig('requestOptions', $feedId);
     }
 
     /**
      * @param $dateTime
-     * @return mixed
+     * @return DateTime|false
+     * @throws \Exception
      */
-    public function formatDateTime($dateTime)
+    public function formatDateTime($dateTime): DateTime|bool
     {
         return DateTimeHelper::toDateTime($dateTime);
     }

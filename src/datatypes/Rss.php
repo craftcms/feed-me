@@ -10,7 +10,7 @@ class Rss extends Xml
     /**
      * @var string
      */
-    public static $name = 'RSS';
+    public static string $name = 'RSS';
 
     // Same as XML data type.
 }

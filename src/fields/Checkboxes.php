@@ -5,6 +5,7 @@ namespace craft\feedme\fields;
 use Cake\Utility\Hash;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
+use craft\fields\Checkboxes as CheckboxesField;
 
 /**
  *
@@ -18,12 +19,12 @@ class Checkboxes extends Field implements FieldInterface
     /**
      * @var string
      */
-    public static $name = 'Checkboxes';
+    public static string $name = 'Checkboxes';
 
     /**
      * @var string
      */
-    public static $class = 'craft\fields\Checkboxes';
+    public static string $class = CheckboxesField::class;
 
     // Templates
     // =========================================================================
@@ -31,7 +32,7 @@ class Checkboxes extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function getMappingTemplate()
+    public function getMappingTemplate(): string
     {
         return 'feed-me/_includes/fields/option-select';
     }
@@ -42,7 +43,7 @@ class Checkboxes extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function parseField()
+    public function parseField(): mixed
     {
         $value = $this->fetchArrayValue();
 

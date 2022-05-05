@@ -5,6 +5,7 @@ namespace craft\feedme\fields;
 use Cake\Utility\Hash;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
+use craft\fields\RadioButtons as RadioButtonsField;
 
 /**
  *
@@ -18,12 +19,12 @@ class RadioButtons extends Field implements FieldInterface
     /**
      * @var string
      */
-    public static $name = 'RadioButtons';
+    public static string $name = 'RadioButtons';
 
     /**
      * @var string
      */
-    public static $class = 'craft\fields\RadioButtons';
+    public static string $class = RadioButtonsField::class;
 
 
     // Templates
@@ -32,7 +33,7 @@ class RadioButtons extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function getMappingTemplate()
+    public function getMappingTemplate(): string
     {
         return 'feed-me/_includes/fields/option-select';
     }
@@ -44,7 +45,7 @@ class RadioButtons extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function parseField()
+    public function parseField(): mixed
     {
         $value = $this->fetchValue();
 

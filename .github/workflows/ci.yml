@@ -5,18 +5,19 @@ on:
     branches:
       - develop
       - main
+      - '5.0'
   pull_request:
 jobs:
   ecs:
     name: ECS
     uses: craftcms/.github/.github/workflows/ecs.yml@v1
     with:
-      php_version: '7.2'
+      php_version: '8.0'
   phpstan:
     name: PHPStan
     uses: craftcms/.github/.github/workflows/phpstan.yml@v1
     with:
-      php_version: '7.2'
+      php_version: '8.0'
   notify-slack:
     name: Notify Slack
     needs: [ ecs, phpstan ]

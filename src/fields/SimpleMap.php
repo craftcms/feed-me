@@ -6,6 +6,7 @@ use Cake\Utility\Hash;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\helpers\DataHelper;
+use craft\helpers\Json;
 use ether\simplemap\services\MapService;
 use ether\simplemap\SimpleMap as SimpleMapPlugin;
 
@@ -21,12 +22,12 @@ class SimpleMap extends Field implements FieldInterface
     /**
      * @var string
      */
-    public static $name = 'SimpleMap';
+    public static string $name = 'SimpleMap';
 
     /**
      * @var string
      */
-    public static $class = 'ether\simplemap\fields\MapField';
+    public static string $class = 'ether\simplemap\fields\MapField';
 
     // Templates
     // =========================================================================
@@ -34,7 +35,7 @@ class SimpleMap extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function getMappingTemplate()
+    public function getMappingTemplate(): string
     {
         return 'feed-me/_includes/fields/simple-map';
     }
@@ -45,7 +46,7 @@ class SimpleMap extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function parseField()
+    public function parseField(): mixed
     {
         $preppedData = [];
 
@@ -84,7 +85,7 @@ class SimpleMap extends Field implements FieldInterface
         }
 
         if (isset($preppedData['parts'])) {
-            $preppedData['parts'] = json_encode($preppedData['parts']);
+            $preppedData['parts'] = Json::encode($preppedData['parts']);
         }
 
         // Protect against sending an empty array
@@ -103,7 +104,7 @@ class SimpleMap extends Field implements FieldInterface
      * @param $lng
      * @return mixed|null
      */
-    private function _getAddressFromLatLng($lat, $lng)
+    private function _getAddressFromLatLng($lat, $lng): mixed
     {
         $apiKey = SimpleMapPlugin::getInstance()->getSettings()->geoToken;
 
@@ -120,7 +121,7 @@ class SimpleMap extends Field implements FieldInterface
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        $resp = json_decode(curl_exec($ch), true);
+        $resp = Json::decode(curl_exec($ch), true);
 
         if (empty($resp['results'])) {
             return null;

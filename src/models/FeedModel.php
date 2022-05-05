@@ -2,6 +2,7 @@
 
 namespace craft\feedme\models;
 
+use ArrayAccess;
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Model;
@@ -9,6 +10,7 @@ use craft\feedme\base\Element;
 use craft\feedme\base\ElementInterface;
 use craft\feedme\helpers\DuplicateHelper;
 use craft\feedme\Plugin;
+use DateTime;
 
 /**
  * Class FeedModel
@@ -24,125 +26,125 @@ class FeedModel extends Model
     // =========================================================================
 
     /**
-     * @var
+     * @var int|null
      */
-    public $id;
+    public ?int $id = null;
 
     /**
-     * @var
+     * @var string
      */
-    public $name;
+    public string $name = '';
 
     /**
-     * @var
+     * @var string|null
      */
-    public $feedUrl;
+    public ?string $feedUrl = null;
 
     /**
-     * @var
+     * @var string|null
      */
-    public $feedType;
+    public ?string $feedType = null;
 
     /**
-     * @var
+     * @var string|null
      */
-    public $primaryElement;
+    public ?string $primaryElement = null;
 
     /**
-     * @var
+     * @var string|null
      */
-    public $elementType;
+    public ?string $elementType = null;
 
     /**
-     * @var
+     * @var array|null
      */
-    public $elementGroup;
+    public ?array $elementGroup = null;
 
     /**
-     * @var
+     * @var int|null
      */
-    public $siteId;
+    public ?int $siteId = null;
 
     /**
-     * @var
+     * @var int|null
      */
-    public $sortOrder;
+    public ?int $sortOrder = null;
 
     /**
      * @var bool
      * @since 4.3.0
      */
-    public $singleton = false;
+    public ?bool $singleton = false;
 
     /**
-     * @var
+     * @var array|null
      */
-    public $duplicateHandle;
+    public ?array $duplicateHandle = null;
 
     /**
      * @var bool
      * @since 4.4.0
      */
-    public $updateSearchIndexes = true;
+    public ?bool $updateSearchIndexes = true;
+
+    /**
+     * @var string|null
+     */
+    public ?string $paginationNode = null;
 
     /**
      * @var
      */
-    public $paginationNode;
+    public mixed $fieldMapping = null;
 
     /**
      * @var
      */
-    public $fieldMapping;
+    public mixed $fieldUnique = null;
 
     /**
-     * @var
+     * @var string|null
      */
-    public $fieldUnique;
+    public ?string $passkey = null;
 
     /**
-     * @var
+     * @var bool|null
      */
-    public $passkey;
+    public ?bool $backup = null;
 
     /**
-     * @var
+     * @var DateTime|null
      */
-    public $backup;
+    public ?DateTime $dateCreated = null;
 
     /**
-     * @var
+     * @var DateTime|null
      */
-    public $dateCreated;
+    public ?DateTime $dateUpdated = null;
 
     /**
-     * @var
+     * @var string|null
      */
-    public $dateUpdated;
-
-    /**
-     * @var
-     */
-    public $uid;
+    public ?string $uid = null;
 
     // Model-only properties
 
     /**
-     * @var
+     * @var bool|null
      */
-    public $debug;
+    public ?bool $debug = null;
 
     /**
-     * @var
+     * @var string|null
      */
-    public $paginationUrl;
+    public ?string $paginationUrl = null;
 
 
     // Public Methods
     // =========================================================================
 
     /**
-     * @return mixed
+     * @return string
      */
     public function __toString()
     {
@@ -152,7 +154,7 @@ class FeedModel extends Model
     /**
      * @return string
      */
-    public function getDuplicateHandleFriendly()
+    public function getDuplicateHandleFriendly(): string
     {
         return DuplicateHelper::getFriendly($this->duplicateHandle);
     }
@@ -160,15 +162,15 @@ class FeedModel extends Model
     /**
      * @return mixed|null
      */
-    public function getDataType()
+    public function getDataType(): mixed
     {
         return Plugin::$plugin->data->getRegisteredDataType($this->feedType);
     }
 
     /**
-     * @return ElementInterface|null
+     * @return ElementInterface|Element|null
      */
-    public function getElement()
+    public function getElement(): ElementInterface|Element|null
     {
         $element = Plugin::$plugin->elements->getRegisteredElement($this->elementType);
 
@@ -182,9 +184,9 @@ class FeedModel extends Model
 
     /**
      * @param bool $usePrimaryElement
-     * @return array|\ArrayAccess|mixed|null
+     * @return array|ArrayAccess|mixed|null
      */
-    public function getFeedData($usePrimaryElement = true)
+    public function getFeedData(bool $usePrimaryElement = true): mixed
     {
         $feedDataResponse = Plugin::$plugin->data->getFeedData($this, $usePrimaryElement);
 
@@ -195,7 +197,7 @@ class FeedModel extends Model
      * @param false $usePrimaryElement
      * @return mixed
      */
-    public function getFeedNodes($usePrimaryElement = false)
+    public function getFeedNodes(bool $usePrimaryElement = false): mixed
     {
         $feedDataResponse = Plugin::$plugin->data->getFeedData($this, $usePrimaryElement);
 
@@ -210,7 +212,7 @@ class FeedModel extends Model
      * @param bool $usePrimaryElement
      * @return mixed
      */
-    public function getFeedMapping($usePrimaryElement = true)
+    public function getFeedMapping(bool $usePrimaryElement = true): mixed
     {
         $feedDataResponse = Plugin::$plugin->data->getFeedData($this, $usePrimaryElement);
 
@@ -224,7 +226,7 @@ class FeedModel extends Model
     /**
      * @return bool
      */
-    public function getNextPagination()
+    public function getNextPagination(): bool
     {
         if (!$this->paginationUrl || !filter_var($this->paginationUrl, FILTER_VALIDATE_URL)) {
             return false;
@@ -237,9 +239,10 @@ class FeedModel extends Model
     }
 
     /**
-     * @var
+     *
+     * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['name', 'feedUrl', 'feedType', 'elementType', 'duplicateHandle', 'passkey'], 'required'],

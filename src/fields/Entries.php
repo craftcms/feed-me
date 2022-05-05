@@ -6,10 +6,15 @@ use Cake\Utility\Hash;
 use Craft;
 use craft\base\Element as BaseElement;
 use craft\elements\Entry as EntryElement;
+use craft\errors\ElementNotFoundException;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\Plugin;
+use craft\fields\Entries as EntriesField;
 use craft\helpers\Db;
+use craft\helpers\Json;
+use Throwable;
+use yii\base\Exception;
 
 /**
  *
@@ -23,17 +28,17 @@ class Entries extends Field implements FieldInterface
     /**
      * @var string
      */
-    public static $name = 'Entries';
+    public static string $name = 'Entries';
 
     /**
      * @var string
      */
-    public static $class = 'craft\fields\Entries';
+    public static string $class = EntriesField::class;
 
     /**
      * @var string
      */
-    public static $elementType = 'craft\elements\Entry';
+    public static string $elementType = EntryElement::class;
 
     // Templates
     // =========================================================================
@@ -41,7 +46,7 @@ class Entries extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function getMappingTemplate()
+    public function getMappingTemplate(): string
     {
         return 'feed-me/_includes/fields/entries';
     }
@@ -52,7 +57,7 @@ class Entries extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function parseField()
+    public function parseField(): mixed
     {
         $value = $this->fetchArrayValue();
 
@@ -71,11 +76,11 @@ class Entries extends Field implements FieldInterface
             foreach ($sources as $source) {
                 // When singles is selected as the only option to search in, it doesn't contain any ids...
                 if ($source == 'singles') {
-                    foreach (Craft::$app->sections->getAllSections() as $section) {
+                    foreach (Craft::$app->getSections()->getAllSections() as $section) {
                         $sectionIds[] = ($section->type == 'single') ? $section->id : '';
                     }
                 } else {
-                    list(, $uid) = explode(':', $source);
+                    [, $uid] = explode(':', $source);
                     $sectionIds[] = Db::idByUid('{{%sections}}', $uid);
                 }
             }
@@ -125,20 +130,19 @@ class Entries extends Field implements FieldInterface
             }
 
             $criteria['status'] = null;
-            $criteria['enabledForSite'] = false;
             $criteria['sectionId'] = $sectionIds;
             $criteria['limit'] = $limit;
             $criteria['where'] = ['=', $columnName, $dataValue];
 
             Craft::configure($query, $criteria);
 
-            Plugin::info('Search for existing entry with query `{i}`', ['i' => json_encode($criteria)]);
+            Plugin::info('Search for existing entry with query `{i}`', ['i' => Json::encode($criteria)]);
 
             $ids = $query->ids();
 
             $foundElements = array_merge($foundElements, $ids);
 
-            Plugin::info('Found `{i}` existing entries: `{j}`', ['i' => count($foundElements), 'j' => json_encode($foundElements)]);
+            Plugin::info('Found `{i}` existing entries: `{j}`', ['i' => count($foundElements), 'j' => Json::encode($foundElements)]);
 
             // Check if we should create the element. But only if title is provided (for the moment)
             if ((count($ids) == 0) && $create && $match === 'title') {
@@ -173,22 +177,22 @@ class Entries extends Field implements FieldInterface
     /**
      * @param $dataValue
      * @return int|null
-     * @throws \Throwable
-     * @throws \craft\errors\ElementNotFoundException
-     * @throws \yii\base\Exception
+     * @throws Throwable
+     * @throws ElementNotFoundException
+     * @throws Exception
      */
-    private function _createElement($dataValue)
+    private function _createElement($dataValue): ?int
     {
         $sectionId = Hash::get($this->fieldInfo, 'options.group.sectionId');
         $typeId = Hash::get($this->fieldInfo, 'options.group.typeId');
 
         // Bit of backwards-compatibility here, if not explicitly set, grab the first globally
         if (!$sectionId) {
-            $sectionId = Craft::$app->sections->getAllSectionIds()[0];
+            $sectionId = Craft::$app->getSections()->getAllSectionIds()[0];
         }
 
         if (!$typeId) {
-            $typeId = Craft::$app->sections->getEntryTypesBySectionId($sectionId)[0]->id;
+            $typeId = Craft::$app->getSections()->getEntryTypesBySectionId($sectionId)[0]->id;
         }
 
         $element = new EntryElement();
@@ -197,7 +201,7 @@ class Entries extends Field implements FieldInterface
         $element->typeId = $typeId;
 
         $siteId = Hash::get($this->feed, 'siteId');
-        $section = Craft::$app->sections->getSectionById($element->sectionId);
+        $section = Craft::$app->getSections()->getSectionById($element->sectionId);
 
         if ($siteId) {
             $element->siteId = $siteId;
@@ -223,7 +227,7 @@ class Entries extends Field implements FieldInterface
         $element->setScenario(BaseElement::SCENARIO_ESSENTIALS);
 
         if (!Craft::$app->getElements()->saveElement($element, true, true, Hash::get($this->feed, 'updateSearchIndexes'))) {
-            Plugin::error('`{handle}` - Entry error: Could not create - `{e}`.', ['e' => json_encode($element->getErrors()), 'handle' => $this->field->handle]);
+            Plugin::error('`{handle}` - Entry error: Could not create - `{e}`.', ['e' => Json::encode($element->getErrors()), 'handle' => $this->field->handle]);
         } else {
             Plugin::info('`{handle}` - Entry `#{id}` added.', ['id' => $element->id, 'handle' => $this->field->handle]);
         }

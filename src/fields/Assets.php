@@ -11,8 +11,10 @@ use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\helpers\AssetHelper;
 use craft\feedme\Plugin;
+use craft\fields\Assets as AssetsField;
 use craft\helpers\Assets as AssetsHelper;
 use craft\helpers\Db;
+use craft\helpers\Json;
 use craft\helpers\UrlHelper;
 
 /**
@@ -27,17 +29,17 @@ class Assets extends Field implements FieldInterface
     /**
      * @var string
      */
-    public static $name = 'Assets';
+    public static string $name = 'Assets';
 
     /**
      * @var string
      */
-    public static $class = 'craft\fields\Assets';
+    public static string $class = AssetsField::class;
 
     /**
      * @var string
      */
-    public static $elementType = 'craft\elements\Asset';
+    public static string $elementType = AssetElement::class;
 
 
     // Templates
@@ -46,7 +48,7 @@ class Assets extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function getMappingTemplate()
+    public function getMappingTemplate(): string
     {
         return 'feed-me/_includes/fields/assets';
     }
@@ -57,7 +59,7 @@ class Assets extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function parseField()
+    public function parseField(): mixed
     {
         $value = $this->fetchArrayValue();
 
@@ -77,7 +79,7 @@ class Assets extends Field implements FieldInterface
         if (!$folderIds) {
             if (is_array($folders)) {
                 foreach ($folders as $folder) {
-                    list(, $uid) = explode(':', $folder);
+                    [, $uid] = explode(':', $folder);
                     $volumeId = Db::idByUid(Table::VOLUMES, $uid);
 
                     // Get all folders for this volume
@@ -139,7 +141,7 @@ class Assets extends Field implements FieldInterface
                 }
             }
 
-            // Check if the URL is actually an base64 encoded file.
+            // Check if the URL is actually a base64 encoded file.
             $matches = [];
             preg_match('/^data:\w+\/\w+;base64,/i', $dataValue, $matches);
 
@@ -158,12 +160,12 @@ class Assets extends Field implements FieldInterface
 
             Craft::configure($query, $criteria);
 
-            Plugin::info('Search for existing asset with query `{i}`', ['i' => json_encode($criteria)]);
+            Plugin::info('Search for existing asset with query `{i}`', ['i' => Json::encode($criteria)]);
 
             $ids = $query->ids();
             $foundElements = array_merge($foundElements, $ids);
 
-            Plugin::info('Found `{i}` existing assets: `{j}`', ['i' => count($foundElements), 'j' => json_encode($foundElements)]);
+            Plugin::info('Found `{i}` existing assets: `{j}`', ['i' => count($foundElements), 'j' => Json::encode($foundElements)]);
 
             // Are we uploading, and did we find existing assets? No need to process
             if ($upload && $ids && $conflict === AssetElement::SCENARIO_INDEX) {

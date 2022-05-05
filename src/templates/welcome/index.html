@@ -7,7 +7,11 @@
 {% block content %}
     <div class="feedme-welcome">
         <div class="plugin-icon-welcome">
-            {{ svg(craft.app.plugins.getPluginIconSvg('feed-me')) }}
+            {{ svg(craft.app.plugins.getPluginIconSvg('feed-me'))|attr({
+                style: {
+                    display: 'inline-block',
+                },
+            }) }}
         </div>
 
         <h1>{{ "Thanks for using {name}!"|t('feed-me', { name: craft.feedme.getPluginName() }) }}</h1>

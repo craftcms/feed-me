@@ -13,50 +13,51 @@ class GetHelp extends Model
     /**
      * @var
      */
-    public $fromEmail;
+    public mixed $fromEmail = null;
 
     /**
      * @var
      */
-    public $feedIssue;
+    public mixed $feedIssue = null;
 
     /**
      * @var
      */
-    public $message;
+    public mixed $message = null;
 
     /**
      * @var bool
      */
-    public $attachLogs = false;
+    public bool $attachLogs = false;
 
     /**
      * @var bool
      */
-    public $attachSettings = false;
+    public bool $attachSettings = false;
 
     /**
      * @var bool
      */
-    public $attachFeed = false;
+    public bool $attachFeed = false;
 
     /**
      * @var bool
      */
-    public $attachFields = false;
+    public bool $attachFields = false;
 
     /**
      * @var
      */
-    public $attachment;
+    public mixed $attachment = null;
 
     // Public Methods
     // =========================================================================
 
     /**
-     * @var
+     *
+     * @return array
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'fromEmail' => Craft::t('feed-me', 'Your Email'),
@@ -64,9 +65,10 @@ class GetHelp extends Model
     }
 
     /**
-     * @var
+     *
+     * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['fromEmail', 'feedIssue', 'message'], 'required'],

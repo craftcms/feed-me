@@ -6,6 +6,7 @@ use Cake\Utility\Hash;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\Plugin;
+use verbb\supertable\fields\SuperTableField;
 
 /**
  *
@@ -19,12 +20,12 @@ class SuperTable extends Field implements FieldInterface
     /**
      * @var string
      */
-    public static $name = 'SuperTable';
+    public static string $name = 'SuperTable';
 
     /**
      * @var string
      */
-    public static $class = 'verbb\supertable\fields\SuperTableField';
+    public static string $class = SuperTableField::class;
 
     // Templates
     // =========================================================================
@@ -32,7 +33,7 @@ class SuperTable extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function getMappingTemplate()
+    public function getMappingTemplate(): string
     {
         return 'feed-me/_includes/fields/super-table';
     }
@@ -43,7 +44,7 @@ class SuperTable extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function parseField()
+    public function parseField(): mixed
     {
         $preppedData = [];
         $fieldData = [];
@@ -53,7 +54,7 @@ class SuperTable extends Field implements FieldInterface
         $fields = Hash::get($this->fieldInfo, 'fields');
 
         if (!$blockTypeId) {
-            return;
+            return null;
         }
 
         foreach ($this->feedData as $nodePath => $value) {
@@ -132,7 +133,7 @@ class SuperTable extends Field implements FieldInterface
         $order = 0;
 
         // New, we've got a collection of prepared data, but its formatted a little rough, due to catering for
-        // sub-field data that could be arrays or single values. Lets build our Matrix-ready data
+        // sub-field data that could be arrays or single values. Let's build our Matrix-ready data
         foreach ($fieldData as $blockSubFieldHandle => $value) {
             $handles = explode('.', $blockSubFieldHandle);
             $blockIndex = 'new' . ($handles[0] + 1);
@@ -147,9 +148,7 @@ class SuperTable extends Field implements FieldInterface
             $order++;
         }
 
-        $preppedData = Hash::expand($preppedData);
-
-        return $preppedData;
+        return Hash::expand($preppedData);
     }
 
     // Private Methods
@@ -160,7 +159,7 @@ class SuperTable extends Field implements FieldInterface
      * @param $fields
      * @return array|null
      */
-    private function _getFieldMappingInfoForNodePath($nodePath, $fields)
+    private function _getFieldMappingInfoForNodePath($nodePath, $fields): ?array
     {
         $feedPath = preg_replace('/(\/\d+\/)/', '/', $nodePath);
         $feedPath = preg_replace('/^(\d+\/)|(\/\d+)/', '', $feedPath);
@@ -171,7 +170,7 @@ class SuperTable extends Field implements FieldInterface
             $nestedFieldNodes = Hash::extract($subFieldInfo, 'fields.{*}.node');
 
             if ($nestedFieldNodes) {
-                foreach ($nestedFieldNodes as $key => $nestedFieldNode) {
+                foreach ($nestedFieldNodes as $nestedFieldNode) {
                     if ($feedPath == $nestedFieldNode) {
                         return [
                             'subFieldHandle' => $subFieldHandle,
@@ -202,7 +201,7 @@ class SuperTable extends Field implements FieldInterface
      * @param $subFieldInfo
      * @return mixed
      */
-    private function _parseSubField($feedData, $subFieldHandle, $subFieldInfo)
+    private function _parseSubField($feedData, $subFieldHandle, $subFieldInfo): mixed
     {
         $subFieldClassHandle = Hash::get($subFieldInfo, 'field');
 

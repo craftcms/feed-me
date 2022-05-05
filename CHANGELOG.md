@@ -1,5 +1,16 @@
 # Release Notes for Feed Me 4.x
 
+## 5.0.0 - 2022-05-03
+
+### Added
+- Added Craft 4 compatibility.
+
+### Changed
+- The `data`, `elements`, `feeds`, `fields`, `logs`, `process`, and `service` components can now be configured via `craft\services\Plugins::$pluginConfigs`.
+
+### Removed
+- Removed built-in support for the Verbb Comments plugin, which provides its own Feed Me driver.
+
 ## 4.5.0 - 2022-04-21
 
 ### Changed

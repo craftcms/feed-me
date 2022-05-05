@@ -6,10 +6,15 @@ use Cake\Utility\Hash;
 use Craft;
 use craft\base\Element as BaseElement;
 use craft\elements\Tag as TagElement;
+use craft\errors\ElementNotFoundException;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\Plugin;
+use craft\fields\Tags as TagsField;
 use craft\helpers\Db;
+use craft\helpers\Json;
+use Throwable;
+use yii\base\Exception;
 
 /**
  *
@@ -23,17 +28,17 @@ class Tags extends Field implements FieldInterface
     /**
      * @var string
      */
-    public static $name = 'Tags';
+    public static string $name = 'Tags';
 
     /**
      * @var string
      */
-    public static $class = 'craft\fields\Tags';
+    public static string $class = TagsField::class;
 
     /**
      * @var string
      */
-    public static $elementType = 'craft\elements\Tag';
+    public static string $elementType = TagElement::class;
 
 
     // Templates
@@ -42,7 +47,7 @@ class Tags extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function getMappingTemplate()
+    public function getMappingTemplate(): string
     {
         return 'feed-me/_includes/fields/tags';
     }
@@ -53,7 +58,7 @@ class Tags extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function parseField()
+    public function parseField(): mixed
     {
         $value = $this->fetchArrayValue();
 
@@ -67,7 +72,7 @@ class Tags extends Field implements FieldInterface
         $node = Hash::get($this->fieldInfo, 'node');
 
         // Get tag group id
-        list(, $groupUid) = explode(':', $source);
+        [, $groupUid] = explode(':', $source);
         $groupId = Db::idByUid('{{%taggroups}}', $groupUid);
 
         $foundElements = [];
@@ -118,13 +123,13 @@ class Tags extends Field implements FieldInterface
 
             Craft::configure($query, $criteria);
 
-            Plugin::info('Search for existing tag with query `{i}`', ['i' => json_encode($criteria)]);
+            Plugin::info('Search for existing tag with query `{i}`', ['i' => Json::encode($criteria)]);
 
             $ids = $query->ids();
 
             $foundElements = array_merge($foundElements, $ids);
 
-            Plugin::info('Found `{i}` existing tags: `{j}`', ['i' => count($foundElements), 'j' => json_encode($foundElements)]);
+            Plugin::info('Found `{i}` existing tags: `{j}`', ['i' => count($foundElements), 'j' => Json::encode($foundElements)]);
 
             // Check if we should create the element. But only if title is provided (for the moment)
             if ((count($ids) == 0) && $create && $match === 'title') {
@@ -160,11 +165,11 @@ class Tags extends Field implements FieldInterface
      * @param $dataValue
      * @param $groupId
      * @return int|null
-     * @throws \Throwable
-     * @throws \craft\errors\ElementNotFoundException
-     * @throws \yii\base\Exception
+     * @throws Throwable
+     * @throws ElementNotFoundException
+     * @throws Exception
      */
-    private function _createElement($dataValue, $groupId)
+    private function _createElement($dataValue, $groupId): ?int
     {
         $element = new TagElement();
         $element->title = $dataValue;
@@ -179,7 +184,7 @@ class Tags extends Field implements FieldInterface
         $element->setScenario(BaseElement::SCENARIO_ESSENTIALS);
 
         if (!Craft::$app->getElements()->saveElement($element, true, true, Hash::get($this->feed, 'updateSearchIndexes'))) {
-            Plugin::error('`{handle}` - Tag error: Could not create - `{e}`.', ['e' => json_encode($element->getErrors()), 'handle' => $this->field->handle]);
+            Plugin::error('`{handle}` - Tag error: Could not create - `{e}`.', ['e' => Json::encode($element->getErrors()), 'handle' => $this->field->handle]);
         } else {
             Plugin::info('`{handle}` - Tag `#{id}` added.', ['id' => $element->id, 'handle' => $this->field->handle]);
         }
