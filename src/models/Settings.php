@@ -64,9 +64,9 @@ class Settings extends Model
     public string $csvColumnDelimiter = ',';
 
     /**
-     * @var array
+     * @var bool
      */
-    public array $parseTwig = [];
+    public bool $parseTwig = false;
 
     /**
      * @var array
