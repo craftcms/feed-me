@@ -79,13 +79,13 @@ class User extends Element
      */
     public function getGroups(): array
     {
-        $result = false;
+        $result = [];
 
         // User are only allowed for Craft Pro
         if (Craft::$app->getEdition() == Craft::Pro) {
             $groups = Craft::$app->userGroups->getAllGroups();
 
-            $result = count($groups) ? $groups : true;
+            $result = count($groups) ? $groups : [];
         }
 
         return $result;
