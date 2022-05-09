@@ -3,7 +3,6 @@
 namespace craft\feedme\base;
 
 use craft\base\ComponentInterface;
-use craft\models\UserGroup;
 
 interface ElementInterface extends ComponentInterface
 {
