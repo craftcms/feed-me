@@ -1,6 +1,6 @@
 # Release Notes for Feed Me
 
-## Unreleased
+## 5.0.2 - 2022-05-11
 
 ### Fixed
 - Fixed various PHP errors. ([#1132](https://github.com/craftcms/feed-me/issues/1132), [#1133](https://github.com/craftcms/feed-me/issues/1133))
