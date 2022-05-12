@@ -30,7 +30,7 @@ interface ElementInterface extends ComponentInterface
     public function getMappingTemplate(): string;
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getGroups(): array;
 
