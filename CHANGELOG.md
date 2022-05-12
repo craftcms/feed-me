@@ -3,7 +3,7 @@
 ## Unreleased
 
 ### Fixed
-- Fix a PHP error ([#1132](https://github.com/craftcms/feed-me/issues/1132))
+- Fixed a PHP error that would occur when processing feed settings. ([#1132](https://github.com/craftcms/feed-me/issues/1132))
 
 ## 5.0.1 - 2022-05-05
 
