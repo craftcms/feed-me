@@ -1,6 +1,6 @@
 # Release Notes for Feed Me
 
-## Unreleased
+## 5.0.3 - 2022-05-17
 
 ### Fixed
 - Fixed CSV importing. ([#1137](https://github.com/craftcms/feed-me/pull/1137)) 
