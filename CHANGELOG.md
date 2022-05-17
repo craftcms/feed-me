@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Fixed
+- Fixed CSV importing. ([#1137](https://github.com/craftcms/feed-me/pull/1137)) 
+
 ### Changed
 - The `EVENT_AFTER_PARSE_FEED` event now passes in the feed’s ID. ([#1107](https://github.com/craftcms/feed-me/issues/1107))
 
