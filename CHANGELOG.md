@@ -1,5 +1,10 @@
 # Release Notes for Feed Me
 
+## Unreleased
+
+### Changed
+- The `EVENT_AFTER_PARSE_FEED` event now passes in the feed’s ID. ([#1107](https://github.com/craftcms/feed-me/issues/1107))
+
 ## 5.0.2 - 2022-05-11
 
 ### Fixed
