@@ -233,6 +233,7 @@ class DataTypes extends Component
         $event = new FeedDataEvent([
             'url' => $feedModel->feedUrl,
             'response' => $feedDataResponse,
+            'feedId' => $feedModel->id,
         ]);
 
         Event::trigger(static::class, self::EVENT_AFTER_PARSE_FEED, $event);
