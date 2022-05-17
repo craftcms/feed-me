@@ -119,7 +119,7 @@ class Csv extends DataType implements DataTypeInterface
      * @return array
      * @throws \League\Csv\Exception
      */
-    private function _getRows($reader): array
+    private function _getRows($reader): mixed
     {
         // We try to first fetch the first row in the CSV which we figure is the headers. But if it's not
         // it'll throw an error saying the first row of the CSV isn't valid, and not unique, etc.
@@ -145,14 +145,14 @@ class Csv extends DataType implements DataTypeInterface
         try {
             $reader->setHeaderOffset(0);
 
-            return (array)$stmt->process($reader);
+            return $stmt->process($reader);
         } catch (Throwable $e) {
         }
 
         // Support for league/csv v9 without a header
         $reader->setHeaderOffset(null);
 
-        return (array)$stmt->process($reader);
+        return $stmt->process($reader);
     }
 
     /**
