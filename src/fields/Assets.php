@@ -12,7 +12,6 @@ use craft\feedme\base\FieldInterface;
 use craft\feedme\helpers\AssetHelper;
 use craft\feedme\Plugin;
 use craft\fields\Assets as AssetsField;
-use craft\helpers\Assets as AssetsHelper;
 use craft\helpers\Db;
 use craft\helpers\Json;
 use craft\helpers\UrlHelper;
