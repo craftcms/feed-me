@@ -1,6 +1,6 @@
 # Release Notes for Feed Me
 
-## Unreleased
+## 5.0.4 - 2022-05-24
 
 ### Fixed
 - Fixed a PHP error that could occur when importing a base64-encoded asset.
