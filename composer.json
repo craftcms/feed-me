@@ -2,7 +2,7 @@
     "name": "craftcms/feed-me",
     "description": "Import content from XML, RSS, CSV or JSON feeds into entries, categories, Craft Commerce products, and more.",
     "type": "craft-plugin",
-    "version": "4.5.2",
+    "version": "4.5.3",
     "keywords": [
         "craft",
         "cms",
