@@ -11,8 +11,8 @@ use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\helpers\AssetHelper;
 use craft\feedme\Plugin;
-use craft\helpers\Assets as AssetsHelper;
 use craft\helpers\Db;
+use craft\helpers\Json;
 use craft\helpers\UrlHelper;
 
 /**
@@ -128,48 +128,43 @@ class Assets extends Field implements FieldInterface
                 }
             }
 
-            // If we're uploading files, this will need to be an absolute URL. If it is, save until later.
-            // We also don't check for existing assets here, so break out instantly.
-            if ($upload && UrlHelper::isAbsoluteUrl($dataValue)) {
-                $urlsToUpload[$key] = $dataValue;
-
-                // If we're opting to use the already uploaded asset, we can check here
-                if ($conflict === AssetElement::SCENARIO_INDEX) {
-                    $dataValue = AssetHelper::getRemoteUrlFilename($dataValue);
-                }
-            }
-
-            // Check if the URL is actually an base64 encoded file.
-            $matches = [];
+            // Check if the URL is actually a base64 encoded file.
             preg_match('/^data:\w+\/\w+;base64,/i', $dataValue, $matches);
 
             if ($upload && count($matches) > 0) {
                 $base64ToUpload[$key] = $dataValue;
-            }
+            } else {
+                // If we're uploading files, this will need to be an absolute URL. If it is, save until later.
+                // We also don't check for existing assets here, so break out instantly.
+                if ($upload && UrlHelper::isAbsoluteUrl($dataValue)) {
+                    $urlsToUpload[$key] = $dataValue;
+                    $filename = AssetHelper::getRemoteUrlFilename($dataValue);
+                } else {
+                    $filename = basename($dataValue);
+                }
 
-            $filename = AssetsHelper::prepareAssetName($dataValue);
+                $criteria['status'] = null;
+                $criteria['folderId'] = $folderIds;
+                $criteria['kind'] = $settings['allowedKinds'];
+                $criteria['limit'] = $limit;
+                $criteria['filename'] = $filename;
+                $criteria['includeSubfolders'] = true;
 
-            $criteria['status'] = null;
-            $criteria['folderId'] = $folderIds;
-            $criteria['kind'] = $settings['allowedKinds'];
-            $criteria['limit'] = $limit;
-            $criteria['filename'] = $filename;
-            $criteria['includeSubfolders'] = true;
+                Craft::configure($query, $criteria);
 
-            Craft::configure($query, $criteria);
+                Plugin::info('Search for existing asset with query `{i}`', ['i' => Json::encode($criteria)]);
 
-            Plugin::info('Search for existing asset with query `{i}`', ['i' => json_encode($criteria)]);
+                $ids = $query->ids();
+                $foundElements = array_merge($foundElements, $ids);
 
-            $ids = $query->ids();
-            $foundElements = array_merge($foundElements, $ids);
+                Plugin::info('Found `{i}` existing assets: `{j}`', ['i' => count($foundElements), 'j' => Json::encode($foundElements)]);
 
-            Plugin::info('Found `{i}` existing assets: `{j}`', ['i' => count($foundElements), 'j' => json_encode($foundElements)]);
+                // Are we uploading, and did we find existing assets? No need to process
+                if ($upload && $ids && $conflict === AssetElement::SCENARIO_INDEX) {
+                    unset($urlsToUpload[$key]);
 
-            // Are we uploading, and did we find existing assets? No need to process
-            if ($upload && $ids && $conflict === AssetElement::SCENARIO_INDEX) {
-                unset($urlsToUpload[$key]);
-
-                Plugin::info('Skipping asset upload (already exists).');
+                    Plugin::info('Skipping asset upload (already exists).');
+                }
             }
         }
 

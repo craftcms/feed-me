@@ -1,5 +1,11 @@
 # Release Notes for Feed Me 4.x
 
+## Unreleased
+
+### Fixed
+- Fixed a PHP error that could occur when importing a base64-encoded asset.
+- Fixed a bug where asset file names were getting normalized before searching for an existing asset when the feed specified a file path. ([#847](https://github.com/craftcms/feed-me/issues/847))
+
 ## 4.5.2 - 2022-05-17
 
 ### Changed
