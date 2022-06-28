@@ -227,7 +227,7 @@ class AssetHelper
         // Create the new asset (even if we're setting it to replace)
         $asset = new AssetElement();
         $asset->tempFilePath = $tempFilePath;
-        $asset->filename = $filename;
+        $asset->setFilename($filename);
         $asset->newFolderId = $folder->id;
         $asset->volumeId = $folder->volumeId;
         $asset->avoidFilenameConflicts = true;
