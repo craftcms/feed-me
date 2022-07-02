@@ -1,5 +1,10 @@
 # Release Notes for Feed Me 4.x
 
+## Unreleased
+
+### Fixed
+- Fixed a PHP error that could occur when using the `--continue-on-error` flag on the `feed-me/feeds/queue` CLI command. 
+
 ## 4.5.3 - 2022-05-31
 
 ### Fixed
