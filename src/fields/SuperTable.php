@@ -182,7 +182,7 @@ class SuperTable extends Field implements FieldInterface
                 }
             }
 
-            if ($feedPath == $node || $node === 'usedefault') {
+            if ($feedPath == $node) {
                 return [
                     'subFieldHandle' => $subFieldHandle,
                     'subFieldInfo' => $subFieldInfo,
