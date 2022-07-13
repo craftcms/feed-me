@@ -155,7 +155,30 @@ class Matrix extends Field implements FieldInterface
             // $order++;
         }
 
-        return Hash::expand($preppedData);
+        $data = Hash::expand($preppedData);
+
+        // We have settled on a block type for each block, and now we can assign the default values to them
+        foreach ($data as $idx => $blockData) {
+            $blockHandle = Hash::get($blockData, 'type');
+            $blockInfo = $blocks[$blockHandle];
+            $fields = Hash::get($blockInfo, 'fields');
+            foreach ($fields as $subFieldHandle => $subFieldInfo) {
+                $node = Hash::get($subFieldInfo, 'node');
+                if (is_null($node)) {
+                    // Complex subfield; these do not have a default value
+                    continue;
+                }
+                $subFieldKey = $idx . '.fields.' . $subFieldHandle;
+                if (is_null(Hash::get($data, $subFieldKey))) {
+                    // Make the subfield deterministically use the default, as the original key lacks the block index
+                    // and can lead to unwanted behavior.
+                    $subFieldInfo['node'] = 'usedefault';
+                    $data = Hash::insert($data, $subFieldKey, $this->_parseSubField($this->feedData, $subFieldHandle, $subFieldInfo));
+                }
+            }
+        }
+
+        return $data;
     }
 
 
