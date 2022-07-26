@@ -1,5 +1,10 @@
 # Release Notes for Feed Me
 
+## Unreleased
+
+### Changed
+- The `EVENT_AFTER_PARSE_ATTRIBUTE` event now allows plugins to modify parsed values.
+
 ## 5.0.4 - 2022-05-24
 
 ### Fixed
