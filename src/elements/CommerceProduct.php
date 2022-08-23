@@ -12,6 +12,7 @@ use craft\commerce\Plugin as Commerce;
 use craft\db\Query;
 use craft\feedme\base\Element;
 use craft\feedme\events\FeedProcessEvent;
+use craft\feedme\events\RegisterFeedMeComplexFieldsEvent;
 use craft\feedme\helpers\BaseHelper;
 use craft\feedme\helpers\DataHelper;
 use craft\feedme\Plugin;
@@ -31,6 +32,11 @@ use yii\base\Event;
  */
 class CommerceProduct extends Element
 {
+    // Constants
+    // =========================================================================
+
+    public const EVENT_REGISTER_FEED_ME_COMPLEX_FIELDS = 'registerFeedMeComplexFields';
+
     // Properties
     // =========================================================================
 
@@ -124,7 +130,7 @@ class CommerceProduct extends Element
             ->typeId($settings['elementGroup'][ProductElement::class])
             ->siteId(Hash::get($settings, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id);
         Craft::configure($query, $params);
-        
+
         return $query;
     }
 
@@ -169,6 +175,23 @@ class CommerceProduct extends Element
         }
 
         return true;
+    }
+
+    /**
+     * @return array
+     */
+    public function getComplexFieldTypes(): array
+    {
+        $event = new RegisterFeedMeComplexFieldsEvent([
+            'complexFields' => [
+                'craft\fields\Matrix',
+                'craft\fields\Table'
+            ],
+        ]);
+
+        $this->trigger(self::EVENT_REGISTER_FEED_ME_COMPLEX_FIELDS, $event);
+
+        return $event->complexFields;
     }
 
 
@@ -317,9 +340,9 @@ class CommerceProduct extends Element
                     }
                 }
 
-                $isMatrixField = (Hash::get($fieldInfo, 'field') === 'craft\fields\Matrix');
+                $isComplexField = in_array(Hash::get($fieldInfo, 'field'), $this->getComplexFieldTypes());
 
-                if ($isMatrixField) {
+                if ($isComplexField) {
                     $complexFields[$variantIndex][$fieldHandle]['info'] = $fieldInfo;
                     $complexFields[$variantIndex][$fieldHandle]['data'][$nodePath] = $value;
                     continue;
