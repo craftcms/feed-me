@@ -24,7 +24,7 @@ class Linkit extends Field implements FieldInterface
     /**
      * @var string
      */
-    public static string $class = 'fruitstudios\linkit\fields\LinkitField';
+    public static string $class = 'presseddigital\linkit\fields\LinkitField';
 
 
     // Templates
