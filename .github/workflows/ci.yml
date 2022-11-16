@@ -19,7 +19,7 @@ jobs:
       craft_version: '4'
       jobs: '["ecs", "phpstan", "prettier"]'
       notify_slack: true
-      slack_subteam: <!subteam^S01CWPYH9D5>
+      slack_subteam: <!subteam^SGFL9NKNZ>
     secrets:
       token: ${{ secrets.GITHUB_TOKEN }}
       slack_webhook_url: ${{ secrets.SLACK_PLUGIN_WEBHOOK_URL }}
