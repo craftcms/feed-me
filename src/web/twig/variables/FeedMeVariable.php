@@ -233,7 +233,7 @@ class FeedMeVariable extends ServiceLocator
             return null;
         }
 
-        if (($fieldLayout = Craft::$app->getFields()->getLayoutById($source->fieldLayoutId)) === null) {
+        if (($fieldLayout = Craft::$app->getFields()->getLayoutById($source->fieldLayoutId)) !== null) {
             return $fieldLayout->getCustomFields();
         }
 
@@ -248,7 +248,7 @@ class FeedMeVariable extends ServiceLocator
             return null;
         }
 
-        if (($fieldLayout = Craft::$app->getFields()->getLayoutById($layoutId)) === null) {
+        if (($fieldLayout = Craft::$app->getFields()->getLayoutById($layoutId)) !== null) {
             return $fieldLayout->getCustomFields();
         }
 
