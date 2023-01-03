@@ -107,7 +107,10 @@ class CommerceProduct extends Element
      */
     public function getGroups(): array
     {
-        if (Commerce::getInstance()) {
+        // Fix for https://github.com/craftcms/feed-me/issues/1199
+        $user = Craft::$app->getUser()->getIdentity();
+
+        if (Commerce::getInstance() && $user) {
             return Commerce::getInstance()->getProductTypes()->getEditableProductTypes();
         }
 
