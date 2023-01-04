@@ -108,7 +108,14 @@ class CommerceProduct extends Element
     public function getGroups(): array
     {
         if (Commerce::getInstance()) {
-            return Commerce::getInstance()->getProductTypes()->getEditableProductTypes();
+            // Return all product types if it is a feedme direct url
+            if (Craft::$app->getRequest()->getParam('direct')) {
+                $productTypes =  Commerce::getInstance()->getProductTypes()->getAllProductTypes();
+            } else {
+                $productTypes =  Commerce::getInstance()->getProductTypes()->getEditableProductTypes();
+            }
+
+            return $productTypes;
         }
 
         return [];
