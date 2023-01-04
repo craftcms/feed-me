@@ -383,6 +383,9 @@ class Process extends Component
             }
 
             $enabledForSite[$element->siteId] = $attributeData['enabled'];
+
+            // Set the global status to true if it's enabled for *any* sites, or if already enabled.
+            $element->enabled = in_array(true, $enabledForSite) || $element->enabled;
             $element->setEnabledForSite($enabledForSite);
         }
 
