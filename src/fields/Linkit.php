@@ -24,7 +24,7 @@ class Linkit extends Field implements FieldInterface
     /**
      * @var string
      */
-    public static $class = 'fruitstudios\linkit\fields\LinkitField';
+    public static $class = 'presseddigital\linkit\fields\LinkitField';
 
 
     // Templates
@@ -60,9 +60,9 @@ class Linkit extends Field implements FieldInterface
 
         if ($preppedData) {
             // Handle Link Type
-            $preppedData['type'] = empty($preppedData['type'] ?? '') ? 'fruitstudios\linkit\models\Url' : $preppedData['type'];
+            $preppedData['type'] = empty($preppedData['type'] ?? '') ? 'presseddigital\linkit\models\Url' : $preppedData['type'];
             if (strpos($preppedData['type'], '\\') === false) {
-                $preppedData['type'] = 'fruitstudios\\linkit\\models\\' . ucfirst(strtolower(trim($preppedData['type'])));
+                $preppedData['type'] = 'presseddigital\\linkit\\models\\' . ucfirst(strtolower(trim($preppedData['type'])));
             }
 
             // Handle Link Target
