@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 4.5.4 - 2023-01-09
+
 ### Fixed
 - Fixed a PHP error that could occur when using the `--continue-on-error` flag on the `feed-me/feeds/queue` CLI command.
 - Fixed a bug where sites in a Site Group would all have their statuses updated when a feed was targeting a single site. ([#1208](https://github.com/craftcms/feed-me/issues/1208))
