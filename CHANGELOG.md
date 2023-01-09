@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 5.0.5 - 2023-01-09
+
 ### Fixed
 - Fixed a bug where `enabledForSite` was still being used in element selector modal criteria. ([#1126](https://github.com/craftcms/feed-me/issues/1126))
 - Fixed a bug where a user’s status wouldn’t be set to “Active” if the feed specified so. ([#1182](https://github.com/craftcms/feed-me/issues/1182))
