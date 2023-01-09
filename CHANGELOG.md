@@ -3,7 +3,11 @@
 ## Unreleased
 
 ### Fixed
-- Fixed a bug where `enabledForSite` was still being used in element selector modal criteria ([#1126](https://github.com/craftcms/feed-me/issues/1126))
+- Fixed a bug where `enabledForSite` was still being used in element selector modal criteria. ([#1126](https://github.com/craftcms/feed-me/issues/1126))
+- Fixed a bug where a user’s status wouldn’t be set to “Active” if the feed specified so. ([#1182](https://github.com/craftcms/feed-me/issues/1182))
+- Fixed a bug where sites in a Site Group would all have their statuses updated when a feed was targeting a single site. ([#1208](https://github.com/craftcms/feed-me/issues/1208))
+- Fixed importing using the LinkIt plugin. ([#1203](https://github.com/craftcms/feed-me/issues/1203))
+- Fixed a bug where some element custom fields would not display when setting up feed mappings. ([#1209](https://github.com/craftcms/feed-me/pull/1209))
 
 ## 5.0.4 - 2022-05-24
 
