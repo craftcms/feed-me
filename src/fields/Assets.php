@@ -205,5 +205,4 @@ class Assets extends Field implements FieldInterface
 
         return $foundElements;
     }
-
 }
