@@ -224,7 +224,7 @@ class DataHelper
                 $existingValue = $groups;
             }
 
-            if (self::_compareSimpleValues($fields, $key, $existingValue, $newValue)) {
+            if (self::_compareSimpleValues($attributes, $key, $existingValue, $newValue)) {
                 unset($trackedChanges[$key]);
                 continue;
             }
