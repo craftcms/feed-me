@@ -12,6 +12,7 @@ use craft\feedme\Plugin;
 use craft\helpers\Json;
 use Throwable;
 use yii\base\Exception;
+use yii\base\InvalidConfigException;
 
 /**
  *
@@ -134,7 +135,18 @@ abstract class Field extends Component
     // Protected Methods
     // =========================================================================
 
-    protected function populateFields($elementIds, $fieldType = 'custom')
+    /**
+     * Populate values on an element.
+     *
+     * @param array $elementIds Array of elementIds to populate.
+     * @param string $fieldType Type of field to populate, can be `custom` or `native`.
+     * @return void
+     * @throws ElementNotFoundException
+     * @throws Exception
+     * @throws Throwable
+     * @throws InvalidConfigException
+     */
+    protected function populateFields(array $elementIds, string $fieldType = 'custom'): void
     {
         $elementsService = Craft::$app->getElements();
         $key = $fieldType === 'custom' ? 'fields' : 'nativeFields';
