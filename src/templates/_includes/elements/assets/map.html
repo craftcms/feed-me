@@ -95,6 +95,18 @@
 
                     {% include template ignore missing with variables only %}
                 {% endfor %}
+
+                {% for layoutField in tab.getElements()|filter(e => e is instance of('craft\\fieldlayoutelements\\assets\\AltField')) %}
+                    {% set variables = {
+                        name: 'Alt Text',
+                        handle: 'alt',
+                        feed: feed,
+                        feedData: feedData,
+                        attribute: true,
+                    } %}
+
+                    {% include 'feed-me/_includes/fields/default' ignore missing with variables only %}
+                {% endfor %}
             </tbody>
         </table>
     {% endfor %}

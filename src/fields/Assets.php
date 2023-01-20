@@ -70,6 +70,7 @@ class Assets extends Field implements FieldInterface
         $upload = Hash::get($this->fieldInfo, 'options.upload');
         $conflict = Hash::get($this->fieldInfo, 'options.conflict');
         $fields = Hash::get($this->fieldInfo, 'fields');
+        $alt = Hash::get($this->fieldInfo, 'alt');
         $node = Hash::get($this->fieldInfo, 'node');
 
         // Get folder id's for connecting
@@ -187,7 +188,7 @@ class Assets extends Field implements FieldInterface
         }
 
         // Check for any sub-fields for the element
-        if ($fields) {
+        if ($fields || $alt) {
             $this->populateElementFields($foundElements);
         }
 

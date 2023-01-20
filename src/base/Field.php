@@ -10,6 +10,7 @@ use craft\errors\ElementNotFoundException;
 use craft\feedme\helpers\DataHelper;
 use craft\feedme\Plugin;
 use craft\helpers\Json;
+use Symfony\Component\VarDumper\Cloner\Data;
 use Throwable;
 use yii\base\Exception;
 
@@ -144,24 +145,37 @@ abstract class Field extends Component
     {
         $elementsService = Craft::$app->getElements();
         $fields = Hash::get($this->fieldInfo, 'fields');
+        $alt = Hash::get($this->fieldInfo, 'alt');
 
         $fieldData = [];
 
         foreach ($elementIds as $key => $elementId) {
-            foreach ($fields as $fieldHandle => $fieldInfo) {
-                $default = Hash::get($fieldInfo, 'default');
+            if ($fields) {
+                foreach ($fields as $fieldHandle => $fieldInfo) {
+                    $default = Hash::get($fieldInfo, 'default');
 
-                // Because we're dealing with an element which always has array content, we need to fetch our content
-                // in the same way, as it'll be parsed as an array, despite the actual values being likely a single value
-                // Even if it's an array of one size (importing one element), that's fine!
-                $fieldValue = DataHelper::fetchArrayValue($this->feedData, $fieldInfo);
+                    // Because we're dealing with an element which always has array content, we need to fetch our content
+                    // in the same way, as it'll be parsed as an array, despite the actual values being likely a single value
+                    // Even if it's an array of one size (importing one element), that's fine!
+                    $fieldValue = DataHelper::fetchArrayValue($this->feedData, $fieldInfo);
 
-                // Arrayed content doesn't provide defaults because it's unable to determine how many items it _should_ return
-                // This also checks if there was any data that corresponds on the same array index/level as our element
+                    // Arrayed content doesn't provide defaults because it's unable to determine how many items it _should_ return
+                    // This also checks if there was any data that corresponds on the same array index/level as our element
+                    $value = Hash::get($fieldValue, $key, $default);
+
+                    if ($value) {
+                        $fieldData[$elementId][$fieldHandle] = $value;
+                    }
+                }
+            }
+
+            if ($alt) {
+                $default = Hash::get($alt, 'default');
+                $fieldValue = DataHelper::fetchArrayValue($this->feedData, $alt);
                 $value = Hash::get($fieldValue, $key, $default);
 
                 if ($value) {
-                    $fieldData[$elementId][$fieldHandle] = $value;
+                    $fieldData[$elementId]['alt'] = $value;
                 }
             }
         }
@@ -169,6 +183,13 @@ abstract class Field extends Component
         // Now, for each element, we need to save the contents
         foreach ($fieldData as $elementId => $fieldContent) {
             $element = $elementsService->getElementById($elementId, null, Hash::get($this->feed, 'siteId'));
+
+            if ($alt = $fieldContent['alt'] ?? false) {
+                $element->setAttributes(['alt' => $alt]);
+
+                // Trying to set `alt` in `setFieldValues` will throw an error
+                unset($fieldContent['alt']);
+            }
 
             $element->setFieldValues($fieldContent);
 
