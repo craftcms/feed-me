@@ -190,7 +190,7 @@
             {% if parentPath is defined %}
                 {% set path = parentPath|merge([ 'fields', elementFieldHandle ]) %}
             {% elseif attribute %}
-                {% set path = [ handle, attribute ] %}
+                {% set path = [ handle, 'nativeFields', attribute ] %}
             {% else %}
                 {% set path = [ handle, 'fields', elementFieldHandle ] %}
             {% endif %}

@@ -136,6 +136,55 @@ abstract class Field extends Component
     // =========================================================================
 
     /**
+     * Save native field data on the elements.
+     *
+     * @param $elementIds
+     * @throws Throwable
+     * @throws ElementNotFoundException
+     * @throws Exception
+     */
+    protected function populateNativeFields($elementIds): void
+    {
+        $elementsService = Craft::$app->getElements();
+        $attributes = Hash::get($this->fieldInfo, 'nativeFields');
+
+        $attributeData = [];
+
+        foreach ($elementIds as $key => $elementId) {
+            foreach ($attributes as $handle => $fieldInfo) {
+                $default = Hash::get($fieldInfo, 'default');
+
+                $fieldValue = DataHelper::fetchArrayValue($this->feedData, $fieldInfo);
+                $value = Hash::get($fieldValue, $key, $default);
+
+                if ($value) {
+                    $attributeData[$elementId][$handle] = $value;
+                }
+            }
+        }
+
+        // Now, for each element, we need to save the contents
+        foreach ($attributeData as $elementId => $attributeValue) {
+            $element = $elementsService->getElementById($elementId, null, Hash::get($this->feed, 'siteId'));
+
+            $element->setAttributes($attributeValue);
+
+            Plugin::debug([
+                $this->fieldHandle => [
+                    $elementId => $attributeValue,
+                ],
+            ]);
+
+            if (!$elementsService->saveElement($element, true, true, Hash::get($this->feed, 'updateSearchIndexes'))) {
+                Plugin::error('`{handle}` - Unable to save sub-field: `{e}`.', ['e' => Json::encode($element->getErrors()), 'handle' => $this->fieldHandle]);
+            }
+
+            Plugin::info('`{handle}` - Processed {name} [`#{id}`]({url}) sub-fields with content: `{content}`.', ['name' => $element::displayName(), 'id' => $elementId, 'url' => $element->cpEditUrl, 'handle' => $this->fieldHandle, 'content' => Json::encode($attributeValue)]);
+        }
+    }
+
+
+    /**
      * @param $elementIds
      * @throws Throwable
      * @throws ElementNotFoundException
@@ -145,37 +194,24 @@ abstract class Field extends Component
     {
         $elementsService = Craft::$app->getElements();
         $fields = Hash::get($this->fieldInfo, 'fields');
-        $alt = Hash::get($this->fieldInfo, 'alt');
 
         $fieldData = [];
 
         foreach ($elementIds as $key => $elementId) {
-            if ($fields) {
-                foreach ($fields as $fieldHandle => $fieldInfo) {
-                    $default = Hash::get($fieldInfo, 'default');
+            foreach ($fields as $fieldHandle => $fieldInfo) {
+                $default = Hash::get($fieldInfo, 'default');
 
-                    // Because we're dealing with an element which always has array content, we need to fetch our content
-                    // in the same way, as it'll be parsed as an array, despite the actual values being likely a single value
-                    // Even if it's an array of one size (importing one element), that's fine!
-                    $fieldValue = DataHelper::fetchArrayValue($this->feedData, $fieldInfo);
+                // Because we're dealing with an element which always has array content, we need to fetch our content
+                // in the same way, as it'll be parsed as an array, despite the actual values being likely a single value
+                // Even if it's an array of one size (importing one element), that's fine!
+                $fieldValue = DataHelper::fetchArrayValue($this->feedData, $fieldInfo);
 
-                    // Arrayed content doesn't provide defaults because it's unable to determine how many items it _should_ return
-                    // This also checks if there was any data that corresponds on the same array index/level as our element
-                    $value = Hash::get($fieldValue, $key, $default);
-
-                    if ($value) {
-                        $fieldData[$elementId][$fieldHandle] = $value;
-                    }
-                }
-            }
-
-            if ($alt) {
-                $default = Hash::get($alt, 'default');
-                $fieldValue = DataHelper::fetchArrayValue($this->feedData, $alt);
+                // Arrayed content doesn't provide defaults because it's unable to determine how many items it _should_ return
+                // This also checks if there was any data that corresponds on the same array index/level as our element
                 $value = Hash::get($fieldValue, $key, $default);
 
                 if ($value) {
-                    $fieldData[$elementId]['alt'] = $value;
+                    $fieldData[$elementId][$fieldHandle] = $value;
                 }
             }
         }
