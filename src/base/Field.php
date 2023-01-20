@@ -134,65 +134,11 @@ abstract class Field extends Component
     // Protected Methods
     // =========================================================================
 
-    /**
-     * Save native field data on the elements.
-     *
-     * @param $elementIds
-     * @throws Throwable
-     * @throws ElementNotFoundException
-     * @throws Exception
-     */
-    protected function populateNativeFields($elementIds): void
+    protected function populateFields($elementIds, $fieldType = 'custom')
     {
         $elementsService = Craft::$app->getElements();
-        $attributes = Hash::get($this->fieldInfo, 'nativeFields');
-
-        $attributeData = [];
-
-        foreach ($elementIds as $key => $elementId) {
-            foreach ($attributes as $handle => $fieldInfo) {
-                $default = Hash::get($fieldInfo, 'default');
-
-                $fieldValue = DataHelper::fetchArrayValue($this->feedData, $fieldInfo);
-                $value = Hash::get($fieldValue, $key, $default);
-
-                if ($value) {
-                    $attributeData[$elementId][$handle] = $value;
-                }
-            }
-        }
-
-        // Now, for each element, we need to save the contents
-        foreach ($attributeData as $elementId => $attributeValue) {
-            $element = $elementsService->getElementById($elementId, null, Hash::get($this->feed, 'siteId'));
-
-            $element->setAttributes($attributeValue);
-
-            Plugin::debug([
-                $this->fieldHandle => [
-                    $elementId => $attributeValue,
-                ],
-            ]);
-
-            if (!$elementsService->saveElement($element, true, true, Hash::get($this->feed, 'updateSearchIndexes'))) {
-                Plugin::error('`{handle}` - Unable to save sub-field: `{e}`.', ['e' => Json::encode($element->getErrors()), 'handle' => $this->fieldHandle]);
-            }
-
-            Plugin::info('`{handle}` - Processed {name} [`#{id}`]({url}) sub-fields with content: `{content}`.', ['name' => $element::displayName(), 'id' => $elementId, 'url' => $element->cpEditUrl, 'handle' => $this->fieldHandle, 'content' => Json::encode($attributeValue)]);
-        }
-    }
-
-
-    /**
-     * @param $elementIds
-     * @throws Throwable
-     * @throws ElementNotFoundException
-     * @throws Exception
-     */
-    protected function populateElementFields($elementIds): void
-    {
-        $elementsService = Craft::$app->getElements();
-        $fields = Hash::get($this->fieldInfo, 'fields');
+        $key = $fieldType === 'custom' ? 'fields' : 'nativeFields';
+        $fields = Hash::get($this->fieldInfo, $key);
 
         $fieldData = [];
 
@@ -219,14 +165,11 @@ abstract class Field extends Component
         foreach ($fieldData as $elementId => $fieldContent) {
             $element = $elementsService->getElementById($elementId, null, Hash::get($this->feed, 'siteId'));
 
-            if ($alt = $fieldContent['alt'] ?? false) {
-                $element->setAttributes(['alt' => $alt]);
-
-                // Trying to set `alt` in `setFieldValues` will throw an error
-                unset($fieldContent['alt']);
+            if ($fieldType === 'native') {
+                $element->setAttributes($fieldContent);
+            } else {
+                $element->setFieldValues($fieldContent);
             }
-
-            $element->setFieldValues($fieldContent);
 
             Plugin::debug([
                 $this->fieldHandle => [
@@ -240,5 +183,30 @@ abstract class Field extends Component
 
             Plugin::info('`{handle}` - Processed {name} [`#{id}`]({url}) sub-fields with content: `{content}`.', ['name' => $element::displayName(), 'id' => $elementId, 'url' => $element->cpEditUrl, 'handle' => $this->fieldHandle, 'content' => Json::encode($fieldContent)]);
         }
+    }
+
+    /**
+     * Save native field data on the elements.
+     *
+     * @param $elementIds
+     * @throws Throwable
+     * @throws ElementNotFoundException
+     * @throws Exception
+     */
+    protected function populateNativeFields($elementIds): void
+    {
+        $this->populateFields($elementIds, 'native');
+    }
+
+
+    /**
+     * @param $elementIds
+     * @throws Throwable
+     * @throws ElementNotFoundException
+     * @throws Exception
+     */
+    protected function populateElementFields($elementIds): void
+    {
+        $this->populateFields($elementIds);
     }
 }
