@@ -1,6 +1,7 @@
 # Release Notes for Feed Me
 
 ## Unreleased
+- Fixed a bug where custom source in entry field was causing issues with the mapping screen. ([#1186](https://github.com/craftcms/feed-me/issues/1186))
 
 ## 5.0.5 - 2023-01-09
 
