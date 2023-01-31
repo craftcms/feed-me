@@ -127,6 +127,7 @@ class Feeds extends Component
         $record->paginationNode = $model->paginationNode;
         $record->passkey = $model->passkey;
         $record->backup = $model->backup;
+        $record->setEmptyValues = $model->setEmptyValues;
 
         if ($model->elementGroup) {
             $record->setAttribute('elementGroup', json_encode($model->elementGroup));
@@ -259,6 +260,7 @@ class Feeds extends Component
                 'fieldUnique',
                 'passkey',
                 'backup',
+                'setEmptyValues',
                 'dateCreated',
                 'dateUpdated',
                 'uid',

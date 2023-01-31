@@ -408,6 +408,7 @@ class FeedsController extends Controller
         $feed->paginationNode = $request->getBodyParam('paginationNode', $feed->paginationNode);
         $feed->passkey = $request->getBodyParam('passkey', $feed->passkey);
         $feed->backup = (bool)$request->getBodyParam('backup', $feed->backup);
+        $feed->setEmptyValues = (bool)$request->getBodyParam('setEmptyValues', $feed->setEmptyValues);
 
         // Don't overwrite mappings when saving from first screen
         if ($request->getBodyParam('fieldMapping')) {
