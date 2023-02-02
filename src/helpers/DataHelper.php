@@ -5,6 +5,7 @@ namespace craft\feedme\helpers;
 use Cake\Utility\Hash;
 use Craft;
 use craft\feedme\Plugin;
+use craft\fields\BaseRelationField;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Db;
 
@@ -50,6 +51,8 @@ class DataHelper
 
         $node = Hash::get($fieldInfo, 'node');
         $default = Hash::get($fieldInfo, 'default');
+        $fieldClass = Hash::get($fieldInfo, 'field');
+        $field = new $fieldClass;
 
         $dataDelimiter = Plugin::$plugin->service->getConfig('dataDelimiter');
 
@@ -77,7 +80,14 @@ class DataHelper
 
                     $value = array_merge($value, $delimitedValues);
                 } else {
-                    $value[] = $nodeValue;
+                    // special provision for when actual $nodeValue was empty,
+                    // so it was overwritten by the $default value that comes from a BaseRelationField
+                    // e.g. specifying a default asset to fall back on
+                    if (is_array($nodeValue) && $field instanceof BaseRelationField) {
+                        $value['elementIds'] = $nodeValue;
+                    } else {
+                        $value[] = $nodeValue;
+                    }
                 }
             }
         }

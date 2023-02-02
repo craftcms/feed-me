@@ -113,6 +113,12 @@ class Assets extends Field implements FieldInterface
                 $foundElements = $value;
                 break;
             }
+            // special provision for falling back on default BaseRelationField value
+            // https://github.com/craftcms/feed-me/issues/1195
+            if ($key === 'elementIds') {
+                $foundElements = $dataValue;
+                break;
+            }
 
             $query = AssetElement::find();
 

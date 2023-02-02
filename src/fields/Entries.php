@@ -89,7 +89,7 @@ class Entries extends Field implements FieldInterface
             return $foundElements;
         }
 
-        foreach ($value as $dataValue) {
+        foreach ($value as $key => $dataValue) {
             // Prevent empty or blank values (string or array), which match all elements
             if (empty($dataValue)) {
                 continue;
@@ -98,6 +98,12 @@ class Entries extends Field implements FieldInterface
             // If we're using the default value - skip, we've already got an id array
             if ($node === 'usedefault') {
                 $foundElements = $value;
+                break;
+            }
+            // special provision for falling back on default BaseRelationField value
+            // https://github.com/craftcms/feed-me/issues/1195
+            if ($key === 'elementIds') {
+                $foundElements = $dataValue;
                 break;
             }
 
