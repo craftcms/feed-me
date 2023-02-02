@@ -151,7 +151,7 @@ class DataHelper
             $value = $default;
         }
 
-        // If emptyStringReplace setting is enabled, send $value overwrite existing data
+        // If setEmptyValues is enabled allow overwriting existing data
         if ($value === "" && $feed['setEmptyValues']) {
             return $value;
         }

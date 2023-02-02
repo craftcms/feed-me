@@ -20,11 +20,6 @@ class Settings extends Model
     public $cache = 60;
 
     /**
-     * @var bool
-     */
-    public $emptyStringReplace = false;
-
-    /**
      * @var string
      */
     public $enabledTabs = '*';
