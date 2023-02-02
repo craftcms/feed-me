@@ -2,11 +2,14 @@
 
 namespace craft\feedme\helpers;
 
+use ArrayAccess;
 use Cake\Utility\Hash;
 use Craft;
 use craft\feedme\Plugin;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Db;
+use DateTime;
+use Throwable;
 
 class DataHelper
 {
@@ -16,7 +19,7 @@ class DataHelper
     /**
      * @param $feedData
      * @param $fieldInfo
-     * @return array|\ArrayAccess|mixed|string|null
+     * @return array|ArrayAccess|mixed|string|null
      */
     public static function fetchSimpleValue($feedData, $fieldInfo)
     {
@@ -42,7 +45,7 @@ class DataHelper
     /**
      * @param $feedData
      * @param $fieldInfo
-     * @return array|\ArrayAccess|mixed
+     * @return array|ArrayAccess|mixed
      */
     public static function fetchArrayValue($feedData, $fieldInfo)
     {
@@ -96,9 +99,10 @@ class DataHelper
     /**
      * @param $feedData
      * @param $fieldInfo
-     * @return array|\ArrayAccess|mixed|null
+     * @param array $feed
+     * @return array|ArrayAccess|mixed|null
      */
-    public static function fetchValue($feedData, $fieldInfo)
+    public static function fetchValue($feedData, $fieldInfo, array $feed)
     {
         $value = [];
 
@@ -148,7 +152,7 @@ class DataHelper
         }
 
         // If emptyStringReplace setting is enabled, send $value overwrite existing data
-        if ($value === "" && Plugin::$plugin->getSettings()->emptyStringReplace) {
+        if ($value === "" && $feed['setEmptyValues']) {
             return $value;
         }
 
@@ -173,7 +177,7 @@ class DataHelper
             // it won't be a field handle tag, causing the Twig Lexer to freak out. We ignore those errors
             try {
                 $value = Craft::$app->getView()->renderObjectTemplate($value, $element);
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
             }
         }
 
@@ -200,7 +204,7 @@ class DataHelper
             $existingValue = Hash::get($fields, $key);
 
             // If date value, make sure to cast it as a string to compare
-            if ($newValue instanceof \DateTime || DateTimeHelper::isIso8601($newValue)) {
+            if ($newValue instanceof DateTime || DateTimeHelper::isIso8601($newValue)) {
                 $newValue = Db::prepareDateForDb($newValue);
             }
 
