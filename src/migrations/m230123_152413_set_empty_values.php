@@ -2,7 +2,6 @@
 
 namespace craft\feedme\migrations;
 
-use Craft;
 use craft\db\Migration;
 
 /**
