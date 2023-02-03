@@ -98,7 +98,6 @@ class DataHelper
         }
 
         return $default;
-
     }
 
     /**
