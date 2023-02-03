@@ -45,6 +45,7 @@ class MultiSelect extends Field implements FieldInterface
     public function parseField()
     {
         $value = $this->fetchArrayValue();
+        $default = $this->fetchDefaultArrayValue();
 
         $preppedData = [];
 
@@ -57,7 +58,12 @@ class MultiSelect extends Field implements FieldInterface
                 continue;
             }
             foreach ($value as $dataValue) {
-                if ($dataValue === $option[$match]) {
+                if (!empty($dataValue) && $dataValue === $option[$match]) {
+                    $preppedData[] = $option['value'];
+                }
+                // special case for when mapping by label, but also using a default value
+                // which relies on $option['value']
+                if (empty($dataValue) && in_array($option['value'], $default)) {
                     $preppedData[] = $option['value'];
                 }
             }

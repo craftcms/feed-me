@@ -55,6 +55,7 @@ class Entries extends Field implements FieldInterface
     public function parseField()
     {
         $value = $this->fetchArrayValue();
+        $default = $this->fetchDefaultArrayValue();
 
         $sources = Hash::get($this->field, 'settings.sources');
         $limit = Hash::get($this->field, 'settings.limit');
@@ -89,9 +90,9 @@ class Entries extends Field implements FieldInterface
             return $foundElements;
         }
 
-        foreach ($value as $key => $dataValue) {
+        foreach ($value as $dataValue) {
             // Prevent empty or blank values (string or array), which match all elements
-            if (empty($dataValue)) {
+            if (empty($dataValue) && empty($default)) {
                 continue;
             }
 
@@ -100,10 +101,11 @@ class Entries extends Field implements FieldInterface
                 $foundElements = $value;
                 break;
             }
+
             // special provision for falling back on default BaseRelationField value
             // https://github.com/craftcms/feed-me/issues/1195
-            if ($key === 'elementIds') {
-                $foundElements = $dataValue;
+            if (empty($dataValue) && !empty($default)) {
+                $foundElements = $default;
                 break;
             }
 
