@@ -5,6 +5,7 @@ namespace craft\feedme\helpers;
 use ArrayAccess;
 use Cake\Utility\Hash;
 use Craft;
+use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Db;
@@ -99,11 +100,16 @@ class DataHelper
     /**
      * @param $feedData
      * @param $fieldInfo
-     * @param array $feed
+     * @param array|FeedModel $feed
      * @return array|ArrayAccess|mixed|null
      */
-    public static function fetchValue($feedData, $fieldInfo, array $feed)
+    public static function fetchValue($feedData, $fieldInfo, $feed)
     {
+        // $feed will be a FeedModel when calling `fetchValue` from an element
+        if ($feed instanceof FeedModel) {
+            $feed = $feed->toArray();
+        }
+
         $value = [];
 
         $node = Hash::get($fieldInfo, 'node');
