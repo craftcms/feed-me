@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Fixed
+- Fixed a bug where [direct feed](https://docs.craftcms.com/feed-me/v4/feature-tour/feed-overview.html#settings-pane) links in the control panel were malformed if [cpTrigger](https://craftcms.com/docs/4.x/config/general.html#cptrigger) was set to null. ([#1190](https://github.com/craftcms/feed-me/pull/1190))
+
 ## 5.0.5 - 2023-01-09
 
 ### Fixed
