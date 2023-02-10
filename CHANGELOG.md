@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Added 
+- Added a feed setting that allows feeds to specify if they'd like empty values to used to overwrite existing data. ([#1228](https://github.com/craftcms/feed-me/pull/1228), [#797](https://github.com/craftcms/feed-me/issues/797), [#723](https://github.com/craftcms/feed-me/issues/723), [#854](https://github.com/craftcms/feed-me/issues/854))
+
 ## 4.5.4 - 2023-01-09
 
 ### Fixed
