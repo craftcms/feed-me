@@ -5,8 +5,11 @@
 ### Added
 - Added a feed setting that allows feeds to specify if they'd like empty values to used to overwrite existing data. ([#1228](https://github.com/craftcms/feed-me/pull/1228), [#797](https://github.com/craftcms/feed-me/issues/797), [#723](https://github.com/craftcms/feed-me/issues/723), [#854](https://github.com/craftcms/feed-me/issues/854))
 
+### Changed
+- The `EVENT_AFTER_PARSE_ATTRIBUTE` event now allows plugins to modify parsed values.
+
 ### Fixed
-- Fixed a bug where [direct feed](https://docs.craftcms.com/feed-me/v4/feature-tour/feed-overview.html#settings-pane) links in the control panel were malformed if [cpTrigger](https://craftcms.com/docs/4.x/config/general.html#cptrigger) was set to null. ([#1190](https://github.com/craftcms/feed-me/pull/1190))
+- Fixed a PHP error that would occur on the feed mapping screen if there was an entry field using a custom source. ([#1186](https://github.com/craftcms/feed-me/issues/1186))
 
 ## 5.0.5 - 2023-01-09
 

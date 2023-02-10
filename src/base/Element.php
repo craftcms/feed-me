@@ -106,16 +106,17 @@ abstract class Element extends Component implements ElementInterface
 
         $parsedValue = $this->$name($feedData, $fieldInfo);
 
-        if ($this->hasEventHandlers(self::EVENT_AFTER_PARSE_ATTRIBUTE)) {
-            $this->trigger(self::EVENT_AFTER_PARSE_ATTRIBUTE, new ElementEvent([
-                'feedData' => $feedData,
-                'fieldHandle' => $fieldHandle,
-                'fieldInfo' => $fieldInfo,
-                'parsedValue' => $parsedValue,
-            ]));
-        }
+        // Give plugins a chance to modify parsed attributes
+        $event = new ElementEvent([
+            'feedData' => $feedData,
+            'fieldHandle' => $fieldHandle,
+            'fieldInfo' => $fieldInfo,
+            'parsedValue' => $parsedValue,
+        ]);
 
-        return $parsedValue;
+        $this->trigger(self::EVENT_AFTER_PARSE_ATTRIBUTE, $event);
+
+        return $event->parsedValue;
     }
 
     /**
