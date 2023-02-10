@@ -3,7 +3,7 @@
 ## Unreleased
 
 ### Added
-- Added a feed setting that allows feeds to specify if they'd like empty values to used to overwrite existing data. ([#1228](https://github.com/craftcms/feed-me/pull/1228), [#797](https://github.com/craftcms/feed-me/issues/797), [#723](https://github.com/craftcms/feed-me/issues/723), [#854](https://github.com/craftcms/feed-me/issues/854))
+- Added a feed setting that allows feeds to specify if they'd like empty values to used to overwrite existing data. ([#1228](https://github.com/craftcms/feed-me/pull/1228), [#797](https://github.com/craftcms/feed-me/issues/797), [#723](https://github.com/craftcms/feed-me/issues/723), [#854](https://github.com/craftcms/feed-me/issues/854), [#680](https://github.com/craftcms/feed-me/issues/680))
 
 ### Changed
 - The `EVENT_AFTER_PARSE_ATTRIBUTE` event now allows plugins to modify parsed values.
