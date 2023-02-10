@@ -394,6 +394,10 @@ class Process extends Component
             if (Hash::get($fieldInfo, 'field')) {
                 $fieldValue = Plugin::$plugin->fields->parseField($feed, $element, $feedData, $fieldHandle, $fieldInfo);
 
+                if ($feed['setEmptyValues'] === 1 && $fieldValue === null) {
+                    $fieldData[$fieldHandle] = "";
+                }
+
                 if ($fieldValue !== null) {
                     $fieldData[$fieldHandle] = $fieldValue;
                 }

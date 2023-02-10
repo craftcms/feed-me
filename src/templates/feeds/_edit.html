@@ -208,6 +208,13 @@
         on: (feed.id) ? feed.backup : true,
     }) }}
 
+    {{ forms.lightswitchField({
+        label: 'Set Empty Values'|t('feed-me'),
+        instructions: 'When enabled, empty values are considered valid and will be used to replace existing data. When disabled, empty values are ignored.'|t('feed-me'),
+        name: 'setEmptyValues',
+        on: (feed.id) ? feed.setEmptyValues : false,
+    }) }}
+
     {{ parent() }}
 {% endblock %}
 

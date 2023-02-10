@@ -5,6 +5,7 @@ namespace craft\feedme\helpers;
 use ArrayAccess;
 use Cake\Utility\Hash;
 use Craft;
+use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Db;
@@ -100,10 +101,16 @@ class DataHelper
     /**
      * @param $feedData
      * @param $fieldInfo
+     * @param array|FeedModel $feed
      * @return array|ArrayAccess|mixed|null
      */
-    public static function fetchValue($feedData, $fieldInfo): mixed
+    public static function fetchValue($feedData, $fieldInfo, $feed): mixed
     {
+        // $feed will be a FeedModel when calling `fetchValue` from an element
+        if ($feed instanceof FeedModel) {
+            $feed = $feed->toArray();
+        }
+
         $value = [];
 
         $node = Hash::get($fieldInfo, 'node');
@@ -149,6 +156,11 @@ class DataHelper
         // Check if not importing, just using default
         if ($node === 'usedefault' && !$value) {
             $value = $default;
+        }
+
+        // If setEmptyValues is enabled allow overwriting existing data
+        if ($value === "" && $feed['setEmptyValues']) {
+            return $value;
         }
 
         // We want to preserve 0 and '0', but if it's empty, return null.

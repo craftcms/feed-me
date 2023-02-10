@@ -128,7 +128,7 @@ abstract class Field extends Component
      */
     public function fetchValue(): mixed
     {
-        return DataHelper::fetchValue($this->feedData, $this->fieldInfo);
+        return DataHelper::fetchValue($this->feedData, $this->fieldInfo, $this->feed);
     }
 
     // Protected Methods
