@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Changed
+- The `EVENT_AFTER_PARSE_ATTRIBUTE` event now allows plugins to modify parsed values.
+
 ### Fixed
 - Fixed a PHP error that would occur on the feed mapping screen if there was an entry field using a custom source. ([#1186](https://github.com/craftcms/feed-me/issues/1186))
 
