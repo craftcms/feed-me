@@ -158,7 +158,10 @@ $(function () {
 
       // var sections = $(this).parents('.element-sub-group').data('items');
       var entryType = 'item_' + $(this).val();
-      var entryTypes = sections[entryType];
+      var entryTypes = [];
+      if (sections !== undefined) {
+        var entryTypes = sections[entryType];
+      }
 
       var newOptions = '';
       $.each(entryTypes, function (index, value) {

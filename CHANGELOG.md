@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Fixed
+- Fixed a PHP error that would occur on the feed mapping screen if there was an entry field using a custom source. ([#1186](https://github.com/craftcms/feed-me/issues/1186))
+
 ## 5.0.5 - 2023-01-09
 
 ### Fixed
