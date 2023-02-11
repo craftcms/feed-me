@@ -36,7 +36,7 @@ abstract class Element extends Component implements ElementInterface
 
 
     /**
-     * @var FeedModel
+     * @var FeedModel|array
      */
     public $feed;
 
