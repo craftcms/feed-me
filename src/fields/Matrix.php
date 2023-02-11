@@ -141,7 +141,7 @@ class Matrix extends Field implements FieldInterface
             $handles = explode('.', $blockSubFieldHandle);
             $blockHandle = $handles[1];
             // Inclusion of block handle here prevents blocks of different types from being merged together
-            $blockIndex = 'new' . $blockHandle . ($handles[0] + 1);
+            $blockIndex = 'new' . $blockHandle . ((int)$handles[0] + 1);
             $subFieldHandle = $handles[2];
 
             $disabled = Hash::get($this->fieldInfo, 'blocks.' . $blockHandle . '.disabled', false);
@@ -149,11 +149,9 @@ class Matrix extends Field implements FieldInterface
 
             // Prepare an array that's ready for Matrix to import it
             $preppedData[$blockIndex . '.type'] = $blockHandle;
-            // $preppedData[$blockIndex . '.order'] = $order;
             $preppedData[$blockIndex . '.enabled'] = !$disabled;
             $preppedData[$blockIndex . '.collapsed'] = $collapsed;
             $preppedData[$blockIndex . '.fields.' . $subFieldHandle] = $value;
-            // $order++;
         }
 
         $expanded = Hash::expand($preppedData);
