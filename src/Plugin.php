@@ -43,7 +43,7 @@ class Plugin extends \craft\base\Plugin
     // Public Properties
     // =========================================================================
 
-    public $schemaVersion = '4.4.0';
+    public $schemaVersion = '4.4.1';
     public $hasCpSettings = true;
     public $hasCpSection = true;
 

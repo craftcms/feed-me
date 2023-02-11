@@ -2,12 +2,16 @@
 
 namespace craft\feedme\base;
 
+use ArrayAccess;
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
+use craft\errors\ElementNotFoundException;
 use craft\feedme\helpers\DataHelper;
 use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
+use Throwable;
+use yii\base\Exception;
 
 /**
  *
@@ -42,7 +46,7 @@ abstract class Field extends Component
     public $field;
 
     /**
-     * @var FeedModel
+     * @var FeedModel|array
      */
     public $feed;
 
@@ -104,7 +108,7 @@ abstract class Field extends Component
     // =========================================================================
 
     /**
-     * @return array|\ArrayAccess|mixed|string|null
+     * @return array|ArrayAccess|mixed|string|null
      */
     public function fetchSimpleValue()
     {
@@ -112,7 +116,7 @@ abstract class Field extends Component
     }
 
     /**
-     * @return array|\ArrayAccess|mixed
+     * @return array|ArrayAccess|mixed
      */
     public function fetchArrayValue()
     {
@@ -120,11 +124,11 @@ abstract class Field extends Component
     }
 
     /**
-     * @return array|\ArrayAccess|mixed|null
+     * @return array|ArrayAccess|mixed|null
      */
     public function fetchValue()
     {
-        return DataHelper::fetchValue($this->feedData, $this->fieldInfo);
+        return DataHelper::fetchValue($this->feedData, $this->fieldInfo, $this->feed);
     }
 
     // Protected Methods
@@ -132,9 +136,9 @@ abstract class Field extends Component
 
     /**
      * @param $elementIds
-     * @throws \Throwable
-     * @throws \craft\errors\ElementNotFoundException
-     * @throws \yii\base\Exception
+     * @throws Throwable
+     * @throws ElementNotFoundException
+     * @throws Exception
      */
     protected function populateElementFields($elementIds)
     {
