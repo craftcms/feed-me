@@ -210,7 +210,12 @@ class DataHelper
             $existingValue = Hash::get($fields, $key);
 
             // If date value, make sure to cast it as a string to compare
-            if ($newValue instanceof DateTime || DateTimeHelper::isIso8601($newValue)) {
+            if ($existingValue instanceof \DateTime || DateTimeHelper::isIso8601($existingValue)) {
+                $existingValue = Db::prepareDateForDb($existingValue);
+            }
+            
+            // If date value, make sure to cast it as a string to compare
+            if ($newValue instanceof \DateTime || DateTimeHelper::isIso8601($newValue)) {
                 $newValue = Db::prepareDateForDb($newValue);
             }
 
@@ -227,6 +232,11 @@ class DataHelper
 
             // Then check for simple attributes
             $existingValue = Hash::get($attributes, $key);
+            
+            // If date value, make sure to cast it as a string to compare
+            if ($existingValue instanceof \DateTime || DateTimeHelper::isIso8601($existingValue)) {
+                $existingValue = Db::prepareDateForDb($existingValue);
+            }
 
             // Check for attribute groups - more than simple asset
             if ($key === 'groups') {
