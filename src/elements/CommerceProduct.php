@@ -393,7 +393,7 @@ class CommerceProduct extends Element
             // Parse the just the element attributes first. We use these in our field contexts, and need a fully-prepped element
             foreach ($variantContent as $fieldHandle => $fieldInfo) {
                 if (Hash::get($fieldInfo, 'attribute')) {
-                    $attributeValue = DataHelper::fetchValue(Hash::get($fieldInfo, 'data'), $fieldInfo);
+                    $attributeValue = DataHelper::fetchValue(Hash::get($fieldInfo, 'data'), $fieldInfo, $this->feed);
 
                     $attributeData[$fieldHandle] = $attributeValue;
                 }

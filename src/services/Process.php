@@ -5,6 +5,7 @@ namespace craft\feedme\services;
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
+use craft\errors\ShellCommandException;
 use craft\feedme\base\ElementInterface;
 use craft\feedme\events\FeedProcessEvent;
 use craft\feedme\helpers\DataHelper;
@@ -14,6 +15,7 @@ use craft\feedme\Plugin;
 use craft\helpers\App;
 use craft\helpers\FileHelper;
 use craft\helpers\StringHelper;
+use yii\base\Exception;
 
 class Process extends Component
 {
@@ -391,6 +393,10 @@ class Process extends Component
             if (Hash::get($fieldInfo, 'field')) {
                 $fieldValue = Plugin::$plugin->fields->parseField($feed, $element, $feedData, $fieldHandle, $fieldInfo);
 
+                if ($feed['setEmptyValues'] === 1 && $fieldValue === null) {
+                    $fieldData[$fieldHandle] = "";
+                }
+
                 if ($fieldValue !== null) {
                     $fieldData[$fieldHandle] = $fieldValue;
                 }
@@ -613,8 +619,8 @@ class Process extends Component
 
     /**
      * @param $feed
-     * @throws \craft\errors\ShellCommandException
-     * @throws \yii\base\Exception
+     * @throws ShellCommandException
+     * @throws Exception
      */
     private function _backupBeforeFeed($feed)
     {

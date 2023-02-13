@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### Added 
+- Added a feed setting that allows feeds to specify if they'd like empty values to used to overwrite existing data. ([#1228](https://github.com/craftcms/feed-me/pull/1228), [#797](https://github.com/craftcms/feed-me/issues/797), [#723](https://github.com/craftcms/feed-me/issues/723), [#854](https://github.com/craftcms/feed-me/issues/854), [#680](https://github.com/craftcms/feed-me/issues/680))
+
+### Fixed
+- Fixed a bug where some feed element data would be considered changed even if there were no changes. ([#1220](https://github.com/craftcms/feed-me/pull/1220), [#1219](https://github.com/craftcms/feed-me/issues/1219), [#1223](https://github.com/craftcms/feed-me/pull/1223/), [#1219](https://github.com/craftcms/feed-me/issues/1219))
+- Fixed a bug where the default value modal for relational fields on the feed mapping page would show all available sources and not just the sources allowed for the field. ([#1234](https://github.com/craftcms/feed-me/pull/1234))
+
 ## 4.5.4 - 2023-01-09
 
 ### Fixed

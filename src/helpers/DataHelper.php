@@ -2,11 +2,15 @@
 
 namespace craft\feedme\helpers;
 
+use ArrayAccess;
 use Cake\Utility\Hash;
 use Craft;
+use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Db;
+use DateTime;
+use Throwable;
 
 class DataHelper
 {
@@ -16,7 +20,7 @@ class DataHelper
     /**
      * @param $feedData
      * @param $fieldInfo
-     * @return array|\ArrayAccess|mixed|string|null
+     * @return array|ArrayAccess|mixed|string|null
      */
     public static function fetchSimpleValue($feedData, $fieldInfo)
     {
@@ -42,7 +46,7 @@ class DataHelper
     /**
      * @param $feedData
      * @param $fieldInfo
-     * @return array|\ArrayAccess|mixed
+     * @return array|ArrayAccess|mixed
      */
     public static function fetchArrayValue($feedData, $fieldInfo)
     {
@@ -103,10 +107,16 @@ class DataHelper
     /**
      * @param $feedData
      * @param $fieldInfo
-     * @return array|\ArrayAccess|mixed|null
+     * @param array|FeedModel $feed
+     * @return array|ArrayAccess|mixed|null
      */
-    public static function fetchValue($feedData, $fieldInfo)
+    public static function fetchValue($feedData, $fieldInfo, $feed)
     {
+        // $feed will be a FeedModel when calling `fetchValue` from an element
+        if ($feed instanceof FeedModel) {
+            $feed = $feed->toArray();
+        }
+
         $value = [];
 
         $node = Hash::get($fieldInfo, 'node');
@@ -154,6 +164,11 @@ class DataHelper
             $value = $default;
         }
 
+        // If setEmptyValues is enabled allow overwriting existing data
+        if ($value === "" && $feed['setEmptyValues']) {
+            return $value;
+        }
+
         // We want to preserve 0 and '0', but if it's empty, return null.
         // https://github.com/craftcms/feed-me/issues/779
         if (!is_numeric($value) && empty($value)) {
@@ -175,7 +190,7 @@ class DataHelper
             // it won't be a field handle tag, causing the Twig Lexer to freak out. We ignore those errors
             try {
                 $value = Craft::$app->getView()->renderObjectTemplate($value, $element);
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
             }
         }
 
@@ -202,6 +217,11 @@ class DataHelper
             $existingValue = Hash::get($fields, $key);
 
             // If date value, make sure to cast it as a string to compare
+            if ($existingValue instanceof \DateTime || DateTimeHelper::isIso8601($existingValue)) {
+                $existingValue = Db::prepareDateForDb($existingValue);
+            }
+            
+            // If date value, make sure to cast it as a string to compare
             if ($newValue instanceof \DateTime || DateTimeHelper::isIso8601($newValue)) {
                 $newValue = Db::prepareDateForDb($newValue);
             }
@@ -219,6 +239,11 @@ class DataHelper
 
             // Then check for simple attributes
             $existingValue = Hash::get($attributes, $key);
+            
+            // If date value, make sure to cast it as a string to compare
+            if ($existingValue instanceof \DateTime || DateTimeHelper::isIso8601($existingValue)) {
+                $existingValue = Db::prepareDateForDb($existingValue);
+            }
 
             // Check for attribute groups - more than simple asset
             if ($key === 'groups') {
@@ -231,7 +256,7 @@ class DataHelper
                 $existingValue = $groups;
             }
 
-            if (self::_compareSimpleValues($fields, $key, $existingValue, $newValue)) {
+            if (self::_compareSimpleValues($attributes, $key, $existingValue, $newValue)) {
                 unset($trackedChanges[$key]);
                 continue;
             }

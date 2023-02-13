@@ -17,6 +17,7 @@
         options: {
             elementType: fieldClass.elementType,
             selectionLabel: "Default Category"|t('feed-me'),
+            sources: field.source ? [field.source] : '*',
         },
     } %}
 {% endif %}
