@@ -9,7 +9,6 @@ use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Db;
-use DateTime;
 use Throwable;
 
 class DataHelper
@@ -220,7 +219,7 @@ class DataHelper
             if ($existingValue instanceof \DateTime || DateTimeHelper::isIso8601($existingValue)) {
                 $existingValue = Db::prepareDateForDb($existingValue);
             }
-            
+
             // If date value, make sure to cast it as a string to compare
             if ($newValue instanceof \DateTime || DateTimeHelper::isIso8601($newValue)) {
                 $newValue = Db::prepareDateForDb($newValue);
@@ -239,7 +238,7 @@ class DataHelper
 
             // Then check for simple attributes
             $existingValue = Hash::get($attributes, $key);
-            
+
             // If date value, make sure to cast it as a string to compare
             if ($existingValue instanceof \DateTime || DateTimeHelper::isIso8601($existingValue)) {
                 $existingValue = Db::prepareDateForDb($existingValue);
