@@ -9,7 +9,6 @@ use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Db;
-use DateTime;
 use Throwable;
 
 class DataHelper
@@ -53,7 +52,6 @@ class DataHelper
         $value = [];
 
         $node = Hash::get($fieldInfo, 'node');
-        $default = Hash::get($fieldInfo, 'default');
 
         $dataDelimiter = Plugin::$plugin->service->getConfig('dataDelimiter');
 
@@ -67,10 +65,6 @@ class DataHelper
             $feedPath = preg_replace('/^(\d+\/)|(\/\d+)/', '', $feedPath);
 
             if ($feedPath == $node || $nodePath == $node) {
-                if ($nodeValue === null || $nodeValue === '') {
-                    $nodeValue = $default;
-                }
-
                 // Allow pipes '|' to denote multiple items, but even if it doesn't contain one, explode will create
                 // an array, so ensure to merge with the current results.
                 if (is_string($nodeValue) && strpos($nodeValue, $dataDelimiter) !== false) {
@@ -88,13 +82,25 @@ class DataHelper
 
         // Check if not importing, just using default
         if ($node === 'usedefault' && !$value) {
-            if (!is_array($default)) {
-                $default = [$default];
-            }
-            $value = $default;
+            $value = self::fetchDefaultArrayValue($fieldInfo);
         }
 
         return $value;
+    }
+
+    /**
+     * @param $fieldInfo
+     * @return array|\ArrayAccess|mixed
+     */
+    public static function fetchDefaultArrayValue($fieldInfo)
+    {
+        $default = Hash::get($fieldInfo, 'default');
+
+        if (!is_array($default)) {
+            $default = [$default];
+        }
+
+        return $default;
     }
 
     /**
@@ -213,7 +219,7 @@ class DataHelper
             if ($existingValue instanceof \DateTime || DateTimeHelper::isIso8601($existingValue)) {
                 $existingValue = Db::prepareDateForDb($existingValue);
             }
-            
+
             // If date value, make sure to cast it as a string to compare
             if ($newValue instanceof \DateTime || DateTimeHelper::isIso8601($newValue)) {
                 $newValue = Db::prepareDateForDb($newValue);
@@ -232,7 +238,7 @@ class DataHelper
 
             // Then check for simple attributes
             $existingValue = Hash::get($attributes, $key);
-            
+
             // If date value, make sure to cast it as a string to compare
             if ($existingValue instanceof \DateTime || DateTimeHelper::isIso8601($existingValue)) {
                 $existingValue = Db::prepareDateForDb($existingValue);
