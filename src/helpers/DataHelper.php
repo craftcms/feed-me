@@ -343,8 +343,7 @@ class DataHelper
             && array_reduce($firstValue, static fn($carry, $item) => $carry && is_numeric($item), true)
             && array_reduce($secondValue, static fn($carry, $item) => $carry && is_numeric($item), true)
             && array_values($firstValue) == array_values($secondValue)
-        )
-        {
+        ) {
             return true;
         }        
         
