@@ -345,8 +345,8 @@ class DataHelper
             && array_values($firstValue) == array_values($secondValue)
         ) {
             return true;
-        }        
-        
+        }
+
         /** @noinspection TypeUnsafeComparisonInspection */
         // Should probably do a strict check, but doing this for backwards compatibility.
         if (Hash::check($fields, $key) && ($firstValue == $secondValue)) {
