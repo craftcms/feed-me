@@ -334,6 +334,20 @@ class DataHelper
      */
     private static function _compareSimpleValues($fields, $key, $firstValue, $secondValue): bool
     {
+        // When the values are arrays filled with numbers then they most likely represent references to elements.
+        // Unfortunately these arrays sometimes have non-matching keys, while the values are the same, i.e. reference
+        // the same elements.  In this case, we should determine that the values are the same.
+        if (Hash::check($fields, $key)
+            && is_array($firstValue)
+            && is_array($secondValue)
+            && array_reduce($firstValue, static fn($carry, $item) => $carry && is_numeric($item), true)
+            && array_reduce($secondValue, static fn($carry, $item) => $carry && is_numeric($item), true)
+            && array_values($firstValue) == array_values($secondValue)
+        )
+        {
+            return true;
+        }        
+        
         /** @noinspection TypeUnsafeComparisonInspection */
         // Should probably do a strict check, but doing this for backwards compatibility.
         if (Hash::check($fields, $key) && ($firstValue == $secondValue)) {
