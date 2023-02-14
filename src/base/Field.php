@@ -124,6 +124,14 @@ abstract class Field extends Component
     }
 
     /**
+     * @return array|\ArrayAccess|mixed
+     */
+    public function fetchDefaultArrayValue()
+    {
+        return DataHelper::fetchDefaultArrayValue($this->fieldInfo);
+    }
+
+    /**
      * @return array|ArrayAccess|mixed|null
      */
     public function fetchValue(): mixed

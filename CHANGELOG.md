@@ -14,6 +14,7 @@
 - Fixed a bug where importing into Matrix fields that had identical sub-fields across blocks would only import the first matching field. ([#1185](https://github.com/craftcms/feed-me/pull/1185), [#1226](https://github.com/craftcms/feed-me/issues/1226), [#1184](https://github.com/craftcms/feed-me/issues/1184))
 - Fixed a bug where some feed element data would be considered changed even if there were no changes. ([#1220](https://github.com/craftcms/feed-me/pull/1220), [#1219](https://github.com/craftcms/feed-me/issues/1219), [#1223](https://github.com/craftcms/feed-me/pull/1223/), [#1219](https://github.com/craftcms/feed-me/issues/1219))
 - Fixed a bug where the default value modal for relational fields on the feed mapping page would show all available sources and not just the sources allowed for the field. ([#1234](https://github.com/craftcms/feed-me/pull/1234))
+- Fixed a PHP error that could occur when you map an assets field with a default value and there is an empty value in the feed. ([#1229](https://github.com/craftcms/feed-me/pull/1229), [#1195](https://github.com/craftcms/feed-me/issues/1195), [#1106](https://github.com/craftcms/feed-me/issues/1106), [#1154](https://github.com/craftcms/feed-me/issues/1154))
 
 ## 5.0.5 - 2023-01-09
 

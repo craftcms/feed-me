@@ -61,6 +61,7 @@ class Assets extends Field implements FieldInterface
     public function parseField(): mixed
     {
         $value = $this->fetchArrayValue();
+        $default = $this->fetchDefaultArrayValue();
 
         $settings = Hash::get($this->field, 'settings');
         $folders = Hash::get($this->field, 'settings.sources');
@@ -105,13 +106,20 @@ class Assets extends Field implements FieldInterface
 
         foreach ($value as $key => $dataValue) {
             // Prevent empty or blank values (string or array), which match all elements
-            if (empty($dataValue)) {
+            if (empty($dataValue) && empty($default)) {
                 continue;
             }
 
             // If we're using the default value - skip, we've already got an id array
             if ($node === 'usedefault') {
                 $foundElements = $value;
+                break;
+            }
+
+            // special provision for falling back on default BaseRelationField value
+            // https://github.com/craftcms/feed-me/issues/1195
+            if (empty($dataValue) && !empty($default)) {
+                $foundElements = $default;
                 break;
             }
 
