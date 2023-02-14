@@ -15,4 +15,4 @@ parameters:
         - src/fields/CommerceVariants.php
         - src/fields/DigitalProducts.php
         - src/fields/SimpleMap.php
-        - src/fiesds/CommerceProducts.php
+        - src/fields/CommerceProducts.php
