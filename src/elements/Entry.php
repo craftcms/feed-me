@@ -217,6 +217,7 @@ class Entry extends Element
                 Plugin::error('Entry error: Could not create parent - `{e}`.', ['e' => json_encode($element->getErrors())]);
             } else {
                 Plugin::info('Entry `#{id}` added.', ['id' => $element->id]);
+                $this->element->newParentId = $element->id;
             }
 
             return $element->id;
