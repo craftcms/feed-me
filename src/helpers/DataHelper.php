@@ -98,7 +98,7 @@ class DataHelper
     {
         $default = Hash::get($fieldInfo, 'default');
 
-        if (!is_array($default)) {
+        if (!empty($default) && !is_array($default)) {
             $default = [$default];
         }
 
@@ -345,7 +345,7 @@ class DataHelper
         if (is_array($firstValue) && is_array($secondValue) && count($firstValue) === 0 && count($secondValue) === 0) {
             return true;
         }
-        
+
         /** @noinspection TypeUnsafeComparisonInspection */
         // Should probably do a strict check, but doing this for backwards compatibility.
         if (Hash::check($fields, $key) && ($firstValue == $secondValue)) {
