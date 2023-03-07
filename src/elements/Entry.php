@@ -201,6 +201,11 @@ class Entry extends Element
             $query->siteId($this->feed['siteId']);
         }
 
+        // fix for https://github.com/craftcms/feed-me/issues/1154#issuecomment-1429622276
+        if (!empty($this->element->sectionId)) {
+            $query->sectionId($this->element->sectionId);
+        }
+
         $element = $query->one();
 
         if ($element) {
@@ -220,6 +225,7 @@ class Entry extends Element
                 Plugin::error('Entry error: Could not create parent - `{e}`.', ['e' => Json::encode($element->getErrors())]);
             } else {
                 Plugin::info('Entry `#{id}` added.', ['id' => $element->id]);
+                $this->element->newParentId = $element->id;
             }
 
             return $element->id;
