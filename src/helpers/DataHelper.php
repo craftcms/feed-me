@@ -339,6 +339,11 @@ class DataHelper
      */
     private static function _compareSimpleValues($fields, $key, $firstValue, $secondValue): bool
     {
+        // When the values are empty arrays we do NOT use the Hash::check below because that will always return false
+        if (is_array($firstValue) && is_array($secondValue) && count($firstValue) === 0 && count($secondValue) === 0) {
+            return true;
+        }
+
         /** @noinspection TypeUnsafeComparisonInspection */
         // Should probably do a strict check, but doing this for backwards compatibility.
         if (Hash::check($fields, $key) && ($firstValue == $secondValue)) {
