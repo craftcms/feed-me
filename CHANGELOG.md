@@ -16,6 +16,7 @@
 - Fixed a bug where the default value modal for relational fields on the feed mapping page would show all available sources and not just the sources allowed for the field. ([#1234](https://github.com/craftcms/feed-me/pull/1234))
 - Fixed a PHP error that could occur when you map an assets field with a default value and there is an empty value in the feed. ([#1229](https://github.com/craftcms/feed-me/pull/1229), [#1195](https://github.com/craftcms/feed-me/issues/1195), [#1106](https://github.com/craftcms/feed-me/issues/1106), [#1154](https://github.com/craftcms/feed-me/issues/1154))
 - Fixed a bug where simple array comparisons might incorrectly return false on empty arrays during an import. ([#1236](https://github.com/craftcms/feed-me/pull/1236))
+- Fixed a compatibility issue with v4.3+ of the Google Maps plugin. If patching an existing feed, it may be necessary to remap the Address subfields. ([#1245](https://github.com/craftcms/feed-me/pull/1245))
 
 ## 5.0.5 - 2023-01-09
 
