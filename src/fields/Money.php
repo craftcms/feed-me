@@ -51,7 +51,7 @@ class Money extends Field implements FieldInterface
         }
 
         return [
-            'value' => $value
+            'value' => $value,
         ];
     }
 }
