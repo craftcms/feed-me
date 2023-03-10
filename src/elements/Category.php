@@ -185,7 +185,7 @@ class Category extends Element
         // use the default value if it's provided and none of the above worked
         // https://github.com/craftcms/feed-me/issues/1154
         if (!empty($default)) {
-            $this->element->newParentId = $default[0];
+            $this->element->parentId = $default[0];
 
             return $default[0];
         }
