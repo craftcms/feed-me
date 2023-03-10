@@ -8,6 +8,7 @@
 
 ### Changed
 - The `EVENT_AFTER_PARSE_ATTRIBUTE` event now allows plugins to modify parsed values.
+- Feed Me now won't disable already disabled elements when importing a feed, drastically improving the performance of some feeds. ([#1248](https://github.com/craftcms/feed-me/pull/1248), [#1241](https://github.com/craftcms/feed-me/issues/1241))
 
 ### Fixed
 - Fixed a PHP error that would occur on the feed mapping screen if there was an entry field using a custom source. ([#1186](https://github.com/craftcms/feed-me/issues/1186))

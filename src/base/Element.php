@@ -207,8 +207,10 @@ abstract class Element extends Component implements ElementInterface
         foreach ($elementIds as $elementId) {
             /** @var BaseElement $element */
             $element = $elementsService->getElementById($elementId, $class);
-            $element->enabled = false;
-            $elementsService->saveElement($element, true, true, Hash::get($this->feed, 'updateSearchIndexes'));
+            if ($element->enabled) {
+                $element->enabled = false;
+                $elementsService->saveElement($element, true, true, Hash::get($this->feed, 'updateSearchIndexes'));
+            }
         }
 
         return true;
@@ -232,8 +234,10 @@ abstract class Element extends Component implements ElementInterface
 
         foreach ($query->each() as $element) {
             /** @var BaseElement $element */
-            $element->enabledForSite = false;
-            $elementsService->saveElement($element, false, false, Hash::get($this->feed, 'updateSearchIndexes'));
+            if ($element->enabledForSite) {
+                $element->enabledForSite = false;
+                $elementsService->saveElement($element, false, false, Hash::get($this->feed, 'updateSearchIndexes'));
+            }
         }
 
         return true;
