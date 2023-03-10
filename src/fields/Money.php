@@ -46,6 +46,10 @@ class Money extends Field implements FieldInterface
     {
         $value = $this->fetchValue();
 
+        if ($value === null) {
+            return null;
+        }
+
         return [
             'value' => $value
         ];
