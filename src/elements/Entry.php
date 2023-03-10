@@ -195,6 +195,7 @@ class Entry extends Element
 
         $query = EntryElement::find()
             ->status(null)
+            ->sectionId($this->element->sectionId)
             ->andWhere(['=', $match, $value]);
 
         if (isset($this->feed['siteId']) && $this->feed['siteId']) {
