@@ -98,6 +98,14 @@ class DataHelper
     {
         $default = Hash::get($fieldInfo, 'default');
 
+        if (!is_array($default)) {
+            if (empty($default)) {
+                $default = [];
+            } else {
+                $default = [$default];
+            }
+        }
+
         if (!empty($default) && !is_array($default)) {
             $default = [$default];
         }
