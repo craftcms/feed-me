@@ -265,6 +265,22 @@ Accepts a single value. Can be provided as any boolean-like string.
 
 Check out [Importing into Matrix](../guides/importing-into-matrix.md) for a more comprehensive guide.
 
+### Money
+
+Accepts a single value.
+
+:::code
+```xml
+<Money>10</Money>
+```
+
+```json
+{
+    "Money": "10"
+}
+```
+:::
+
 ### Multi-select
 
 Accepts single or multiple values. You must provide the Value of the option to select, not the Label.
