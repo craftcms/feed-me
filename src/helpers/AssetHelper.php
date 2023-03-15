@@ -316,9 +316,7 @@ class AssetHelper
             $filename .= '-' . $query;
         }
 
-        $filename = AssetsHelper::prepareAssetName($filename, false);
-
-        return $filename . '.' . $extension;
+        return AssetsHelper::prepareAssetName("$filename.$extension");
     }
 
     /**
