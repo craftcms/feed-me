@@ -280,7 +280,7 @@ class AssetHelper
      */
     public static function getRemoteUrlFilename($url)
     {
-        // Function to extract a filename from a URL path. It does not query the actual URL however.
+        // Function to extract a filename from a URL path. It does not query the actual URL, however.
         // There are some tricky cases being tested again, and mostly revolves around query strings. We do our best to figure it out!
         // http://example.com/test.php
         // http://example.com/test.php?pubid=image.jpg
@@ -305,9 +305,7 @@ class AssetHelper
             $filename .= '-' . $query;
         }
 
-        $filename = AssetsHelper::prepareAssetName($filename, false);
-
-        return $filename . '.' . $extension;
+        return AssetsHelper::prepareAssetName("$filename.$extension");
     }
 
     /**
