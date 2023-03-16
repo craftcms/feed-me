@@ -107,6 +107,13 @@ class Users extends Field implements FieldInterface
                 break;
             }
 
+            // special provision for falling back on default BaseRelationField value
+            // https://github.com/craftcms/feed-me/issues/1195
+            if (empty($dataValue)) {
+                $foundElements = $default;
+                break;
+            }
+
             // Because we can match on element attributes and custom fields, AND we're directly using SQL
             // queries in our `where` below, we need to check if we need a prefix for custom fields accessing
             // the content table.

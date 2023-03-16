@@ -69,6 +69,36 @@
 ### Removed
 - Removed built-in support for the Verbb Comments plugin, which provides its own Feed Me driver.
 
+## 4.6.0 - 2023-03-16
+
+- Added the “Set Empty Values” feed setting, which determines whether empty values in the feed should be respected or ignored. ([#1228](https://github.com/craftcms/feed-me/pull/1228), [#797](https://github.com/craftcms/feed-me/issues/797), [#723](https://github.com/craftcms/feed-me/issues/723), [#854](https://github.com/craftcms/feed-me/issues/854), [#680](https://github.com/craftcms/feed-me/issues/680))
+- Disabled elements are no longer redundantly re-disabled, drastically improving the performance of some feed imports. ([#1248](https://github.com/craftcms/feed-me/pull/1248), [#1241](https://github.com/craftcms/feed-me/issues/1241))
+- Fixed a bug where some feed element data would be considered changed even if there were no changes. ([#1220](https://github.com/craftcms/feed-me/pull/1220), [#1219](https://github.com/craftcms/feed-me/issues/1219), [#1223](https://github.com/craftcms/feed-me/pull/1223/), [#1219](https://github.com/craftcms/feed-me/issues/1219))
+- Fixed a bug where the default value modal for relational fields on the feed mapping page would show all available sources, not just the sources allowed for the field. ([#1234](https://github.com/craftcms/feed-me/pull/1234))
+- Fixed a PHP error that could occur when a feed contained an empty value that was mapped to an Assets field. ([#1229](https://github.com/craftcms/feed-me/pull/1229), [#1195](https://github.com/craftcms/feed-me/issues/1195), [#1106](https://github.com/craftcms/feed-me/issues/1106), [#1154](https://github.com/craftcms/feed-me/issues/1154))
+- Fixed a bug where empty arrays could be misinterpreted during feed imports. ([#1236](https://github.com/craftcms/feed-me/pull/1236))
+- Fixed several issues related to importing categories and Structure section entries. ([#1240](https://github.com/craftcms/feed-me/pull/1240), [#1154](https://github.com/craftcms/feed-me/issues/1154))
+- Fixed a PHP error that could occur when importing relational field data within a Matrix field. ([#1069](https://github.com/craftcms/feed-me/issues/1069))
+- Fixed a PHP error that occurred when importing an asset with a filename over 255 characters long.
+
+## 4.5.4 - 2023-01-09
+
+### Fixed
+- Fixed a PHP error that could occur when using the `--continue-on-error` flag on the `feed-me/feeds/queue` CLI command.
+- Fixed a bug where sites in a Site Group would all have their statuses updated when a feed was targeting a single site. ([#1208](https://github.com/craftcms/feed-me/issues/1208))
+- Fixed importing using the LinkIt plugin. ([#1203](https://github.com/craftcms/feed-me/issues/1203))
+
+## 4.5.3 - 2022-05-31
+
+### Fixed
+- Fixed a PHP error that could occur when importing a base64-encoded asset.
+- Fixed a bug where asset file names were getting normalized before searching for an existing asset when the feed specified a file path. ([#847](https://github.com/craftcms/feed-me/issues/847))
+
+## 4.5.2 - 2022-05-17
+
+### Changed
+- The `EVENT_AFTER_PARSE_FEED` event now passes in the feed’s ID. ([#1107](https://github.com/craftcms/feed-me/issues/1107))
+
 ## 4.5.1 - 2022-05-05
 
 ### Fixed
@@ -77,7 +107,7 @@
 ## 4.5.0 - 2022-04-21
 
 ### Changed
-- Entries imported within sections whose Propagation Method is set to “Let each entry choose which sites it should be saved to” are no longer created for all of the section's supported sites. ([#1084](https://github.com/craftcms/feed-me/issues/1084))
+- Entries imported within sections whose Propagation Method is set to “Let each entry choose which sites it should be saved to” are no longer created for all of the section’s supported sites. ([#1084](https://github.com/craftcms/feed-me/issues/1084))
 
 ## 4.4.3 - 2022-04-06
 
@@ -95,7 +125,7 @@
 ### Fixed
 - Fixed a bug that would prevent relating products in Products field. ([#1058](https://github.com/craftcms/feed-me/issues/1058))
 - Fixed a bug that would prevent changing element status on multisite when the target site was set to default. ([#606](https://github.com/craftcms/feed-me/issues/606))
-- Fixed a bug where mapping fields for an entry fieldtype wasn't showing the correct available fields. ([#1098](https://github.com/craftcms/feed-me/pull/1098), ([#692](https://github.com/craftcms/feed-me/issues/692)), ([#825](https://github.com/craftcms/feed-me/issues/825))
+- Fixed a bug where mapping fields for an entry fieldtype wasn’t showing the correct available fields. ([#1098](https://github.com/craftcms/feed-me/pull/1098), ([#692](https://github.com/craftcms/feed-me/issues/692)), ([#825](https://github.com/craftcms/feed-me/issues/825))
 
 ## 4.4.1.1 - 2021-12-06
 
@@ -368,7 +398,7 @@
 ## 3.1.12 - 2019-03-03
 
 ### Fixed
-- Ensure all complex fields don't process when none of their sub-fields are mapped.
+- Ensure all complex fields don’t process when none of their sub-fields are mapped.
 
 ## 3.1.11 - 2019-03-02
 
@@ -376,7 +406,7 @@
 - Added config option to run Garbage Collection before a feed starts.
 
 ### Fixed
-- Ensure complex fields (Matrix, etc) don't process when none of their sub-fields are mapped.
+- Ensure complex fields (Matrix, etc) don’t process when none of their sub-fields are mapped.
 
 ## 3.1.10 - 2019-02-26
 
@@ -466,14 +496,14 @@
 ## 3.1.1 - 2019-02-01
 
 ### Added
-- Updates to asset element importing, including "URL or Path" field.
+- Updates to asset element importing, including “URL or Path” field.
 - Added docs guide for asset element importing (finally, right).
 
 ### Changed
 - Add some more clarity around errors in help requests.
 - Update processing events to be cancelable and modify params.
 - Upgrades to nesbot/carbon ^2.10.
-- Allow `getSelectOptions()` to modify the ‘none’ option.
+- Allow `getSelectOptions()` to modify the `none` option.
 - Alphabetise help feeds.
 
 ### Fixed
@@ -658,7 +688,7 @@
 - Fix element fields in Matrix not mapping correctly.
 - Fix Twig parsing in default and feed data too early, resulting in empty values.
 - Matrix - fix block types with no fields messing things up.
-- Fix ‘placeholder’ in products query causing PostgreSQL errors.
+- Fix `placeholder` in products query causing PostgreSQL errors.
 - Fix error thrown on entry mapping screen when no sections are available.
 - Assets - fix filename matches not including subfolders.
 - Table - protect against array values importing into fields.
@@ -690,7 +720,7 @@
 ### Changed
 - Ensure element fields don’t throw fatal errors when unable to save - allowing owner element to continue.
 - Products - remove required attribute on unlimited stock.
-- Change element field matching existing elements querying. Fixes the case where trying to match elements with the keyword 'not' in the value.
+- Change element field matching existing elements querying. Fixes the case where trying to match elements with the keyword `not` in the value.
 
 ### Fixed
 - Fix primary element iterator when only one item in feed (in some cases).
@@ -721,7 +751,7 @@
 - Use registerTwigExtension(), otherwise may cause Twig to be loaded before it should be (thanks @brandonkelly)
 - Entry - Fix authors not being created when they should be.
 - CSV - fix for line breaks in headings causing issues.
-- Fix for variants in that they can potentially move to another product type, or otherwise plucked from a product other than the one you're importing.
+- Fix for variants in that they can potentially move to another product type, or otherwise plucked from a product other than the one you’re importing.
 - Fix incorrect variant custom field namespace.
 
 ## 3.0.0-beta.17 - 2018-07-19
@@ -835,7 +865,7 @@
 - Fix matching existing elements with special characters
 - Improve handling of remote asset handling when `HEAD` requests fail
 - Fix help widget
-- Improve date-helper to handle ‘0’
+- Improve date-helper to handle `0`
 - Table - ensure dates are parsed
 
 ## 3.0.0-beta.9 - 2018-04-28
@@ -913,7 +943,7 @@
 
 ## 3.0.0-beta.1 - 2018-04-03
 
-> {warning} Feed Me 3.0.0 is a major release with significant, breaking changes. Be sure to back up your existing Feed Me 2.x.x settings. In most cases, you'll be required to re-map fields to your feed data, as this has been heavily changed and improved.
+> {warning} Feed Me 3.0.0 is a major release with significant, breaking changes. Be sure to back up your existing Feed Me 2.x.x settings. In most cases, you’ll be required to re-map fields to your feed data, as this has been heavily changed and improved.
 
 ### Added
 - Support for Craft 3, and all that comes with it.
@@ -932,11 +962,11 @@
 - Better handling of default field values under the hood.
 - Lots of smaller improvements pathing the way to more major changes in 3.1.0.
 - Better support for uploading remote assets (a little faster too).
-- When running from the command line (curl, wget, etc), feed processing will wait until it's finished before ending the request.
+- When running from the command line (curl, wget, etc), feed processing will wait until it’s finished before ending the request.
 - Improved UI for mapping complex fields (Matrix, Table). Includes setting collapsed state for Matrix fields.
 - Improved UI for mapping sub-element fields. Fields are hidden by default and can be toggled to provide better visual clarity.
-- Improved UI for logs, also shows log 'type' to easily pick up errors.
-- When a feed fails or contains errors it will no longer show the red error symbol for the queue job. Errors are recorded in the logs, but it won't cause other queue jobs to prevent being run, and notifying clients of an error.
+- Improved UI for logs, also shows log `type` to easily pick up errors.
+- When a feed fails or contains errors it will no longer show the red error symbol for the queue job. Errors are recorded in the logs, but it won’t cause other queue jobs to prevent being run, and notifying clients of an error.
 - Logs now capture additional information of line/file when exceptions occur.
 - utilise Guzzle for all HTTP requests, rather than new instances of Curl.
 - Improved Help widget to utilise API for sending emails, not relying on local relay. Caused immeasurable amount of issues for people try to get support!
@@ -992,7 +1022,7 @@
 - Date - Add date formatting options for date field.
 - Ensure each run of the feed uses a fresh criteria model.
 - Matrix - improvements for Super Table handling.
-- Add extra truthy detections for ‘live’ and ‘enabled’.
+- Add extra truthy detections for `live` and `enabled`.
 
 ### Fixed
 - Load custom (fixed) version of selectize to fix being unable to un-select defaults.
@@ -1004,7 +1034,7 @@
 - Fix regex for short-hand twig detection.
 - Fix for Table field not processing more than 10 rows.
 - Ensure more than just plain sub-element field are styed correctly.
-- Elements - Ensure we properly escape ‘{‘ characters, and don’t assume they’re short-hand twig.
+- Elements - Ensure we properly escape `{` characters, and don’t assume they’re short-hand twig.
 - Entries fieldtype - don’t rely on parent element being a section.
 - Assets - Fix folder-mapping from 2.0.7 (requires re-mapping).
 - Support for limitAutoSlugsToAscii for element slugs.
@@ -1110,7 +1140,7 @@
 ### Changed
 - Refactor remote asset uploading/handling.
 - Remote assets - Better support for dynamic paths set in asset fields (ie `{slug}`).
-- Remote assets - When set to `Keep Original`, don't download it and then check if it exists in Craft - it can be skipped.
+- Remote assets - When set to `Keep Original`, don’t download it and then check if it exists in Craft - it can be skipped.
 - Ensure all fields are bootstrapped with the owner element being imported.
 - Improve Commerce Products matching on existing elements (including better variant-field support).
 - Remove certain unique identifier options for Product Variants - the element criteria doesn’t support them anyway.
@@ -1169,7 +1199,7 @@
 - Added support for Categories, Users, Entries, Commerce Products
 - Support for third-party element types
 - Auto-upload Assets when mapping
-- Support to map content to element's inner fields (think fields for assets)
+- Support to map content to element’s inner fields (think fields for assets)
 - Added Assets ElementType - easily upload assets into Craft.
 - Direct access to mapping screen
 - Support attribute-mapping for XML feeds
@@ -1178,9 +1208,9 @@
 - Added debug icon to Feeds index.
 - Added Element ID mapping. *A word of warning - * do not use this for importing new data. [Read more](https://sgroup.com.au/plugins/feedme/feature-tour/field-mapping#element-iDs).
 - Added parent-mapping for Entry and Category.
-- Elements can be created if they don't exist
+- Elements can be created if they don’t exist
 - Assets can be uploaded automatically, with options for conflict handling
-- Added support to map element fields' own custom fields (think fields for assets). Currently only supports simple fields.
+- Added support to map element fields’ own custom fields (think fields for assets). Currently only supports simple fields.
 - Support for importing Categories, Users, Entries, Commerce Products
 - Support for third-party Element Types using `registerFeedMeElementTypes`
 - Added `onBeforeProcessFeed`, `onProcessFeed`, and `onStepProcessFeed` events
@@ -1204,9 +1234,9 @@
 - Feed mapping now looks at entire feed structure for nodes, rather than just the first node
 - Feed mapping is no longer case-insensitive
 - Proper confirmation screen when importing, with progress bar
-- Feeds no longer die when an error occurs. It'll try to complete the rest of the feed, notifying you of errors at the end of processing.
+- Feeds no longer die when an error occurs. It’ll try to complete the rest of the feed, notifying you of errors at the end of processing.
 - Sub-folders are now searched for existing assets.
-- Improved handling of inconsistent, repeatable nodes (I'm looking at you XML).
+- Improved handling of inconsistent, repeatable nodes (I’m looking at you XML).
 - Asterisks are now shown during mapping for required fields - a handy reminder.
 - User importing no longer requires a User Group set.
 - More modular handling by moving to separate classes
@@ -1220,9 +1250,9 @@
 - Remove database logging (no longer used)
 - Fix support for local feeds
 - Feed no longer lags when processing from the control panel
-- Fix issue where task wouldn't fire asynchronously, locking up the CP
-- Fixed issue where pending/disabled existing entries weren't being matched for updating/deleting
-- Prevent feed from processing if there are no nodes to process. Fixes deletion when elements shouldn't be
+- Fix issue where task wouldn’t fire asynchronously, locking up the CP
+- Fixed issue where pending/disabled existing entries weren’t being matched for updating/deleting
+- Prevent feed from processing if there are no nodes to process. Fixes deletion when elements shouldn’t be
 - Treat boolean-like values with the respect they deserve.
 - Added Shipping Category for Commerce Products.
 - Fixes to Help requests not validating - therefore unable to send
@@ -1250,7 +1280,7 @@
 
 ### Changed
 - FeedUrl attribute stored as `TEXT` column type to allow for longer URLs.
-- Improved JSON parsing to use Yii's JsonHelper class, with better logging when failing.
+- Improved JSON parsing to use Yii’s JsonHelper class, with better logging when failing.
 
 ## 1.4.9 - 2016-03-15
 
@@ -1342,7 +1372,7 @@
 
 ## 1.3.3 - 2015-11-25
 
-- Minor fix for log reporting which wasn't displaying errors in a useful way.
+- Minor fix for log reporting which wasn’t displaying errors in a useful way.
 
 ## 1.3.2 - 2015-11-25
 
@@ -1354,7 +1384,7 @@
 
 ## 1.3.0 - 2015-11-25
 
-- Refactored direct processing to utalize Craft's tasks service, rather than using pure PHP processing. This greatly improves performance as PHP processing would run out of memory extremely quickly.
+- Refactored direct processing to utalize Craft’s tasks service, rather than using pure PHP processing. This greatly improves performance as PHP processing would run out of memory extremely quickly.
 
 ## 1.2.9 - 2015-11-25
 
@@ -1363,7 +1393,7 @@
 - Added help tab, allowing users to submit their feed info and setup for debugging/troubleshooting.
 - Fix for fields in Matrix blocks only succesfully mapping textual fields. Complex fields such as Assets, Entries, etc were not mapping correctly.
 - Fix for only one item being processed when Delete duplication handling was selected.
-- Fix for Dropdown/RadioButtons causing a critical error when a provided value didn't exist in the field.
+- Fix for Dropdown/RadioButtons causing a critical error when a provided value didn’t exist in the field.
 - Added credit and plugin url to footer.
 
 ## 1.2.8 - 2015-11-25
@@ -1391,7 +1421,7 @@
 - Refactoring for performance improvements.
 - Remove database logging until a better performing option is figured out. Logging still occurs to the file system under `craft/storage/runtime/logs/`.
 - Added optional backup option per-feed (default to true).
-- Minor fix so direct feed link doesn't use `siteUrl`.
+- Minor fix so direct feed link doesn’t use `siteUrl`.
 
 ## 1.2.4 - 2015-11-25
 
@@ -1400,7 +1430,7 @@
 ## 1.2.3 - 2015-11-25
 
 - Primary Element is no longer required - important for JSON feeds.
-- Fixes for when no primary element specified. It's pretty much optional now.
+- Fixes for when no primary element specified. It’s pretty much optional now.
 - UI tidy for mapping table.
 - Fix for duplication handling not matching in some cases. Now uses element search.
 
