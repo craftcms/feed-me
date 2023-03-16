@@ -540,13 +540,13 @@ class Process extends Component
             if ($elementsToDeleteDisable) {
                 if (DuplicateHelper::isDisable($feed)) {
                     $this->_service->disable($elementsToDeleteDisable);
-                $message = 'The following elements have been disabled: ' . Json::encode($elementsToDeleteDisable) . '.';
+                    $message = 'The following elements have been disabled: ' . Json::encode($elementsToDeleteDisable) . '.';
                 } elseif (DuplicateHelper::isDisableForSite($feed)) {
                     $this->_service->disableForSite($elementsToDeleteDisable);
-                $message = 'The following elements have been disabled for the target site: ' . Json::encode($elementsToDeleteDisable) . '.';
+                    $message = 'The following elements have been disabled for the target site: ' . Json::encode($elementsToDeleteDisable) . '.';
                 } else {
                     $this->_service->delete($elementsToDeleteDisable);
-                $message = 'The following elements have been deleted: ' . Json::encode($elementsToDeleteDisable) . '.';
+                    $message = 'The following elements have been deleted: ' . Json::encode($elementsToDeleteDisable) . '.';
                 }
 
                 Plugin::info($message);
