@@ -15,6 +15,7 @@
 - Fixed a bug where simple array comparisons might incorrectly return false on empty arrays during an import. ([#1236](https://github.com/craftcms/feed-me/pull/1236))
 - Fixed multiple issues that could occur when importing elements mapped to a structure section. ([#1240](https://github.com/craftcms/feed-me/pull/1240), [#1154](https://github.com/craftcms/feed-me/issues/1154))
 - Fixed a PHP error that could occur when importing into a relational field inside of Matrix under certain circumstances. ([#1069](https://github.com/craftcms/feed-me/issues/1069))
+- Fixed a bug where simple array comparisons might return false if the values were identical, but the keys were mixed. ([#1237](https://github.com/craftcms/feed-me/pull/1237/))
 - Fixed an PHP error that would occur if you tried to import a new Asset with a filename > 255 characters.
 
 ## 4.5.4 - 2023-01-09
