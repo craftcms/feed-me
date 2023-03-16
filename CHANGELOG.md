@@ -21,6 +21,7 @@
 - Fixed a compatibility issue with v4.3+ of the Google Maps plugin. If patching an existing feed, it may be necessary to remap the Address subfields. ([#1245](https://github.com/craftcms/feed-me/pull/1245))
 - Fixed multiple issues that could occur when importing elements mapped to a structure section. ([#1240](https://github.com/craftcms/feed-me/pull/1240), [#1154](https://github.com/craftcms/feed-me/issues/1154))
 - Fixed a PHP error that could occur when importing into a relational field inside of Matrix under certain circumstances. ([#1069](https://github.com/craftcms/feed-me/issues/1069))
+- Fixed a bug where simple array comparisons might return false if the values were identical, but the keys were mixed. ([#1237](https://github.com/craftcms/feed-me/pull/1237/), [#1238](https://github.com/craftcms/feed-me/issues/1238))
 - Fixed an PHP error that would occur if you tried to import a new Asset with a filename > 255 characters.
 
 ## 5.0.5 - 2023-01-09
