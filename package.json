@@ -3,7 +3,7 @@
   "name": "@craftcms/feed-me",
   "main": "gruntfile.js",
   "devDependencies": {
-    "craftcms-sass": "^3.4.0",
+        "craftcms-sass": "^3.5.0",
     "esm": "^3.2.25",
     "grunt": "^1.0.3",
     "grunt-contrib-concat": "latest",
