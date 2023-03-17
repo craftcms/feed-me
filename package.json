@@ -1,17 +1,13 @@
 {
   "private": true,
   "name": "@craftcms/feed-me",
-  "main": "gruntfile.js",
+  "main": "webpack.config.js",
+  "browserslist": [
+    "extends @craftcms/browserslist-config"
+  ],
   "devDependencies": {
-    "craftcms-sass": "^3.5.0",
-    "esm": "^3.2.25",
-    "grunt": "^1.0.3",
-    "grunt-contrib-concat": "latest",
-    "grunt-contrib-jshint": "latest",
-    "grunt-contrib-sass": "latest",
-    "grunt-contrib-uglify": "latest",
-    "grunt-contrib-watch": "^1.1.0",
-    "grunt-postcss": "^0.9.0",
+    "@craftcms/webpack": "^1.1.0",
+    "@craftcms/sass": "^1.1.0",
     "markdown-it-deflist": "^2.0.3",
     "vuepress": "^1.5.2",
     "vuepress-plugin-sitemap": "^2.0.0",
@@ -21,6 +17,9 @@
     "prettier": "^2.7.1"
   },
   "scripts": {
+    "build": "webpack --node-env=production --progress",
+    "dev": "webpack --node-env=dev --mode=development --progress",
+    "serve": "webpack-dev-server --node-env=development",
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs -d docs-build",
     "docs:sitemap": "vuepress-sitemap -d docs-build -H https://docs.craftcms.com/feed-me/v4/",
