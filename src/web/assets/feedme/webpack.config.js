@@ -19,7 +19,7 @@ module.exports = getConfig({
             filename: 'fonts/[name][ext][query]',
           },
         },
-      ]
+      ],
     },
     plugins: [
       new CopyWebpackPlugin({
