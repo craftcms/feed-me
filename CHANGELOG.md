@@ -2,27 +2,24 @@
 
 ## Unreleased
 
-### Added
-- Added a feed setting that allows feeds to specify if they'd like empty values to used to overwrite existing data. ([#1228](https://github.com/craftcms/feed-me/pull/1228), [#797](https://github.com/craftcms/feed-me/issues/797), [#723](https://github.com/craftcms/feed-me/issues/723), [#854](https://github.com/craftcms/feed-me/issues/854), [#680](https://github.com/craftcms/feed-me/issues/680))
-- Add the ability to map the Full name for a feed to a User element which takes priority over the First and Last names. ([#1235](https://github.com/craftcms/feed-me/pull/1235))
-- Added the ability to import into [Money fields](https://craftcms.com/docs/4.x/money-fields.html).
+> **Warning:**
+> If you have an existing Google Maps feed, you may need to remap its fields after updating.
 
-### Changed
-- The `EVENT_AFTER_PARSE_ATTRIBUTE` event now allows plugins to modify parsed values.
-- Feed Me now won't disable already disabled elements when importing a feed, drastically improving the performance of some feeds. ([#1248](https://github.com/craftcms/feed-me/pull/1248), [#1241](https://github.com/craftcms/feed-me/issues/1241))
-
-### Fixed
-- Fixed a PHP error that would occur on the feed mapping screen if there was an entry field using a custom source. ([#1186](https://github.com/craftcms/feed-me/issues/1186))
-- Fixed a bug where importing into Matrix fields that had identical sub-fields across blocks would only import the first matching field. ([#1185](https://github.com/craftcms/feed-me/pull/1185), [#1226](https://github.com/craftcms/feed-me/issues/1226), [#1184](https://github.com/craftcms/feed-me/issues/1184))
+- Added the “Set Empty Values” feed setting, which determines whether empty values in the feed should be respected or ignored. ([#1228](https://github.com/craftcms/feed-me/pull/1228), [#797](https://github.com/craftcms/feed-me/issues/797), [#723](https://github.com/craftcms/feed-me/issues/723), [#854](https://github.com/craftcms/feed-me/issues/854), [#680](https://github.com/craftcms/feed-me/issues/680))
+- Added support for Money fields.
+- Added support for users’ Full Name fields. ([#1235](https://github.com/craftcms/feed-me/pull/1235))
+- Changes made to `craft\feedme\events\ElementEvent::$parsedValue` via `craft\feedme\base\Element::EVENT_AFTER_PARSE_ATTRIBUTE` are now respected. ([#1172](https://github.com/craftcms/feed-me/pull/1172))
+- Disabled elements are no longer redundantly re-disabled, drastically improving the performance of some feed imports. ([#1248](https://github.com/craftcms/feed-me/pull/1248), [#1241](https://github.com/craftcms/feed-me/issues/1241))
 - Fixed a bug where some feed element data would be considered changed even if there were no changes. ([#1220](https://github.com/craftcms/feed-me/pull/1220), [#1219](https://github.com/craftcms/feed-me/issues/1219), [#1223](https://github.com/craftcms/feed-me/pull/1223/), [#1219](https://github.com/craftcms/feed-me/issues/1219))
-- Fixed a bug where the default value modal for relational fields on the feed mapping page would show all available sources and not just the sources allowed for the field. ([#1234](https://github.com/craftcms/feed-me/pull/1234))
-- Fixed a PHP error that could occur when you map an assets field with a default value and there is an empty value in the feed. ([#1229](https://github.com/craftcms/feed-me/pull/1229), [#1195](https://github.com/craftcms/feed-me/issues/1195), [#1106](https://github.com/craftcms/feed-me/issues/1106), [#1154](https://github.com/craftcms/feed-me/issues/1154))
-- Fixed a bug where simple array comparisons might incorrectly return false on empty arrays during an import. ([#1236](https://github.com/craftcms/feed-me/pull/1236))
-- Fixed a compatibility issue with v4.3+ of the Google Maps plugin. If patching an existing feed, it may be necessary to remap the Address subfields. ([#1245](https://github.com/craftcms/feed-me/pull/1245))
-- Fixed multiple issues that could occur when importing elements mapped to a structure section. ([#1240](https://github.com/craftcms/feed-me/pull/1240), [#1154](https://github.com/craftcms/feed-me/issues/1154))
-- Fixed a PHP error that could occur when importing into a relational field inside of Matrix under certain circumstances. ([#1069](https://github.com/craftcms/feed-me/issues/1069))
-- Fixed a bug where simple array comparisons might return false if the values were identical, but the keys were mixed. ([#1237](https://github.com/craftcms/feed-me/pull/1237/), [#1238](https://github.com/craftcms/feed-me/issues/1238))
-- Fixed an PHP error that would occur if you tried to import a new Asset with a filename > 255 characters.
+- Fixed a bug where the default value modal for relational fields on the feed mapping page would show all available sources, not just the sources allowed for the field. ([#1234](https://github.com/craftcms/feed-me/pull/1234))
+- Fixed a PHP error that could occur when a feed contained an empty value that was mapped to an Assets field. ([#1229](https://github.com/craftcms/feed-me/pull/1229), [#1195](https://github.com/craftcms/feed-me/issues/1195), [#1106](https://github.com/craftcms/feed-me/issues/1106), [#1154](https://github.com/craftcms/feed-me/issues/1154))
+- Fixed a bug where arrays could be misinterpreted during feed imports. ([#1236](https://github.com/craftcms/feed-me/pull/1236), [#1237](https://github.com/craftcms/feed-me/pull/1237/), [#1238](https://github.com/craftcms/feed-me/issues/1238))
+- Fixed several issues related to importing categories and Structure section entries. ([#1240](https://github.com/craftcms/feed-me/pull/1240), [#1154](https://github.com/craftcms/feed-me/issues/1154))
+- Fixed a PHP error that could occur when importing relational field data within a Matrix field. ([#1069](https://github.com/craftcms/feed-me/issues/1069))
+- Fixed a PHP error that occurred when importing an asset with a filename over 255 characters long.
+- Fixed a PHP error that occurred if an Entries field was configured to use a custom source. ([#1186](https://github.com/craftcms/feed-me/issues/1186))
+- Fixed a bug where importing into Matrix fields that had identically-named sub-fields across block types would only import to the first matching field. ([#1185](https://github.com/craftcms/feed-me/pull/1185), [#1226](https://github.com/craftcms/feed-me/issues/1226), [#1184](https://github.com/craftcms/feed-me/issues/1184))
+- Fixed a compatibility issue with Google Maps 4.3+. ([#1245](https://github.com/craftcms/feed-me/pull/1245))
 
 ## 5.0.5 - 2023-01-09
 
