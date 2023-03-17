@@ -2,7 +2,7 @@
 
 ## 5.1.0 - 2023-03-17
 
-> **Warning:**
+> **Warning**
 > If you have an existing Google Maps feed, you may need to remap its fields after updating.
 
 - Added the “Set Empty Values” feed setting, which determines whether empty values in the feed should be respected or ignored. ([#1228](https://github.com/craftcms/feed-me/pull/1228), [#797](https://github.com/craftcms/feed-me/issues/797), [#723](https://github.com/craftcms/feed-me/issues/723), [#854](https://github.com/craftcms/feed-me/issues/854), [#680](https://github.com/craftcms/feed-me/issues/680))
