@@ -26,11 +26,11 @@ class FeedMeAsset extends AssetBundle
         ];
 
         $this->js = [
-            'js/feed-me.js',
+            'Feedme.js',
         ];
 
         $this->css = [
-            'css/feed-me.css',
+            'css/FeedMe.css',
         ];
 
         parent::init();

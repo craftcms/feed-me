@@ -10,6 +10,7 @@ use craft\elements\Entry as EntryElement;
 use craft\elements\User as UserElement;
 use craft\errors\ElementNotFoundException;
 use craft\feedme\base\Element;
+use craft\feedme\helpers\DataHelper;
 use craft\feedme\models\ElementGroup;
 use craft\feedme\Plugin;
 use craft\helpers\Json;
@@ -177,13 +178,19 @@ class Entry extends Element
     protected function parseParent($feedData, $fieldInfo): ?int
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
+        $default = DataHelper::fetchDefaultArrayValue($fieldInfo);
 
         $match = Hash::get($fieldInfo, 'options.match');
         $create = Hash::get($fieldInfo, 'options.create');
+        $node = Hash::get($fieldInfo, 'node');
 
         // Element lookups must have a value to match against
         if ($value === null || $value === '') {
             return null;
+        }
+
+        if ($node === 'usedefault') {
+            $match = 'elements.id';
         }
 
         $query = EntryElement::find()
@@ -192,6 +199,11 @@ class Entry extends Element
 
         if (isset($this->feed['siteId']) && $this->feed['siteId']) {
             $query->siteId($this->feed['siteId']);
+        }
+
+        // fix for https://github.com/craftcms/feed-me/issues/1154#issuecomment-1429622276
+        if (!empty($this->element->sectionId)) {
+            $query->sectionId($this->element->sectionId);
         }
 
         $element = $query->one();
@@ -213,9 +225,18 @@ class Entry extends Element
                 Plugin::error('Entry error: Could not create parent - `{e}`.', ['e' => Json::encode($element->getErrors())]);
             } else {
                 Plugin::info('Entry `#{id}` added.', ['id' => $element->id]);
+                $this->element->newParentId = $element->id;
             }
 
             return $element->id;
+        }
+
+        // use the default value if it's provided and none of the above worked
+        // https://github.com/craftcms/feed-me/issues/1154
+        if (!empty($default)) {
+            $this->element->parentId = $default[0];
+
+            return $default[0];
         }
 
         return null;

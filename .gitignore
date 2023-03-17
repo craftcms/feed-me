@@ -29,6 +29,7 @@ tests/.env
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+/.ddev
 
 ## TESTS
 /tests/_craft/storage

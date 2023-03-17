@@ -103,7 +103,7 @@
                                     </a>
                                 </div>
 
-                                {% set cpTrigger = craft.app.config.general.cpTrigger ~ '/' %}
+                                {% set cpTrigger = craft.app.config.general.cpTrigger ? craft.app.config.general.cpTrigger ~ '/' : null %}
 
                                 {% set directUrl = actionUrl('feed-me/feeds/run-task', { direct: true, feedId: feed.id, passkey: feed.passkey })|replace(cpTrigger, '') %}
 

@@ -11,6 +11,7 @@ use craft\elements\User as UserElement;
 use craft\errors\VolumeException;
 use craft\feedme\base\Element;
 use craft\feedme\helpers\AssetHelper;
+use craft\feedme\helpers\DataHelper;
 use craft\helpers\UrlHelper;
 use craft\records\User as UserRecord;
 use Throwable;
@@ -187,6 +188,7 @@ class User extends Element
     protected function parseGroups($feedData, $fieldInfo): array
     {
         $value = $this->fetchArrayValue($feedData, $fieldInfo);
+        $default = DataHelper::fetchDefaultArrayValue($fieldInfo);
 
         $newGroupsIds = [];
 
@@ -210,6 +212,10 @@ class User extends Element
             }
 
             $newGroupsIds[] = $result['id'];
+        }
+
+        if (empty(array_filter($value)) && !empty($default)) {
+            $newGroupsIds = $default;
         }
 
         $removeFromExisting = Hash::get($fieldInfo, 'options.removeFromExisting');

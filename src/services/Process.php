@@ -394,6 +394,10 @@ class Process extends Component
             if (Hash::get($fieldInfo, 'field')) {
                 $fieldValue = Plugin::$plugin->fields->parseField($feed, $element, $feedData, $fieldHandle, $fieldInfo);
 
+                if ($feed['setEmptyValues'] === 1 && $fieldValue === null) {
+                    $fieldData[$fieldHandle] = "";
+                }
+
                 if ($fieldValue !== null) {
                     $fieldData[$fieldHandle] = $fieldValue;
                 }
@@ -530,22 +534,24 @@ class Process extends Component
             return;
         }
 
-        $elementsToDeleteDisable = array_diff($settings['existingElements'], $processedElementIds);
+        if ($processedElementIds) {
+            $elementsToDeleteDisable = array_diff($settings['existingElements'], $processedElementIds);
 
-        if ($elementsToDeleteDisable) {
-            if (DuplicateHelper::isDisable($feed)) {
-                $this->_service->disable($elementsToDeleteDisable);
-                $message = 'The following elements have been disabled: ' . Json::encode($elementsToDeleteDisable) . '.';
-            } elseif (DuplicateHelper::isDisableForSite($feed)) {
-                $this->_service->disableForSite($elementsToDeleteDisable);
-                $message = 'The following elements have been disabled for the target site: ' . Json::encode($elementsToDeleteDisable) . '.';
-            } else {
-                $this->_service->delete($elementsToDeleteDisable);
-                $message = 'The following elements have been deleted: ' . Json::encode($elementsToDeleteDisable) . '.';
+            if ($elementsToDeleteDisable) {
+                if (DuplicateHelper::isDisable($feed)) {
+                    $this->_service->disable($elementsToDeleteDisable);
+                    $message = 'The following elements have been disabled: ' . Json::encode($elementsToDeleteDisable) . '.';
+                } elseif (DuplicateHelper::isDisableForSite($feed)) {
+                    $this->_service->disableForSite($elementsToDeleteDisable);
+                    $message = 'The following elements have been disabled for the target site: ' . Json::encode($elementsToDeleteDisable) . '.';
+                } else {
+                    $this->_service->delete($elementsToDeleteDisable);
+                    $message = 'The following elements have been deleted: ' . Json::encode($elementsToDeleteDisable) . '.';
+                }
+
+                Plugin::info($message);
+                Plugin::debug($message);
             }
-
-            Plugin::info($message);
-            Plugin::debug($message);
         }
 
         // Log the total time taken to process the feed
@@ -554,7 +560,7 @@ class Process extends Component
 
         Plugin::$stepKey = null;
 
-        $message = 'Processing ' . count($processedElementIds) . ' elements finished in ' . $execution_time . 's';
+        $message = 'Processing ' . ($processedElementIds ? count($processedElementIds) : 0) . ' elements finished in ' . $execution_time . 's';
         Plugin::info($message);
         Plugin::debug($message);
 

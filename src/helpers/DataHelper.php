@@ -5,6 +5,7 @@ namespace craft\feedme\helpers;
 use ArrayAccess;
 use Cake\Utility\Hash;
 use Craft;
+use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Db;
@@ -53,7 +54,6 @@ class DataHelper
         $value = [];
 
         $node = Hash::get($fieldInfo, 'node');
-        $default = Hash::get($fieldInfo, 'default');
 
         $dataDelimiter = Plugin::$plugin->service->getConfig('dataDelimiter');
 
@@ -67,10 +67,6 @@ class DataHelper
             $feedPath = preg_replace('/^(\d+\/)|(\/\d+)/', '', $feedPath);
 
             if ($feedPath == $node || $nodePath == $node) {
-                if ($nodeValue === null || $nodeValue === '') {
-                    $nodeValue = $default;
-                }
-
                 // Allow pipes '|' to denote multiple items, but even if it doesn't contain one, explode will create
                 // an array, so ensure to merge with the current results.
                 if (is_string($nodeValue) && str_contains($nodeValue, $dataDelimiter)) {
@@ -88,22 +84,48 @@ class DataHelper
 
         // Check if not importing, just using default
         if ($node === 'usedefault' && !$value) {
-            if (!is_array($default)) {
-                $default = [$default];
-            }
-            $value = $default;
+            $value = self::fetchDefaultArrayValue($fieldInfo);
         }
 
         return $value;
     }
 
     /**
+     * @param $fieldInfo
+     * @return array|\ArrayAccess|mixed
+     */
+    public static function fetchDefaultArrayValue($fieldInfo)
+    {
+        $default = Hash::get($fieldInfo, 'default');
+
+        if (!is_array($default)) {
+            if (empty($default)) {
+                $default = [];
+            } else {
+                $default = [$default];
+            }
+        }
+
+        if (!empty($default) && !is_array($default)) {
+            $default = [$default];
+        }
+
+        return $default;
+    }
+
+    /**
      * @param $feedData
      * @param $fieldInfo
+     * @param array|FeedModel $feed
      * @return array|ArrayAccess|mixed|null
      */
-    public static function fetchValue($feedData, $fieldInfo): mixed
+    public static function fetchValue($feedData, $fieldInfo, $feed): mixed
     {
+        // $feed will be a FeedModel when calling `fetchValue` from an element
+        if ($feed instanceof FeedModel) {
+            $feed = $feed->toArray();
+        }
+
         $value = [];
 
         $node = Hash::get($fieldInfo, 'node');
@@ -149,6 +171,16 @@ class DataHelper
         // Check if not importing, just using default
         if ($node === 'usedefault' && !$value) {
             $value = $default;
+        }
+
+        // If setEmptyValues is enabled allow overwriting existing data
+        if ($value === "" && $feed['setEmptyValues']) {
+            return $value;
+        }
+
+        // If setEmptyValues is enabled allow overwriting existing data
+        if ($value === "" && $feed['setEmptyValues']) {
+            return $value;
         }
 
         // We want to preserve 0 and '0', but if it's empty, return null.
@@ -199,6 +231,11 @@ class DataHelper
             $existingValue = Hash::get($fields, $key);
 
             // If date value, make sure to cast it as a string to compare
+            if ($existingValue instanceof \DateTime || DateTimeHelper::isIso8601($existingValue)) {
+                $existingValue = Db::prepareDateForDb($existingValue);
+            }
+
+            // If date value, make sure to cast it as a string to compare
             if ($newValue instanceof DateTime || DateTimeHelper::isIso8601($newValue)) {
                 $newValue = Db::prepareDateForDb($newValue);
             }
@@ -217,6 +254,11 @@ class DataHelper
             // Then check for simple attributes
             $existingValue = Hash::get($attributes, $key);
 
+            // If date value, make sure to cast it as a string to compare
+            if ($existingValue instanceof \DateTime || DateTimeHelper::isIso8601($existingValue)) {
+                $existingValue = Db::prepareDateForDb($existingValue);
+            }
+
             // Check for attribute groups - more than simple asset
             if ($key === 'groups') {
                 $groups = $element->getGroups();
@@ -228,7 +270,7 @@ class DataHelper
                 $existingValue = $groups;
             }
 
-            if (self::_compareSimpleValues($fields, $key, $existingValue, $newValue)) {
+            if (self::_compareSimpleValues($attributes, $key, $existingValue, $newValue)) {
                 unset($trackedChanges[$key]);
                 continue;
             }
@@ -312,6 +354,24 @@ class DataHelper
      */
     private static function _compareSimpleValues($fields, $key, $firstValue, $secondValue): bool
     {
+        // When the values are arrays filled with numbers then they most likely represent references to elements.
+        // Unfortunately these arrays sometimes have non-matching keys, while the values are the same, i.e. reference
+        // the same elements.  In this case, we should determine that the values are the same.
+        if (Hash::check($fields, $key)
+            && is_array($firstValue)
+            && is_array($secondValue)
+            && array_reduce($firstValue, static fn($carry, $item) => $carry && is_numeric($item), true)
+            && array_reduce($secondValue, static fn($carry, $item) => $carry && is_numeric($item), true)
+            && array_values($firstValue) == array_values($secondValue)
+        ) {
+            return true;
+        }
+
+        // When the values are empty arrays we do NOT use the Hash::check below because that will always return false
+        if (is_array($firstValue) && is_array($secondValue) && count($firstValue) === 0 && count($secondValue) === 0) {
+            return true;
+        }
+
         /** @noinspection TypeUnsafeComparisonInspection */
         // Should probably do a strict check, but doing this for backwards compatibility.
         if (Hash::check($fields, $key) && ($firstValue == $secondValue)) {

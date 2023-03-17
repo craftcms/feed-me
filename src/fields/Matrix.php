@@ -104,7 +104,7 @@ class Matrix extends Field implements FieldInterface
 
                 // Finish up with the content, also sort out cases where there's array content
                 if (isset($fieldData[$key]) && is_array($fieldData[$key])) {
-                    $fieldData[$key] = array_merge_recursive($fieldData[$key], $parsedValue);
+                    $fieldData[$key] = is_array($parsedValue) ? array_merge_recursive($fieldData[$key], $parsedValue) : $fieldData[$key];
                 } else {
                     $fieldData[$key] = $parsedValue;
                 }
@@ -139,8 +139,9 @@ class Matrix extends Field implements FieldInterface
         // sub-field data that could be arrays or single values. Let's build our Matrix-ready data
         foreach ($fieldData as $blockSubFieldHandle => $value) {
             $handles = explode('.', $blockSubFieldHandle);
-            $blockIndex = 'new' . ($handles[0] + 1);
             $blockHandle = $handles[1];
+            // Inclusion of block handle here prevents blocks of different types from being merged together
+            $blockIndex = 'new' . $blockHandle . ((int)$handles[0] + 1);
             $subFieldHandle = $handles[2];
 
             $disabled = Hash::get($this->fieldInfo, 'blocks.' . $blockHandle . '.disabled', false);
@@ -148,14 +149,21 @@ class Matrix extends Field implements FieldInterface
 
             // Prepare an array that's ready for Matrix to import it
             $preppedData[$blockIndex . '.type'] = $blockHandle;
-            // $preppedData[$blockIndex . '.order'] = $order;
             $preppedData[$blockIndex . '.enabled'] = !$disabled;
             $preppedData[$blockIndex . '.collapsed'] = $collapsed;
             $preppedData[$blockIndex . '.fields.' . $subFieldHandle] = $value;
-            // $order++;
         }
 
-        return Hash::expand($preppedData);
+        $expanded = Hash::expand($preppedData);
+
+        // Although it seems to work with block handles in keys, it's better to keep things clean
+        $index = 1;
+        $resultBlocks = [];
+        foreach ($expanded as $blockData) {
+            $resultBlocks['new' . $index++] = $blockData;
+        }
+
+        return $resultBlocks;
     }
 
 

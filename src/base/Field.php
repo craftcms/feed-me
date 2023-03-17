@@ -124,11 +124,19 @@ abstract class Field extends Component
     }
 
     /**
+     * @return array|\ArrayAccess|mixed
+     */
+    public function fetchDefaultArrayValue()
+    {
+        return DataHelper::fetchDefaultArrayValue($this->fieldInfo);
+    }
+
+    /**
      * @return array|ArrayAccess|mixed|null
      */
     public function fetchValue(): mixed
     {
-        return DataHelper::fetchValue($this->feedData, $this->fieldInfo);
+        return DataHelper::fetchValue($this->feedData, $this->fieldInfo, $this->feed);
     }
 
     // Protected Methods

@@ -1,0 +1,66 @@
+{# ------------------------ #}
+{# Available Variables #}
+{# ------------------------ #}
+{# Attributes: #}
+{# type, name, handle, instructions, attribute, default, feed, feedData #}
+{# ------------------------ #}
+{# Fields: #}
+{# name, handle, instructions, feed, feedData, field, fieldClass #}
+{# ------------------------ #}
+
+{% import 'feed-me/_macros' as feedMeMacro %}
+{% import '_includes/forms' as forms %}
+
+{# Special case when inside another complex field (Matrix) #}
+{% if parentPath is defined %}
+    {% set prefixPath = parentPath %}
+{% else %}
+    {% set prefixPath = [handle] %}
+{% endif %}
+
+{% set classes = ['complex-field'] %}
+
+<tr class="complex-field complex-field-header">
+    <td class="col-field" colspan="3">
+        <div class="field">
+            <div class="heading">
+                <label class="">{{ name }}</label>
+            </div>
+
+            <div class="additional-mapping-fields">
+                {% namespace 'fieldMapping[' ~ prefixPath|join('][') ~ ']' %}
+                    <input type="text" name="field" value="{{ className(field) }}">
+                {% endnamespace %}
+            </div>
+        </div>
+    </td>
+</tr>
+
+{# Get comprehensive list of subfields, including coordinates #}
+{% set subfieldConfig = field.settings.subfieldConfig | merge({
+    'lat': {'label': 'Latitude'},
+    'lng': {'label': 'Longitude'},
+    'zoom': {'label': 'Zoom'},
+}) %}
+
+{# Loop through all subfields #}
+{% for key,subfield in subfieldConfig %}
+    {% set nameLabel = subfield['label'] %}
+    {% set instructionsHandle = handle ~ '[' ~ key ~ ']' %}
+
+    {% set path = prefixPath|merge ([ 'fields', key ]) %}
+
+    {% set default = default ?? {
+        type: 'text',
+    } %}
+
+    {% embed 'feed-me/_includes/fields/_base' %}
+        {% block additionalFieldSettings %}
+
+        {% endblock %}
+
+        {% block fieldSettings %}
+
+        {% endblock %}
+    {% endembed %}
+{% endfor %}

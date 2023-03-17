@@ -113,6 +113,11 @@ class FeedModel extends Model
     public ?bool $backup = null;
 
     /**
+     * @var bool
+     */
+    public $setEmptyValues;
+
+    /**
      * @var DateTime|null
      */
     public ?DateTime $dateCreated = null;
@@ -246,7 +251,7 @@ class FeedModel extends Model
     {
         return [
             [['name', 'feedUrl', 'feedType', 'elementType', 'duplicateHandle', 'passkey'], 'required'],
-            [['backup'], 'boolean'],
+            [['backup', 'setEmptyValues'], 'boolean'],
         ];
     }
 }

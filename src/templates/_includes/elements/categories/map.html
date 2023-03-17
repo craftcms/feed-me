@@ -8,7 +8,7 @@
 {% endif %}
 
 {% set categories = [{ label: 'Don’t import'|t('feed-me'), value: '' }] %}
-{% for category in craft.categories.all() %}
+{% for category in craft.categories({ groupId: groupId }).all() %}
     {% set categories = categories|merge([{ label: category.title|slice(0, 40), value: category.id }]) %}
 {% endfor %}
 
