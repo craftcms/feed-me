@@ -1,14 +1,16 @@
+/* globals Craft, $ */
+
 // ==========================================================================
 
 // Feed Me Plugin for Craft CMS
 
 // ==========================================================================
 
-if (typeof Craft.FeedMe === typeof undefined) {
-  Craft.FeedMe = {};
-}
-
 $(function () {
+  if (typeof Craft.FeedMe === typeof undefined) {
+    Craft.FeedMe = {};
+  }
+
   // Settings pane toggle for feeds index
   $(document).on('click', '#feeds .settings', function (e) {
     e.preventDefault();
