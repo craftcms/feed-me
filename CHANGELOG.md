@@ -1,6 +1,6 @@
 # Release Notes for Feed Me
 
-## Unreleased
+## 5.1.0 - 2023-03-17
 
 > **Warning:**
 > If you have an existing Google Maps feed, you may need to remap its fields after updating.
