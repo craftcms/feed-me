@@ -26,7 +26,7 @@ class FeedMeAsset extends AssetBundle
         ];
 
         $this->js = [
-            'Feedme.js',
+            'FeedMe.js',
         ];
 
         $this->css = [
