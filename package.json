@@ -6,7 +6,7 @@
     "extends @craftcms/browserslist-config"
   ],
   "devDependencies": {
-    "@craftcms/webpack": "^1.1.0",
+    "@craftcms/webpack": "^1.1.2",
     "@craftcms/sass": "^1.1.0",
     "markdown-it-deflist": "^2.0.3",
     "vuepress": "^1.5.2",
