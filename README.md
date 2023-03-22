@@ -28,7 +28,7 @@ cd /path/to/my-project.test
 composer require craftcms/feed-me
 
 # tell Craft to install the plugin
-./craft install/plugin feed-me
+./craft plugin/install feed-me
 ```
 
 ## Resources
