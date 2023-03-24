@@ -1,6 +1,6 @@
 # Release Notes for Feed Me
 
-## Unreleased
+## 5.1.1.1 - 2023-02-24
 
 - Fixed a PHP error that could occur when importing into some 3rd party fields. ([#1264](https://github.com/craftcms/feed-me/issues/1264), [#1265](https://github.com/craftcms/feed-me/pull/1265))
 
