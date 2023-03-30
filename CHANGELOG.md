@@ -3,7 +3,13 @@
 ## Unreleased
 
 ### Fixed
+
 - Fixed a bug where importing data to the commerce variant table field don’t work. ([#464](https://github.com/craftcms/feed-me/issues/464))
+
+## 4.6.1.1 - 2023-03-24
+
+- Fixed a PHP error that could occur when importing into some 3rd party fields. ([#1264](https://github.com/craftcms/feed-me/issues/1264), [#1265](https://github.com/craftcms/feed-me/pull/1265))
+
 
 ## 4.6.1 - 2023-03-20
 
