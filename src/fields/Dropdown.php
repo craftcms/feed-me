@@ -47,6 +47,12 @@ class Dropdown extends Field implements FieldInterface
     {
         $value = $this->fetchValue();
 
+        if ($value === null) {
+            return null;
+        }
+
+        $value = (string) $value;
+
         $options = Hash::get($this->field, 'settings.options');
         $match = Hash::get($this->fieldInfo, 'options.match', 'value');
 
@@ -56,14 +62,10 @@ class Dropdown extends Field implements FieldInterface
             }
         }
 
-        return null;
-    }
+        if (empty($value)) {
+            return $value;
+        }
 
-    /**
-     * @inheritDoc
-     */
-    public function fetchValue()
-    {
-        return (string) parent::fetchValue();
+        return null;
     }
 }

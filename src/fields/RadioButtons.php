@@ -57,6 +57,10 @@ class RadioButtons extends Field implements FieldInterface
             }
         }
 
+        if (empty($value)) {
+            return $value;
+        }
+
         return null;
     }
 }
