@@ -110,10 +110,10 @@ class DataHelper
     /**
      * @param $feedData
      * @param $fieldInfo
-     * @param array|FeedModel $feed
+     * @param array|FeedModel|null $feed
      * @return array|ArrayAccess|mixed|null
      */
-    public static function fetchValue($feedData, $fieldInfo, $feed)
+    public static function fetchValue($feedData, $fieldInfo, $feed = null)
     {
         // $feed will be a FeedModel when calling `fetchValue` from an element
         if ($feed instanceof FeedModel) {
@@ -168,7 +168,7 @@ class DataHelper
         }
 
         // If setEmptyValues is enabled allow overwriting existing data
-        if ($value === "" && $feed['setEmptyValues']) {
+        if ($feed !== null && $value === "" && $feed['setEmptyValues']) {
             return $value;
         }
 
