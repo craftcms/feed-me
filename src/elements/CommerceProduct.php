@@ -14,6 +14,8 @@ use craft\feedme\helpers\BaseHelper;
 use craft\feedme\helpers\DataHelper;
 use craft\feedme\Plugin;
 use craft\feedme\services\Process;
+use craft\fields\Matrix;
+use craft\fields\Table;
 use yii\base\Event;
 
 /**
@@ -310,9 +312,9 @@ class CommerceProduct extends Element
                     }
                 }
 
-                $isMatrixField = (Hash::get($fieldInfo, 'field') === 'craft\fields\Matrix');
+                $isNestedField = (in_array(Hash::get($fieldInfo, 'field'), [Matrix::class, Table::class]));
 
-                if ($isMatrixField) {
+                if ($isNestedField === true) {
                     $complexFields[$variantIndex][$fieldHandle]['info'] = $fieldInfo;
                     $complexFields[$variantIndex][$fieldHandle]['data'][$nodePath] = $value;
                     continue;
