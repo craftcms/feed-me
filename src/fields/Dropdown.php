@@ -52,12 +52,16 @@ class Dropdown extends Field implements FieldInterface
         }
 
         $value = (string) $value;
+        $default = Hash::get($this->fieldInfo, 'default');
 
         $options = Hash::get($this->field, 'settings.options');
         $match = Hash::get($this->fieldInfo, 'options.match', 'value');
 
         foreach ($options as $option) {
-            if (isset($option['value']) && $value === $option[$match]) {
+            if (
+                (isset($option['value']) && $value === $option[$match]) ||
+                ($match === 'label' && $value === $default && $value === $option['value'])
+            ) {
                 return $option['value'];
             }
         }
