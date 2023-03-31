@@ -152,6 +152,17 @@ class FeedsController extends Controller
     {
         $feed = $this->_getModelFromPost();
 
+        if ($feed->getErrors()) {
+            $this->setFailFlash(Craft::t('feed-me', 'Couldn’t save the feed.'));
+
+            // Send the category group back to the template
+            Craft::$app->getUrlManager()->setRouteParams([
+                'feed' => $feed,
+            ]);
+
+            return null;
+        }
+
         return $this->_saveAndRedirect($feed, 'feed-me/feeds/', true);
     }
 
