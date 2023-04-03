@@ -155,16 +155,12 @@ class Matrix extends Field implements FieldInterface
             $preppedData[$blockIndex . '.collapsed'] = $collapsed;
             $preppedData[$blockIndex . '.fields.' . $subFieldHandle] = $value;
 
-            if (is_string($value) && !empty($value)) {
+            if ((is_string($value) && !empty($value)) || (is_array($value) && !empty(array_filter($value)))) {
                 $allEmpty = false;
             }
-            if (is_array($value) && !empty(array_filter($value))) {
-                $allEmpty = false;
-            }
+
             // $order++;
         }
-
-        $preppedData = Hash::expand($preppedData);
 
         // if there's nothing in the prepped data, return null, as if mapping doesn't exist
         if (empty($preppedData)) {
@@ -175,6 +171,8 @@ class Matrix extends Field implements FieldInterface
         if ($allEmpty === true) {
             return [];
         }
+
+        $preppedData = Hash::expand($preppedData);
 
         // otherwise return what we have
         return $preppedData;
