@@ -22,7 +22,8 @@ class DataHelper
      * @param $value
      * @return bool
      */
-    public static function isArrayValueEmpty($value) {
+    public static function isArrayValueEmpty($value)
+    {
         return (!$value || (is_array($value) && empty(array_filter($value))));
     }
 
