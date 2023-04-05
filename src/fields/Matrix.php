@@ -135,6 +135,9 @@ class Matrix extends Field implements FieldInterface
 
         // $order = 0;
 
+        // check if all values in fieldData are empty strings
+        $allEmpty = true;
+
         // New, we've got a collection of prepared data, but its formatted a little rough, due to catering for
         // sub-field data that could be arrays or single values. Let's build our Matrix-ready data
         foreach ($fieldData as $blockSubFieldHandle => $value) {
@@ -152,6 +155,20 @@ class Matrix extends Field implements FieldInterface
             $preppedData[$blockIndex . '.enabled'] = !$disabled;
             $preppedData[$blockIndex . '.collapsed'] = $collapsed;
             $preppedData[$blockIndex . '.fields.' . $subFieldHandle] = $value;
+
+            if ((is_string($value) && !empty($value)) || (is_array($value) && !empty(array_filter($value)))) {
+                $allEmpty = false;
+            }
+        }
+
+        // if there's nothing in the prepped data, return null, as if mapping doesn't exist
+        if (empty($preppedData)) {
+            return null;
+        }
+
+        // if everything in the $preppedData[][fields] is empty - return empty array
+        if ($allEmpty === true) {
+            return [];
         }
 
         $expanded = Hash::expand($preppedData);

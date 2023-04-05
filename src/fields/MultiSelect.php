@@ -48,6 +48,10 @@ class MultiSelect extends Field implements FieldInterface
         $value = $this->fetchArrayValue();
         $default = $this->fetchDefaultArrayValue();
 
+        if ($value === null) {
+            return null;
+        }
+
         $preppedData = [];
 
         $options = Hash::get($this->field, 'settings.options');
