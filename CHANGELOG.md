@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Fixed a PHP error that could occur when saving a feed using an Asset element type with no volume selected.
+- Fixed several bugs related to empty and non-existent feed values and the “Set Empty Values” feed setting. ([#1271](https://github.com/craftcms/feed-me/pull/1271))
 
 ## 4.6.1.1 - 2023-03-24 
 
