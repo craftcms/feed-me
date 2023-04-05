@@ -8,6 +8,7 @@ use craft\base\Element as BaseElement;
 use craft\elements\Entry as EntryElement;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
+use craft\feedme\helpers\DataHelper;
 use craft\feedme\Plugin;
 use craft\helpers\Db;
 
@@ -57,6 +58,17 @@ class Entries extends Field implements FieldInterface
         $value = $this->fetchArrayValue();
         $default = $this->fetchDefaultArrayValue();
 
+        // if the mapped value is not set in the feed
+        if ($value === null) {
+            return null;
+        }
+
+        // if value from the feed is empty and default is not set
+        // return an empty array; no point bothering further
+        if (empty($default) && DataHelper::isArrayValueEmpty($value)) {
+            return [];
+        }
+
         $sources = Hash::get($this->field, 'settings.sources');
         $limit = Hash::get($this->field, 'settings.limit');
         $targetSiteId = Hash::get($this->field, 'settings.targetSiteId');
@@ -76,7 +88,7 @@ class Entries extends Field implements FieldInterface
                         $sectionIds[] = ($section->type == 'single') ? $section->id : '';
                     }
                 } else {
-                    list(, $uid) = explode(':', $source);
+                    [, $uid] = explode(':', $source);
                     $sectionIds[] = Db::idByUid('{{%sections}}', $uid);
                 }
             }
@@ -85,10 +97,6 @@ class Entries extends Field implements FieldInterface
         }
 
         $foundElements = [];
-
-        if (!$value) {
-            return $foundElements;
-        }
 
         foreach ($value as $dataValue) {
             // Prevent empty or blank values (string or array), which match all elements
@@ -104,7 +112,7 @@ class Entries extends Field implements FieldInterface
 
             // special provision for falling back on default BaseRelationField value
             // https://github.com/craftcms/feed-me/issues/1195
-            if (empty($dataValue)) {
+            if (trim($dataValue) === '') {
                 $foundElements = $default;
                 break;
             }

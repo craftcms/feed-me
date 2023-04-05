@@ -8,6 +8,7 @@ use craft\base\Element as BaseElement;
 use craft\elements\User as UserElement;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
+use craft\feedme\helpers\DataHelper;
 use craft\feedme\Plugin;
 use craft\helpers\Db;
 
@@ -58,6 +59,17 @@ class Users extends Field implements FieldInterface
         $value = $this->fetchArrayValue();
         $default = $this->fetchDefaultArrayValue();
 
+        // if the mapped value is not set in the feed
+        if ($value === null) {
+            return null;
+        }
+
+        // if value from the feed is empty and default is not set
+        // return an empty array; no point bothering further
+        if (empty($default) && DataHelper::isArrayValueEmpty($value)) {
+            return [];
+        }
+
         $sources = Hash::get($this->field, 'settings.sources');
         $limit = Hash::get($this->field, 'settings.limit');
         $match = Hash::get($this->fieldInfo, 'options.match', 'email');
@@ -70,7 +82,7 @@ class Users extends Field implements FieldInterface
 
         if (is_array($sources)) {
             foreach ($sources as $source) {
-                list(, $uid) = explode(':', $source);
+                [, $uid] = explode(':', $source);
                 $groupIds[] = Db::idByUid('{{%usergroups}}', $uid);
             }
         } elseif ($sources === '*') {
@@ -78,10 +90,6 @@ class Users extends Field implements FieldInterface
         }
 
         $foundElements = [];
-
-        if (!$value) {
-            return $foundElements;
-        }
 
         foreach ($value as $dataValue) {
             // Prevent empty or blank values (string or array), which match all elements
@@ -97,7 +105,7 @@ class Users extends Field implements FieldInterface
 
             // special provision for falling back on default BaseRelationField value
             // https://github.com/craftcms/feed-me/issues/1195
-            if (empty($dataValue)) {
+            if (trim($dataValue) === '') {
                 $foundElements = $default;
                 break;
             }
