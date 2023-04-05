@@ -178,11 +178,6 @@ class DataHelper
             return $value;
         }
 
-        // If setEmptyValues is enabled allow overwriting existing data
-        if ($value === "" && $feed['setEmptyValues']) {
-            return $value;
-        }
-
         // We want to preserve 0 and '0', but if it's empty, return null.
         // https://github.com/craftcms/feed-me/issues/779
         if (!is_numeric($value) && empty($value)) {
