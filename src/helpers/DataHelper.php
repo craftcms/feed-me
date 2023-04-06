@@ -154,7 +154,7 @@ class DataHelper
             $feedPath = preg_replace('/^(\d+\/)|(\/\d+)/', '', $feedPath);
 
             if ($feedPath == $node || $nodePath == $node) {
-                if ($nodeValue === null || ($feed !== null && $nodeValue === '' && $feed['setEmptyValues'])) {
+                if ($nodeValue === null || $nodeValue === '') {
                     $nodeValue = $default;
                 }
 
