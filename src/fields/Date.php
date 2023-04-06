@@ -47,6 +47,10 @@ class Date extends Field implements FieldInterface
     {
         $value = $this->fetchValue();
 
+        if ($value === null) {
+            return null;
+        }
+
         $formatting = Hash::get($this->fieldInfo, 'options.match');
 
         $dateValue = DateHelper::parseString($value, $formatting);

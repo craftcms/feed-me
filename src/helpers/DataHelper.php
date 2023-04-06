@@ -17,6 +17,17 @@ class DataHelper
     // =========================================================================
 
     /**
+     * Check if provided value is not set or empty or an array of empties
+     *
+     * @param $value
+     * @return bool
+     */
+    public static function isArrayValueEmpty($value)
+    {
+        return (!$value || (is_array($value) && empty(array_filter($value))));
+    }
+
+    /**
      * @param $feedData
      * @param $fieldInfo
      * @return array|ArrayAccess|mixed|string|null
@@ -49,7 +60,7 @@ class DataHelper
      */
     public static function fetchArrayValue($feedData, $fieldInfo)
     {
-        $value = [];
+        $value = null;
 
         $node = Hash::get($fieldInfo, 'node');
 
@@ -120,7 +131,7 @@ class DataHelper
             $feed = $feed->toArray();
         }
 
-        $value = [];
+        $value = null;
 
         $node = Hash::get($fieldInfo, 'node');
         $default = Hash::get($fieldInfo, 'default');
@@ -137,7 +148,7 @@ class DataHelper
             $feedPath = preg_replace('/^(\d+\/)|(\/\d+)/', '', $feedPath);
 
             if ($feedPath == $node || $nodePath == $node) {
-                if ($nodeValue === null || $nodeValue === '') {
+                if ($nodeValue === null || ($feed !== null && $nodeValue === '' && $feed['setEmptyValues'])) {
                     $nodeValue = $default;
                 }
 
@@ -154,6 +165,10 @@ class DataHelper
                     $value[] = $nodeValue;
                 }
             }
+        }
+
+        if ($value === null) {
+            return null;
         }
 
         // Help to normalise things if an array with only one item. Probably a better idea to offload this to each
