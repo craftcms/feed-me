@@ -6,6 +6,7 @@ use Craft;
 use craft\elements\User;
 use craft\feedme\Plugin;
 use craft\helpers\DateTimeHelper;
+use craft\helpers\Html;
 use craft\helpers\UrlHelper;
 use craft\models\Section;
 use yii\di\ServiceLocator;
@@ -79,7 +80,7 @@ class FeedMeVariable extends ServiceLocator
                     continue;
                 }
 
-                $values[$value[$index]] = $value[$label];
+                $values[$value[$index]] = Html::encode($value[$label]);
             }
         }
 
@@ -129,7 +130,7 @@ class FeedMeVariable extends ServiceLocator
 
         if (is_array($field->sources)) {
             foreach ($field->sources as $source) {
-                list(, $uid) = explode(':', $source);
+                [, $uid] = explode(':', $source);
 
                 $sources[] = Craft::$app->volumes->getVolumeByUid($uid);
             }
@@ -146,7 +147,7 @@ class FeedMeVariable extends ServiceLocator
             return;
         }
 
-        list(, $uid) = explode(':', $field->source);
+        [, $uid] = explode(':', $field->source);
 
         return Craft::$app->categories->getGroupByUid($uid);
     }
@@ -168,7 +169,7 @@ class FeedMeVariable extends ServiceLocator
                         }
                     }
                 } else {
-                    list(, $uid) = explode(':', $source);
+                    [, $uid] = explode(':', $source);
 
                     $sources[] = Craft::$app->sections->getSectionByUid($uid);
                 }
@@ -186,7 +187,7 @@ class FeedMeVariable extends ServiceLocator
             return;
         }
 
-        list(, $uid) = explode(':', $field->source);
+        [, $uid] = explode(':', $field->source);
 
         return Craft::$app->tags->getTagGroupByUid($uid);
     }
