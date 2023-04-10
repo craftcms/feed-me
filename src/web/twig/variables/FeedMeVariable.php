@@ -15,7 +15,6 @@ use craft\fields\MultiSelect;
 use craft\fields\Number;
 use craft\fields\PlainText;
 use craft\fields\RadioButtons;
-use craft\redactor\Field as RedactorField;
 use craft\fields\Url;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Html;
@@ -346,7 +345,7 @@ class FeedMeVariable extends ServiceLocator
             Number::class,
             PlainText::class,
             RadioButtons::class,
-            RedactorField::class,
+            'craft\redactor\Field',
         ];
 
         return in_array($class, $supportedSubFields, true);
