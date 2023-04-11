@@ -6,6 +6,7 @@
 - Fixed a PHP error that could occur when importing a feed  that has `setEmptyValues` set to off on the feed. ([#1269](https://github.com/craftcms/feed-me/issues/1269))
 - Fixed several bugs related to empty and non-existent feed values and the “Set Empty Values” feed setting. ([#1271](https://github.com/craftcms/feed-me/pull/1271))
 - Fixed a bug where that prevented importing data as Commerce Variants. ([#464](https://github.com/craftcms/feed-me/issues/464), [#1168](https://github.com/craftcms/feed-me/issues/1168))
+- Fixed a bug were you could not import into a Redactor as a mapped subfield.
 - Fixed an XSS vulnerability.
 
 ## 5.1.1.1 - 2023-02-24

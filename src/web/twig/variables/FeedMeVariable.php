@@ -345,6 +345,7 @@ class FeedMeVariable extends ServiceLocator
             Number::class,
             PlainText::class,
             RadioButtons::class,
+            'craft\redactor\Field',
         ];
 
         return in_array($class, $supportedSubFields, true);
