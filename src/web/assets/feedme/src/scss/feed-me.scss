@@ -38,10 +38,10 @@ body.ltr .table-feed-me .thin.action {
 }
 
 .table-feed-me .thin.action .icon {
-  color: rgba(0, 0, 0, 0.2);
+  color: var(--ui-control-color);
 
   &:hover {
-    color: #0d78f2;
+    color: var(--link-color);
   }
 }
 
@@ -87,14 +87,6 @@ body.ltr .table-feed-me .thin.action {
   &:hover {
     color: rgba(0, 0, 0, 0.2);
   }
-}
-
-#feeds .settings-pane .btn-group {
-  display: inline-flex;
-}
-
-#feeds .settings-pane .btn-group .btn {
-  height: auto;
 }
 
 #feeds .settings-pane .input input {
@@ -371,22 +363,6 @@ body.ltr .table-feed-me .thin.action {
   text-align: left;
   justify-content: flex-end;
   padding-top: 8px;
-
-  .lightswitch.small {
-    width: 25px;
-    height: 16px;
-    margin-bottom: -4px;
-  }
-
-  .lightswitch.small .label {
-    height: 16px;
-  }
-
-  .lightswitch.small .handle {
-    margin: 1px -8px;
-    width: 14px;
-    height: 14px;
-  }
 
   > .heading > label {
     font-weight: 400;
