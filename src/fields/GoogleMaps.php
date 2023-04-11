@@ -75,7 +75,10 @@ class GoogleMaps extends Field implements FieldInterface
         }
 
         foreach ($fields as $subFieldHandle => $subFieldInfo) {
-            $preppedData[$subFieldHandle] = DataHelper::fetchValue($this->feedData, $subFieldInfo, $this->feed);
+            $value = DataHelper::fetchValue($this->feedData, $subFieldInfo, $this->feed);
+            if ($value !== null) {
+                $preppedData[$subFieldHandle] = $value;
+            }
         }
 
         // Protect against sending an empty array

@@ -58,6 +58,14 @@ class Linkit extends Field implements FieldInterface
             $preppedData[$subFieldHandle] = DataHelper::fetchValue($this->feedData, $subFieldInfo, $this->feed);
         }
 
+        if (empty(
+            array_filter($preppedData, function($val) {
+                return $val !== null;
+            })
+        )) {
+            return null;
+        }
+
         if ($preppedData) {
             // Handle Link Type
             $preppedData['type'] = empty($preppedData['type'] ?? '') ? 'presseddigital\linkit\models\Url' : $preppedData['type'];

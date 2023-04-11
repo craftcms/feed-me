@@ -126,7 +126,7 @@ class CommerceProduct extends Element
             ->typeId($settings['elementGroup'][ProductElement::class])
             ->siteId(Hash::get($settings, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id);
         Craft::configure($query, $params);
-        
+
         return $query;
     }
 
@@ -321,7 +321,7 @@ class CommerceProduct extends Element
 
                 $isNestedField = (in_array(Hash::get($fieldInfo, 'field'), [Matrix::class, Table::class]));
 
-                if ($isNestedField) {
+                if ($isNestedField === true) {
                     $complexFields[$variantIndex][$fieldHandle]['info'] = $fieldInfo;
                     $complexFields[$variantIndex][$fieldHandle]['data'][$nodePath] = $value;
                     continue;

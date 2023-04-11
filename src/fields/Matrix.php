@@ -154,13 +154,26 @@ class Matrix extends Field implements FieldInterface
             $preppedData[$blockIndex . '.fields.' . $subFieldHandle] = $value;
         }
 
+        // if there's nothing in the prepped data, return null, as if mapping doesn't exist
+        if (empty($preppedData)) {
+            return null;
+        }
+
         $expanded = Hash::expand($preppedData);
 
         // Although it seems to work with block handles in keys, it's better to keep things clean
         $index = 1;
         $resultBlocks = [];
         foreach ($expanded as $blockData) {
-            $resultBlocks['new' . $index++] = $blockData;
+            // all the fields are empty and setEmptyValues is off, ignore the block
+            if (
+                !empty(array_filter(
+                    $blockData['fields'],
+                    fn($value) => (is_string($value) && !empty($value)) || (is_array($value) && !empty(array_filter($value)))
+                ))
+            ) {
+                $resultBlocks['new' . $index++] = $blockData;
+            }
         }
 
         return $resultBlocks;

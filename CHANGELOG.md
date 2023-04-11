@@ -2,7 +2,12 @@
 
 ## Unreleased
 
+- Fixed a PHP error that could occur when saving a feed using an Asset element type with no volume selected.
+- Fixed a PHP error that could occur when importing a feed  that has `setEmptyValues` set to off on the feed. ([#1269](https://github.com/craftcms/feed-me/issues/1269))
+- Fixed several bugs related to empty and non-existent feed values and the “Set Empty Values” feed setting. ([#1271](https://github.com/craftcms/feed-me/pull/1271))
 - Fixed a bug where that prevented importing data as Commerce Variants. ([#464](https://github.com/craftcms/feed-me/issues/464), [#1168](https://github.com/craftcms/feed-me/issues/1168))
+- Fixed an XSS vulnerability.
+
 
 ## 5.1.1.1 - 2023-02-24
 
@@ -77,6 +82,14 @@
 
 ### Removed
 - Removed built-in support for the Verbb Comments plugin, which provides its own Feed Me driver.
+
+## 4.6.1.1 - 2023-03-24
+
+- Fixed a PHP error that could occur when importing into some 3rd party fields. ([#1264](https://github.com/craftcms/feed-me/issues/1264), [#1265](https://github.com/craftcms/feed-me/pull/1265))
+
+## 4.6.1 - 2023-03-20
+
+- Fixed a JavaScript error that would occur on case-sensitive filesystems when using Feed Me. ([#1260](https://github.com/craftcms/feed-me/pull/1260), [#1257](https://github.com/craftcms/feed-me/issues/1257), [#1258](https://github.com/craftcms/feed-me/issues/1258), [#1259](https://github.com/craftcms/feed-me/issues/1259))
 
 ## 4.6.0 - 2023-03-16
 

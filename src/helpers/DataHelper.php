@@ -19,6 +19,17 @@ class DataHelper
     // =========================================================================
 
     /**
+     * Check if provided value is not set or empty or an array of empties
+     *
+     * @param $value
+     * @return bool
+     */
+    public static function isArrayValueEmpty($value)
+    {
+        return (!$value || (is_array($value) && empty(array_filter($value))));
+    }
+
+    /**
      * @param $feedData
      * @param $fieldInfo
      * @return array|ArrayAccess|mixed|string|null
@@ -51,7 +62,7 @@ class DataHelper
      */
     public static function fetchArrayValue($feedData, $fieldInfo): mixed
     {
-        $value = [];
+        $value = null;
 
         $node = Hash::get($fieldInfo, 'node');
 
@@ -126,7 +137,7 @@ class DataHelper
             $feed = $feed->toArray();
         }
 
-        $value = [];
+        $value = null;
 
         $node = Hash::get($fieldInfo, 'node');
         $default = Hash::get($fieldInfo, 'default');
@@ -162,6 +173,10 @@ class DataHelper
             }
         }
 
+        if ($value === null) {
+            return null;
+        }
+
         // Help to normalise things if an array with only one item. Probably a better idea to offload this to each
         // attribute of field definition, as it's quite an assumption at this point...
         if (count($value) === 1) {
@@ -175,11 +190,6 @@ class DataHelper
 
         // If setEmptyValues is enabled allow overwriting existing data
         if ($feed !== null && $value === "" && $feed['setEmptyValues']) {
-            return $value;
-        }
-
-        // If setEmptyValues is enabled allow overwriting existing data
-        if ($value === "" && $feed['setEmptyValues']) {
             return $value;
         }
 
