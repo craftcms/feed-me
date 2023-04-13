@@ -2,11 +2,12 @@
 
 ## Unreleased
 
+- Added support for importing into CKEditor as an inner element field.
 - Fixed a PHP error that could occur when saving a feed using an Asset element type with no volume selected.
 - Fixed several bugs related to empty and non-existent feed values and the “Set Empty Values” feed setting. ([#1271](https://github.com/craftcms/feed-me/pull/1271))
 - Fixed a bug where that prevented importing data as Commerce Variants. ([#464](https://github.com/craftcms/feed-me/issues/464), [#1168](https://github.com/craftcms/feed-me/issues/1168))
-- Fixed a bug were you could not import into Redactor as a mapped subfield.
-- Added support for importing into CKEditor as a mapped subfield. 
+- Fixed a bug were you could not import into Redactor as an inner element field.
+- Fixed a bug where mapping into fields that support inner elements that were inside of Matrix, content from the first element was used to populate all other elements. ([#1227](https://github.com/craftcms/feed-me/issues/1227), [#1278](https://github.com/craftcms/feed-me/pull/1278))
 - Fixed an XSS vulnerability.
 
 ## 4.6.1.1 - 2023-03-24 
