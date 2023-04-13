@@ -345,6 +345,7 @@ class FeedMeVariable extends ServiceLocator
             Number::class,
             PlainText::class,
             RadioButtons::class,
+            'craft\ckeditor\Field',
             'craft\redactor\Field',
         ];
 
