@@ -124,10 +124,12 @@ class Matrix extends Field implements FieldInterface
 
             $parsedValue = $this->_parseSubField($nodePaths, $subFieldHandle, $subFieldInfo);
 
-            if (isset($fieldData[$key])) {
-                $fieldData[$key] = array_merge_recursive($fieldData[$key], $parsedValue);
-            } else {
-                $fieldData[$key] = $parsedValue;
+            if ($parsedValue !== null) {
+                if (isset($fieldData[$key])) {
+                    $fieldData[$key] = array_merge_recursive($fieldData[$key], $parsedValue);
+                } else {
+                    $fieldData[$key] = $parsedValue;
+                }
             }
         }
 
