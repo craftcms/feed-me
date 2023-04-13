@@ -321,6 +321,7 @@ class FeedMeVariable extends ServiceLocator
             'craft\fields\PlainText',
             'craft\fields\PositionSelect',
             'craft\fields\Radio',
+            'craft\ckeditor\Field',
             'craft\redactor\Field',
         ];
 
