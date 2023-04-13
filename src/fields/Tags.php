@@ -78,6 +78,7 @@ class Tags extends Field implements FieldInterface
         $create = Hash::get($this->fieldInfo, 'options.create');
         $fields = Hash::get($this->fieldInfo, 'fields');
         $node = Hash::get($this->fieldInfo, 'node');
+        $nodeKey = null;
 
         // Get tag group id
         [, $groupUid] = explode(':', $source);
@@ -146,6 +147,8 @@ class Tags extends Field implements FieldInterface
             if ((count($ids) == 0) && $create && $match === 'title') {
                 $foundElements[] = $this->_createElement($dataValue, $groupId);
             }
+
+            $nodeKey = $this->getArrayKeyFromNode($node);
         }
 
         // Check for field limit - only return the specified amount
@@ -155,7 +158,7 @@ class Tags extends Field implements FieldInterface
 
         // Check for any sub-fields for the element
         if ($fields) {
-            $this->populateElementFields($foundElements);
+            $this->populateElementFields($foundElements, $nodeKey);
         }
 
         $foundElements = array_unique($foundElements);
