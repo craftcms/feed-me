@@ -71,7 +71,6 @@ class Matrix extends Field implements FieldInterface
                 $subFieldInfo = $fieldInfo['subFieldInfo'];
                 $isComplexField = $fieldInfo['isComplexField'];
 
-                //$nodePathSegments = explode('/', $nodePath);
                 $key = $this->_getBlockKey($nodePathSegments, $blockHandle, $subFieldHandle);
 
                 // Check for complex fields (think Table, Super Table, etc), essentially anything that has
@@ -105,7 +104,6 @@ class Matrix extends Field implements FieldInterface
                     if ($node === 'usedefault') {
                         $key = $this->_getBlockKey($nodePathSegments, $blockHandle, $fieldHandle);
 
-                        //$parsedValue = $this->_parseSubField($this->feedData, $fieldHandle, $feedInfo);
                         $parsedValue = DataHelper::fetchSimpleValue($this->feedData, $fieldInfo);
                         $fieldData[$key] = $parsedValue;
                     }
