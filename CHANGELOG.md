@@ -8,6 +8,7 @@
 - Fixed a bug where Commerce variant data wasn’t getting imported properly. ([#464](https://github.com/craftcms/feed-me/issues/464), [#1168](https://github.com/craftcms/feed-me/issues/1168))
 - Fixed a bug where field mapping for inner elemets within Matrix fields  wasn’t always accurate. ([#1227](https://github.com/craftcms/feed-me/issues/1227), [#1278](https://github.com/craftcms/feed-me/pull/1278))
 - Fixed a bug where user importing could result in the wrong user photo being assigned to imported users. ([#582](https://github.com/craftcms/feed-me/issues/582), [#1283](https://github.com/craftcms/feed-me/pull/1283))
+- Fixed a bug where Matrix sub-field importing could pull in the wrong data. ([#674](https://github.com/craftcms/feed-me/issues/674), [#1282](https://github.com/craftcms/feed-me/pull/1282))
 - Fixed an XSS vulnerability.
 
 ## 4.6.1.1 - 2023-03-24

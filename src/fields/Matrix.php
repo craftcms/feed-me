@@ -5,6 +5,7 @@ namespace craft\feedme\fields;
 use Cake\Utility\Hash;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
+use craft\feedme\helpers\DataHelper;
 use craft\feedme\Plugin;
 
 /**
@@ -61,6 +62,7 @@ class Matrix extends Field implements FieldInterface
         foreach ($this->feedData as $nodePath => $value) {
             // Get the field mapping info for this node in the feed
             $fieldInfo = $this->_getFieldMappingInfoForNodePath($nodePath, $blocks);
+            $nodePathSegments = explode('/', $nodePath);
 
             // If this is data concerning our Matrix field and blocks
             if ($fieldInfo) {
@@ -69,20 +71,7 @@ class Matrix extends Field implements FieldInterface
                 $subFieldInfo = $fieldInfo['subFieldInfo'];
                 $isComplexField = $fieldInfo['isComplexField'];
 
-                $nodePathSegments = explode('/', $nodePath);
-                $blockIndex = Hash::get($nodePathSegments, 1);
-
-                if (!is_numeric($blockIndex)) {
-                    // Try to check if its only one-level deep (only importing one block type)
-                    // which is particularly common for JSON.
-                    $blockIndex = Hash::get($nodePathSegments, 2);
-
-                    if (!is_numeric($blockIndex)) {
-                        $blockIndex = 0;
-                    }
-                }
-
-                $key = $blockIndex . '.' . $blockHandle . '.' . $subFieldHandle;
+                $key = $this->_getBlockKey($nodePathSegments, $blockHandle, $subFieldHandle);
 
                 // Check for complex fields (think Table, Super Table, etc), essentially anything that has
                 // sub-fields, and doesn't have data directly mapped to the field itself. It needs to be
@@ -106,6 +95,18 @@ class Matrix extends Field implements FieldInterface
                     $fieldData[$key] = is_array($parsedValue) ? array_merge_recursive($fieldData[$key], $parsedValue) : $fieldData[$key];
                 } else {
                     $fieldData[$key] = $parsedValue;
+                }
+            }
+
+            foreach ($blocks as $blockHandle => $fields) {
+                foreach ($fields['fields'] as $fieldHandle => $fieldInfo) {
+                    $node = Hash::get($fieldInfo, 'node');
+                    if ($node === 'usedefault') {
+                        $key = $this->_getBlockKey($nodePathSegments, $blockHandle, $fieldHandle);
+
+                        $parsedValue = DataHelper::fetchSimpleValue($this->feedData, $fieldInfo);
+                        $fieldData[$key] = $parsedValue;
+                    }
                 }
             }
         }
@@ -185,9 +186,34 @@ class Matrix extends Field implements FieldInterface
     // =========================================================================
 
     /**
+     * Get block's key
+     *
+     * @param array $nodePathSegments
+     * @param string $blockHandle
+     * @param string $fieldHandle
+     * @return string
+     */
+    private function _getBlockKey(array $nodePathSegments, string $blockHandle, string $fieldHandle): string
+    {
+        $blockIndex = Hash::get($nodePathSegments, 1);
+
+        if (!is_numeric($blockIndex)) {
+            // Try to check if its only one-level deep (only importing one block type)
+            // which is particularly common for JSON.
+            $blockIndex = Hash::get($nodePathSegments, 2);
+
+            if (!is_numeric($blockIndex)) {
+                $blockIndex = 0;
+            }
+        }
+
+        return $blockIndex . '.' . $blockHandle . '.' . $fieldHandle;
+    }
+
+    /**
      * @param $nodePath
      * @param $blocks
-     * @return array|null
+     * @return array|null|string
      */
     private function _getFieldMappingInfoForNodePath($nodePath, $blocks)
     {
@@ -216,7 +242,7 @@ class Matrix extends Field implements FieldInterface
                     }
                 }
 
-                if ($feedPath == $node || $node === 'usedefault') {
+                if ($feedPath == $node) {
                     return [
                         'blockHandle' => $blockHandle,
                         'subFieldHandle' => $subFieldHandle,
