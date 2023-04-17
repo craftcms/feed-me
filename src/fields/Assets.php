@@ -10,6 +10,7 @@ use craft\elements\Asset as AssetElement;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\helpers\AssetHelper;
+use craft\feedme\helpers\DataHelper;
 use craft\feedme\Plugin;
 use craft\fields\Assets as AssetsField;
 use craft\helpers\Db;
@@ -63,6 +64,17 @@ class Assets extends Field implements FieldInterface
         $value = $this->fetchArrayValue();
         $default = $this->fetchDefaultArrayValue();
 
+        // if the mapped value is not set in the feed
+        if ($value === null) {
+            return null;
+        }
+
+        // if value from the feed is empty and default is not set
+        // return an empty array; no point bothering further
+        if (empty($default) && DataHelper::isArrayValueEmpty($value)) {
+            return [];
+        }
+
         $settings = Hash::get($this->field, 'settings');
         $folders = Hash::get($this->field, 'settings.sources');
         $limit = Hash::get($this->field, 'settings.limit');
@@ -72,6 +84,7 @@ class Assets extends Field implements FieldInterface
         $conflict = Hash::get($this->fieldInfo, 'options.conflict');
         $fields = Hash::get($this->fieldInfo, 'fields');
         $node = Hash::get($this->fieldInfo, 'node');
+        $nodeKey = null;
 
         // Get folder id's for connecting
         $folderIds = $this->field->resolveDynamicPathToFolderId($this->element);
@@ -100,10 +113,6 @@ class Assets extends Field implements FieldInterface
         $urlsToUpload = [];
         $base64ToUpload = [];
 
-        if (!$value) {
-            return $foundElements;
-        }
-
         foreach ($value as $key => $dataValue) {
             // Prevent empty or blank values (string or array), which match all elements
             if (empty($dataValue) && empty($default)) {
@@ -118,7 +127,7 @@ class Assets extends Field implements FieldInterface
 
             // special provision for falling back on default BaseRelationField value
             // https://github.com/craftcms/feed-me/issues/1195
-            if (empty($dataValue)) {
+            if (trim($dataValue) === '') {
                 $foundElements = $default;
                 break;
             }
@@ -175,6 +184,8 @@ class Assets extends Field implements FieldInterface
                     Plugin::info('Skipping asset upload (already exists).');
                 }
             }
+
+            $nodeKey = $this->getArrayKeyFromNode($node);
         }
 
         if ($upload) {
@@ -196,7 +207,7 @@ class Assets extends Field implements FieldInterface
 
         // Check for any sub-fields for the element
         if ($fields) {
-            $this->populateElementFields($foundElements);
+            $this->populateElementFields($foundElements, $nodeKey);
         }
 
         $foundElements = array_unique($foundElements);

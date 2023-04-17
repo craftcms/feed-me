@@ -46,6 +46,10 @@ class DefaultField extends Field implements FieldInterface
     {
         $value = $this->fetchValue();
 
+        if ($value === null) {
+            return null;
+        }
+
         // Default fields expect strings, if it's an array for an odd reason, serialise it
         if (is_array($value)) {
             if (empty($value)) {

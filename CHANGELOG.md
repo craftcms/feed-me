@@ -1,5 +1,19 @@
 # Release Notes for Feed Me
 
+## 5.1.2 - 2023-04-17
+
+- Added support for importing into CKEditor as an inner element field.
+- Fixed a PHP error that could occur when saving a feed using an Asset element type with no volume selected.
+- Fixed a PHP error that could occur when importing a feed  that has `setEmptyValues` set to off on the feed. ([#1269](https://github.com/craftcms/feed-me/issues/1269))
+- Fixed several bugs related to empty and non-existent feed values and the “Set Empty Values” feed setting. ([#1271](https://github.com/craftcms/feed-me/pull/1271))
+- Fixed a bug where that prevented importing data as Commerce Variants. ([#464](https://github.com/craftcms/feed-me/issues/464), [#1168](https://github.com/craftcms/feed-me/issues/1168))
+- Fixed a bug were you could not import into Redactor as an inner element field.
+- Fixed a bug where mapping into fields that support inner elements that were inside of Matrix, content from the first element was used to populate all other elements. ([#1227](https://github.com/craftcms/feed-me/issues/1227), [#1278](https://github.com/craftcms/feed-me/pull/1278))
+- Fixed a bug where importing a user with an empty user photo in the feed, would assign an incorrect photo for the user. ([#582](https://github.com/craftcms/feed-me/issues/582), [#1283](https://github.com/craftcms/feed-me/pull/1283))
+- Fixed a bug where importing into Matrix sub fields could use incorrect data when “Use default value” was selected for the field. ([#674](https://github.com/craftcms/feed-me/issues/674), [#1282](https://github.com/craftcms/feed-me/pull/1282))
+- Removed the “Collapsed” checkbox from Matrix feed mapping screens. ([#709](https://github.com/craftcms/feed-me/issues/709), [#1284](https://github.com/craftcms/feed-me/pull/1284))
+- Fixed an XSS vulnerability.
+
 ## 5.1.1.1 - 2023-02-24
 
 - Fixed a PHP error that could occur when importing into some 3rd party fields. ([#1264](https://github.com/craftcms/feed-me/issues/1264), [#1265](https://github.com/craftcms/feed-me/pull/1265))
@@ -73,6 +87,14 @@
 
 ### Removed
 - Removed built-in support for the Verbb Comments plugin, which provides its own Feed Me driver.
+
+## 4.6.1.1 - 2023-03-24
+
+- Fixed a PHP error that could occur when importing into some 3rd party fields. ([#1264](https://github.com/craftcms/feed-me/issues/1264), [#1265](https://github.com/craftcms/feed-me/pull/1265))
+
+## 4.6.1 - 2023-03-20
+
+- Fixed a JavaScript error that would occur on case-sensitive filesystems when using Feed Me. ([#1260](https://github.com/craftcms/feed-me/pull/1260), [#1257](https://github.com/craftcms/feed-me/issues/1257), [#1258](https://github.com/craftcms/feed-me/issues/1258), [#1259](https://github.com/craftcms/feed-me/issues/1259))
 
 ## 4.6.0 - 2023-03-16
 
