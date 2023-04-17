@@ -1,6 +1,6 @@
 # Release Notes for Feed Me
 
-## Unreleased
+## 5.1.2 - 2023-04-17
 
 - Added support for importing into CKEditor as an inner element field.
 - Fixed a PHP error that could occur when saving a feed using an Asset element type with no volume selected.
