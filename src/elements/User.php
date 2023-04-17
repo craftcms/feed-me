@@ -237,6 +237,15 @@ class User extends Element
         $upload = Hash::get($fieldInfo, 'options.upload');
         $conflict = Hash::get($fieldInfo, 'options.conflict');
 
+        // if the value in the feed is empty, return null or empty string depending on setEmptyValues setting
+        if (empty($value)) {
+            if ($this->feed->setEmptyValues) {
+                return "";
+            }
+
+            return null;
+        }
+
         // Try to find an existing element
         $urlToUpload = null;
 
