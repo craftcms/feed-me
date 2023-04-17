@@ -162,7 +162,7 @@ abstract class Field extends Component
 
                 // Because we're dealing with an element which always has array content, we need to fetch our content
                 // in the same way, as it'll be parsed as an array, despite the actual values being likely a single value
-                // Even if its an array of one size (importing one element), that's fine!
+                // Even if it's an array of one size (importing one element), that's fine!
                 $fieldValue = DataHelper::fetchArrayValue($this->feedData, $fieldInfo);
 
                 // Arrayed content doesn't provide defaults because its unable to determine how many items it _should_ return
