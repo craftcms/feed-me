@@ -11,6 +11,7 @@
 - Fixed a bug where mapping into fields that support inner elements that were inside of Matrix, content from the first element was used to populate all other elements. ([#1227](https://github.com/craftcms/feed-me/issues/1227), [#1278](https://github.com/craftcms/feed-me/pull/1278))
 - Fixed a bug where importing a user with an empty user photo in the feed, would assign an incorrect photo for the user. ([#582](https://github.com/craftcms/feed-me/issues/582), [#1283](https://github.com/craftcms/feed-me/pull/1283))
 - Fixed a bug where importing into Matrix sub fields could use incorrect data when “Use default value” was selected for the field. ([#674](https://github.com/craftcms/feed-me/issues/674), [#1282](https://github.com/craftcms/feed-me/pull/1282))
+- Removed the “collapsed” checkbox from the Matrix block feed mapping screen, since it never worked anyway. ([#709](https://github.com/craftcms/feed-me/issues/709), [#1284](https://github.com/craftcms/feed-me/pull/1284))
 - Fixed an XSS vulnerability.
 
 ## 5.1.1.1 - 2023-02-24
