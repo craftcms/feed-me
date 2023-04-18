@@ -14,7 +14,7 @@
 - Removed the “Collapsed” checkbox from Matrix feed mapping screens. ([#709](https://github.com/craftcms/feed-me/issues/709), [#1284](https://github.com/craftcms/feed-me/pull/1284))
 - Fixed an XSS vulnerability.
 
-## 5.1.1.1 - 2023-02-24
+## 5.1.1.1 - 2023-03-24
 
 - Fixed a PHP error that could occur when importing into some 3rd party fields. ([#1264](https://github.com/craftcms/feed-me/issues/1264), [#1265](https://github.com/craftcms/feed-me/pull/1265))
 
