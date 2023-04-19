@@ -98,14 +98,16 @@ class Entry extends Element
     public function getQuery($settings, array $params = []): mixed
     {
         $targetSiteId = Hash::get($settings, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id;
-        $section = $this->element->getSection();
+        if ($this->element !== null) {
+            $section = $this->element->getSection();
+        }
 
         $query = EntryElement::find()
             ->status(null)
             ->sectionId($settings['elementGroup'][EntryElement::class]['section'])
             ->typeId($settings['elementGroup'][EntryElement::class]['entryType']);
 
-        if ($section->propagationMethod === Section::PROPAGATION_METHOD_CUSTOM) {
+        if (isset($section) && $section->propagationMethod === Section::PROPAGATION_METHOD_CUSTOM) {
             $query->site('*')
                 ->preferSites([$targetSiteId])
                 ->unique();
