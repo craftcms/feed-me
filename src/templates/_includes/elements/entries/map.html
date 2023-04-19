@@ -29,20 +29,21 @@
 {% if section.type == 'structure' %}
     {% set entries = [{ label: 'Don’t import'|t('feed-me'), value: '' }] %}
 
-    {% for entry in craft.entries({ sectionId: sectionId }).all() %}
-        {% set entries = entries|merge([{ label: entry.title|slice(0, 40), value: entry.id }]) %}
-    {% endfor %}
-
-    {% set fields = fields|merge([{
+    {% set fields = fields|push({
         type: 'entries',
         name: 'Parent',
         handle: 'parent',
         instructions: 'Select a parent entry to import these entries under.'|t('feed-me'),
         default: {
-            type: 'select',
-            options: entries,
+            type: 'elementselect',
+            options: {
+                elementType: 'craft\\elements\\Entry',
+                sources: ['section:' ~ section.uid],
+                selectionLabel: "Default Parent"|t('feed-me'),
+                limit: 1,
+            },
         },
-    }]) %}
+    }) %}
 {% endif %}
 
 {% set fields = fields|merge([{
