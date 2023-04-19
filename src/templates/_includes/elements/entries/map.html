@@ -27,8 +27,6 @@
 
 {# If a structure, provide the option for a parent #}
 {% if section.type == 'structure' %}
-    {% set entries = [{ label: 'Don’t import'|t('feed-me'), value: '' }] %}
-
     {% set fields = fields|push({
         type: 'entries',
         name: 'Parent',
