@@ -157,6 +157,7 @@ class Entry extends Element
      * @throws Exception
      * @throws \craft\errors\SiteNotFoundException
      * @throws \craft\errors\UnsupportedSiteException
+     * @since 5.1.3
      */
     public function checkPropagation($existingElement, array $feed)
     {
