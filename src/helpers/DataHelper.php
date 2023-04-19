@@ -42,7 +42,7 @@ class DataHelper
         $value = $feedData[$node] ?? null;
 
         // Use the default value for the field-mapping (if defined)
-        if ($value === null || $value === '') {
+        if (($value === null || $value === '') && !empty($default)) {
             $value = $default;
         }
 
