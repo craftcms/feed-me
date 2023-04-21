@@ -2,8 +2,8 @@
 
 namespace craft\feedme\base;
 
-use Craft;
 use Cake\Utility\Hash;
+use Craft;
 use craft\base\Component;
 use craft\helpers\UrlHelper;
 
