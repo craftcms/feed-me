@@ -106,16 +106,17 @@ abstract class Element extends Component implements ElementInterface
 
         $parsedValue = $this->$name($feedData, $fieldInfo);
 
-        if ($this->hasEventHandlers(self::EVENT_AFTER_PARSE_ATTRIBUTE)) {
-            $this->trigger(self::EVENT_AFTER_PARSE_ATTRIBUTE, new ElementEvent([
-                'feedData' => $feedData,
-                'fieldHandle' => $fieldHandle,
-                'fieldInfo' => $fieldInfo,
-                'parsedValue' => $parsedValue,
-            ]));
-        }
+        // Give plugins a chance to modify parsed attributes
+        $event = new ElementEvent([
+            'feedData' => $feedData,
+            'fieldHandle' => $fieldHandle,
+            'fieldInfo' => $fieldInfo,
+            'parsedValue' => $parsedValue,
+        ]);
 
-        return $parsedValue;
+        $this->trigger(self::EVENT_AFTER_PARSE_ATTRIBUTE, $event);
+
+        return $event->parsedValue;
     }
 
     /**
@@ -206,8 +207,10 @@ abstract class Element extends Component implements ElementInterface
         foreach ($elementIds as $elementId) {
             /** @var BaseElement $element */
             $element = $elementsService->getElementById($elementId, $class);
-            $element->enabled = false;
-            $elementsService->saveElement($element, true, true, Hash::get($this->feed, 'updateSearchIndexes'));
+            if ($element->enabled) {
+                $element->enabled = false;
+                $elementsService->saveElement($element, true, true, Hash::get($this->feed, 'updateSearchIndexes'));
+            }
         }
 
         return true;
@@ -231,8 +234,10 @@ abstract class Element extends Component implements ElementInterface
 
         foreach ($query->each() as $element) {
             /** @var BaseElement $element */
-            $element->enabledForSite = false;
-            $elementsService->saveElement($element, false, false, Hash::get($this->feed, 'updateSearchIndexes'));
+            if ($element->enabledForSite) {
+                $element->enabledForSite = false;
+                $elementsService->saveElement($element, false, false, Hash::get($this->feed, 'updateSearchIndexes'));
+            }
         }
 
         return true;

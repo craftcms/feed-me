@@ -11,6 +11,7 @@ use craft\elements\User as UserElement;
 use craft\errors\VolumeException;
 use craft\feedme\base\Element;
 use craft\feedme\helpers\AssetHelper;
+use craft\feedme\helpers\DataHelper;
 use craft\helpers\UrlHelper;
 use craft\records\User as UserRecord;
 use Throwable;
@@ -136,15 +137,19 @@ class User extends Element
             $record->locked = false;
             $record->suspended = false;
             $record->pending = false;
+            $record->active = false;
 
             switch ($this->status) {
-                case 'locked':
+                case UserElement::STATUS_ACTIVE:
+                    $record->active = true;
+                    break;
+                case UserElement::STATUS_LOCKED:
                     $record->locked = true;
                     break;
-                case 'suspended':
+                case UserElement::STATUS_SUSPENDED:
                     $record->suspended = true;
                     break;
-                case 'pending':
+                case UserElement::STATUS_PENDING:
                     $record->pending = true;
                     break;
             }
@@ -183,6 +188,7 @@ class User extends Element
     protected function parseGroups($feedData, $fieldInfo): array
     {
         $value = $this->fetchArrayValue($feedData, $fieldInfo);
+        $default = DataHelper::fetchDefaultArrayValue($fieldInfo);
 
         $newGroupsIds = [];
 
@@ -206,6 +212,10 @@ class User extends Element
             }
 
             $newGroupsIds[] = $result['id'];
+        }
+
+        if (empty(array_filter($value)) && !empty($default)) {
+            $newGroupsIds = $default;
         }
 
         $removeFromExisting = Hash::get($fieldInfo, 'options.removeFromExisting');
@@ -235,6 +245,15 @@ class User extends Element
 
         $upload = Hash::get($fieldInfo, 'options.upload');
         $conflict = Hash::get($fieldInfo, 'options.conflict');
+
+        // if the value in the feed is empty, return null or empty string depending on setEmptyValues setting
+        if (empty($value)) {
+            if ($this->feed->setEmptyValues) {
+                return "";
+            }
+
+            return null;
+        }
 
         // Try to find an existing element
         $urlToUpload = null;

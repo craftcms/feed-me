@@ -57,7 +57,7 @@ class SimpleMap extends Field implements FieldInterface
         }
 
         foreach ($fields as $subFieldHandle => $subFieldInfo) {
-            $preppedData[$subFieldHandle] = DataHelper::fetchValue($this->feedData, $subFieldInfo);
+            $preppedData[$subFieldHandle] = DataHelper::fetchValue($this->feedData, $subFieldInfo, $this->feed);
         }
 
         // In order to full-fill any empty gaps in data (lng/lat/address), we check to see if we have any data missing

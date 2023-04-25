@@ -37,18 +37,27 @@
 </tr>
 
 {# Get comprehensive list of subfields, including coordinates #}
-{% set subfieldConfig = field.settings.subfieldConfig | merge({
-    'lat': {'label': 'Latitude'},
-    'lng': {'label': 'Longitude'},
-    'zoom': {'label': 'Zoom'},
-}) %}
+{% set subfieldConfig = field.settings.subfieldConfig | merge([
+    {
+        'handle': 'lat',
+        'label': 'Latitude'
+    },
+    {
+        'handle': 'lng',
+        'label': 'Longitude'
+    },
+    {
+        'handle': 'zoom',
+        'label': 'Zoom'
+    },
+]) %}
 
 {# Loop through all subfields #}
-{% for key,subfield in subfieldConfig %}
+{% for subfield in subfieldConfig %}
     {% set nameLabel = subfield['label'] %}
-    {% set instructionsHandle = handle ~ '[' ~ key ~ ']' %}
+    {% set instructionsHandle = handle ~ '[' ~ subfield['handle'] ~ ']' %}
 
-    {% set path = prefixPath|merge ([ 'fields', key ]) %}
+    {% set path = prefixPath|merge ([ 'fields', subfield['handle'] ]) %}
 
     {% set default = default ?? {
         type: 'text',

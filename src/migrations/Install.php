@@ -46,6 +46,7 @@ class Install extends Migration
             'fieldUnique' => $this->text(),
             'passkey' => $this->string()->notNull(),
             'backup' => $this->boolean()->notNull()->defaultValue(false),
+            'setEmptyValues' => $this->boolean()->notNull()->defaultValue(false),
 
             'dateCreated' => $this->dateTime()->notNull(),
             'dateUpdated' => $this->dateTime()->notNull(),

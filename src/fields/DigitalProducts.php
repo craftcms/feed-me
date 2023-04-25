@@ -7,6 +7,7 @@ use Craft;
 use craft\digitalproducts\elements\Product as ProductElement;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
+use craft\feedme\helpers\DataHelper;
 use craft\feedme\Plugin;
 use craft\helpers\Json;
 
@@ -56,6 +57,18 @@ class DigitalProducts extends Field implements FieldInterface
     public function parseField(): mixed
     {
         $value = $this->fetchArrayValue();
+        $default = $this->fetchDefaultArrayValue();
+
+        // if the mapped value is not set in the feed
+        if ($value === null) {
+            return null;
+        }
+
+        // if value from the feed is empty and default is not set
+        // return an empty array; no point bothering further
+        if (empty($default) && DataHelper::isArrayValueEmpty($value)) {
+            return [];
+        }
 
         $sources = Hash::get($this->field, 'settings.sources');
         $limit = Hash::get($this->field, 'settings.limit');
@@ -77,19 +90,22 @@ class DigitalProducts extends Field implements FieldInterface
 
         $foundElements = [];
 
-        if (!$value) {
-            return $foundElements;
-        }
-
         foreach ($value as $dataValue) {
             // Prevent empty or blank values (string or array), which match all elements
-            if (empty($dataValue)) {
+            if (empty($dataValue) && empty($default)) {
                 continue;
             }
 
             // If we're using the default value - skip, we've already got an id array
             if ($node === 'usedefault') {
                 $foundElements = $value;
+                break;
+            }
+
+            // special provision for falling back on default BaseRelationField value
+            // https://github.com/craftcms/feed-me/issues/1195
+            if (trim($dataValue) === '') {
+                $foundElements = $default;
                 break;
             }
 

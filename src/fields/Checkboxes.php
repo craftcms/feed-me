@@ -46,6 +46,11 @@ class Checkboxes extends Field implements FieldInterface
     public function parseField(): mixed
     {
         $value = $this->fetchArrayValue();
+        $default = $this->fetchDefaultArrayValue();
+
+        if ($value === null) {
+            return null;
+        }
 
         $preppedData = [];
 
@@ -55,6 +60,12 @@ class Checkboxes extends Field implements FieldInterface
         foreach ($options as $option) {
             foreach ($value as $dataValue) {
                 if ($dataValue === $option[$match]) {
+                    $preppedData[] = $option['value'];
+                }
+
+                // special case for when mapping by label, but also using a default value
+                // which relies on $option['value']
+                if (empty($dataValue) && in_array($option['value'], $default)) {
                     $preppedData[] = $option['value'];
                 }
             }

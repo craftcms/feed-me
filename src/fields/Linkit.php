@@ -24,7 +24,7 @@ class Linkit extends Field implements FieldInterface
     /**
      * @var string
      */
-    public static string $class = 'fruitstudios\linkit\fields\LinkitField';
+    public static string $class = 'presseddigital\linkit\fields\LinkitField';
 
 
     // Templates
@@ -55,14 +55,22 @@ class Linkit extends Field implements FieldInterface
         }
 
         foreach ($fields as $subFieldHandle => $subFieldInfo) {
-            $preppedData[$subFieldHandle] = DataHelper::fetchValue($this->feedData, $subFieldInfo);
+            $preppedData[$subFieldHandle] = DataHelper::fetchValue($this->feedData, $subFieldInfo, $this->feed);
+        }
+
+        if (empty(
+            array_filter($preppedData, function($val) {
+                return $val !== null;
+            })
+        )) {
+            return null;
         }
 
         if ($preppedData) {
             // Handle Link Type
-            $preppedData['type'] = empty($preppedData['type'] ?? '') ? 'fruitstudios\linkit\models\Url' : $preppedData['type'];
+            $preppedData['type'] = empty($preppedData['type'] ?? '') ? 'presseddigital\linkit\models\Url' : $preppedData['type'];
             if (!str_contains($preppedData['type'], '\\')) {
-                $preppedData['type'] = 'fruitstudios\\linkit\\models\\' . ucfirst(strtolower(trim($preppedData['type'])));
+                $preppedData['type'] = 'presseddigital\\linkit\\models\\' . ucfirst(strtolower(trim($preppedData['type'])));
             }
 
             // Handle Link Target

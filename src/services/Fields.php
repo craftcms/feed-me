@@ -27,6 +27,7 @@ use craft\feedme\fields\Lightswitch;
 use craft\feedme\fields\Linkit;
 use craft\feedme\fields\Matrix;
 use craft\feedme\fields\MissingField;
+use craft\feedme\fields\Money;
 use craft\feedme\fields\MultiSelect;
 use craft\feedme\fields\Number;
 use craft\feedme\fields\RadioButtons;
@@ -133,6 +134,7 @@ class Fields extends Component
                 Matrix::class,
                 MultiSelect::class,
                 Number::class,
+                Money::class,
                 RadioButtons::class,
                 Table::class,
                 Tags::class,

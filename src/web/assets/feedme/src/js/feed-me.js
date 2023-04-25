@@ -1,14 +1,16 @@
+/* globals Craft, $ */
+
 // ==========================================================================
 
 // Feed Me Plugin for Craft CMS
 
 // ==========================================================================
 
-if (typeof Craft.FeedMe === typeof undefined) {
-  Craft.FeedMe = {};
-}
-
 $(function () {
+  if (typeof Craft.FeedMe === typeof undefined) {
+    Craft.FeedMe = {};
+  }
+
   // Settings pane toggle for feeds index
   $(document).on('click', '#feeds .settings', function (e) {
     e.preventDefault();
@@ -158,7 +160,10 @@ $(function () {
 
       // var sections = $(this).parents('.element-sub-group').data('items');
       var entryType = 'item_' + $(this).val();
-      var entryTypes = sections[entryType];
+      var entryTypes = [];
+      if (sections !== undefined) {
+        var entryTypes = sections[entryType];
+      }
 
       var newOptions = '';
       $.each(entryTypes, function (index, value) {

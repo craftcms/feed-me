@@ -54,7 +54,15 @@ class TypedLink extends Field implements FieldInterface
         }
 
         foreach ($fields as $subFieldHandle => $subFieldInfo) {
-            $preppedData[$subFieldHandle] = DataHelper::fetchValue($this->feedData, $subFieldInfo);
+            $preppedData[$subFieldHandle] = DataHelper::fetchValue($this->feedData, $subFieldInfo, $this->feed);
+        }
+
+        if (empty(
+        array_filter($preppedData, function($val) {
+            return $val !== null;
+        })
+        )) {
+            return null;
         }
 
         // Protect against sending an empty array

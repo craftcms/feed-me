@@ -47,6 +47,10 @@ class Number extends Field implements FieldInterface
     {
         $value = $this->fetchValue();
 
+        if ($value === null) {
+            return null;
+        }
+
         return $this->parseValue($value);
     }
 

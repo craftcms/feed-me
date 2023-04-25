@@ -16,6 +16,8 @@ use craft\feedme\helpers\BaseHelper;
 use craft\feedme\helpers\DataHelper;
 use craft\feedme\Plugin;
 use craft\feedme\services\Process;
+use craft\fields\Matrix;
+use craft\fields\Table;
 use craft\helpers\Json;
 use DateTime;
 use Exception;
@@ -124,7 +126,7 @@ class CommerceProduct extends Element
             ->typeId($settings['elementGroup'][ProductElement::class])
             ->siteId(Hash::get($settings, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id);
         Craft::configure($query, $params);
-        
+
         return $query;
     }
 
@@ -317,9 +319,9 @@ class CommerceProduct extends Element
                     }
                 }
 
-                $isMatrixField = (Hash::get($fieldInfo, 'field') === 'craft\fields\Matrix');
+                $isNestedField = (in_array(Hash::get($fieldInfo, 'field'), [Matrix::class, Table::class]));
 
-                if ($isMatrixField) {
+                if ($isNestedField === true) {
                     $complexFields[$variantIndex][$fieldHandle]['info'] = $fieldInfo;
                     $complexFields[$variantIndex][$fieldHandle]['data'][$nodePath] = $value;
                     continue;
@@ -400,7 +402,7 @@ class CommerceProduct extends Element
             // Parse just the element attributes first. We use these in our field contexts, and need a fully-prepped element
             foreach ($variantContent as $fieldHandle => $fieldInfo) {
                 if (Hash::get($fieldInfo, 'attribute')) {
-                    $attributeValue = DataHelper::fetchValue(Hash::get($fieldInfo, 'data'), $fieldInfo);
+                    $attributeValue = DataHelper::fetchValue(Hash::get($fieldInfo, 'data'), $fieldInfo, $this->feed);
 
                     $attributeData[$fieldHandle] = $attributeValue;
                 }

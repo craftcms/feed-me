@@ -160,6 +160,17 @@ class FeedsController extends Controller
     {
         $feed = $this->_getModelFromPost();
 
+        if ($feed->getErrors()) {
+            $this->setFailFlash(Craft::t('feed-me', 'Couldn’t save the feed.'));
+
+            // Send the category group back to the template
+            Craft::$app->getUrlManager()->setRouteParams([
+                'feed' => $feed,
+            ]);
+
+            return null;
+        }
+
         return $this->_saveAndRedirect($feed, 'feed-me/feeds/', true);
     }
 
@@ -423,6 +434,7 @@ class FeedsController extends Controller
         $feed->paginationNode = $request->getBodyParam('paginationNode', $feed->paginationNode);
         $feed->passkey = $request->getBodyParam('passkey', $feed->passkey);
         $feed->backup = (bool)$request->getBodyParam('backup', $feed->backup);
+        $feed->setEmptyValues = (bool)$request->getBodyParam('setEmptyValues', $feed->setEmptyValues);
 
         // Don't overwrite mappings when saving from first screen
         if ($request->getBodyParam('fieldMapping')) {

@@ -1,6 +1,6 @@
 # Field Types
 
-Feed Me supports all native [Craft Fields](https://craftcms.com/docs/fields), and even some third-party ones.
+Feed Me supports all native [Craft Fields](https://craftcms.com/docs/4.x/fields.html), and even some third-party ones.
 
 ### Assets
 
@@ -190,6 +190,7 @@ Accepts a single value. You must provide the Value of the option to select, not 
 :::
 
 ### Entries
+
 Accepts single or multiple values.
 
 #### Additional Options
@@ -265,6 +266,22 @@ Accepts a single value. Can be provided as any boolean-like string.
 
 Check out [Importing into Matrix](../guides/importing-into-matrix.md) for a more comprehensive guide.
 
+### Money
+
+Accepts a single value.
+
+:::code
+```xml
+<Money>10</Money>
+```
+
+```json
+{
+    "Money": "10"
+}
+```
+:::
+
 ### Multi-select
 
 Accepts single or multiple values. You must provide the Value of the option to select, not the Label.
@@ -327,43 +344,6 @@ Accepts a single value.
 ```
 :::
 
-### Position Select
-
-Accepts a single or multiple values. Should provide from the below options:
-
-- `left`
-- `center`
-- `right`
-- `full`
-- `drop-left`
-- `drop-right`
-
-:::code
-```xml
-<Position>right</Position>
-
-// Or
-<Positions>
-    <Position>left</Position>
-    <Position>right</Position>
-</Positions>
-```
-
-```json
-{
-    "Position": "right"
-}
-
-// Or
-{
-    "Positions": [
-        "left",
-        "right"
-    ]
-}
-```
-:::
-
 ### Radio Buttons
 
 Accepts a single value. You must provide the Value of the option to select, not the Label.
@@ -376,22 +356,6 @@ Accepts a single value. You must provide the Value of the option to select, not 
 ```json
 {
     "Radio": "option2"
-}
-```
-:::
-
-### Rich Text
-
-Accepts a single value. Be sure to escape your content properly if it contains HTML.
-
-:::code
-```xml
-<RichText><![CDATA[<p>Lorem ipsum dolor sit amet.</p>]]></RichText>
-```
-
-```json
-{
-    "RichText": "<p>Lorem ipsum dolor sit amet.</p>"
 }
 ```
 :::
@@ -561,3 +525,5 @@ Depending on what data your feed contains, you'll need to select the appropriate
 ## Inner Element Fields
 
 As each Element (Assets, Categories, Entries, Tags, Users) can have custom fields themselves, Feed Me gives you the chance to map to those fields as well. They'll appear under any row when mapping to an Element field.
+
+See the introduction to field mapping for more information on setting up nested fields.

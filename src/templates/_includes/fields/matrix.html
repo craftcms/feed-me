@@ -35,7 +35,6 @@
                     {% set blockPath = [ handle, 'blocks', blocktype.handle ] %}
 
                     {% set disabled = hash_get(feed.fieldMapping, blockPath|join('.') ~ '.disabled') ?: '' %}
-                    {% set collapsed = hash_get(feed.fieldMapping, blockPath|join('.') ~ '.collapsed') ?: '' %}
 
                     {% namespace 'fieldMapping[' ~ blockPath|join('][') ~ ']' %}
                         {{ feedMeMacro.checkbox({
@@ -43,13 +42,6 @@
                             name: 'disabled',
                             value: 1,
                             checked: disabled,
-                        }) }}
-
-                        {{ feedMeMacro.checkbox({
-                            label: 'Collapsed'|t('feed-me'),
-                            name: 'collapsed',
-                            value: 1,
-                            checked: collapsed,
                         }) }}
                     {% endnamespace %}
                 </div>
