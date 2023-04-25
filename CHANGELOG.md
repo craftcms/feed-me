@@ -1,10 +1,10 @@
 # Release Notes for Feed Me
 
 ## Unreleased
+- Fixed a bug where Category children of disabled parents will become orphaned. ([#555](https://github.com/craftcms/feed-me/issues/555))
 
 ### Fixed
 - Fixed a bug where `enabledForSite` was still being used in element selector modal criteria ([#1126](https://github.com/craftcms/feed-me/issues/1126))
-- Fixed a bug where Category children of disabled parents will become orphaned. ([#555](https://github.com/craftcms/feed-me/issues/555))
 
 ## 5.0.4 - 2022-05-24
 
