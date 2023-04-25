@@ -1,5 +1,8 @@
 # Release Notes for Feed Me
 
+## Unreleased
+- Fixed a bug where Category children of disabled parents will become orphaned. ([#555](https://github.com/craftcms/feed-me/issues/555))
+
 ## 5.1.2 - 2023-04-17
 
 - Added support for importing into CKEditor as an inner element field.
