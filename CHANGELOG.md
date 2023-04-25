@@ -6,6 +6,7 @@
 - Fixed several bugs related to empty and non-existent feed values and the “Set Empty Values” feed setting. ([#1271](https://github.com/craftcms/feed-me/pull/1271))
 - Fixed a bug where that prevented importing data as Commerce Variants. ([#464](https://github.com/craftcms/feed-me/issues/464), [#1168](https://github.com/craftcms/feed-me/issues/1168))
 - Fixed an XSS vulnerability.
+- Fixed a bug where Category children of disabled parents will become orphaned. ([#555](https://github.com/craftcms/feed-me/issues/555))
 
 ## 4.6.1.1 - 2023-03-24 
 
