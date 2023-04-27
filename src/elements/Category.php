@@ -109,9 +109,11 @@ class Category extends Element
         $parent = Hash::get($data, 'parent');
 
         if ($parent && $parent !== $this->element->id) {
-            $parentCategory = CategoryElement::findOne(['id' => $parent]);
+            $parentCategory = CategoryElement::find()->status(null)->id($parent)->one();
 
-            Craft::$app->getStructures()->append($this->element->group->structureId, $this->element, $parentCategory);
+            if ($parentCategory) {
+                Craft::$app->getStructures()->append($this->element->group->structureId, $this->element, $parentCategory);
+            }
         }
     }
 
