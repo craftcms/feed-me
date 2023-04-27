@@ -227,6 +227,14 @@ class Entry extends Element
             return $element->id;
         }
 
+        // use the default value if it's provided and none of the above worked
+        // https://github.com/craftcms/feed-me/issues/1154
+        if (!empty($default)) {
+            $this->element->parentId = $default[0];
+
+            return $default[0];
+        }
+
         return null;
     }
 
