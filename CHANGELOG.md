@@ -14,6 +14,7 @@
 - Fixed a PHP error that could occur when trying to import into a Commerce Product’s “Post Date” or Expiry Date” fields. ([#1287](https://github.com/craftcms/feed-me/issues/1287), [#1296](https://github.com/craftcms/feed-me/pull/1296))
 - Fixed a bug where the Table field’s UI for mapping was missing default value options. ([#1254](https://github.com/craftcms/feed-me/issues/1254), [#1300](https://github.com/craftcms/feed-me/pull/1300))
 - Fixed a bug where importing a date or time into a Table field would give incorrect results. ([#604](https://github.com/craftcms/feed-me/issues/604), [#1300](https://github.com/craftcms/feed-me/pull/1300))
+- Fixed a bug where the “Let each entry choose which sites it should be saved” feed setting wasn’t working as expected. ([#1279](https://github.com/craftcms/feed-me/issues/1279), [#1292](https://github.com/craftcms/feed-me/pull/1292))
 
 ## 5.1.2 - 2023-04-17
 
