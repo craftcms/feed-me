@@ -146,8 +146,12 @@ class Category extends Element
             return null;
         }
 
-        if ($node === 'usedefault') {
+        if ($node === 'usedefault' || $value === $default) {
             $match = 'elements.id';
+        }
+
+        if (is_array($value)) {
+            $value = $value[0];
         }
 
         $query = CategoryElement::find()
