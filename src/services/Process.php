@@ -275,6 +275,10 @@ class Process extends Component
 
             // If we're deleting or updating an existing element, we want to focus on that one
             if (DuplicateHelper::isUpdate($feed)) {
+                if (method_exists($this->_service, 'checkPropagation')) {
+                    $existingElement = $this->_service->checkPropagation($existingElement, $feed);
+                }
+
                 $element = clone $existingElement;
 
                 // Update our service with the correct element
