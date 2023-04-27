@@ -135,7 +135,6 @@ class DataHelper
 
         $node = Hash::get($fieldInfo, 'node');
         $default = Hash::get($fieldInfo, 'default');
-
         $dataDelimiter = Plugin::$plugin->service->getConfig('dataDelimiter');
 
         // Some fields require array, or multiple values like Elements, Checkboxes, etc, and we need to parse them differently.
@@ -167,6 +166,12 @@ class DataHelper
             }
         }
 
+        // Check if not importing, just using default
+        if ($node === 'usedefault' && !$value) {
+            $value = $default;
+        }
+
+        // if value is still null - return
         if ($value === null) {
             return null;
         }
@@ -175,11 +180,6 @@ class DataHelper
         // attribute of field definition, as its quite an assumption at this point...
         if (count($value) === 1) {
             $value = $value[0];
-        }
-
-        // Check if not importing, just using default
-        if ($node === 'usedefault' && !$value) {
-            $value = $default;
         }
 
         // If setEmptyValues is enabled allow overwriting existing data
