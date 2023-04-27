@@ -13,6 +13,7 @@ use craft\feedme\base\Element;
 use craft\feedme\helpers\DataHelper;
 use craft\feedme\models\ElementGroup;
 use craft\feedme\Plugin;
+use craft\helpers\ElementHelper;
 use craft\helpers\Json;
 use craft\models\Section;
 use DateTime;
@@ -96,11 +97,24 @@ class Entry extends Element
      */
     public function getQuery($settings, array $params = []): mixed
     {
+        $targetSiteId = Hash::get($settings, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id;
+        if ($this->element !== null) {
+            $section = $this->element->getSection();
+        }
+
         $query = EntryElement::find()
             ->status(null)
             ->sectionId($settings['elementGroup'][EntryElement::class]['section'])
-            ->typeId($settings['elementGroup'][EntryElement::class]['entryType'])
-            ->siteId(Hash::get($settings, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id);
+            ->typeId($settings['elementGroup'][EntryElement::class]['entryType']);
+
+        if (isset($section) && $section->propagationMethod === Section::PROPAGATION_METHOD_CUSTOM) {
+            $query->site('*')
+                ->preferSites([$targetSiteId])
+                ->unique();
+        } else {
+            $query->siteId($targetSiteId);
+        }
+
         Craft::configure($query, $params);
         return $query;
     }
@@ -134,6 +148,41 @@ class Entry extends Element
         $this->element->setEnabledForSite($enabledForSite);
 
         return $this->element;
+    }
+
+    /**
+     * Checks if $existingElement should be propagated to the target site.
+     *
+     * @param $existingElement
+     * @param array $feed
+     * @return ElementInterface|null
+     * @throws Exception
+     * @throws \craft\errors\SiteNotFoundException
+     * @throws \craft\errors\UnsupportedSiteException
+     * @since 5.1.3
+     */
+    public function checkPropagation($existingElement, array $feed)
+    {
+        $targetSiteId = Hash::get($feed, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id;
+
+        // Did the entry come back in a different site?
+        if ($existingElement->siteId != $targetSiteId) {
+            // Skip it if its section doesn't use the `custom` propagation method
+            if ($existingElement->getSection()->propagationMethod !== Section::PROPAGATION_METHOD_CUSTOM) {
+                return $existingElement;
+            }
+
+            // Give the entry a status for the import's target site
+            // (This is how the `custom` propagation method knows which sites the entry should support.)
+            $siteStatuses = ElementHelper::siteStatusesForElement($existingElement);
+            $siteStatuses[$targetSiteId] = $existingElement->getEnabledForSite();
+            $existingElement->setEnabledForSite($siteStatuses);
+
+            // Propagate the entry, and swap $entry with the propagated copy
+            return Craft::$app->getElements()->propagateElement($existingElement, $targetSiteId);
+        }
+
+        return $existingElement;
     }
 
     // Protected Methods
