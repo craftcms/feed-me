@@ -4,6 +4,7 @@
 
 - Fixed a bug where mapping into boolean fields using while “Use default value” was selected would give incorrect results. ([#1304](https://github.com/craftcms/feed-me/issues/1304), [#1305](https://github.com/craftcms/feed-me/pull/1305))
 - Fixed a bug where a Category could become orphaned if its parent was disabled when importing. ([#555](https://github.com/craftcms/feed-me/issues/555))
+- Fixed a bug where pagination would fail if an alias was used in a pagination node in a feed during an import. ([#1244](https://github.com/craftcms/feed-me/issues/1244), [#1301](https://github.com/craftcms/feed-me/pull/1301))
 
 ## 5.1.2 - 2023-04-17
 
