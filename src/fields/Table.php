@@ -86,6 +86,21 @@ class Table extends Field implements FieldInterface
             }
         }
 
+        // fill out default values
+        foreach ($parsedData as $rowCounter => $row) {
+            foreach ($columns as $columnHandle => $columnInfo) {
+                $node = Hash::get($columnInfo, 'node');
+                $type = Hash::get($columnInfo, 'type');
+
+                if ($node === 'usedefault') {
+                    if (!isset($parsedData[$rowCounter][$columnHandle]) && !empty($columnInfo['default'])) {
+                        $parsedValue = $this->_handleSubField($type, $columnInfo['default']);
+                        $parsedData[$rowCounter][$columnHandle] = $parsedValue;
+                    }
+                }
+            }
+        }
+
         $dataDelimiter = Plugin::$plugin->service->getConfig('dataDelimiter', $this->feed['id']);
 
         foreach ($parsedData as $rowKey => $row) {
@@ -146,9 +161,7 @@ class Table extends Field implements FieldInterface
         }
 
         if ($type == 'date') {
-            $parsedValue = DateTimeHelper::toDateTime($value) ?: null;
-
-            return $this->field->serializeValue($parsedValue);
+            return DateTimeHelper::toDateTime($value) ?: null;
         }
 
         if ($type == 'lightswitch') {
@@ -160,9 +173,7 @@ class Table extends Field implements FieldInterface
         }
 
         if ($type == 'time') {
-            $parsedValue = DateTimeHelper::toDateTime($value) ?: null;
-
-            return $this->field->serializeValue($parsedValue);
+            return DateTimeHelper::toDateTime($value) ?: null;
         }
 
         // Protect against array values
