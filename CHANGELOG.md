@@ -11,6 +11,8 @@
 - Fixed a performance problem when mapping a feed into a category group or structure section with a large number of elements. ([#1255](https://github.com/craftcms/feed-me/issues/1255), [#1293](https://github.com/craftcms/feed-me/pull/1293))
 - Fixed a PHP error that could occur when importing some feeds. ([#1298](https://github.com/craftcms/feed-me/issues/1298), [#1299](https://github.com/craftcms/feed-me/pull/1299))
 - Fixed a PHP error that could occur when trying to import into a Commerce Product’s “Post Date” or Expiry Date” fields. ([#1287](https://github.com/craftcms/feed-me/issues/1287), [#1296](https://github.com/craftcms/feed-me/pull/1296))
+- Fixed a bug where the Table field’s UI for mapping was missing default value options. ([#1254](https://github.com/craftcms/feed-me/issues/1254), [#1300](https://github.com/craftcms/feed-me/pull/1300))
+- Fixed a bug where importing a date or time into a Table field would give incorrect results. ([#604](https://github.com/craftcms/feed-me/issues/604), [#1300](https://github.com/craftcms/feed-me/pull/1300))
 
 ## 4.6.2 - 2023-04-17
 
