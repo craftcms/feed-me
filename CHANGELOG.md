@@ -1,5 +1,12 @@
 # Release Notes for Feed Me
 
+<<<<<<< HEAD
+
+=======
+## Unreleased
+
+- Fixed a bug where mapping into boolean fields using while “Use default value” was selected would give incorrect results. ([#1304](https://github.com/craftcms/feed-me/issues/1304), [#1305](https://github.com/craftcms/feed-me/pull/1305))
+
 ## 5.1.2 - 2023-04-17
 
 - Added support for importing into CKEditor as an inner element field.
