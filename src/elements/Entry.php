@@ -181,8 +181,12 @@ class Entry extends Element
             return null;
         }
 
-        if ($node === 'usedefault') {
+        if ($node === 'usedefault' || $value === $default) {
             $match = 'elements.id';
+        }
+
+        if (is_array($value)) {
+            $value = $value[0];
         }
 
         $query = EntryElement::find()
@@ -223,14 +227,6 @@ class Entry extends Element
             return $element->id;
         }
 
-        // use the default value if it's provided and none of the above worked
-        // https://github.com/craftcms/feed-me/issues/1154
-        if (!empty($default)) {
-            $this->element->newParentId = $default[0];
-
-            return $default[0];
-        }
-
         return null;
     }
 
@@ -245,6 +241,8 @@ class Entry extends Element
     protected function parseAuthorId($feedData, $fieldInfo)
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
+        $default = DataHelper::fetchDefaultArrayValue($fieldInfo);
+
         $match = Hash::get($fieldInfo, 'options.match');
         $create = Hash::get($fieldInfo, 'options.create');
         $node = Hash::get($fieldInfo, 'node');
@@ -254,12 +252,12 @@ class Entry extends Element
             return null;
         }
 
-        if (is_array($value)) {
-            $value = $value[0];
+        if ($node === 'usedefault' || $value === $default) {
+            $match = 'elements.id';
         }
 
-        if ($node === 'usedefault') {
-            $match = 'elements.id';
+        if (is_array($value)) {
+            $value = $value[0];
         }
 
         if ($match === 'fullName') {
