@@ -84,6 +84,12 @@ class DataHelper
                     // Trim values in case whitespace was used between delimiter
                     $delimitedValues = array_map('trim', $delimitedValues);
 
+                    // we need the value to start as null for setEmptyValues
+                    // but we also need it to be an array at this point so that array_merge doesn't freak out
+                    // so if it's null so far, change it to an empty array as we're about to populate it with data
+                    if ($value === null) {
+                        $value = [];
+                    }
                     $value = array_merge($value, $delimitedValues);
                 } else {
                     $value[] = $nodeValue;
@@ -159,6 +165,12 @@ class DataHelper
                     // Trim values in case whitespace was used between delimiter
                     $delimitedValues = array_map('trim', $delimitedValues);
 
+                    // we need the value to start as null for setEmptyValues
+                    // but we also need it to be an array at this point so that array_merge doesn't freak out
+                    // so if it's null so far, change it to an empty array as we're about to populate it with data
+                    if ($value === null) {
+                        $value = [];
+                    }
                     $value = array_merge($value, $delimitedValues);
                 } else {
                     $value[] = $nodeValue;
