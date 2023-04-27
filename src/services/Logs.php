@@ -170,7 +170,13 @@ class Logs extends Component
      */
     private function _canLog($type): bool
     {
-        $logging = Plugin::$plugin->service->getConfig('logging');
+        $loggingConfig = Plugin::$plugin->service->getConfig('logging');
+
+        // parse the config value because it need to allow for strings too to support 'error' level
+        $logging = App::parseBooleanEnv($loggingConfig);
+        if ($logging === null) {
+            $logging = $loggingConfig;
+        }
 
         // If logging set to false, don't log anything
         if ($logging === false) {

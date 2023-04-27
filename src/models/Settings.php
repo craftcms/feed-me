@@ -79,9 +79,9 @@ class Settings extends Model
     public int $sleepTime = 0;
 
     /**
-     * @var bool
+     * @var bool|string
      */
-    public bool $logging = true;
+    public bool|string $logging = true;
 
     /**
      * @var bool
