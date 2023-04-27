@@ -111,7 +111,9 @@ class Category extends Element
         if ($parent && $parent !== $this->element->id) {
             $parentCategory = CategoryElement::find()->status(null)->id($parent)->one();
 
-            Craft::$app->getStructures()->append($this->element->group->structureId, $this->element, $parentCategory);
+            if ($parentCategory) {
+                Craft::$app->getStructures()->append($this->element->group->structureId, $this->element, $parentCategory);
+            }
         }
     }
 
