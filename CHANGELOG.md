@@ -7,6 +7,7 @@
 - Fixed a bug where pagination would fail if an alias was used in a pagination node in a feed during an import. ([#1244](https://github.com/craftcms/feed-me/issues/1244), [#1301](https://github.com/craftcms/feed-me/pull/1301))
 - Fixed a performance problem when mapping a feed into a category group or structure section with a large number of elements. ([#1255](https://github.com/craftcms/feed-me/issues/1255), [#1293](https://github.com/craftcms/feed-me/pull/1293))
 - Fixed a PHP error that would occur if you set Feed Me’s logging level to `'error'`. ([#1295](https://github.com/craftcms/feed-me/issues/1295), [#1297](https://github.com/craftcms/feed-me/pull/1297))
+- Fixed a PHP error that could occur when importing some feeds. ([#1298](https://github.com/craftcms/feed-me/issues/1298), [#1299](https://github.com/craftcms/feed-me/pull/1299))
 
 ## 5.1.2 - 2023-04-17
 
