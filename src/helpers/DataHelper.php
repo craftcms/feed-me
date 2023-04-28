@@ -409,12 +409,16 @@ class DataHelper
      * @param mixed $secondValue
      * @return bool
      */
-    private static function _recursiveCompare(mixed $firstValue, mixed $secondValue): bool
+    private static function _recursiveCompare($firstValue, $secondValue): bool
     {
         if (is_array($firstValue) && is_array($secondValue)) {
             // Ignore values that are `null` or empty arrays
-            $firstValue = array_filter($firstValue, static fn (mixed $value) => !($value === null || $value === []));
-            $secondValue = array_filter($secondValue, static fn (mixed $value) => !($value === null || $value === []));
+            $firstValue = array_filter($firstValue, static function ($value) {
+                return !($value === null || $value === []);
+            });
+            $secondValue = array_filter($secondValue, static function ($value) {
+                return !($value === null || $value === []);
+            });
 
             // Both values must have the same keys (ignoring order)
             $firstKeys = array_keys($firstValue);
@@ -447,8 +451,8 @@ class DataHelper
         if (Hash::check($fields, $key)
             && is_array($firstValue)
             && is_array($secondValue)
-            && array_reduce($firstValue, static fn($carry, $item) => $carry && is_array($item), true)
-            && array_reduce($secondValue, static fn($carry, $item) => $carry && is_array($item), true)
+            && array_reduce($firstValue, static function($carry, $item) { return $carry && is_array($item); }, true)
+            && array_reduce($secondValue, static function($carry, $item) { return $carry && is_array($item); }, true)
         ) {
             // Compare the values recursively while ignoring the keys at the first level,
             // these keys are statically set to `'newX'` and the ids for the values in the database
