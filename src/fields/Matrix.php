@@ -154,6 +154,10 @@ class Matrix extends Field implements FieldInterface
             $preppedData[$blockIndex . '.type'] = $blockHandle;
             // $preppedData[$blockIndex . '.order'] = $order;
             $preppedData[$blockIndex . '.enabled'] = !$disabled;
+            // because of PR 1284 and enhanced matrix data comparison in PR 1291,
+            // we need to add "collapsed => false" to the matrix data from the feed;
+            // otherwise enhanced matrix data comparison will always think the data has changed
+            $preppedData[$blockIndex . '.collapsed'] = false;
             $preppedData[$blockIndex . '.fields.' . $subFieldHandle] = $value;
 
             if ((is_string($value) && !empty($value)) || (is_array($value) && !empty(array_filter($value)))) {
