@@ -232,6 +232,29 @@ class User extends Element
     }
 
     /**
+     * Get and validate Preferred Locale attribute
+     *
+     * @param $feedData
+     * @param $fieldInfo
+     * @return array|\ArrayAccess|mixed|string|null
+     * @throws \yii\base\Exception
+     */
+    protected function parsePreferredLocale($feedData, $fieldInfo)
+    {
+        $value = $this->fetchSimpleValue($feedData, $fieldInfo);
+
+        if ($value === "") {
+            return $value;
+        }
+
+        if ($value !== null && in_array($value, Craft::$app->getI18n()->getAppLocaleIds(), true)) {
+            return $value;
+        }
+
+        return null;
+    }
+
+    /**
      * @param $feedData
      * @param $fieldInfo
      * @return int|mixed|string|null

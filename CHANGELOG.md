@@ -15,6 +15,7 @@
 - Fixed a bug where the Table field’s UI for mapping was missing default value options. ([#1254](https://github.com/craftcms/feed-me/issues/1254), [#1300](https://github.com/craftcms/feed-me/pull/1300))
 - Fixed a bug where importing a date or time into a Table field would give incorrect results. ([#604](https://github.com/craftcms/feed-me/issues/604), [#1300](https://github.com/craftcms/feed-me/pull/1300))
 - Fixed a bug where importing entries in a multi-site setup with a custom propagation method wasn’t working as expected. ([#1279](https://github.com/craftcms/feed-me/issues/1279), [#1292](https://github.com/craftcms/feed-me/pull/1292))
+- Fixed a bug where importing a user’s “Preferred Locale” wasn’t working. ([#612](https://github.com/craftcms/feed-me/issues/612), [#1289](https://github.com/craftcms/feed-me/pull/1289))
 
 ## 5.1.2 - 2023-04-17
 
