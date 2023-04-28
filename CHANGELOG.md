@@ -15,8 +15,8 @@
 - Fixed a bug where the mapping UI for Table fields didn’t include default value options. ([#1254](https://github.com/craftcms/feed-me/issues/1254), [#1300](https://github.com/craftcms/feed-me/pull/1300))
 - Fixed a bug where date and time values weren’t getting imported into Table fields properly. ([#604](https://github.com/craftcms/feed-me/issues/604), [#1300](https://github.com/craftcms/feed-me/pull/1300))
 - Fixed a bug where users’ “Preferred Locale” settings weren’t getting imported properly. ([#612](https://github.com/craftcms/feed-me/issues/612), [#1289](https://github.com/craftcms/feed-me/pull/1289))
-- Fixed a PHP error that would occur if you set Feed Me’s logging level to `'error'`. ([#1295](https://github.com/craftcms/feed-me/issues/1295), [#1297](https://github.com/craftcms/feed-me/pull/1297))
-- Fixed a bug where importing entries in a multi-site setup with a custom propagation method wasn’t working as expected. ([#1279](https://github.com/craftcms/feed-me/issues/1279), [#1292](https://github.com/craftcms/feed-me/pull/1292))
+- Fixed a PHP error occurred if Feed Me’s logging level was set to `error`. ([#1295](https://github.com/craftcms/feed-me/issues/1295), [#1297](https://github.com/craftcms/feed-me/pull/1297))
+- Fixed a bug where entries with a custom propagation method weren’t getting imported properly. ([#1279](https://github.com/craftcms/feed-me/issues/1279), [#1292](https://github.com/craftcms/feed-me/pull/1292))
 
 ## 5.1.2 - 2023-04-17
 
