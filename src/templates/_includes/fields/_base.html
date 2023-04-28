@@ -138,6 +138,20 @@
                                 options: default.options,
                             }) }}
 
+                        {% elseif default.type == 'date' %}
+
+                            {{ forms.dateField({
+                                name: 'default',
+                                value: craft.feedme.formatDateTime(defaultValue),
+                            }) }}
+
+                        {% elseif default.type == 'time' %}
+
+                            {{ forms.timeField({
+                                name: 'default',
+                                value: craft.feedme.formatDateTime(defaultValue),
+                            }) }}
+
                         {% elseif default.type == 'dateTime' %}
 
                             {{ forms.dateTimeField({

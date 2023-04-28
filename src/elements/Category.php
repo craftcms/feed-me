@@ -113,9 +113,11 @@ class Category extends Element
         $parent = Hash::get($data, 'parent');
 
         if ($parent && $parent !== $this->element->id) {
-            $parentCategory = CategoryElement::findOne(['id' => $parent]);
+            $parentCategory = CategoryElement::find()->status(null)->id($parent)->one();
 
-            Craft::$app->getStructures()->append($this->element->group->structureId, $this->element, $parentCategory);
+            if ($parentCategory) {
+                Craft::$app->getStructures()->append($this->element->group->structureId, $this->element, $parentCategory);
+            }
         }
     }
 
@@ -144,8 +146,12 @@ class Category extends Element
             return null;
         }
 
-        if ($node === 'usedefault') {
+        if ($node === 'usedefault' || $value === $default) {
             $match = 'elements.id';
+        }
+
+        if (is_array($value)) {
+            $value = $value[0];
         }
 
         $query = CategoryElement::find()
