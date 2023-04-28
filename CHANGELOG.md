@@ -5,18 +5,18 @@
 > **Warning**
 > If you have an existing Commerce Products feed, you may need to resave its settings after updating.
 
-- Fixed a bug where mapping into boolean fields using while “Use default value” was selected would give incorrect results. ([#1304](https://github.com/craftcms/feed-me/issues/1304), [#1305](https://github.com/craftcms/feed-me/pull/1305))
-- Fixed a bug where a Category could become orphaned if its parent was disabled when importing. ([#555](https://github.com/craftcms/feed-me/issues/555))
-- Fixed a bug where pagination would fail if an alias was used in a pagination node in a feed during an import. ([#1244](https://github.com/craftcms/feed-me/issues/1244), [#1301](https://github.com/craftcms/feed-me/pull/1301))
-- Fixed a performance problem when mapping a feed into a category group or structure section with a large number of elements. ([#1255](https://github.com/craftcms/feed-me/issues/1255), [#1293](https://github.com/craftcms/feed-me/pull/1293))
-- Fixed a PHP error that would occur if you set Feed Me’s logging level to `'error'`. ([#1295](https://github.com/craftcms/feed-me/issues/1295), [#1297](https://github.com/craftcms/feed-me/pull/1297))
+- Improved feed mapping performance for large category groups and structure sections. ([#1255](https://github.com/craftcms/feed-me/issues/1255), [#1293](https://github.com/craftcms/feed-me/pull/1293))
+- Improved Matrix field importing performance. ([#1291](https://github.com/craftcms/feed-me/issues/1291), [#1307](https://github.com/craftcms/feed-me/pull/1307))
+- Fixed a bug where “Use default value” wasn’t mapping boolean fields properly. ([#1304](https://github.com/craftcms/feed-me/issues/1304), [#1305](https://github.com/craftcms/feed-me/pull/1305))
+- Fixed a bug where imported categories could become orphaned if their parents were disabled. ([#555](https://github.com/craftcms/feed-me/issues/555))
+- Fixed a bug where pagination wasn’t working for feeds whose URL contained an alias. ([#1244](https://github.com/craftcms/feed-me/issues/1244), [#1301](https://github.com/craftcms/feed-me/pull/1301))
 - Fixed a PHP error that could occur when importing some feeds. ([#1298](https://github.com/craftcms/feed-me/issues/1298), [#1299](https://github.com/craftcms/feed-me/pull/1299))
-- Fixed a PHP error that could occur when trying to import into a Commerce Product’s “Post Date” or Expiry Date” fields. ([#1287](https://github.com/craftcms/feed-me/issues/1287), [#1296](https://github.com/craftcms/feed-me/pull/1296))
-- Fixed a bug where the Table field’s UI for mapping was missing default value options. ([#1254](https://github.com/craftcms/feed-me/issues/1254), [#1300](https://github.com/craftcms/feed-me/pull/1300))
-- Fixed a bug where importing a date or time into a Table field would give incorrect results. ([#604](https://github.com/craftcms/feed-me/issues/604), [#1300](https://github.com/craftcms/feed-me/pull/1300))
+- Fixed a PHP error that could occur when importing a Craft Commerce product feed that contained “Post Date” or Expiry Date” fields. ([#1287](https://github.com/craftcms/feed-me/issues/1287), [#1296](https://github.com/craftcms/feed-me/pull/1296))
+- Fixed a bug where the mapping UI for Table fields didn’t include default value options. ([#1254](https://github.com/craftcms/feed-me/issues/1254), [#1300](https://github.com/craftcms/feed-me/pull/1300))
+- Fixed a bug where date and time values weren’t getting imported into Table fields properly. ([#604](https://github.com/craftcms/feed-me/issues/604), [#1300](https://github.com/craftcms/feed-me/pull/1300))
+- Fixed a bug where users’ “Preferred Locale” settings weren’t getting imported properly. ([#612](https://github.com/craftcms/feed-me/issues/612), [#1289](https://github.com/craftcms/feed-me/pull/1289))
+- Fixed a PHP error that would occur if you set Feed Me’s logging level to `'error'`. ([#1295](https://github.com/craftcms/feed-me/issues/1295), [#1297](https://github.com/craftcms/feed-me/pull/1297))
 - Fixed a bug where importing entries in a multi-site setup with a custom propagation method wasn’t working as expected. ([#1279](https://github.com/craftcms/feed-me/issues/1279), [#1292](https://github.com/craftcms/feed-me/pull/1292))
-- Fixed a bug where importing a user’s “Preferred Locale” wasn’t working. ([#612](https://github.com/craftcms/feed-me/issues/612), [#1289](https://github.com/craftcms/feed-me/pull/1289))
-- Fixed a bug where importing into Matrix fields would incorrectly assume changed data, causing unnecessary overhead. ([#1291](https://github.com/craftcms/feed-me/issues/1291), [#1307](https://github.com/craftcms/feed-me/pull/1307))
 
 ## 5.1.2 - 2023-04-17
 
