@@ -152,6 +152,10 @@ class Matrix extends Field implements FieldInterface
             // Prepare an array that's ready for Matrix to import it
             $preppedData[$blockIndex . '.type'] = $blockHandle;
             $preppedData[$blockIndex . '.enabled'] = !$disabled;
+            // because of PR 1284 and enhanced matrix data comparison in PR 1291,
+            // we need to add "collapsed => false" to the matrix data from the feed;
+            // otherwise enhanced matrix data comparison will always think the data has changed
+            $preppedData[$blockIndex . '.collapsed'] = false;
             $preppedData[$blockIndex . '.fields.' . $subFieldHandle] = $value;
         }
 
