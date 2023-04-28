@@ -1,6 +1,6 @@
 # Release Notes for Feed Me
 
-## Unreleased
+## 5.1.3 - 2023-04-28
 
 > **Warning**
 > If you have an existing Commerce Products feed, you may need to resave its settings after updating.
