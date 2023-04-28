@@ -14,6 +14,7 @@
 - Fixed a bug where the Table field’s UI for mapping was missing default value options. ([#1254](https://github.com/craftcms/feed-me/issues/1254), [#1300](https://github.com/craftcms/feed-me/pull/1300))
 - Fixed a bug where importing a date or time into a Table field would give incorrect results. ([#604](https://github.com/craftcms/feed-me/issues/604), [#1300](https://github.com/craftcms/feed-me/pull/1300))
 - Fixed a bug where importing a user’s “Preferred Locale” wasn’t working. ([#612](https://github.com/craftcms/feed-me/issues/612), [#1289](https://github.com/craftcms/feed-me/pull/1289))
+- Fixed a bug where importing into Matrix fields would incorrectly assume changed data, causing unnecessary overhead. ([#1291](https://github.com/craftcms/feed-me/issues/1291), [#1307](https://github.com/craftcms/feed-me/pull/1307))
 
 ## 4.6.2 - 2023-04-17
 
