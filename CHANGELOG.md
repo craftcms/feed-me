@@ -1,8 +1,8 @@
 # Release Notes for Feed Me
 
-## Unreleased
+## 4.6.3.1 - 2023-05-02
 
-- Fixed a bug where custom fields would not import on Postgres.
+- Fixed a bug where custom fields would not import on PostgreSQL.
 
 ## 5.1.3 - 2023-04-28
 
