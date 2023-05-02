@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- Fixed a bug where custom fields would not import on Postgres.
+- Fixed a bug where custom fields would not import on PostgreSQL.
 
 ## 4.6.3 - 2023-04-28
 
