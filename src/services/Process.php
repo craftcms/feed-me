@@ -400,7 +400,7 @@ class Process extends Component
                 $fieldValue = Plugin::$plugin->fields->parseField($feed, $element, $feedData, $fieldHandle, $fieldInfo);
 
                 if ($fieldValue !== null) {
-                    if ($feed['setEmptyValues'] === 1 || ($feed['setEmptyValues'] === 0 && !empty($fieldValue))) {
+                    if ($feed['setEmptyValues'] || !empty($fieldValue)) {
                         $fieldData[$fieldHandle] = $fieldValue;
                     }
                 }
