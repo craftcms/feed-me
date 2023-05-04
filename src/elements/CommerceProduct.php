@@ -147,7 +147,13 @@ class CommerceProduct extends Element
     {
         $this->beforeSave($element, $settings);
 
-        if (!Craft::$app->getElements()->saveElement($this->element, true, true, Hash::get($this->feed, 'updateSearchIndexes'))) {
+        $runValidation = true;
+
+        if ($element->id !== null) {
+            $runValidation = false;
+        }
+
+        if (!Craft::$app->getElements()->saveElement($this->element, $runValidation, true, Hash::get($this->feed, 'updateSearchIndexes'))) {
             $errors = [$this->element->getErrors()];
 
             if ($this->element->getErrors()) {
