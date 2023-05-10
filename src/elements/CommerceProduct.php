@@ -3,7 +3,6 @@
 namespace craft\feedme\elements;
 
 use Cake\Utility\Hash;
-use Carbon\Carbon;
 use Craft;
 use craft\commerce\elements\Product as ProductElement;
 use craft\commerce\elements\Variant as VariantElement;
@@ -484,12 +483,7 @@ class CommerceProduct extends Element
     protected function parsePostDate($feedData, $fieldInfo)
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
-
         $formatting = Hash::get($fieldInfo, 'options.match');
-
-        if (is_numeric($value) && $formatting === null) {
-            $formatting = 'seconds';
-        }
 
         return $this->parseDateAttribute($value, $formatting);
     }
