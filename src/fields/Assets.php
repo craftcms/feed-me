@@ -83,6 +83,7 @@ class Assets extends Field implements FieldInterface
         $conflict = Hash::get($this->fieldInfo, 'options.conflict');
         $fields = Hash::get($this->fieldInfo, 'fields');
         $node = Hash::get($this->fieldInfo, 'node');
+        $nodeKey = null;
 
         // Get folder id's for connecting
         $folderIds = $this->field->resolveDynamicPathToFolderId($this->element);
@@ -182,6 +183,8 @@ class Assets extends Field implements FieldInterface
                     Plugin::info('Skipping asset upload (already exists).');
                 }
             }
+
+            $nodeKey = $this->getArrayKeyFromNode($node);
         }
 
         if ($upload) {
@@ -203,7 +206,7 @@ class Assets extends Field implements FieldInterface
 
         // Check for any sub-fields for the element
         if ($fields) {
-            $this->populateElementFields($foundElements);
+            $this->populateElementFields($foundElements, $nodeKey);
         }
 
         $foundElements = array_unique($foundElements);

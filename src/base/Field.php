@@ -144,11 +144,12 @@ abstract class Field extends Component
 
     /**
      * @param $elementIds
+     * @param null $nodeKey
      * @throws Throwable
      * @throws ElementNotFoundException
      * @throws Exception
      */
-    protected function populateElementFields($elementIds)
+    protected function populateElementFields($elementIds, $nodeKey = null)
     {
         $elementsService = Craft::$app->getElements();
         $fields = Hash::get($this->fieldInfo, 'fields');
@@ -161,12 +162,12 @@ abstract class Field extends Component
 
                 // Because we're dealing with an element which always has array content, we need to fetch our content
                 // in the same way, as it'll be parsed as an array, despite the actual values being likely a single value
-                // Even if its an array of one size (importing one element), that's fine!
+                // Even if it's an array of one size (importing one element), that's fine!
                 $fieldValue = DataHelper::fetchArrayValue($this->feedData, $fieldInfo);
 
                 // Arrayed content doesn't provide defaults because its unable to determine how many items it _should_ return
                 // This also checks if there was any data that corresponds on the same array index/level as our element
-                $value = Hash::get($fieldValue, $key, $default);
+                $value = Hash::get($fieldValue, $nodeKey, $default);
 
                 if ($value) {
                     $fieldData[$elementId][$fieldHandle] = $value;
@@ -192,5 +193,26 @@ abstract class Field extends Component
 
             Plugin::info('`{handle}` - Processed {name} [`#{id}`]({url}) sub-fields with content: `{content}`.', ['name' => $element::displayName(), 'id' => $elementId, 'url' => $element->cpEditUrl, 'handle' => $this->fieldHandle, 'content' => json_encode($fieldContent)]);
         }
+    }
+
+    /**
+     * Get numerical node key from node name.
+     * E.g. if $nodeName is authors/1/author/name, the $nodeKey should be 1
+     *
+     * @param $nodeName
+     * @return mixed|null
+     */
+    protected function getArrayKeyFromNode($nodeName)
+    {
+        $nodeKey = null;
+
+        if (!empty($nodeName)) {
+            preg_match('/\/(\d+)\//', $nodeName, $matches);
+            if (isset($matches[1])) {
+                $nodeKey = $matches[1];
+            }
+        }
+
+        return $nodeKey;
     }
 }

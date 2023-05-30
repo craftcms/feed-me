@@ -36,11 +36,34 @@
     </td>
 </tr>
 
+{% set colTypeMappings = {
+    'checkbox': 'checkbox',
+    'color': 'text',
+    'date': 'date',
+    'select': 'select',
+    'email': 'text',
+    'lightswitch': 'lightswitch',
+    'multiline': 'text',
+    'number': 'text',
+    'singleline': 'text',
+    'time': 'time',
+    'url': 'text',
+} %}
+
 {% for index, col in field.settings.columns %}
     {% set nameLabel = col.heading %}
     {% set instructionsHandle = handle ~ '[' ~ col.handle ~ ']' %}
 
     {% set path = prefixPath|merge ([ 'fields', index ]) %}
+
+    {% if colTypeMappings[col.type] is defined %}
+        {% set default = {
+            type: colTypeMappings[col.type],
+        } %}
+        {% if colTypeMappings[col.type] == 'select' %}
+            {% set default = default|merge({options: col.options}) %}
+        {% endif %}
+    {% endif %}
 
     {% embed 'feed-me/_includes/fields/_base' %}
         {% block additionalFieldSettings %}

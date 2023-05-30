@@ -5,6 +5,7 @@ namespace craft\feedme\services;
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
+use craft\elements\User;
 use craft\errors\ShellCommandException;
 use craft\feedme\base\ElementInterface;
 use craft\feedme\events\FeedProcessEvent;
@@ -394,7 +395,7 @@ class Process extends Component
                 $fieldValue = Plugin::$plugin->fields->parseField($feed, $element, $feedData, $fieldHandle, $fieldInfo);
 
                 if ($fieldValue !== null) {
-                    if ($feed['setEmptyValues'] === 1 || ($feed['setEmptyValues'] === 0 && !empty($fieldValue))) {
+                    if ($feed['setEmptyValues'] || !empty($fieldValue)) {
                         $fieldData[$fieldHandle] = $fieldValue;
                     }
                 }
@@ -473,6 +474,15 @@ class Process extends Component
 
         // Save the element
         if ($this->_service->save($element, $feed)) {
+
+            // save user's preferences only after user has been successfully saved
+            if ($element instanceof User && isset($attributeData['preferredLocale'])) {
+                if (!empty($attributeData['preferredLocale']) || $feed['setEmptyValues'] === 1) {
+                    $preferences = ['locale' => $attributeData['preferredLocale']];
+                    Craft::$app->getUsers()->saveUserPreferences($element, $preferences);
+                }
+            }
+
             // Give elements a chance to perform actions after save
             $this->_service->afterSave($contentData, $feed);
 

@@ -225,6 +225,29 @@ class User extends Element
     }
 
     /**
+     * Get and validate Preferred Locale attribute
+     *
+     * @param $feedData
+     * @param $fieldInfo
+     * @return array|\ArrayAccess|mixed|string|null
+     * @throws \yii\base\Exception
+     */
+    protected function parsePreferredLocale($feedData, $fieldInfo)
+    {
+        $value = $this->fetchSimpleValue($feedData, $fieldInfo);
+
+        if ($value === "") {
+            return $value;
+        }
+
+        if ($value !== null && in_array($value, Craft::$app->getI18n()->getAppLocaleIds(), true)) {
+            return $value;
+        }
+
+        return null;
+    }
+
+    /**
      * @param $feedData
      * @param $fieldInfo
      * @return int|mixed|string|null
@@ -236,6 +259,15 @@ class User extends Element
 
         $upload = Hash::get($fieldInfo, 'options.upload');
         $conflict = Hash::get($fieldInfo, 'options.conflict');
+
+        // if the value in the feed is empty, return null or empty string depending on setEmptyValues setting
+        if (empty($value)) {
+            if ($this->feed->setEmptyValues) {
+                return "";
+            }
+
+            return null;
+        }
 
         // Try to find an existing element
         $urlToUpload = null;

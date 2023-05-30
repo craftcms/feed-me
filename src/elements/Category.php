@@ -109,9 +109,11 @@ class Category extends Element
         $parent = Hash::get($data, 'parent');
 
         if ($parent && $parent !== $this->element->id) {
-            $parentCategory = CategoryElement::findOne(['id' => $parent]);
+            $parentCategory = CategoryElement::find()->status(null)->id($parent)->one();
 
-            Craft::$app->getStructures()->append($this->element->group->structureId, $this->element, $parentCategory);
+            if ($parentCategory) {
+                Craft::$app->getStructures()->append($this->element->group->structureId, $this->element, $parentCategory);
+            }
         }
     }
 
@@ -140,8 +142,12 @@ class Category extends Element
             return null;
         }
 
-        if ($node === 'usedefault') {
+        if ($node === 'usedefault' || $value === $default) {
             $match = 'elements.id';
+        }
+
+        if (is_array($value)) {
+            $value = $value[0];
         }
 
         $query = CategoryElement::find()
@@ -177,11 +183,11 @@ class Category extends Element
 
             return $element->id;
         }
-        
+
         // use the default value if it's provided and none of the above worked
         // https://github.com/craftcms/feed-me/issues/1154
         if (!empty($default)) {
-            $this->element->newParentId = $default[0];
+            $this->element->parentId = $default[0];
 
             return $default[0];
         }

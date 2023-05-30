@@ -3,12 +3,41 @@
 ## Unreleased
 
 - Fixed a bug where the date format option template import is missing for Post Date and Expiry Date ([#602](https://github.com/craftcms/feed-me/issues/602))
+
+## 4.6.3.1 - 2023-05-02
+
+- Fixed a bug where custom fields would not import on PostgreSQL.
+
+## 4.6.3 - 2023-04-28
+
+> **Warning**
+> If you have an existing Commerce Products feed, you may need to resave its settings after updating.
+
+- Improved feed mapping performance for large category groups and structure sections. ([#1255](https://github.com/craftcms/feed-me/issues/1255), [#1293](https://github.com/craftcms/feed-me/pull/1293))
+- Improved Matrix field importing performance. ([#1291](https://github.com/craftcms/feed-me/issues/1291), [#1307](https://github.com/craftcms/feed-me/pull/1307))
+- Fixed a bug where “Use default value” wasn’t mapping boolean fields properly. ([#1304](https://github.com/craftcms/feed-me/issues/1304), [#1305](https://github.com/craftcms/feed-me/pull/1305))
+- Fixed a bug where imported categories could become orphaned if their parents were disabled. ([#555](https://github.com/craftcms/feed-me/issues/555))
+- Fixed a bug where pagination wasn’t working for feeds whose URL contained an alias. ([#1244](https://github.com/craftcms/feed-me/issues/1244), [#1301](https://github.com/craftcms/feed-me/pull/1301))
+- Fixed a PHP error that could occur when importing some feeds. ([#1298](https://github.com/craftcms/feed-me/issues/1298), [#1299](https://github.com/craftcms/feed-me/pull/1299))
+- Fixed a PHP error that could occur when importing a Craft Commerce product feed that contained “Post Date” or Expiry Date” fields. ([#1287](https://github.com/craftcms/feed-me/issues/1287), [#1296](https://github.com/craftcms/feed-me/pull/1296))
+- Fixed a bug where the mapping UI for Table fields didn’t include default value options. ([#1254](https://github.com/craftcms/feed-me/issues/1254), [#1300](https://github.com/craftcms/feed-me/pull/1300))
+- Fixed a bug where date and time values weren’t getting imported into Table fields properly. ([#604](https://github.com/craftcms/feed-me/issues/604), [#1300](https://github.com/craftcms/feed-me/pull/1300))
+- Fixed a bug where users’ “Preferred Locale” settings weren’t getting imported properly. ([#612](https://github.com/craftcms/feed-me/issues/612), [#1289](https://github.com/craftcms/feed-me/pull/1289))
+
+## 4.6.2 - 2023-04-17
+
+- Added support for importing into CKEditor as an inner element field.
 - Fixed a PHP error that could occur when saving a feed using an Asset element type with no volume selected.
 - Fixed several bugs related to empty and non-existent feed values and the “Set Empty Values” feed setting. ([#1271](https://github.com/craftcms/feed-me/pull/1271))
 - Fixed a bug where that prevented importing data as Commerce Variants. ([#464](https://github.com/craftcms/feed-me/issues/464), [#1168](https://github.com/craftcms/feed-me/issues/1168))
+- Fixed a bug were you could not import into Redactor as an inner element field.
+- Fixed a bug where mapping into fields that support inner elements that were inside of Matrix, content from the first element was used to populate all other elements. ([#1227](https://github.com/craftcms/feed-me/issues/1227), [#1278](https://github.com/craftcms/feed-me/pull/1278))
+- Fixed a bug where importing a user with an empty user photo in the feed, would assign an incorrect photo for the user. ([#582](https://github.com/craftcms/feed-me/issues/582), [#1283](https://github.com/craftcms/feed-me/pull/1283))
+- Fixed a bug where importing into Matrix sub fields could use incorrect data when “Use default value” was selected for the field. ([#674](https://github.com/craftcms/feed-me/issues/674), [#1282](https://github.com/craftcms/feed-me/pull/1282))
+- Removed the “Collapsed” checkbox from Matrix feed mapping screens. ([#709](https://github.com/craftcms/feed-me/issues/709), [#1284](https://github.com/craftcms/feed-me/pull/1284))
 - Fixed an XSS vulnerability.
 
-## 4.6.1.1 - 2023-03-24 
+## 4.6.1.1 - 2023-03-24
 
 - Fixed a PHP error that could occur when importing into some 3rd party fields. ([#1264](https://github.com/craftcms/feed-me/issues/1264), [#1265](https://github.com/craftcms/feed-me/pull/1265))
 
