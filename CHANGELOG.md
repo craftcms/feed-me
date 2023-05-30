@@ -1,5 +1,9 @@
 # Release Notes for Feed Me 4.x
 
+## Unreleased
+
+- Fixed a bug where the date format option template import is missing for Post Date and Expiry Date ([#602](https://github.com/craftcms/feed-me/issues/602))
+
 ## 4.6.3.1 - 2023-05-02
 
 - Fixed a bug where custom fields would not import on PostgreSQL.
