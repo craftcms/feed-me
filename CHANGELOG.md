@@ -1,5 +1,10 @@
 # Release Notes for Feed Me
 
+## Unreleased
+
+- Fixed a bug where variant attributes are not respecting the parseTwig setting. ([#1035](https://github.com/craftcms/feed-me/issues/1035))
+- Fixed a bug where the date format option template import is missing for Post Date and Expiry Date. ([#602](https://github.com/craftcms/feed-me/issues/602))
+
 ## 5.1.3.1 - 2023-05-02
 
 - Fixed a bug where custom fields would not import on PostgreSQL.
