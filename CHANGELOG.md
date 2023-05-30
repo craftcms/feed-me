@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Fixed a bug where the date format option template import is missing for Post Date and Expiry Date ([#602](https://github.com/craftcms/feed-me/issues/602))
 - Fixed a PHP error that could occur when saving a feed using an Asset element type with no volume selected.
 - Fixed several bugs related to empty and non-existent feed values and the “Set Empty Values” feed setting. ([#1271](https://github.com/craftcms/feed-me/pull/1271))
 - Fixed a bug where that prevented importing data as Commerce Variants. ([#464](https://github.com/craftcms/feed-me/issues/464), [#1168](https://github.com/craftcms/feed-me/issues/1168))
