@@ -80,6 +80,7 @@ class Assets extends Field implements FieldInterface
         $limit = Hash::get($this->field, 'settings.limit');
         $targetSiteId = Hash::get($this->field, 'settings.targetSiteId');
         $feedSiteId = Hash::get($this->feed, 'siteId');
+        $match = Hash::get($this->fieldInfo, 'options.match', 'filename');
         $upload = Hash::get($this->fieldInfo, 'options.upload');
         $conflict = Hash::get($this->fieldInfo, 'options.conflict');
         $fields = Hash::get($this->fieldInfo, 'fields');
@@ -165,7 +166,13 @@ class Assets extends Field implements FieldInterface
                 $criteria['folderId'] = $folderIds;
                 $criteria['kind'] = $settings['allowedKinds'];
                 $criteria['limit'] = $limit;
-                $criteria['filename'] = $filename;
+
+				if ($match === 'id') {
+					$criteria['id'] = $dataValue;
+				} else {
+					$criteria['filename'] = $filename;
+				}
+
                 $criteria['includeSubfolders'] = true;
 
                 Craft::configure($query, $criteria);
