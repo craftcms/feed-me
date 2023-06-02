@@ -167,11 +167,11 @@ class Assets extends Field implements FieldInterface
                 $criteria['kind'] = $settings['allowedKinds'];
                 $criteria['limit'] = $limit;
 
-				if ($match === 'id') {
-					$criteria['id'] = $dataValue;
-				} else {
-					$criteria['filename'] = $filename;
-				}
+                if ($match === 'id') {
+                    $criteria['id'] = $dataValue;
+                } else {
+                    $criteria['filename'] = $filename;
+                }
 
                 $criteria['includeSubfolders'] = true;
 

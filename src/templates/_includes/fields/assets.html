@@ -37,19 +37,19 @@
 
 {% block extraSettings %}
 
-	<div class="element-match assets-matching">
-		<span>{{ 'Data provided for this asset is:'|t('feed-me') }}</span>
+    <div class="element-match assets-matching">
+        <span>{{ 'Data provided for this asset is:'|t('feed-me') }}</span>
 
-		{{ forms.selectField({
-			name: 'options[match]',
-			class: '',
-			value: hash_get(feed.fieldMapping, optionsPath ~ '.match') ?: '',
-			options: [
-				{ value: 'filename', label: 'Filename'|t('feed-me') },
-				{ value: 'id', label: 'ID'|t('feed-me') },
-			],
-		}) }}
-	</div>
+        {{ forms.selectField({
+            name: 'options[match]',
+            class: '',
+            value: hash_get(feed.fieldMapping, optionsPath ~ '.match') ?: '',
+            options: [
+                { value: 'filename', label: 'Filename'|t('feed-me') },
+                { value: 'id', label: 'ID'|t('feed-me') },
+            ],
+        }) }}
+    </div>
 
     <div class="assets-uploads">
         {{ feedMeMacro.checkbox({
