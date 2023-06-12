@@ -207,7 +207,7 @@ class DataHelper
 
         // We want to preserve 0 and '0', but if it's empty, return null.
         // https://github.com/craftcms/feed-me/issues/779
-        if (!is_numeric($value) && empty($value)) {
+        if (!is_numeric($value) && !is_bool($value) && empty($value)) {
             return null;
         }
 
