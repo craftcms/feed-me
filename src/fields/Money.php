@@ -50,8 +50,16 @@ class Money extends Field implements FieldInterface
             return null;
         }
 
+        // we want the values in the feed to look like regular numbers,
+        // to be independent of the formatting locale
+        // for example if your money field is in EUR, the amount of
+        // one thousand two hundred thirty-four euro and fifty-six cents
+        // should be: 1234.56 in your feed;
+        // not 1234,56 or 1,234.56 or 1.234,56 - those values are all locale dependant strings
+        // not float-like values
         return [
             'value' => $value,
+            'locale' => 'en',
         ];
     }
 }
