@@ -1,5 +1,9 @@
 # Release Notes for Feed Me
 
+## Unreleased
+
+- Fixed a bug where Lightswitch and Number fields could get incorrect results in an import if `setEmptyValues` was set to `false` in a feed’s settings. ([#1329](https://github.com/craftcms/feed-me/issues/1329), [#1330](https://github.com/craftcms/feed-me/pull/1330))
+
 ## 5.1.3.1 - 2023-05-02
 
 - Fixed a bug where custom fields would not import on PostgreSQL.
