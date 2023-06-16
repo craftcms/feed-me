@@ -1,6 +1,6 @@
 # Release Notes for Feed Me
 
-## Unreleased
+## 5.1.4 - 2023-06-15
 
 - Fixed a bug where Lightswitch and Number fields could get incorrect results in an import if `setEmptyValues` was set to `false` in a feed’s settings. ([#1329](https://github.com/craftcms/feed-me/issues/1329), [#1330](https://github.com/craftcms/feed-me/pull/1330))
 
