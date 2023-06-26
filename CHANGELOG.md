@@ -1,5 +1,9 @@
 # Release Notes for Feed Me 4.x
 
+## Unreleased
+
+- Fixed a bug where an element’s status would not update on a multi-site install if the status was the only thing that changed. ([#1310](https://github.com/craftcms/feed-me/issues/1310))
+
 ## 4.6.3.1 - 2023-05-02
 
 - Fixed a bug where custom fields would not import on PostgreSQL.
