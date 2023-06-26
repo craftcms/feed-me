@@ -2,7 +2,8 @@
 
 ## Unreleased
 
-- Improved the localization experience when importing into a Money field. ([#1315](https://github.com/craftcms/feed-me/issues/1315)) 
+- Improved the localization experience when importing into a Money field. ([#1315](https://github.com/craftcms/feed-me/issues/1315))
+- Fixed a bug where `setEmptyValues` wasn’t being respected when mapping Redactor and CKEditor fields. ([#1321](https://github.com/craftcms/feed-me/issues/1321))
 
 ## 5.1.4 - 2023-06-15
 
