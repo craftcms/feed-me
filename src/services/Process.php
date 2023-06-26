@@ -377,6 +377,7 @@ class Process extends Component
         // Set the attributes for the element
         $element->setAttributes($attributeData, false);
 
+        $contentData = [];
         if (isset($attributeData['enabled'])) {
             // Set the site-specific status as well, but retain all other site statuses
             $enabledForSite = [];
@@ -392,6 +393,8 @@ class Process extends Component
             // Set the global status to true if it's enabled for *any* sites, or if already enabled.
             $element->enabled = in_array(true, $enabledForSite) || $element->enabled;
             $element->setEnabledForSite($enabledForSite);
+            $contentData['enabled'] = $element->enabled;
+            $contentData['enabledForSite'] = $element->getEnabledForSite($element->siteId);
         }
 
         // Then, do the same for custom fields. Again, this should be done after populating the element attributes
@@ -431,7 +434,7 @@ class Process extends Component
         }
 
         // We need to keep these separate to apply to the element but required when matching against existing elements
-        $contentData = $attributeData + $fieldData;
+        $contentData += $attributeData + $fieldData;
 
         //
         // It's time to actually save the element!
