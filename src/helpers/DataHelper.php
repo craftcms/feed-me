@@ -242,6 +242,9 @@ class DataHelper
 
         $fields = $element->getSerializedFieldValues();
         $attributes = $element->attributes;
+        if (isset($attributes['enabled'])) {
+            $attributes['enabledForSite'] = $element->getEnabledForSite();
+        }
 
         foreach ($content as $key => $newValue) {
             $existingValue = Hash::get($fields, $key);
