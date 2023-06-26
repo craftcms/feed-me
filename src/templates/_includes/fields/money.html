@@ -1,0 +1,30 @@
+{# ------------------------ #}
+{# Available Variables #}
+{# ------------------------ #}
+{# Attributes: #}
+{# type, name, handle, instructions, attribute, default, feed, feedData #}
+{# ------------------------ #}
+{# Fields: #}
+{# name, handle, instructions, feed, feedData, field, fieldClass #}
+{# ------------------------ #}
+
+{% import 'feed-me/_macros' as feedMeMacro %}
+{% import '_includes/forms' as forms %}
+
+{% set default = default ?? {
+    type: 'text',
+} %}
+
+{% extends 'feed-me/_includes/fields/_base' %}
+
+{% block extraSettings %}
+    <div class="element-localized">
+        {{ forms.checkboxField({
+            name: 'options[localized]',
+            label: 'Data provided for this localized for the site the feed is for'|t('feed-me'),
+            class: '',
+            value: 1,
+            checked: hash_get(feed.fieldMapping, optionsPath ~ '.localized') ? true : false
+        }) }}
+    </div>
+{% endblock %}
