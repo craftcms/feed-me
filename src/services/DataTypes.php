@@ -188,7 +188,15 @@ class DataTypes extends Component
                 $response = ['success' => true, 'data' => $data];
             }
 
-            return $response;
+            $event = new FeedDataEvent([
+                'url' => $url,
+                'feedId' => $feedId,
+                'response' => $response,
+            ]);
+
+            Event::trigger(static::class, self::EVENT_AFTER_FETCH_FEED, $event);
+
+            return $event->response;
         }
 
         try {
