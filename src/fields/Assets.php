@@ -112,6 +112,8 @@ class Assets extends Field implements FieldInterface
         $urlsToUpload = [];
         $base64ToUpload = [];
 
+        $filenamesFromFeed = $upload ? DataHelper::fetchArrayValue($this->feedData, $this->fieldInfo, 'options.filenameNode') : null;
+
         foreach ($value as $key => $dataValue) {
             // Prevent empty or blank values (string or array), which match all elements
             if (empty($dataValue) && empty($default)) {
@@ -154,8 +156,15 @@ class Assets extends Field implements FieldInterface
                 // If we're uploading files, this will need to be an absolute URL. If it is, save until later.
                 // We also don't check for existing assets here, so break out instantly.
                 if ($upload && UrlHelper::isAbsoluteUrl($dataValue)) {
-                    $urlsToUpload[$key] = $dataValue;
-                    $filename = AssetHelper::getRemoteUrlFilename($dataValue);
+                    $urlsToUpload[$key]['value'] = $dataValue;
+
+                    if (isset($filenamesFromFeed[$key])) {
+                        $filename = $filenamesFromFeed[$key] . '.' . AssetHelper::getRemoteUrlExtension($urlsToUpload[$key]['value']);
+                        $urlsToUpload[$key]['newFilename'] = $filename;
+                    } else {
+                        $filename = AssetHelper::getRemoteUrlFilename($dataValue);
+                        $urlsToUpload[$key]['newFilename'] = null;
+                    }
                 } else {
                     $filename = basename($dataValue);
                 }
@@ -189,8 +198,18 @@ class Assets extends Field implements FieldInterface
 
         if ($upload) {
             if ($urlsToUpload) {
-                $uploadedElements = AssetHelper::fetchRemoteImage($urlsToUpload, $this->fieldInfo, $this->feed, $this->field, $this->element);
-                $foundElements = array_merge($foundElements, $uploadedElements);
+                foreach ($urlsToUpload as $item) {
+                    $uploadedElements = AssetHelper::fetchRemoteImage(
+                        [$item['value']],
+                        $this->fieldInfo,
+                        $this->feed,
+                        $this->field,
+                        $this->element,
+                        null,
+                        $item['newFilename']
+                    );
+                    $foundElements = array_merge($foundElements, $uploadedElements);
+                }
             }
 
             if ($base64ToUpload) {
