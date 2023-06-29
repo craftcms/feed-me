@@ -111,8 +111,6 @@ class Users extends Field implements FieldInterface
             if (in_array(UserElement::STATUS_INACTIVE, $sources, true)) {
                 $status[] = UserElement::STATUS_INACTIVE;
             }
-
-
         } elseif ($sources === '*') {
             $groupIds = null;
         }
