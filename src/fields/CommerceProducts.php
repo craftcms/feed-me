@@ -62,9 +62,12 @@ class CommerceProducts extends Field implements FieldInterface
             return null;
         }
 
+        $match = Hash::get($this->fieldInfo, 'options.match', 'title');
+        $specialMatchCase = in_array($match, ['title', 'slug']);
+
         // if value from the feed is empty and default is not set
         // return an empty array; no point bothering further
-        if (empty($default) && DataHelper::isArrayValueEmpty($value)) {
+        if (empty($default) && DataHelper::isArrayValueEmpty($value, $specialMatchCase)) {
             return [];
         }
 
@@ -72,7 +75,6 @@ class CommerceProducts extends Field implements FieldInterface
         $limit = Hash::get($this->field, 'settings.limit');
         $targetSiteId = Hash::get($this->field, 'settings.targetSiteId');
         $feedSiteId = Hash::get($this->feed, 'siteId');
-        $match = Hash::get($this->fieldInfo, 'options.match', 'title');
         $node = Hash::get($this->fieldInfo, 'node');
 
         $typeIds = [];
@@ -90,7 +92,8 @@ class CommerceProducts extends Field implements FieldInterface
 
         foreach ($value as $dataValue) {
             // Prevent empty or blank values (string or array), which match all elements
-            if (empty($dataValue) && empty($default)) {
+            // but sometimes allow for zeros
+            if (empty($dataValue) && empty($default) && ($specialMatchCase && !is_numeric($dataValue))) {
                 continue;
             }
 

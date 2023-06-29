@@ -63,9 +63,13 @@ class Categories extends Field implements FieldInterface
             return null;
         }
 
+        $match = Hash::get($this->fieldInfo, 'options.match', 'title');
+        $specialMatchCase = in_array($match, ['title', 'slug']);
+
         // if value from the feed is empty and default is not set
-        // return an empty array; no point bothering further
-        if (empty($default) && DataHelper::isArrayValueEmpty($value)) {
+        // return an empty array; no point bothering further;
+        // but we need to allow for zero as a string ("0") value if we're matching by title or slug
+        if (empty($default) && DataHelper::isArrayValueEmpty($value, $specialMatchCase)) {
             return [];
         }
 
@@ -73,7 +77,6 @@ class Categories extends Field implements FieldInterface
         $branchLimit = Hash::get($this->field, 'settings.branchLimit');
         $targetSiteId = Hash::get($this->field, 'settings.targetSiteId');
         $feedSiteId = Hash::get($this->feed, 'siteId');
-        $match = Hash::get($this->fieldInfo, 'options.match', 'title');
         $create = Hash::get($this->fieldInfo, 'options.create');
         $fields = Hash::get($this->fieldInfo, 'fields');
         $node = Hash::get($this->fieldInfo, 'node');
@@ -87,7 +90,8 @@ class Categories extends Field implements FieldInterface
 
         foreach ($value as $dataValue) {
             // Prevent empty or blank values (string or array), which match all elements
-            if (empty($dataValue) && empty($default)) {
+            // but sometimes allow for zeros
+            if (empty($dataValue) && empty($default) && ($specialMatchCase && !is_numeric($dataValue))) {
                 continue;
             }
 
