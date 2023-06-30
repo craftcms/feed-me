@@ -269,6 +269,10 @@ class FeedMeVariable extends ServiceLocator
     {
         $type = $field['type'] ?? 'attribute';
 
+        if (isset($field['type']) && $field['handle'] === 'parent') {
+            $type = 'parent';
+        }
+
         if (is_object($field)) {
             $type = get_class($field);
         }
@@ -290,6 +294,7 @@ class FeedMeVariable extends ServiceLocator
         $supportedValues = [
             'assets',
             'attribute',
+            'parent'
         ];
 
         $supported = array_merge($supportedFields, $supportedValues);
