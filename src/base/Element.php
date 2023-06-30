@@ -14,6 +14,7 @@ use craft\feedme\helpers\DataHelper;
 use craft\feedme\helpers\DateHelper;
 use craft\feedme\models\FeedModel;
 use craft\helpers\Db;
+use craft\helpers\ElementHelper;
 use craft\helpers\StringHelper;
 
 /**
@@ -303,6 +304,12 @@ abstract class Element extends Component implements ElementInterface
 
         if (Craft::$app->getConfig()->getGeneral()->limitAutoSlugsToAscii) {
             $value = $this->_asciiString($value);
+        }
+
+        // normalize the slug and check if it's valid;
+        // if it is - use it, otherwise _createSlug()
+        if (is_string($value) && ($value = ElementHelper::normalizeSlug($value)) !== '') {
+            return $value;
         }
 
         return $this->_createSlug($value);
