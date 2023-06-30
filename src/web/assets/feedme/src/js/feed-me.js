@@ -115,6 +115,33 @@ $(function () {
     }
   }
 
+  // for categories and entries - only show "create if they do not exist" if matching done by "title"
+  // for users - only show "create if they do not exist" if matching done by "email"
+  $(
+    '.categories-field-match select, .entries-field-match select, .users-field-match select'
+  ).on('change', function (e) {
+    var match = 'title';
+    var $selectParent = $(this).parent();
+    var $elementCreateContainer = $(this)
+      .parents('.field-extra-settings')
+      .find('.element-create');
+
+    if ($selectParent.hasClass('users-field-match')) {
+      match = 'email';
+    }
+
+    if ($(this).val() === match) {
+      $elementCreateContainer.show();
+    } else {
+      $elementCreateContainer.hide();
+    }
+  });
+
+  // On-load, hide/show element create container
+  $('.categories-field-match select').trigger('change');
+  $('.entries-field-match select').trigger('change');
+  $('.users-field-match select').trigger('change');
+
   // For Assets, only show the upload options if we decide to upload
   $('.assets-uploads input').on('change', function (e) {
     var $options = $(this).parents('.field-extra-settings').find('.select');
