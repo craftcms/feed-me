@@ -133,6 +133,8 @@ $(function () {
     if ($(this).val() === match) {
       $elementCreateContainer.show();
     } else {
+      $elementCreateContainer.find('input').prop('checked', false);
+      $('.field-extra-settings .element-create input').trigger('change');
       $elementCreateContainer.hide();
     }
   });
