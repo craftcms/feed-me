@@ -162,7 +162,6 @@ abstract class Element extends Component implements ElementInterface
                 } else {
                     $criteria[$handle] = Db::escapeParam($feedValue);
                 }
-
             }
         }
 

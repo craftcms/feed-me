@@ -294,7 +294,7 @@ class FeedMeVariable extends ServiceLocator
         $supportedValues = [
             'assets',
             'attribute',
-            'parent'
+            'parent',
         ];
 
         $supported = array_merge($supportedFields, $supportedValues);
