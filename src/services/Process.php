@@ -381,11 +381,8 @@ class Process extends Component
         if (isset($attributeData['enabled'])) {
             // Set the site-specific status as well, but retain all other site statuses
             $enabledForSite = [];
-            foreach (Craft::$app->getSites()->getAllSiteIds(true) as $siteId) {
-                $status = $element->getEnabledForSite($siteId);
-                if ($status !== null) {
-                    $enabledForSite[$siteId] = $status;
-                }
+            foreach (Craft::$app->getElements()->getEnabledSiteIdsForElement($element->id) as $siteId) {
+                $enabledForSite[$siteId] = true;
             }
 
             $enabledForSite[$element->siteId] = $attributeData['enabled'];
