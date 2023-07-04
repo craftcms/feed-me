@@ -80,11 +80,20 @@ class Users extends Field implements FieldInterface
 
         // Get source id's for connecting
         $groupIds = [];
+        $isAdmin = false;
 
         if (is_array($sources)) {
+            // go through sources that start with "group:" and get group uid for those
             foreach ($sources as $source) {
-                [, $uid] = explode(':', $source);
-                $groupIds[] = Db::idByUid('{{%usergroups}}', $uid);
+                if (str_starts_with($source, 'group:')) {
+                    [, $uid] = explode(':', $source);
+                    $groupIds[] = Db::idByUid('{{%usergroups}}', $uid);
+                }
+            }
+
+            // the other source left in Craft 3 can be 'admins' for which we'll need a separate query
+            if (in_array('admins', $sources, true)) {
+                $isAdmin = true;
             }
         } elseif ($sources === '*') {
             $groupIds = null;
@@ -120,22 +129,29 @@ class Users extends Field implements FieldInterface
                 $columnName = Craft::$app->getFields()->oldFieldColumnPrefix . $match;
             }
 
-            $query = UserElement::find();
-
+            $ids = [];
             $criteria['status'] = null;
             $criteria['groupId'] = $groupIds;
             $criteria['limit'] = $limit;
             $criteria['where'] = ['=', $columnName, $dataValue];
 
-            Craft::configure($query, $criteria);
+            // If the only source for the Users field is "admins" we don't have to bother with this query.
+            if (!($isAdmin && empty($groupIds))) {
+                $ids = $this->_findUsers($criteria);
+                $foundElements = array_merge($foundElements, $ids);
+            }
 
-            Plugin::info('Search for existing user with query `{i}`', ['i' => json_encode($criteria)]);
+            // Previous query would look through selected groups or if "all" was selected
+            // (in which case groupIds would be null, and wouldn't actually limit the query).
+            // So if we haven't found a match with the previous query, and field sources contains "admins",
+            // we have to look for the user among admins too.
+            if ($isAdmin && count($ids) === 0) {
+                unset($criteria['groupId']);
+                $criteria['admin'] = true;
 
-            $ids = $query->ids();
-
-            $foundElements = array_merge($foundElements, $ids);
-
-            Plugin::info('Found `{i}` existing users: `{j}`', ['i' => count($foundElements), 'j' => json_encode($foundElements)]);
+                $ids = $this->_findUsers($criteria);
+                $foundElements = array_merge($foundElements, $ids);
+            }
 
             // Check if we should create the element. But only if email is provided (for the moment)
             if ((count($ids) == 0) && $create && $match === 'email') {
@@ -201,5 +217,25 @@ class Users extends Field implements FieldInterface
         }
 
         return $element->id;
+    }
+
+    /**
+     * Attempt to find User based on search criteria. Return array of found IDs.
+     *
+     * @param $criteria
+     * @return array|int[]
+     */
+    private function _findUsers($criteria): array
+    {
+        $query = UserElement::find();
+        Craft::configure($query, $criteria);
+
+        Plugin::info('Search for existing user with query `{i}`', ['i' => json_encode($criteria)]);
+
+        $ids = $query->ids();
+
+        Plugin::info('Found `{i}` existing users: `{j}`', ['i' => count($ids), 'j' => json_encode($ids)]);
+
+        return $ids;
     }
 }
