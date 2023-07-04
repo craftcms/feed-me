@@ -158,7 +158,11 @@ abstract class Element extends Component implements ElementInterface
                     continue;
                 }
 
-                $criteria[$handle] = Db::escapeParam($feedValue);
+                if ($handle === 'parent') {
+                    $criteria['descendantOf'] = Db::escapeParam($feedValue);
+                } else {
+                    $criteria[$handle] = Db::escapeParam($feedValue);
+                }
             }
         }
 
