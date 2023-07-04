@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- The “Create if they do not exist” setting on a feed’s mapping now conditionally show/hide the checkbox for Categories, Entries and Users relation fields. ([#1077](https://github.com/craftcms/feed-me/issues/1077))
 - Fixed a bug where an element’s status would not update on a multi-site install if the status was the only thing that changed. ([#1310](https://github.com/craftcms/feed-me/issues/1310))
 - Fixed a bug where the `DataTypes::EVENT_AFTER_FETCH_FEED` event was not being fired for local feeds. ([#1101](https://github.com/craftcms/feed-me/issues/1101))
 - Fixed a PHP error that could happen when importing into a User field. ([#844](https://github.com/craftcms/feed-me/issues/844))
