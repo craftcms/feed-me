@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Improved the localization experience when importing into a Money field. ([#1315](https://github.com/craftcms/feed-me/issues/1315))
+- The “Create if they do not exist” setting on a feed’s mapping now conditionally show/hide the checkbox for Categories, Entries and Users relation fields. ([#1077](https://github.com/craftcms/feed-me/issues/1077))
 - Fixed a bug where `setEmptyValues` wasn’t being respected when mapping Redactor and CKEditor fields. ([#1321](https://github.com/craftcms/feed-me/issues/1321))
 - Fixed a bug where an element’s status would not update on a multi-site install if the status was the only thing that changed. ([#1310](https://github.com/craftcms/feed-me/issues/1310))
 - Fixed a bug where the `DataTypes::EVENT_AFTER_FETCH_FEED` event was not being fired for local feeds. ([#1101](https://github.com/craftcms/feed-me/issues/1101))
