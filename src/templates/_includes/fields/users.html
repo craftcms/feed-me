@@ -57,7 +57,7 @@
 
         {{ forms.selectField({
             name: 'options[match]',
-            class: '',
+            class: 'users-field-match',
             value: hash_get(feed.fieldMapping, optionsPath ~ '.match') ?: '',
             options: matchAttributes,
         }) }}
