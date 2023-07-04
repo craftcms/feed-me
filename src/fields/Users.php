@@ -5,6 +5,7 @@ namespace craft\feedme\fields;
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Element as BaseElement;
+use craft\elements\db\UserQuery;
 use craft\elements\User as UserElement;
 use craft\errors\ElementNotFoundException;
 use craft\feedme\base\Field;
@@ -86,6 +87,7 @@ class Users extends Field implements FieldInterface
         // Get source id's for connecting
         $groupIds = [];
         $isAdmin = false;
+        $status = null;
 
         if (is_array($sources)) {
             // go through sources that start with "group:" and get group uid for those
@@ -96,9 +98,18 @@ class Users extends Field implements FieldInterface
                 }
             }
 
-            // the other source left in Craft 3 can be 'admins' for which we'll need a separate query
+            // the other possible source in Craft 4 can be 'admins' for which we'll need a separate query
             if (in_array('admins', $sources, true)) {
                 $isAdmin = true;
+            }
+
+            // the other possible source in Craft 4 can be 'credentialed'
+            if (in_array(UserQuery::STATUS_CREDENTIALED, $sources, true)) {
+                $status[] = UserQuery::STATUS_CREDENTIALED;
+            }
+            // or 'inactive'
+            if (in_array(UserElement::STATUS_INACTIVE, $sources, true)) {
+                $status[] = UserElement::STATUS_INACTIVE;
             }
         } elseif ($sources === '*') {
             $groupIds = null;
@@ -153,6 +164,15 @@ class Users extends Field implements FieldInterface
             if ($isAdmin && count($ids) === 0) {
                 unset($criteria['groupId']);
                 $criteria['admin'] = true;
+
+                $ids = $this->_findUsers($criteria);
+                $foundElements = array_merge($foundElements, $ids);
+            }
+
+            // If we still have no matches, check based on the credentialed/inactive status
+            if (!empty($status) && count($ids) === 0) {
+                unset($criteria['groupId'], $criteria['admin']);
+                $criteria['status'] = $status;
 
                 $ids = $this->_findUsers($criteria);
                 $foundElements = array_merge($foundElements, $ids);
