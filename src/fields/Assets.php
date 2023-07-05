@@ -9,6 +9,7 @@ use craft\db\Table;
 use craft\elements\Asset as AssetElement;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
+use craft\feedme\events\AssetFilenameEvent;
 use craft\feedme\helpers\AssetHelper;
 use craft\feedme\helpers\DataHelper;
 use craft\feedme\Plugin;
@@ -22,6 +23,8 @@ use craft\helpers\UrlHelper;
  */
 class Assets extends Field implements FieldInterface
 {
+    const EVENT_ASSET_FILENAME = 'onAssetFilename';
+
     // Properties
     // =========================================================================
 
@@ -113,6 +116,19 @@ class Assets extends Field implements FieldInterface
         $base64ToUpload = [];
 
         $filenamesFromFeed = $upload ? DataHelper::fetchArrayValue($this->feedData, $this->fieldInfo, 'options.filenameNode') : null;
+
+        // Fire an 'onAssetFilename' event
+        $event = new AssetFilenameEvent([
+            'field' => $this->field,
+            'element' => $this->element,
+            'fieldValue' => $value,
+            'filenames' => $filenamesFromFeed,
+        ]);
+
+        $this->trigger(self::EVENT_ASSET_FILENAME, $event);
+
+        // Allow event to overwrite filenames to be used
+        $filenamesFromFeed = $event->filenames;
 
         foreach ($value as $key => $dataValue) {
             // Prevent empty or blank values (string or array), which match all elements
