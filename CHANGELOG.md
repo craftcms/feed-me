@@ -10,6 +10,7 @@
 - Fixed a PHP error that could happen when importing into a User field. ([#844](https://github.com/craftcms/feed-me/issues/844))
 - Fixed a bug where slugs imported from a feed would not be respected if they contained underscores. ([#603](https://github.com/craftcms/feed-me/issues/603))
 - Fixed a bug where nested subcategories sharing the same slug but with different parents would only import the last subcategory. ([#780](https://github.com/craftcms/feed-me/issues/780))
+- Fixed a bug where you could not import a Category, Entry, Product, or Digital Product with a “0” as the title or slug. ([#1102](https://github.com/craftcms/feed-me/issues/1102))
 
 ## 5.1.4 - 2023-06-15
 
