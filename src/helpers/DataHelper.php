@@ -22,11 +22,20 @@ class DataHelper
      * Check if provided value is not set or empty or an array of empties
      *
      * @param $value
+     * @param $allowZero bool Whether to treat zero as an empty value or not
      * @return bool
      */
-    public static function isArrayValueEmpty($value)
+    public static function isArrayValueEmpty($value, $allowZero = false): bool
     {
-        return (!$value || (is_array($value) && empty(array_filter($value))));
+        return (!$value ||
+            (is_array($value) && empty(array_filter($value, function($item) use ($allowZero): bool {
+                if ($allowZero) {
+                    return (!empty($item) || is_numeric($item));
+                }
+
+                return !empty($item);
+            })))
+        );
     }
 
     /**
