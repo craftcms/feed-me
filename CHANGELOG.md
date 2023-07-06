@@ -1,6 +1,6 @@
 # Release Notes for Feed Me
 
-## Unreleased
+## 5.2.0 - 2023-07-06
 
 - Improved the localization experience when importing into a Money field. ([#1315](https://github.com/craftcms/feed-me/issues/1315))
 - The “Create if they do not exist” setting on a feed’s mapping now conditionally show/hide the checkbox for Categories, Entries and Users relation fields. ([#1077](https://github.com/craftcms/feed-me/issues/1077))
