@@ -11,6 +11,7 @@
 - Fixed a bug where slugs imported from a feed would not be respected if they contained underscores. ([#603](https://github.com/craftcms/feed-me/issues/603))
 - Fixed a bug where nested subcategories sharing the same slug but with different parents would only import the last subcategory. ([#780](https://github.com/craftcms/feed-me/issues/780))
 - Fixed a bug where you could not import a Category, Entry, Product, or Digital Product with a “0” as the title or slug. ([#1102](https://github.com/craftcms/feed-me/issues/1102))
+- Fixed a bug where feeds would break for elements that had been “[entrified](https://craftcms.com/blog/entrification)”. ([#1340](https://github.com/craftcms/feed-me/issues/1340))
 
 ## 5.1.4 - 2023-06-15
 
