@@ -7,6 +7,8 @@ use Craft;
 use craft\base\Component;
 use craft\db\ActiveQuery;
 use craft\db\Query;
+use craft\elements\Entry;
+use craft\elements\GlobalSet;
 use craft\feedme\errors\FeedException;
 use craft\feedme\events\FeedEvent;
 use craft\feedme\models\FeedModel;
@@ -235,6 +237,44 @@ class Feeds extends Component
         }
 
         return true;
+    }
+
+    /**
+     * Adjust the feeds after entrification.
+     *
+     * @param string $elementType Element being entrified
+     * @param array $elementGroup From and To IDs; e.g. from would be a groupId, to would be sectionId and typeId
+     * @return void
+     */
+    public function entrifyFeeds(string $elementType, array $elementGroup): void
+    {
+        $allFeeds = $this->getFeeds();
+
+        foreach ($allFeeds as $feed) {
+            if ($feed->elementType === $elementType) {
+                // if, in the elementGroup, the key matches $elementType
+                // and the value for that key matches $elementGroup[from]
+                // (in case of GlobalSet, the value would be ['globalSet' => <globalSetId>])
+                if (isset($feed->elementGroup[$elementType]) &&
+                    (
+                        $feed->elementGroup[$elementType] == $elementGroup['from'] ||
+                        ($elementType === GlobalSet::class && $feed->elementGroup[$elementType] == ['globalSet' => $elementGroup['from']])
+                    )
+                ) {
+                    // change the elementType
+                    $feed->elementType = Entry::class;
+                    // in the elementGroup change the value for the $elementType key to an empty string
+                    $feed->elementGroup[$elementType] = "";
+                    // in the elementGroup change the value for the craft\elements\Entry key
+                    $feed->elementGroup[Entry::class] = [
+                        'section' => $elementGroup['to']['sectionId'],
+                        'entryType' => $elementGroup['to']['typeId'],
+                    ];
+
+                    $this->saveFeed($feed);
+                }
+            }
+        }
     }
 
 

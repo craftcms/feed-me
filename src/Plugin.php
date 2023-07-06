@@ -4,6 +4,8 @@ namespace craft\feedme;
 
 use Craft;
 use craft\base\Model;
+use craft\console\controllers\EntrifyController;
+use craft\events\EntrifyEvent;
 use craft\events\RegisterUrlRulesEvent;
 use craft\feedme\base\PluginTrait;
 use craft\feedme\models\Settings;
@@ -86,6 +88,7 @@ class Plugin extends \craft\base\Plugin
         $this->_registerCpRoutes();
         $this->_registerTwigExtensions();
         $this->_registerVariables();
+        $this->_listenToEvents();
     }
 
     /**
@@ -168,5 +171,21 @@ class Plugin extends \craft\base\Plugin
         Event::on(CraftVariable::class, CraftVariable::EVENT_INIT, function(Event $event) {
             $event->sender->set('feedme', FeedMeVariable::class);
         });
+    }
+
+    /**
+     * Listen to events
+     *
+     * @return void
+     */
+    private function _listenToEvents(): void
+    {
+        Event::on(
+            EntrifyController::class,
+            EntrifyController::EVENT_AFTER_ENTRIFY,
+            function (EntrifyEvent $event) {
+                self::$plugin->feeds->entrifyFeeds($event->elementType, $event->elementGroup);
+            }
+        );
     }
 }
