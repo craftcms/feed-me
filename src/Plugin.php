@@ -183,7 +183,7 @@ class Plugin extends \craft\base\Plugin
         Event::on(
             EntrifyController::class,
             EntrifyController::EVENT_AFTER_ENTRIFY,
-            function (EntrifyEvent $event) {
+            function(EntrifyEvent $event) {
                 self::$plugin->feeds->entrifyFeeds($event->elementType, $event->elementGroup);
             }
         );
