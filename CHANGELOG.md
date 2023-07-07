@@ -1,6 +1,6 @@
 # Release Notes for Feed Me
 
-## Unreleased
+## 5.2.0 - 2023-07-06
 
 - Improved the localization experience when importing into a Money field. ([#1315](https://github.com/craftcms/feed-me/issues/1315))
 - The “Create if they do not exist” setting on a feed’s mapping now conditionally show/hide the checkbox for Categories, Entries and Users relation fields. ([#1077](https://github.com/craftcms/feed-me/issues/1077))
@@ -10,6 +10,8 @@
 - Fixed a PHP error that could happen when importing into a User field. ([#844](https://github.com/craftcms/feed-me/issues/844))
 - Fixed a bug where slugs imported from a feed would not be respected if they contained underscores. ([#603](https://github.com/craftcms/feed-me/issues/603))
 - Fixed a bug where nested subcategories sharing the same slug but with different parents would only import the last subcategory. ([#780](https://github.com/craftcms/feed-me/issues/780))
+- Fixed a bug where you could not import a Category, Entry, Product, or Digital Product with a “0” as the title or slug. ([#1102](https://github.com/craftcms/feed-me/issues/1102))
+- Fixed a bug where feeds would break for elements that had been “[entrified](https://craftcms.com/blog/entrification)”. ([#1340](https://github.com/craftcms/feed-me/issues/1340))
 
 ## 5.1.4 - 2023-06-15
 
