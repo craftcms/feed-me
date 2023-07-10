@@ -250,6 +250,14 @@ class Feeds extends Component
     {
         $allFeeds = $this->getFeeds();
 
+        $sectionsService = Craft::$app->getSections();
+        $section = $sectionsService->getSectionByUid($elementGroup['to']['section']);
+        $entryType = $sectionsService->getEntryTypeByUid($elementGroup['to']['entryType']);
+
+        if (!$section || !$entryType) {
+            return;
+        }
+
         foreach ($allFeeds as $feed) {
             if ($feed->elementType === $elementType) {
                 // if, in the elementGroup, the key matches $elementType
@@ -257,8 +265,8 @@ class Feeds extends Component
                 // (in case of GlobalSet, the value would be ['globalSet' => <globalSetId>])
                 if (isset($feed->elementGroup[$elementType]) &&
                     (
-                        $feed->elementGroup[$elementType] == $elementGroup['from'] ||
-                        ($elementType === GlobalSet::class && $feed->elementGroup[$elementType] == ['globalSet' => $elementGroup['from']])
+                        $feed->elementGroup[$elementType] == $elementGroup['from']['id'] ||
+                        ($elementType === GlobalSet::class && $feed->elementGroup[$elementType] == ['globalSet' => $elementGroup['from']['id']])
                     )
                 ) {
                     // change the elementType
@@ -267,8 +275,8 @@ class Feeds extends Component
                     $feed->elementGroup[$elementType] = "";
                     // in the elementGroup change the value for the craft\elements\Entry key
                     $feed->elementGroup[Entry::class] = [
-                        'section' => $elementGroup['to']['sectionId'],
-                        'entryType' => $elementGroup['to']['typeId'],
+                        'section' => $section->id,
+                        'entryType' => $entryType->id,
                     ];
 
                     $this->saveFeed($feed);
