@@ -32,7 +32,7 @@ class Service extends Component
         if ($feedId) {
             $configFeedItem = Hash::get($settings, 'feedOptions.' . $feedId . '.' . $key);
 
-            if ($configFeedItem) {
+            if (isset($configFeedItem)) {
                 $configItem = $configFeedItem;
             }
         }
