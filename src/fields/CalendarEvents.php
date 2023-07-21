@@ -69,7 +69,7 @@ class CalendarEvents extends Field implements FieldInterface
         }
 
         $sources = Hash::get($this->field, 'settings.sources');
-        $limit = Hash::get($this->field, 'settings.limit');
+        $limit = Hash::get($this->field, 'settings.maxRelations');
         $targetSiteId = Hash::get($this->field, 'settings.targetSiteId');
         $feedSiteId = Hash::get($this->feed, 'siteId');
         $match = Hash::get($this->fieldInfo, 'options.match', 'title');

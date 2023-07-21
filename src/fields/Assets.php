@@ -77,7 +77,7 @@ class Assets extends Field implements FieldInterface
 
         $settings = Hash::get($this->field, 'settings');
         $folders = Hash::get($this->field, 'settings.sources');
-        $limit = Hash::get($this->field, 'settings.limit');
+        $limit = Hash::get($this->field, 'settings.maxRelations');
         $targetSiteId = Hash::get($this->field, 'settings.targetSiteId');
         $feedSiteId = Hash::get($this->feed, 'siteId');
         $upload = Hash::get($this->fieldInfo, 'options.upload');
