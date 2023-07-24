@@ -21,11 +21,12 @@ class AssetHelper
      * @param $dstName
      * @param int $chunkSize
      * @param bool $returnbytes
+     * @param null|int $feedId
      * @return bool|int
      */
-    public static function downloadFile($srcName, $dstName, $chunkSize = 1, $returnbytes = true)
+    public static function downloadFile($srcName, $dstName, $chunkSize = 1, $returnbytes = true, $feedId = null)
     {
-        $assetDownloadCurl = Plugin::$plugin->getSettings()->assetDownloadCurl;
+        $assetDownloadCurl = Plugin::$plugin->service->getConfig('assetDownloadCurl', $feedId);
 
         // Provide some legacy support
         if ($assetDownloadCurl) {
@@ -106,7 +107,7 @@ class AssetHelper
                 Plugin::info('Fetching remote image `{i}` - `{j}`', ['i' => $url, 'j' => $filename]);
 
                 if (!$cachedImage) {
-                    self::downloadFile($url, $fetchedImage);
+                    self::downloadFile($url, $fetchedImage, 1, true, $feed['id']);
                 } else {
                     $fetchedImage = $cachedImage[0];
                 }
