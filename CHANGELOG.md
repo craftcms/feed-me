@@ -2,7 +2,8 @@
 
 ## Unreleased
 
-- Fixed a bug where you could not override feed settings with `false` if you used the `feedOptions` config file. ([#1352](https://github.com/craftcms/feed-me/issues/1352))
+- Fixed a bug where you could not override feed settings with `false` if you used a `config/feed-me.php` config file. ([#1352](https://github.com/craftcms/feed-me/issues/1352))
+- Fixed a bug where `queueTtr`, `queueMaxRetry`, and `assetDownloadCurl` settings were being ignored if you used a `config/feed-me.php` config file. ([#1356](https://github.com/craftcms/feed-me/issues/1356))
 
 ## 5.2.0 - 2023-07-06
 
