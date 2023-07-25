@@ -1,5 +1,9 @@
 # Release Notes for Feed Me 4.x
 
+## Unreleased
+
+- Fixed a bug where you could not override feed settings with `false` if you used the `feedOptions` config file. ([#1352](https://github.com/craftcms/feed-me/issues/1352))
+
 ## 4.7.0 - 2023-07-06
 
 - The “Create if they do not exist” setting on a feed’s mapping now conditionally show/hide the checkbox for Categories, Entries and Users relation fields. ([#1077](https://github.com/craftcms/feed-me/issues/1077))
