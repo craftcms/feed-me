@@ -77,7 +77,7 @@ class Users extends Field implements FieldInterface
         }
 
         $sources = Hash::get($this->field, 'settings.sources');
-        $limit = Hash::get($this->field, 'settings.limit');
+        $limit = Hash::get($this->field, 'settings.maxRelations');
         $match = Hash::get($this->fieldInfo, 'options.match', 'email');
         $create = Hash::get($this->fieldInfo, 'options.create');
         $fields = Hash::get($this->fieldInfo, 'fields');
