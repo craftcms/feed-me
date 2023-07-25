@@ -15,6 +15,9 @@ use craft\helpers\FileHelper;
 use craft\helpers\Json;
 use craft\helpers\StringHelper;
 use craft\helpers\UrlHelper;
+use craft\models\AssetIndexData;
+use craft\models\FsListing;
+use craft\models\Volume;
 use Throwable;
 use yii\base\Exception;
 use yii\base\InvalidArgumentException;
@@ -79,6 +82,61 @@ class AssetHelper
         return $status;
     }
 
+    public static function indexExistingFile($urlFromFeed, $fieldInfo, $feed, $field = null, $element = null, $folderId = null, $newFilename = null): AssetElement|bool
+    {
+        $assets = Craft::$app->getAssets();
+
+        if (!$folderId) {
+            if (!$field) {
+                throw new InvalidArgumentException('$folderId and $field cannot both be null.');
+            }
+            $folderId = $field->resolveDynamicPathToFolderId($element);
+        }
+
+        $folder = $assets->findFolder(['id' => $folderId]);
+        $volume = $folder->getVolume();
+
+        $filename = $newFilename ? AssetsHelper::prepareAssetName($newFilename, false) : self::getRemoteUrlFilename($urlFromFeed);
+
+        // get the url/path of the asset we're supposed to end up with
+        $asset = new AssetElement();
+        $asset->setFilename($filename);
+        $asset->folderId = $folder->id;
+        $asset->folderPath = $folder->path;
+        $asset->volumeId = $volume->id;
+        $targetUrl = \craft\helpers\Assets::generateUrl($volume->getFs(), $asset);
+
+        $rootUrl = $volume->getRootUrl() ?? '';
+        $targetPath = str_replace($rootUrl, '', $targetUrl);
+
+        // check if it exists
+        if (!$volume->fileExists($targetPath)) {
+            // if it doesn't - proceed with createAsset()
+            return false;
+        }
+
+        // if it does - index it
+        $listing = new FsListing([
+            'dirname' => pathinfo($targetPath, PATHINFO_DIRNAME),
+            'basename' => pathinfo($targetPath, PATHINFO_BASENAME),
+            'type' => 'file',
+            'dateModified' => $volume->getDateModified($targetPath),
+            'fileSize' => $volume->getFileSize($targetPath),
+        ]);
+
+        $indexEntry = new AssetIndexData([
+            'volumeId' => $volume->id,
+            //'sessionId' => $sessionId,
+            'uri' => $listing->getUri(),
+            'size' => $listing->getFileSize(),
+            'timestamp' => $listing->getDateModified(),
+            'isDir' => $listing->getIsDir(),
+            //'inProgress' => true,
+        ]);
+
+        return Craft::$app->getAssetIndexer()->indexFileByEntry($indexEntry);
+    }
+
     /**
      * @param array $urls
      * @param $fieldInfo
@@ -102,30 +160,37 @@ class AssetHelper
         // user has set to use that instead, so we're good to proceed.
         foreach ($urls as $url) {
             try {
-                $filename = $newFilename ? AssetsHelper::prepareAssetName($newFilename, false) : self::getRemoteUrlFilename($url);
+                $indexedAsset = self::indexExistingFile($url, $fieldInfo, $feed, $field, $element, $folderId, $newFilename);
 
-                $fetchedImage = $tempFeedMePath . $filename;
-
-                // But also check if we've downloaded this recently, use the copy in the temp directory
-                $cachedImage = FileHelper::findFiles($tempFeedMePath, [
-                    'only' => [$filename],
-                    'recursive' => false,
-                ]);
-
-                Plugin::info('Fetching remote image `{i}` - `{j}`', ['i' => $url, 'j' => $filename]);
-
-                if (!$cachedImage) {
-                    self::downloadFile($url, $fetchedImage, 1, true, $feed['id']);
+                if ($indexedAsset instanceof AssetElement) {
+                    $uploadedAssets[] = $indexedAsset->id;
                 } else {
-                    $fetchedImage = $cachedImage[0];
-                }
 
-                $result = self::createAsset($fetchedImage, $filename, $folderId, $field, $element, $conflict, Hash::get($feed, 'updateSearchIndexes'));
+                    $filename = $newFilename ? AssetsHelper::prepareAssetName($newFilename, false) : self::getRemoteUrlFilename($url);
 
-                if ($result) {
-                    $uploadedAssets[] = $result;
-                } else {
-                    Plugin::error('Failed to create asset from `{i}`', ['i' => $url]);
+                    $fetchedImage = $tempFeedMePath . $filename;
+
+                    // But also check if we've downloaded this recently, use the copy in the temp directory
+                    $cachedImage = FileHelper::findFiles($tempFeedMePath, [
+                        'only' => [$filename],
+                        'recursive' => false,
+                    ]);
+
+                    Plugin::info('Fetching remote image `{i}` - `{j}`', ['i' => $url, 'j' => $filename]);
+
+                    if (!$cachedImage) {
+                        self::downloadFile($url, $fetchedImage, 1, true, $feed['id']);
+                    } else {
+                        $fetchedImage = $cachedImage[0];
+                    }
+
+                    $result = self::createAsset($fetchedImage, $filename, $folderId, $field, $element, $conflict, Hash::get($feed, 'updateSearchIndexes'));
+
+                    if ($result) {
+                        $uploadedAssets[] = $result;
+                    } else {
+                        Plugin::error('Failed to create asset from `{i}`', ['i' => $url]);
+                    }
                 }
             } catch (Throwable $e) {
                 if ($field) {
