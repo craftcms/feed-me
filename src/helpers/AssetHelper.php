@@ -17,7 +17,6 @@ use craft\helpers\StringHelper;
 use craft\helpers\UrlHelper;
 use craft\models\AssetIndexData;
 use craft\models\FsListing;
-use craft\models\Volume;
 use craft\models\VolumeFolder;
 use Throwable;
 use yii\base\Exception;
