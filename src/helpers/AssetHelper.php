@@ -82,7 +82,25 @@ class AssetHelper
         return $status;
     }
 
-    public static function indexExistingFile($urlFromFeed, $fieldInfo, $feed, $field = null, $element = null, $folderId = null, $newFilename = null): AssetElement|bool
+    /**
+     * Check if the file exists in the FS - if it does, index it (like via asset indexing) and return it
+     * otherwise return false and proceed with creating the asset
+     *
+     * @param $urlFromFeed
+     * @param $fieldInfo
+     * @param $feed
+     * @param $field
+     * @param $element
+     * @param $folderId
+     * @param $newFilename
+     * @return AssetElement|bool
+     * @throws \craft\errors\AssetDisallowedExtensionException
+     * @throws \craft\errors\FsException
+     * @throws \craft\errors\MissingAssetException
+     * @throws \craft\errors\VolumeException
+     * @throws \yii\base\InvalidConfigException
+     */
+    public static function indexExistingFile($urlFromFeed, $field = null, $element = null, $folderId = null, $newFilename = null): AssetElement|bool
     {
         $assets = Craft::$app->getAssets();
 
@@ -94,6 +112,10 @@ class AssetHelper
         }
 
         $folder = $assets->findFolder(['id' => $folderId]);
+        if (!$folder) {
+            throw new InvalidArgumentException('Cannot find folder by ID.');
+        }
+
         $volume = $folder->getVolume();
 
         $filename = $newFilename ? AssetsHelper::prepareAssetName($newFilename, false) : self::getRemoteUrlFilename($urlFromFeed);
@@ -104,7 +126,7 @@ class AssetHelper
         $asset->folderId = $folder->id;
         $asset->folderPath = $folder->path;
         $asset->volumeId = $volume->id;
-        $targetUrl = \craft\helpers\Assets::generateUrl($volume->getFs(), $asset);
+        $targetUrl = AssetsHelper::generateUrl($volume->getFs(), $asset);
 
         $rootUrl = $volume->getRootUrl() ?? '';
         $targetPath = str_replace($rootUrl, '', $targetUrl);
@@ -126,12 +148,10 @@ class AssetHelper
 
         $indexEntry = new AssetIndexData([
             'volumeId' => $volume->id,
-            //'sessionId' => $sessionId,
             'uri' => $listing->getUri(),
             'size' => $listing->getFileSize(),
             'timestamp' => $listing->getDateModified(),
             'isDir' => $listing->getIsDir(),
-            //'inProgress' => true,
         ]);
 
         return Craft::$app->getAssetIndexer()->indexFileByEntry($indexEntry);
@@ -160,12 +180,11 @@ class AssetHelper
         // user has set to use that instead, so we're good to proceed.
         foreach ($urls as $url) {
             try {
-                $indexedAsset = self::indexExistingFile($url, $fieldInfo, $feed, $field, $element, $folderId, $newFilename);
+                $indexedAsset = self::indexExistingFile($url, $field, $element, $folderId, $newFilename);
 
                 if ($indexedAsset instanceof AssetElement) {
                     $uploadedAssets[] = $indexedAsset->id;
                 } else {
-
                     $filename = $newFilename ? AssetsHelper::prepareAssetName($newFilename, false) : self::getRemoteUrlFilename($url);
 
                     $fetchedImage = $tempFeedMePath . $filename;
