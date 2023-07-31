@@ -18,6 +18,7 @@ use craft\helpers\UrlHelper;
 use craft\models\AssetIndexData;
 use craft\models\FsListing;
 use craft\models\Volume;
+use craft\models\VolumeFolder;
 use Throwable;
 use yii\base\Exception;
 use yii\base\InvalidArgumentException;
@@ -102,22 +103,8 @@ class AssetHelper
      */
     public static function indexExistingFile($urlFromFeed, $field = null, $element = null, $folderId = null, $newFilename = null): AssetElement|bool
     {
-        $assets = Craft::$app->getAssets();
-
-        if (!$folderId) {
-            if (!$field) {
-                throw new InvalidArgumentException('$folderId and $field cannot both be null.');
-            }
-            $folderId = $field->resolveDynamicPathToFolderId($element);
-        }
-
-        $folder = $assets->findFolder(['id' => $folderId]);
-        if (!$folder) {
-            throw new InvalidArgumentException('Cannot find folder by ID.');
-        }
-
+        $folder = self::_getAssetFolder($folderId, $field, $element);
         $volume = $folder->getVolume();
-
         $filename = $newFilename ? AssetsHelper::prepareAssetName($newFilename, false) : self::getRemoteUrlFilename($urlFromFeed);
 
         // get the url/path of the asset we're supposed to end up with
@@ -299,15 +286,7 @@ class AssetHelper
     private static function createAsset(string $tempFilePath, string $filename, ?int $folderId, ?Assets $field, ?ElementInterface $element, string $conflict, bool $updateSearchIndexes): bool|int
     {
         $assets = Craft::$app->getAssets();
-
-        if (!$folderId) {
-            if (!$field) {
-                throw new InvalidArgumentException('$folderId and $field cannot both be null.');
-            }
-            $folderId = $field->resolveDynamicPathToFolderId($element);
-        }
-
-        $folder = $assets->findFolder(['id' => $folderId]);
+        $folder = self::_getAssetFolder($folderId, $field, $element);
 
         // Create the new asset (even if we're setting it to replace)
         $asset = new AssetElement();
@@ -452,5 +431,31 @@ class AssetHelper
         }
 
         return StringHelper::toLowerCase($extension);
+    }
+
+    /**
+     * Find and return folder for an asset by folder id or field and element
+     *
+     * @param int|null $folderId
+     * @param Assets|null $field
+     * @param ElementInterface|null $element
+     * @return VolumeFolder
+     */
+    private static function _getAssetFolder(?int $folderId, ?Assets $field, ?ElementInterface $element): VolumeFolder
+    {
+        if (!$folderId) {
+            if (!$field) {
+                throw new InvalidArgumentException('$folderId and $field cannot both be null.');
+            }
+            $folderId = $field->resolveDynamicPathToFolderId($element);
+        }
+
+        $folder = Craft::$app->getAssets()->findFolder(['id' => $folderId]);
+
+        if (!$folder) {
+            throw new InvalidArgumentException('Cannot find folder by ID.');
+        }
+
+        return $folder;
     }
 }
