@@ -100,8 +100,13 @@ class AssetHelper
      * @throws \craft\errors\VolumeException
      * @throws \yii\base\InvalidConfigException
      */
-    public static function indexExistingFile($urlFromFeed, $field = null, $element = null, $folderId = null, $newFilename = null): AssetElement|bool
+    public static function indexExistingFile($urlFromFeed, string $conflict, $field = null, $element = null, $folderId = null, $newFilename = null): AssetElement|bool
     {
+        // if the conflict strategy is to replace or create, just bail straight away
+        // and allow for creation of the asset even the file exists
+        if ($conflict == AssetElement::SCENARIO_REPLACE || $conflict == AssetElement::SCENARIO_CREATE) {
+            return false;
+        }
         $folder = self::_getAssetFolder($folderId, $field, $element);
         $volume = $folder->getVolume();
         $filename = $newFilename ? AssetsHelper::prepareAssetName($newFilename, false) : self::getRemoteUrlFilename($urlFromFeed);
@@ -166,7 +171,7 @@ class AssetHelper
         // user has set to use that instead, so we're good to proceed.
         foreach ($urls as $url) {
             try {
-                $indexedAsset = self::indexExistingFile($url, $field, $element, $folderId, $newFilename);
+                $indexedAsset = self::indexExistingFile($url, $conflict, $field, $element, $folderId, $newFilename);
 
                 if ($indexedAsset instanceof AssetElement) {
                     $uploadedAssets[] = $indexedAsset->id;
