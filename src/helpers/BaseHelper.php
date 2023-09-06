@@ -52,6 +52,10 @@ class BaseHelper
         if (strtolower($value) === Craft::t('feed-me', 'y')) {
             $result = true;
         }
+        
+        if (strtolower($value) === Craft::t('feed-me', 'started')) {
+            $result = true;
+        }
 
 
         if (strtolower($value) === Craft::t('feed-me', 'no')) {
