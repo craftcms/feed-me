@@ -170,13 +170,10 @@ class Matrix extends Field implements FieldInterface
         $index = 1;
         $resultBlocks = [];
         foreach ($expanded as $blockData) {
-            // all the fields are empty and setEmptyValues is off, ignore the block
-            if (
-                !empty(array_filter(
-                    $blockData['fields'],
-                    fn($value) => (is_string($value) && !empty($value)) || (is_array($value) && !empty(array_filter($value)))
-                ))
-            ) {
+            $setEmptyValues = $this->feed['setEmptyValues'] ?? false;
+            $isNotEmpty = collect($blockData['fields'])->filter(fn ($value) => ! empty($value))->isNotEmpty();
+
+            if ($setEmptyValues || (! $setEmptyValues && $isNotEmpty)) {
                 $resultBlocks['new' . $index++] = $blockData;
             }
         }

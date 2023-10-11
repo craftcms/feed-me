@@ -8,6 +8,7 @@ use Craft;
 use craft\base\Component;
 use craft\errors\ElementNotFoundException;
 use craft\feedme\helpers\DataHelper;
+use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
 use craft\helpers\Json;
 use Throwable;
@@ -46,7 +47,7 @@ abstract class Field extends Component
     public mixed $field = null;
 
     /**
-     * @var
+     * @var FeedModel|array
      */
     public mixed $feed = null;
 
