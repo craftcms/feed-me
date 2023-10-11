@@ -10,6 +10,7 @@ use craft\feedme\base\Element;
 use craft\feedme\base\ElementInterface;
 use craft\feedme\helpers\DuplicateHelper;
 use craft\feedme\Plugin;
+use craft\helpers\App;
 use DateTime;
 
 /**
@@ -154,6 +155,11 @@ class FeedModel extends Model
     public function __toString()
     {
         return Craft::t('feed-me', $this->name);
+    }
+
+    public function getFeedUrl(): string
+    {
+        return App::parseEnv($this->feedUrl);
     }
 
     /**
