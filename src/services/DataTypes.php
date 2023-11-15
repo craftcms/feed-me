@@ -205,7 +205,7 @@ class DataTypes extends Component
         }
 
         $tries = 0;
-        $maxTries = 3;
+        $maxTries = 10;
         while (++$tries <= $maxTries) {
             try {
                 $client = Plugin::$plugin->service->createGuzzleClient($feedId);
@@ -237,7 +237,7 @@ class DataTypes extends Component
                 }
                 else {
                     Plugin::info('HTTP error #' . $tries . ' at ' . $url . ', ' . $e->getMessage());
-                    sleep($tries);
+                    sleep(($tries ^ 2) / 2); // wait up to 40.5 seconds on the 9th try
                 }
             }
         }
