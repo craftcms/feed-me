@@ -204,27 +204,43 @@ class DataTypes extends Component
             ]);
         }
 
-        try {
-            $client = Plugin::$plugin->service->createGuzzleClient($feedId);
-            $options = Plugin::$plugin->service->getRequestOptions($feedId);
+        $tries = 0;
+        $maxTries = 3;
+        while (++$tries <= $maxTries) {
+            try {
+                $client = Plugin::$plugin->service->createGuzzleClient($feedId);
+                $options = Plugin::$plugin->service->getRequestOptions($feedId);
 
-            $resp = $client->request('GET', $url, $options);
-            $data = (string)$resp->getBody();
+                $resp = $client->request('GET', $url, $options);
+                $data = (string)$resp->getBody();
 
-            // Save headers for later
-            $this->_headers = $resp->getHeaders();
+                // Save headers for later
+                $this->_headers = $resp->getHeaders();
 
-            $response = ['success' => true, 'data' => $data];
-        } catch (Exception $e) {
-            $response = ['success' => false, 'error' => $e->getMessage()];
-            Craft::$app->getErrorHandler()->logException($e);
+                $response = ['success' => true, 'data' => $data];
+
+                return $this->_triggerEventAfterFetchFeed([
+                    'url' => $url,
+                    'feedId' => $feedId,
+                    'response' => $response,
+                ]);
+            } catch (Exception $e) {
+                $response = ['success' => false, 'error' => $e->getMessage()];
+                Craft::$app->getErrorHandler()->logException($e);
+
+                if ($tries === $maxTries) {
+                    return $this->_triggerEventAfterFetchFeed([
+                        'url' => $url,
+                        'feedId' => $feedId,
+                        'response' => $response,
+                    ]);
+                }
+                else {
+                    Plugin::info('HTTP error #' . $tries . ' at ' . $url . ', ' . $e->getMessage());
+                    sleep($tries);
+                }
+            }
         }
-
-        return $this->_triggerEventAfterFetchFeed([
-            'url' => $url,
-            'feedId' => $feedId,
-            'response' => $response,
-        ]);
     }
 
     /**
