@@ -167,6 +167,7 @@ abstract class Field extends Component
 
                 // Arrayed content doesn't provide defaults because its unable to determine how many items it _should_ return
                 // This also checks if there was any data that corresponds on the same array index/level as our element
+                /** @phpstan-ignore-next-line */
                 $value = Hash::get($fieldValue, $nodeKey ?? $key, $default);
 
                 if ($value) {
