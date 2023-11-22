@@ -61,7 +61,7 @@ class Plugin extends \craft\base\Plugin
         ];
     }
 
-    public string $minVersionRequired = '4.4.8';
+    public string $minVersionRequired = '1.0.0';
     public string $schemaVersion = '5.1.0.0';
     public bool $hasCpSettings = true;
     public bool $hasCpSection = true;
