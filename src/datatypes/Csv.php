@@ -71,7 +71,7 @@ class Csv extends DataType implements DataTypeInterface
                 $col = 1;
                 foreach ($row as $key => $value) {
                     $newKey = preg_replace('#\r\n?#', " ", $key);
-                    if (empty(trim($newKey))) {
+                    if (trim($newKey) == '') {
                         $newKey = 'blank_heading_' . $col;
                     }
                     $filteredRow[$newKey] = $value;
