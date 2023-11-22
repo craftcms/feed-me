@@ -41,12 +41,12 @@
   },
   "autoload": {
     "psr-4": {
-      "craft\\feedme\\": "src/"
+      "semabit\\feedme\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "craft\\feedme\\tests\\": "tests/"
+      "semabit\\feedme\\tests\\": "tests/"
     }
   },
   "extra": {
