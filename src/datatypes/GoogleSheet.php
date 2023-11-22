@@ -54,7 +54,7 @@ class GoogleSheet extends DataType implements DataTypeInterface
                     $key = $headers[$j];
 
                     if (trim($key) == '') {
-                        $key = 'blank_heading_' . ($j+1);
+                        $key = 'blank_heading_' . ($j + 1);
                     }
 
                     $array[$i][$key] = $column;
