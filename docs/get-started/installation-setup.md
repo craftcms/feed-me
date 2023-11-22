@@ -13,6 +13,6 @@ cd /path/to/project
 ```
 2. Then tell Composer to load the plugin:
 ```
-composer require craftcms/feed-me
+composer require semabit/feed-me
 ```
 3. In the Control Panel, go to Settings → Plugins and click the “Install” button for Feed Me.

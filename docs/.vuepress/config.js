@@ -7,7 +7,7 @@ module.exports = {
   lang: 'en-US',
   themeConfig: {
     editLinks: true,
-    docsRepo: 'craftcms/feed-me',
+    docsRepo: 'semabit/feed-me',
     docsDir: 'docs',
     smallerSidebarHeadings: true,
     widerSidebar: false,
