@@ -1,6 +1,6 @@
 <?php
 
-namespace craft\feedme\elements;
+namespace semabit\feedme\elements;
 
 use Cake\Utility\Hash;
 use Carbon\Carbon;
@@ -10,12 +10,12 @@ use craft\commerce\elements\Product as ProductElement;
 use craft\commerce\elements\Variant as VariantElement;
 use craft\commerce\Plugin as Commerce;
 use craft\db\Query;
-use craft\feedme\base\Element;
-use craft\feedme\events\FeedProcessEvent;
-use craft\feedme\helpers\BaseHelper;
-use craft\feedme\helpers\DataHelper;
-use craft\feedme\Plugin;
-use craft\feedme\services\Process;
+use semabit\feedme\base\Element;
+use semabit\feedme\events\FeedProcessEvent;
+use semabit\feedme\helpers\BaseHelper;
+use semabit\feedme\helpers\DataHelper;
+use semabit\feedme\Plugin;
+use semabit\feedme\services\Process;
 use craft\fields\Matrix;
 use craft\fields\Table;
 use craft\helpers\Json;

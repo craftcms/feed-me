@@ -1,14 +1,14 @@
 <?php
 
-namespace craft\feedme\base;
+namespace semabit\feedme\base;
 
 use ArrayAccess;
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
 use craft\errors\ElementNotFoundException;
-use craft\feedme\helpers\DataHelper;
-use craft\feedme\Plugin;
+use semabit\feedme\helpers\DataHelper;
+use semabit\feedme\Plugin;
 use craft\helpers\Json;
 use Throwable;
 use yii\base\Exception;

@@ -1,6 +1,6 @@
 <?php
 
-namespace craft\feedme\datatypes;
+namespace semabit\feedme\datatypes;
 
 class Atom extends Xml
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace craft\feedme\elements;
+namespace semabit\feedme\elements;
 
 use Cake\Utility\Hash;
 use Carbon\Carbon;
@@ -8,10 +8,10 @@ use Craft;
 use craft\base\ElementInterface;
 use craft\elements\User as UserElement;
 use craft\errors\ElementNotFoundException;
-use craft\feedme\base\Element;
-use craft\feedme\events\FeedProcessEvent;
-use craft\feedme\Plugin;
-use craft\feedme\services\Process;
+use semabit\feedme\base\Element;
+use semabit\feedme\events\FeedProcessEvent;
+use semabit\feedme\Plugin;
+use semabit\feedme\services\Process;
 use craft\helpers\Json;
 use Exception;
 use RRule\RfcParser;

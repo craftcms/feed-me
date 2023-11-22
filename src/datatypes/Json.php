@@ -1,12 +1,12 @@
 <?php
 
-namespace craft\feedme\datatypes;
+namespace semabit\feedme\datatypes;
 
 use Cake\Utility\Hash;
 use Craft;
-use craft\feedme\base\DataType;
-use craft\feedme\base\DataTypeInterface;
-use craft\feedme\Plugin;
+use semabit\feedme\base\DataType;
+use semabit\feedme\base\DataTypeInterface;
+use semabit\feedme\Plugin;
 use craft\helpers\Json as JsonHelper;
 use Seld\JsonLint\JsonParser;
 use yii\base\InvalidArgumentException;

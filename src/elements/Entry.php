@@ -1,6 +1,6 @@
 <?php
 
-namespace craft\feedme\elements;
+namespace semabit\feedme\elements;
 
 use Cake\Utility\Hash;
 use Carbon\Carbon;
@@ -9,10 +9,10 @@ use craft\base\ElementInterface;
 use craft\elements\Entry as EntryElement;
 use craft\elements\User as UserElement;
 use craft\errors\ElementNotFoundException;
-use craft\feedme\base\Element;
-use craft\feedme\helpers\DataHelper;
-use craft\feedme\models\ElementGroup;
-use craft\feedme\Plugin;
+use semabit\feedme\base\Element;
+use semabit\feedme\helpers\DataHelper;
+use semabit\feedme\models\ElementGroup;
+use semabit\feedme\Plugin;
 use craft\helpers\ElementHelper;
 use craft\helpers\Json;
 use craft\models\Section;

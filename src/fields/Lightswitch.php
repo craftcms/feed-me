@@ -1,10 +1,10 @@
 <?php
 
-namespace craft\feedme\fields;
+namespace semabit\feedme\fields;
 
-use craft\feedme\base\Field;
-use craft\feedme\base\FieldInterface;
-use craft\feedme\helpers\BaseHelper;
+use semabit\feedme\base\Field;
+use semabit\feedme\base\FieldInterface;
+use semabit\feedme\helpers\BaseHelper;
 use craft\fields\Lightswitch as LightswitchField;
 
 /**

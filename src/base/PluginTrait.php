@@ -1,16 +1,16 @@
 <?php
 
-namespace craft\feedme\base;
+namespace semabit\feedme\base;
 
 use Craft;
-use craft\feedme\Plugin;
-use craft\feedme\services\DataTypes;
-use craft\feedme\services\Elements;
-use craft\feedme\services\Feeds;
-use craft\feedme\services\Fields;
-use craft\feedme\services\Logs;
-use craft\feedme\services\Process;
-use craft\feedme\services\Service;
+use semabit\feedme\Plugin;
+use semabit\feedme\services\DataTypes;
+use semabit\feedme\services\Elements;
+use semabit\feedme\services\Feeds;
+use semabit\feedme\services\Fields;
+use semabit\feedme\services\Logs;
+use semabit\feedme\services\Process;
+use semabit\feedme\services\Service;
 
 trait PluginTrait
 {

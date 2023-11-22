@@ -1,9 +1,9 @@
 <?php
 
-namespace craft\feedme\controllers;
+namespace semabit\feedme\controllers;
 
 use Craft;
-use craft\feedme\Plugin;
+use semabit\feedme\Plugin;
 use craft\web\Controller;
 use yii\web\Response;
 

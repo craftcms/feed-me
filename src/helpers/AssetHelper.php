@@ -1,6 +1,6 @@
 <?php
 
-namespace craft\feedme\helpers;
+namespace semabit\feedme\helpers;
 
 use Cake\Utility\Hash;
 use Craft;
@@ -8,7 +8,7 @@ use craft\base\ElementInterface;
 use craft\base\Field;
 use craft\elements\Asset as AssetElement;
 use craft\errors\ElementNotFoundException;
-use craft\feedme\Plugin;
+use semabit\feedme\Plugin;
 use craft\fields\Assets;
 use craft\helpers\Assets as AssetsHelper;
 use craft\helpers\FileHelper;

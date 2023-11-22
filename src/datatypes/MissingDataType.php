@@ -5,11 +5,11 @@
  * @license https://craftcms.github.io/license/
  */
 
-namespace craft\feedme\datatypes;
+namespace semabit\feedme\datatypes;
 
 use craft\base\MissingComponentInterface;
 use craft\base\MissingComponentTrait;
-use craft\feedme\base\DataType;
+use semabit\feedme\base\DataType;
 
 /**
  * MissingDataType represents a data type with an invalid class.

@@ -1,11 +1,11 @@
 <?php
 
-namespace craft\feedme\helpers;
+namespace semabit\feedme\helpers;
 
 use Cake\Utility\Hash;
 use Carbon\Carbon;
 use Craft;
-use craft\feedme\Plugin;
+use semabit\feedme\Plugin;
 use craft\helpers\DateTimeHelper;
 use DateTime;
 use Exception;

@@ -1,6 +1,6 @@
 <?php
 
-namespace craft\feedme\base;
+namespace semabit\feedme\base;
 
 use Cake\Utility\Hash;
 use Craft;

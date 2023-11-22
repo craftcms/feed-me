@@ -1,24 +1,24 @@
 <?php
 
-namespace craft\feedme\services;
+namespace semabit\feedme\services;
 
 use ArrayAccess;
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
 use craft\errors\MissingComponentException;
-use craft\feedme\base\DataTypeInterface;
-use craft\feedme\datatypes\Atom;
-use craft\feedme\datatypes\Csv;
-use craft\feedme\datatypes\GoogleSheet;
-use craft\feedme\datatypes\Json;
-use craft\feedme\datatypes\MissingDataType;
-use craft\feedme\datatypes\Rss;
-use craft\feedme\datatypes\Xml;
-use craft\feedme\events\FeedDataEvent;
-use craft\feedme\events\RegisterFeedMeDataTypesEvent;
-use craft\feedme\models\FeedModel;
-use craft\feedme\Plugin;
+use semabit\feedme\base\DataTypeInterface;
+use semabit\feedme\datatypes\Atom;
+use semabit\feedme\datatypes\Csv;
+use semabit\feedme\datatypes\GoogleSheet;
+use semabit\feedme\datatypes\Json;
+use semabit\feedme\datatypes\MissingDataType;
+use semabit\feedme\datatypes\Rss;
+use semabit\feedme\datatypes\Xml;
+use semabit\feedme\events\FeedDataEvent;
+use semabit\feedme\events\RegisterFeedMeDataTypesEvent;
+use semabit\feedme\models\FeedModel;
+use semabit\feedme\Plugin;
 use craft\helpers\Component as ComponentHelper;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;

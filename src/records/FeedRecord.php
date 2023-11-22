@@ -1,6 +1,6 @@
 <?php
 
-namespace craft\feedme\records;
+namespace semabit\feedme\records;
 
 use craft\db\ActiveRecord;
 

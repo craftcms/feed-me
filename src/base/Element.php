@@ -1,6 +1,6 @@
 <?php
 
-namespace craft\feedme\base;
+namespace semabit\feedme\base;
 
 use ArrayAccess;
 use Cake\Utility\Hash;
@@ -10,11 +10,11 @@ use craft\base\Component;
 use craft\base\Element as BaseElement;
 use craft\base\ElementInterface as CraftElementInterface;
 use craft\elements\db\ElementQuery;
-use craft\feedme\events\ElementEvent;
-use craft\feedme\helpers\BaseHelper;
-use craft\feedme\helpers\DataHelper;
-use craft\feedme\helpers\DateHelper;
-use craft\feedme\models\FeedModel;
+use semabit\feedme\events\ElementEvent;
+use semabit\feedme\helpers\BaseHelper;
+use semabit\feedme\helpers\DataHelper;
+use semabit\feedme\helpers\DateHelper;
+use semabit\feedme\models\FeedModel;
 use craft\helpers\Db;
 use craft\helpers\ElementHelper;
 use craft\helpers\Json;

@@ -1,16 +1,16 @@
 <?php
 
-namespace craft\feedme\elements;
+namespace semabit\feedme\elements;
 
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\ElementInterface;
 use craft\elements\Asset as AssetElement;
-use craft\feedme\base\Element;
-use craft\feedme\events\FeedProcessEvent;
-use craft\feedme\helpers\AssetHelper;
-use craft\feedme\helpers\DuplicateHelper;
-use craft\feedme\services\Process;
+use semabit\feedme\base\Element;
+use semabit\feedme\events\FeedProcessEvent;
+use semabit\feedme\helpers\AssetHelper;
+use semabit\feedme\helpers\DuplicateHelper;
+use semabit\feedme\services\Process;
 use craft\helpers\Assets as AssetsHelper;
 use craft\helpers\UrlHelper;
 use craft\models\VolumeFolder;

@@ -1,6 +1,6 @@
 <?php
 
-namespace craft\feedme\helpers;
+namespace semabit\feedme\helpers;
 
 class DuplicateHelper
 {

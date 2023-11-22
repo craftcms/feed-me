@@ -5,7 +5,7 @@
  * @license https://craftcms.github.io/license/
  */
 
-namespace craft\feedme\errors;
+namespace semabit\feedme\errors;
 
 use yii\base\UserException;
 

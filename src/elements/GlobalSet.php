@@ -1,13 +1,13 @@
 <?php
 
-namespace craft\feedme\elements;
+namespace semabit\feedme\elements;
 
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\ElementInterface;
 use craft\elements\GlobalSet as GlobalSetElement;
-use craft\feedme\base\Element;
-use craft\feedme\models\ElementGroup;
+use semabit\feedme\base\Element;
+use semabit\feedme\models\ElementGroup;
 
 /**
  * Class GlobalSet

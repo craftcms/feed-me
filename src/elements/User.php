@@ -1,6 +1,6 @@
 <?php
 
-namespace craft\feedme\elements;
+namespace semabit\feedme\elements;
 
 use Cake\Utility\Hash;
 use Craft;
@@ -9,9 +9,9 @@ use craft\db\Query;
 use craft\elements\Asset as AssetElement;
 use craft\elements\User as UserElement;
 use craft\errors\VolumeException;
-use craft\feedme\base\Element;
-use craft\feedme\helpers\AssetHelper;
-use craft\feedme\helpers\DataHelper;
+use semabit\feedme\base\Element;
+use semabit\feedme\helpers\AssetHelper;
+use semabit\feedme\helpers\DataHelper;
 use craft\helpers\UrlHelper;
 use craft\records\User as UserRecord;
 use Throwable;

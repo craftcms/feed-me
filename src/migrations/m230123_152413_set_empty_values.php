@@ -1,6 +1,6 @@
 <?php
 
-namespace craft\feedme\migrations;
+namespace semabit\feedme\migrations;
 
 use craft\db\Migration;
 

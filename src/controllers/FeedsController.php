@@ -1,13 +1,13 @@
 <?php
 
-namespace craft\feedme\controllers;
+namespace semabit\feedme\controllers;
 
 use Cake\Utility\Hash;
 use Craft;
 use craft\errors\MissingComponentException;
-use craft\feedme\models\FeedModel;
-use craft\feedme\Plugin;
-use craft\feedme\queue\jobs\FeedImport;
+use semabit\feedme\models\FeedModel;
+use semabit\feedme\Plugin;
+use semabit\feedme\queue\jobs\FeedImport;
 use craft\helpers\Json;
 use craft\helpers\StringHelper;
 use craft\web\Controller;

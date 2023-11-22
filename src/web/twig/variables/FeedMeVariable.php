@@ -1,10 +1,10 @@
 <?php
 
-namespace craft\feedme\web\twig\variables;
+namespace semabit\feedme\web\twig\variables;
 
 use Craft;
 use craft\elements\User as UserElement;
-use craft\feedme\Plugin;
+use semabit\feedme\Plugin;
 use craft\fields\Checkboxes;
 use craft\fields\Color;
 use craft\fields\Date;

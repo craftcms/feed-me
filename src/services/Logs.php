@@ -1,10 +1,10 @@
 <?php
 
-namespace craft\feedme\services;
+namespace semabit\feedme\services;
 
 use Craft;
 use craft\base\Component;
-use craft\feedme\Plugin;
+use semabit\feedme\Plugin;
 use craft\helpers\App;
 use craft\helpers\FileHelper;
 use craft\helpers\Json;

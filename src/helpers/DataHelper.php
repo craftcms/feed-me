@@ -1,12 +1,12 @@
 <?php
 
-namespace craft\feedme\helpers;
+namespace semabit\feedme\helpers;
 
 use ArrayAccess;
 use Cake\Utility\Hash;
 use Craft;
-use craft\feedme\models\FeedModel;
-use craft\feedme\Plugin;
+use semabit\feedme\models\FeedModel;
+use semabit\feedme\Plugin;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Db;
 use craft\helpers\Json;

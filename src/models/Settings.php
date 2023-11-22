@@ -1,6 +1,6 @@
 <?php
 
-namespace craft\feedme\models;
+namespace semabit\feedme\models;
 
 use craft\base\Model;
 

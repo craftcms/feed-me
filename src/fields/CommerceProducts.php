@@ -1,15 +1,15 @@
 <?php
 
-namespace craft\feedme\fields;
+namespace semabit\feedme\fields;
 
 use Cake\Utility\Hash;
 use Craft;
 use craft\commerce\elements\Product as ProductElement;
 use craft\commerce\fields\Products;
-use craft\feedme\base\Field;
-use craft\feedme\base\FieldInterface;
-use craft\feedme\helpers\DataHelper;
-use craft\feedme\Plugin;
+use semabit\feedme\base\Field;
+use semabit\feedme\base\FieldInterface;
+use semabit\feedme\helpers\DataHelper;
+use semabit\feedme\Plugin;
 use craft\helpers\Db;
 use craft\helpers\Json;
 

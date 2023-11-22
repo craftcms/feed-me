@@ -1,6 +1,6 @@
 <?php
 
-namespace craft\feedme\events;
+namespace semabit\feedme\events;
 
 use yii\base\Event;
 

@@ -1,18 +1,18 @@
 <?php
 
-namespace craft\feedme\services;
+namespace semabit\feedme\services;
 
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
 use craft\elements\User;
 use craft\errors\ShellCommandException;
-use craft\feedme\base\ElementInterface;
-use craft\feedme\events\FeedProcessEvent;
-use craft\feedme\helpers\DataHelper;
-use craft\feedme\helpers\DuplicateHelper;
-use craft\feedme\models\FeedModel;
-use craft\feedme\Plugin;
+use semabit\feedme\base\ElementInterface;
+use semabit\feedme\events\FeedProcessEvent;
+use semabit\feedme\helpers\DataHelper;
+use semabit\feedme\helpers\DuplicateHelper;
+use semabit\feedme\models\FeedModel;
+use semabit\feedme\Plugin;
 use craft\helpers\App;
 use craft\helpers\FileHelper;
 use craft\helpers\Json;

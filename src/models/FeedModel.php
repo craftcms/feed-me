@@ -1,15 +1,15 @@
 <?php
 
-namespace craft\feedme\models;
+namespace semabit\feedme\models;
 
 use ArrayAccess;
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Model;
-use craft\feedme\base\Element;
-use craft\feedme\base\ElementInterface;
-use craft\feedme\helpers\DuplicateHelper;
-use craft\feedme\Plugin;
+use semabit\feedme\base\Element;
+use semabit\feedme\base\ElementInterface;
+use semabit\feedme\helpers\DuplicateHelper;
+use semabit\feedme\Plugin;
 use DateTime;
 
 /**

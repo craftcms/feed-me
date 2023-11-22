@@ -5,11 +5,11 @@
  * @license https://craftcms.github.io/license/
  */
 
-namespace craft\feedme\fields;
+namespace semabit\feedme\fields;
 
 use craft\base\MissingComponentInterface;
 use craft\base\MissingComponentTrait;
-use craft\feedme\base\Field;
+use semabit\feedme\base\Field;
 
 /**
  * MissingField represents a field with an invalid class.

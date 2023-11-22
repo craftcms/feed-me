@@ -1,9 +1,9 @@
 <?php
 
-namespace craft\feedme\console\controllers;
+namespace semabit\feedme\console\controllers;
 
-use craft\feedme\Plugin;
-use craft\feedme\queue\jobs\FeedImport;
+use semabit\feedme\Plugin;
+use semabit\feedme\queue\jobs\FeedImport;
 use craft\helpers\Console;
 use yii\console\Controller;
 use yii\console\ExitCode;

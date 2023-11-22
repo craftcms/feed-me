@@ -1,12 +1,12 @@
 <?php
 
-namespace craft\feedme\services;
+namespace semabit\feedme\services;
 
 use ArrayAccess;
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
-use craft\feedme\Plugin;
+use semabit\feedme\Plugin;
 use craft\helpers\DateTimeHelper;
 use DateTime;
 use GuzzleHttp\Client;

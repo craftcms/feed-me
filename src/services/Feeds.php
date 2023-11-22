@@ -1,16 +1,16 @@
 <?php
 
-namespace craft\feedme\services;
+namespace semabit\feedme\services;
 
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
 use craft\db\ActiveQuery;
 use craft\db\Query;
-use craft\feedme\errors\FeedException;
-use craft\feedme\events\FeedEvent;
-use craft\feedme\models\FeedModel;
-use craft\feedme\records\FeedRecord;
+use semabit\feedme\errors\FeedException;
+use semabit\feedme\events\FeedEvent;
+use semabit\feedme\models\FeedModel;
+use semabit\feedme\records\FeedRecord;
 use craft\helpers\Json;
 use Exception;
 use Throwable;

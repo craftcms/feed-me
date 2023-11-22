@@ -1,6 +1,6 @@
 <?php
 
-namespace craft\feedme\helpers;
+namespace semabit\feedme\helpers;
 
 use Craft;
 use craft\fields\data\ColorData;

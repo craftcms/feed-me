@@ -1,6 +1,6 @@
 <?php
 
-namespace craft\feedme\fields;
+namespace semabit\feedme\fields;
 
 class EntriesSubset extends Entries
 {

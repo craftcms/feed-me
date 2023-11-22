@@ -1,21 +1,21 @@
 <?php
 
-namespace craft\feedme;
+namespace semabit\feedme;
 
 use Craft;
 use craft\base\Model;
 use craft\events\RegisterUrlRulesEvent;
-use craft\feedme\base\PluginTrait;
-use craft\feedme\models\Settings;
-use craft\feedme\services\DataTypes;
-use craft\feedme\services\Elements;
-use craft\feedme\services\Feeds;
-use craft\feedme\services\Fields;
-use craft\feedme\services\Logs;
-use craft\feedme\services\Process;
-use craft\feedme\services\Service;
-use craft\feedme\web\twig\Extension;
-use craft\feedme\web\twig\variables\FeedMeVariable;
+use semabit\feedme\base\PluginTrait;
+use semabit\feedme\models\Settings;
+use semabit\feedme\services\DataTypes;
+use semabit\feedme\services\Elements;
+use semabit\feedme\services\Feeds;
+use semabit\feedme\services\Fields;
+use semabit\feedme\services\Logs;
+use semabit\feedme\services\Process;
+use semabit\feedme\services\Service;
+use semabit\feedme\web\twig\Extension;
+use semabit\feedme\web\twig\variables\FeedMeVariable;
 use craft\helpers\UrlHelper;
 use craft\web\twig\variables\CraftVariable;
 use craft\web\UrlManager;

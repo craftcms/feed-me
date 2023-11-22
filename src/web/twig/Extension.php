@@ -1,6 +1,6 @@
 <?php
 
-namespace craft\feedme\web\twig;
+namespace semabit\feedme\web\twig;
 
 use Cake\Utility\Hash;
 use Twig\Extension\AbstractExtension;

@@ -1,22 +1,22 @@
 <?php
 
-namespace craft\feedme\services;
+namespace semabit\feedme\services;
 
 use Craft;
 use craft\base\Component;
 use craft\base\ComponentInterface;
 use craft\errors\MissingComponentException;
-use craft\feedme\base\ElementInterface;
-use craft\feedme\elements\Asset;
-use craft\feedme\elements\CalenderEvent;
-use craft\feedme\elements\Category;
-use craft\feedme\elements\CommerceProduct;
-use craft\feedme\elements\DigitalProduct;
-use craft\feedme\elements\Entry;
-use craft\feedme\elements\GlobalSet;
-use craft\feedme\elements\Tag;
-use craft\feedme\elements\User;
-use craft\feedme\events\RegisterFeedMeElementsEvent;
+use semabit\feedme\base\ElementInterface;
+use semabit\feedme\elements\Asset;
+use semabit\feedme\elements\CalenderEvent;
+use semabit\feedme\elements\Category;
+use semabit\feedme\elements\CommerceProduct;
+use semabit\feedme\elements\DigitalProduct;
+use semabit\feedme\elements\Entry;
+use semabit\feedme\elements\GlobalSet;
+use semabit\feedme\elements\Tag;
+use semabit\feedme\elements\User;
+use semabit\feedme\events\RegisterFeedMeElementsEvent;
 use craft\helpers\Component as ComponentHelper;
 use yii\base\InvalidConfigException;
 

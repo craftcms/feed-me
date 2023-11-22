@@ -1,9 +1,9 @@
 <?php
 
-namespace craft\feedme\web\assets\feedme;
+namespace semabit\feedme\web\assets\feedme;
 
-use craft\feedme\models\ElementGroup;
-use craft\feedme\Plugin;
+use semabit\feedme\models\ElementGroup;
+use semabit\feedme\Plugin;
 use craft\helpers\Json;
 use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;

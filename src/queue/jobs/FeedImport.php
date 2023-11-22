@@ -1,10 +1,10 @@
 <?php
 
-namespace craft\feedme\queue\jobs;
+namespace semabit\feedme\queue\jobs;
 
 use Craft;
-use craft\feedme\models\FeedModel;
-use craft\feedme\Plugin;
+use semabit\feedme\models\FeedModel;
+use semabit\feedme\Plugin;
 use craft\queue\BaseJob;
 use Throwable;
 use yii\queue\RetryableJobInterface;
