@@ -1,5 +1,5 @@
 {
-  "name": "craftcms/feed-me",
+  "name": "semabit/feed-me",
   "description": "Import content from XML, RSS, CSV or JSON feeds into entries, categories, Craft Commerce products, and more.",
   "type": "craft-plugin",
   "keywords": [
@@ -11,12 +11,8 @@
   "license": "proprietary",
   "authors": [
     {
-      "name": "Pixel & Tonic",
-      "homepage": "https://pixelandtonic.com/"
-    },
-    {
-      "name": "Verbb",
-      "homepage": "https://verbb.io"
+      "name": "semabit GmbH",
+      "homepage": "https://semabit.ch/"
     }
   ],
   "support": {

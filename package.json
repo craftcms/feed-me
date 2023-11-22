@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "@craftcms/feed-me",
+  "name": "@semabit/feed-me",
   "main": "webpack.config.js",
   "browserslist": [
     "extends @craftcms/browserslist-config"
