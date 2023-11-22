@@ -53,6 +53,10 @@ class GoogleSheet extends DataType implements DataTypeInterface
                 foreach ($row as $j => $column) {
                     $key = $headers[$j];
 
+                    if (empty(trim($key))) {
+                        $key = 'blank_heading_' . ($j+1);
+                    }
+
                     $array[$i][$key] = $column;
                 }
             }
