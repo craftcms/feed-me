@@ -210,7 +210,10 @@ class Fields extends Component
         // if it hasn't changed - proceed as before
         // if it has changed - assume that we've entrified and adjust the $fieldClassHandle
         $field = Craft::$app->getFields()->getFieldByHandle($fieldHandle);
-        if (!$field instanceof $fieldClassHandle) {
+        if (
+            !$field instanceof $fieldClassHandle &&
+            ($field instanceof \craft\fields\Categories || $field instanceof \craft\fields\Tags)
+        ) {
             $fieldClassHandle = \craft\fields\Entries::class;
         }
 

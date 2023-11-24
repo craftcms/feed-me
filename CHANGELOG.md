@@ -6,6 +6,7 @@
 - Fixed a bug where `queueTtr`, `queueMaxRetry`, and `assetDownloadCurl` settings were being ignored if you used a `config/feed-me.php` config file. ([#1356](https://github.com/craftcms/feed-me/issues/1356))
 - Fixed a PHP error that could occur when you map an entry field with a default value and there is an empty value in the feed. ([#1250](https://github.com/craftcms/feed-me/pull/1250))
 - Fixed a bug where the `maxRelations` setting was not being respected for relational fields. ([#1354](https://github.com/craftcms/feed-me/issues/1354))
+- Part 2 of ([1346](https://github.com/craftcms/feed-me/pull/1346)). Only cater for Categories and Tags fields.
 
 ## 5.2.0 - 2023-07-06
 
