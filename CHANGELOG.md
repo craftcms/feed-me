@@ -9,6 +9,7 @@
 - Fixed a bug where the `maxRelations` setting was not being respected for relational fields. ([#1354](https://github.com/craftcms/feed-me/issues/1354))
 - Fixed a bug where importing assets with “Use existing assets” could create duplicate assets. ([#1348](https://github.com/craftcms/feed-me/issues/1348))
 - Fixed a bug where importing Address data from the Google Maps plugin could cause duplicate Addresses if the Address already existed. ([#1370](https://github.com/craftcms/feed-me/pull/1370))
+- Fixed a bug where updating entry statuses for a site in a site group, would update statuses for all sites in the site group instead of the targeted one. ([#1208](https://github.com/craftcms/feed-me/issues/1208))
 
 ## 5.2.0 - 2023-07-06
 
