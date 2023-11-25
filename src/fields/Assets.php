@@ -9,6 +9,7 @@ use craft\db\Table;
 use craft\elements\Asset as AssetElement;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
+use craft\feedme\events\AssetFilenameEvent;
 use craft\feedme\helpers\AssetHelper;
 use craft\feedme\helpers\DataHelper;
 use craft\feedme\Plugin;
@@ -22,6 +23,8 @@ use craft\helpers\UrlHelper;
  */
 class Assets extends Field implements FieldInterface
 {
+    const EVENT_ASSET_FILENAME = 'onAssetFilename';
+
     // Properties
     // =========================================================================
 
@@ -112,6 +115,21 @@ class Assets extends Field implements FieldInterface
         $urlsToUpload = [];
         $base64ToUpload = [];
 
+        $filenamesFromFeed = $upload ? DataHelper::fetchArrayValue($this->feedData, $this->fieldInfo, 'options.filenameNode') : null;
+
+        // Fire an 'onAssetFilename' event
+        $event = new AssetFilenameEvent([
+            'field' => $this->field,
+            'element' => $this->element,
+            'fieldValue' => $value,
+            'filenames' => $filenamesFromFeed,
+        ]);
+
+        $this->trigger(self::EVENT_ASSET_FILENAME, $event);
+
+        // Allow event to overwrite filenames to be used
+        $filenamesFromFeed = $event->filenames;
+
         foreach ($value as $key => $dataValue) {
             // Prevent empty or blank values (string or array), which match all elements
             if (empty($dataValue) && empty($default)) {
@@ -154,8 +172,15 @@ class Assets extends Field implements FieldInterface
                 // If we're uploading files, this will need to be an absolute URL. If it is, save until later.
                 // We also don't check for existing assets here, so break out instantly.
                 if ($upload && UrlHelper::isAbsoluteUrl($dataValue)) {
-                    $urlsToUpload[$key] = $dataValue;
-                    $filename = AssetHelper::getRemoteUrlFilename($dataValue);
+                    $urlsToUpload[$key]['value'] = $dataValue;
+
+                    if (isset($filenamesFromFeed[$key])) {
+                        $filename = $filenamesFromFeed[$key] . '.' . AssetHelper::getRemoteUrlExtension($urlsToUpload[$key]['value']);
+                        $urlsToUpload[$key]['newFilename'] = $filename;
+                    } else {
+                        $filename = AssetHelper::getRemoteUrlFilename($dataValue);
+                        $urlsToUpload[$key]['newFilename'] = null;
+                    }
                 } else {
                     $filename = basename($dataValue);
                 }
@@ -189,8 +214,18 @@ class Assets extends Field implements FieldInterface
 
         if ($upload) {
             if ($urlsToUpload) {
-                $uploadedElements = AssetHelper::fetchRemoteImage($urlsToUpload, $this->fieldInfo, $this->feed, $this->field, $this->element);
-                $foundElements = array_merge($foundElements, $uploadedElements);
+                foreach ($urlsToUpload as $item) {
+                    $uploadedElements = AssetHelper::fetchRemoteImage(
+                        [$item['value']],
+                        $this->fieldInfo,
+                        $this->feed,
+                        $this->field,
+                        $this->element,
+                        null,
+                        $item['newFilename']
+                    );
+                    $foundElements = array_merge($foundElements, $uploadedElements);
+                }
             }
 
             if ($base64ToUpload) {

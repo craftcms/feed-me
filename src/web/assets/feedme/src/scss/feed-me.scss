@@ -253,22 +253,32 @@ body.ltr .table-feed-me .thin.action {
 // Assets Uploading
 //
 
-.feedme-mapping .field-extra-settings .assets-uploads .asset-label-hide {
-  visibility: hidden;
-}
+.feedme-mapping .field-extra-settings .assets-uploads {
+  .asset-label-hide {
+    visibility: hidden;
+  }
 
-.feedme-mapping .field-extra-settings .assets-uploads .checkboxfield {
-  float: left;
-  margin-right: 10px;
-  padding-top: 0;
-  margin-bottom: 3px;
-  z-index: 1;
-}
+  .checkboxfield {
+    float: left;
+    margin-right: 10px;
+    padding-top: 0;
+    margin-bottom: 3px;
+    z-index: 1;
+  }
 
-.feedme-mapping .field-extra-settings .assets-uploads .select {
-  height: auto;
-  opacity: 0;
-  visibility: hidden;
+  .select {
+    height: auto;
+    opacity: 0;
+    visibility: hidden;
+
+    &.selectize {
+      height: 32px;
+    }
+  }
+
+  .asset-filename-node {
+    margin-top: 15px;
+  }
 }
 
 .feedme-mapping .field-extra-settings .assets-create .heading label {
