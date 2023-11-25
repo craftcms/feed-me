@@ -24,7 +24,7 @@ use craft\helpers\UrlHelper;
  */
 class Assets extends Field implements FieldInterface
 {
-    const EVENT_ASSET_FILENAME = 'onAssetFilename';
+    public const EVENT_ASSET_FILENAME = 'onAssetFilename';
 
     // Properties
     // =========================================================================
