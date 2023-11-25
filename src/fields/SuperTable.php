@@ -121,7 +121,7 @@ class SuperTable extends Field implements FieldInterface
             $parsedValue = $this->_parseSubField($nodePaths, $subFieldHandle, $subFieldInfo);
 
             if (isset($fieldData[$key])) {
-                $fieldData[$key] = array_merge_recursive($fieldData[$key], $parsedValue);
+                $fieldData[$key] = is_array($parsedValue) ? array_merge_recursive($fieldData[$key], $parsedValue) : $fieldData[$key];
             } else {
                 $fieldData[$key] = $parsedValue;
             }

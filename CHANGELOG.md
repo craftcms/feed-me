@@ -5,6 +5,7 @@
 - Added the ability to provide a filename for importing assets via the assets field if you choose to “Create asset from URL”. ([#749](https://github.com/craftcms/feed-me/issues/749))
 - Fixed a bug where you could not override feed settings with `false` if you used a `config/feed-me.php` config file. ([#1352](https://github.com/craftcms/feed-me/issues/1352))
 - Fixed a bug where `queueTtr`, `queueMaxRetry`, and `assetDownloadCurl` settings were being ignored if you used a `config/feed-me.php` config file. ([#1356](https://github.com/craftcms/feed-me/issues/1356))
+- Fixed a PHP error that could occur when importing into a relational field inside of Super Table under certain circumstances. ([#1364](https://github.com/craftcms/feed-me/issues/1364))
 
 ## 4.7.0 - 2023-07-06
 
