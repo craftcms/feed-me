@@ -173,7 +173,13 @@ class DataTypes extends Component
             $filepath = realpath($url);
 
             if (!$filepath) {
-                return ['success' => false, 'error' => 'File path cannot be found.'];
+                $response = ['success' => false, 'error' => 'File path cannot be found.'];
+
+                return $this->_triggerEventAfterFetchFeed([
+                    'url' => $url,
+                    'feedId' => $feedId,
+                    'response' => $response,
+                ]);
             }
 
             $data = @file_get_contents($filepath);
@@ -188,7 +194,11 @@ class DataTypes extends Component
                 $response = ['success' => true, 'data' => $data];
             }
 
-            return $response;
+            return $this->_triggerEventAfterFetchFeed([
+                'url' => $url,
+                'feedId' => $feedId,
+                'response' => $response,
+            ]);
         }
 
         try {
@@ -207,15 +217,11 @@ class DataTypes extends Component
             Craft::$app->getErrorHandler()->logException($e);
         }
 
-        $event = new FeedDataEvent([
+        return $this->_triggerEventAfterFetchFeed([
             'url' => $url,
             'feedId' => $feedId,
             'response' => $response,
         ]);
-
-        Event::trigger(static::class, self::EVENT_AFTER_FETCH_FEED, $event);
-
-        return $event->response;
     }
 
     /**
@@ -466,5 +472,20 @@ class DataTypes extends Component
     private function _getCache($url)
     {
         return Craft::$app->cache->get(base64_encode(urlencode($url)));
+    }
+
+    /**
+     * Trigger EVENT_AFTER_FETCH_FEED
+     *
+     * @param $data
+     * @return mixed
+     */
+    private function _triggerEventAfterFetchFeed($data)
+    {
+        $event = new FeedDataEvent($data);
+
+        Event::trigger(static::class, self::EVENT_AFTER_FETCH_FEED, $event);
+
+        return $event->response;
     }
 }
