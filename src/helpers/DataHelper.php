@@ -69,11 +69,11 @@ class DataHelper
      * @param $fieldInfo
      * @return array|ArrayAccess|mixed
      */
-    public static function fetchArrayValue($feedData, $fieldInfo): mixed
+    public static function fetchArrayValue($feedData, $fieldInfo, $nodeName = 'node'): mixed
     {
         $value = null;
 
-        $node = Hash::get($fieldInfo, 'node');
+        $node = Hash::get($fieldInfo, $nodeName);
 
         $dataDelimiter = Plugin::$plugin->service->getConfig('dataDelimiter');
 
