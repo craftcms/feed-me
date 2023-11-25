@@ -150,13 +150,18 @@ $(function () {
     var $label = $(this)
       .parents('.field-extra-settings')
       .find('.asset-label-hide');
+    var $filenameNode = $(this)
+      .parents('.field-extra-settings')
+      .find('.asset-filename-node');
 
     if ($(this).prop('checked')) {
       $label.css({opacity: 1, visibility: 'visible'});
       $options.css({opacity: 1, visibility: 'visible'});
+      $filenameNode.show();
     } else {
       $label.css({opacity: 0, visibility: 'hidden'});
       $options.css({opacity: 0, visibility: 'hidden'});
+      $filenameNode.hide();
     }
   });
 
