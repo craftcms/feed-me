@@ -369,9 +369,6 @@ class Process extends Component
             }
         }
 
-        // Set the attributes for the element
-        $element->setAttributes($attributeData, false);
-
         $contentData = [];
         if (isset($attributeData['enabled'])) {
             // Set the site-specific status as well, but retain all other site statuses
@@ -390,7 +387,12 @@ class Process extends Component
             $element->setEnabledForSite($enabledForSite);
             $contentData['enabled'] = $element->enabled;
             $contentData['enabledForSite'] = $element->getEnabledForSite($element->siteId);
+
+            unset($attributeData['enabled']);
         }
+
+        // Set the attributes for the element
+        $element->setAttributes($attributeData, false);
 
         // Then, do the same for custom fields. Again, this should be done after populating the element attributes
         foreach ($feed['fieldMapping'] as $fieldHandle => $fieldInfo) {
