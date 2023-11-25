@@ -8,6 +8,7 @@ use Craft;
 use craft\base\Component;
 use craft\errors\ElementNotFoundException;
 use craft\feedme\helpers\DataHelper;
+use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
 use craft\helpers\Json;
 use Throwable;
@@ -46,7 +47,7 @@ abstract class Field extends Component
     public mixed $field = null;
 
     /**
-     * @var
+     * @var FeedModel|array
      */
     public mixed $feed = null;
 
@@ -167,7 +168,7 @@ abstract class Field extends Component
 
                 // Arrayed content doesn't provide defaults because it's unable to determine how many items it _should_ return
                 // This also checks if there was any data that corresponds on the same array index/level as our element
-                $value = Hash::get($fieldValue, $nodeKey, $default);
+                $value = Hash::get($fieldValue, $nodeKey ?? 0, $default);
 
                 if ($value) {
                     $fieldData[$elementId][$fieldHandle] = $value;
@@ -176,9 +177,16 @@ abstract class Field extends Component
         }
 
         // Now, for each element, we need to save the contents
-        foreach ($fieldData as $elementId => $fieldContent) {
+        foreach ($fieldData as $elementId => $elementData) {
             $element = $elementsService->getElementById($elementId, null, Hash::get($this->feed, 'siteId'));
 
+            $fieldHandles = collect($element->getFieldLayout()->getCustomFields())->pluck('handle')->all();
+            $attributeKeys = array_diff(array_keys($elementData), $fieldHandles);
+
+            $attributeContent = collect($elementData)->only($attributeKeys)->all();
+            $element->setAttributes($attributeContent);
+
+            $fieldContent = collect($elementData)->except($attributeKeys)->all();
             $element->setFieldValues($fieldContent);
 
             Plugin::debug([
@@ -191,7 +199,7 @@ abstract class Field extends Component
                 Plugin::error('`{handle}` - Unable to save sub-field: `{e}`.', ['e' => Json::encode($element->getErrors()), 'handle' => $this->fieldHandle]);
             }
 
-            Plugin::info('`{handle}` - Processed {name} [`#{id}`]({url}) sub-fields with content: `{content}`.', ['name' => $element::displayName(), 'id' => $elementId, 'url' => $element->cpEditUrl, 'handle' => $this->fieldHandle, 'content' => Json::encode($fieldContent)]);
+            Plugin::info('`{handle}` - Processed {name} [`#{id}`]({url}) sub-fields with content: `{content}`.', ['name' => $element::displayName(), 'id' => $elementId, 'url' => $element->cpEditUrl, 'handle' => $this->fieldHandle, 'content' => Json::encode($elementData)]);
         }
     }
 

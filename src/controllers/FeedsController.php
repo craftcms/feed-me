@@ -39,7 +39,7 @@ class FeedsController extends Controller
      */
     public function actionFeedsIndex(): Response
     {
-        $variables['feeds'] = Plugin::$plugin->feeds->getFeeds();
+        $variables['feeds'] = Plugin::$plugin->feeds->getFeeds('name asc');
 
         return $this->renderTemplate('feed-me/feeds/index', $variables);
     }

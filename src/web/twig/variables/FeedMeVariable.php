@@ -240,7 +240,11 @@ class FeedMeVariable extends ServiceLocator
         }
 
         if (($fieldLayout = Craft::$app->getFields()->getLayoutById($source->fieldLayoutId)) !== null) {
-            return $fieldLayout->getCustomFields();
+            $customFields = $fieldLayout->getCustomFields();
+            if ($field instanceof \craft\fields\Assets) {
+                array_unshift($customFields, new \craft\fields\PlainText(['name' => 'Alt', 'handle' => 'alt']));
+            }
+            return $customFields;
         }
 
         return null;

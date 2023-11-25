@@ -49,7 +49,11 @@ class FeedsController extends Controller
         $options[] = 'limit';
         $options[] = 'offset';
         $options[] = 'continueOnError';
-        $options[] = 'all';
+
+        if ($actionID !== 'queue') {
+            $options[] = 'all';
+        }
+
         return $options;
     }
 
@@ -116,5 +120,23 @@ class FeedsController extends Controller
         ]));
 
         $this->stdout('done' . PHP_EOL, Console::FG_GREEN);
+    }
+
+    /**
+     * Execute a feed without the queue
+     */
+    public function actionExecute(string $feedId=null): int
+    {
+        $config = [
+            'feed' => Plugin::getInstance()?->getFeeds()->getFeedById($feedId),
+            'limit' => $this->limit,
+            'offset' => $this->offset,
+            'continueOnError' => $this->continueOnError,
+        ];
+
+        $job = new FeedImport($config);
+        $job->execute(new \yii\queue\sync\Queue);
+
+        return 1;
     }
 }
