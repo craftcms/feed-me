@@ -35,3 +35,4 @@ tests/.env
 /tests/_craft/storage
 /.sass-cache
 /tests/_craft/.env
+/src/web/assets/feedme/.env
