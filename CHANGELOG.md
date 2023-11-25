@@ -6,6 +6,7 @@
 - Fixed a bug where you could not override feed settings with `false` if you used a `config/feed-me.php` config file. ([#1352](https://github.com/craftcms/feed-me/issues/1352))
 - Fixed a bug where `queueTtr`, `queueMaxRetry`, and `assetDownloadCurl` settings were being ignored if you used a `config/feed-me.php` config file. ([#1356](https://github.com/craftcms/feed-me/issues/1356))
 - Fixed a PHP error that could occur when importing into a relational field inside of Super Table under certain circumstances. ([#1364](https://github.com/craftcms/feed-me/issues/1364))
+- Fixed a bug where importing Address data from the Google Maps plugin could cause duplicate Addresses if the Address already existed. ([#1370](https://github.com/craftcms/feed-me/pull/1370))
 
 ## 4.7.0 - 2023-07-06
 
