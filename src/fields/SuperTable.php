@@ -224,10 +224,7 @@ class SuperTable extends Field implements FieldInterface
 
         $subField = Hash::extract($this->field->getBlockTypeFields(), '{n}[handle=' . $subFieldHandle . ']')[0];
 
-        if (
-            !$subField instanceof $subFieldClassHandle &&
-            $subField instanceof \verbb\supertable\fields\SuperTableField
-        ) {
+        if (!$subField instanceof $subFieldClassHandle) {
             $subFieldClassHandle = \craft\fields\Entries::class;
         }
 
