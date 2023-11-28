@@ -13,6 +13,7 @@
 - Fixed a bug where you could not use `false` to override feed settings in `config/feed-me.php`. ([#1380](https://github.com/craftcms/feed-me/issues/1380))
 - Fixed a bug where importing nested element fields would not work in some scenarios. ([#1378](https://github.com/craftcms/feed-me/issues/1378))
 - Fixed a bug where empty column headings in a feed would cause incorrect values to be selected in the pagination URL dropdown when mapping a feed. ([#1375](https://github.com/craftcms/feed-me/issues/1375))
+- Fixed a bug that could occur when using Feed Me with fields that have been entrified in Craft. ([1346](https://github.com/craftcms/feed-me/pull/1346)).
 
 ## 5.2.0 - 2023-07-06
 
