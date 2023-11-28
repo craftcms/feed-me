@@ -2,11 +2,18 @@
 
 ## Unreleased
 
+- Added the ability to provide a filename for importing assets via the assets field if you choose to “Create asset from URL”. ([#749](https://github.com/craftcms/feed-me/issues/749))
 - Fixed a bug where you could not override feed settings with `false` if you used a `config/feed-me.php` config file. ([#1352](https://github.com/craftcms/feed-me/issues/1352))
 - Fixed a bug where `queueTtr`, `queueMaxRetry`, and `assetDownloadCurl` settings were being ignored if you used a `config/feed-me.php` config file. ([#1356](https://github.com/craftcms/feed-me/issues/1356))
 - Fixed a PHP error that could occur when you map an entry field with a default value and there is an empty value in the feed. ([#1250](https://github.com/craftcms/feed-me/pull/1250))
 - Fixed a bug where the `maxRelations` setting was not being respected for relational fields. ([#1354](https://github.com/craftcms/feed-me/issues/1354))
-- Part 2 of ([1346](https://github.com/craftcms/feed-me/pull/1346)). Only cater for Categories and Tags fields.
+- Fixed a bug where importing assets with “Use existing assets” could create duplicate assets. ([#1348](https://github.com/craftcms/feed-me/issues/1348))
+- Fixed a bug where importing Address data from the Google Maps plugin could cause duplicate Addresses if the Address already existed. ([#1370](https://github.com/craftcms/feed-me/pull/1370))
+- Fixed a bug where updating entry statuses for a site in a site group, would update statuses for all sites in the site group instead of the targeted one. ([#1208](https://github.com/craftcms/feed-me/issues/1208))
+- Fixed a bug where you could not use `false` to override feed settings in `config/feed-me.php`. ([#1380](https://github.com/craftcms/feed-me/issues/1380))
+- Fixed a bug where importing nested element fields would not work in some scenarios. ([#1378](https://github.com/craftcms/feed-me/issues/1378))
+- Fixed a bug where empty column headings in a feed would cause incorrect values to be selected in the pagination URL dropdown when mapping a feed. ([#1375](https://github.com/craftcms/feed-me/issues/1375))
+- Fixed a bug that could occur when using Feed Me with fields that have been entrified in Craft. ([1346](https://github.com/craftcms/feed-me/pull/1346)).
 
 ## 5.2.0 - 2023-07-06
 
