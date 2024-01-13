@@ -7,6 +7,7 @@ use craft\base\Model;
 use craft\events\RegisterUrlRulesEvent;
 use craft\feedme\base\PluginTrait;
 use craft\feedme\models\Settings;
+use craft\feedme\services\FeedConfigStorage;
 use craft\feedme\services\DataTypes;
 use craft\feedme\services\Elements;
 use craft\feedme\services\Feeds;
@@ -26,6 +27,7 @@ use yii\queue\Queue;
 /**
  * Class Plugin
  *
+ * @property-read FeedConfigStorage $config
  * @property-read DataTypes $data
  * @property-read Elements $elements
  * @property-read Feeds $feeds
@@ -50,6 +52,7 @@ class Plugin extends \craft\base\Plugin
     {
         return [
             'components' => [
+                'config' => ['class' => FeedConfigStorage::class],
                 'data' => ['class' => DataTypes::class],
                 'elements' => ['class' => Elements::class],
                 'feeds' => ['class' => Feeds::class],

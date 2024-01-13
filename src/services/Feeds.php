@@ -119,30 +119,8 @@ class Feeds extends Component
             }
         }
 
-        $record->name = $model->name;
-        $record->feedUrl = $model->feedUrl;
-        $record->feedType = $model->feedType;
-        $record->primaryElement = $model->primaryElement;
-        $record->elementType = $model->elementType;
-        $record->siteId = $model->siteId;
-        $record->singleton = $model->singleton;
-        $record->duplicateHandle = $model->duplicateHandle;
-        $record->updateSearchIndexes = $model->updateSearchIndexes;
-        $record->paginationNode = $model->paginationNode;
-        $record->passkey = $model->passkey;
-        $record->backup = $model->backup;
-        $record->setEmptyValues = $model->setEmptyValues;
-
-        if ($model->elementGroup) {
-            $record->setAttribute('elementGroup', Json::encode($model->elementGroup));
-        }
-
-        if ($model->fieldMapping) {
-            $record->setAttribute('fieldMapping', Json::encode($model->fieldMapping));
-        }
-
-        if ($model->fieldUnique) {
-            $record->setAttribute('fieldUnique', Json::encode($model->fieldUnique));
+        foreach($model->getRecordAttributes() as $name => $value) {
+            $record->setAttribute($name, $value);
         }
 
         if ($isNewModel) {
