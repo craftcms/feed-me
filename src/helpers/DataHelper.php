@@ -462,7 +462,24 @@ class DataHelper
 
             // Each key must be the same value
             foreach ($firstValue as $key => $value) {
-                if (!self::_recursiveCompare($value, $secondValue[$key])) {
+                $newValue = $secondValue[$key];
+
+                // If date value, make sure to cast it as a string to compare
+                if ($value instanceof DateTime || DateTimeHelper::isIso8601($value)) {
+                    $value = Db::prepareDateForDb($value);
+                }
+
+                // If date value, make sure to cast it as a string to compare
+                if ($newValue instanceof DateTime || DateTimeHelper::isIso8601($newValue)) {
+                    $newValue = Db::prepareDateForDb($newValue);
+                }
+
+                // If an empty 'date' value, it's the same as null
+                if (is_array($newValue) && isset($newValue['date']) && $newValue['date'] === '') {
+                    $newValue = null;
+                }
+
+                if (!self::_recursiveCompare($value, $newValue)) {
                     return false;
                 }
             }
