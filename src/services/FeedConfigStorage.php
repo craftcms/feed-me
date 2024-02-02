@@ -35,6 +35,8 @@ class FeedConfigStorage extends Component
         $fileName = $this->defaultFileName;
         $fileContents = Yaml::dump($feeds, JSON_PRETTY_PRINT);
 
+        mkdir(dirname($this->defaultFileName), 0777, true);
+
         return file_put_contents($fileName, $fileContents) !== false;
     }
 
