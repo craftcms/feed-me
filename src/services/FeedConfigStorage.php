@@ -3,8 +3,8 @@
 namespace craft\feedme\services;
 
 use craft\base\Component;
-use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
+use craft\feedme\records\FeedRecord;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -52,16 +52,16 @@ class FeedConfigStorage extends Component
         $fileName = $this->defaultFileName;
         $feeds = Yaml::parse(file_get_contents($fileName));
         foreach ($feeds as $feed) {
-            $model = Plugin::getInstance()->getFeeds()->getFeedById($feed['id']);
-            if (!$model) {
-                $model = new FeedModel();
-            }
-            $model->setAttributes($feed, false);
-            $success = Plugin::getInstance()->getFeeds()->saveFeed($model);
+            Plugin::getInstance()->getFeeds()->deleteFeedById($feed['id']);
+
+            $record = new FeedRecord();
+            $record->setAttributes($feed, false);
+            $record->save(false);
+            $success = (bool) $record->id;
             if ($success) {
-                $result->success_feeds[] = $model;
+                $result->success_feeds[] = $record;
             } else {
-                $result->failed_feeds[] = $model;
+                $result->failed_feeds[] = $record;
             }
         }
 
