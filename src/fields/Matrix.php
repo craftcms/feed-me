@@ -261,6 +261,27 @@ class Matrix extends Field implements FieldInterface
     }
 
     /**
+     * Returns all of the matrix field's entry types' fields.
+     *
+     * @param MatrixField $field
+     * @return array
+     * @throws \yii\base\InvalidConfigException
+     */
+    private function _getEntryTypeFields(MatrixField $field): array
+    {
+        $fields = [];
+        if (!empty($entryTypes = $field->getEntryTypes())) {
+            foreach ($entryTypes as $entryType) {
+                foreach ($entryType->getFieldLayout()?->getCustomFields() as $field) {
+                    $fields[] = $field;
+                }
+            }
+        }
+
+        return $fields;
+    }
+
+    /**
      * @param $feedData
      * @param $subFieldHandle
      * @param $subFieldInfo
@@ -270,7 +291,7 @@ class Matrix extends Field implements FieldInterface
     {
         $subFieldClassHandle = Hash::get($subFieldInfo, 'field');
 
-        $subField = Hash::extract($this->field->getBlockTypeFields(), '{n}[handle=' . $subFieldHandle . ']')[0];
+        $subField = Hash::extract($this->_getEntryTypeFields($this->field), '{n}[handle=' . $subFieldHandle . ']')[0];
 
         if (
             !$subField instanceof $subFieldClassHandle &&

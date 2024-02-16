@@ -19,20 +19,20 @@
     {% endnamespace %}
 </div>
 
-{% for blocktype in field.blocktypes %}
-    {% if blocktype.fields|length %}
+{% for entrytype in field.getEntryTypes() %}
+    {% if entrytype.fields|length %}
         <tr class="complex-field complex-field-header">
             <td class="col-field">
                 <div class="field">
                     <div class="heading">
-                        <label class="">{{ name }} - {{ blocktype.name }}</label>
+                        <label class="">{{ name }} - {{ entrytype.name }}</label>
                     </div>
                 </div>
             </td>
 
             <td class="col-map" colspan="2">
                 <div class="field-extra-settings">
-                    {% set blockPath = [ handle, 'blocks', blocktype.handle ] %}
+                    {% set blockPath = [ handle, 'blocks', entrytype.handle ] %}
 
                     {% set disabled = hash_get(feed.fieldMapping, blockPath|join('.') ~ '.disabled') ?: '' %}
 
@@ -48,18 +48,49 @@
             </td>
         </tr>
 
-        {% for blocktypefield in blocktype.getCustomFields() %}
-            {% set nameLabel = blocktype.name ~ ': ' ~ blocktypefield.name %}
-            {% set instructionsHandle = handle ~ '[' ~ blocktype.handle ~ '][' ~ blocktypefield.handle ~ ']' %}
+        {#{% set fields = [] %}
 
-            {% set parentPath = [ handle, 'blocks', blocktype.handle, 'fields', blocktypefield.handle ] %}
+        {% if entrytype.hasTitleField %}
+            {% set fields = fields|push({
+                name: 'Title',
+                handle: 'title',
+                default: {
+                    type: 'text',
+                },
+            }) %}
+        {% endif %}
 
-            {% set fieldClass = craft.feedme.fields.getRegisteredField(className(blocktypefield)) %}
+        {% if entrytype.showSlugField %}
+            {% set fields = fields|push({
+                name: 'Slug',
+                handle: 'slug',
+                instructions: 'If not set, the Slug will be automatically created from Title.'|t('feed-me'),
+                default: {
+                    type: 'text',
+                },
+            }) %}
+        {% endif %}#}
+
+        {% for field in fields %}
+            {% set template = field.type ?? 'default' %}
+            {% set parentPath = [ handle, 'blocks', entrytype.handle, entrytypefield.handle ] %}
+            {% set variables = field|merge({ feed: feed, feedData: feedData, attribute: true, path: parentPath }) %}
+
+            {% include 'feed-me/_includes/fields/' ~ template ignore missing with variables only %}
+        {% endfor %}
+
+        {% for entrytypefield in entrytype.getFieldLayout().getCustomFields() %}
+            {% set nameLabel = entrytype.name ~ ': ' ~ entrytypefield.name %}
+            {% set instructionsHandle = handle ~ '[' ~ entrytype.handle ~ '][' ~ entrytypefield.handle ~ ']' %}
+
+            {% set parentPath = [ handle, 'blocks', entrytype.handle, 'fields', entrytypefield.handle ] %}
+
+            {% set fieldClass = craft.feedme.fields.getRegisteredField(className(entrytypefield)) %}
             {% set template = fieldClass.getMappingTemplate() %}
 
             {% include template ignore missing with {
-                field: blocktypefield,
-                handle: blocktypefield.handle,
+                field: entrytypefield,
+                handle: entrytypefield.handle,
                 path: parentPath,
             } %}
         {% endfor %}
