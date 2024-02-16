@@ -166,6 +166,13 @@
                                 on: defaultValue,
                             }) }}
 
+                        {% elseif default.type == 'iconpicker' %}
+
+                            {{ forms.iconPickerField({
+                                name: 'default',
+                                value: defaultValue,
+                            }) }}
+
                         {% elseif default.type == 'elementselect' %}
 
                             {% set elements = [] %}

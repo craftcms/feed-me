@@ -23,6 +23,7 @@ use craft\feedme\fields\Dropdown;
 use craft\feedme\fields\Entries;
 use craft\feedme\fields\EntriesSubset;
 use craft\feedme\fields\GoogleMaps;
+use craft\feedme\fields\Icon;
 use craft\feedme\fields\Lightswitch;
 use craft\feedme\fields\Linkit;
 use craft\feedme\fields\Matrix;
@@ -130,6 +131,7 @@ class Fields extends Component
                 Date::class,
                 Dropdown::class,
                 Entries::class,
+                Icon::class,
                 Lightswitch::class,
                 Matrix::class,
                 MultiSelect::class,
