@@ -177,7 +177,7 @@ class FeedMeVariable extends ServiceLocator
         if (is_array($field->sources)) {
             foreach ($field->sources as $source) {
                 if ($source == 'singles') {
-                    foreach (Craft::$app->getSections()->getAllSections() as $section) {
+                    foreach (Craft::$app->getEntries()->getAllSections() as $section) {
                         if ($section->type == 'single') {
                             $sources[] = $section;
                         }
@@ -185,7 +185,7 @@ class FeedMeVariable extends ServiceLocator
                 } else {
                     [, $uid] = explode(':', $source);
 
-                    $section = Craft::$app->getSections()->getSectionByUid($uid);
+                    $section = Craft::$app->getEntries()->getSectionByUid($uid);
                     // only add to sources, if this was a section that we were able to retrieve (native section's uid)
                     // https://github.com/craftcms/feed-me/issues/1186
                     if ($section) {
@@ -194,7 +194,7 @@ class FeedMeVariable extends ServiceLocator
                 }
             }
         } elseif ($field->sources === '*') {
-            $sources = Craft::$app->getSections()->getAllSections();
+            $sources = Craft::$app->getEntries()->getAllSections();
         }
 
         return $sources;
@@ -229,7 +229,7 @@ class FeedMeVariable extends ServiceLocator
             $section = $this->getEntrySourcesByField($field)[0] ?? null;
 
             if ($section) {
-                $source = Craft::$app->getSections()->getEntryTypeById($section->id);
+                $source = Craft::$app->getEntries()->getEntryTypeById($section->id);
             }
         } elseif ($type === 'craft\fields\Tags') {
             $source = $this->getTagSourcesByField($field);

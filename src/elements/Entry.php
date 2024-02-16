@@ -78,7 +78,7 @@ class Entry extends Element
      */
     public function getGroups(): array
     {
-        $editable = Craft::$app->getSections()->getEditableSections();
+        $editable = Craft::$app->getEntries()->getEditableSections();
         $groups = [];
 
         foreach ($editable as $section) {
@@ -107,7 +107,7 @@ class Entry extends Element
             ->sectionId($settings['elementGroup'][EntryElement::class]['section'])
             ->typeId($settings['elementGroup'][EntryElement::class]['entryType']);
 
-        if (isset($section) && $section->propagationMethod === Section::PROPAGATION_METHOD_CUSTOM) {
+        if (isset($section) && $section->propagationMethod === \craft\enums\PropagationMethod::Custom) {
             $query->site('*')
                 ->preferSites([$targetSiteId])
                 ->unique();
@@ -128,7 +128,7 @@ class Entry extends Element
         $this->element->sectionId = $settings['elementGroup'][EntryElement::class]['section'];
         $this->element->typeId = $settings['elementGroup'][EntryElement::class]['entryType'];
 
-        $section = Craft::$app->getSections()->getSectionById($this->element->sectionId);
+        $section = Craft::$app->getEntries()->getSectionById($this->element->sectionId);
         $siteId = Hash::get($settings, 'siteId');
 
         if ($siteId) {
@@ -139,7 +139,7 @@ class Entry extends Element
         $enabledForSite = [];
         foreach ($section->getSiteSettings() as $siteSettings) {
             if (
-                $section->propagationMethod !== Section::PROPAGATION_METHOD_CUSTOM ||
+                $section->propagationMethod !== \craft\enums\PropagationMethod::Custom ||
                 $siteSettings->siteId == $siteId
             ) {
                 $enabledForSite[$siteSettings->siteId] = $siteSettings->enabledByDefault;
@@ -168,7 +168,7 @@ class Entry extends Element
         // Did the entry come back in a different site?
         if ($existingElement->siteId != $targetSiteId) {
             // Skip it if its section doesn't use the `custom` propagation method
-            if ($existingElement->getSection()->propagationMethod !== Section::PROPAGATION_METHOD_CUSTOM) {
+            if ($existingElement->getSection()->propagationMethod !== \craft\enums\PropagationMethod::Custom) {
                 return $existingElement;
             }
 

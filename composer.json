@@ -29,8 +29,8 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
-    "php": "^8.0.2",
-    "craftcms/cms": "^4.0.0-RC2",
+    "php": "^8.2",
+    "craftcms/cms": "^5.0.0-beta.2",
     "cakephp/utility": "^3.3.12",
     "jakeasmith/http_build_url": "^1.0",
     "nesbot/carbon": "^1.22 || ^2.10",
@@ -65,7 +65,7 @@
   },
   "config": {
     "platform": {
-      "php": "8.0.2"
+      "php": "8.2"
     },
     "allow-plugins": {
       "yiisoft/yii2-composer": true,

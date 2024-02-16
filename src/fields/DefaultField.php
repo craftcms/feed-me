@@ -62,7 +62,7 @@ class DefaultField extends Field implements FieldInterface
         // If it's exactly an empty string, that's okay and allowed. Normalising this will set it to
         // null, which means it won't get imported. Sometimes we want to have empty strings
         if ($value !== '') {
-            $value = $this->field->normalizeValue($value);
+            $value = $this->field->normalizeValue($value, $this->element);
         }
 
         // if we're setting empty values and the value is an empty string - return it
@@ -73,6 +73,6 @@ class DefaultField extends Field implements FieldInterface
         }
 
         // Lastly, get each field to prepare values how they should
-        return $this->field->serializeValue($value);
+        return $this->field->serializeValue($value, $this->element);
     }
 }

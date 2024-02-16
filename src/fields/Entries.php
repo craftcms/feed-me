@@ -93,7 +93,7 @@ class Entries extends Field implements FieldInterface
             foreach ($sources as $source) {
                 // When singles is selected as the only option to search in, it doesn't contain any ids...
                 if ($source == 'singles') {
-                    foreach (Craft::$app->getSections()->getAllSections() as $section) {
+                    foreach (Craft::$app->getEntries()->getAllSections() as $section) {
                         $sectionIds[] = ($section->type == 'single') ? $section->id : '';
                     }
                 } else {
@@ -211,11 +211,11 @@ class Entries extends Field implements FieldInterface
 
         // Bit of backwards-compatibility here, if not explicitly set, grab the first globally
         if (!$sectionId) {
-            $sectionId = Craft::$app->getSections()->getAllSectionIds()[0];
+            $sectionId = Craft::$app->getEntries()->getAllSectionIds()[0];
         }
 
         if (!$typeId) {
-            $typeId = Craft::$app->getSections()->getEntryTypesBySectionId($sectionId)[0]->id;
+            $typeId = Craft::$app->getEntries()->getEntryTypesBySectionId($sectionId)[0]->id;
         }
 
         $element = new EntryElement();
@@ -224,7 +224,7 @@ class Entries extends Field implements FieldInterface
         $element->typeId = $typeId;
 
         $siteId = Hash::get($this->feed, 'siteId');
-        $section = Craft::$app->getSections()->getSectionById($element->sectionId);
+        $section = Craft::$app->getEntries()->getSectionById($element->sectionId);
 
         if ($siteId) {
             $element->siteId = $siteId;
