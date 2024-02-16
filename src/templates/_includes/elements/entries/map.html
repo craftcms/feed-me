@@ -92,15 +92,15 @@
 
 {% set fields = fields|push({
     type: 'users',
-    name: 'Author',
-    handle: 'authorId',
+    name: section.maxAuthors == 1 ? 'Author' : 'Authors',
+    handle: 'authorIds',
     instructions: 'Entries will be assigned to the user in this field. If the field does not match any existing member, the default author will be assigned.'|t('feed-me'),
     default: {
         type: 'elementselect',
         options: {
             elementType: 'craft\\elements\\User',
-            selectionLabel: "Default Author"|t('feed-me'),
-            limit: 1,
+            selectionLabel: section.maxAuthors == 1 ? "Default Author"|t('feed-me') : "Default Authors"|t('feed-me'),
+            limit: section.maxAuthors,
         },
     },
 }) %}

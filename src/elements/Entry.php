@@ -298,14 +298,14 @@ class Entry extends Element
     /**
      * @param $feedData
      * @param $fieldInfo
-     * @return int|null
+     * @return array|null
      * @throws Throwable
      * @throws ElementNotFoundException
      * @throws Exception
      */
-    protected function parseAuthorId($feedData, $fieldInfo): ?int
+    protected function parseAuthorIds($feedData, $fieldInfo): ?array
     {
-        $value = $this->fetchSimpleValue($feedData, $fieldInfo);
+        $values = $this->fetchArrayValue($feedData, $fieldInfo);
         $default = DataHelper::fetchDefaultArrayValue($fieldInfo);
 
         $match = Hash::get($fieldInfo, 'options.match');
@@ -313,29 +313,28 @@ class Entry extends Element
         $node = Hash::get($fieldInfo, 'node');
 
         // Element lookups must have a value to match against
-        if ($value === null || $value === '') {
+        if (empty($values)) {
             return null;
         }
 
-        if ($node === 'usedefault' || $value === $default) {
+        if ($node === 'usedefault' || $values === $default) {
             $match = 'elements.id';
         }
 
-        if (is_array($value)) {
-            $value = $value[0];
-        }
+        $matchedIds = null;
+        foreach ($values as $value) {
+            if ($match === 'fullName') {
+                $element = UserElement::findOne(['search' => $value, 'status' => null]);
+            } else {
+                $element = UserElement::find()
+                    ->status(null)
+                    ->andWhere(['=', $match, $value])
+                    ->one();
+            }
 
-        if ($match === 'fullName') {
-            $element = UserElement::findOne(['search' => $value, 'status' => null]);
-        } else {
-            $element = UserElement::find()
-                ->status(null)
-                ->andWhere(['=', $match, $value])
-                ->one();
-        }
-
-        if ($element) {
-            return $element->id;
+            if ($element) {
+                $matchedIds[] = $element->id;
+            }
         }
 
         // Check if we should create the element. But only if email is provided (for the moment)
@@ -350,9 +349,9 @@ class Entry extends Element
                 Plugin::info('Author `#{id}` added.', ['id' => $element->id]);
             }
 
-            return $element->id;
+            $matchedIds[] = $element->id;
         }
 
-        return null;
+        return $matchedIds;
     }
 }
