@@ -68,7 +68,7 @@ class Country extends Field implements FieldInterface
         // if we're looking by label - look for the keys
         if ($match === 'label') {
             $found = array_filter($options, function($option) use ($value) {
-                 return strcasecmp($option, $value) === 0;
+                return strcasecmp($option, $value) === 0;
             });
 
             if (!empty($found)) {
