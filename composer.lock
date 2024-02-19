@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0c490f967d1ceba3d16685b0c79a669b",
+    "content-hash": "528c788f6873ddcec0ff0ce656d839c3",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -2029,34 +2029,39 @@
         },
         {
             "name": "league/csv",
-            "version": "9.8.0",
+            "version": "9.14.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/csv.git",
-                "reference": "9d2e0265c5d90f5dd601bc65ff717e05cec19b47"
+                "reference": "34bf0df7340b60824b9449b5c526fcc3325070d5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/csv/zipball/9d2e0265c5d90f5dd601bc65ff717e05cec19b47",
-                "reference": "9d2e0265c5d90f5dd601bc65ff717e05cec19b47",
+                "url": "https://api.github.com/repos/thephpleague/csv/zipball/34bf0df7340b60824b9449b5c526fcc3325070d5",
+                "reference": "34bf0df7340b60824b9449b5c526fcc3325070d5",
                 "shasum": ""
             },
             "require": {
+                "ext-filter": "*",
                 "ext-json": "*",
                 "ext-mbstring": "*",
-                "php": "^7.4 || ^8.0"
+                "php": "^8.1.2"
             },
             "require-dev": {
-                "ext-curl": "*",
+                "doctrine/collections": "^2.1.4",
                 "ext-dom": "*",
-                "friendsofphp/php-cs-fixer": "^v3.4.0",
-                "phpstan/phpstan": "^1.3.0",
-                "phpstan/phpstan-phpunit": "^1.0.0",
-                "phpstan/phpstan-strict-rules": "^1.1.0",
-                "phpunit/phpunit": "^9.5.11"
+                "ext-xdebug": "*",
+                "friendsofphp/php-cs-fixer": "^v3.22.0",
+                "phpbench/phpbench": "^1.2.15",
+                "phpstan/phpstan": "^1.10.50",
+                "phpstan/phpstan-deprecation-rules": "^1.1.4",
+                "phpstan/phpstan-phpunit": "^1.3.15",
+                "phpstan/phpstan-strict-rules": "^1.5.2",
+                "phpunit/phpunit": "^10.5.3",
+                "symfony/var-dumper": "^6.4.0"
             },
             "suggest": {
-                "ext-dom": "Required to use the XMLConverter and or the HTMLConverter classes",
+                "ext-dom": "Required to use the XMLConverter and the HTMLConverter classes",
                 "ext-iconv": "Needed to ease transcoding CSV using iconv stream filters"
             },
             "type": "library",
@@ -2109,7 +2114,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-01-04T00:13:07+00:00"
+            "time": "2023-12-29T07:34:53+00:00"
         },
         {
             "name": "mikehaertl/php-shellcommand",
