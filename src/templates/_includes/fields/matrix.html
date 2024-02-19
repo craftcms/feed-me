@@ -19,20 +19,20 @@
     {% endnamespace %}
 </div>
 
-{% for entrytype in field.getEntryTypes() %}
-    {% if entrytype.fields|length %}
+{% for entryType in field.getEntryTypes() %}
+    {% if entryType.fields|length %}
         <tr class="complex-field complex-field-header">
             <td class="col-field">
                 <div class="field">
                     <div class="heading">
-                        <label class="">{{ name }} - {{ entrytype.name }}</label>
+                        <label class="">{{ name }} - {{ entryType.name }}</label>
                     </div>
                 </div>
             </td>
 
             <td class="col-map" colspan="2">
                 <div class="field-extra-settings">
-                    {% set blockPath = [ handle, 'blocks', entrytype.handle ] %}
+                    {% set blockPath = [ handle, 'blocks', entryType.handle ] %}
 
                     {% set disabled = hash_get(feed.fieldMapping, blockPath|join('.') ~ '.disabled') ?: '' %}
 
@@ -48,9 +48,9 @@
             </td>
         </tr>
 
-        {#{% set fields = [] %}
+        {% set fields = [] %}
 
-        {% if entrytype.hasTitleField %}
+        {% if entryType.hasTitleField %}
             {% set fields = fields|push({
                 name: 'Title',
                 handle: 'title',
@@ -60,7 +60,7 @@
             }) %}
         {% endif %}
 
-        {% if entrytype.showSlugField %}
+        {% if entryType.showSlugField %}
             {% set fields = fields|push({
                 name: 'Slug',
                 handle: 'slug',
@@ -69,30 +69,50 @@
                     type: 'text',
                 },
             }) %}
-        {% endif %}#}
+        {% endif %}
 
         {% for field in fields %}
             {% set template = field.type ?? 'default' %}
-            {% set parentPath = [ handle, 'blocks', entrytype.handle, entrytypefield.handle ] %}
+            {% set parentPath = [ handle, 'blocks', entryType.handle, 'attributes', field.handle ] %}
             {% set variables = field|merge({ feed: feed, feedData: feedData, attribute: true, path: parentPath }) %}
 
             {% include 'feed-me/_includes/fields/' ~ template ignore missing with variables only %}
         {% endfor %}
 
-        {% for entrytypefield in entrytype.getFieldLayout().getCustomFields() %}
-            {% set nameLabel = entrytype.name ~ ': ' ~ entrytypefield.name %}
-            {% set instructionsHandle = handle ~ '[' ~ entrytype.handle ~ '][' ~ entrytypefield.handle ~ ']' %}
+        {% set tabs = [] %}
 
-            {% set parentPath = [ handle, 'blocks', entrytype.handle, 'fields', entrytypefield.handle ] %}
+        {% if entryType.fieldLayoutId %}
+            {% set tabs = craft.app.fields.getLayoutById(entryType.fieldLayoutId).getTabs() %}
 
-            {% set fieldClass = craft.feedme.fields.getRegisteredField(className(entrytypefield)) %}
-            {% set template = fieldClass.getMappingTemplate() %}
+            {% for tab in tabs %}
+                <hr>
 
-            {% include template ignore missing with {
-                field: entrytypefield,
-                handle: entrytypefield.handle,
-                path: parentPath,
-            } %}
-        {% endfor %}
+                <h2>{{ tab.name }} Fields</h2>
+
+                {% for layoutField in tab.getElements()|filter(e => e is instance of('craft\\fieldlayoutelements\\CustomField')) %}
+                    {% set field = layoutField.getField() %}
+                    {% set fieldClass = craft.feedme.fields.getRegisteredField(className(field)) %}
+                    {% set template = fieldClass.getMappingTemplate() %}
+
+                    {% set nameLabel = entryType.name ~ ': ' ~ field.name %}
+                    {% set instructionsHandle = handle ~ '[' ~ entryType.handle ~ '][' ~ field.handle ~ ']' %}
+
+                    {% set parentPath = [ handle, 'blocks', entryType.handle, 'fields', field.handle ] %}
+
+                    {% set variables = {
+                        name: field.name,
+                        handle: field.handle,
+                        feed: feed,
+                        feedData: feedData,
+                        field: field,
+                        fieldClass: fieldClass,
+                        path: parentPath
+                    }
+                    %}
+
+                    {% include template ignore missing with variables only %}
+                {% endfor %}
+            {% endfor %}
+        {% endif %}
     {% endif %}
 {% endfor %}

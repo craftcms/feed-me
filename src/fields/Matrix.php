@@ -48,6 +48,7 @@ class Matrix extends Field implements FieldInterface
     public function parseField(): mixed
     {
         $preppedData = [];
+        $attributeData = [];
         $fieldData = [];
         $complexFields = [];
 
@@ -63,6 +64,7 @@ class Matrix extends Field implements FieldInterface
         foreach ($this->feedData as $nodePath => $value) {
             // Get the field mapping info for this node in the feed
             $fieldInfo = $this->_getFieldMappingInfoForNodePath($nodePath, $blocks);
+            $attributeInfo = $this->_getAttributeMappingInfoForNodePath($nodePath, $blocks);
             $nodePathSegments = explode('/', $nodePath);
 
             // If this is data concerning our Matrix field and blocks
@@ -99,6 +101,21 @@ class Matrix extends Field implements FieldInterface
                 }
             }
 
+            if ($attributeInfo) {
+                $blockHandle = $attributeInfo['blockHandle'];
+                $subFieldHandle = $attributeInfo['subFieldHandle'];
+
+                $key = $this->_getBlockKey($nodePathSegments, $blockHandle, $subFieldHandle);
+
+                $parsedValue = $value;
+
+                if (isset($attributeData[$key]) && is_array($attributeData[$key])) {
+                    $attributeData[$key] = is_array($parsedValue) ? array_merge_recursive($attributeData[$key], $parsedValue) : $attributeData[$key];
+                } else {
+                    $attributeData[$key] = $parsedValue;
+                }
+            }
+
             foreach ($blocks as $blockHandle => $fields) {
                 foreach ($fields['fields'] as $fieldHandle => $fieldInfo) {
                     $node = Hash::get($fieldInfo, 'node');
@@ -107,6 +124,15 @@ class Matrix extends Field implements FieldInterface
 
                         $parsedValue = DataHelper::fetchSimpleValue($this->feedData, $fieldInfo);
                         $fieldData[$key] = $parsedValue;
+                    }
+                }
+                foreach ($fields['attributes'] as $fieldHandle => $fieldInfo) {
+                    $node = Hash::get($fieldInfo, 'node');
+                    if ($node === 'usedefault') {
+                        $key = $this->_getBlockKey($nodePathSegments, $blockHandle, $fieldHandle);
+
+                        $parsedValue = DataHelper::fetchSimpleValue($this->feedData, $fieldInfo);
+                        $attributeData[$key] = $parsedValue;
                     }
                 }
             }
@@ -135,6 +161,7 @@ class Matrix extends Field implements FieldInterface
         }
 
         ksort($fieldData, SORT_NUMERIC);
+        ksort($attributeData, SORT_NUMERIC);
 
         // $order = 0;
 
@@ -157,6 +184,15 @@ class Matrix extends Field implements FieldInterface
             // otherwise enhanced matrix data comparison will always think the data has changed
             $preppedData[$blockIndex . '.collapsed'] = false;
             $preppedData[$blockIndex . '.fields.' . $subFieldHandle] = $value;
+        }
+
+        foreach ($attributeData as $blockSubFieldHandle => $value) {
+            $handles = explode('.', $blockSubFieldHandle);
+            // Inclusion of block handle here prevents blocks of different types from being merged together
+            $blockIndex = 'new' . $handles[1] . ((int)$handles[0] + 1);
+            $subFieldHandle = $handles[2];
+
+            $preppedData[$blockIndex . '.' . $subFieldHandle] = $value;
         }
 
         // if there's nothing in the prepped data, return null, as if mapping doesn't exist
@@ -252,6 +288,47 @@ class Matrix extends Field implements FieldInterface
                         'subFieldInfo' => $subFieldInfo,
                         'nodePath' => $nodePath,
                         'isComplexField' => false,
+                    ];
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param $nodePath
+     * @param $blocks
+     * @return array|null|string
+     */
+    private function _getAttributeMappingInfoForNodePath($nodePath, $blocks): ?array
+    {
+        foreach ($blocks as $blockHandle => $blockInfo) {
+            $fields = Hash::get($blockInfo, 'attributes');
+
+            $feedPath = preg_replace('/(\/\d+\/)/', '/', $nodePath);
+            $feedPath = preg_replace('/^(\d+\/)|(\/\d+)/', '', $feedPath);
+
+            foreach ($fields as $subFieldHandle => $subFieldInfo) {
+                $node = Hash::get($subFieldInfo, 'node');
+
+                $nestedFieldNodes = Hash::extract($subFieldInfo, 'attributes.{*}.node');
+
+                if ($nestedFieldNodes) {
+                    foreach ($nestedFieldNodes as $nestedFieldNode) {
+                        if ($feedPath == $nestedFieldNode) {
+                            return [
+                                'blockHandle' => $blockHandle,
+                                'subFieldHandle' => $subFieldHandle,
+                            ];
+                        }
+                    }
+                }
+
+                if ($feedPath == $node) {
+                    return [
+                        'blockHandle' => $blockHandle,
+                        'subFieldHandle' => $subFieldHandle,
                     ];
                 }
             }
