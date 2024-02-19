@@ -40,8 +40,8 @@
   "require-dev": {
     "craftcms/ecs": "dev-main",
     "craftcms/phpstan": "dev-main",
-    "codeception/codeception": "^4.0.0",
-    "codeception/module-asserts": "^1.3"
+    "codeception/codeception": "^5.0.11",
+    "codeception/module-asserts": "^3.0.0"
   },
   "autoload": {
     "psr-4": {
