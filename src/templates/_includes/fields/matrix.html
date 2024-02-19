@@ -14,105 +14,140 @@
 {% set classes = ['complex-field'] %}
 
 <div class="additional-mapping-fields">
+    {% if handle is defined %}
     {% namespace 'fieldMapping[' ~ handle ~ ']' %}
         <input type="text" name="field" value="{{ className(field) }}">
     {% endnamespace %}
+    {% endif %}
 </div>
 
-{% for entryType in field.getEntryTypes() %}
-    {% if entryType.fields|length %}
-        <tr class="complex-field complex-field-header">
-            <td class="col-field">
-                <div class="field">
-                    <div class="heading">
-                        <label class="">{{ name }} - {{ entryType.name }}</label>
+{% if field is defined %}
+    {% for entryType in field.getEntryTypes() %}
+        {% if entryType.fields|length %}
+            <tr class="complex-field complex-field-header">
+                <td class="col-field">
+                    <div class="field">
+                        <div class="heading">
+                            <label class="">{{ name }} - {{ entryType.name }}</label>
+                        </div>
+                    </div>
+                </td>
+
+                <td class="col-map" colspan="2">
+                    <div class="field-extra-settings">
+                        {% set blockPath = [ handle, 'blocks', entryType.handle ] %}
+
+                        {% set disabled = hash_get(feed.fieldMapping, blockPath|join('.') ~ '.disabled') ?: '' %}
+
+                        {% namespace 'fieldMapping[' ~ blockPath|join('][') ~ ']' %}
+                            {{ feedMeMacro.checkbox({
+                                label: 'Disabled'|t('feed-me'),
+                                name: 'disabled',
+                                value: 1,
+                                checked: disabled,
+                            }) }}
+                        {% endnamespace %}
+                    </div>
+                </td>
+            </tr>
+
+            {% set fields = [] %}
+
+            {% if entryType.hasTitleField %}
+                {% set fields = fields|push({
+                    name: 'Title',
+                    handle: 'title',
+                    default: {
+                        type: 'text',
+                    },
+                }) %}
+            {% endif %}
+
+            {% if entryType.showSlugField %}
+                {% set fields = fields|push({
+                    name: 'Slug',
+                    handle: 'slug',
+                    instructions: 'If not set, the Slug will be automatically created from Title.'|t('feed-me'),
+                    default: {
+                        type: 'text',
+                    },
+                }) %}
+            {% endif %}
+
+            {% for field in fields %}
+                {% set template = field.type ?? 'default' %}
+                {% set parentPath = [ handle, 'blocks', entryType.handle, 'attributes', field.handle ] %}
+                {% set variables = field|merge({ feed: feed, feedData: feedData, attribute: true, path: parentPath }) %}
+
+                {% include 'feed-me/_includes/fields/' ~ template ignore missing with variables only %}
+            {% endfor %}
+
+            {% set tabs = [] %}
+
+            {% if entryType.fieldLayoutId %}
+                {% set tabs = craft.app.fields.getLayoutById(entryType.fieldLayoutId).getTabs() %}
+
+                {% for tab in tabs %}
+                    <hr>
+
+                    <h2>{{ tab.name }} Fields</h2>
+
+                    {% for layoutField in tab.getElements()|filter(e => e is instance of('craft\\fieldlayoutelements\\CustomField')) %}
+                        {% set field = layoutField.getField() %}
+                        {% set fieldClass = craft.feedme.fields.getRegisteredField(className(field)) %}
+                        {% set template = fieldClass.getMappingTemplate() %}
+
+                        {% set nameLabel = entryType.name ~ ': ' ~ field.name %}
+                        {% set instructionsHandle = handle ~ '[' ~ entryType.handle ~ '][' ~ field.handle ~ ']' %}
+
+                        {% set parentPath = [ handle, 'blocks', entryType.handle, 'fields', field.handle ] %}
+
+                        {% set variables = {
+                            name: field.name,
+                            handle: field.handle,
+                            feed: feed,
+                            feedData: feedData,
+                            field: field,
+                            fieldClass: fieldClass,
+                            path: parentPath
+                        }
+                        %}
+
+                        {% if fieldClass is instance of ('craft\\feedme\\fields\\Matrix') %}
+                            {% include template ignore missing with {
+                                nestedField: true,
+                                nameLabel: field.name,
+                                instructionsHandle: field.handle,
+                                instructions: 'Importing to a matrix in a matrix isn\'t yet supported.'
+                            } only %}
+                        {% else %}
+                            {% include template ignore missing with variables only %}
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+{% if field is not defined and nestedField is defined %}
+    <tr>
+        <td class="col-field">
+            <div class="field">
+                <div class="heading">
+                    <label>{{ nameLabel|t('site') }}</label>
+                    <div class="instructions">
+                        <code>{{ instructionsHandle }}</code>
                     </div>
                 </div>
-            </td>
+            </div>
+        </td>
 
-            <td class="col-map" colspan="2">
-                <div class="field-extra-settings">
-                    {% set blockPath = [ handle, 'blocks', entryType.handle ] %}
+        <td class="col-map">
+            {{ instructions }}
+        </td>
 
-                    {% set disabled = hash_get(feed.fieldMapping, blockPath|join('.') ~ '.disabled') ?: '' %}
-
-                    {% namespace 'fieldMapping[' ~ blockPath|join('][') ~ ']' %}
-                        {{ feedMeMacro.checkbox({
-                            label: 'Disabled'|t('feed-me'),
-                            name: 'disabled',
-                            value: 1,
-                            checked: disabled,
-                        }) }}
-                    {% endnamespace %}
-                </div>
-            </td>
-        </tr>
-
-        {% set fields = [] %}
-
-        {% if entryType.hasTitleField %}
-            {% set fields = fields|push({
-                name: 'Title',
-                handle: 'title',
-                default: {
-                    type: 'text',
-                },
-            }) %}
-        {% endif %}
-
-        {% if entryType.showSlugField %}
-            {% set fields = fields|push({
-                name: 'Slug',
-                handle: 'slug',
-                instructions: 'If not set, the Slug will be automatically created from Title.'|t('feed-me'),
-                default: {
-                    type: 'text',
-                },
-            }) %}
-        {% endif %}
-
-        {% for field in fields %}
-            {% set template = field.type ?? 'default' %}
-            {% set parentPath = [ handle, 'blocks', entryType.handle, 'attributes', field.handle ] %}
-            {% set variables = field|merge({ feed: feed, feedData: feedData, attribute: true, path: parentPath }) %}
-
-            {% include 'feed-me/_includes/fields/' ~ template ignore missing with variables only %}
-        {% endfor %}
-
-        {% set tabs = [] %}
-
-        {% if entryType.fieldLayoutId %}
-            {% set tabs = craft.app.fields.getLayoutById(entryType.fieldLayoutId).getTabs() %}
-
-            {% for tab in tabs %}
-                <hr>
-
-                <h2>{{ tab.name }} Fields</h2>
-
-                {% for layoutField in tab.getElements()|filter(e => e is instance of('craft\\fieldlayoutelements\\CustomField')) %}
-                    {% set field = layoutField.getField() %}
-                    {% set fieldClass = craft.feedme.fields.getRegisteredField(className(field)) %}
-                    {% set template = fieldClass.getMappingTemplate() %}
-
-                    {% set nameLabel = entryType.name ~ ': ' ~ field.name %}
-                    {% set instructionsHandle = handle ~ '[' ~ entryType.handle ~ '][' ~ field.handle ~ ']' %}
-
-                    {% set parentPath = [ handle, 'blocks', entryType.handle, 'fields', field.handle ] %}
-
-                    {% set variables = {
-                        name: field.name,
-                        handle: field.handle,
-                        feed: feed,
-                        feedData: feedData,
-                        field: field,
-                        fieldClass: fieldClass,
-                        path: parentPath
-                    }
-                    %}
-
-                    {% include template ignore missing with variables only %}
-                {% endfor %}
-            {% endfor %}
-        {% endif %}
-    {% endif %}
-{% endfor %}
+        <td class="col-default">
+        </td>
+    </tr>
+{% endif %}
