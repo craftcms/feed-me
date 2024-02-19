@@ -33,7 +33,7 @@
     "craftcms/cms": "^5.0.0-beta.2",
     "cakephp/utility": "^5.0.0",
     "jakeasmith/http_build_url": "^1.0",
-    "nesbot/carbon": "^1.22 || ^2.10",
+    "nesbot/carbon": "^3.0.0",
     "league/csv": "^8.2 || ^9.0",
     "seld/jsonlint": "^1.7"
   },
