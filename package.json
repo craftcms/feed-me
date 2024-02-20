@@ -2,6 +2,9 @@
   "private": true,
   "name": "@craftcms/feed-me",
   "main": "webpack.config.js",
+  "engines": {
+    "node": ">=20"
+  },
   "browserslist": [
     "extends @craftcms/browserslist-config"
   ],
