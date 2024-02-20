@@ -15,7 +15,7 @@
     "vuepress": "^1.5.2",
     "vuepress-plugin-sitemap": "^2.0.0",
     "vuepress-theme-craftdocs": "^2.0.8",
-    "husky": "^7.0.4",
+    "husky": "^8.0.3",
     "lint-staged": "^12.4.0",
     "prettier": "^2.7.1"
   },
