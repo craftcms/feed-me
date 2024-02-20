@@ -211,7 +211,7 @@ class Fields extends Component
         // get the field by handle, check if the type hasn't changed since the feed was last saved;
         // if it hasn't changed - proceed as before
         // if it has changed - assume that we've entrified and adjust the $fieldClassHandle
-        $field = Craft::$app->getFields()->getFieldByHandle($fieldHandle);
+        $field = $element->getFieldLayout()->getFieldByHandle($fieldHandle);
         if (
             !$field instanceof $fieldClassHandle &&
             ($field instanceof \craft\fields\Categories || $field instanceof \craft\fields\Tags)
