@@ -335,21 +335,21 @@ class Entry extends Element
             if ($element) {
                 $matchedIds[] = $element->id;
             }
-        }
 
-        // Check if we should create the element. But only if email is provided (for the moment)
-        if ($create && $match === 'email') {
-            $element = new UserElement();
-            $element->username = $value;
-            $element->email = $value;
+            // Check if we should create the element. But only if email is provided (for the moment)
+            if ($create && $match === 'email') {
+                $element = new UserElement();
+                $element->username = $value;
+                $element->email = $value;
 
-            if (!Craft::$app->getElements()->saveElement($element, true, true, Hash::get($this->feed, 'updateSearchIndexes'))) {
-                Plugin::error('Entry error: Could not create author - `{e}`.', ['e' => Json::encode($element->getErrors())]);
-            } else {
-                Plugin::info('Author `#{id}` added.', ['id' => $element->id]);
+                if (!Craft::$app->getElements()->saveElement($element, true, true, Hash::get($this->feed, 'updateSearchIndexes'))) {
+                    Plugin::error('Entry error: Could not create author - `{e}`.', ['e' => Json::encode($element->getErrors())]);
+                } else {
+                    Plugin::info('Author `#{id}` added.', ['id' => $element->id]);
+                }
+
+                $matchedIds[] = $element->id;
             }
-
-            $matchedIds[] = $element->id;
         }
 
         return $matchedIds;
