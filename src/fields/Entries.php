@@ -141,19 +141,10 @@ class Entries extends Field implements FieldInterface
                 }
             }
 
-            // Because we can match on element attributes and custom fields, AND we're directly using SQL
-            // queries in our `where` below, we need to check if we need a prefix for custom fields accessing
-            // the content table.
-            $columnName = $match;
-
-            if (Craft::$app->getFields()->getFieldByHandle($match)) {
-                $columnName = Craft::$app->getFields()->oldFieldColumnPrefix . $match;
-            }
-
             $criteria['status'] = null;
             $criteria['sectionId'] = $sectionIds;
             $criteria['limit'] = $limit;
-            $criteria['where'] = ['=', $columnName, $dataValue];
+            $criteria[$match] = $dataValue;
 
             Craft::configure($query, $criteria);
 

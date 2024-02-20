@@ -136,20 +136,11 @@ class Users extends Field implements FieldInterface
                 break;
             }
 
-            // Because we can match on element attributes and custom fields, AND we're directly using SQL
-            // queries in our `where` below, we need to check if we need a prefix for custom fields accessing
-            // the content table.
-            $columnName = $match;
-
-            if (Craft::$app->getFields()->getFieldByHandle($match)) {
-                $columnName = Craft::$app->getFields()->oldFieldColumnPrefix . $match;
-            }
-
             $ids = [];
             $criteria['status'] = null;
             $criteria['groupId'] = $groupIds;
             $criteria['limit'] = $limit;
-            $criteria['where'] = ['=', $columnName, $dataValue];
+            $criteria[$match] = $dataValue;
 
             // If the only source for the Users field is "admins" we don't have to bother with this query.
             if (!($isAdmin && empty($groupIds))) {
