@@ -191,6 +191,7 @@ $(function () {
         .parents('.field-extra-settings')
         .find('.element-group-entrytype');
       var sections = $container.data('items');
+      var selectedTypeId = $container.data('selectedtypeid');
 
       // var sections = $(this).parents('.element-sub-group').data('items');
       var entryType = 'item_' + $(this).val();
@@ -202,7 +203,14 @@ $(function () {
       var newOptions = '';
       $.each(entryTypes, function (index, value) {
         if (index) {
-          newOptions += '<option value="' + index + '">' + value + '</option>';
+          newOptions +=
+            '<option value="' +
+            index +
+            '"' +
+            (index == selectedTypeId ? ' selected="selected"' : '') +
+            '>' +
+            value +
+            '</option>';
         }
       });
 
