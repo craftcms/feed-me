@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Feed Me now requires Craft 4.6 or later.
+- Added support for importing into the native [Country](https://craftcms.com/docs/4.x/country-fields.html) field. ([#1410](https://github.com/craftcms/feed-me/pull/1410))
 - Fixed a bug where the Entry Type wouldn’t be remembered for related Entry fields in a feed’s mappings. ([#1387](https://github.com/craftcms/feed-me/issues/1387), [#1390](https://github.com/craftcms/feed-me/pull/1390))
 
 ## 5.3.0 - 2023-11-27
