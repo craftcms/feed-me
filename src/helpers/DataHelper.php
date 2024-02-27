@@ -279,6 +279,12 @@ class DataHelper
                 $newValue = null;
             }
 
+            // If the values match exactly they are not changed
+            if ($existingValue === $newValue) {
+                unset($trackedChanges[$key]);
+                continue;
+            }
+
             // If array key & values are already within the existing array
             if (is_array($newValue) && is_array($existingValue) && Hash::contains($existingValue,$newValue)) {
                 unset($trackedChanges[$key]);
@@ -445,13 +451,30 @@ class DataHelper
     private static function _recursiveCompare($firstValue, $secondValue): bool
     {
         if (is_array($firstValue) && is_array($secondValue)) {
-            // Ignore values that are `null` or empty arrays
+            // Ignore values that are `null`, empty strings, empty arrays or empty dates
             $firstValue = array_filter($firstValue, static function($value) {
-                return !($value === null || $value === []);
+                return
+                    !($value === null || $value === '' || $value === []) &&
+                    !(is_array($value) && isset($value['date']) && $value['date'] === '');
             });
             $secondValue = array_filter($secondValue, static function($value) {
-                return !($value === null || $value === []);
+                return
+                    !($value === null || $value === '' || $value === []) &&
+                    !(is_array($value) && isset($value['date']) && $value['date'] === '');
             });
+
+            // Ignore extra SuperTable `order` and `enabled` fields when comparing
+            if (isset($firstValue['type'])
+                && isset($firstValue['fields'])
+                && isset($secondValue['type'])
+                && isset($secondValue['fields'])
+            ) {
+                foreach (['order', 'enabled'] as $field) {
+                    if (!isset($firstValue[$field])) {
+                        unset($secondValue[$field]);
+                    }
+                }
+            }
 
             // Both values must have the same keys (ignoring order)
             $firstKeys = array_keys($firstValue);
@@ -461,12 +484,12 @@ class DataHelper
             }
 
             // Each key must be the same value
-            foreach ($firstValue as $key => $value) {
+            foreach ($firstValue as $key => $existingValue) {
                 $newValue = $secondValue[$key];
 
                 // If date value, make sure to cast it as a string to compare
-                if ($value instanceof DateTime || DateTimeHelper::isIso8601($value)) {
-                    $value = Db::prepareDateForDb($value);
+                if ($existingValue instanceof DateTime || DateTimeHelper::isIso8601($existingValue)) {
+                    $existingValue = Db::prepareDateForDb($existingValue);
                 }
 
                 // If date value, make sure to cast it as a string to compare
@@ -474,12 +497,7 @@ class DataHelper
                     $newValue = Db::prepareDateForDb($newValue);
                 }
 
-                // If an empty 'date' value, it's the same as null
-                if (is_array($newValue) && isset($newValue['date']) && $newValue['date'] === '') {
-                    $newValue = null;
-                }
-
-                if (!self::_recursiveCompare($value, $newValue)) {
+                if (!self::_recursiveCompare($existingValue, $newValue)) {
                     return false;
                 }
             }
@@ -487,9 +505,14 @@ class DataHelper
             return true;
         }
 
+        // For now this does not seem relevant
         if (is_object($firstValue) && is_object($secondValue)) {
-            // For now this does not seem relevant
             return false;
+        }
+
+        // Perform a loose compare when two values are numeric
+        if (is_numeric($firstValue) && is_numeric($secondValue)) {
+            return $firstValue == $secondValue;
         }
 
         return $firstValue === $secondValue;
