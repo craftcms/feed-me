@@ -100,13 +100,14 @@
             {% endfor %}
 
             {% if sources and sources[0] %}
-                <div class="element-group element-group-entrytype" data-items="{{ entryTypes|json_encode }}">
+                {% set selectedTypeId = hash_get(feed.fieldMapping, optionsPath ~ '.group.typeId') ?: '' %}
+                <div class="element-group element-group-entrytype" data-items="{{ entryTypes|json_encode }}" data-selectedTypeId="{{ selectedTypeId }}">
                     <span>{{ 'Type:'|t('feed-me') }}</span>
 
                     {{ forms.selectField({
                         name: 'options[group][typeId]',
                         class: '',
-                        value: hash_get(feed.fieldMapping, optionsPath ~ '.group.typeId') ?: '',
+                        value: selectedTypeId,
                         options: entryTypes['item_' ~ sources[0].id] ?? [],
                     }) }}
                 </div>
