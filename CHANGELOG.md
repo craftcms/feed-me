@@ -1,6 +1,6 @@
 # Release Notes for Feed Me
 
-## Unreleased
+## 5.4.0 - 2024-02-25
 
 - Feed Me now requires Craft 4.6 or later.
 - Added support for importing into the native [Country](https://craftcms.com/docs/4.x/country-fields.html) field. ([#1410](https://github.com/craftcms/feed-me/pull/1410))
