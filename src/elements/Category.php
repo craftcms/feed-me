@@ -132,7 +132,7 @@ class Category extends Element
      * @throws ElementNotFoundException
      * @throws Exception
      */
-    protected function parseParent($feedData, $fieldInfo): ?int
+    protected function parseParentId($feedData, $fieldInfo): ?int
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
         $default = DataHelper::fetchDefaultArrayValue($fieldInfo);
