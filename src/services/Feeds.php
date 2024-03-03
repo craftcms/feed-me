@@ -7,11 +7,20 @@ use Craft;
 use craft\base\Component;
 use craft\db\ActiveQuery;
 use craft\db\Query;
+use craft\elements\Category;
+use craft\elements\Entry;
+use craft\elements\GlobalSet;
+use craft\elements\Tag;
+use craft\events\EntrifyCategoriesEvent;
+use craft\events\EntrifyGlobalSetEvent;
+use craft\events\EntrifyTagsEvent;
 use craft\feedme\errors\FeedException;
 use craft\feedme\events\FeedEvent;
 use craft\feedme\models\FeedModel;
 use craft\feedme\records\FeedRecord;
 use craft\helpers\Json;
+use craft\models\EntryType;
+use craft\models\Section;
 use Exception;
 use Throwable;
 
@@ -237,6 +246,39 @@ class Feeds extends Component
         return true;
     }
 
+    /**
+     * Adjust Category Feeds after entrification
+     *
+     * @param EntrifyCategoriesEvent $event
+     * @return void
+     */
+    public function entrifyCategoryFeeds(EntrifyCategoriesEvent $event): void
+    {
+        $this->_entrifyFeeds(Category::class, $event->section, $event->entryType, $event->categoryGroup->id);
+    }
+
+    /**
+     * Adjust Tag Feeds after entrification
+     *
+     * @param EntrifyTagsEvent $event
+     * @return void
+     */
+    public function entrifyTagFeeds(EntrifyTagsEvent $event): void
+    {
+        $this->_entrifyFeeds(Tag::class, $event->section, $event->entryType, $event->tagGroup->id);
+    }
+
+    /**
+     * Adjust Global Set Feeds after entrification
+     *
+     * @param EntrifyGlobalSetEvent $event
+     * @return void
+     */
+    public function entrifyGlobalSetFeeds(EntrifyGlobalSetEvent $event): void
+    {
+        $this->_entrifyFeeds(GlobalSet::class, $event->section, $event->entryType, ['globalSet' => $event->globalSet->id]);
+    }
+
 
     // Private Methods
     // =========================================================================
@@ -319,5 +361,46 @@ class Feeds extends Component
         }
 
         return $feedRecord;
+    }
+
+    /**
+     * Adjust the feeds after entrification.
+     *
+     * @param string $entrifiedElementClass class name of the entrified elements
+     * @param Section $section section to entrify to
+     * @param EntryType $entryType element type to entrify to
+     * @param int|array $entrifiedModelId id of the entrified model (category group, tag group or global set)
+     * @return void
+     */
+    private function _entrifyFeeds(
+        string $entrifiedElementClass,
+        Section $section,
+        EntryType $entryType,
+        int|array $entrifiedModelId
+    ): void
+    {
+        $allFeeds = $this->getFeeds();
+
+        foreach ($allFeeds as $feed) {
+            if ($feed->elementType === $entrifiedElementClass) {
+                // if, in the elementGroup, the key matches $elementType
+                // and the value for that key matches $elementGroup[from]
+                // (in case of GlobalSet, the value would be ['globalSet' => <globalSetId>])
+                if (isset($feed->elementGroup[$entrifiedElementClass]) &&
+                    $feed->elementGroup[$entrifiedElementClass] == $entrifiedModelId) {
+                    // change the elementType
+                    $feed->elementType = Entry::class;
+                    // in the elementGroup change the value for the $elementType key to an empty string
+                    $feed->elementGroup[$entrifiedElementClass] = "";
+                    // in the elementGroup change the value for the craft\elements\Entry key
+                    $feed->elementGroup[Entry::class] = [
+                        'section' => $section->id,
+                        'entryType' => $entryType->id,
+                    ];
+
+                    $this->saveFeed($feed);
+                }
+            }
+        }
     }
 }
