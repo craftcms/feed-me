@@ -77,7 +77,7 @@
             {% for field in fields %}
                 {% set template = field.type ?? 'default' %}
                 {% set parentPath = [ handle, 'blocks', entryType.handle, 'attributes', field.handle ] %}
-                {% set variables = field|merge({ feed: feed, feedData: feedData, attribute: true, path: parentPath }) %}
+                {% set variables = field|merge({ feed: feed, feedData: feedData, attribute: true, path: parentPath, classes: ['inner-matrix'] }) %}
 
                 {% include 'feed-me/_includes/fields/' ~ template ignore missing with variables only %}
             {% endfor %}
@@ -88,9 +88,17 @@
                 {% set tabs = craft.app.fields.getLayoutById(entryType.fieldLayoutId).getTabs() %}
 
                 {% for tab in tabs %}
-                    <hr>
-
-                    <h2>{{ tab.name }} Fields</h2>
+                    <tr class="inner-matrix complex-field-header">
+                        <td class="col-field">
+                            <div class="field">
+                                <div class="heading">
+                                    <label class="">{{ tab.name }} Fields</label>
+                                </div>
+                            </div>
+                        </td>
+                        <td></td>
+                        <td></td>
+                    </tr>
 
                     {% for layoutField in tab.getElements()|filter(e => e is instance of('craft\\fieldlayoutelements\\CustomField')) %}
                         {% set field = layoutField.getField() %}
@@ -109,7 +117,8 @@
                             feedData: feedData,
                             field: field,
                             fieldClass: fieldClass,
-                            path: parentPath
+                            path: parentPath,
+                            classes: ['inner-matrix']
                         }
                         %}
 
@@ -125,13 +134,14 @@
                         {% endif %}
                     {% endfor %}
                 {% endfor %}
+                </tr>
             {% endif %}
         {% endif %}
     {% endfor %}
 {% endif %}
 
 {% if field is not defined and nestedField is defined %}
-    <tr>
+    <tr class="inner-matrix">
         <td class="col-field">
             <div class="field">
                 <div class="heading">
@@ -144,7 +154,7 @@
         </td>
 
         <td class="col-map">
-            {{ instructions }}
+            <em>{{ instructions }}</em>
         </td>
 
         <td class="col-default">

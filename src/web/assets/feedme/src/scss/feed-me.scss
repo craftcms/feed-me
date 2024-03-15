@@ -100,39 +100,39 @@ body.ltr .table-feed-me .thin.action {
 .feedme-mapping {
   // table-layout: fixed;
   font-size: 13px;
-}
 
-.feedme-mapping th:nth-child(1) {
-  width: 25%;
-}
+  th:nth-child(1) {
+    width: 25%;
+  }
 
-.feedme-mapping th:nth-child(2) {
-  width: 40%;
-}
+  th:nth-child(2) {
+    width: 40%;
+  }
 
-.feedme-mapping th:nth-child(3) {
-  width: 25%;
-}
+  th:nth-child(3) {
+    width: 25%;
+  }
 
-.feedme-mapping td.col-field .field.instructions {
-  line-height: 18px;
-}
+  td.col-field .field.instructions {
+    line-height: 18px;
+  }
 
-.feedme-mapping td.col-map .field .heading {
-  font-size: 11px;
-}
+  td.col-map .field .heading {
+    font-size: 11px;
+  }
 
-.feedme-mapping td.col-map .field {
-  margin: 5px 0;
-}
+  td.col-map .field {
+    margin: 5px 0;
+  }
 
-.feedme-mapping td.col-field .field > .heading {
-  font-size: 12px;
-  margin-bottom: 0;
-}
+  td.col-field .field > .heading {
+    font-size: 12px;
+    margin-bottom: 0;
+  }
 
-.feedme-mapping td {
-  vertical-align: top;
+  td {
+    vertical-align: top;
+  }
 }
 
 // Hide the initial select field onload, because we're using Selectize. But - its a nasty UI shift before/after
@@ -172,6 +172,10 @@ body.ltr .table-feed-me .thin.action {
     user-select: none;
     pointer-events: none;
     @include right(9px);
+  }
+
+  &:not(.selectize)::after {
+    content: '';
   }
 
   &.selectize select {
@@ -328,25 +332,27 @@ body.ltr .table-feed-me .thin.action {
 // Sub-Element fields
 //
 
-.feedme-mapping .element-sub-field {
-  display: none;
-}
+.feedme-mapping {
+  .element-sub-field {
+    display: none;
 
-.feedme-mapping .element-sub-field td {
-  background: #fafafa;
-}
+    td {
+      background: #fafafa;
+    }
 
-.feedme-mapping .element-sub-field .col-field {
-  padding-left: 30px;
-}
+    .col-field {
+      padding-left: 30px;
+    }
 
-.feedme-mapping .element-sub-field .col-default {
-  padding-right: 30px;
-}
+    .col-default {
+      padding-right: 30px;
+    }
 
-.feedme-mapping .element-sub-field td.col-field .field > .heading {
-  font-size: 11px;
-  margin-bottom: 0;
+    td.col-field .field > .heading {
+      font-size: 11px;
+      margin-bottom: 0;
+    }
+  }
 }
 
 .feedme-mapping
@@ -388,50 +394,68 @@ body.ltr .table-feed-me .thin.action {
 // Complex fields like Matrix/Table
 //
 
-.feedme-mapping .complex-field td {
-  background: #fafafa;
-}
+.feedme-mapping {
+  .complex-field {
+    td {
+      background: #fafafa;
+    }
 
-.feedme-mapping .complex-field .col-field {
-  padding-left: 13px;
-}
+    .col-field {
+      padding-left: 13px;
+    }
 
-.feedme-mapping .complex-field .col-field .field > .heading {
-  font-size: 11px;
-}
+    .col-field .field > .heading {
+      font-size: 11px;
+    }
 
-.feedme-mapping .complex-field .col-field .field > .heading > .instructions {
-  margin-top: 0;
-  line-height: 12px;
-}
+    .col-field .field > .heading > .instructions {
+      margin-top: 0;
+      line-height: 12px;
+    }
 
-.feedme-mapping .complex-field td.col-map .field {
-  margin-bottom: 0;
-}
+    td.col-map .field {
+      margin-bottom: 0;
+    }
 
-.feedme-mapping .complex-field .col-default {
-  padding-right: 13px;
-}
+    .col-default {
+      padding-right: 13px;
+    }
+  }
 
-.feedme-mapping .complex-field-header td {
-  background: darken(#fafafa, 4%);
-}
+  .complex-field-header {
+    td {
+      background: darken(#fafafa, 4%);
+    }
 
-.feedme-mapping .complex-field-header + .complex-field-header {
-  display: none;
-}
+    & + .complex-field-header {
+      display: none;
+    }
 
-.feedme-mapping .complex-field-header .col-field {
-  padding-left: 13px;
-}
+    .col-field {
+      padding-left: 13px;
+    }
 
-.feedme-mapping .complex-field-header .col-field .field > .heading {
-  font-size: 14px;
-}
+    .col-field .field > .heading {
+      font-size: 14px;
+    }
 
-.feedme-mapping .complex-field-header .field-extra-settings .checkboxfield {
-  display: inline-block;
-  margin-right: 10px;
+    .field-extra-settings .checkboxfield {
+      display: inline-block;
+      margin-right: 10px;
+    }
+  }
+
+  .inner-matrix {
+    background-color: darken(#fafafa, 2%);
+
+    &:not(.complex-field-header) {
+      --hover-bg-color: var(--gray-100);
+    }
+
+    & + tr:not(.inner-matrix) {
+      box-shadow: 0px -1px 0px 0px var(--gray-100);
+    }
+  }
 }
 
 .additional-mapping-fields {
