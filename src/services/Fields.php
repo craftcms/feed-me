@@ -16,6 +16,7 @@ use craft\feedme\fields\Categories;
 use craft\feedme\fields\Checkboxes;
 use craft\feedme\fields\CommerceProducts;
 use craft\feedme\fields\CommerceVariants;
+use craft\feedme\fields\Country;
 use craft\feedme\fields\Date;
 use craft\feedme\fields\DefaultField;
 use craft\feedme\fields\DigitalProducts;
@@ -128,6 +129,7 @@ class Fields extends Component
                 Checkboxes::class,
                 CommerceProducts::class,
                 CommerceVariants::class,
+                Country::class,
                 Date::class,
                 Dropdown::class,
                 Entries::class,
