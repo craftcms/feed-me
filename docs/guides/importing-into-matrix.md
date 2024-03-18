@@ -2,6 +2,8 @@
 
 Importing into a Matrix field is like many other [Field Types](../content-mapping/field-types.md), however, this reference provides a practical example of how to structure your feed properly.
 
+For multi-site setups where matrix fields have per-site or localized content, a specific setup is needed. See [caveats](#caveats) below. 
+
 In this example, we'll be importing 2 Entries, which have a single Matrix field called Content Builder. The entry itself has a Featured Image `(Assets)` and Description `(Rich Text)` field. Our Page Builder Matrix field has 3 Blocktypes:
 
 - **Heading**
@@ -285,3 +287,17 @@ You should now have 2 brand new Entries with our Matrix data populated.
 ![Feedme Matrix Guide Finish1](../screenshots/feedme-matrix-guide-finish1.png)
 
 ![Feedme Matrix Guide Finish2](../screenshots/feedme-matrix-guide-finish2.png)
+
+## Caveats
+
+For multi-site setups, you need to pay special attention as to how matrix fields are propagated.
+Since Craft CMS 3.2RC1 these are the options available:
+
+- **Only save blocks to the site they were created in** – this is the same behavior as before pre 3.2RC1, if “Manage blocks on a per-site basis” was enabled.
+- **Save blocks to other sites in the same site group** – when saving an entry, all of its blocks will be saved to any other sites that are in the same site group as the current site.
+- **Save blocks to other sites with the same language** – when saving an entry, all of its blocks will be saved to any other sites that have the same language.
+- **Save blocks to all sites the owner element is saved in** – same behavior as before, if “Manage blocks on a per-site basis” was not enabled.
+
+If you need to import content to a site/language in a multi-site configuration, verify that the propagation method for matrix blocks is set to either one of the first three options above. This allows Feed Me to (re)create or overwrite content blocks only in the specific site targeted for import, instead of overwriting content for all sites.
+
+See issue #463 [Matrix content gets overwritten on import](https://github.com/craftcms/feed-me/issues/463) for reference and for updates.
