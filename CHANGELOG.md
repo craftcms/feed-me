@@ -1,5 +1,10 @@
 # Release Notes for Feed Me
 
+## 6.0.0 - 2024-03-19
+
+- Feed Me now requires Craft CMS 5.0.0-beta.2 or later.
+- Added support for importing into Icon fields.
+
 ## 5.4.0 - 2024-02-25
 
 - Feed Me now requires Craft 4.6 or later.
