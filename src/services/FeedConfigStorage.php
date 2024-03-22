@@ -42,18 +42,22 @@ class FeedConfigStorage extends Component
     }
 
     /**
-     * Reads feed data from a YAML file and processes each feed.
+     * Reads feed data from a YAML file and imports each feed.
      *
      * @return \stdClass The result object containing success flag, successful feeds, and failed feeds.
      * @throws \yii\base\InvalidConfigException If the configuration is invalid.
      */
     public function read(): \stdClass {
         $result = (object)["success" => true, "success_feeds" => [], "failed_feeds" => []];
+
+        // Delete all feeds
+        foreach(Plugin::getInstance()->getFeeds()->getFeeds() as $feed) {
+            Plugin::getInstance()->getFeeds()->deleteFeedById($feed['id']);
+        }
+        
         $fileName = $this->defaultFileName;
         $feeds = Yaml::parse(file_get_contents($fileName));
         foreach ($feeds as $feed) {
-            Plugin::getInstance()->getFeeds()->deleteFeedById($feed['id']);
-
             $record = new FeedRecord();
             $record->setAttributes($feed, false);
             $record->save(false);
