@@ -102,10 +102,15 @@ class Entry extends Element
             $section = $this->element->getSection();
         }
 
+        list($sectionId, $entryTypeId) = $this->getSectionAndElementGroupIdsFromUids(
+            $settings['elementGroup'][EntryElement::class]['section'],
+            $settings['elementGroup'][EntryElement::class]['entryType']
+        );
+
         $query = EntryElement::find()
             ->status(null)
-            ->sectionId($settings['elementGroup'][EntryElement::class]['section'])
-            ->typeId($settings['elementGroup'][EntryElement::class]['entryType']);
+            ->sectionId($sectionId)
+            ->typeId($entryTypeId);
 
         if (isset($section) && $section->propagationMethod === Section::PROPAGATION_METHOD_CUSTOM) {
             $query->site('*')
@@ -119,16 +124,37 @@ class Entry extends Element
         return $query;
     }
 
+
+    public function getSectionAndElementGroupIdsFromUids(string $sectionUid, string $elementGroupUid): array
+    {
+        $section = Craft::$app->sections->getSectionByUid($sectionUid);
+        $entryTypes = $section->getEntryTypes();
+        $entryTypeId = null;
+        foreach ($entryTypes as $entryType) {
+            if ($entryType->uid === $elementGroupUid) {
+                $entryTypeId = $entryType->id;
+                break;
+            }
+        }
+        return [$section->id, $entryTypeId];
+    }
+
     /**
      * @inheritDoc
      */
     public function setModel($settings): ElementInterface
     {
         $this->element = new EntryElement();
-        $this->element->sectionId = $settings['elementGroup'][EntryElement::class]['section'];
-        $this->element->typeId = $settings['elementGroup'][EntryElement::class]['entryType'];
 
-        $section = Craft::$app->getSections()->getSectionById($this->element->sectionId);
+        list($sectionId, $entryTypeId) = $this->getSectionAndElementGroupIdsFromUids(
+            $settings['elementGroup'][EntryElement::class]['section'],
+            $settings['elementGroup'][EntryElement::class]['entryType']
+        );
+
+        $this->element->sectionId = $sectionId;
+        $this->element->typeId = $entryTypeId;
+
+        $section = Craft::$app->getSections()->getSectionByUid($this->element->section->uid);
         $siteId = Hash::get($settings, 'siteId');
 
         if ($siteId) {
