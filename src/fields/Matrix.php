@@ -120,6 +120,9 @@ class Matrix extends Field implements FieldInterface
                 return null;
             }
             foreach ($blocks as $blockHandle => $fields) {
+                if (empty($fields['fields']) || !is_array($fields['fields'])) {
+                    return null;
+                }
                 foreach ($fields['fields'] as $fieldHandle => $fieldInfo) {
                     $node = Hash::get($fieldInfo, 'node');
                     if ($node === 'usedefault') {
@@ -128,6 +131,9 @@ class Matrix extends Field implements FieldInterface
                         $parsedValue = DataHelper::fetchSimpleValue($this->feedData, $fieldInfo);
                         $fieldData[$key] = $parsedValue;
                     }
+                }
+                if (empty($fields['attributes']) || !is_array($fields['attributes'])) {
+                    return null;
                 }
                 foreach ($fields['attributes'] as $fieldHandle => $fieldInfo) {
                     $node = Hash::get($fieldInfo, 'node');
@@ -213,7 +219,7 @@ class Matrix extends Field implements FieldInterface
             if (
                 !empty(array_filter(
                     $blockData['fields'],
-                    fn($value) => (is_string($value) && !empty($value)) || (is_array($value) && !empty(array_filter($value)))
+                    fn ($value) => (is_string($value) && !empty($value)) || (is_array($value) && !empty(array_filter($value)))
                 ))
             ) {
                 $resultBlocks['new' . $index++] = $blockData;
@@ -268,6 +274,10 @@ class Matrix extends Field implements FieldInterface
             $feedPath = preg_replace('/(\/\d+\/)/', '/', $nodePath);
             $feedPath = preg_replace('/^(\d+\/)|(\/\d+)/', '', $feedPath);
 
+            if ($fields === null) {
+                return null;
+            }
+
             foreach ($fields as $subFieldHandle => $subFieldInfo) {
                 $node = Hash::get($subFieldInfo, 'node');
 
@@ -317,6 +327,10 @@ class Matrix extends Field implements FieldInterface
 
             $feedPath = preg_replace('/(\/\d+\/)/', '/', $nodePath);
             $feedPath = preg_replace('/^(\d+\/)|(\/\d+)/', '', $feedPath);
+
+            if ($fields === null) {
+                return null;
+            }
 
             foreach ($fields as $subFieldHandle => $subFieldInfo) {
                 $node = Hash::get($subFieldInfo, 'node');
