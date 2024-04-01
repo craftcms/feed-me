@@ -116,6 +116,9 @@ class Matrix extends Field implements FieldInterface
                 }
             }
 
+            if ($blocks === null) {
+                return null;
+            }
             foreach ($blocks as $blockHandle => $fields) {
                 foreach ($fields['fields'] as $fieldHandle => $fieldInfo) {
                     $node = Hash::get($fieldInfo, 'node');
@@ -256,6 +259,9 @@ class Matrix extends Field implements FieldInterface
      */
     private function _getFieldMappingInfoForNodePath($nodePath, $blocks): ?array
     {
+        if ($blocks === null) {
+            return null;
+        }
         foreach ($blocks as $blockHandle => $blockInfo) {
             $fields = Hash::get($blockInfo, 'fields');
 
@@ -303,6 +309,9 @@ class Matrix extends Field implements FieldInterface
      */
     private function _getAttributeMappingInfoForNodePath($nodePath, $blocks): ?array
     {
+        if ($blocks === null) {
+            return null;
+        }
         foreach ($blocks as $blockHandle => $blockInfo) {
             $fields = Hash::get($blockInfo, 'attributes');
 
