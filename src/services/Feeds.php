@@ -293,7 +293,7 @@ class Feeds extends Component
         foreach ($attributes as $attribute => $value) {
             $override = $this->getModelOverrides($attribute, $record['id']);
 
-            if ($override) {
+            if ($override !== null) {
                 $attributes[$attribute] = $override;
             }
         }

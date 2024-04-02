@@ -70,9 +70,14 @@ class Csv extends DataType implements DataTypeInterface
                 $filteredRow = [];
 
                 // Additional work here to handle line-breaks in keys (CSV header) - they're not allowed
+                $col = 1;
                 foreach ($row as $key => $value) {
                     $newKey = preg_replace('#\r\n?#', " ", $key);
+                    if (trim($newKey) == '') {
+                        $newKey = 'blank_heading_' . $col;
+                    }
                     $filteredRow[$newKey] = $value;
+                    $col++;
                 }
 
                 // Check for empty rows - ditch them

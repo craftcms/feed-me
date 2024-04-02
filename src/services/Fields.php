@@ -7,37 +7,38 @@ use Craft;
 use craft\base\Component;
 use craft\base\ComponentInterface;
 use craft\errors\MissingComponentException;
-use semabit\feedme\base\FieldInterface;
-use semabit\feedme\events\FieldEvent;
-use semabit\feedme\events\RegisterFeedMeFieldsEvent;
-use semabit\feedme\fields\Assets;
-use semabit\feedme\fields\CalendarEvents;
-use semabit\feedme\fields\Categories;
-use semabit\feedme\fields\Checkboxes;
-use semabit\feedme\fields\CommerceProducts;
-use semabit\feedme\fields\CommerceVariants;
-use semabit\feedme\fields\Date;
-use semabit\feedme\fields\DefaultField;
-use semabit\feedme\fields\DigitalProducts;
-use semabit\feedme\fields\Dropdown;
-use semabit\feedme\fields\Entries;
-use semabit\feedme\fields\EntriesSubset;
-use semabit\feedme\fields\GoogleMaps;
-use semabit\feedme\fields\Lightswitch;
-use semabit\feedme\fields\Linkit;
-use semabit\feedme\fields\Matrix;
-use semabit\feedme\fields\MissingField;
-use semabit\feedme\fields\Money;
-use semabit\feedme\fields\MultiSelect;
-use semabit\feedme\fields\Number;
-use semabit\feedme\fields\RadioButtons;
-use semabit\feedme\fields\SimpleMap;
-use semabit\feedme\fields\SmartMap;
-use semabit\feedme\fields\SuperTable;
-use semabit\feedme\fields\Table;
-use semabit\feedme\fields\Tags;
-use semabit\feedme\fields\TypedLink;
-use semabit\feedme\fields\Users;
+use craft\feedme\base\FieldInterface;
+use craft\feedme\events\FieldEvent;
+use craft\feedme\events\RegisterFeedMeFieldsEvent;
+use craft\feedme\fields\Assets;
+use craft\feedme\fields\CalendarEvents;
+use craft\feedme\fields\Categories;
+use craft\feedme\fields\Checkboxes;
+use craft\feedme\fields\CommerceProducts;
+use craft\feedme\fields\CommerceVariants;
+use craft\feedme\fields\Country;
+use craft\feedme\fields\Date;
+use craft\feedme\fields\DefaultField;
+use craft\feedme\fields\DigitalProducts;
+use craft\feedme\fields\Dropdown;
+use craft\feedme\fields\Entries;
+use craft\feedme\fields\EntriesSubset;
+use craft\feedme\fields\GoogleMaps;
+use craft\feedme\fields\Lightswitch;
+use craft\feedme\fields\Linkit;
+use craft\feedme\fields\Matrix;
+use craft\feedme\fields\MissingField;
+use craft\feedme\fields\Money;
+use craft\feedme\fields\MultiSelect;
+use craft\feedme\fields\Number;
+use craft\feedme\fields\RadioButtons;
+use craft\feedme\fields\SimpleMap;
+use craft\feedme\fields\SmartMap;
+use craft\feedme\fields\SuperTable;
+use craft\feedme\fields\Table;
+use craft\feedme\fields\Tags;
+use craft\feedme\fields\TypedLink;
+use craft\feedme\fields\Users;
 use craft\helpers\Component as ComponentHelper;
 use yii\base\InvalidConfigException;
 
@@ -127,6 +128,7 @@ class Fields extends Component
                 Checkboxes::class,
                 CommerceProducts::class,
                 CommerceVariants::class,
+                Country::class,
                 Date::class,
                 Dropdown::class,
                 Entries::class,
@@ -210,7 +212,10 @@ class Fields extends Component
         // if it hasn't changed - proceed as before
         // if it has changed - assume that we've entrified and adjust the $fieldClassHandle
         $field = Craft::$app->getFields()->getFieldByHandle($fieldHandle);
-        if (!$field instanceof $fieldClassHandle) {
+        if (
+            !$field instanceof $fieldClassHandle &&
+            ($field instanceof \craft\fields\Categories || $field instanceof \craft\fields\Tags)
+        ) {
             $fieldClassHandle = \craft\fields\Entries::class;
         }
 

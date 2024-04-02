@@ -69,11 +69,11 @@ class DataHelper
      * @param $fieldInfo
      * @return array|ArrayAccess|mixed
      */
-    public static function fetchArrayValue($feedData, $fieldInfo): mixed
+    public static function fetchArrayValue($feedData, $fieldInfo, $nodeName = 'node'): mixed
     {
         $value = null;
 
-        $node = Hash::get($fieldInfo, 'node');
+        $node = Hash::get($fieldInfo, $nodeName);
 
         $dataDelimiter = Plugin::$plugin->service->getConfig('dataDelimiter');
 
@@ -277,6 +277,12 @@ class DataHelper
             // If an empty 'date' value, it's the same as null
             if (is_array($newValue) && isset($newValue['date']) && $newValue['date'] === '') {
                 $newValue = null;
+            }
+
+            // If array key & values are already within the existing array
+            if (is_array($newValue) && is_array($existingValue) && Hash::contains($existingValue,$newValue)) {
+                unset($trackedChanges[$key]);
+                continue;
             }
 
             // Check for simple fields first
