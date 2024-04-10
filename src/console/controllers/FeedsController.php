@@ -127,6 +127,9 @@ class FeedsController extends Controller
      */
     public function actionExecute(string $feedId=null): int
     {
+        $queue = new \yii\queue\sync\Queue;
+        Plugin::getInstance()->queue = $queue;
+
         $config = [
             'feed' => Plugin::getInstance()?->getFeeds()->getFeedById($feedId),
             'limit' => $this->limit,
@@ -134,8 +137,13 @@ class FeedsController extends Controller
             'continueOnError' => $this->continueOnError,
         ];
 
+        // Push the first job in to the queue
         $job = new FeedImport($config);
-        $job->execute(new \yii\queue\sync\Queue);
+        $queue->push($job);
+
+        // Run the queue, subsequent pages will be pushed in at the
+        // end of an existing page
+        $queue->run();
 
         return 1;
     }
