@@ -1,5 +1,9 @@
 # Release Notes for Feed Me
 
+## Unreleased
+
+- Fixed a bug when importing Assets ([#1427](https://github.com/craftcms/feed-me/pull/1410))
+
 ## 6.0.0 - 2024-03-19
 
 - Feed Me now requires Craft CMS 5.0.0-beta.2 or later.
