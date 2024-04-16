@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- Fixed a bug when importing Assets ([#1427](https://github.com/craftcms/feed-me/pull/1410))
+- Fixed a bug when importing Assets ([#1427](https://github.com/craftcms/feed-me/pull/1427))
 
 ## 6.0.0 - 2024-03-19
 
