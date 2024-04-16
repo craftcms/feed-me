@@ -117,7 +117,7 @@ class AssetHelper
         $asset->folderId = $folder->id;
         $asset->folderPath = $folder->path;
         $asset->volumeId = $volume->id;
-        $targetUrl = AssetsHelper::generateUrl($volume->getFs(), $asset);
+        $targetUrl = AssetsHelper::generateUrl($asset);
 
         $rootUrl = $volume->getRootUrl() ?? '';
         $targetPath = str_replace($rootUrl, '', $targetUrl);
