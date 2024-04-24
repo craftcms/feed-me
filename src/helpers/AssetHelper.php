@@ -100,39 +100,48 @@ class AssetHelper
         // Download each image. Note we've already checked if there's an existing asset and if the
         // user has set to use that instead, so we're good to proceed.
         foreach ($urls as $url) {
-            try {
-                $filename = $newFilename ? AssetsHelper::prepareAssetName($newFilename, false) : self::getRemoteUrlFilename($url);
+            $try = 0;
+            $maxTries = 5;
+            while($try++ < $maxTries) {
+                try {
+                    $filename = $newFilename ? AssetsHelper::prepareAssetName($newFilename, false) : self::getRemoteUrlFilename($url);
 
-                $fetchedImage = $tempFeedMePath . $filename;
+                    $fetchedImage = $tempFeedMePath . $filename;
 
-                // But also check if we've downloaded this recently, use the copy in the temp directory
-                $cachedImage = FileHelper::findFiles($tempFeedMePath, [
-                    'only' => [$filename],
-                    'recursive' => false,
-                ]);
+                    // But also check if we've downloaded this recently, use the copy in the temp directory
+                    $cachedImage = FileHelper::findFiles($tempFeedMePath, [
+                        'only' => [$filename],
+                        'recursive' => false,
+                    ]);
 
-                Plugin::info('Fetching remote image `{i}` - `{j}`', ['i' => $url, 'j' => $filename]);
+                    Plugin::info('Fetching remote image `{i}` - `{j}`', ['i' => $url, 'j' => $filename]);
 
-                if (!$cachedImage) {
-                    self::downloadFile($url, $fetchedImage);
-                } else {
-                    $fetchedImage = $cachedImage[0];
+                    if (!$cachedImage) {
+                        self::downloadFile($url, $fetchedImage);
+                    } else {
+                        $fetchedImage = $cachedImage[0];
+                    }
+
+                    $result = self::createAsset($fetchedImage, $filename, $folderId, $field, $element, $conflict, Hash::get($feed, 'updateSearchIndexes'));
+
+                    if ($result) {
+                        $uploadedAssets[] = $result;
+                    } else {
+                        Plugin::error('Failed to create asset from `{i}`', ['i' => $url]);
+                    }
+                } catch (Throwable $e) {
+                    if ($try < $maxTries) {
+                        sleep($try);
+                        continue;
+                    }
+
+                    if ($field) {
+                        Plugin::error('`{handle}` - Asset error: `{url}` - `{e}`.', ['url' => $url, 'e' => $e->getMessage(), 'handle' => $field->handle]);
+                    } else {
+                        Plugin::error('Asset error: `{url}` - `{e}`.', ['url' => $url, 'e' => $e->getMessage()]);
+                    }
+                    Craft::$app->getErrorHandler()->logException($e);
                 }
-
-                $result = self::createAsset($fetchedImage, $filename, $folderId, $field, $element, $conflict, Hash::get($feed, 'updateSearchIndexes'));
-
-                if ($result) {
-                    $uploadedAssets[] = $result;
-                } else {
-                    Plugin::error('Failed to create asset from `{i}`', ['i' => $url]);
-                }
-            } catch (Throwable $e) {
-                if ($field) {
-                    Plugin::error('`{handle}` - Asset error: `{url}` - `{e}`.', ['url' => $url, 'e' => $e->getMessage(), 'handle' => $field->handle]);
-                } else {
-                    Plugin::error('Asset error: `{url}` - `{e}`.', ['url' => $url, 'e' => $e->getMessage()]);
-                }
-                Craft::$app->getErrorHandler()->logException($e);
             }
         }
 
