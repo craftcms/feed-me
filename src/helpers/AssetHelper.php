@@ -136,7 +136,7 @@ class AssetHelper
                     }
 
                     if ($field) {
-                        Plugin::error('`{handle}` - Asset error: `{url}` - `{e}`.', ['url' => $url, 'e' => $e->getMessage(), 'handle' => $field->handle]);
+                        Plugin::error('`{handle}` - Asset error: `{url}` - `{e}` `{t}`.', ['url' => $url, 'e' => $e->getMessage(), 'handle' => $field->handle, 't' => $e->getTraceAsString()]);
                     } else {
                         Plugin::error('Asset error: `{url}` - `{e}`.', ['url' => $url, 'e' => $e->getMessage()]);
                     }
