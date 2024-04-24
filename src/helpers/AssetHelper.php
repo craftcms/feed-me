@@ -129,8 +129,11 @@ class AssetHelper
                     } else {
                         Plugin::error('Failed to create asset from `{i}`', ['i' => $url]);
                     }
+
+                    break;
                 } catch (Throwable $e) {
                     if ($try < $maxTries) {
+                        Plugin::info('`{handle}` - Asset error, trying again: `{url}` - `{e}`.', ['url' => $url, 'e' => $e->getMessage(), 'handle' => $field->handle]);
                         sleep($try);
                         continue;
                     }
