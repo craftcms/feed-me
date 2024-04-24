@@ -87,6 +87,7 @@ class FeedImport extends BaseJob implements RetryableJobInterface
             }
 
             $feedSettings = Plugin::$plugin->process->beforeProcessFeed($this->feed, $feedData);
+            Plugin::info('Processing `' . $this->feed->getFeedUrl() . '`');
 
             $feedData = $feedSettings['feedData'];
 
