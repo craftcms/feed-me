@@ -2,6 +2,7 @@
 
 namespace craft\feedme\helpers;
 
+use Aws\S3\Exception\S3Exception;
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\ElementInterface;
@@ -133,6 +134,15 @@ class AssetHelper
                     break;
                 } catch (Throwable $e) {
                     if ($try < $maxTries) {
+                        $prev = $e;
+                        while ($prev) {
+                            if (get_class($prev) === \Aws\S3\Exception\S3Exception::class && $prev->getStatusCode() === 400) {
+                                Plugin::info('`{handle}` - Asset error, resetting credentials. {e}.', ['e' => $prev->getMessage(), 'handle' => $field->handle]);
+                                Craft::$app->set('volumes', ["class" => "craft\services\Volumes"]);
+                                Craft::$app->set('fs', ["class" => "craft\services\Fs"]);
+                            }
+                            $prev = $prev->getPrevious();
+                        }
                         Plugin::info('`{handle}` - Asset error, trying again: `{url}` - `{e}`.', ['url' => $url, 'e' => $e->getMessage(), 'handle' => $field->handle]);
                         sleep($try);
                         continue;
