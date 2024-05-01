@@ -2,7 +2,8 @@
 
 ## Unreleased
 
-- Fixed a bug where importing into an entry type with hidden title attribute would cause an error. ([#1423](https://github.com/craftcms/feed-me/pull/1423))
+- Fixed a PHP error that would occur when importing Assets ([#1427](https://github.com/craftcms/feed-me/pull/1427))
+- Fixed a PHP error that could occur when importing into an entry type with a hidden title attribute. ([#1423](https://github.com/craftcms/feed-me/pull/1423))
 
 ## 6.0.0 - 2024-03-19
 
