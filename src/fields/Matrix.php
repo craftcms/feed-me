@@ -126,13 +126,15 @@ class Matrix extends Field implements FieldInterface
                         $fieldData[$key] = $parsedValue;
                     }
                 }
-                foreach ($fields['attributes'] as $fieldHandle => $fieldInfo) {
-                    $node = Hash::get($fieldInfo, 'node');
-                    if ($node === 'usedefault') {
-                        $key = $this->_getBlockKey($nodePathSegments, $blockHandle, $fieldHandle);
-
-                        $parsedValue = DataHelper::fetchSimpleValue($this->feedData, $fieldInfo);
-                        $attributeData[$key] = $parsedValue;
+                if ($attributeInfo) {
+                    foreach ($fields['attributes'] as $fieldHandle => $fieldInfo) {
+                        $node = Hash::get($fieldInfo, 'node');
+                        if ($node === 'usedefault') {
+                            $key = $this->_getBlockKey($nodePathSegments, $blockHandle, $fieldHandle);
+    
+                            $parsedValue = DataHelper::fetchSimpleValue($this->feedData, $fieldInfo);
+                            $attributeData[$key] = $parsedValue;
+                        }
                     }
                 }
             }
@@ -257,7 +259,7 @@ class Matrix extends Field implements FieldInterface
     private function _getFieldMappingInfoForNodePath($nodePath, $blocks): ?array
     {
         foreach ($blocks as $blockHandle => $blockInfo) {
-            $fields = Hash::get($blockInfo, 'fields');
+            $fields = Hash::get($blockInfo, 'fields', []);
 
             $feedPath = preg_replace('/(\/\d+\/)/', '/', $nodePath);
             $feedPath = preg_replace('/^(\d+\/)|(\/\d+)/', '', $feedPath);
@@ -304,7 +306,7 @@ class Matrix extends Field implements FieldInterface
     private function _getAttributeMappingInfoForNodePath($nodePath, $blocks): ?array
     {
         foreach ($blocks as $blockHandle => $blockInfo) {
-            $fields = Hash::get($blockInfo, 'attributes');
+            $fields = Hash::get($blockInfo, 'attributes', []);
 
             $feedPath = preg_replace('/(\/\d+\/)/', '/', $nodePath);
             $feedPath = preg_replace('/^(\d+\/)|(\/\d+)/', '', $feedPath);
