@@ -155,8 +155,7 @@ class Category extends Element
         }
 
         $query = CategoryElement::find()
-            ->status(null)
-            ->andWhere(['=', $match, $value]);
+            ->status(null);
 
         if (isset($this->feed['siteId']) && $this->feed['siteId']) {
             $query->siteId($this->feed['siteId']);
@@ -167,6 +166,8 @@ class Category extends Element
             $query->groupId($this->element->groupId);
         }
 
+        // using $query->andWhere() doesn't work for custom fields
+        Craft::configure($query, [$match => $value]);
         $element = $query->one();
 
         if ($element) {
