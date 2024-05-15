@@ -4,8 +4,11 @@ namespace craft\feedme\helpers;
 
 use Cake\Utility\Hash;
 use Carbon\Carbon;
+use Craft;
 use craft\feedme\Plugin;
 use craft\helpers\DateTimeHelper;
+use DateTime;
+use Exception;
 
 class DateHelper
 {
@@ -15,10 +18,10 @@ class DateHelper
     /**
      * @param $value
      * @param string $formatting
-     * @return array|Carbon|\DateTime|false|string
-     * @throws \Exception
+     * @return DateTime|bool|array|Carbon|string|null
+     * @throws \yii\base\InvalidConfigException
      */
-    public static function parseString($value, $formatting = 'auto')
+    public static function parseString($value, string $formatting = 'auto'): DateTime|bool|array|Carbon|string|null
     {
         // Check for null or empty strings
         if ($value === null || $value === '' || $value === '0') {
@@ -30,7 +33,7 @@ class DateHelper
             $dateIndex = Hash::get($value, 'date');
             $timeIndex = Hash::get($value, 'time');
 
-            // Its okay to return this if it was an empty date-time array. This will often be the default
+            // It's okay to return this if it was an empty date-time array. This will often be the default
             // value for an empty stringed date value in the feed. At this point, we want to retain the
             // empty value in the feed to overwrite the date value on the element.
             if (!$dateIndex || !$timeIndex) {
@@ -168,21 +171,27 @@ class DateHelper
             if ($date) {
                 return $date;
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Plugin::error('Date parse error: `{value}` - `{e}`.', ['value' => $value, 'e' => $e->getMessage()]);
+            Craft::$app->getErrorHandler()->logException($e);
         }
+
+        return null;
     }
 
     /**
      * @param $value
-     * @return \DateTime|false|null
+     * @return DateTime|false|null
      */
-    public static function parseTimeString($value)
+    public static function parseTimeString($value): DateTime|bool|null
     {
         try {
             return DateTimeHelper::toDateTime($value) ?: null;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Plugin::error('Time parse error: `{value}` - `{e}`.', ['value' => $value, 'e' => $e->getMessage()]);
+            Craft::$app->getErrorHandler()->logException($e);
         }
+
+        return null;
     }
 }

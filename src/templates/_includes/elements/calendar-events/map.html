@@ -200,7 +200,8 @@
                 <th>{{ 'Default Value'|t('feed-me') }}</th>
             </thead>
             <tbody>
-                {% for field in tab.getFields() %}
+                {% for layoutField in tab.getElements()|filter(e => e is instance of('craft\\fieldlayoutelements\\CustomField')) %}
+                    {% set field = layoutField.getField() %}
                     {% set fieldClass = craft.feedme.fields.getRegisteredField(className(field)) %}
                     {% set template = fieldClass.getMappingTemplate() %}
 
@@ -225,17 +226,20 @@
 {% endfor %}
 
 {% for tab in tabs %}
-    {% for field in tab.getFields() %}
+    {% for layoutField in tab.getElements()|filter(e => e is instance of('craft\\fieldlayoutelements\\CustomField')) %}
+        {% set field = layoutField.getField() %}
         {% set uniqueFields = uniqueFields|merge([{ name: field.name, handle: field.handle, type: className(field) }]) %}
     {% endfor %}
 {% endfor %}
 
 <fieldset class="feedme-uniques" aria-labelledby="event-uniques-label">
-    {% for field in uniqueFields if field and craft.feedme.fieldCanBeUniqueId(field) %}
-        {{ forms.checkboxField({
-            name: 'fieldUnique[' ~ field.handle ~ ']',
-            label: field.name,
-            checked: feed.fieldUnique[field.handle] ?? '',
-        }) }}
+    {% for field in uniqueFields %}
+        {% if field and craft.feedme.fieldCanBeUniqueId(field) %}
+            {{ forms.checkboxField({
+                name: 'fieldUnique[' ~ field.handle ~ ']',
+                label: field.name,
+                checked: feed.fieldUnique[field.handle] ?? '',
+            }) }}
+        {% endif %}
     {% endfor %}
 </fieldset>

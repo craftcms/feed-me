@@ -12,17 +12,17 @@ use craft\base\Model;
 class ElementGroup extends Model
 {
     /**
-     * @var string The ID of the group, which corresponds to the group option’s value
+     * @var int|null The ID of the group, which corresponds to the group option’s value
      */
-    public $id;
+    public ?int $id = null;
 
     /**
      * @var mixed The group model
      */
-    public $model;
+    public mixed $model;
 
     /**
      * @var bool Whether the group contains a singleton element
      */
-    public $isSingleton = false;
+    public bool $isSingleton = false;
 }

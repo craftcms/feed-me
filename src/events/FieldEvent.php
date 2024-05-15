@@ -12,30 +12,30 @@ class FieldEvent extends Event
     /**
      * @var
      */
-    public $feed;
+    public mixed $feed = null;
 
     /**
      * @var
      */
-    public $feedData;
+    public mixed $feedData = null;
 
     /**
      * @var
      */
-    public $fieldHandle;
+    public mixed $fieldHandle = null;
 
     /**
      * @var
      */
-    public $fieldInfo;
+    public mixed $fieldInfo = null;
 
     /**
      * @var
      */
-    public $parsedValue;
+    public mixed $parsedValue = null;
 
     /**
      * @var
      */
-    public $element;
+    public mixed $element = null;
 }

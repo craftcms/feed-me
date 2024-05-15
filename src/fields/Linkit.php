@@ -19,12 +19,12 @@ class Linkit extends Field implements FieldInterface
     /**
      * @var string
      */
-    public static $name = 'Linkit';
+    public static string $name = 'Linkit';
 
     /**
      * @var string
      */
-    public static $class = 'fruitstudios\linkit\fields\LinkitField';
+    public static string $class = 'presseddigital\linkit\fields\LinkitField';
 
 
     // Templates
@@ -33,7 +33,7 @@ class Linkit extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function getMappingTemplate()
+    public function getMappingTemplate(): string
     {
         return 'feed-me/_includes/fields/linkit';
     }
@@ -44,7 +44,7 @@ class Linkit extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function parseField()
+    public function parseField(): mixed
     {
         $preppedData = [];
 
@@ -55,16 +55,22 @@ class Linkit extends Field implements FieldInterface
         }
 
         foreach ($fields as $subFieldHandle => $subFieldInfo) {
-            $preppedData[$subFieldHandle] = DataHelper::fetchValue($this->feedData, $subFieldInfo);
+            $preppedData[$subFieldHandle] = DataHelper::fetchValue($this->feedData, $subFieldInfo, $this->feed);
         }
 
-        if ($preppedData)
-        {
+        if (empty(
+            array_filter($preppedData, function($val) {
+                return $val !== null;
+            })
+        )) {
+            return null;
+        }
+
+        if ($preppedData) {
             // Handle Link Type
-            $preppedData['type'] = empty($preppedData['type'] ?? '') ? 'fruitstudios\linkit\models\Url' : $preppedData['type'];
-            if(strpos($preppedData['type'], '\\') === false)
-            {
-                $preppedData['type'] = 'fruitstudios\\linkit\\models\\'.ucfirst(strtolower(trim($preppedData['type'])));
+            $preppedData['type'] = empty($preppedData['type'] ?? '') ? 'presseddigital\linkit\models\Url' : $preppedData['type'];
+            if (!str_contains($preppedData['type'], '\\')) {
+                $preppedData['type'] = 'presseddigital\\linkit\\models\\' . ucfirst(strtolower(trim($preppedData['type'])));
             }
 
             // Handle Link Target

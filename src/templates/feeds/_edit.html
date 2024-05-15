@@ -98,7 +98,7 @@
     {% endfor %}
 
     {% if craft.app.isMultiSite() %}
-        {% set sites = [{ label: 'Primary Site ({name})'|t('feed-me', {name: craft.app.sites.primarySite.name}), value: '' }] %}
+        {% set sites = [{ label: 'Primary Site ({name})'|t('feed-me', {name: craft.app.sites.primarySite.name}), value: craft.app.sites.primarySite.id }] %}
 
         {% for site in craft.app.sites.getAllSites() %}
             {% set sites = sites|merge([{ label: site.name, value: site.id }]) %}
@@ -120,11 +120,8 @@
         id: 'singleton',
     }) }}
 
-    {{ forms.field({
-        label: "Import strategy"|t('feed-me'),
-        instructions: 'Choose what happens when this feed is run again.'|t('feed-me'),
-        id: 'duplicateHandle',
-    }) }}
+    <h2>{{ 'Import strategy'|t('feed-me') }}</h2>
+    <p>{{ 'Choose what happens when this feed is run again.'|t('feed-me') }}</p>
 
     {{ forms.checkboxField({
         id: 'is-create',
@@ -182,6 +179,15 @@
         disabled: feed.singleton,
     }) }}
 
+    {{ forms.checkboxField({
+        id: 'is-update-search-indexes',
+        name: 'updateSearchIndexes',
+        label: 'Update search indexes'|t('feed-me'),
+        instructions: 'Whether search indexes should be updated.'|t('feed-me'),
+        checked: not feed.singleton and feed.updateSearchIndexes,
+        disabled: feed.singleton,
+    }) }}
+
     <hr>
 
     {{ forms.textField({
@@ -200,6 +206,13 @@
         instructions: 'Perform a full backup each time this feed is processed.'|t('feed-me'),
         name: 'backup',
         on: (feed.id) ? feed.backup : true,
+    }) }}
+
+    {{ forms.lightswitchField({
+        label: 'Set Empty Values'|t('feed-me'),
+        instructions: 'When enabled, empty values are considered valid and will be used to replace existing data. When disabled, empty values are ignored.'|t('feed-me'),
+        name: 'setEmptyValues',
+        on: (feed.id) ? feed.setEmptyValues : false,
     }) }}
 
     {{ parent() }}

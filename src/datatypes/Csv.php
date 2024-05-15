@@ -3,11 +3,15 @@
 namespace craft\feedme\datatypes;
 
 use Cake\Utility\Hash;
+use Craft;
 use craft\feedme\base\DataType;
 use craft\feedme\base\DataTypeInterface;
 use craft\feedme\Plugin;
 use craft\helpers\StringHelper;
+use Exception;
 use League\Csv\Reader;
+use League\Csv\Statement;
+use Throwable;
 
 class Csv extends DataType implements DataTypeInterface
 {
@@ -17,7 +21,7 @@ class Csv extends DataType implements DataTypeInterface
     /**
      * @var string
      */
-    public static $name = 'CSV';
+    public static string $name = 'CSV';
 
 
     // Public Methods
@@ -26,7 +30,7 @@ class Csv extends DataType implements DataTypeInterface
     /**
      * @inheritDoc
      */
-    public function getFeed($url, $settings, $usePrimaryElement = true)
+    public function getFeed($url, $settings, bool $usePrimaryElement = true): array
     {
         $feedId = Hash::get($settings, 'id');
         $response = Plugin::$plugin->data->getRawData($url, $feedId);
@@ -58,7 +62,7 @@ class Csv extends DataType implements DataTypeInterface
 
             $array = [];
 
-            // We need to check if the CSV provided has headers. Bit tricky in 8.x, but lets do it.
+            // We need to check if the CSV provided has headers. This is a bit tricky in 8.x, but let's do it.
             $rows = $this->_getRows($reader);
 
             // Create associative array with Row 1 header as keys
@@ -66,9 +70,14 @@ class Csv extends DataType implements DataTypeInterface
                 $filteredRow = [];
 
                 // Additional work here to handle line-breaks in keys (CSV header) - they're not allowed
+                $col = 1;
                 foreach ($row as $key => $value) {
                     $newKey = preg_replace('#\r\n?#', " ", $key);
+                    if (trim($newKey) == '') {
+                        $newKey = 'blank_heading_' . $col;
+                    }
                     $filteredRow[$newKey] = $value;
+                    $col++;
                 }
 
                 // Check for empty rows - ditch them
@@ -78,17 +87,18 @@ class Csv extends DataType implements DataTypeInterface
 
                 $array[] = $filteredRow;
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $error = 'Invalid CSV: ' . $e->getMessage();
 
             Plugin::error($error);
+            Craft::$app->getErrorHandler()->logException($e);
 
             return ['success' => false, 'error' => $error];
         }
 
-        // Make sure its indeed an array!
+        // Make sure it's indeed an array!
         if (!is_array($array)) {
-            $error = 'Invalid CSV: ' . json_encode($array);
+            $error = 'Invalid CSV: ' . \craft\helpers\Json::encode($array);
 
             Plugin::error($error);
 
@@ -112,49 +122,56 @@ class Csv extends DataType implements DataTypeInterface
     /**
      * @param $reader
      * @return array
+     * @throws \League\Csv\Exception
      */
-    private function _getRows($reader)
+    private function _getRows($reader): mixed
     {
-        $array = [];
-
-        // We try to first fetch the first row in the CSV which we figure is the headers. But if its not
+        // We try to first fetch the first row in the CSV which we figure is the headers. But if it's not
         // it'll throw an error saying the first row of the CSV isn't valid, and not unique, etc.
         // So, in that case, just fail silently, and move on to the 'traditional' method which are just numbers.
         //
         // You really should provide your CSVs with headers though.
 
+        // Support for league/csv v8 with a header
         try {
-            $array = $reader->fetchAssoc(0);
-        } catch (\Throwable $e) {
+            return $reader->fetchAssoc(0);
+        } catch (Throwable $e) {
         }
 
+        // Support for league/csv v8 without a header
         try {
-            if (!$array) {
-                $array = $reader->fetch();
-            }
-        } catch (\Throwable $e) {
+            return $reader->fetch();
+        } catch (Throwable $e) {
         }
 
-        // Support league/csv v9 syntax
+        $stmt = Statement::create();
+
+        // Support for league/csv v9 with a header
         try {
-            if (!$array) {
-                $reader->setHeaderOffset(0);
-                $array = $reader->getRecords();
-            }
-        } catch (\Throwable $e) {
+            $reader->setHeaderOffset(0);
+
+            return $stmt->process($reader);
+        } catch (Throwable $e) {
         }
 
-        return $array;
+        // Support for league/csv v9 without a header
+        $reader->setHeaderOffset(null);
+
+        return $stmt->process($reader);
     }
 
     /**
      * @param $array
      * @return bool
      */
-    private function _isArrayEmpty($array)
+    private function _isArrayEmpty($array): bool
     {
-        foreach ($array as $key => $val) {
-            if (trim($val) !== '') {
+        foreach ($array as $val) {
+            if (is_string($val)) {
+                if (trim($val) !== '') {
+                    return false;
+                }
+            } elseif ($val) {
                 return false;
             }
         }

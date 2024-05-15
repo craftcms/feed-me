@@ -2,7 +2,9 @@
 
 namespace craft\feedme\base;
 
+use ArrayAccess;
 use Cake\Utility\Hash;
+use Carbon\Carbon;
 use Craft;
 use craft\base\Component;
 use craft\base\Element as BaseElement;
@@ -14,7 +16,11 @@ use craft\feedme\helpers\DataHelper;
 use craft\feedme\helpers\DateHelper;
 use craft\feedme\models\FeedModel;
 use craft\helpers\Db;
+use craft\helpers\ElementHelper;
+use craft\helpers\Json;
 use craft\helpers\StringHelper;
+use DateTime;
+use Exception;
 
 /**
  *
@@ -27,8 +33,8 @@ abstract class Element extends Component implements ElementInterface
     // Constants
     // =========================================================================
 
-    const EVENT_BEFORE_PARSE_ATTRIBUTE = 'onBeforeParseAttribute';
-    const EVENT_AFTER_PARSE_ATTRIBUTE = 'onParseAttribute';
+    public const EVENT_BEFORE_PARSE_ATTRIBUTE = 'onBeforeParseAttribute';
+    public const EVENT_AFTER_PARSE_ATTRIBUTE = 'onParseAttribute';
 
 
     // Properties
@@ -36,9 +42,14 @@ abstract class Element extends Component implements ElementInterface
 
 
     /**
-     * @var FeedModel
+     * @var FeedModel|null
      */
-    public $feed;
+    public ?FeedModel $feed = null;
+
+    /**
+     * @var CraftElementInterface
+     */
+    public $element;
 
 
     // Public Methods
@@ -47,15 +58,16 @@ abstract class Element extends Component implements ElementInterface
     /**
      * @return mixed
      */
-    public function getName()
+    public function getName(): string
     {
-        return $this::$name;
+        /** @phpstan-ignore-next-line */
+        return static::$name;
     }
 
     /**
-     * @return false|string
+     * @return string
      */
-    public function getClass()
+    public function getClass(): string
     {
         return get_class($this);
     }
@@ -63,18 +75,19 @@ abstract class Element extends Component implements ElementInterface
     /**
      * @inheritDoc
      */
-    public function getElementClass()
+    public function getElementClass(): string
     {
-        return $this::$class;
+        /** @phpstan-ignore-next-line */
+        return static::$class;
     }
 
     /**
      * @param $feedData
      * @param $fieldHandle
      * @param $fieldInfo
-     * @return array|\ArrayAccess|mixed|string|null
+     * @return array|ArrayAccess|mixed|string|null
      */
-    public function parseAttribute($feedData, $fieldHandle, $fieldInfo)
+    public function parseAttribute($feedData, $fieldHandle, $fieldInfo): mixed
     {
         if ($this->hasEventHandlers(self::EVENT_BEFORE_PARSE_ATTRIBUTE)) {
             $this->trigger(self::EVENT_BEFORE_PARSE_ATTRIBUTE, new ElementEvent([
@@ -94,24 +107,25 @@ abstract class Element extends Component implements ElementInterface
 
         $parsedValue = $this->$name($feedData, $fieldInfo);
 
-        if ($this->hasEventHandlers(self::EVENT_AFTER_PARSE_ATTRIBUTE)) {
-            $this->trigger(self::EVENT_AFTER_PARSE_ATTRIBUTE, new ElementEvent([
-                'feedData' => $feedData,
-                'fieldHandle' => $fieldHandle,
-                'fieldInfo' => $fieldInfo,
-                'parsedValue' => $parsedValue,
-            ]));
-        }
+        // Give plugins a chance to modify parsed attributes
+        $event = new ElementEvent([
+            'feedData' => $feedData,
+            'fieldHandle' => $fieldHandle,
+            'fieldInfo' => $fieldInfo,
+            'parsedValue' => $parsedValue,
+        ]);
 
-        return $parsedValue;
+        $this->trigger(self::EVENT_AFTER_PARSE_ATTRIBUTE, $event);
+
+        return $event->parsedValue;
     }
 
     /**
      * @param $feedData
      * @param $fieldInfo
-     * @return array|\ArrayAccess|mixed|string|null
+     * @return array|ArrayAccess|mixed|string|null
      */
-    public function fetchSimpleValue($feedData, $fieldInfo)
+    public function fetchSimpleValue($feedData, $fieldInfo): mixed
     {
         return DataHelper::fetchSimpleValue($feedData, $fieldInfo);
     }
@@ -119,9 +133,9 @@ abstract class Element extends Component implements ElementInterface
     /**
      * @param $feedData
      * @param $fieldInfo
-     * @return array|\ArrayAccess|mixed
+     * @return array|ArrayAccess|mixed
      */
-    public function fetchArrayValue($feedData, $fieldInfo)
+    public function fetchArrayValue($feedData, $fieldInfo): mixed
     {
         return DataHelper::fetchArrayValue($feedData, $fieldInfo);
     }
@@ -133,7 +147,7 @@ abstract class Element extends Component implements ElementInterface
     /**
      * @inheritDoc
      */
-    public function matchExistingElement($data, $settings)
+    public function matchExistingElement($data, $settings): mixed
     {
         $criteria = [];
 
@@ -150,18 +164,22 @@ abstract class Element extends Component implements ElementInterface
                     continue;
                 }
 
-                $criteria[$handle] = Db::escapeParam($feedValue);
+                if ($handle === 'parent') {
+                    $criteria['descendantOf'] = Db::escapeParam($feedValue);
+                } else {
+                    $criteria[$handle] = Db::escapeParam($feedValue);
+                }
             }
         }
 
         // Make sure we have data to match on, otherwise it'll just grab the first found entry
         // without matching against anything. Not what we want at all!
         if (empty($settings['singleton']) && count($criteria) === 0) {
-            throw new \Exception('Unable to match an existing element. Have you set a unique identifier for ' . json_encode(array_keys($settings['fieldUnique'])) . '? Make sure you are also mapping this in your feed and it has a value.');
+            throw new Exception('Unable to match an existing element. Have you set a unique identifier for ' . Json::encode(array_keys($settings['fieldUnique'])) . '? Make sure you are also mapping this in your feed and it has a value.');
         }
 
         // Check against elements that may be disabled for site
-        $criteria['enabledForSite'] = false;
+        // $criteria['enabledForSite'] = false;
 
         return $this->getQuery($settings, $criteria)->one();
     }
@@ -169,7 +187,7 @@ abstract class Element extends Component implements ElementInterface
     /**
      * @inheritDoc
      */
-    public function delete($elementIds)
+    public function delete($elementIds): bool
     {
         /** @var CraftElementInterface|string $class */
         $class = $this->getElementClass();
@@ -185,7 +203,7 @@ abstract class Element extends Component implements ElementInterface
     /**
      * @inheritDoc
      */
-    public function disable($elementIds)
+    public function disable($elementIds): bool
     {
         /** @var CraftElementInterface|string $class */
         $class = $this->getElementClass();
@@ -194,8 +212,10 @@ abstract class Element extends Component implements ElementInterface
         foreach ($elementIds as $elementId) {
             /** @var BaseElement $element */
             $element = $elementsService->getElementById($elementId, $class);
-            $element->enabled = false;
-            $elementsService->saveElement($element);
+            if ($element->enabled) {
+                $element->enabled = false;
+                $elementsService->saveElement($element, true, true, Hash::get($this->feed, 'updateSearchIndexes'));
+            }
         }
 
         return true;
@@ -204,7 +224,7 @@ abstract class Element extends Component implements ElementInterface
     /**
      * @inheritDoc
      */
-    public function disableForSite($elementIds)
+    public function disableForSite(array $elementIds): bool
     {
         /** @var CraftElementInterface|string $class */
         $class = $this->getElementClass();
@@ -213,14 +233,16 @@ abstract class Element extends Component implements ElementInterface
         $query = $class::find()
             ->id($elementIds)
             ->siteId($this->feed->siteId)
-            ->anyStatus();
+            ->status(null);
 
         $elementsService = Craft::$app->getElements();
 
         foreach ($query->each() as $element) {
             /** @var BaseElement $element */
-            $element->enabledForSite = false;
-            $elementsService->saveElement($element, false, false);
+            if ($element->enabledForSite) {
+                $element->enabledForSite = false;
+                $elementsService->saveElement($element, false, false, Hash::get($this->feed, 'updateSearchIndexes'));
+            }
         }
 
         return true;
@@ -229,24 +251,21 @@ abstract class Element extends Component implements ElementInterface
     /**
      * @inheritDoc
      */
-    public function save($element, $settings)
+    public function save($element, $settings): bool
     {
         // Setup some stuff before the element saves, and also give a chance to prevent saving
         if (!$this->beforeSave($element, $settings)) {
             return true;
         }
 
-        if (!Craft::$app->getElements()->saveElement($this->element)) {
+        if (!Craft::$app->getElements()->saveElement($this->element, true, true, Hash::get($this->feed, 'updateSearchIndexes'))) {
             return false;
         }
 
         return true;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function beforeSave($element, $settings)
+    public function beforeSave($element, $settings): bool
     {
         $this->element = $element;
         $this->element->setScenario(BaseElement::SCENARIO_ESSENTIALS);
@@ -257,9 +276,8 @@ abstract class Element extends Component implements ElementInterface
     /**
      * @inheritDoc
      */
-    public function afterSave($data, $settings)
+    public function afterSave($data, $settings): void
     {
-
     }
 
     // Protected Methods
@@ -268,9 +286,9 @@ abstract class Element extends Component implements ElementInterface
     /**
      * @param $feedData
      * @param $fieldInfo
-     * @return array|\ArrayAccess|mixed|string|null
+     * @return string
      */
-    protected function parseTitle($feedData, $fieldInfo)
+    protected function parseTitle($feedData, $fieldInfo): string
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
 
@@ -287,14 +305,18 @@ abstract class Element extends Component implements ElementInterface
      * @param $fieldInfo
      * @return string
      */
-    protected function parseSlug($feedData, $fieldInfo)
+    protected function parseSlug($feedData, $fieldInfo): string
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
 
-        $value = mb_strtolower($value);
-
         if (Craft::$app->getConfig()->getGeneral()->limitAutoSlugsToAscii) {
             $value = $this->_asciiString($value);
+        }
+
+        // normalize the slug and check if it's valid;
+        // if it is - use it, otherwise _createSlug()
+        if (is_string($value) && ($value = ElementHelper::normalizeSlug($value)) !== '') {
+            return $value;
         }
 
         return $this->_createSlug($value);
@@ -303,9 +325,9 @@ abstract class Element extends Component implements ElementInterface
     /**
      * @param $feedData
      * @param $fieldInfo
-     * @return bool|mixed|void
+     * @return bool
      */
-    protected function parseEnabled($feedData, $fieldInfo)
+    protected function parseEnabled($feedData, $fieldInfo): bool
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
 
@@ -315,13 +337,17 @@ abstract class Element extends Component implements ElementInterface
     /**
      * @param $value
      * @param $formatting
-     * @return array|\Carbon\Carbon|\DateTime|false|string|null
+     * @return DateTime|null
+     * @throws Exception
      */
-    protected function parseDateAttribute($value, $formatting)
+    protected function parseDateAttribute($value, $formatting): ?DateTime
     {
         $dateValue = DateHelper::parseString($value, $formatting);
+        if ($dateValue instanceof Carbon) {
+            $dateValue = $dateValue->toDateTime();
+        }
 
-        if (!is_null($dateValue)) {
+        if (!empty($dateValue)) {
             return $dateValue;
         }
 
@@ -340,16 +366,14 @@ abstract class Element extends Component implements ElementInterface
         // Convert to kebab case
         $glue = Craft::$app->getConfig()->getGeneral()->slugWordSeparator;
         $lower = !Craft::$app->getConfig()->getGeneral()->allowUppercaseInSlug;
-        $str = StringHelper::toKebabCase($str, $glue, $lower);
-
-        return $str;
+        return StringHelper::toKebabCase($str, $glue, $lower);
     }
 
     /**
      * @param $str
      * @return string
      */
-    private function _asciiString($str)
+    private function _asciiString($str): string
     {
         $charMap = StringHelper::asciiCharMap(true, Craft::$app->language);
 

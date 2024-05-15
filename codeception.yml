@@ -1,17 +1,17 @@
 actor: Tester
 bootstrap: _bootstrap.php
 paths:
-    tests: tests
-    log: tests/_output
-    data: tests/_data
-    support: tests/_support
-    envs: tests/_envs
+  tests: tests
+  log: tests/_output
+  data: tests/_data
+  support: tests/_support
+  envs: tests/_envs
 settings:
-    colors: true
-    memory_limit: 1024M
+  colors: true
+  memory_limit: 1024M
 extensions:
-    enabled:
-        - Codeception\Extension\RunFailed
+  enabled:
+    - Codeception\Extension\RunFailed
 params:
   - tests/_craft/.env
 modules:

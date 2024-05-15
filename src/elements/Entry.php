@@ -3,13 +3,22 @@
 namespace craft\feedme\elements;
 
 use Cake\Utility\Hash;
+use Carbon\Carbon;
 use Craft;
+use craft\base\ElementInterface;
 use craft\elements\Entry as EntryElement;
 use craft\elements\User as UserElement;
+use craft\errors\ElementNotFoundException;
 use craft\feedme\base\Element;
+use craft\feedme\helpers\DataHelper;
 use craft\feedme\models\ElementGroup;
 use craft\feedme\Plugin;
+use craft\helpers\ElementHelper;
+use craft\helpers\Json;
 use craft\models\Section;
+use DateTime;
+use Throwable;
+use yii\base\Exception;
 
 /**
  *
@@ -27,18 +36,12 @@ class Entry extends Element
     /**
      * @var string
      */
-    public static $name = 'Entry';
+    public static string $name = 'Entry';
 
     /**
      * @var string
      */
-    public static $class = 'craft\elements\Entry';
-
-    /**
-     * @var
-     */
-    public $element;
-
+    public static string $class = EntryElement::class;
 
     // Templates
     // =========================================================================
@@ -46,7 +49,7 @@ class Entry extends Element
     /**
      * @inheritDoc
      */
-    public function getGroupsTemplate()
+    public function getGroupsTemplate(): string
     {
         return 'feed-me/_includes/elements/entries/groups';
     }
@@ -54,7 +57,7 @@ class Entry extends Element
     /**
      * @inheritDoc
      */
-    public function getColumnTemplate()
+    public function getColumnTemplate(): string
     {
         return 'feed-me/_includes/elements/entries/column';
     }
@@ -62,7 +65,7 @@ class Entry extends Element
     /**
      * @inheritDoc
      */
-    public function getMappingTemplate()
+    public function getMappingTemplate(): string
     {
         return 'feed-me/_includes/elements/entries/map';
     }
@@ -73,9 +76,9 @@ class Entry extends Element
     /**
      * @inheritDoc
      */
-    public function getGroups()
+    public function getGroups(): array
     {
-        $editable = Craft::$app->sections->getEditableSections();
+        $editable = Craft::$app->getSections()->getEditableSections();
         $groups = [];
 
         foreach ($editable as $section) {
@@ -92,13 +95,26 @@ class Entry extends Element
     /**
      * @inheritDoc
      */
-    public function getQuery($settings, $params = [])
+    public function getQuery($settings, array $params = []): mixed
     {
+        $targetSiteId = Hash::get($settings, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id;
+        if ($this->element !== null) {
+            $section = $this->element->getSection();
+        }
+
         $query = EntryElement::find()
-            ->anyStatus()
+            ->status(null)
             ->sectionId($settings['elementGroup'][EntryElement::class]['section'])
-            ->typeId($settings['elementGroup'][EntryElement::class]['entryType'])
-            ->siteId(Hash::get($settings, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id);
+            ->typeId($settings['elementGroup'][EntryElement::class]['entryType']);
+
+        if (isset($section) && $section->propagationMethod === Section::PROPAGATION_METHOD_CUSTOM) {
+            $query->site('*')
+                ->preferSites([$targetSiteId])
+                ->unique();
+        } else {
+            $query->siteId($targetSiteId);
+        }
+
         Craft::configure($query, $params);
         return $query;
     }
@@ -106,13 +122,13 @@ class Entry extends Element
     /**
      * @inheritDoc
      */
-    public function setModel($settings)
+    public function setModel($settings): ElementInterface
     {
         $this->element = new EntryElement();
         $this->element->sectionId = $settings['elementGroup'][EntryElement::class]['section'];
         $this->element->typeId = $settings['elementGroup'][EntryElement::class]['entryType'];
 
-        $section = Craft::$app->sections->getSectionById($this->element->sectionId);
+        $section = Craft::$app->getSections()->getSectionById($this->element->sectionId);
         $siteId = Hash::get($settings, 'siteId');
 
         if ($siteId) {
@@ -122,11 +138,51 @@ class Entry extends Element
         // Set the default site status based on the section's settings
         $enabledForSite = [];
         foreach ($section->getSiteSettings() as $siteSettings) {
-            $enabledForSite[$siteSettings->siteId] = $siteSettings->enabledByDefault;
+            if (
+                $section->propagationMethod !== Section::PROPAGATION_METHOD_CUSTOM ||
+                $siteSettings->siteId == $siteId
+            ) {
+                $enabledForSite[$siteSettings->siteId] = $siteSettings->enabledByDefault;
+            }
         }
         $this->element->setEnabledForSite($enabledForSite);
 
         return $this->element;
+    }
+
+    /**
+     * Checks if $existingElement should be propagated to the target site.
+     *
+     * @param $existingElement
+     * @param array $feed
+     * @return ElementInterface|null
+     * @throws Exception
+     * @throws \craft\errors\SiteNotFoundException
+     * @throws \craft\errors\UnsupportedSiteException
+     * @since 5.1.3
+     */
+    public function checkPropagation($existingElement, array $feed)
+    {
+        $targetSiteId = Hash::get($feed, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id;
+
+        // Did the entry come back in a different site?
+        if ($existingElement->siteId != $targetSiteId) {
+            // Skip it if its section doesn't use the `custom` propagation method
+            if ($existingElement->getSection()->propagationMethod !== Section::PROPAGATION_METHOD_CUSTOM) {
+                return $existingElement;
+            }
+
+            // Give the entry a status for the import's target site
+            // (This is how the `custom` propagation method knows which sites the entry should support.)
+            $siteStatuses = ElementHelper::siteStatusesForElement($existingElement);
+            $siteStatuses[$targetSiteId] = $existingElement->getEnabledForSite();
+            $existingElement->setEnabledForSite($siteStatuses);
+
+            // Propagate the entry, and swap $entry with the propagated copy
+            return Craft::$app->getElements()->propagateElement($existingElement, $targetSiteId);
+        }
+
+        return $existingElement;
     }
 
     // Protected Methods
@@ -135,9 +191,10 @@ class Entry extends Element
     /**
      * @param $feedData
      * @param $fieldInfo
-     * @return array|\Carbon\Carbon|\DateTime|false|string|null
+     * @return array|Carbon|DateTime|false|string|null
+     * @throws \Exception
      */
-    protected function parsePostDate($feedData, $fieldInfo)
+    protected function parsePostDate($feedData, $fieldInfo): DateTime|bool|array|Carbon|string|null
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
         $formatting = Hash::get($fieldInfo, 'options.match');
@@ -148,9 +205,10 @@ class Entry extends Element
     /**
      * @param $feedData
      * @param $fieldInfo
-     * @return array|\Carbon\Carbon|\DateTime|false|string|null
+     * @return array|Carbon|DateTime|false|string|null
+     * @throws \Exception
      */
-    protected function parseExpiryDate($feedData, $fieldInfo)
+    protected function parseExpiryDate($feedData, $fieldInfo): DateTime|bool|array|Carbon|string|null
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
         $formatting = Hash::get($fieldInfo, 'options.match');
@@ -162,20 +220,30 @@ class Entry extends Element
      * @param $feedData
      * @param $fieldInfo
      * @return int|null
-     * @throws \Throwable
-     * @throws \craft\errors\ElementNotFoundException
-     * @throws \yii\base\Exception
+     * @throws Throwable
+     * @throws ElementNotFoundException
+     * @throws Exception
      */
-    protected function parseParent($feedData, $fieldInfo)
+    protected function parseParent($feedData, $fieldInfo): ?int
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
+        $default = DataHelper::fetchDefaultArrayValue($fieldInfo);
 
         $match = Hash::get($fieldInfo, 'options.match');
         $create = Hash::get($fieldInfo, 'options.create');
+        $node = Hash::get($fieldInfo, 'node');
 
         // Element lookups must have a value to match against
         if ($value === null || $value === '') {
             return null;
+        }
+
+        if ($node === 'usedefault' || $value === $default) {
+            $match = 'elements.id';
+        }
+
+        if (is_array($value)) {
+            $value = $value[0];
         }
 
         $query = EntryElement::find()
@@ -186,10 +254,15 @@ class Entry extends Element
             $query->siteId($this->feed['siteId']);
         }
 
+        // fix for https://github.com/craftcms/feed-me/issues/1154#issuecomment-1429622276
+        if (!empty($this->element->sectionId)) {
+            $query->sectionId($this->element->sectionId);
+        }
+
         $element = $query->one();
 
         if ($element) {
-            $this->element->newParentId = $element->id;
+            $this->element->setParentId($element->id);
 
             return $element->id;
         }
@@ -201,13 +274,22 @@ class Entry extends Element
             $element->sectionId = $this->element->sectionId;
             $element->typeId = $this->element->typeId;
 
-            if (!Craft::$app->getElements()->saveElement($element)) {
-                Plugin::error('Entry error: Could not create parent - `{e}`.', ['e' => json_encode($element->getErrors())]);
+            if (!Craft::$app->getElements()->saveElement($element, true, true, Hash::get($this->feed, 'updateSearchIndexes'))) {
+                Plugin::error('Entry error: Could not create parent - `{e}`.', ['e' => Json::encode($element->getErrors())]);
             } else {
                 Plugin::info('Entry `#{id}` added.', ['id' => $element->id]);
+                $this->element->parentId = $element->id;
             }
 
             return $element->id;
+        }
+
+        // use the default value if it's provided and none of the above worked
+        // https://github.com/craftcms/feed-me/issues/1154
+        if (!empty($default)) {
+            $this->element->parentId = $default[0];
+
+            return $default[0];
         }
 
         return null;
@@ -217,13 +299,15 @@ class Entry extends Element
      * @param $feedData
      * @param $fieldInfo
      * @return int|null
-     * @throws \Throwable
-     * @throws \craft\errors\ElementNotFoundException
-     * @throws \yii\base\Exception
+     * @throws Throwable
+     * @throws ElementNotFoundException
+     * @throws Exception
      */
-    protected function parseAuthorId($feedData, $fieldInfo)
+    protected function parseAuthorId($feedData, $fieldInfo): ?int
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
+        $default = DataHelper::fetchDefaultArrayValue($fieldInfo);
+
         $match = Hash::get($fieldInfo, 'options.match');
         $create = Hash::get($fieldInfo, 'options.create');
         $node = Hash::get($fieldInfo, 'node');
@@ -233,12 +317,12 @@ class Entry extends Element
             return null;
         }
 
-        if (is_array($value)) {
-            $value = $value[0];
+        if ($node === 'usedefault' || $value === $default) {
+            $match = 'elements.id';
         }
 
-        if ($node === 'usedefault') {
-            $match = 'elements.id';
+        if (is_array($value)) {
+            $value = $value[0];
         }
 
         if ($match === 'fullName') {
@@ -260,8 +344,8 @@ class Entry extends Element
             $element->username = $value;
             $element->email = $value;
 
-            if (!Craft::$app->getElements()->saveElement($element)) {
-                Plugin::error('Entry error: Could not create author - `{e}`.', ['e' => json_encode($element->getErrors())]);
+            if (!Craft::$app->getElements()->saveElement($element, true, true, Hash::get($this->feed, 'updateSearchIndexes'))) {
+                Plugin::error('Entry error: Could not create author - `{e}`.', ['e' => Json::encode($element->getErrors())]);
             } else {
                 Plugin::info('Author `#{id}` added.', ['id' => $element->id]);
             }
@@ -272,4 +356,3 @@ class Entry extends Element
         return null;
     }
 }
-

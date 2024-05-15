@@ -5,6 +5,7 @@ namespace craft\feedme\controllers;
 use Craft;
 use craft\feedme\Plugin;
 use craft\web\Controller;
+use yii\web\Response;
 
 class LogsController extends Controller
 {
@@ -12,12 +13,13 @@ class LogsController extends Controller
     // =========================================================================
 
     /**
-     * @return \yii\web\Response
+     * @return Response
+     * @throws \yii\base\Exception
      */
-    public function actionLogs()
+    public function actionLogs(): Response
     {
         $show = Craft::$app->getRequest()->getParam('show');
-        $logEntries = Plugin::$plugin->logs->getLogEntries($show);
+        $logEntries = Plugin::$plugin->getLogs()->getLogEntries($show);
 
         // Limit to 300 for UI
         $logEntries = array_slice($logEntries, 0, 300);
@@ -29,11 +31,11 @@ class LogsController extends Controller
     }
 
     /**
-     * @return \yii\web\Response
+     * @return Response
      */
-    public function actionClear()
+    public function actionClear(): Response
     {
-        Plugin::$plugin->logs->clear();
+        Plugin::$plugin->getLogs()->clear();
 
         return $this->redirect('feed-me/logs');
     }

@@ -12,5 +12,5 @@ class RegisterFeedMeElementsEvent extends Event
     /**
      * @var array
      */
-    public $elements = [];
+    public array $elements = [];
 }

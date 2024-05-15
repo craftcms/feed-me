@@ -4,6 +4,7 @@ namespace craft\feedme\fields;
 
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
+use craft\helpers\Json;
 
 /**
  *
@@ -17,12 +18,12 @@ class DefaultField extends Field implements FieldInterface
     /**
      * @var string
      */
-    public static $name = 'Default';
+    public static string $name = 'Default';
 
     /**
      * @var string
      */
-    public static $class = 'craft\fields\Default';
+    public static string $class = 'craft\fields\Default';
 
     // Templates
     // =========================================================================
@@ -30,7 +31,7 @@ class DefaultField extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function getMappingTemplate()
+    public function getMappingTemplate(): string
     {
         return 'feed-me/_includes/fields/default';
     }
@@ -41,28 +42,37 @@ class DefaultField extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function parseField()
+    public function parseField(): mixed
     {
         $value = $this->fetchValue();
 
-        // Default fields expect strings, if its an array for an odd reason, serialise it
+        if ($value === null) {
+            return null;
+        }
+
+        // Default fields expect strings, if it's an array for an odd reason, serialise it
         if (is_array($value)) {
             if (empty($value)) {
                 $value = '';
             } else {
-                $value = json_encode($value);
+                $value = Json::encode($value);
             }
         }
 
-        // If its exactly an empty string, that's okay and allowed. Normalising this will set it to
-        // null, which means it won't get imported. Some times we want to have empty strings
+        // If it's exactly an empty string, that's okay and allowed. Normalising this will set it to
+        // null, which means it won't get imported. Sometimes we want to have empty strings
         if ($value !== '') {
             $value = $this->field->normalizeValue($value);
         }
 
-        // Lastly, get each field to prepare values how they should
-        $value = $this->field->serializeValue($value);
+        // if we're setting empty values and the value is an empty string - return it
+        // otherwise HtmlField will serialize it to null, and we setEmptyValues won't take effect
+        // https://github.com/craftcms/feed-me/issues/1321
+        if ($this->feed['setEmptyValues'] === 1 && $value === '') {
+            return $value;
+        }
 
-        return $value;
+        // Lastly, get each field to prepare values how they should
+        return $this->field->serializeValue($value);
     }
 }

@@ -5,6 +5,8 @@ namespace craft\feedme\services;
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
+use craft\elements\User;
+use craft\errors\ShellCommandException;
 use craft\feedme\base\ElementInterface;
 use craft\feedme\events\FeedProcessEvent;
 use craft\feedme\helpers\DataHelper;
@@ -13,19 +15,21 @@ use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
 use craft\helpers\App;
 use craft\helpers\FileHelper;
+use craft\helpers\Json;
 use craft\helpers\StringHelper;
+use yii\base\Exception;
 
 class Process extends Component
 {
     // Constants
     // =========================================================================
 
-    const EVENT_BEFORE_PROCESS_FEED = 'onBeforeProcessFeed';
-    const EVENT_STEP_BEFORE_ELEMENT_MATCH = 'onStepBeforeElementMatch';
-    const EVENT_STEP_BEFORE_PARSE_CONTENT = 'onStepBeforeParseContent';
-    const EVENT_STEP_BEFORE_ELEMENT_SAVE = 'onStepBeforeElementSave';
-    const EVENT_STEP_AFTER_ELEMENT_SAVE = 'onStepElementSave';
-    const EVENT_AFTER_PROCESS_FEED = 'onAfterProcessFeed';
+    public const EVENT_BEFORE_PROCESS_FEED = 'onBeforeProcessFeed';
+    public const EVENT_STEP_BEFORE_ELEMENT_MATCH = 'onStepBeforeElementMatch';
+    public const EVENT_STEP_BEFORE_PARSE_CONTENT = 'onStepBeforeParseContent';
+    public const EVENT_STEP_BEFORE_ELEMENT_SAVE = 'onStepBeforeElementSave';
+    public const EVENT_STEP_AFTER_ELEMENT_SAVE = 'onStepElementSave';
+    public const EVENT_AFTER_PROCESS_FEED = 'onAfterProcessFeed';
 
 
     // Properties
@@ -34,17 +38,17 @@ class Process extends Component
     /**
      * @var
      */
-    private $_time_start;
+    private mixed $_time_start = null;
 
     /**
      * @var ElementInterface
      */
-    private $_service;
+    private ElementInterface $_service;
 
     /**
      * @var array
      */
-    private $_data;
+    private array $_data;
 
 
     // Public Methods
@@ -56,7 +60,7 @@ class Process extends Component
      * @return array|void
      * @throws \Exception
      */
-    public function beforeProcessFeed($feed, $feedData)
+    public function beforeProcessFeed(FeedModel $feed, array $feedData)
     {
         Plugin::$feedName = $feed->name;
 
@@ -124,8 +128,7 @@ class Process extends Component
         if (
             DuplicateHelper::isDelete($feed) ||
             DuplicateHelper::isDisable($feed) ||
-            DuplicateHelper::isDisableForSite($feed))
-        {
+            DuplicateHelper::isDisableForSite($feed)) {
             $query = $feed->element->getQuery($feed);
             $return['existingElements'] = $query->ids();
         }
@@ -168,10 +171,11 @@ class Process extends Component
      * @param $step
      * @param $feed
      * @param $processedElementIds
+     * @param $feedData
      * @return mixed|void
      * @throws \Exception
      */
-    public function processFeed($step, $feed, &$processedElementIds)
+    public function processFeed($step, $feed, &$processedElementIds, $feedData = null)
     {
         $attributeData = [];
         $fieldData = [];
@@ -180,17 +184,17 @@ class Process extends Component
         $skipUpdateFieldHandle = Plugin::$plugin->service->getConfig('skipUpdateFieldHandle', $feed['id']);
 
         //
-        // Lets get started!
+        // Let's get started!
         //
 
         $logKey = StringHelper::randomString(20);
 
-        // Save this to session so we don't have to pass it around everywhere.
+        // Save this to session, so we don't have to pass it around everywhere.
         Plugin::$stepKey = $logKey;
 
         // Try to fix an elusive bug...
         if (!is_numeric($step)) {
-            Plugin::error('Error `{i}`.', ['i' => json_encode($step)]);
+            Plugin::error('Error `{i}`.', ['i' => Json::encode($step)]);
         }
 
         if (!is_array($this->_data) || empty($this->_data[0])) {
@@ -204,7 +208,7 @@ class Process extends Component
         $element = $this->_service->setModel($feed);
 
         // From the raw data in our feed, we need to fix it up so its Craft-ready for the element and fields
-        $feedData = $this->_data[$step];
+        $feedData = $feedData ?? $this->_data[$step];
 
         // We need to first find a potentially existing element, and to do that, we need to prep just the fields
         // that are selected as the unique identifier. We prep everything else later on.
@@ -235,7 +239,7 @@ class Process extends Component
                 }
             }
 
-            Plugin::info('Match existing element with data `{i}`.', ['i' => json_encode($matchExistingElementData)]);
+            Plugin::info('Match existing element with data `{i}`.', ['i' => Json::encode($matchExistingElementData)]);
         }
 
 
@@ -272,6 +276,10 @@ class Process extends Component
 
             // If we're deleting or updating an existing element, we want to focus on that one
             if (DuplicateHelper::isUpdate($feed)) {
+                if (method_exists($this->_service, 'checkPropagation')) {
+                    $existingElement = $this->_service->checkPropagation($existingElement, $feed);
+                }
+
                 $element = clone $existingElement;
 
                 // Update our service with the correct element
@@ -282,7 +290,7 @@ class Process extends Component
             if ($skipUpdateFieldHandle) {
                 $updateField = $element->$skipUpdateFieldHandle ?? '';
 
-                // We've got our special field on this element, and its switched on
+                // We've got our special field on this element, and it's switched on
                 if ($updateField === '1') {
                     Plugin::info('Skipped due to config setting.');
 
@@ -355,7 +363,7 @@ class Process extends Component
             $element = $event->element;
         }
 
-        // Parse the just the element attributes first. We use these in our field contexts, and need a fully-prepped element
+        // Parse just the element attributes first. We use these in our field contexts, and need a fully-prepped element
         foreach ($feed['fieldMapping'] as $fieldHandle => $fieldInfo) {
             if (Hash::get($fieldInfo, 'attribute')) {
                 $attributeValue = $this->_service->parseAttribute($feedData, $fieldHandle, $fieldInfo);
@@ -364,6 +372,28 @@ class Process extends Component
                     $attributeData[$fieldHandle] = $attributeValue;
                 }
             }
+        }
+
+        $contentData = [];
+        if (isset($attributeData['enabled'])) {
+            // Set the site-specific status as well, but retain all other site statuses
+            $enabledForSite = [];
+            foreach (Craft::$app->getSites()->getAllSiteIds(true) as $siteId) {
+                $status = $element->getEnabledForSite($siteId);
+                if ($status !== null) {
+                    $enabledForSite[$siteId] = $status;
+                }
+            }
+
+            $enabledForSite[$element->siteId] = $attributeData['enabled'];
+
+            // Set the global status to true if it's enabled for *any* sites, or if already enabled.
+            $element->enabled = in_array(true, $enabledForSite) || $element->enabled;
+            $element->setEnabledForSite($enabledForSite);
+            $contentData['enabled'] = $element->enabled;
+            $contentData['enabledForSite'] = $element->getEnabledForSite($element->siteId);
+
+            unset($attributeData['enabled']);
         }
 
         // Set the attributes for the element
@@ -375,7 +405,11 @@ class Process extends Component
                 $fieldValue = Plugin::$plugin->fields->parseField($feed, $element, $feedData, $fieldHandle, $fieldInfo);
 
                 if ($fieldValue !== null) {
-                    $fieldData[$fieldHandle] = $fieldValue;
+                    if ($feed['setEmptyValues'] ||
+                        (!empty($fieldValue) || is_numeric($fieldValue) || is_bool($fieldValue))
+                    ) {
+                        $fieldData[$fieldHandle] = $fieldValue;
+                    }
                 }
             }
         }
@@ -402,7 +436,7 @@ class Process extends Component
         }
 
         // We need to keep these separate to apply to the element but required when matching against existing elements
-        $contentData = $attributeData + $fieldData;
+        $contentData += $attributeData + $fieldData;
 
         //
         // It's time to actually save the element!
@@ -447,11 +481,20 @@ class Process extends Component
             }
         }
 
-        Plugin::info('Data ready to import `{i}`.', ['i' => json_encode($contentData)]);
+        Plugin::info('Data ready to import `{i}`.', ['i' => Json::encode($contentData)]);
         Plugin::debug($contentData);
 
         // Save the element
         if ($this->_service->save($element, $feed)) {
+
+            // save user's preferences only after user has been successfully saved
+            if ($element instanceof User && isset($attributeData['preferredLocale'])) {
+                if (!empty($attributeData['preferredLocale']) || $feed['setEmptyValues'] === 1) {
+                    $preferences = ['locale' => $attributeData['preferredLocale']];
+                    Craft::$app->getUsers()->saveUserPreferences($element, $preferences);
+                }
+            }
+
             // Give elements a chance to perform actions after save
             $this->_service->afterSave($contentData, $feed);
 
@@ -487,7 +530,7 @@ class Process extends Component
         }
 
         if ($element->getErrors()) {
-            throw new \Exception('Node #' . ($step + 1) . ' - ' . json_encode($element->getErrors()));
+            throw new \Exception('Node #' . ($step + 1) . ' - ' . Json::encode($element->getErrors()));
         }
 
         throw new \Exception(Craft::t('feed-me', 'Unknown Element saving error occurred.'));
@@ -498,7 +541,7 @@ class Process extends Component
      * @param $feed
      * @param $processedElementIds
      */
-    public function afterProcessFeed($settings, $feed, $processedElementIds)
+    public function afterProcessFeed($settings, $feed, $processedElementIds): void
     {
         if ((int)DuplicateHelper::isDelete($feed) + (int)DuplicateHelper::isDisable($feed) + (int)DuplicateHelper::isDisableForSite($feed) > 1) {
             Plugin::info("You can't have Delete and Disabled enabled at the same time as an Import Strategy.");
@@ -510,22 +553,24 @@ class Process extends Component
             return;
         }
 
-        $elementsToDeleteDisable = array_diff($settings['existingElements'], $processedElementIds);
+        if ($processedElementIds) {
+            $elementsToDeleteDisable = array_diff($settings['existingElements'], $processedElementIds);
 
-        if ($elementsToDeleteDisable) {
-            if (DuplicateHelper::isDisable($feed)) {
-                $this->_service->disable($elementsToDeleteDisable);
-                $message = 'The following elements have been disabled: ' . json_encode($elementsToDeleteDisable) . '.';
-            } else if (DuplicateHelper::isDisableForSite($feed)) {
-                $this->_service->disableForSite($elementsToDeleteDisable);
-                $message = 'The following elements have been disabled for the target site: ' . json_encode($elementsToDeleteDisable) . '.';
-            } else {
-                $this->_service->delete($elementsToDeleteDisable);
-                $message = 'The following elements have been deleted: ' . json_encode($elementsToDeleteDisable) . '.';
+            if ($elementsToDeleteDisable) {
+                if (DuplicateHelper::isDisable($feed)) {
+                    $this->_service->disable($elementsToDeleteDisable);
+                    $message = 'The following elements have been disabled: ' . Json::encode($elementsToDeleteDisable) . '.';
+                } elseif (DuplicateHelper::isDisableForSite($feed)) {
+                    $this->_service->disableForSite($elementsToDeleteDisable);
+                    $message = 'The following elements have been disabled for the target site: ' . Json::encode($elementsToDeleteDisable) . '.';
+                } else {
+                    $this->_service->delete($elementsToDeleteDisable);
+                    $message = 'The following elements have been deleted: ' . Json::encode($elementsToDeleteDisable) . '.';
+                }
+
+                Plugin::info($message);
+                Plugin::debug($message);
             }
-
-            Plugin::info($message);
-            Plugin::debug($message);
         }
 
         // Log the total time taken to process the feed
@@ -534,7 +579,7 @@ class Process extends Component
 
         Plugin::$stepKey = null;
 
-        $message = 'Processing ' . count($processedElementIds) . ' elements finished in ' . $execution_time . 's';
+        $message = 'Processing ' . ($processedElementIds ? count($processedElementIds) : 0) . ' elements finished in ' . $execution_time . 's';
         Plugin::info($message);
         Plugin::debug($message);
 
@@ -553,7 +598,7 @@ class Process extends Component
      * @param $processedElementIds
      * @throws \Exception
      */
-    public function debugFeed($feed, $limit, $offset, $processedElementIds)
+    public function debugFeed($feed, $limit, $offset, $processedElementIds): void
     {
         $feed->debug = true;
 
@@ -594,10 +639,10 @@ class Process extends Component
 
     /**
      * @param $feed
-     * @throws \craft\errors\ShellCommandException
-     * @throws \yii\base\Exception
+     * @throws ShellCommandException
+     * @throws Exception
      */
-    private function _backupBeforeFeed($feed)
+    private function _backupBeforeFeed($feed): void
     {
         $logKey = StringHelper::randomString(20);
 
@@ -611,7 +656,7 @@ class Process extends Component
             // Check for any existing backups, if more than our limit, we need to kill some off...
             $currentBackups = FileHelper::findFiles($backupPath, [
                 'only' => ['feedme-*.sql'],
-                'recursive' => false
+                'recursive' => false,
             ]);
 
             // Remove all the previous backups, except the amount we want to limit
@@ -650,7 +695,7 @@ class Process extends Component
      * @param $fields
      * @return array
      */
-    private function _filterUnmappedFields($fields)
+    private function _filterUnmappedFields($fields): array
     {
         if (!is_array($fields)) {
             return [];

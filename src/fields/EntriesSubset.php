@@ -10,10 +10,10 @@ class EntriesSubset extends Entries
     /**
      * @var string
      */
-    public static $name = 'EntriesSubset';
+    public static string $name = 'EntriesSubset';
 
     /**
      * @var string
      */
-    public static $class = 'nfourtythree\entriessubset\fields\EntriesSubsetField';
+    public static string $class = 'nfourtythree\entriessubset\fields\EntriesSubsetField';
 }

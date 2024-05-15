@@ -4,12 +4,12 @@ namespace craft\feedme\services;
 
 use Craft;
 use craft\base\Component;
+use craft\base\ComponentInterface;
 use craft\errors\MissingComponentException;
 use craft\feedme\base\ElementInterface;
 use craft\feedme\elements\Asset;
 use craft\feedme\elements\CalenderEvent;
 use craft\feedme\elements\Category;
-use craft\feedme\elements\Comment;
 use craft\feedme\elements\CommerceProduct;
 use craft\feedme\elements\DigitalProduct;
 use craft\feedme\elements\Entry;
@@ -29,7 +29,7 @@ class Elements extends Component
     // Constants
     // =========================================================================
 
-    const EVENT_REGISTER_FEED_ME_ELEMENTS = 'registerFeedMeElements';
+    public const EVENT_REGISTER_FEED_ME_ELEMENTS = 'registerFeedMeElements';
 
 
     // Properties
@@ -38,7 +38,7 @@ class Elements extends Component
     /**
      * @var ElementInterface[]
      */
-    private $_elements = [];
+    private array $_elements = [];
 
 
     // Public Methods
@@ -47,7 +47,7 @@ class Elements extends Component
     /**
      * @inheritDoc
      */
-    public function init()
+    public function init(): void
     {
         parent::init();
 
@@ -76,7 +76,7 @@ class Elements extends Component
      * @param string $handle
      * @return ElementInterface|null
      */
-    public function getRegisteredElement($handle)
+    public function getRegisteredElement(string $handle): ?ElementInterface
     {
         return $this->_elements[$handle] ?? null;
     }
@@ -84,7 +84,7 @@ class Elements extends Component
     /**
      * @return array
      */
-    public function elementsList()
+    public function elementsList(): array
     {
         $list = [];
 
@@ -96,9 +96,9 @@ class Elements extends Component
     }
 
     /**
-     * @return array|ElementInterface[]
+     * @return array
      */
-    public function getRegisteredElements()
+    public function getRegisteredElements(): array
     {
         if (count($this->_elements)) {
             return $this->_elements;
@@ -115,7 +115,6 @@ class Elements extends Component
 
             // Third-party
             CalenderEvent::class,
-            Comment::class,
             DigitalProduct::class,
         ];
 
@@ -130,11 +129,11 @@ class Elements extends Component
 
     /**
      * @param $config
-     * @return \craft\base\ComponentInterface
+     * @return ComponentInterface
      * @throws InvalidConfigException
      * @throws MissingComponentException
      */
-    public function createElement($config)
+    public function createElement($config): ComponentInterface
     {
         if (is_string($config)) {
             $config = ['type' => $config];

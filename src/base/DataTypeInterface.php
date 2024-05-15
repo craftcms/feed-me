@@ -15,5 +15,5 @@ interface DataTypeInterface extends ComponentInterface
      * @param bool $usePrimaryElement
      * @return mixed
      */
-    public function getFeed($url, $settings, $usePrimaryElement = true);
+    public function getFeed($url, $settings, bool $usePrimaryElement = true): mixed;
 }

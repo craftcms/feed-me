@@ -5,6 +5,8 @@ namespace craft\feedme\services;
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
+use craft\base\ComponentInterface;
+use craft\errors\MissingComponentException;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\events\FieldEvent;
 use craft\feedme\events\RegisterFeedMeFieldsEvent;
@@ -14,15 +16,19 @@ use craft\feedme\fields\Categories;
 use craft\feedme\fields\Checkboxes;
 use craft\feedme\fields\CommerceProducts;
 use craft\feedme\fields\CommerceVariants;
+use craft\feedme\fields\Country;
 use craft\feedme\fields\Date;
 use craft\feedme\fields\DefaultField;
 use craft\feedme\fields\DigitalProducts;
 use craft\feedme\fields\Dropdown;
 use craft\feedme\fields\Entries;
 use craft\feedme\fields\EntriesSubset;
+use craft\feedme\fields\GoogleMaps;
 use craft\feedme\fields\Lightswitch;
 use craft\feedme\fields\Linkit;
 use craft\feedme\fields\Matrix;
+use craft\feedme\fields\MissingField;
+use craft\feedme\fields\Money;
 use craft\feedme\fields\MultiSelect;
 use craft\feedme\fields\Number;
 use craft\feedme\fields\RadioButtons;
@@ -34,6 +40,7 @@ use craft\feedme\fields\Tags;
 use craft\feedme\fields\TypedLink;
 use craft\feedme\fields\Users;
 use craft\helpers\Component as ComponentHelper;
+use yii\base\InvalidConfigException;
 
 /**
  *
@@ -44,9 +51,9 @@ class Fields extends Component
     // Constants
     // =========================================================================
 
-    const EVENT_REGISTER_FEED_ME_FIELDS = 'registerFeedMeFields';
-    const EVENT_BEFORE_PARSE_FIELD = 'onBeforeParseField';
-    const EVENT_AFTER_PARSE_FIELD = 'onAfterParseField';
+    public const EVENT_REGISTER_FEED_ME_FIELDS = 'registerFeedMeFields';
+    public const EVENT_BEFORE_PARSE_FIELD = 'onBeforeParseField';
+    public const EVENT_AFTER_PARSE_FIELD = 'onAfterParseField';
 
 
     // Properties
@@ -55,7 +62,7 @@ class Fields extends Component
     /**
      * @var array
      */
-    private $_fields = [];
+    private array $_fields = [];
 
     // Public Methods
     // =========================================================================
@@ -63,7 +70,7 @@ class Fields extends Component
     /**
      * @inheritDoc
      */
-    public function init()
+    public function init(): void
     {
         parent::init();
 
@@ -83,9 +90,10 @@ class Fields extends Component
 
     /**
      * @param $handle
-     * @return \craft\base\ComponentInterface|MissingDataType|mixed
+     * @return ComponentInterface|MissingDataType|mixed
+     * @throws InvalidConfigException
      */
-    public function getRegisteredField($handle)
+    public function getRegisteredField($handle): mixed
     {
         return $this->_fields[$handle] ?? $this->createField(DefaultField::class);
     }
@@ -93,7 +101,7 @@ class Fields extends Component
     /**
      * @return array
      */
-    public function fieldsList()
+    public function fieldsList(): array
     {
         $list = [];
 
@@ -107,7 +115,7 @@ class Fields extends Component
     /**
      * @return array
      */
-    public function getRegisteredFields()
+    public function getRegisteredFields(): array
     {
         if (count($this->_fields)) {
             return $this->_fields;
@@ -120,6 +128,7 @@ class Fields extends Component
                 Checkboxes::class,
                 CommerceProducts::class,
                 CommerceVariants::class,
+                Country::class,
                 Date::class,
                 Dropdown::class,
                 Entries::class,
@@ -127,6 +136,7 @@ class Fields extends Component
                 Matrix::class,
                 MultiSelect::class,
                 Number::class,
+                Money::class,
                 RadioButtons::class,
                 Table::class,
                 Tags::class,
@@ -136,6 +146,7 @@ class Fields extends Component
                 CalendarEvents::class,
                 DigitalProducts::class,
                 EntriesSubset::class,
+                GoogleMaps::class,
                 Linkit::class,
                 SimpleMap::class,
                 SmartMap::class,
@@ -151,11 +162,10 @@ class Fields extends Component
 
     /**
      * @param $config
-     * @return \craft\base\ComponentInterface|MissingDataType
-     * @throws \craft\errors\MissingComponentException
-     * @throws \yii\base\InvalidConfigException
+     * @return FieldInterface
+     * @throws InvalidConfigException
      */
-    public function createField($config)
+    public function createField($config): FieldInterface
     {
         if (is_string($config)) {
             $config = ['type' => $config];
@@ -168,9 +178,10 @@ class Fields extends Component
             $config['expectedType'] = $config['type'];
             unset($config['type']);
 
-            $field = new MissingDataType($config);
+            $field = new MissingField($config);
         }
 
+        /** @var FieldInterface $field */
         return $field;
     }
 
@@ -182,7 +193,7 @@ class Fields extends Component
      * @param $fieldInfo
      * @return mixed
      */
-    public function parseField($feed, $element, $feedData, $fieldHandle, $fieldInfo)
+    public function parseField($feed, $element, $feedData, $fieldHandle, $fieldInfo): mixed
     {
         if ($this->hasEventHandlers(self::EVENT_BEFORE_PARSE_FIELD)) {
             $this->trigger(self::EVENT_BEFORE_PARSE_FIELD, new FieldEvent([
@@ -194,16 +205,26 @@ class Fields extends Component
             ]));
         }
 
-        $parsedValue = null;
-
         $fieldClassHandle = Hash::get($fieldInfo, 'field');
+
+        // if category groups or tag groups have been entrified, the fields for them could have been entrified too;
+        // get the field by handle, check if the type hasn't changed since the feed was last saved;
+        // if it hasn't changed - proceed as before
+        // if it has changed - assume that we've entrified and adjust the $fieldClassHandle
+        $field = Craft::$app->getFields()->getFieldByHandle($fieldHandle);
+        if (
+            !$field instanceof $fieldClassHandle &&
+            ($field instanceof \craft\fields\Categories || $field instanceof \craft\fields\Tags)
+        ) {
+            $fieldClassHandle = \craft\fields\Entries::class;
+        }
 
         // Find the class to deal with the attribute
         $class = $this->getRegisteredField($fieldClassHandle);
         $class->feedData = $feedData;
         $class->fieldHandle = $fieldHandle;
         $class->fieldInfo = $fieldInfo;
-        $class->field = Craft::$app->fields->getFieldByHandle($fieldHandle);
+        $class->field = $field;
         $class->element = $element;
         $class->feed = $feed;
 

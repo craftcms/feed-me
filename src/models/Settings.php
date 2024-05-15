@@ -6,100 +6,100 @@ use craft\base\Model;
 
 class Settings extends Model
 {
-    // Public Properties
+    // Properties
     // =========================================================================
 
     /**
      * @var string
      */
-    public $pluginName = 'Feed Me';
+    public string $pluginName = 'Feed Me';
 
     /**
      * @var int
      */
-    public $cache = 60;
+    public int $cache = 60;
 
     /**
-     * @var string
+     * @var string|int|array
      */
-    public $enabledTabs = '*';
+    public string|int|array $enabledTabs = '*';
 
     /**
      * @var array
      */
-    public $clientOptions = [];
+    public array $clientOptions = [];
 
     /**
-     * @var \string[][]
+     * @var string[][]
      */
-    public $requestOptions = [
+    public array $requestOptions = [
         'headers' => [
             'User-Agent' => 'Feed Me',
-        ]
+        ],
     ];
 
     /**
      * @var bool
      */
-    public $compareContent = true;
+    public bool $compareContent = true;
 
     /**
      * @var string
      */
-    public $skipUpdateFieldHandle = '';
+    public string $skipUpdateFieldHandle = '';
 
     /**
      * @var int
      */
-    public $backupLimit = 100;
+    public int $backupLimit = 100;
 
     /**
      * @var string
      */
-    public $dataDelimiter = '-|-';
+    public string $dataDelimiter = '-|-';
 
     /**
      * @var string
      */
-    public $csvColumnDelimiter = ',';
+    public string $csvColumnDelimiter = ',';
+
+    /**
+     * @var bool
+     */
+    public bool $parseTwig = false;
 
     /**
      * @var array
      */
-    public $parseTwig = [];
-
-    /**
-     * @var array
-     */
-    public $feedOptions = [];
+    public array $feedOptions = [];
 
     /**
      * @var int
      */
-    public $sleepTime = 0;
+    public int $sleepTime = 0;
+
+    /**
+     * @var bool|string
+     */
+    public bool|string $logging = true;
 
     /**
      * @var bool
      */
-    public $logging = true;
+    public bool $runGcBeforeFeed = false;
+
+    /**
+     * @var int|null
+     */
+    public ?int $queueTtr = null;
+
+    /**
+     * @var int|null
+     */
+    public ?int $queueMaxRetry = null;
 
     /**
      * @var bool
      */
-    public $runGcBeforeFeed = false;
-
-    /**
-     * @var
-     */
-    public $queueTtr;
-
-    /**
-     * @var
-     */
-    public $queueMaxRetry;
-
-    /**
-     * @var bool
-     */
-    public $assetDownloadCurl = false;
+    public bool $assetDownloadCurl = false;
 }

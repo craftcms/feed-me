@@ -16,8 +16,9 @@
         type: 'elementselect',
         options: {
             elementType: fieldClass.elementType,
-            criteria: {'status' : null, enabledForSite : false},
+            criteria: {'status' : null},
             selectionLabel: "Default Entry"|t('feed-me'),
+            sources: field.sources ?? '*',
         },
     } %}
 {% endif %}
@@ -49,13 +50,15 @@
 
         {% for field in craft.app.fields.getAllFields() %}
             {% if craft.feedme.fieldCanBeUniqueId(field) %}
-                {% set matchAttributes = matchAttributes|merge({ ('field_' ~ field.handle): field.name }) %}
+                {# Check for columnSuffix (since 3.7) #}
+                {% set suffix = field['columnSuffix'] is defined and field.columnSuffix|length  ? '_' ~ field.columnSuffix : '' %}
+                {% set matchAttributes = matchAttributes|merge({ ('field_' ~ field.handle ~ suffix): field.name }) %}
             {% endif %}
         {% endfor %}
 
         {{ forms.selectField({
             name: 'options[match]',
-            class: '',
+            class: 'entries-field-match',
             value: hash_get(feed.fieldMapping, optionsPath ~ '.match') ?: '',
             options: matchAttributes,
         }) }}
@@ -87,21 +90,24 @@
             </div>
 
             {% set entryTypes = [] %}
-            {% for section in sources if section %}
-                {% set options = craft.feedme.getSelectOptions(section.getEntryTypes(), 'name', 'id', false) %}
+            {% for section in sources %}
+                {% if section %}
+                    {% set options = craft.feedme.getSelectOptions(section.getEntryTypes(), 'name', 'id', false) %}
 
-                {# We have to prefix the index, otherwise Twig doesn't maintain numbered index correctly #}
-                {% set entryTypes = entryTypes|merge({ ('item_' ~ section.id): options }) %}
+                    {# We have to prefix the index, otherwise Twig doesn't maintain numbered index correctly #}
+                    {% set entryTypes = entryTypes|merge({ ('item_' ~ section.id): options }) %}
+                {% endif %}
             {% endfor %}
 
             {% if sources and sources[0] %}
-                <div class="element-group element-group-entrytype" data-items="{{ entryTypes|json_encode }}">
+                {% set selectedTypeId = hash_get(feed.fieldMapping, optionsPath ~ '.group.typeId') ?: '' %}
+                <div class="element-group element-group-entrytype" data-items="{{ entryTypes|json_encode }}" data-selectedTypeId="{{ selectedTypeId }}">
                     <span>{{ 'Type:'|t('feed-me') }}</span>
 
                     {{ forms.selectField({
                         name: 'options[group][typeId]',
                         class: '',
-                        value: hash_get(feed.fieldMapping, optionsPath ~ '.group.typeId') ?: '',
+                        value: selectedTypeId,
                         options: entryTypes['item_' ~ sources[0].id] ?? [],
                     }) }}
                 </div>

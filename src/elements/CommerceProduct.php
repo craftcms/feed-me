@@ -3,7 +3,9 @@
 namespace craft\feedme\elements;
 
 use Cake\Utility\Hash;
+use Carbon\Carbon;
 use Craft;
+use craft\base\ElementInterface;
 use craft\commerce\elements\Product as ProductElement;
 use craft\commerce\elements\Variant as VariantElement;
 use craft\commerce\Plugin as Commerce;
@@ -14,6 +16,11 @@ use craft\feedme\helpers\BaseHelper;
 use craft\feedme\helpers\DataHelper;
 use craft\feedme\Plugin;
 use craft\feedme\services\Process;
+use craft\fields\Matrix;
+use craft\fields\Table;
+use craft\helpers\Json;
+use DateTime;
+use Exception;
 use yii\base\Event;
 
 /**
@@ -32,18 +39,12 @@ class CommerceProduct extends Element
     /**
      * @var string
      */
-    public static $name = 'Commerce Product';
+    public static string $name = 'Commerce Product';
 
     /**
      * @var string
      */
-    public static $class = 'craft\commerce\elements\Product';
-
-    /**
-     * @var
-     */
-    public $element;
-
+    public static string $class = ProductElement::class;
 
     // Templates
     // =========================================================================
@@ -51,7 +52,7 @@ class CommerceProduct extends Element
     /**
      * @inheritDoc
      */
-    public function getGroupsTemplate()
+    public function getGroupsTemplate(): string
     {
         return 'feed-me/_includes/elements/commerce-products/groups';
     }
@@ -59,7 +60,7 @@ class CommerceProduct extends Element
     /**
      * @inheritDoc
      */
-    public function getColumnTemplate()
+    public function getColumnTemplate(): string
     {
         return 'feed-me/_includes/elements/commerce-products/column';
     }
@@ -67,7 +68,7 @@ class CommerceProduct extends Element
     /**
      * @inheritDoc
      */
-    public function getMappingTemplate()
+    public function getMappingTemplate(): string
     {
         return 'feed-me/_includes/elements/commerce-products/map';
     }
@@ -78,7 +79,7 @@ class CommerceProduct extends Element
     /**
      * @inheritDoc
      */
-    public function init()
+    public function init(): void
     {
         parent::init();
 
@@ -106,30 +107,33 @@ class CommerceProduct extends Element
     /**
      * @inheritDoc
      */
-    public function getGroups()
+    public function getGroups(): array
     {
         if (Commerce::getInstance()) {
             return Commerce::getInstance()->getProductTypes()->getEditableProductTypes();
         }
+
+        return [];
     }
 
     /**
      * @inheritDoc
      */
-    public function getQuery($settings, $params = [])
+    public function getQuery($settings, array $params = []): mixed
     {
         $query = ProductElement::find()
-            ->anyStatus()
+            ->status(null)
             ->typeId($settings['elementGroup'][ProductElement::class])
             ->siteId(Hash::get($settings, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id);
         Craft::configure($query, $params);
+
         return $query;
     }
 
     /**
      * @inheritDoc
      */
-    public function setModel($settings)
+    public function setModel($settings): ElementInterface
     {
         $this->element = new ProductElement();
         $this->element->typeId = $settings['elementGroup'][ProductElement::class];
@@ -146,11 +150,11 @@ class CommerceProduct extends Element
     /**
      * @inheritDoc
      */
-    public function save($element, $settings)
+    public function save($element, $settings): bool
     {
         $this->beforeSave($element, $settings);
 
-        if (!Craft::$app->getElements()->saveElement($this->element)) {
+        if (!Craft::$app->getElements()->saveElement($this->element, true, true, Hash::get($this->feed, 'updateSearchIndexes'))) {
             $errors = [$this->element->getErrors()];
 
             if ($this->element->getErrors()) {
@@ -160,7 +164,7 @@ class CommerceProduct extends Element
                     }
                 }
 
-                throw new \Exception(json_encode($errors));
+                throw new Exception(Json::encode($errors));
             }
 
             return false;
@@ -176,7 +180,7 @@ class CommerceProduct extends Element
     /**
      * @param $event
      */
-    private function _preParseVariants($event)
+    private function _preParseVariants($event): void
     {
         $feed = $event->feed;
 
@@ -184,7 +188,7 @@ class CommerceProduct extends Element
         // variants[] array for easy management later. If we don't do this, it'll start processing
         // attributes and fields based on the top-level product, which is incorrect..
         foreach ($feed['fieldMapping'] as $fieldHandle => $fieldInfo) {
-            if (strpos($fieldHandle, 'variant-') !== false) {
+            if (str_contains($fieldHandle, 'variant-')) {
                 // Add it to variants[]
                 $attribute = str_replace('variant-', '', $fieldHandle);
                 $feed['fieldMapping']['variants'][$attribute] = $fieldInfo;
@@ -201,7 +205,7 @@ class CommerceProduct extends Element
     /**
      * @param $event
      */
-    private function _checkForVariantMatches($event)
+    private function _checkForVariantMatches($event): void
     {
         $feed = $event->feed;
         $feedData = $event->feedData;
@@ -209,9 +213,9 @@ class CommerceProduct extends Element
 
         // If we're trying to match an existing product element on a variant's content, we're not going to have much
         // luck. So instead, in here, we look up the parent product (if any), and return that. We directly modify the
-        // unique content array $contentData so we don't have to deal with any other shenanigans in core code.
+        // unique content array $contentData, so we don't have to deal with any other shenanigans in core code.
         foreach ($contentData as $handle => $value) {
-            if (strpos($handle, 'variant-') !== false) {
+            if (str_contains($handle, 'variant-')) {
                 $sku = null;
 
                 $fieldInfo = Hash::get($feed, 'fieldMapping.variant-sku');
@@ -255,7 +259,7 @@ class CommerceProduct extends Element
     /**
      * @param $event
      */
-    private function _parseVariants($event)
+    private function _parseVariants($event): void
     {
         $feed = $event->feed;
         $feedData = $event->feedData;
@@ -275,7 +279,7 @@ class CommerceProduct extends Element
 
         // Fetch any existing variants on the product, indexes by their SKU
         if (!empty($element->variants[0]['sku'])) {
-            foreach ($element->variants as $key => $value) {
+            foreach ($element->variants as $value) {
                 $variants[$value['sku']] = $value;
             }
         }
@@ -284,12 +288,12 @@ class CommerceProduct extends Element
         $variantFieldsByNode = [];
 
         foreach (Hash::flatten($variantMapping) as $key => $value) {
-            if (strpos($key, 'node') !== false && $value !== 'noimport' && $value !== 'usedefault') {
+            if (str_contains($key, 'node') && $value !== 'noimport' && $value !== 'usedefault') {
                 $variantFieldsByNode[] = $value;
             }
         }
 
-        // Now we need to find out how many variants we're importing - can even be one, and its all a little tricky...
+        // Now we need to find out how many variants we're importing - can even be one, and it's all a little tricky...
         foreach ($feedData as $nodePath => $value) {
             foreach ($variantMapping as $fieldHandle => $fieldInfo) {
                 $node = Hash::get($fieldInfo, 'node');
@@ -307,7 +311,7 @@ class CommerceProduct extends Element
 
                 if (!is_numeric($variantIndex)) {
                     // Try to check if its only one-level deep (only importing one block type)
-                    // which is particuarly common for JSON.
+                    // which is particularly common for JSON.
                     $variantIndex = Hash::get($nodePathSegments, 2);
 
                     if (!is_numeric($variantIndex)) {
@@ -315,9 +319,9 @@ class CommerceProduct extends Element
                     }
                 }
 
-                $isMatrixField = (Hash::get($fieldInfo, 'field') === 'craft\fields\Matrix');
+                $isNestedField = (in_array(Hash::get($fieldInfo, 'field'), [Matrix::class, Table::class]));
 
-                if ($isMatrixField) {
+                if ($isNestedField === true) {
                     $complexFields[$variantIndex][$fieldHandle]['info'] = $fieldInfo;
                     $complexFields[$variantIndex][$fieldHandle]['data'][$nodePath] = $value;
                     continue;
@@ -325,7 +329,7 @@ class CommerceProduct extends Element
 
                 // Find the node in the feed (stripped of indexes) that matches what's stored in field mapping
                 if ($feedPath === $node) {
-                    // Store this information so we can parse the field data later
+                    // Store this information, so we can parse the field data later
                     if (!isset($variantData[$variantIndex][$fieldHandle])) {
                         $variantData[$variantIndex][$fieldHandle] = $fieldInfo;
                     }
@@ -351,7 +355,6 @@ class CommerceProduct extends Element
 
         foreach ($complexFields as $variantNumber => $complexInfo) {
             foreach ($complexInfo as $fieldHandle => $fieldInfo) {
-
                 $variantNodePathKey = null;
 
                 // Refrain from looking at the whole nodepath, really just want to find the first bits
@@ -392,14 +395,14 @@ class CommerceProduct extends Element
             }
         }
 
-        foreach ($variantData as $variantNumber => $variantContent) {
+        foreach ($variantData as $variantContent) {
             $attributeData = [];
             $fieldData = [];
 
-            // Parse the just the element attributes first. We use these in our field contexts, and need a fully-prepped element
+            // Parse just the element attributes first. We use these in our field contexts, and need a fully-prepped element
             foreach ($variantContent as $fieldHandle => $fieldInfo) {
                 if (Hash::get($fieldInfo, 'attribute')) {
-                    $attributeValue = DataHelper::fetchValue(Hash::get($fieldInfo, 'data'), $fieldInfo);
+                    $attributeValue = DataHelper::fetchValue(Hash::get($fieldInfo, 'data'), $fieldInfo, $this->feed);
 
                     $attributeData[$fieldHandle] = $attributeValue;
                 }
@@ -458,7 +461,7 @@ class CommerceProduct extends Element
      * @param null $siteId
      * @return VariantElement
      */
-    private function _getVariantBySku($sku, $siteId = null)
+    private function _getVariantBySku($sku, $siteId = null): VariantElement
     {
         $variant = VariantElement::find()
             ->sku($sku)
@@ -482,9 +485,10 @@ class CommerceProduct extends Element
     /**
      * @param $feedData
      * @param $fieldInfo
-     * @return array|\Carbon\Carbon|\DateTime|false|string|null
+     * @return array|Carbon|DateTime|false|string|null
+     * @throws Exception
      */
-    protected function parsePostDate($feedData, $fieldInfo)
+    protected function parsePostDate($feedData, $fieldInfo): DateTime|bool|array|Carbon|string|null
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
         $formatting = Hash::get($fieldInfo, 'options.match');
@@ -495,9 +499,10 @@ class CommerceProduct extends Element
     /**
      * @param $feedData
      * @param $fieldInfo
-     * @return array|\Carbon\Carbon|\DateTime|false|string|null
+     * @return array|Carbon|DateTime|false|string|null
+     * @throws Exception
      */
-    protected function parseExpiryDate($feedData, $fieldInfo)
+    protected function parseExpiryDate($feedData, $fieldInfo): DateTime|bool|array|Carbon|string|null
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
         $formatting = Hash::get($fieldInfo, 'options.match');
@@ -546,7 +551,7 @@ class CommerceProduct extends Element
      * @param $fieldInfo
      * @return false|mixed
      */
-    protected function parseTaxCategoryId($feedData, $fieldInfo)
+    protected function parseTaxCategoryId($feedData, $fieldInfo): mixed
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
 
@@ -579,7 +584,7 @@ class CommerceProduct extends Element
      * @param $fieldInfo
      * @return false|mixed
      */
-    protected function parseShippingCategoryId($feedData, $fieldInfo)
+    protected function parseShippingCategoryId($feedData, $fieldInfo): mixed
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
 

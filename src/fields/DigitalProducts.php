@@ -7,7 +7,9 @@ use Craft;
 use craft\digitalproducts\elements\Product as ProductElement;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
+use craft\feedme\helpers\DataHelper;
 use craft\feedme\Plugin;
+use craft\helpers\Json;
 
 /**
  *
@@ -21,17 +23,17 @@ class DigitalProducts extends Field implements FieldInterface
     /**
      * @var string
      */
-    public static $name = 'DigitalProducts';
+    public static string $name = 'DigitalProducts';
 
     /**
      * @var string
      */
-    public static $class = 'craft\digitalproducts\fields\Products';
+    public static string $class = 'craft\digitalproducts\fields\Products';
 
     /**
      * @var string
      */
-    public static $elementType = 'craft\digitalproducts\elements\Product';
+    public static string $elementType = 'craft\digitalproducts\elements\Product';
 
 
     // Templates
@@ -40,7 +42,7 @@ class DigitalProducts extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function getMappingTemplate()
+    public function getMappingTemplate(): string
     {
         return 'feed-me/_includes/fields/digital-products';
     }
@@ -52,43 +54,61 @@ class DigitalProducts extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function parseField()
+    public function parseField(): mixed
     {
         $value = $this->fetchArrayValue();
+        $default = $this->fetchDefaultArrayValue();
+
+        // if the mapped value is not set in the feed
+        if ($value === null) {
+            return null;
+        }
+
+        $match = Hash::get($this->fieldInfo, 'options.match', 'title');
+        $specialMatchCase = in_array($match, ['title', 'slug']);
+
+        // if value from the feed is empty and default is not set
+        // return an empty array; no point bothering further
+        if (empty($default) && DataHelper::isArrayValueEmpty($value, $specialMatchCase)) {
+            return [];
+        }
 
         $sources = Hash::get($this->field, 'settings.sources');
-        $limit = Hash::get($this->field, 'settings.limit');
+        $limit = Hash::get($this->field, 'settings.maxRelations');
         $targetSiteId = Hash::get($this->field, 'settings.targetSiteId');
         $feedSiteId = Hash::get($this->feed, 'siteId');
-        $match = Hash::get($this->fieldInfo, 'options.match', 'title');
         $node = Hash::get($this->fieldInfo, 'node');
 
         $typeIds = [];
 
         if (is_array($sources)) {
             foreach ($sources as $source) {
-                list(, $uid) = explode(':', $source);
+                [, $uid] = explode(':', $source);
                 $typeIds[] = $uid;
             }
-        } else if ($sources === '*') {
+        } elseif ($sources === '*') {
             $typeIds = null;
         }
 
         $foundElements = [];
 
-        if (!$value) {
-            return $foundElements;
-        }
-
         foreach ($value as $dataValue) {
             // Prevent empty or blank values (string or array), which match all elements
-            if (empty($dataValue)) {
+            // but sometimes allow for zeros
+            if (empty($dataValue) && empty($default) && ($specialMatchCase && !is_numeric($dataValue))) {
                 continue;
             }
 
             // If we're using the default value - skip, we've already got an id array
             if ($node === 'usedefault') {
                 $foundElements = $value;
+                break;
+            }
+
+            // special provision for falling back on default BaseRelationField value
+            // https://github.com/craftcms/feed-me/issues/1195
+            if (trim($dataValue) === '') {
+                $foundElements = $default;
                 break;
             }
 
@@ -108,7 +128,7 @@ class DigitalProducts extends Field implements FieldInterface
             if (Craft::$app->getIsMultiSite()) {
                 if ($targetSiteId) {
                     $criteria['siteId'] = Craft::$app->getSites()->getSiteByUid($targetSiteId)->id;
-                } else if ($feedSiteId) {
+                } elseif ($feedSiteId) {
                     $criteria['siteId'] = $feedSiteId;
                 } else {
                     $criteria['siteId'] = Craft::$app->getSites()->getCurrentSite()->id;
@@ -122,13 +142,13 @@ class DigitalProducts extends Field implements FieldInterface
 
             Craft::configure($query, $criteria);
 
-            Plugin::info('Search for existing product with query `{i}`', ['i' => json_encode($criteria)]);
+            Plugin::info('Search for existing product with query `{i}`', ['i' => Json::encode($criteria)]);
 
             $ids = $query->ids();
 
             $foundElements = array_merge($foundElements, $ids);
 
-            Plugin::info('Found `{i}` existing products: `{j}`', ['i' => count($foundElements), 'j' => json_encode($foundElements)]);
+            Plugin::info('Found `{i}` existing products: `{j}`', ['i' => count($foundElements), 'j' => Json::encode($foundElements)]);
         }
 
         // Check for field limit - only return the specified amount

@@ -4,6 +4,7 @@ namespace craft\feedme\fields;
 
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
+use craft\fields\Number as NumberField;
 use craft\helpers\Localization;
 
 /**
@@ -18,12 +19,12 @@ class Number extends Field implements FieldInterface
     /**
      * @var string
      */
-    public static $name = 'Number';
+    public static string $name = 'Number';
 
     /**
      * @var string
      */
-    public static $class = 'craft\fields\Number';
+    public static string $class = NumberField::class;
 
     // Templates
     // =========================================================================
@@ -31,7 +32,7 @@ class Number extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function getMappingTemplate()
+    public function getMappingTemplate(): string
     {
         return 'feed-me/_includes/fields/default';
     }
@@ -42,9 +43,13 @@ class Number extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function parseField()
+    public function parseField(): mixed
     {
         $value = $this->fetchValue();
+
+        if ($value === null) {
+            return null;
+        }
 
         return $this->parseValue($value);
     }
@@ -53,7 +58,7 @@ class Number extends Field implements FieldInterface
      * @param $value
      * @return mixed
      */
-    public function parseValue($value)
+    public function parseValue($value): mixed
     {
         return Localization::normalizeNumber($value);
     }

@@ -17,6 +17,7 @@
         options: {
             elementType: fieldClass.elementType,
             selectionLabel: "Default User"|t('feed-me'),
+            sources: field.sources ?? '*',
         },
     } %}
 {% endif %}
@@ -48,13 +49,15 @@
 
         {% for field in craft.app.fields.getAllFields() %}
             {% if craft.feedme.fieldCanBeUniqueId(field) %}
-                {% set matchAttributes = matchAttributes|merge({ ('field_' ~ field.handle): field.name }) %}
+                {# Check for columnSuffix (since 3.7) #}
+                {% set suffix = field['columnSuffix'] is defined and field.columnSuffix|length  ? '_' ~ field.columnSuffix : '' %}
+                {% set matchAttributes = matchAttributes|merge({ ('field_' ~ field.handle ~ suffix): field.name }) %}
             {% endif %}
         {% endfor %}
 
         {{ forms.selectField({
             name: 'options[match]',
-            class: '',
+            class: 'users-field-match',
             value: hash_get(feed.fieldMapping, optionsPath ~ '.match') ?: '',
             options: matchAttributes,
         }) }}

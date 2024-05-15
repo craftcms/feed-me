@@ -34,10 +34,7 @@
             <input type="hidden" name="feedId" value="{{ feed.id }}">
         {% endif %}
 
-        {% set parsedFeedData = [
-            { label: 'Don’t import'|t('feed-me'), value: 'noimport' },
-            { label: "Use default value", value: 'usedefault' }
-        ] %}
+        {% set parsedFeedData = [] %}
 
         {% for key, data in feedMappingData.data %}
             {% if data is iterable %}
@@ -49,7 +46,14 @@
             {% set parsedFeedData = parsedFeedData|merge([{ label: '<' ~ key ~ '> eg: ' ~ snippet, value: key }]) %}
         {% endfor %}
 
-        {% include feed.element.getMappingTemplate() with { feedData: parsedFeedData } %}
+        {% set parsedFeedData = parsedFeedData|sort((a, b) => b.label < a.label) %}
+
+        {% set parsedFeedData = [
+            { label: 'Don’t import'|t('feed-me'), value: 'noimport' },
+            { label: 'Use default value', value: 'usedefault' }
+        ]|merge(parsedFeedData) %}
+
+        {% include feed.getElement().getMappingTemplate() with { feedData: parsedFeedData } %}
 
     {% else %}
         <div class="feedme-fullpage fullpage-error">
@@ -57,6 +61,12 @@
 
             <h2>{{ 'Unable to proceed to field mapping'|t('feed-me') }}</h2>
             <p>{{ 'Feed Me is unable to find, or parse your provided data. This usually means your URL cannot be reached from your Craft site, or your {feedType} is invalid. Check the logs, and double-check your settings.'|t('feed-me', { feedType: feed.feedType|upper }) }}</p>
+
+            {% if feedMappingData.error is not empty %}
+                <div class="fullpage-error-message">
+                    <code>{{ feedMappingData.error }}</code>
+                </div>
+            {% endif %}
 
             <div class="buttons">
                 <a href="{{ url('feed-me/feeds/' ~ feed.id) }}" class="btn submit">&larr; {{ 'Back to feed'|t('feed-me') }}</a>

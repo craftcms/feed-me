@@ -5,7 +5,9 @@ namespace craft\feedme\fields;
 use Cake\Utility\Hash;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
+use craft\feedme\helpers\DataHelper;
 use craft\feedme\Plugin;
+use craft\fields\Matrix as MatrixField;
 
 /**
  *
@@ -19,12 +21,12 @@ class Matrix extends Field implements FieldInterface
     /**
      * @var string
      */
-    public static $name = 'Matrix';
+    public static string $name = 'Matrix';
 
     /**
      * @var string
      */
-    public static $class = 'craft\fields\Matrix';
+    public static string $class = MatrixField::class;
 
     // Templates
     // =========================================================================
@@ -32,7 +34,7 @@ class Matrix extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function getMappingTemplate()
+    public function getMappingTemplate(): string
     {
         return 'feed-me/_includes/fields/matrix';
     }
@@ -43,7 +45,7 @@ class Matrix extends Field implements FieldInterface
     /**
      * @inheritDoc
      */
-    public function parseField()
+    public function parseField(): mixed
     {
         $preppedData = [];
         $fieldData = [];
@@ -61,6 +63,7 @@ class Matrix extends Field implements FieldInterface
         foreach ($this->feedData as $nodePath => $value) {
             // Get the field mapping info for this node in the feed
             $fieldInfo = $this->_getFieldMappingInfoForNodePath($nodePath, $blocks);
+            $nodePathSegments = explode('/', $nodePath);
 
             // If this is data concerning our Matrix field and blocks
             if ($fieldInfo) {
@@ -69,25 +72,12 @@ class Matrix extends Field implements FieldInterface
                 $subFieldInfo = $fieldInfo['subFieldInfo'];
                 $isComplexField = $fieldInfo['isComplexField'];
 
-                $nodePathSegments = explode('/', $nodePath);
-                $blockIndex = Hash::get($nodePathSegments, 1);
-
-                if (!is_numeric($blockIndex)) {
-                    // Try to check if its only one-level deep (only importing one block type)
-                    // which is particularly common for JSON.
-                    $blockIndex = Hash::get($nodePathSegments, 2);
-
-                    if (!is_numeric($blockIndex)) {
-                        $blockIndex = 0;
-                    }
-                }
-
-                $key = $blockIndex . '.' . $blockHandle . '.' . $subFieldHandle;
+                $key = $this->_getBlockKey($nodePathSegments, $blockHandle, $subFieldHandle);
 
                 // Check for complex fields (think Table, Super Table, etc), essentially anything that has
                 // sub-fields, and doesn't have data directly mapped to the field itself. It needs to be
                 // accumulated here (so its in the right order), but grouped based on the field and block
-                // its in. A little bit annoying, but no better ideas...
+                // its in. A bit annoying, but no better ideas...
                 if ($isComplexField) {
                     $complexFields[$key]['info'] = $subFieldInfo;
                     $complexFields[$key]['data'][$nodePath] = $value;
@@ -103,9 +93,21 @@ class Matrix extends Field implements FieldInterface
 
                 // Finish up with the content, also sort out cases where there's array content
                 if (isset($fieldData[$key]) && is_array($fieldData[$key])) {
-                    $fieldData[$key] = array_merge_recursive($fieldData[$key], $parsedValue);
+                    $fieldData[$key] = is_array($parsedValue) ? array_merge_recursive($fieldData[$key], $parsedValue) : $fieldData[$key];
                 } else {
                     $fieldData[$key] = $parsedValue;
+                }
+            }
+
+            foreach ($blocks as $blockHandle => $fields) {
+                foreach ($fields['fields'] as $fieldHandle => $fieldInfo) {
+                    $node = Hash::get($fieldInfo, 'node');
+                    if ($node === 'usedefault') {
+                        $key = $this->_getBlockKey($nodePathSegments, $blockHandle, $fieldHandle);
+
+                        $parsedValue = DataHelper::fetchSimpleValue($this->feedData, $fieldInfo);
+                        $fieldData[$key] = $parsedValue;
+                    }
                 }
             }
         }
@@ -123,10 +125,12 @@ class Matrix extends Field implements FieldInterface
 
             $parsedValue = $this->_parseSubField($nodePaths, $subFieldHandle, $subFieldInfo);
 
-            if (isset($fieldData[$key])) {
-                $fieldData[$key] = array_merge_recursive($fieldData[$key], $parsedValue);
-            } else {
-                $fieldData[$key] = $parsedValue;
+            if ($parsedValue !== null) {
+                if (isset($fieldData[$key])) {
+                    $fieldData[$key] = array_merge_recursive($fieldData[$key], $parsedValue);
+                } else {
+                    $fieldData[$key] = $parsedValue;
+                }
             }
         }
 
@@ -135,28 +139,49 @@ class Matrix extends Field implements FieldInterface
         // $order = 0;
 
         // New, we've got a collection of prepared data, but its formatted a little rough, due to catering for
-        // sub-field data that could be arrays or single values. Lets build our Matrix-ready data
+        // sub-field data that could be arrays or single values. Let's build our Matrix-ready data
         foreach ($fieldData as $blockSubFieldHandle => $value) {
             $handles = explode('.', $blockSubFieldHandle);
-            $blockIndex = 'new' . ($handles[0] + 1);
             $blockHandle = $handles[1];
+            // Inclusion of block handle here prevents blocks of different types from being merged together
+            $blockIndex = 'new' . $blockHandle . ((int)$handles[0] + 1);
             $subFieldHandle = $handles[2];
 
             $disabled = Hash::get($this->fieldInfo, 'blocks.' . $blockHandle . '.disabled', false);
-            $collapsed = Hash::get($this->fieldInfo, 'blocks.' . $blockHandle . '.collapsed', false);
 
             // Prepare an array that's ready for Matrix to import it
             $preppedData[$blockIndex . '.type'] = $blockHandle;
-            // $preppedData[$blockIndex . '.order'] = $order;
             $preppedData[$blockIndex . '.enabled'] = !$disabled;
-            $preppedData[$blockIndex . '.collapsed'] = $collapsed;
+            // because of PR 1284 and enhanced matrix data comparison in PR 1291,
+            // we need to add "collapsed => false" to the matrix data from the feed;
+            // otherwise enhanced matrix data comparison will always think the data has changed
+            $preppedData[$blockIndex . '.collapsed'] = false;
             $preppedData[$blockIndex . '.fields.' . $subFieldHandle] = $value;
-            // $order++;
         }
 
-        $preppedData = Hash::expand($preppedData);
+        // if there's nothing in the prepped data, return null, as if mapping doesn't exist
+        if (empty($preppedData)) {
+            return null;
+        }
 
-        return $preppedData;
+        $expanded = Hash::expand($preppedData);
+
+        // Although it seems to work with block handles in keys, it's better to keep things clean
+        $index = 1;
+        $resultBlocks = [];
+        foreach ($expanded as $blockData) {
+            // all the fields are empty and setEmptyValues is off, ignore the block
+            if (
+                !empty(array_filter(
+                    $blockData['fields'],
+                    fn($value) => (is_string($value) && !empty($value)) || (is_array($value) && !empty(array_filter($value)))
+                ))
+            ) {
+                $resultBlocks['new' . $index++] = $blockData;
+            }
+        }
+
+        return $resultBlocks;
     }
 
 
@@ -164,11 +189,36 @@ class Matrix extends Field implements FieldInterface
     // =========================================================================
 
     /**
+     * Get block's key
+     *
+     * @param array $nodePathSegments
+     * @param string $blockHandle
+     * @param string $fieldHandle
+     * @return string
+     */
+    private function _getBlockKey(array $nodePathSegments, string $blockHandle, string $fieldHandle): string
+    {
+        $blockIndex = Hash::get($nodePathSegments, 1);
+
+        if (!is_numeric($blockIndex)) {
+            // Try to check if its only one-level deep (only importing one block type)
+            // which is particularly common for JSON.
+            $blockIndex = Hash::get($nodePathSegments, 2);
+
+            if (!is_numeric($blockIndex)) {
+                $blockIndex = 0;
+            }
+        }
+
+        return $blockIndex . '.' . $blockHandle . '.' . $fieldHandle;
+    }
+
+    /**
      * @param $nodePath
      * @param $blocks
-     * @return array
+     * @return array|null|string
      */
-    private function _getFieldMappingInfoForNodePath($nodePath, $blocks)
+    private function _getFieldMappingInfoForNodePath($nodePath, $blocks): ?array
     {
         foreach ($blocks as $blockHandle => $blockInfo) {
             $fields = Hash::get($blockInfo, 'fields');
@@ -182,7 +232,7 @@ class Matrix extends Field implements FieldInterface
                 $nestedFieldNodes = Hash::extract($subFieldInfo, 'fields.{*}.node');
 
                 if ($nestedFieldNodes) {
-                    foreach ($nestedFieldNodes as $key => $nestedFieldNode) {
+                    foreach ($nestedFieldNodes as $nestedFieldNode) {
                         if ($feedPath == $nestedFieldNode) {
                             return [
                                 'blockHandle' => $blockHandle,
@@ -195,7 +245,7 @@ class Matrix extends Field implements FieldInterface
                     }
                 }
 
-                if ($feedPath == $node || $node === 'usedefault') {
+                if ($feedPath == $node) {
                     return [
                         'blockHandle' => $blockHandle,
                         'subFieldHandle' => $subFieldHandle,
@@ -206,6 +256,8 @@ class Matrix extends Field implements FieldInterface
                 }
             }
         }
+
+        return null;
     }
 
     /**
@@ -214,11 +266,18 @@ class Matrix extends Field implements FieldInterface
      * @param $subFieldInfo
      * @return mixed
      */
-    private function _parseSubField($feedData, $subFieldHandle, $subFieldInfo)
+    private function _parseSubField($feedData, $subFieldHandle, $subFieldInfo): mixed
     {
         $subFieldClassHandle = Hash::get($subFieldInfo, 'field');
 
         $subField = Hash::extract($this->field->getBlockTypeFields(), '{n}[handle=' . $subFieldHandle . ']')[0];
+
+        if (
+            !$subField instanceof $subFieldClassHandle &&
+            ($subField instanceof \craft\fields\Categories || $subField instanceof \craft\fields\Tags)
+        ) {
+            $subFieldClassHandle = \craft\fields\Entries::class;
+        }
 
         $class = Plugin::$plugin->fields->getRegisteredField($subFieldClassHandle);
         $class->feedData = $feedData;

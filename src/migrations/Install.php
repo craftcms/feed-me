@@ -9,14 +9,14 @@ class Install extends Migration
     // Public Methods
     // =========================================================================
 
-    public function safeUp()
+    public function safeUp(): bool
     {
         $this->createTables();
 
         return true;
     }
 
-    public function safeDown()
+    public function safeDown(): bool
     {
         $this->removeTables();
 
@@ -26,7 +26,7 @@ class Install extends Migration
     // Protected Methods
     // =========================================================================
 
-    protected function createTables()
+    protected function createTables(): void
     {
         $this->createTable('{{%feedme_feeds}}', [
             'id' => $this->primaryKey(),
@@ -40,11 +40,13 @@ class Install extends Migration
             'sortOrder' => $this->smallInteger()->unsigned(),
             'singleton' => $this->boolean()->notNull()->defaultValue(false),
             'duplicateHandle' => $this->text(),
+            'updateSearchIndexes' => $this->boolean()->notNull()->defaultValue(true),
             'paginationNode' => $this->text(),
             'fieldMapping' => $this->text(),
             'fieldUnique' => $this->text(),
             'passkey' => $this->string()->notNull(),
             'backup' => $this->boolean()->notNull()->defaultValue(false),
+            'setEmptyValues' => $this->boolean()->notNull()->defaultValue(false),
 
             'dateCreated' => $this->dateTime()->notNull(),
             'dateUpdated' => $this->dateTime()->notNull(),
@@ -52,7 +54,7 @@ class Install extends Migration
         ]);
     }
 
-    protected function removeTables()
+    protected function removeTables(): void
     {
         $this->dropTableIfExists('{{%feedme_feeds}}');
     }

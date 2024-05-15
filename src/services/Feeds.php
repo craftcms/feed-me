@@ -5,11 +5,15 @@ namespace craft\feedme\services;
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
+use craft\db\ActiveQuery;
 use craft\db\Query;
+use craft\feedme\errors\FeedException;
 use craft\feedme\events\FeedEvent;
 use craft\feedme\models\FeedModel;
 use craft\feedme\records\FeedRecord;
 use craft\helpers\Json;
+use Exception;
+use Throwable;
 
 /**
  *
@@ -23,13 +27,13 @@ class Feeds extends Component
     /**
      * @var array
      */
-    private $_overrides = [];
+    private array $_overrides = [];
 
     // Constants
     // =========================================================================
 
-    const EVENT_BEFORE_SAVE_FEED = 'onBeforeSaveFeed';
-    const EVENT_AFTER_SAVE_FEED = 'onAfterSaveFeed';
+    public const EVENT_BEFORE_SAVE_FEED = 'onBeforeSaveFeed';
+    public const EVENT_AFTER_SAVE_FEED = 'onAfterSaveFeed';
 
 
     // Public Methods
@@ -37,9 +41,9 @@ class Feeds extends Component
 
     /**
      * @param null $orderBy
-     * @return array|\yii\db\ActiveRecord[]
+     * @return array
      */
-    public function getFeeds($orderBy = null)
+    public function getFeeds($orderBy = null): array
     {
         $query = $this->_getQuery();
 
@@ -59,7 +63,7 @@ class Feeds extends Component
     /**
      * @return int
      */
-    public function getTotalFeeds()
+    public function getTotalFeeds(): int
     {
         return count($this->getFeeds());
     }
@@ -68,7 +72,7 @@ class Feeds extends Component
      * @param $feedId
      * @return FeedModel|null
      */
-    public function getFeedById($feedId)
+    public function getFeedById($feedId): ?FeedModel
     {
         $result = $this->_getQuery()
             ->where(['id' => $feedId])
@@ -81,6 +85,7 @@ class Feeds extends Component
      * @param FeedModel $model
      * @param bool $runValidation
      * @return bool
+     * @throws Exception
      */
     public function saveFeed(FeedModel $model, bool $runValidation = true): bool
     {
@@ -110,7 +115,7 @@ class Feeds extends Component
             $record = FeedRecord::findOne($model->id);
 
             if (!$record) {
-                throw new FeedException(Craft::t('feed-me', 'No feed exists with the ID “{id}”', ['id' => $model->id]));
+                throw new Exception(Craft::t('feed-me', 'No feed exists with the ID “{id}”', ['id' => $model->id]));
             }
         }
 
@@ -120,22 +125,24 @@ class Feeds extends Component
         $record->primaryElement = $model->primaryElement;
         $record->elementType = $model->elementType;
         $record->siteId = $model->siteId;
-        $record->singleton = (bool)$model->singleton;
+        $record->singleton = $model->singleton;
         $record->duplicateHandle = $model->duplicateHandle;
+        $record->updateSearchIndexes = $model->updateSearchIndexes;
         $record->paginationNode = $model->paginationNode;
         $record->passkey = $model->passkey;
         $record->backup = $model->backup;
+        $record->setEmptyValues = $model->setEmptyValues;
 
         if ($model->elementGroup) {
-            $record->setAttribute('elementGroup', json_encode($model->elementGroup));
+            $record->setAttribute('elementGroup', Json::encode($model->elementGroup));
         }
 
         if ($model->fieldMapping) {
-            $record->setAttribute('fieldMapping', json_encode($model->fieldMapping));
+            $record->setAttribute('fieldMapping', Json::encode($model->fieldMapping));
         }
 
         if ($model->fieldUnique) {
-            $record->setAttribute('fieldUnique', json_encode($model->fieldUnique));
+            $record->setAttribute('fieldUnique', Json::encode($model->fieldUnique));
         }
 
         if ($isNewModel) {
@@ -170,7 +177,7 @@ class Feeds extends Component
      * @return int
      * @throws \yii\db\Exception
      */
-    public function deleteFeedById($feedId)
+    public function deleteFeedById($feedId): int
     {
         return Craft::$app->getDb()->createCommand()
             ->delete('{{%feedme_feeds}}', ['id' => $feedId])
@@ -180,8 +187,9 @@ class Feeds extends Component
     /**
      * @param $feed
      * @return bool
+     * @throws Exception
      */
-    public function duplicateFeed($feed)
+    public function duplicateFeed($feed): bool
     {
         $feed->id = null;
 
@@ -193,19 +201,19 @@ class Feeds extends Component
      * @param $feedId
      * @return mixed|null
      */
-    public function getModelOverrides($handle, $feedId)
+    public function getModelOverrides($handle, $feedId): mixed
     {
-        if (!$this->_overrides) {
-            $this->_overrides = Hash::get(Craft::$app->getConfig()->getConfigFromFile('feed-me'), 'feedOptions.' . $feedId);
+        if (empty($this->_overrides[$feedId])) {
+            $this->_overrides[$feedId] = Hash::get(Craft::$app->getConfig()->getConfigFromFile('feed-me'), 'feedOptions.' . $feedId);
         }
 
-        return $this->_overrides[$handle] ?? null;
+        return $this->_overrides[$feedId][$handle] ?? null;
     }
 
     /**
      * @param array $feedIds
      * @return bool
-     * @throws \Throwable
+     * @throws Throwable
      * @throws \yii\db\Exception
      */
     public function reorderFeeds(array $feedIds): bool
@@ -220,7 +228,7 @@ class Feeds extends Component
             }
 
             $transaction->commit();
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $transaction->rollBack();
 
             throw $e;
@@ -234,9 +242,9 @@ class Feeds extends Component
     // =========================================================================
 
     /**
-     * @return \craft\db\ActiveQuery
+     * @return ActiveQuery
      */
-    private function _getQuery()
+    private function _getQuery(): ActiveQuery
     {
         return FeedRecord::find()
             ->select([
@@ -251,11 +259,13 @@ class Feeds extends Component
                 'sortOrder',
                 'singleton',
                 'duplicateHandle',
+                'updateSearchIndexes',
                 'paginationNode',
                 'fieldMapping',
                 'fieldUnique',
                 'passkey',
                 'backup',
+                'setEmptyValues',
                 'dateCreated',
                 'dateUpdated',
                 'uid',
@@ -267,7 +277,7 @@ class Feeds extends Component
      * @param FeedRecord|null $record
      * @return FeedModel|null
      */
-    private function _createModelFromRecord(FeedRecord $record = null)
+    private function _createModelFromRecord(FeedRecord $record = null): ?FeedModel
     {
         if (!$record) {
             return null;
@@ -283,7 +293,7 @@ class Feeds extends Component
         foreach ($attributes as $attribute => $value) {
             $override = $this->getModelOverrides($attribute, $record['id']);
 
-            if ($override) {
+            if ($override !== null) {
                 $attributes[$attribute] = $override;
             }
         }
@@ -294,6 +304,7 @@ class Feeds extends Component
     /**
      * @param int|null $feedId
      * @return FeedRecord
+     * @throws Exception
      */
     private function _getFeedRecordById(int $feedId = null): FeedRecord
     {
@@ -301,7 +312,7 @@ class Feeds extends Component
             $feedRecord = FeedRecord::findOne(['id' => $feedId]);
 
             if (!$feedRecord) {
-                throw new Exception(Craft::t('feed-me', 'No feed exists with the ID “{id}”.', ['id' => $feedId]));
+                throw new FeedException(Craft::t('feed-me', 'No feed exists with the ID “{id}”.', ['id' => $feedId]));
             }
         } else {
             $feedRecord = new FeedRecord();

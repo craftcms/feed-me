@@ -3,6 +3,7 @@
 namespace craft\feedme\datatypes;
 
 use Cake\Utility\Hash;
+use Craft;
 use craft\feedme\base\DataType;
 use craft\feedme\base\DataTypeInterface;
 use craft\feedme\Plugin;
@@ -18,7 +19,7 @@ class Json extends DataType implements DataTypeInterface
     /**
      * @var string
      */
-    public static $name = 'JSON';
+    public static string $name = 'JSON';
 
 
     // Public Methods
@@ -27,7 +28,7 @@ class Json extends DataType implements DataTypeInterface
     /**
      * @inheritDoc
      */
-    public function getFeed($url, $settings, $usePrimaryElement = true)
+    public function getFeed($url, $settings, bool $usePrimaryElement = true): array
     {
         $feedId = Hash::get($settings, 'id');
         $response = Plugin::$plugin->data->getRawData($url, $feedId);
@@ -50,12 +51,26 @@ class Json extends DataType implements DataTypeInterface
             $e = (new JsonParser())->lint($data) ?: $e;
             $error = 'Invalid JSON: ' . $e->getMessage();
             Plugin::error($error);
+            Craft::$app->getErrorHandler()->logException($e);
             return ['success' => false, 'error' => $error];
         }
 
         // Make sure it's indeed an array!
         if (!is_array($array)) {
             $error = 'Invalid JSON: ' . json_last_error_msg();
+            Plugin::error($error);
+            return ['success' => false, 'error' => $error];
+        }
+
+        // if we have empty keys in the array - throw an error, that's not allowed
+        $containsEmptyKeys = false;
+        array_walk_recursive($array, function($value, $key) use (&$containsEmptyKeys) {
+            if (trim($key) === '') {
+                $containsEmptyKeys = true;
+            }
+        });
+        if ($containsEmptyKeys) {
+            $error = 'Invalid Data: data contains empty headings (keys)';
             Plugin::error($error);
             return ['success' => false, 'error' => $error];
         }

@@ -153,3 +153,33 @@ Event::on(Process::class, Process::EVENT_STEP_AFTER_ELEMENT_SAVE, function(FeedP
 
 });
 ```
+
+## Field parsing related events
+
+### The `beforeParseField` event
+
+Triggered before a field value is parsed. Plugins can get notified before a field value is parsed.
+
+```php
+use craft\feedme\events\FieldEvent;
+use craft\feedme\services\Fields;
+use yii\base\Event;
+
+Event::on(Fields::class, Fields::EVENT_BEFORE_PARSE_FIELD, function(FieldEvent $event) {
+
+});
+```
+
+### The `afterParseField` event
+
+Triggered after a field value is parsed. Plugins can get notified before a field value is parsed and alter the parsed value. 
+
+```php
+use craft\feedme\events\FieldEvent;
+use craft\feedme\services\Fields;
+use yii\base\Event;
+
+Event::on(Fields::class, Fields::EVENT_AFTER_PARSE_FIELD, function(FieldEvent $event) {
+
+});
+```

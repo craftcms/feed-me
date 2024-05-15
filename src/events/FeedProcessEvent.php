@@ -12,20 +12,20 @@ class FeedProcessEvent extends CancelableEvent
     /**
      * @var
      */
-    public $feed;
+    public mixed $feed = null;
 
     /**
      * @var
      */
-    public $feedData;
+    public mixed $feedData = null;
 
     /**
      * @var
      */
-    public $contentData;
+    public mixed $contentData = null;
 
     /**
      * @var
      */
-    public $element;
+    public mixed $element = null;
 }

@@ -1,0 +1,25 @@
+name: ci
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  ci:
+    name: ci
+    uses: craftcms/.github/.github/workflows/ci.yml@v3
+    with:
+      craft_version: '4'
+      jobs: '["ecs", "phpstan", "prettier"]'
+      notify_slack: true
+      slack_subteam: <!subteam^SGFL9NKNZ>
+    secrets:
+      token: ${{ secrets.GITHUB_TOKEN }}
+      slack_webhook_url: ${{ secrets.SLACK_PLUGIN_WEBHOOK_URL }}

@@ -4,13 +4,22 @@ namespace craft\feedme\controllers;
 
 use Cake\Utility\Hash;
 use Craft;
+use craft\errors\MissingComponentException;
 use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
 use craft\feedme\queue\jobs\FeedImport;
 use craft\helpers\Json;
 use craft\helpers\StringHelper;
 use craft\web\Controller;
+use Exception;
+use Throwable;
+use yii\base\ExitException;
+use yii\web\BadRequestHttpException;
+use yii\web\Response;
 
+/**
+ * @property Plugin $module
+ */
 class FeedsController extends Controller
 {
     // Properties
@@ -19,16 +28,16 @@ class FeedsController extends Controller
     /**
      * @var string[]
      */
-    protected $allowAnonymous = ['run-task'];
+    protected int|bool|array $allowAnonymous = ['run-task'];
 
 
     // Public Methods
     // =========================================================================
 
     /**
-     * @return \yii\web\Response
+     * @return Response
      */
-    public function actionFeedsIndex()
+    public function actionFeedsIndex(): Response
     {
         $variables['feeds'] = Plugin::$plugin->feeds->getFeeds();
 
@@ -38,9 +47,9 @@ class FeedsController extends Controller
     /**
      * @param null $feedId
      * @param null $feed
-     * @return \yii\web\Response
+     * @return Response
      */
-    public function actionEditFeed($feedId = null, $feed = null)
+    public function actionEditFeed($feedId = null, $feed = null): Response
     {
         $variables = [];
 
@@ -64,9 +73,9 @@ class FeedsController extends Controller
     /**
      * @param null $feedId
      * @param null $postData
-     * @return \yii\web\Response
+     * @return Response
      */
-    public function actionElementFeed($feedId = null, $postData = null)
+    public function actionElementFeed($feedId = null, $postData = null): Response
     {
         $variables = [];
 
@@ -86,9 +95,9 @@ class FeedsController extends Controller
     /**
      * @param null $feedId
      * @param null $postData
-     * @return \yii\web\Response
+     * @return Response
      */
-    public function actionMapFeed($feedId = null, $postData = null)
+    public function actionMapFeed($feedId = null, $postData = null): Response
     {
         $variables = [];
 
@@ -106,10 +115,10 @@ class FeedsController extends Controller
 
     /**
      * @param null $feedId
-     * @return \yii\web\Response
+     * @return Response
      * @throws \yii\base\Exception
      */
-    public function actionRunFeed($feedId = null)
+    public function actionRunFeed($feedId = null): Response
     {
         $request = Craft::$app->getRequest();
 
@@ -131,9 +140,9 @@ class FeedsController extends Controller
 
     /**
      * @param null $feedId
-     * @return \yii\web\Response
+     * @return Response
      */
-    public function actionStatusFeed($feedId = null)
+    public function actionStatusFeed($feedId = null): Response
     {
         $feed = Plugin::$plugin->feeds->getFeedById($feedId);
 
@@ -143,19 +152,11 @@ class FeedsController extends Controller
     }
 
     /**
-     * @return \yii\web\Response|null
+     * @return Response|null
+     * @throws BadRequestHttpException
+     * @throws MissingComponentException
      */
-    public function actionSaveFeed()
-    {
-        $feed = $this->_getModelFromPost();
-
-        return $this->_saveAndRedirect($feed, 'feed-me/feeds/', true);
-    }
-
-    /**
-     * @return \yii\web\Response|null
-     */
-    public function actionSaveAndElementFeed()
+    public function actionSaveFeed(): ?Response
     {
         $feed = $this->_getModelFromPost();
 
@@ -164,7 +165,30 @@ class FeedsController extends Controller
 
             // Send the category group back to the template
             Craft::$app->getUrlManager()->setRouteParams([
-                'feed' => $feed
+                'feed' => $feed,
+            ]);
+
+            return null;
+        }
+
+        return $this->_saveAndRedirect($feed, 'feed-me/feeds/', true);
+    }
+
+    /**
+     * @return Response|null
+     * @throws BadRequestHttpException
+     * @throws MissingComponentException
+     */
+    public function actionSaveAndElementFeed(): ?Response
+    {
+        $feed = $this->_getModelFromPost();
+
+        if ($feed->getErrors()) {
+            $this->setFailFlash(Craft::t('feed-me', 'Couldn’t save the feed.'));
+
+            // Send the category group back to the template
+            Craft::$app->getUrlManager()->setRouteParams([
+                'feed' => $feed,
             ]);
 
             return null;
@@ -174,9 +198,11 @@ class FeedsController extends Controller
     }
 
     /**
-     * @return \yii\web\Response|null
+     * @return Response|null
+     * @throws BadRequestHttpException
+     * @throws MissingComponentException
      */
-    public function actionSaveAndMapFeed()
+    public function actionSaveAndMapFeed(): ?Response
     {
         $feed = $this->_getModelFromPost();
 
@@ -184,9 +210,11 @@ class FeedsController extends Controller
     }
 
     /**
-     * @return \yii\web\Response|null
+     * @return Response|null
+     * @throws BadRequestHttpException
+     * @throws MissingComponentException
      */
-    public function actionSaveAndReviewFeed()
+    public function actionSaveAndReviewFeed(): ?Response
     {
         $feed = $this->_getModelFromPost();
 
@@ -194,10 +222,10 @@ class FeedsController extends Controller
     }
 
     /**
-     * @return \yii\web\Response
-     * @throws \craft\errors\MissingComponentException
+     * @return Response
+     * @throws MissingComponentException
      */
-    public function actionSaveAndDuplicateFeed()
+    public function actionSaveAndDuplicateFeed(): Response
     {
         $request = Craft::$app->getRequest();
 
@@ -212,10 +240,11 @@ class FeedsController extends Controller
     }
 
     /**
-     * @return \yii\web\Response
-     * @throws \yii\web\BadRequestHttpException
+     * @return Response
+     * @throws BadRequestHttpException
+     * @throws \yii\db\Exception
      */
-    public function actionDeleteFeed()
+    public function actionDeleteFeed(): Response
     {
         $this->requirePostRequest();
 
@@ -230,9 +259,9 @@ class FeedsController extends Controller
 
     /**
      * @throws \yii\base\Exception
-     * @throws \yii\base\ExitException
+     * @throws ExitException
      */
-    public function actionRunTask()
+    public function actionRunTask(): void
     {
         $request = Craft::$app->getRequest();
 
@@ -247,9 +276,9 @@ class FeedsController extends Controller
 
     /**
      * @return false|string
-     * @throws \Exception
+     * @throws Exception
      */
-    public function actionDebug()
+    public function actionDebug(): bool|string
     {
         $request = Craft::$app->getRequest();
 
@@ -270,11 +299,11 @@ class FeedsController extends Controller
     }
 
     /**
-     * @return \yii\web\Response
-     * @throws \Throwable
-     * @throws \yii\web\BadRequestHttpException
+     * @return Response
+     * @throws Throwable
+     * @throws BadRequestHttpException
      */
-    public function actionReorderFeeds()
+    public function actionReorderFeeds(): Response
     {
         $this->requirePostRequest();
         $this->requireAcceptsJson();
@@ -292,10 +321,10 @@ class FeedsController extends Controller
 
     /**
      * @param $feed
-     * @return bool
-     * @throws \craft\errors\MissingComponentException
+     * @return bool|null
+     * @throws MissingComponentException
      */
-    private function _runImportTask($feed)
+    private function _runImportTask($feed): ?bool
     {
         $request = Craft::$app->getRequest();
 
@@ -315,7 +344,7 @@ class FeedsController extends Controller
             Craft::$app->getSession()->setNotice(Craft::t('feed-me', 'Feed processing started.'));
 
             // Create the import task
-            Craft::$app->getQueue()->delay(0)->push(new FeedImport([
+            $this->module->queue->push(new FeedImport([
                 'feed' => $feed,
                 'limit' => $limit,
                 'offset' => $offset,
@@ -334,7 +363,7 @@ class FeedsController extends Controller
 
             // Create the import task only if provided the correct passkey
             if ($proceed) {
-                Craft::$app->getQueue()->delay(0)->push(new FeedImport([
+                $this->module->queue->push(new FeedImport([
                     'feed' => $feed,
                     'limit' => $limit,
                     'offset' => $offset,
@@ -344,16 +373,18 @@ class FeedsController extends Controller
 
             return $proceed;
         }
+
+        return null;
     }
 
     /**
      * @param $feed
      * @param $redirect
      * @param false $withId
-     * @return \yii\web\Response|null
-     * @throws \craft\errors\MissingComponentException
+     * @return Response|null
+     * @throws MissingComponentException
      */
-    private function _saveAndRedirect($feed, $redirect, $withId = false)
+    private function _saveAndRedirect($feed, $redirect, bool $withId = false): ?Response
     {
         if (!Plugin::$plugin->feeds->saveFeed($feed)) {
             Craft::$app->getSession()->setError(Craft::t('feed-me', 'Unable to save feed.'));
@@ -376,9 +407,9 @@ class FeedsController extends Controller
 
     /**
      * @return FeedModel
-     * @throws \yii\web\BadRequestHttpException
+     * @throws BadRequestHttpException
      */
-    private function _getModelFromPost()
+    private function _getModelFromPost(): FeedModel
     {
         $this->requirePostRequest();
 
@@ -399,9 +430,11 @@ class FeedsController extends Controller
         $feed->siteId = $request->getBodyParam('siteId', $feed->siteId);
         $feed->singleton = $request->getBodyParam('singleton', $feed->singleton);
         $feed->duplicateHandle = $request->getBodyParam('duplicateHandle', $feed->duplicateHandle);
+        $feed->updateSearchIndexes = (bool)$request->getBodyParam('updateSearchIndexes', $feed->updateSearchIndexes);
         $feed->paginationNode = $request->getBodyParam('paginationNode', $feed->paginationNode);
         $feed->passkey = $request->getBodyParam('passkey', $feed->passkey);
         $feed->backup = (bool)$request->getBodyParam('backup', $feed->backup);
+        $feed->setEmptyValues = (bool)$request->getBodyParam('setEmptyValues', $feed->setEmptyValues);
 
         // Don't overwrite mappings when saving from first screen
         if ($request->getBodyParam('fieldMapping')) {

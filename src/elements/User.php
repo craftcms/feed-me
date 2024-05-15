@@ -4,13 +4,18 @@ namespace craft\feedme\elements;
 
 use Cake\Utility\Hash;
 use Craft;
+use craft\base\ElementInterface;
 use craft\db\Query;
 use craft\elements\Asset as AssetElement;
 use craft\elements\User as UserElement;
+use craft\errors\VolumeException;
 use craft\feedme\base\Element;
 use craft\feedme\helpers\AssetHelper;
+use craft\feedme\helpers\DataHelper;
 use craft\helpers\UrlHelper;
 use craft\records\User as UserRecord;
+use Throwable;
+use yii\base\Exception;
 
 /**
  *
@@ -28,23 +33,17 @@ class User extends Element
     /**
      * @var string
      */
-    public static $name = 'User';
+    public static string $name = 'User';
 
     /**
      * @var string
      */
-    public static $class = 'craft\elements\User';
+    public static string $class = UserElement::class;
 
     /**
      * @var
      */
-    public $element;
-
-    /**
-     * @var
-     */
-    public $status;
-
+    public mixed $status = null;
 
     // Templates
     // =========================================================================
@@ -52,7 +51,7 @@ class User extends Element
     /**
      * @inheritDoc
      */
-    public function getGroupsTemplate()
+    public function getGroupsTemplate(): string
     {
         return 'feed-me/_includes/elements/user/groups';
     }
@@ -60,7 +59,7 @@ class User extends Element
     /**
      * @inheritDoc
      */
-    public function getColumnTemplate()
+    public function getColumnTemplate(): string
     {
         return 'feed-me/_includes/elements/user/column';
     }
@@ -68,7 +67,7 @@ class User extends Element
     /**
      * @inheritDoc
      */
-    public function getMappingTemplate()
+    public function getMappingTemplate(): string
     {
         return 'feed-me/_includes/elements/user/map';
     }
@@ -79,15 +78,15 @@ class User extends Element
     /**
      * @inheritDoc
      */
-    public function getGroups()
+    public function getGroups(): array
     {
-        $result = false;
+        $result = [];
 
         // User are only allowed for Craft Pro
         if (Craft::$app->getEdition() == Craft::Pro) {
             $groups = Craft::$app->userGroups->getAllGroups();
 
-            $result = count($groups) ? $groups : true;
+            $result = count($groups) ? $groups : [];
         }
 
         return $result;
@@ -96,10 +95,10 @@ class User extends Element
     /**
      * @inheritDoc
      */
-    public function getQuery($settings, $params = [])
+    public function getQuery($settings, array $params = []): mixed
     {
         $query = UserElement::find()
-            ->anyStatus()
+            ->status(null)
             ->siteId(Hash::get($settings, 'siteId'));
         Craft::configure($query, $params);
         return $query;
@@ -108,7 +107,7 @@ class User extends Element
     /**
      * @inheritDoc
      */
-    public function setModel($settings)
+    public function setModel($settings): ElementInterface
     {
         $this->element = new UserElement();
 
@@ -126,7 +125,7 @@ class User extends Element
     /**
      * @inheritDoc
      */
-    public function afterSave($data, $settings)
+    public function afterSave($data, $settings): void
     {
         $groupsIds = Hash::get($data, 'groups');
 
@@ -138,15 +137,19 @@ class User extends Element
             $record->locked = false;
             $record->suspended = false;
             $record->pending = false;
+            $record->active = false;
 
             switch ($this->status) {
-                case 'locked';
+                case UserElement::STATUS_ACTIVE:
+                    $record->active = true;
+                    break;
+                case UserElement::STATUS_LOCKED:
                     $record->locked = true;
                     break;
-                case 'suspended';
+                case UserElement::STATUS_SUSPENDED:
                     $record->suspended = true;
                     break;
-                case 'pending':
+                case UserElement::STATUS_PENDING:
                     $record->pending = true;
                     break;
             }
@@ -162,7 +165,7 @@ class User extends Element
     /**
      * @inheritDoc
      */
-    public function disable($elementIds)
+    public function disable($elementIds): bool
     {
         foreach ($elementIds as $elementId) {
             // User status can't be set on the element anymore, only directly on the record.
@@ -182,13 +185,14 @@ class User extends Element
      * @param $fieldInfo
      * @return array
      */
-    protected function parseGroups($feedData, $fieldInfo)
+    protected function parseGroups($feedData, $fieldInfo): array
     {
         $value = $this->fetchArrayValue($feedData, $fieldInfo);
+        $default = DataHelper::fetchDefaultArrayValue($fieldInfo);
 
         $newGroupsIds = [];
 
-        foreach ($value as $key => $dataValue) {
+        foreach ($value as $dataValue) {
             if (is_numeric($dataValue)) {
                 $newGroupsIds[] = $dataValue;
 
@@ -210,6 +214,10 @@ class User extends Element
             $newGroupsIds[] = $result['id'];
         }
 
+        if (empty(array_filter($value)) && !empty($default)) {
+            $newGroupsIds = $default;
+        }
+
         $removeFromExisting = Hash::get($fieldInfo, 'options.removeFromExisting');
         $existingGroupsIds = Hash::extract($this->element->groups, '{n}.id');
 
@@ -224,17 +232,51 @@ class User extends Element
     }
 
     /**
+     * Get and validate Preferred Locale attribute
+     *
+     * @param $feedData
+     * @param $fieldInfo
+     * @return array|\ArrayAccess|mixed|string|null
+     * @throws \yii\base\Exception
+     */
+    protected function parsePreferredLocale($feedData, $fieldInfo)
+    {
+        $value = $this->fetchSimpleValue($feedData, $fieldInfo);
+
+        if ($value === "") {
+            return $value;
+        }
+
+        if ($value !== null && in_array($value, Craft::$app->getI18n()->getAppLocaleIds(), true)) {
+            return $value;
+        }
+
+        return null;
+    }
+
+    /**
      * @param $feedData
      * @param $fieldInfo
      * @return int|mixed|string|null
-     * @throws \yii\base\Exception
+     * @throws Exception
+     * @throws Throwable
+     * @throws VolumeException
      */
-    protected function parsePhotoId($feedData, $fieldInfo)
+    protected function parsePhotoId($feedData, $fieldInfo): mixed
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
 
         $upload = Hash::get($fieldInfo, 'options.upload');
         $conflict = Hash::get($fieldInfo, 'options.conflict');
+
+        // if the value in the feed is empty, return null or empty string depending on setEmptyValues setting
+        if (empty($value)) {
+            if ($this->feed->setEmptyValues) {
+                return "";
+            }
+
+            return null;
+        }
 
         // Try to find an existing element
         $urlToUpload = null;
@@ -250,7 +292,7 @@ class User extends Element
             }
         }
 
-        // See if its a default asset
+        // See if it's a default asset
         if (is_array($value) && isset($value[0])) {
             return $value[0];
         }
@@ -279,20 +321,20 @@ class User extends Element
                 return $uploadedElementIds[0];
             }
         }
+
+        return null;
     }
 
     /**
      * @param $feedData
      * @param $fieldInfo
-     * @return null
+     * @return void
      */
-    protected function parseStatus($feedData, $fieldInfo)
+    protected function parseStatus($feedData, $fieldInfo): void
     {
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
 
         $this->status = $value;
-
-        return null;
     }
 
     // Private Methods
@@ -300,12 +342,12 @@ class User extends Element
 
     /**
      * @param $user
-     * @return int
-     * @throws \Throwable
-     * @throws \craft\errors\VolumeException
-     * @throws \yii\base\Exception
+     * @return int|null
+     * @throws Exception
+     * @throws Throwable
+     * @throws VolumeException
      */
-    private function _prepareUserPhotosFolder($user)
+    private function _prepareUserPhotosFolder($user): ?int
     {
         $assetsService = Craft::$app->getAssets();
         $volumes = Craft::$app->getVolumes();
@@ -319,6 +361,6 @@ class User extends Element
             $subpath = Craft::$app->getView()->renderObjectTemplate($subpath, $user);
         }
 
-        return $assetsService->ensureFolderByFullPathAndVolume($subpath, $volume);
+        return $assetsService->ensureFolderByFullPathAndVolume($subpath, $volume)->id ?? null;
     }
 }
