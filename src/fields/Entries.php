@@ -79,9 +79,14 @@ class Entries extends Field implements FieldInterface
         }
 
         $sources = Hash::get($this->field, 'settings.sources');
-        $limit = Hash::get($this->field, 'settings.maxRelations');
-        $targetSiteId = Hash::get($this->field, 'settings.targetSiteId');
         $maintainHierarchy = Hash::get($this->field, 'settings.maintainHierarchy');
+        if ($maintainHierarchy) {
+            $limit = Hash::get($this->field, 'settings.branchLimit');
+        } else {
+            $limit = Hash::get($this->field, 'settings.maxRelations');
+        }
+
+        $targetSiteId = Hash::get($this->field, 'settings.targetSiteId');
         $feedSiteId = Hash::get($this->feed, 'siteId');
         $create = Hash::get($this->fieldInfo, 'options.create');
         $fields = Hash::get($this->fieldInfo, 'fields');
