@@ -63,7 +63,7 @@ class MultiSelect extends Field implements FieldInterface
                 continue;
             }
             foreach ($value as $dataValue) {
-                if (!empty($dataValue) && $dataValue === $option[$match]) {
+                if ((!empty($dataValue) || is_numeric($dataValue)) && $dataValue === $option[$match]) {
                     $preppedData[] = $option['value'];
                 }
                 // special case for when mapping by label, but also using a default value
