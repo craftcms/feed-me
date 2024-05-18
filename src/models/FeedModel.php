@@ -240,10 +240,12 @@ class FeedModel extends Model
     public function getNextPagination(): bool
     {
         if (!$this->paginationUrl || !filter_var($this->paginationUrl, FILTER_VALIDATE_URL)) {
+            Plugin::info('No paginationUrl, stopping.');
             return false;
         }
 
         // Set the URL dynamically on the feed, then kick off processing again
+        Plugin::info('Next paginationUrl found. Creating new Queue job with '.$this->feedUrl);
         $this->feedUrl = $this->paginationUrl;
 
         return true;
