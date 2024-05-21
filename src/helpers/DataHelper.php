@@ -445,6 +445,14 @@ class DataHelper
             return true;
         }
 
+        // check if both empty
+        if (
+            (!is_numeric($firstValue) && !is_bool($firstValue) && empty($firstValue)) &&
+            (!is_numeric($secondValue) && !is_bool($secondValue) && empty($secondValue))
+        ) {
+            return true;
+        }
+
         // Didn't match
         return false;
     }
@@ -463,10 +471,10 @@ class DataHelper
         if (is_array($firstValue) && is_array($secondValue)) {
             // Ignore values that are `null` or empty arrays
             $firstValue = array_filter($firstValue, static function($value) {
-                return !($value === null || $value === []);
+                return !($value === null || $value === '' || $value === []);
             });
             $secondValue = array_filter($secondValue, static function($value) {
-                return !($value === null || $value === []);
+                return !($value === null || $value === '' || $value === []);
             });
 
             // Both values must have the same keys (ignoring order)
