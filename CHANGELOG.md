@@ -1,5 +1,7 @@
 # Release Notes for Feed Me
 
+- Added Craft Commerce 5 compatibility. ([#1439](https://github.com/craftcms/feed-me/issues/1439))
+
 ## 6.0.1 - 2024-05-01
 
 - Fixed a PHP error that would occur when importing Assets ([#1427](https://github.com/craftcms/feed-me/pull/1427))

@@ -60,40 +60,6 @@
         ],
     },
 }, {
-    name: 'Tax Category',
-    handle: 'taxCategoryId',
-    required: true,
-    default: {
-        type: 'select',
-        options: taxCategories,
-    },
-}, {
-    name: 'Shipping Category',
-    handle: 'shippingCategoryId',
-    required: true,
-    default: {
-        type: 'select',
-        options: shippingCategories,
-    },
-}, {
-    name: 'Available for Purchase',
-    handle: 'availableForPurchase',
-    default: {
-        type: 'checkbox',
-    },
-}, {
-    name: 'Free Shipping',
-    handle: 'freeShipping',
-    default: {
-        type: 'checkbox',
-    },
-}, {
-    name: 'Promotable',
-    handle: 'promotable',
-    default: {
-        type: 'checkbox',
-    },
-}, {
     name: 'Product ID',
     handle: 'id',
     instructions: '<strong class="error">Warning: </strong>This should only be used for an existing Craft Commerce Product ID.'|t('feed-me'),
@@ -130,7 +96,7 @@
     },
 }, {
     name: 'Price',
-    handle: 'variant-price',
+    handle: 'variant-basePrice',
     required: true,
     default: {
         type: 'text',
@@ -143,14 +109,48 @@
         type: 'text',
     },
 }, {
-    name: 'Unlimited Stock',
-    handle: 'variant-hasUnlimitedStock',
+    name: 'Inventory Tracked',
+    handle: 'variant-inventoryTracked',
     default: {
         type: 'checkbox',
     },
 }, {
     name: 'Is Default',
     handle: 'variant-isDefault',
+    default: {
+        type: 'checkbox',
+    },
+}, {
+    name: 'Promotable',
+    handle: 'variant-promotable',
+    default: {
+    type: 'checkbox',
+},
+}, {
+    name: 'Tax Category',
+    handle: 'variant-taxCategoryId',
+    required: true,
+    default: {
+        type: 'select',
+        options: taxCategories,
+    },
+}, {
+    name: 'Shipping Category',
+    handle: 'variant-shippingCategoryId',
+    required: true,
+    default: {
+        type: 'select',
+        options: shippingCategories,
+    },
+}, {
+    name: 'Available for Purchase',
+    handle: 'variant-availableForPurchase',
+    default: {
+        type: 'checkbox',
+    },
+}, {
+    name: 'Free Shipping',
+    handle: 'variant-freeShipping',
     default: {
         type: 'checkbox',
     },
