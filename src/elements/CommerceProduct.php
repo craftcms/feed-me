@@ -453,7 +453,7 @@ class CommerceProduct extends Element
                 if (Hash::get($fieldInfo, 'field')) {
                     $data = Hash::get($fieldInfo, 'data');
 
-                    $fieldValue = Plugin::$plugin->fields->parseField($feed, $element, $data, $fieldHandle, $fieldInfo);
+                    $fieldValue = Plugin::$plugin->fields->parseField($feed, $variants[$sku], $data, $fieldHandle, $fieldInfo);
 
                     if ($fieldValue !== null) {
                         $fieldData[$fieldHandle] = $fieldValue;
