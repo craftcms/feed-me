@@ -9,7 +9,6 @@ use craft\base\ElementInterface;
 use craft\commerce\collections\UpdateInventoryLevelCollection;
 use craft\commerce\elements\Product as ProductElement;
 use craft\commerce\elements\Variant as VariantElement;
-use craft\commerce\models\inventory\InventoryManualMovement;
 use craft\commerce\models\inventory\UpdateInventoryLevel;
 use craft\commerce\models\InventoryLevel;
 use craft\commerce\Plugin as Commerce;
@@ -436,7 +435,7 @@ class CommerceProduct extends Element
 
             // We are going to handle stock after the product and variants save
             $stock = null;
-            if(isset($attributeData['stock'])) {
+            if (isset($attributeData['stock'])) {
                 $stock = $attributeData['stock'];
                 unset($attributeData['stock']);
             }
@@ -445,7 +444,7 @@ class CommerceProduct extends Element
             $variants[$sku]->setAttributes($attributeData, false);
 
             // Restore it to attribute data
-            if($stock !== null) {
+            if ($stock !== null) {
                 $attributeData['stock'] = $stock;
             }
 
@@ -479,7 +478,8 @@ class CommerceProduct extends Element
         $event->element = $element;
     }
 
-    private function _inventoryUpdate($event): void {
+    private function _inventoryUpdate($event): void
+    {
 
         /** @var Commerce $commercePlugin */
         $commercePlugin = Commerce::getInstance();
@@ -487,10 +487,10 @@ class CommerceProduct extends Element
 
         $updateInventoryLevels = UpdateInventoryLevelCollection::make();
         foreach ($variants as $variant) {
-            if($inventoryItem = $commercePlugin->getInventory()->getInventoryItemByPurchasable($variant)) {
+            if ($inventoryItem = $commercePlugin->getInventory()->getInventoryItemByPurchasable($variant)) {
                 /** @var InventoryLevel $firstInventoryLevel */
                 $firstInventoryLevel = $commercePlugin->getInventory()->getInventoryLevelsForPurchasable($variant)->first();
-                if($firstInventoryLevel && $firstInventoryLevel->getInventoryLocation()) {
+                if ($firstInventoryLevel && $firstInventoryLevel->getInventoryLocation()) {
                     $feedData = $event->feedData;
                     $data = Json::decodeIfJson($event->feedData, true);
                     $stock = $data['stock'] ?? 0;
@@ -507,7 +507,7 @@ class CommerceProduct extends Element
             }
         }
 
-        if($updateInventoryLevels->count() > 0) {
+        if ($updateInventoryLevels->count() > 0) {
             Commerce::getInstance()->getInventory()->executeUpdateInventoryLevels($updateInventoryLevels);
         }
     }
