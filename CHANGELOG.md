@@ -1,5 +1,9 @@
 # Release Notes for Feed Me
 
+## Unreleased
+
+- Fixed a PHP error that could occur when importing multiple values into a relational field in some scenarios. ([#1436](https://github.com/craftcms/feed-me/pull/1436))
+
 ## 6.0.1 - 2024-05-01
 
 - Fixed a PHP error that would occur when importing Assets ([#1427](https://github.com/craftcms/feed-me/pull/1427))
