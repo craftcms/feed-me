@@ -146,7 +146,7 @@ $(function () {
 
   // For Assets, only show the upload options if we decide to upload
   $('.assets-uploads input').on('change', function (e) {
-    var $options = $(this).parents('.field-extra-settings').find('.select');
+    var $options = $(this).parents('.assets-uploads').find('.select');
     var $label = $(this)
       .parents('.field-extra-settings')
       .find('.asset-label-hide');
@@ -165,8 +165,19 @@ $(function () {
     }
   });
 
+  // For Assets, hide Create Asset checkbox if ID values are selected
+  $('.assets-matching select').on('change', function (e) {
+    var $assetsUploads = $('.assets-uploads');
+    if ($(this).val() === 'id') {
+      $('input', $assetsUploads).prop('checked', false).trigger('change');
+      $assetsUploads.css({opacity: 0, visibility: 'hidden'});
+    } else {
+      $assetsUploads.css({opacity: 1, visibility: 'visible'});
+    }
+  });
+
   // On-load, hide/show upload options
-  $('.assets-uploads input').trigger('change');
+  $('.assets-uploads input, .assets-matching select').trigger('change');
 
   // For elements, show the grouping select(s)
   $('.field-extra-settings .element-create input').on('change', function (e) {
