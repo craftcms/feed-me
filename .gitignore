@@ -35,3 +35,6 @@ tests/.env
 /tests/_craft/storage
 /.sass-cache
 /tests/_craft/.env
+/src/web/assets/feedme/.env
+/.ddev/xhprof/xhprof_prepend.php
+/.ddev/providers/platform.yaml

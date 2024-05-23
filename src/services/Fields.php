@@ -16,6 +16,7 @@ use craft\feedme\fields\Categories;
 use craft\feedme\fields\Checkboxes;
 use craft\feedme\fields\CommerceProducts;
 use craft\feedme\fields\CommerceVariants;
+use craft\feedme\fields\Country;
 use craft\feedme\fields\Date;
 use craft\feedme\fields\DefaultField;
 use craft\feedme\fields\DigitalProducts;
@@ -127,6 +128,7 @@ class Fields extends Component
                 Checkboxes::class,
                 CommerceProducts::class,
                 CommerceVariants::class,
+                Country::class,
                 Date::class,
                 Dropdown::class,
                 Entries::class,
@@ -205,12 +207,24 @@ class Fields extends Component
 
         $fieldClassHandle = Hash::get($fieldInfo, 'field');
 
+        // if category groups or tag groups have been entrified, the fields for them could have been entrified too;
+        // get the field by handle, check if the type hasn't changed since the feed was last saved;
+        // if it hasn't changed - proceed as before
+        // if it has changed - assume that we've entrified and adjust the $fieldClassHandle
+        $field = Craft::$app->getFields()->getFieldByHandle($fieldHandle);
+        if (
+            !$field instanceof $fieldClassHandle &&
+            ($field instanceof \craft\fields\Categories || $field instanceof \craft\fields\Tags)
+        ) {
+            $fieldClassHandle = \craft\fields\Entries::class;
+        }
+
         // Find the class to deal with the attribute
         $class = $this->getRegisteredField($fieldClassHandle);
         $class->feedData = $feedData;
         $class->fieldHandle = $fieldHandle;
         $class->fieldInfo = $fieldInfo;
-        $class->field = Craft::$app->getFields()->getFieldByHandle($fieldHandle);
+        $class->field = $field;
         $class->element = $element;
         $class->feed = $feed;
 

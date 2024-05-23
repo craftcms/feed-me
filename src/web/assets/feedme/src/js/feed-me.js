@@ -115,19 +115,53 @@ $(function () {
     }
   }
 
+  // for categories and entries - only show "create if they do not exist" if matching done by "title"
+  // for users - only show "create if they do not exist" if matching done by "email"
+  $(
+    '.categories-field-match select, .entries-field-match select, .users-field-match select'
+  ).on('change', function (e) {
+    var match = 'title';
+    var $selectParent = $(this).parent();
+    var $elementCreateContainer = $(this)
+      .parents('.field-extra-settings')
+      .find('.element-create');
+
+    if ($selectParent.hasClass('users-field-match')) {
+      match = 'email';
+    }
+
+    if ($(this).val() === match) {
+      $elementCreateContainer.show();
+    } else {
+      $elementCreateContainer.find('input').prop('checked', false);
+      $('.field-extra-settings .element-create input').trigger('change');
+      $elementCreateContainer.hide();
+    }
+  });
+
+  // On-load, hide/show element create container
+  $('.categories-field-match select').trigger('change');
+  $('.entries-field-match select').trigger('change');
+  $('.users-field-match select').trigger('change');
+
   // For Assets, only show the upload options if we decide to upload
   $('.assets-uploads input').on('change', function (e) {
     var $options = $(this).parents('.assets-uploads').find('.select');
     var $label = $(this)
       .parents('.field-extra-settings')
       .find('.asset-label-hide');
+    var $filenameNode = $(this)
+      .parents('.field-extra-settings')
+      .find('.asset-filename-node');
 
     if ($(this).prop('checked')) {
       $label.css({opacity: 1, visibility: 'visible'});
       $options.css({opacity: 1, visibility: 'visible'});
+      $filenameNode.show();
     } else {
       $label.css({opacity: 0, visibility: 'hidden'});
       $options.css({opacity: 0, visibility: 'hidden'});
+      $filenameNode.hide();
     }
   });
 
@@ -168,6 +202,7 @@ $(function () {
         .parents('.field-extra-settings')
         .find('.element-group-entrytype');
       var sections = $container.data('items');
+      var selectedTypeId = $container.data('selectedtypeid');
 
       // var sections = $(this).parents('.element-sub-group').data('items');
       var entryType = 'item_' + $(this).val();
@@ -179,7 +214,14 @@ $(function () {
       var newOptions = '';
       $.each(entryTypes, function (index, value) {
         if (index) {
-          newOptions += '<option value="' + index + '">' + value + '</option>';
+          newOptions +=
+            '<option value="' +
+            index +
+            '"' +
+            (index == selectedTypeId ? ' selected="selected"' : '') +
+            '>' +
+            value +
+            '</option>';
         }
       });
 

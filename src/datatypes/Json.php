@@ -62,6 +62,19 @@ class Json extends DataType implements DataTypeInterface
             return ['success' => false, 'error' => $error];
         }
 
+        // if we have empty keys in the array - throw an error, that's not allowed
+        $containsEmptyKeys = false;
+        array_walk_recursive($array, function($value, $key) use (&$containsEmptyKeys) {
+            if (trim($key) === '') {
+                $containsEmptyKeys = true;
+            }
+        });
+        if ($containsEmptyKeys) {
+            $error = 'Invalid Data: data contains empty headings (keys)';
+            Plugin::error($error);
+            return ['success' => false, 'error' => $error];
+        }
+
         // If using pagination, set it up here - we need to do this before messing around with the primary element
         $this->setupPaginationUrl($array, $settings);
 

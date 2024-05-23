@@ -69,5 +69,15 @@
             ],
             value: hash_get(feed.fieldMapping, optionsPath ~ '.conflict') ?: '',
         }) }}
+
+        <div class="asset-filename-node">
+            {{ forms.selectField({
+                label: 'Use this filename for assets created from URL:'|t('feed-me'),
+                name: 'options[filenameNode]',
+                value: hash_get(feed.fieldMapping, optionsPath ~ '.filenameNode') ?: '',
+                options: feedData,
+                class: 'selectize fullwidth',
+            }) }}
+        </div>
     </div>
 {% endblock %}

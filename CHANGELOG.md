@@ -1,5 +1,50 @@
 # Release Notes for Feed Me
 
+## Unreleased
+
+- Fixed a PHP error that could occur when importing multiple values into a relational field in some scenarios. ([#1436](https://github.com/craftcms/feed-me/pull/1436))
+- Fixed a bug where mapping a relational field that has the “maintain hierarchy” setting enabled would give false positives when comparing the contents of the field. ([#1442](https://github.com/craftcms/feed-me/pull/1442))
+- Fixed a bug that could occur when importing numeric values into a multi-select field.  ([#1444](https://github.com/craftcms/feed-me/pull/1444))
+- Fixed a bug where a feed’s title could leak when processing a direct feed and there was a validation error. ([#1445](https://github.com/craftcms/feed-me/pull/1445))
+- Fixed a bug where Date fields could cause false positives when comparing their values. ([#1447](https://github.com/craftcms/feed-me/pull/1447))
+
+## 5.4.0 - 2024-02-25
+
+- Feed Me now requires Craft 4.6 or later.
+- Added support for importing into the native [Country](https://craftcms.com/docs/4.x/country-fields.html) field. ([#1410](https://github.com/craftcms/feed-me/pull/1410))
+- Fixed a bug where the Entry Type wouldn’t be remembered for related Entry fields in a feed’s mappings. ([#1387](https://github.com/craftcms/feed-me/issues/1387), [#1390](https://github.com/craftcms/feed-me/pull/1390))
+
+## 5.3.0 - 2023-11-27
+
+- Added the ability to provide a filename for importing assets via the assets field if you choose to “Create asset from URL”. ([#749](https://github.com/craftcms/feed-me/issues/749))
+- Fixed a bug where you could not override feed settings with `false` if you used a `config/feed-me.php` config file. ([#1352](https://github.com/craftcms/feed-me/issues/1352))
+- Fixed a bug where `queueTtr`, `queueMaxRetry`, and `assetDownloadCurl` settings were being ignored if you used a `config/feed-me.php` config file. ([#1356](https://github.com/craftcms/feed-me/issues/1356))
+- Fixed a PHP error that could occur when you map an entry field with a default value and there is an empty value in the feed. ([#1250](https://github.com/craftcms/feed-me/pull/1250))
+- Fixed a bug where the `maxRelations` setting was not being respected for relational fields. ([#1354](https://github.com/craftcms/feed-me/issues/1354))
+- Fixed a bug where importing assets with “Use existing assets” could create duplicate assets. ([#1348](https://github.com/craftcms/feed-me/issues/1348))
+- Fixed a bug where importing Address data from the Google Maps plugin could cause duplicate Addresses if the Address already existed. ([#1370](https://github.com/craftcms/feed-me/pull/1370))
+- Fixed a bug where updating entry statuses for a site in a site group, would update statuses for all sites in the site group instead of the targeted one. ([#1208](https://github.com/craftcms/feed-me/issues/1208))
+- Fixed a bug where you could not use `false` to override feed settings in `config/feed-me.php`. ([#1380](https://github.com/craftcms/feed-me/issues/1380))
+- Fixed a bug where importing nested element fields would not work in some scenarios. ([#1378](https://github.com/craftcms/feed-me/issues/1378))
+- Fixed a bug where empty column headings in a feed would cause incorrect values to be selected in the pagination URL dropdown when mapping a feed. ([#1375](https://github.com/craftcms/feed-me/issues/1375))
+- Fixed a bug that could occur when using Feed Me with fields that have been entrified in Craft. ([1346](https://github.com/craftcms/feed-me/pull/1346)).
+
+## 5.2.0 - 2023-07-06
+
+- The “Create if they do not exist” setting on a feed’s mapping now conditionally show/hide the checkbox for Categories, Entries and Users relation fields. ([#1077](https://github.com/craftcms/feed-me/issues/1077))
+- Fixed a bug where `setEmptyValues` wasn’t being respected when mapping Redactor and CKEditor fields. ([#1321](https://github.com/craftcms/feed-me/issues/1321))
+- Fixed a bug where an element’s status would not update on a multi-site install if the status was the only thing that changed. ([#1310](https://github.com/craftcms/feed-me/issues/1310))
+- Fixed a bug where the `DataTypes::EVENT_AFTER_FETCH_FEED` event was not being fired for local feeds. ([#1101](https://github.com/craftcms/feed-me/issues/1101))
+- Fixed a PHP error that could happen when importing into a User field. ([#844](https://github.com/craftcms/feed-me/issues/844))
+- Fixed a bug where slugs imported from a feed would not be respected if they contained underscores. ([#603](https://github.com/craftcms/feed-me/issues/603))
+- Fixed a bug where nested subcategories sharing the same slug but with different parents would only import the last subcategory. ([#780](https://github.com/craftcms/feed-me/issues/780))
+- Fixed a bug where you could not import a Category, Entry, Product, or Digital Product with a “0” as the title or slug. ([#1102](https://github.com/craftcms/feed-me/issues/1102))
+- Fixed a bug where feeds would break for elements that had been “[entrified](https://craftcms.com/blog/entrification)”. ([#1340](https://github.com/craftcms/feed-me/issues/1340))
+
+## 5.1.4 - 2023-06-15
+
+- Fixed a bug where Lightswitch and Number fields could get incorrect results in an import if `setEmptyValues` was set to `false` in a feed’s settings. ([#1329](https://github.com/craftcms/feed-me/issues/1329), [#1330](https://github.com/craftcms/feed-me/pull/1330))
+
 ## 5.1.3.1 - 2023-05-02
 
 - Fixed a bug where custom fields would not import on PostgreSQL.
