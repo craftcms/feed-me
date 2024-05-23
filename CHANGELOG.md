@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Fixed a PHP error that could occur when importing multiple values into a relational field in some scenarios. ([#1436](https://github.com/craftcms/feed-me/pull/1436))
+- Fixed a SQL error that could occur when matching elements on a custom field. ([#1437](https://github.com/craftcms/feed-me/pull/1437))
 
 ## 6.0.1 - 2024-05-01
 
