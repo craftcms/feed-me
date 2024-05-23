@@ -117,16 +117,19 @@ class Matrix extends Field implements FieldInterface
             }
 
             foreach ($blocks as $blockHandle => $fields) {
-                foreach ($fields['fields'] as $fieldHandle => $fieldInfo) {
-                    $node = Hash::get($fieldInfo, 'node');
-                    if ($node === 'usedefault') {
-                        $key = $this->_getBlockKey($nodePathSegments, $blockHandle, $fieldHandle);
+                if (isset($fields['fields'])) {
+                    foreach ($fields['fields'] as $fieldHandle => $fieldInfo) {
+                        $node = Hash::get($fieldInfo, 'node');
+                        if ($node === 'usedefault') {
+                            $key = $this->_getBlockKey($nodePathSegments, $blockHandle, $fieldHandle);
 
-                        $parsedValue = DataHelper::fetchSimpleValue($this->feedData, $fieldInfo);
-                        $fieldData[$key] = $parsedValue;
+                            $parsedValue = DataHelper::fetchSimpleValue($this->feedData, $fieldInfo);
+                            $fieldData[$key] = $parsedValue;
+                        }
                     }
                 }
-                if ($attributeInfo) {
+
+                if ($attributeInfo && isset($fields['attributes'])) {
                     foreach ($fields['attributes'] as $fieldHandle => $fieldInfo) {
                         $node = Hash::get($fieldInfo, 'node');
                         if ($node === 'usedefault') {
