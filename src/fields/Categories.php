@@ -165,6 +165,15 @@ class Categories extends Field implements FieldInterface
 
         $foundElements = array_unique($foundElements);
 
+        // if the field has maintainHierarchy on, and we're supposed to compare content,
+        // we need to fill in the gaps, so that we know if the content has truly changed
+        // https://github.com/craftcms/feed-me/issues/1418
+        if ($foundElements && $maintainHierarchy && Plugin::$plugin->service->getConfig('compareContent', $this->feed['id'])) {
+            $elements = CategoryElement::find()->id($foundElements)->all();
+            Craft::$app->getStructures()->fillGapsInElements($elements);
+            $foundElements = array_map(fn($element) => $element->id, $elements);
+        }
+
         // Protect against sending an empty array - removing any existing elements
         if (!$foundElements) {
             return null;

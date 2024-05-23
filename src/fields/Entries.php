@@ -79,7 +79,13 @@ class Entries extends Field implements FieldInterface
         }
 
         $sources = Hash::get($this->field, 'settings.sources');
-        $limit = Hash::get($this->field, 'settings.maxRelations');
+        $maintainHierarchy = Hash::get($this->field, 'settings.maintainHierarchy');
+        if ($maintainHierarchy) {
+            $limit = Hash::get($this->field, 'settings.branchLimit');
+        } else {
+            $limit = Hash::get($this->field, 'settings.maxRelations');
+        }
+
         $targetSiteId = Hash::get($this->field, 'settings.targetSiteId');
         $feedSiteId = Hash::get($this->feed, 'siteId');
         $create = Hash::get($this->fieldInfo, 'options.create');
@@ -175,6 +181,16 @@ class Entries extends Field implements FieldInterface
         }
 
         $foundElements = array_unique($foundElements);
+
+        // if the field has maintainHierarchy on, and we're supposed to compare content,
+        // we need to fill in the gaps, so that we know if the content has truly changed
+        // https://github.com/craftcms/feed-me/issues/1418
+        if ($foundElements && $maintainHierarchy && Plugin::$plugin->service->getConfig('compareContent', $this->feed['id'])) {
+            // get elements by IDs
+            $elements = EntryElement::find()->id($foundElements)->all();
+            Craft::$app->getStructures()->fillGapsInElements($elements);
+            $foundElements = array_map(fn($element) => $element->id, $elements);
+        }
 
         // Protect against sending an empty array - removing any existing elements
         if (!$foundElements) {
