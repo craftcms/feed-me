@@ -117,16 +117,18 @@ class Matrix extends Field implements FieldInterface
             }
 
             foreach ($blocks as $blockHandle => $fields) {
-                foreach ($fields['fields'] as $fieldHandle => $fieldInfo) {
-                    $node = Hash::get($fieldInfo, 'node');
-                    if ($node === 'usedefault') {
-                        $key = $this->_getBlockKey($nodePathSegments, $blockHandle, $fieldHandle);
+                if (isset($fields['fields'])) {
+                    foreach ($fields['fields'] as $fieldHandle => $fieldInfo) {
+                        $node = Hash::get($fieldInfo, 'node');
+                        if ($node === 'usedefault') {
+                            $key = $this->_getBlockKey($nodePathSegments, $blockHandle, $fieldHandle);
 
-                        $parsedValue = DataHelper::fetchSimpleValue($this->feedData, $fieldInfo);
-                        $fieldData[$key] = $parsedValue;
+                            $parsedValue = DataHelper::fetchSimpleValue($this->feedData, $fieldInfo);
+                            $fieldData[$key] = $parsedValue;
+                        }
                     }
                 }
-                if ($attributeInfo) {
+                if (isset($fields['attributes'])) {
                     foreach ($fields['attributes'] as $fieldHandle => $fieldInfo) {
                         $node = Hash::get($fieldInfo, 'node');
                         if ($node === 'usedefault') {
@@ -190,11 +192,25 @@ class Matrix extends Field implements FieldInterface
 
         foreach ($attributeData as $blockSubFieldHandle => $value) {
             $handles = explode('.', $blockSubFieldHandle);
+            $blockHandle = $handles[1];
             // Inclusion of block handle here prevents blocks of different types from being merged together
-            $blockIndex = 'new' . $handles[1] . ((int)$handles[0] + 1);
+            $blockIndex = 'new' . $blockHandle . ((int)$handles[0] + 1);
             $subFieldHandle = $handles[2];
 
             $preppedData[$blockIndex . '.' . $subFieldHandle] = $value;
+
+            // if type, enabled and collapsed are not set, set them now;
+            // this can happen if we have a matrix entry with just the title and no custom fields
+            if (!isset($preppedData[$blockIndex . '.type'])) {
+                $preppedData[$blockIndex . '.type'] = $blockHandle;
+            }
+            if (!isset($preppedData[$blockIndex . '.enabled'])) {
+                $disabled = Hash::get($this->fieldInfo, 'blocks.' . $blockHandle . '.disabled', false);
+                $preppedData[$blockIndex . '.enabled'] = !$disabled;
+            }
+            if (!isset($preppedData[$blockIndex . '.collapsed'])) {
+                $preppedData[$blockIndex . '.collapsed'] = false;
+            }
         }
 
         // if there's nothing in the prepped data, return null, as if mapping doesn't exist
@@ -209,12 +225,17 @@ class Matrix extends Field implements FieldInterface
         $resultBlocks = [];
         foreach ($expanded as $blockData) {
             // all the fields are empty and setEmptyValues is off, ignore the block
-            if (
-                !empty(array_filter(
-                    $blockData['fields'],
-                    fn($value) => (is_string($value) && !empty($value)) || (is_array($value) && !empty(array_filter($value)))
-                ))
-            ) {
+            if (isset($blockData['fields'])) {
+                if (
+                    !empty(array_filter(
+                        $blockData['fields'],
+                        fn($value) => (is_string($value) && !empty($value)) || (is_array($value) && !empty(array_filter($value)))
+                    ))
+                ) {
+                    $resultBlocks['new' . $index++] = $blockData;
+                }
+            } else {
+                // if there are no fields in the block data, we can still have just the attributes, e.g. just the title
                 $resultBlocks['new' . $index++] = $blockData;
             }
         }
