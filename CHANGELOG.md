@@ -10,6 +10,7 @@
 - Fixed a bug where a feed’s title could leak when processing a direct feed and there was a validation error. ([#1445](https://github.com/craftcms/feed-me/pull/1445))
 - Fixed a bug where Date fields could cause false positives when comparing their values. ([#1447](https://github.com/craftcms/feed-me/pull/1447))
 - Fixed a PHP error that could occur when matching feed nodes against element IDs. ([#1440](https://github.com/craftcms/feed-me/pull/1440))
+- Fixed a bug when importing into a Matrix field with only a title and no custom fields. ([#1452](https://github.com/craftcms/feed-me/pull/1452))
 
 ## 6.0.1 - 2024-05-01
 
