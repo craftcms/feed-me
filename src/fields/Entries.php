@@ -1,5 +1,4 @@
 <?php
-
 namespace craft\feedme\fields;
 
 use Cake\Utility\Hash;
@@ -13,6 +12,7 @@ use craft\feedme\helpers\DataHelper;
 use craft\feedme\Plugin;
 use craft\fields\Entries as EntriesField;
 use craft\helpers\Db;
+use craft\helpers\StringHelper;
 use craft\helpers\Json;
 use Throwable;
 use yii\base\Exception;
@@ -171,9 +171,11 @@ class Entries extends Field implements FieldInterface
 
             Plugin::info('Found `{i}` existing entries: `{j}`', ['i' => count($foundElements), 'j' => Json::encode($foundElements)]);
 
-            // Check if we should create the element. But only if title is provided (for the moment)
-            if ((count($ids) == 0) && $create && $match === 'title') {
-                $foundElements[] = $this->_createElement($dataValue);
+            // Check if we should create the element.
+            if (count($ids) == 0) {
+                if ($create) {
+                    $foundElements[] = $this->_createElement($dataValue, $match);
+                }
             }
 
             $nodeKey = $this->getArrayKeyFromNode($node);
@@ -209,18 +211,18 @@ class Entries extends Field implements FieldInterface
         return $foundElements;
     }
 
-
     // Private Methods
     // =========================================================================
 
     /**
      * @param $dataValue
+     * @param string $match
      * @return int|null
      * @throws Throwable
      * @throws ElementNotFoundException
      * @throws Exception
      */
-    private function _createElement($dataValue): ?int
+    private function _createElement($dataValue, $match): ?int
     {
         $sectionId = Hash::get($this->fieldInfo, 'options.group.sectionId');
         $typeId = Hash::get($this->fieldInfo, 'options.group.typeId');
@@ -235,32 +237,49 @@ class Entries extends Field implements FieldInterface
         }
 
         $element = new EntryElement();
-        $element->title = $dataValue;
         $element->sectionId = $sectionId;
         $element->typeId = $typeId;
 
         $siteId = Hash::get($this->feed, 'siteId');
         $section = Craft::$app->getSections()->getSectionById($element->sectionId);
 
-        if ($siteId) {
-            $element->siteId = $siteId;
+        if ($match === 'title') {
+            $element->title = $dataValue;
 
-            // Set the default site status based on the section's settings
-            foreach ($section->getSiteSettings() as $siteSettings) {
-                if ($siteSettings->siteId == $siteId) {
-                    $element->enabledForSite = $siteSettings->enabledByDefault;
+            if ($siteId) {
+                $element->siteId = $siteId;
+
+                // Set the default site status based on the section's settings
+                foreach ($section->getSiteSettings() as $siteSettings) {
+                    if ($siteSettings->siteId == $siteId) {
+                        $element->enabledForSite = $siteSettings->enabledByDefault;
+                        break;
+                    }
+                }
+            } else {
+                // Set the default entry status based on the section's settings
+                foreach ($section->getSiteSettings() as $siteSettings) {
+                    if (!$siteSettings->enabledByDefault) {
+                        $element->enabled = false;
+                    }
+
                     break;
                 }
             }
         } else {
-            // Set the default entry status based on the section's settings
-            foreach ($section->getSiteSettings() as $siteSettings) {
-                if (!$siteSettings->enabledByDefault) {
-                    $element->enabled = false;
-                }
+            // If the new element has no title: Create a random title and disable the element.
+            $randomString = '__feed-me__' . strtolower(StringHelper::randomString(10));
+            $entryType = $element->getType();
 
-                break;
+            // If the element has no title field, we only set a random slug.
+            // Otherwise we would not be able to save the element.
+            if ($entryType->hasTitleField) {
+                $element->title = $randomString;
+            } else {
+                $element->slug = $randomString;
             }
+            $element->setFieldValue(str_replace('field_', '', $match), $dataValue);
+            $element->enabled = false;
         }
 
         $element->setScenario(BaseElement::SCENARIO_ESSENTIALS);
