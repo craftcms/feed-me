@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- Added Craft Commerce 5 compatibility. ([#1439](https://github.com/craftcms/feed-me/issues/1439))
+- Added Craft Commerce 5 compatibility. ([#1448](https://github.com/craftcms/feed-me/pull/1448/))
 - You can now match elements in a feed via their Asset IDs, instead of just the filename. ([#1327](https://github.com/craftcms/feed-me/pull/1327))
 - Fixed a PHP error that could occur when importing multiple values into a relational field in some scenarios. ([#1436](https://github.com/craftcms/feed-me/pull/1436))
 - Fixed a SQL error that could occur when matching elements on a custom field. ([#1437](https://github.com/craftcms/feed-me/pull/1437))
