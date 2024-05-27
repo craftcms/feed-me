@@ -217,10 +217,12 @@ class CalenderEvent extends Element
         if ($match === 'fullName') {
             $element = UserElement::findOne(['search' => $value, 'status' => null]);
         } else {
-            $element = UserElement::find()
-                ->status(null)
-                ->andWhere(['=', $match, $value])
-                ->one();
+            $query = UserElement::find()
+                ->status(null);
+
+            // using $query->andWhere() doesn't work for custom fields
+            Craft::configure($query, [$match => $value]);
+            $element = $query->one();
         }
 
         if ($element) {

@@ -23,7 +23,7 @@ $(function () {
 
   // Change the import strategy for Users
   var $disableLabel = $(
-    'input[name="duplicateHandle[]"][value="disable"]',
+    'input[name="duplicateHandle[]"][value="disable"]'
   ).next('label');
   var originalDisableLabel = $disableLabel.text();
   var $disableInstructions = $disableLabel.siblings('.instructions');
@@ -39,10 +39,7 @@ $(function () {
     if (value === 'craft-elements-User') {
       $disableLabel.text(Craft.t('feed-me', 'Suspend missing users'));
       $disableInstructions.text(
-        Craft.t(
-          'feed-me',
-          'Suspends any users that are missing from the feed.',
-        ),
+        Craft.t('feed-me', 'Suspends any users that are missing from the feed.')
       );
     } else {
       $disableLabel.text(originalDisableLabel);
@@ -121,7 +118,7 @@ $(function () {
   // for categories and entries - only show "create if they do not exist" if matching done by "title"
   // for users - only show "create if they do not exist" if matching done by "email"
   $(
-    '.categories-field-match select, .entries-field-match select, .users-field-match select',
+    '.categories-field-match select, .entries-field-match select, .users-field-match select'
   ).on('change', function (e) {
     var match = 'title';
     var $selectParent = $(this).parent();
@@ -149,7 +146,7 @@ $(function () {
 
   // For Assets, only show the upload options if we decide to upload
   $('.assets-uploads input').on('change', function (e) {
-    var $options = $(this).parents('.field-extra-settings').find('.select');
+    var $options = $(this).parents('.assets-uploads').find('.select');
     var $label = $(this)
       .parents('.field-extra-settings')
       .find('.asset-label-hide');
@@ -168,8 +165,19 @@ $(function () {
     }
   });
 
+  // For Assets, hide Create Asset checkbox if ID values are selected
+  $('.assets-matching select').on('change', function (e) {
+    var $assetsUploads = $('.assets-uploads');
+    if ($(this).val() === 'id') {
+      $('input', $assetsUploads).prop('checked', false).trigger('change');
+      $assetsUploads.css({opacity: 0, visibility: 'hidden'});
+    } else {
+      $assetsUploads.css({opacity: 1, visibility: 'visible'});
+    }
+  });
+
   // On-load, hide/show upload options
-  $('.assets-uploads input').trigger('change');
+  $('.assets-uploads input, .assets-matching select').trigger('change');
 
   // For elements, show the grouping select(s)
   $('.field-extra-settings .element-create input').on('change', function (e) {
@@ -218,7 +226,7 @@ $(function () {
       });
 
       $container.find('select').html(newOptions);
-    },
+    }
   );
 
   $('.field-extra-settings .element-group-section select').trigger('change');
