@@ -6,8 +6,11 @@ use Cake\Utility\Hash;
 use Carbon\Carbon;
 use Craft;
 use craft\base\ElementInterface;
+use craft\commerce\collections\UpdateInventoryLevelCollection;
 use craft\commerce\elements\Product as ProductElement;
 use craft\commerce\elements\Variant as VariantElement;
+use craft\commerce\models\inventory\UpdateInventoryLevel;
+use craft\commerce\models\InventoryLevel;
 use craft\commerce\Plugin as Commerce;
 use craft\db\Query;
 use craft\feedme\base\Element;
@@ -100,6 +103,13 @@ class CommerceProduct extends Element
         Event::on(Process::class, Process::EVENT_STEP_BEFORE_ELEMENT_SAVE, function(FeedProcessEvent $event) {
             if ($event->feed['elementType'] === ProductElement::class) {
                 $this->_parseVariants($event);
+            }
+        });
+
+        // We can only update stock after the purchasable elements have been saved
+        Event::on(Process::class, Process::EVENT_STEP_AFTER_ELEMENT_SAVE, function(FeedProcessEvent $event) {
+            if ($event->feed['elementType'] === ProductElement::class) {
+                $this->_inventoryUpdate($event);
             }
         });
     }
@@ -423,15 +433,27 @@ class CommerceProduct extends Element
 
             $variants[$sku]->product = $element;
 
+            // We are going to handle stock after the product and variants save
+            $stock = null;
+            if (isset($attributeData['stock'])) {
+                $stock = $attributeData['stock'];
+                unset($attributeData['stock']);
+            }
+
             // Set the attributes for the element
             $variants[$sku]->setAttributes($attributeData, false);
+
+            // Restore it to attribute data
+            if ($stock !== null) {
+                $attributeData['stock'] = $stock;
+            }
 
             // Then, do the same for custom fields. Again, this should be done after populating the element attributes
             foreach ($variantContent as $fieldHandle => $fieldInfo) {
                 if (Hash::get($fieldInfo, 'field')) {
                     $data = Hash::get($fieldInfo, 'data');
 
-                    $fieldValue = Plugin::$plugin->fields->parseField($feed, $element, $data, $fieldHandle, $fieldInfo);
+                    $fieldValue = Plugin::$plugin->fields->parseField($feed, $variants[$sku], $data, $fieldHandle, $fieldInfo);
 
                     if ($fieldValue !== null) {
                         $fieldData[$fieldHandle] = $fieldValue;
@@ -454,6 +476,40 @@ class CommerceProduct extends Element
         $event->feedData = $feedData;
         $event->contentData = $contentData;
         $event->element = $element;
+    }
+
+    private function _inventoryUpdate($event): void
+    {
+
+        /** @var Commerce $commercePlugin */
+        $commercePlugin = Commerce::getInstance();
+        $variants = $event->element->getVariants();
+
+        $updateInventoryLevels = UpdateInventoryLevelCollection::make();
+        foreach ($variants as $variant) {
+            if ($inventoryItem = $commercePlugin->getInventory()->getInventoryItemByPurchasable($variant)) {
+                /** @var InventoryLevel $firstInventoryLevel */
+                $firstInventoryLevel = $commercePlugin->getInventory()->getInventoryLevelsForPurchasable($variant)->first();
+                if ($firstInventoryLevel && $firstInventoryLevel->getInventoryLocation()) {
+                    $feedData = $event->feedData;
+                    $data = Json::decodeIfJson($event->feedData, true);
+                    $stock = $data['stock'] ?? 0;
+                    $updateInventoryLevels->push(new UpdateInventoryLevel([
+                            'type' => \craft\commerce\enums\InventoryTransactionType::AVAILABLE->value,
+                            'updateAction' => \craft\commerce\enums\InventoryUpdateQuantityType::SET,
+                            'inventoryItem' => $inventoryItem,
+                            'inventoryLocation' => $firstInventoryLevel->getInventoryLocation(),
+                            'quantity' => $stock,
+                            'note' => '',
+                        ])
+                    );
+                }
+            }
+        }
+
+        if ($updateInventoryLevels->count() > 0) {
+            Commerce::getInstance()->getInventory()->executeUpdateInventoryLevels($updateInventoryLevels);
+        }
     }
 
     /**

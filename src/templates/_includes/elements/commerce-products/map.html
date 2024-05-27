@@ -60,40 +60,6 @@
         ],
     },
 }, {
-    name: 'Tax Category',
-    handle: 'taxCategoryId',
-    required: true,
-    default: {
-        type: 'select',
-        options: taxCategories,
-    },
-}, {
-    name: 'Shipping Category',
-    handle: 'shippingCategoryId',
-    required: true,
-    default: {
-        type: 'select',
-        options: shippingCategories,
-    },
-}, {
-    name: 'Available for Purchase',
-    handle: 'availableForPurchase',
-    default: {
-        type: 'checkbox',
-    },
-}, {
-    name: 'Free Shipping',
-    handle: 'freeShipping',
-    default: {
-        type: 'checkbox',
-    },
-}, {
-    name: 'Promotable',
-    handle: 'promotable',
-    default: {
-        type: 'checkbox',
-    },
-}, {
     name: 'Product ID',
     handle: 'id',
     instructions: '<strong class="error">Warning: </strong>This should only be used for an existing Craft Commerce Product ID.'|t('feed-me'),
@@ -130,7 +96,7 @@
     },
 }, {
     name: 'Price',
-    handle: 'variant-price',
+    handle: 'variant-basePrice',
     required: true,
     default: {
         type: 'text',
@@ -143,14 +109,48 @@
         type: 'text',
     },
 }, {
-    name: 'Unlimited Stock',
-    handle: 'variant-hasUnlimitedStock',
+    name: 'Inventory Tracked',
+    handle: 'variant-inventoryTracked',
     default: {
         type: 'checkbox',
     },
 }, {
     name: 'Is Default',
     handle: 'variant-isDefault',
+    default: {
+        type: 'checkbox',
+    },
+}, {
+    name: 'Promotable',
+    handle: 'variant-promotable',
+    default: {
+    type: 'checkbox',
+},
+}, {
+    name: 'Tax Category',
+    handle: 'variant-taxCategoryId',
+    required: true,
+    default: {
+        type: 'select',
+        options: taxCategories,
+    },
+}, {
+    name: 'Shipping Category',
+    handle: 'variant-shippingCategoryId',
+    required: true,
+    default: {
+        type: 'select',
+        options: shippingCategories,
+    },
+}, {
+    name: 'Available for Purchase',
+    handle: 'variant-availableForPurchase',
+    default: {
+        type: 'checkbox',
+    },
+}, {
+    name: 'Free Shipping',
+    handle: 'variant-freeShipping',
     default: {
         type: 'checkbox',
     },
@@ -238,26 +238,30 @@
     {% for tab in productTabs %}
         <hr>
 
-        <h2>{{ tab.name }} Fields</h2>
+        <h2>{{ "Product Fields"|t('feed-me') }}: {{ tab.name }}</h2>
 
-        <table class="feedme-mapping data fullwidth collapsible">
-            <thead>
-                <th>{{ 'Field'|t('feed-me') }}</th>
-                <th>{{ 'Feed Element'|t('feed-me') }}</th>
-                <th>{{ 'Default Value'|t('feed-me') }}</th>
-            </thead>
-            <tbody>
-                {% for layoutField in tab.getElements()|filter(e => e is instance of('craft\\fieldlayoutelements\\CustomField')) %}
-                    {% set field = layoutField.getField() %}
-                    {% set fieldClass = craft.feedme.fields.getRegisteredField(className(field)) %}
-                    {% set template = fieldClass.getMappingTemplate() %}
+        {% if tab.getElements()|filter(e => e is instance of('craft\\fieldlayoutelements\\CustomField')) is empty %}
+            <p>{{ "No custom fields to map."|t('feed-me') }}</p>
+        {% else %}
+            <table class="feedme-mapping data fullwidth collapsible">
+                <thead>
+                    <th>{{ 'Field'|t('feed-me') }}</th>
+                    <th>{{ 'Feed Element'|t('feed-me') }}</th>
+                    <th>{{ 'Default Value'|t('feed-me') }}</th>
+                </thead>
+                <tbody>
+                    {% for layoutField in tab.getElements()|filter(e => e is instance of('craft\\fieldlayoutelements\\CustomField')) %}
+                        {% set field = layoutField.getField() %}
+                        {% set fieldClass = craft.feedme.fields.getRegisteredField(className(field)) %}
+                        {% set template = fieldClass.getMappingTemplate() %}
 
-                    {% set variables = { name: field.name, handle: field.handle, feed: feed, feedData: feedData, field: field, fieldClass: fieldClass } %}
+                        {% set variables = { name: field.name, handle: field.handle, feed: feed, feedData: feedData, field: field, fieldClass: fieldClass } %}
 
-                    {% include template ignore missing with variables only %}
-                {% endfor %}
-            </tbody>
-        </table>
+                        {% include template ignore missing with variables only %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
     {% endfor %}
 {% endif %}
 
@@ -269,27 +273,31 @@
     {% for tab in variantTabs %}
         <hr>
 
-        <h2>{{ "Variant Fields"|t('feed-me') }}</h2>
+        <h2>{{ "Variant Fields"|t('feed-me') }}: {{ tab.name }}</h2>
 
-        <table class="feedme-mapping data fullwidth collapsible">
-            <thead>
-                <th>{{ 'Field'|t('feed-me') }}</th>
-                <th>{{ 'Feed Element'|t('feed-me') }}</th>
-                <th>{{ 'Default Value'|t('feed-me') }}</th>
-            </thead>
-            <tbody>
-                {% for layoutField in tab.getElements()|filter(e => e is instance of('craft\\fieldlayoutelements\\CustomField')) %}
-                    {% set field = layoutField.getField() %}
-                    {% set fieldClass = craft.feedme.fields.getRegisteredField(className(field)) %}
-                    {% set template = fieldClass.getMappingTemplate() %}
-                    {% set handle = 'variant-' ~ field.handle %}
+        {% if tab.getElements()|filter(e => e is instance of('craft\\fieldlayoutelements\\CustomField')) is empty %}
+            <p>{{ "No custom fields to map."|t('feed-me') }}</p>
+        {% else %}
+            <table class="feedme-mapping data fullwidth collapsible">
+                <thead>
+                    <th>{{ 'Field'|t('feed-me') }}</th>
+                    <th>{{ 'Feed Element'|t('feed-me') }}</th>
+                    <th>{{ 'Default Value'|t('feed-me') }}</th>
+                </thead>
+                <tbody>
+                    {% for layoutField in tab.getElements()|filter(e => e is instance of('craft\\fieldlayoutelements\\CustomField')) %}
+                        {% set field = layoutField.getField() %}
+                        {% set fieldClass = craft.feedme.fields.getRegisteredField(className(field)) %}
+                        {% set template = fieldClass.getMappingTemplate() %}
+                        {% set handle = 'variant-' ~ field.handle %}
 
-                    {% set variables = { name: field.name, handle: handle, feed: feed, feedData: feedData, field: field, fieldClass: fieldClass } %}
+                        {% set variables = { name: field.name, handle: handle, feed: feed, feedData: feedData, field: field, fieldClass: fieldClass } %}
 
-                    {% include template ignore missing with variables only %}
-                {% endfor %}
-            </tbody>
-        </table>
+                        {% include template ignore missing with variables only %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
     {% endfor %}
 {% endif %}
 
