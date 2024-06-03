@@ -199,18 +199,25 @@
         {% for elementField in elementFields %}
             {% set fieldClass = craft.feedme.fields.getRegisteredField(className(elementField)) %}
             {% set template = fieldClass.getMappingTemplate() %}
+            {% set attribute = elementField['attribute'] ?? null %}
+            {% set elementFieldHandle = elementField['handle'] ?? attribute ?? '' %}
 
-            {% if parentPath is defined %}
-                {% set path = parentPath|merge([ 'fields', elementField.handle ]) %}
+            {% if parentPath is defined and attribute %}
+                {% set path = parentPath|merge([ 'nativeFields', elementFieldHandle ]) %}
+            {% elseif parentPath is defined %}
+                {% set path = parentPath|merge([ 'fields', elementFieldHandle ]) %}
+            {% elseif attribute %}
+                {% set path = [ handle, 'nativeFields', attribute ] %}
             {% else %}
-                {% set path = [ handle, 'fields', elementField.handle ] %}
+                {% set path = [ handle, 'fields', elementFieldHandle ] %}
             {% endif %}
 
             {# Be smart about what we include to child field templates #}
             {% include template ignore missing with {
-                name: elementField.name,
-                handle: elementField.handle,
-                instructionHandle: elementField.handle,
+                name: elementField['name'] ?? elementField['label'] ?? '',
+                attribute: elementField['attribute'] ?? null,
+                handle: elementFieldHandle,
+                instructionHandle: elementFieldHandle,
                 isSubElementField: true,
                 path: path,
 

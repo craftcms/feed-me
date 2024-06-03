@@ -87,6 +87,7 @@ class Assets extends Field implements FieldInterface
         $upload = Hash::get($this->fieldInfo, 'options.upload');
         $conflict = Hash::get($this->fieldInfo, 'options.conflict');
         $fields = Hash::get($this->fieldInfo, 'fields');
+        $nativeFields = Hash::get($this->fieldInfo, 'nativeFields');
         $node = Hash::get($this->fieldInfo, 'node');
         $nodeKey = null;
 
@@ -250,6 +251,10 @@ class Assets extends Field implements FieldInterface
         // Check for any sub-fields for the element
         if ($fields) {
             $this->populateElementFields($foundElements, $nodeKey);
+        }
+
+        if ($nativeFields) {
+            $this->populateNativeFields($foundElements, $nodeKey);
         }
 
         $foundElements = array_unique($foundElements);
