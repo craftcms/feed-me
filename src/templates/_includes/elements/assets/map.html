@@ -89,8 +89,8 @@
                 {% for layoutField in tab.getElements()|filter(e => e is instance of('craft\\fieldlayoutelements\\CustomField') or e is instance of('craft\\fieldlayoutelements\\assets\\AltField')) %}
                     {% if layoutField is instance of('craft\\fieldlayoutelements\\assets\\AltField') %}
                         {% set variables = {
-                            name: 'Alternative Text'|t('feed-me'),
-                            handle: 'alt',
+                            name: layoutField.getAttributeLabel(layoutField.attribute),
+                            handle: layoutField.attribute,
                             feed: feed,
                             feedData: feedData,
                             attribute: true,
