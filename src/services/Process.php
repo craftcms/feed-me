@@ -644,6 +644,11 @@ class Process extends Component
      */
     private function _backupBeforeFeed($feed): void
     {
+        if (Craft::$app->getConfig()->getGeneral()->backupCommand === false) {
+            Plugin::info('Database not backed up because the backup command is false.');
+            return;
+        }
+
         $logKey = StringHelper::randomString(20);
 
         $limit = Plugin::$plugin->service->getConfig('backupLimit', $feed['id']);
