@@ -4,12 +4,16 @@ namespace craft\feedme\services;
 
 use Craft;
 use craft\base\Component;
+use craft\db\Query;
 use craft\feedme\Plugin;
 use craft\helpers\App;
-use craft\helpers\FileHelper;
-use craft\helpers\Json;
-use DateTime;
+use craft\helpers\Db;
 use Exception;
+use Illuminate\Support\Collection;
+use samdark\log\PsrMessage;
+use yii\base\InvalidArgumentException;
+use yii\log\DbTarget;
+use yii\log\Logger;
 
 class Logs extends Component
 {
@@ -51,6 +55,16 @@ class Logs extends Component
      */
     public mixed $logFile = null;
 
+    public const LOG_CATEGORY = 'feed-me';
+    public const LOG_TABLE = '{{%feedme_logs}}';
+
+    public const LOG_LEVEL_MAP = [
+        Logger::LEVEL_ERROR => 'error',
+        Logger::LEVEL_WARNING => 'warning',
+        Logger::LEVEL_INFO => 'info',
+        Logger::LEVEL_TRACE => 'trace',
+        Logger::LEVEL_PROFILE => 'profile',
+    ];
 
     // Public Methods
     // =========================================================================
@@ -60,7 +74,18 @@ class Logs extends Component
      */
     public function init(): void
     {
-        $this->logFile = Craft::$app->path->getLogPath() . '/feedme.log';
+        Craft::$app->getLog()->targets['feed-me'] = Craft::createObject([
+            'class' => DbTarget::class,
+            'logTable' => self::LOG_TABLE,
+            'levels' => $this->getLogLevels(),
+            'enabled' => $this->isEnabled(),
+            'categories' => [self::LOG_CATEGORY],
+            'prefix' => static function(array $message) {
+                /** @var PsrMessage $psrMessage */
+                $psrMessage = unserialize($message[0]);
+                return $psrMessage->getContext()['feed'] ?? '';
+            },
+        ]);
     }
 
     /**
@@ -72,35 +97,21 @@ class Logs extends Component
      */
     public function log($method, $message, array $params = [], array $options = []): void
     {
-        $dateTime = new DateTime();
-        $type = explode('::', $method)[1];
+        $level = explode('::', $method)[1];
         $message = Craft::t('feed-me', $message, $params);
 
-        // Make sure to check if we should log anything
-        if (!$this->_canLog($type)) {
-            return;
-        }
+        $context = [
+            'feed' => Plugin::$feedName,
+            'key' => $options['key'] ?? Plugin::$stepKey,
+        ];
 
-        // Always prepend the feed we're dealing with
-        if (Plugin::$feedName) {
-            $message = Plugin::$feedName . ': ' . $message;
-        }
+        $psrMessage = new PsrMessage($message, $context);
 
-        $options = array_merge([
-            'date' => $dateTime->format('Y-m-d H:i:s'),
-            'type' => $type,
-            'message' => $message,
-        ], $options);
-
-        // If we're not explicitly sending a key for logging, check if we've started a feed.
-        // If we have, our $stepKey variable will have a value and can use it here.
-        if (!isset($options['key']) && Plugin::$stepKey) {
-            $options['key'] = Plugin::$stepKey;
-        }
-
-        $options = Json::encode($options);
-
-        $this->_export($options . PHP_EOL);
+        Craft::getLogger()->log(
+            serialize($psrMessage),
+            self::logLevelInt($level),
+            self::LOG_CATEGORY,
+        );
     }
 
     /**
@@ -108,7 +119,9 @@ class Logs extends Component
      */
     public function clear(): void
     {
-        $this->_clearLogFile($this->logFile);
+        Craft::$app->getDb()->createCommand()
+            ->truncateTable(self::LOG_TABLE)
+            ->execute();
     }
 
     /**
@@ -118,180 +131,79 @@ class Logs extends Component
      */
     public function getLogEntries($type = null): array
     {
-        $logEntries = [];
+        $query = (new Query())
+            ->select('*')
+            ->where(['category' => self::LOG_CATEGORY])
+            ->orderBy(['log_time' => SORT_DESC])
+            ->from(self::LOG_TABLE);
 
-        App::maxPowerCaptain();
-
-        if (@file_exists(Craft::$app->path->getLogPath())) {
-            if (@file_exists($this->logFile)) {
-                // Split the log file's contents up into arrays where every line is a new item
-                $contents = @file_get_contents($this->logFile);
-                $lines = explode("\n", $contents);
-
-                foreach ($lines as $line) {
-                    $json = Json::decode($line);
-
-                    if (!$json) {
-                        continue;
-                    }
-
-                    if ($type && $json['type'] !== $type) {
-                        continue;
-                    }
-
-                    if (isset($json['date'])) {
-                        $json['date'] = DateTime::createFromFormat('Y-m-d H:i:s', $json['date'])->format('Y-m-d H:i:s');
-                    }
-
-                    // Backward compatibility
-                    $key = $json['key'] ?? count($logEntries);
-
-                    if (isset($logEntries[$key])) {
-                        $logEntries[$key]['items'][] = $json;
-                    } else {
-                        $logEntries[$key] = $json;
-                    }
-                }
-            }
-
-            // Resort log entries: latest entries first
-            $logEntries = array_reverse($logEntries);
+        if ($type) {
+            $query->andWhere(['level' => self::logLevelInt($type)]);
         }
 
-        return $logEntries;
+        $logEntries = $query->collect()->reduce(function(Collection $logs, array $row) {
+            $psrMessage = unserialize($row['message']);
+            $key = $psrMessage->getContext()['key'] ?? $logs->count();
+            $log = [
+                'type' => self::logLevelName($row['level']),
+                'date' => Db::prepareDateForDb($row['log_time']),
+                'message' => $psrMessage->getMessage(),
+                'key' => $key,
+            ];
+
+            if ($logs->has($key)) {
+                $parentLog = $logs->get($key);
+                $parentLog['items'][] = $log;
+                $logs->put($key, $parentLog);
+            } else {
+                $logs->put($key, $log);
+            }
+
+            return $logs;
+        }, Collection::make());
+
+        return $logEntries->all();
     }
 
     // Private Methods
     // =========================================================================
 
-    /**
-     * @param $type
-     * @return bool
-     */
-    private function _canLog($type): bool
+    private function isEnabled(): bool
     {
-        $loggingConfig = Plugin::$plugin->service->getConfig('logging');
+        $config = Plugin::$plugin->service->getConfig('logging');
 
-        // parse the config value because it need to allow for strings too to support 'error' level
-        $logging = App::parseBooleanEnv($loggingConfig);
-        if ($logging === null) {
-            $logging = $loggingConfig;
-        }
-
-        // If logging set to false, don't log anything
-        if ($logging === false) {
-            return false;
-        }
-
-        if ($type === 'info' && $logging === 'error') {
-            return false;
-        }
-
-        return true;
+        return App::parseBooleanEnv($config) ?? true;
     }
 
-    /**
-     * @param $text
-     * @throws \yii\base\Exception
-     */
-    private function _export($text): void
+    private function getLogLevels(): array
     {
-        $logPath = dirname($this->logFile);
-        FileHelper::createDirectory($logPath, $this->dirMode, true);
+        $config = Plugin::$plugin->service->getConfig('logging');
 
-        if (($fp = @fopen($this->logFile, 'ab')) === false) {
-            throw new Exception("Unable to append to log file: {$this->logFile}");
-        }
-        @flock($fp, LOCK_EX);
-        if ($this->enableRotation) {
-            // clear stat cache to ensure getting the real current file size and not a cached one
-            // this may result in rotating twice when cached file size is used on subsequent calls
-            clearstatcache();
-        }
-        if ($this->enableRotation && @filesize($this->logFile) > $this->maxFileSize * 1024) {
-            $this->_rotateFiles();
-            @flock($fp, LOCK_UN);
-            @fclose($fp);
-            $writeResult = @file_put_contents($this->logFile, $text, FILE_APPEND | LOCK_EX);
-            if ($writeResult === false) {
-                $error = error_get_last();
-                throw new Exception("Unable to export log through file!: {$error['message']}");
-            }
-            $textSize = strlen($text);
-            if ($writeResult < $textSize) {
-                throw new Exception("Unable to export whole log through file! Wrote $writeResult out of $textSize bytes.");
-            }
-        } else {
-            $writeResult = @fwrite($fp, $text);
-            if ($writeResult === false) {
-                $error = error_get_last();
-                throw new Exception("Unable to export log through file!: {$error['message']}");
-            }
-            $textSize = strlen($text);
-            if ($writeResult < $textSize) {
-                throw new Exception("Unable to export whole log through file! Wrote $writeResult out of $textSize bytes.");
-            }
-            @flock($fp, LOCK_UN);
-            @fclose($fp);
-        }
-        if ($this->fileMode !== null) {
-            @chmod($this->logFile, $this->fileMode);
-        }
+        return match ($config) {
+            'error' => ['error'],
+            default => [],
+        };
     }
 
-    /**
-     *
-     */
-    private function _rotateFiles(): void
+    private function logLevelInt(string $level): int
     {
-        $file = $this->logFile;
-        for ($i = $this->maxLogFiles; $i >= 0; --$i) {
-            // $i == 0 is the original log file
-            $rotateFile = $file . ($i === 0 ? '' : '.' . $i);
-            if (is_file($rotateFile)) {
-                // suppress errors because it's possible multiple processes enter into this section
-                if ($i === $this->maxLogFiles) {
-                    @unlink($rotateFile);
-                    continue;
-                }
-                $newFile = $this->logFile . '.' . ($i + 1);
-                $this->rotateByCopy ? $this->_rotateByCopy($rotateFile, $newFile) : $this->_rotateByRename($rotateFile, $newFile);
-                if ($i === 0) {
-                    $this->_clearLogFile($rotateFile);
-                }
-            }
-        }
+        return match ($level) {
+            'error' => Logger::LEVEL_ERROR,
+            'warning' => Logger::LEVEL_WARNING,
+            'info' => Logger::LEVEL_INFO,
+            'trace' => Logger::LEVEL_TRACE,
+            'profile' => Logger::LEVEL_PROFILE,
+        };
     }
 
-    /**
-     * @param $rotateFile
-     */
-    private function _clearLogFile($rotateFile): void
+    private static function logLevelName(int $level): string
     {
-        if ($filePointer = @fopen($rotateFile, 'ab')) {
-            @ftruncate($filePointer, 0);
-            @fclose($filePointer);
-        }
-    }
+        $level = self::LOG_LEVEL_MAP[$level] ?? null;
 
-    /**
-     * @param $rotateFile
-     * @param $newFile
-     */
-    private function _rotateByCopy($rotateFile, $newFile): void
-    {
-        @copy($rotateFile, $newFile);
-        if ($this->fileMode !== null) {
-            @chmod($newFile, $this->fileMode);
+        if ($level === null) {
+            throw new InvalidArgumentException("Invalid log level: $level");
         }
-    }
 
-    /**
-     * @param $rotateFile
-     * @param $newFile
-     */
-    private function _rotateByRename($rotateFile, $newFile): void
-    {
-        @rename($rotateFile, $newFile);
+        return $level;
     }
 }
