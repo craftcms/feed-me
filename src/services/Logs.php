@@ -8,9 +8,9 @@ use craft\db\Query;
 use craft\feedme\Plugin;
 use craft\helpers\App;
 use craft\helpers\Db;
+use craft\helpers\Json;
 use Exception;
 use Illuminate\Support\Collection;
-use samdark\log\PsrMessage;
 use yii\base\InvalidArgumentException;
 use yii\log\DbTarget;
 use yii\log\Logger;
@@ -81,9 +81,9 @@ class Logs extends Component
             'enabled' => $this->isEnabled(),
             'categories' => [self::LOG_CATEGORY],
             'prefix' => static function(array $message) {
-                /** @var PsrMessage $psrMessage */
-                $psrMessage = unserialize($message[0]);
-                return $psrMessage->getContext()['feed'] ?? '';
+                $log = Json::decodeIfJson($message[0]);
+                $feed = $log['feed'] ?? null;
+                return $feed ? "[$feed]" : '';
             },
         ]);
     }
@@ -100,15 +100,14 @@ class Logs extends Component
         $level = explode('::', $method)[1];
         $message = Craft::t('feed-me', $message, $params);
 
-        $context = [
+        $json = [
+            'message' => $message,
             'feed' => Plugin::$feedName,
             'key' => $options['key'] ?? Plugin::$stepKey,
         ];
 
-        $psrMessage = new PsrMessage($message, $context);
-
         Craft::getLogger()->log(
-            serialize($psrMessage),
+            Json::encode($json),
             self::logLevelInt($level),
             self::LOG_CATEGORY,
         );
@@ -142,12 +141,12 @@ class Logs extends Component
         }
 
         $logEntries = $query->collect()->reduce(function(Collection $logs, array $row) {
-            $psrMessage = unserialize($row['message']);
-            $key = $psrMessage->getContext()['key'] ?? $logs->count();
+            $json = Json::decodeIfJson($row['message']);
+            $key = $json['key'] ?? $logs->count();
             $log = [
                 'type' => self::logLevelName($row['level']),
                 'date' => Db::prepareDateForDb($row['log_time']),
-                'message' => $psrMessage->getMessage(),
+                'message' => $json['message'] ?? $json,
                 'key' => $key,
             ];
 
