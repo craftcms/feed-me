@@ -52,10 +52,24 @@ class Install extends Migration
             'dateUpdated' => $this->dateTime()->notNull(),
             'uid' => $this->uid(),
         ]);
+
+        // @see \craft\feedme\migrations\m240611_134740_create_logs_table
+        $this->createTable('{{%feedme_logs}}', [
+            'id' => $this->bigPrimaryKey(),
+            'level' => $this->integer(),
+            'category' => $this->string(),
+            'log_time' => $this->double(),
+            'prefix' => $this->text(),
+            'message' => $this->text(),
+        ]);
+
+        $this->createIndex('idx_log_level', '{{%feedme_logs}}', 'level');
+        $this->createIndex('idx_log_category', '{{%feedme_logs}}', 'category');
     }
 
     protected function removeTables(): void
     {
         $this->dropTableIfExists('{{%feedme_feeds}}');
+        $this->dropTableIfExists('{{%feedme_logs}}');
     }
 }

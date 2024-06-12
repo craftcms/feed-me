@@ -9,19 +9,13 @@ use craft\db\Migration;
  */
 class m240611_134740_create_logs_table extends Migration
 {
-    public const LOG_TABLE = '{{%feedme_logs}}';
-
     /**
      * @inheritdoc
      */
     public function safeUp(): bool
     {
-        if ($this->db->tableExists(self::LOG_TABLE)) {
-            return true;
-        }
-
         // @see \craft\feedme\migrations\m240611_134740_create_logs_table
-        $this->createTable(self::LOG_TABLE, [
+        $this->createTable('{{%feedme_logs}}', [
             'id' => $this->bigPrimaryKey(),
             'level' => $this->integer(),
             'category' => $this->string(),
@@ -30,8 +24,8 @@ class m240611_134740_create_logs_table extends Migration
             'message' => $this->text(),
         ]);
 
-        $this->createIndex('idx_log_level', self::LOG_TABLE, 'level');
-        $this->createIndex('idx_log_category', self::LOG_TABLE, 'category');
+        $this->createIndex('idx_log_level', '{{%feedme_logs}}', 'level');
+        $this->createIndex('idx_log_category', '{{%feedme_logs}}', 'category');
 
         return true;
     }
@@ -41,9 +35,7 @@ class m240611_134740_create_logs_table extends Migration
      */
     public function safeDown(): bool
     {
-        if ($this->db->tableExists(self::LOG_TABLE)) {
-            $this->dropTable(self::LOG_TABLE);
-        }
+        $this->dropTableIfExists('{{%feedme_logs}}');
 
         return true;
     }
