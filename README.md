@@ -31,6 +31,33 @@ composer require craftcms/feed-me
 ./craft plugin/install feed-me
 ```
 
+## Customizing Logs
+
+As of version `5.6`/`6.2`, logging is handled by Craft's log component and stored in the database instead of the filesystem.
+If you want them logged to files (or anywhere else), you can add your own log target in your `config/app.php` file:
+
+```php
+return [
+    'components' => [
+        'log' => [
+            'monologTargetConfig' => [
+                // optionally, omit from Craft's default logs
+                'except' => ['feed-me'],
+            ],
+            
+            // add your own log target to write logs to file
+            'targets' => [
+                [
+                    'class' => \yii\log\FileTarget::class,
+                    'logFile' => '@storage/logs/feed-me.log',
+                    'categories' => ['feed-me'],
+                ],
+            ],
+        ],
+    ],
+];
+```
+
 ## Resources
 
 - **[Feed Me Plugin Page](https://plugins.craftcms.com/feed-me)** – The official plugin page for Feed Me
