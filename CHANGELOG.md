@@ -1,5 +1,9 @@
 # Release Notes for Feed Me
 
+## Unreleased
+
+- Fixed an error that would occur when running a feed with the backup database setting enabled, when Craft's `backupCommand` was set to false. ([#1461](https://github.com/craftcms/feed-me/pull/1461))
+
 ## 5.5.0 - 2024-05-26
 
 - You can now match elements in a feed via their Asset IDs, instead of just the filename. ([#1327](https://github.com/craftcms/feed-me/pull/1327))
