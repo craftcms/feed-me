@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Fixed an error that would occur when running a feed with the backup database setting enabled, when Craft's `backupCommand` was set to false. ([#1461](https://github.com/craftcms/feed-me/pull/1461))
+- Logs now use the default log component, and are stored in the database. [#1344](https://github.com/craftcms/feed-me/issues/1344)
 
 ## 6.1.0 - 2024-05-26
 
