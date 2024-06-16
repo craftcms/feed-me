@@ -45,7 +45,7 @@ You can also trigger your feed to process via a console command by passing in a 
 > php craft feed-me/feeds/queue 1 --continue-on-error
 ```
 
-You can also supply a `--all` parameter to push all feeds into the queue. Not that this parameter will ignore any `--limit` and `--offset` parameters supplied.
+You can also supply a `--all` parameter to push all feeds into the queue. Note that this parameter will ignore any `--limit` and `--offset` parameters supplied.
 
 ```bash
 > php craft feed-me/feeds/queue --all
