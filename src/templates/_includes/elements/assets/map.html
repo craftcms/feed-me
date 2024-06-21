@@ -88,24 +88,33 @@
             <tbody>
                 {% for layoutField in tab.getElements()|filter(e => e is instance of('craft\\fieldlayoutelements\\CustomField') or e is instance of('craft\\fieldlayoutelements\\assets\\AltField')) %}
                     {% if layoutField is instance of('craft\\fieldlayoutelements\\assets\\AltField') %}
+                        {% set fieldClass = craft.feedme.fields.getRegisteredNativeField(className(layoutField)) %}
+
                         {% set variables = {
                             name: layoutField.getAttributeLabel(layoutField.attribute),
                             handle: layoutField.attribute,
                             feed: feed,
                             feedData: feedData,
-                            attribute: true,
+                            nativeField: layoutField,
+                            fieldClass: fieldClass,
                         } %}
-
-                        {% include 'feed-me/_includes/fields/default' ignore missing with variables only %}
                     {% else %}
                         {% set field = layoutField.getField() %}
                         {% set fieldClass = craft.feedme.fields.getRegisteredField(className(field)) %}
-                        {% set template = fieldClass.getMappingTemplate() %}
 
-                        {% set variables = { name: field.name, handle: field.handle, feed: feed, feedData: feedData, field: field, fieldClass: fieldClass } %}
-
-                        {% include template ignore missing with variables only %}
+                        {% set variables = {
+                            name: field.name,
+                            handle: field.handle,
+                            feed: feed,
+                            feedData: feedData,
+                            field: field,
+                            fieldClass: fieldClass
+                        } %}
                     {% endif %}
+
+                    {% set template = fieldClass.getMappingTemplate() %}
+
+                    {% include template ignore missing with variables only %}
                 {% endfor %}
             </tbody>
         </table>

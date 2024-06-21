@@ -253,6 +253,8 @@ class Assets extends Field implements FieldInterface
             $this->populateElementFields($foundElements, $nodeKey);
         }
 
+        // this is used by the sub-fields of the assets field; not when importing into Asset element directly;
+        // when importing into Asset element directly, src/fieldlayoutelements/assets/Alt.php is used
         if ($nativeFields) {
             $this->populateNativeFields($foundElements, $nodeKey);
         }

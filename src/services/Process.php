@@ -179,6 +179,7 @@ class Process extends Component
     {
         $attributeData = [];
         $fieldData = [];
+        $nativeFieldData = [];
 
         // We can opt-out of updating certain elements if a field is switched on
         $skipUpdateFieldHandle = Plugin::$plugin->service->getConfig('skipUpdateFieldHandle', $feed['id']);
@@ -399,6 +400,23 @@ class Process extends Component
         // Set the attributes for the element
         $element->setAttributes($attributeData, false);
 
+        foreach ($feed['fieldMapping'] as $fieldHandle => $fieldInfo) {
+            if (Hash::get($fieldInfo, 'nativeField')) {
+                $fieldValue = Plugin::$plugin->fields->parseNativeField($feed, $element, $feedData, $fieldHandle, $fieldInfo);
+
+                if ($fieldValue !== null) {
+                    if ($feed['setEmptyValues'] ||
+                        (!empty($fieldValue) || is_numeric($fieldValue) || is_bool($fieldValue))
+                    ) {
+                        // we set this for $fieldValue['hasElements'] too so that the logs are accurate when it comes to comparing values
+                        $nativeFieldData[$fieldHandle] = $fieldValue;
+                    }
+                }
+            }
+        }
+
+        $element->setAttributes($nativeFieldData, false);
+
         // Then, do the same for custom fields. Again, this should be done after populating the element attributes
         foreach ($feed['fieldMapping'] as $fieldHandle => $fieldInfo) {
             if (Hash::get($fieldInfo, 'field')) {
@@ -426,17 +444,22 @@ class Process extends Component
                 $attributeData[$key] = DataHelper::parseFieldDataForElement($value, $element);
             }
 
+            foreach ($nativeFieldData as $key => $value) {
+                $nativeFieldData[$key] = DataHelper::parseFieldDataForElement($value, $element);
+            }
+
             foreach ($fieldData as $key => $value) {
                 $fieldData[$key] = DataHelper::parseFieldDataForElement($value, $element);
             }
 
             // Set the attributes and fields again
             $element->setAttributes($attributeData, false);
+            $element->setAttributes($nativeFieldData, false);
             $element->setFieldValues($fieldData);
         }
 
         // We need to keep these separate to apply to the element but required when matching against existing elements
-        $contentData += $attributeData + $fieldData;
+        $contentData += $attributeData + $nativeFieldData + $fieldData;
 
         //
         // It's time to actually save the element!
@@ -724,7 +747,23 @@ class Process extends Component
                     if ($node) {
                         $fields = Hash::remove($fields, $infoPath . '.fields');
                     } else {
-                        $fields = Hash::remove($fields, $infoPath);
+                        if (Hash::get($fields, $infoPath . '.nativeFields')) {
+                            $fields = Hash::remove($fields, $key);
+                        } else {
+                            $fields = Hash::remove($fields, $infoPath);
+                        }
+                    }
+                }
+
+                if ($lastIndex === 'nativeFields' && empty($value)) {
+                    if ($node) {
+                        $fields = Hash::remove($fields, $infoPath . '.nativeFields');
+                    } else {
+                        if (Hash::get($fields, $infoPath . '.fields')) {
+                            $fields = Hash::remove($fields, $key);
+                        } else {
+                            $fields = Hash::remove($fields, $infoPath);
+                        }
                     }
                 }
 
