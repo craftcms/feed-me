@@ -11,6 +11,8 @@ tests/.env
 /node_modules/*
 /build/*
 /yarn-error.log
+/docs/.vitepress/dist
+/docs/.vitepress/cache
 
 # MISC FILES
 .cache

@@ -1,0 +1,57 @@
+[
+    {
+        "text": "Get Started",
+        "items": [
+            { "text": "Introduction", "link": "/" },
+            { "text": "Installation", "link": "get-started/installation-setup" },
+            { "text": "Requirements", "link": "get-started/requirements" },
+            { "text": "Configuration", "link": "get-started/configuration" }
+        ]
+    },
+    {
+        "text": "Feature Tour",
+        "items": [
+            { "text": "Feeds", "link": "feature-tour/feed-overview" },
+            { "text": "Creating a Feed", "link": "feature-tour/creating-your-feed" },
+            { "text": "Primary Element", "link": "feature-tour/primary-element" },
+            { "text": "Field Mapping", "link": "feature-tour/field-mapping" },
+            { "text": "Importing Content", "link": "feature-tour/importing-your-content" },
+            { "text": "Scheduled Imports", "link": "feature-tour/trigger-import-via-cron" },
+            { "text": "Templating", "link": "feature-tour/using-in-your-templates" }
+        ]
+    },
+    {
+        "text": "Content Mapping",
+        "items": [
+            { "text": "Element Types", "link": "content-mapping/element-types" },
+            { "text": "Field Types", "link": "content-mapping/field-types" }
+        ]
+    },
+    {
+        "text": "Developers",
+        "items": [
+            { "text": "Field Types", "link": "developers/field-types" },
+            { "text": "Element Types", "link": "developers/element-types" },
+            { "text": "Data Types", "link": "developers/data-types" },
+            { "text": "Events", "link": "developers/events" }
+        ]
+    },
+    {
+        "text": "Importing Guides",
+        "items": [
+            { "text": "Assets", "link": "guides/importing-assets" },
+            { "text": "Entries", "link": "guides/importing-entries" },
+            { "text": "Commerce Products", "link": "guides/importing-commerce-products" },
+            { "text": "Commerce Variants", "link": "guides/importing-commerce-variants" },
+            { "text": "Matrix Fields", "link": "guides/importing-into-matrix" },
+            { "text": "Expression Engine", "link": "guides/migrating-from-expressionengine" },
+            { "text": "Wordpress", "link": "guides/migrating-from-wordpress" }
+        ]
+    },
+    {
+        "text": "Troubleshooting",
+        "items": [
+            { "text": "Troubleshooting", "link": "troubleshooting" }
+        ]
+    }
+]
