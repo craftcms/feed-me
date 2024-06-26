@@ -61,5 +61,5 @@ return [
 ## Resources
 
 - **[Feed Me Plugin Page](https://plugins.craftcms.com/feed-me)** – The official plugin page for Feed Me
-- **[Feed Me Documentation](https://docs.craftcms.com/feed-me/v4/)** – The official documentation
+- **[Feed Me Documentation](https://docs.craftcms.com/feed-me/v6/)** – The official documentation
 - **[Migrating a Website to Craft CMS](https://craftquest.io/courses/migrating-a-website-to-craft-cms/)** – Full video course from CraftQuest that covers Feed Me
