@@ -211,7 +211,10 @@ abstract class Element extends Component implements ElementInterface
 
         foreach ($elementIds as $elementId) {
             /** @var BaseElement $element */
-            $element = $elementsService->getElementById($elementId, $class);
+            $element = $elementsService->getElementById($elementId, $class, '*');
+            // intentionally not checking if the $element was found
+            // so that we don't get a false positive message (The following elements have been disabled: {"1":$elementId}.)
+            // in the logs
             if ($element->enabled) {
                 $element->enabled = false;
                 $elementsService->saveElement($element, true, true, Hash::get($this->feed, 'updateSearchIndexes'));
