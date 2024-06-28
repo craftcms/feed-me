@@ -194,7 +194,7 @@ abstract class Element extends Component implements ElementInterface
         $elementsService = Craft::$app->getElements();
 
         foreach ($elementIds as $elementId) {
-            $elementsService->deleteElementById($elementId, $class);
+            $elementsService->deleteElementById($elementId, $class, $this->feed->siteId);
         }
 
         return true;
