@@ -1,6 +1,6 @@
 # Release Notes for Feed Me
 
-## Unreleased
+## 6.2.0 - 2024-07-09
 
 > **Warning**
 > After updating, you will need to re-map and re-save any feeds that use a Matrix field with a nested complex fields (Google Maps, Table, etc.).
