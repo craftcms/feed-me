@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+> **Warning**
+> After updating, you will need to re-map and re-save any feeds that use a Matrix field with a nested complex fields (Google Maps, Table, etc.).
+
+- Fixed a bug where complex fields (Google Maps, Table, etc.) would not import correctly when nested inside of a Matrix field. ([#1475](https://github.com/craftcms/feed-me/pull/1475))
 - Fixed a PHP error that could occur when importing Entries or Categories with “Default Author” set on the feed mapping. ([#1476](https://github.com/craftcms/feed-me/pull/1476))
 - Fixed a bug where simple value comparisons would fail if the value you were checking against was missing. ([#1473](https://github.com/craftcms/feed-me/pull/1473))
 - Fixed a bug where assets imported into a Matrix field with “Use this filename for assets created from URL” set would duplicate the first asset across all Matrix blocks. ([#1472](https://github.com/craftcms/feed-me/pull/1472))
