@@ -447,6 +447,7 @@ class DataHelper
 
         // check if both empty
         if (
+            Hash::check($fields, $key) &&
             (!is_numeric($firstValue) && !is_bool($firstValue) && empty($firstValue)) &&
             (!is_numeric($secondValue) && !is_bool($secondValue) && empty($secondValue))
         ) {
