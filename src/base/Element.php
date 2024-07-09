@@ -194,7 +194,7 @@ abstract class Element extends Component implements ElementInterface
         $elementsService = Craft::$app->getElements();
 
         foreach ($elementIds as $elementId) {
-            $elementsService->deleteElementById($elementId, $class);
+            $elementsService->deleteElementById($elementId, $class, $this->feed->siteId);
         }
 
         return true;
@@ -211,7 +211,10 @@ abstract class Element extends Component implements ElementInterface
 
         foreach ($elementIds as $elementId) {
             /** @var BaseElement $element */
-            $element = $elementsService->getElementById($elementId, $class);
+            $element = $elementsService->getElementById($elementId, $class, $this->feed->siteId);
+            // intentionally not checking if the $element was found
+            // so that we don't get a false positive message in the logs
+            // (The following elements have been disabled: {"1":$elementId}.)
             if ($element->enabled) {
                 $element->enabled = false;
                 $elementsService->saveElement($element, true, true, Hash::get($this->feed, 'updateSearchIndexes'));
