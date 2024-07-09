@@ -77,7 +77,14 @@
             {% for field in fields %}
                 {% set template = field.type ?? 'default' %}
                 {% set parentPath = [ handle, 'blocks', entryType.handle, 'attributes', field.handle ] %}
-                {% set variables = field|merge({ feed: feed, feedData: feedData, attribute: true, path: parentPath, classes: ['inner-matrix'] }) %}
+                {% set variables = field|merge({
+                    feed: feed,
+                    feedData: feedData,
+                    attribute: true,
+                    path: parentPath,
+                    parentPath: parentPath,
+                    classes: ['inner-matrix']
+                }) %}
 
                 {% include 'feed-me/_includes/fields/' ~ template ignore missing with variables only %}
             {% endfor %}
@@ -118,6 +125,7 @@
                             field: field,
                             fieldClass: fieldClass,
                             path: parentPath,
+                            parentPath: parentPath,
                             classes: ['inner-matrix']
                         }
                         %}
