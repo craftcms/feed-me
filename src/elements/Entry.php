@@ -239,7 +239,7 @@ class Entry extends Element
         }
 
         if ($node === 'usedefault' || $value === $default) {
-            $match = 'elements.id';
+            $match = 'id';
         }
 
         if (is_array($value)) {
@@ -319,7 +319,7 @@ class Entry extends Element
         }
 
         if ($node === 'usedefault' || $values === $default) {
-            $match = 'elements.id';
+            $match = 'id';
         }
 
         $matchedIds = null;

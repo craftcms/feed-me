@@ -147,7 +147,7 @@ class Category extends Element
         }
 
         if ($node === 'usedefault' || $value === $default) {
-            $match = 'elements.id';
+            $match = 'id';
         }
 
         if (is_array($value)) {
