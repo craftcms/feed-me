@@ -118,8 +118,10 @@ class Assets extends Field implements FieldInterface
         $base64ToUpload = [];
 
         $filenamesFromFeed = $upload ? DataHelper::fetchArrayValue($this->feedData, $this->fieldInfo, 'options.filenameNode') : null;
-        // see https://github.com/craftcms/feed-me/issues/1471
-        $filenamesFromFeed = array_splice($filenamesFromFeed, $nodeKey, count($value));
+        if ($filenamesFromFeed) {
+            // see https://github.com/craftcms/feed-me/issues/1471
+            $filenamesFromFeed = array_splice($filenamesFromFeed, $nodeKey, count($value));
+        }
 
         // Fire an 'onAssetFilename' event
         $event = new AssetFilenameEvent([
