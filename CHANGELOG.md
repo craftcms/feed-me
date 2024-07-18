@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Fixed a PHP error that could occur when importing Assets that had a missing filename. ([#1481](https://github.com/craftcms/feed-me/pull/1481))
+- Fixed a bug that could occur when importing into a Dropdown field that did not support empty strings as a value and the feed had an empty string. ([#1484](https://github.com/craftcms/feed-me/pull/1484))
 
 ## 5.6.0 - 2024-07-09
 
