@@ -1,5 +1,9 @@
 # Release Notes for Feed Me
 
+## Unreleased
+
+- Fixed a PHP error that could occur when importing Assets that had a missing filename. ([#1481](https://github.com/craftcms/feed-me/pull/1481))
+
 ## 6.2.0 - 2024-07-09
 
 > **Warning**

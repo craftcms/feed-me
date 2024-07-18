@@ -75,7 +75,7 @@
                 label: 'Use this filename for assets created from URL:'|t('feed-me'),
                 name: 'options[filenameNode]',
                 value: hash_get(feed.fieldMapping, optionsPath ~ '.filenameNode') ?: '',
-                options: feedData,
+                options: feedData|filter(option => option.value != 'usedefault'),
                 class: 'selectize fullwidth',
             }) }}
         </div>
