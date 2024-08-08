@@ -21,6 +21,7 @@ use craft\feedme\Plugin;
 use craft\feedme\services\Process;
 use craft\fields\Matrix;
 use craft\fields\Table;
+use craft\helpers\ArrayHelper;
 use craft\helpers\Json;
 use DateTime;
 use Exception;
@@ -480,31 +481,63 @@ class CommerceProduct extends Element
 
     private function _inventoryUpdate($event): void
     {
+        /** @var Product $product */
+        $product = $event->element;
+
+        // Index variants by SKU for lookup:
+        $variantsBySku = ArrayHelper::index($event->contentData['variants'], 'sku');
 
         /** @var Commerce $commercePlugin */
         $commercePlugin = Commerce::getInstance();
-        $variants = $event->element->getVariants();
+        $variants = $product->getVariants();
 
+        // Queue up a changeset:
         $updateInventoryLevels = UpdateInventoryLevelCollection::make();
+
         foreach ($variants as $variant) {
-            if ($inventoryItem = $commercePlugin->getInventory()->getInventoryItemByPurchasable($variant)) {
-                /** @var InventoryLevel $firstInventoryLevel */
-                $firstInventoryLevel = $commercePlugin->getInventory()->getInventoryLevelsForPurchasable($variant)->first();
-                if ($firstInventoryLevel && $firstInventoryLevel->getInventoryLocation()) {
-                    $feedData = $event->feedData;
-                    $data = Json::decodeIfJson($event->feedData, true);
-                    $stock = $data['stock'] ?? 0;
-                    $updateInventoryLevels->push(new UpdateInventoryLevel([
-                            'type' => \craft\commerce\enums\InventoryTransactionType::AVAILABLE->value,
-                            'updateAction' => \craft\commerce\enums\InventoryUpdateQuantityType::SET,
-                            'inventoryItem' => $inventoryItem,
-                            'inventoryLocation' => $firstInventoryLevel->getInventoryLocation(),
-                            'quantity' => $stock,
-                            'note' => '',
-                        ])
-                    );
-                }
+            // Do we have a node for this variant at all?
+            if (!isset($variantsBySku[$variant->sku])) {
+                continue;
             }
+
+            $stock = $variantsBySku[$variant->sku]['stock'] ?? null;
+
+            // What if the `stock` key wasn't in the incoming data?
+            if (is_null($stock)) {
+                Plugin::error(sprintf('No stock value was present in the import data for %s.', $variant->sku));
+
+                continue;
+            }
+
+            // Load InventoryItem model:
+            $inventoryItem = $commercePlugin->getInventory()->getInventoryItemByPurchasable($variant);
+
+            if (!$inventoryItem) {
+                // Not tracking, never mind!
+                continue;
+            }
+
+            /** @var InventoryLevel $firstInventoryLevel */
+            $level = $commercePlugin->getInventory()->getInventoryLevelsForPurchasable($variant)->first();
+            $location = $level->getInventoryLocation();
+
+            if (!$level || !$location) {
+                // Again, looks like there's nothing to track…
+                continue;
+            }
+
+            $update = new UpdateInventoryLevel([
+                'type' => \craft\commerce\enums\InventoryTransactionType::AVAILABLE->value,
+                'updateAction' => \craft\commerce\enums\InventoryUpdateQuantityType::SET,
+                'inventoryItem' => $inventoryItem,
+                'inventoryLocation' => $location,
+                'quantity' => $stock,
+                'note' => sprintf('Imported via feed ID #%s', $event->feed->id),
+            ]);
+
+            $updateInventoryLevels->push($update);
+
+            Plugin::info(sprintf('Updating stock for the default inventory location for %s to %s.', $variant->sku, $stock));
         }
 
         if ($updateInventoryLevels->count() > 0) {
