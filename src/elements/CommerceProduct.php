@@ -532,7 +532,7 @@ class CommerceProduct extends Element
                 'inventoryItem' => $inventoryItem,
                 'inventoryLocation' => $location,
                 'quantity' => $stock,
-                'note' => sprintf('Imported via feed ID #%s', $event->feed->id),
+                'note' => sprintf('Imported via feed ID #%s', $event->feed['id']),
             ]);
 
             $updateInventoryLevels->push($update);
