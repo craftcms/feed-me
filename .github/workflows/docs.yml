@@ -1,13 +1,13 @@
 # VitePress Builder
-# 
+#
 # ---
-# 
+#
 # This action relies on two environment variables:
 #   - GIT_COMMITTER_NAME (see: `commit` job)
 #   - GIT_COMMITTER_EMAIL (see: `commit` job)
-# 
+#
 # Configure these in the repo by visiting Settings > Actions > Variables!
-# 
+#
 # In addition, it expects that an `ORG_ACCESS_TOKEN` secret is available, to clone from (and push to) the `pixelandtonic/docs.craftcms.com` repository. This is handled by a second `actions/checkout` step.
 
 name: Build VitePress Documentation
@@ -89,7 +89,7 @@ jobs:
     steps:
       - name: Trigger webhook
         uses: slackapi/slack-github-action@v1.25.0
-        if: 
+        if:
         env:
           # This comes from the GitHub organization:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_PLUGIN_WEBHOOK_URL }}
