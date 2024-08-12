@@ -89,7 +89,6 @@ jobs:
     steps:
       - name: Trigger webhook
         uses: slackapi/slack-github-action@v1.25.0
-        if:
         env:
           # This comes from the GitHub organization:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_PLUGIN_WEBHOOK_URL }}
