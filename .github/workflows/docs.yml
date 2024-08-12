@@ -47,7 +47,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: vitepress-output
-          path: .vitepress/dist
+          path: docs/.vitepress/dist
           retention-days: 1 # Only useful for the duration of this workflow!
       - name: Record hash
         id: hash
