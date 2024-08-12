@@ -6,7 +6,7 @@ If you're experiencing slow processing for your feed, try the following:
 
 - Turn off `devMode`. Craft's built-in logging when devMode is switched on will greatly slow down the import process, and causes a high degree of memory overhead.
 - Similarly, when importing, make sure to disable the debug toolbar under your user account preferences. It can cause high memory overhead and other resource related issues.
-- Consider turning on the `compareContent` [configuration setting](get-started/configuration.md#configuration-options) to prevent unnecessary content overwriting.
+- Consider turning on the `compareContent` [configuration setting](get-started/configuration#configuration-options) to prevent unnecessary content overwriting.
 - Consider selecting the Add Entries option for duplication handling, depending on your requirements.
 - Consider turning off the Backup option for the feed. This will depend on your specific circumstances.
 - Opt for a JSON feed - there is significantly less processing overhead as opposed to XML.
@@ -34,5 +34,5 @@ Feed Me includes a special view to assist with debugging your feed, should you e
 Debug output will be a combination of [`print_r`](https://www.php.net/manual/en/function.print-r.php)-formatted objects and log messages, providing you with as much information as possible about your feed settings, field-mappings, and data. If exceptions occur while processing the feed, they’ll appear on this page, too.
 
 ::: warning
-Debugging a feed attempts to actually run the import, so make sure you have [backups](./feature-tour/creating-your-feed.md#backup) on, or are working in a disposable environment!
+Debugging a feed attempts to actually run the import, so make sure you have [backups](./feature-tour/creating-your-feed#backup) on, or are working in a disposable environment!
 :::
