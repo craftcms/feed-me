@@ -1,10 +1,10 @@
-import { defineConfig } from 'vitepress'
+import {defineConfig} from 'vitepress';
 import markdownDefList from 'markdown-it-deflist';
 
 import sidebarContent from './sidebar.json';
 import headContent from './head.js';
 
-import { renderInlineCode } from './utils.js';
+import {renderInlineCode} from './utils.js';
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -14,8 +14,8 @@ export default defineConfig({
 
   // Documents
   head: headContent,
-  title: "Feed Me 6.x",
-  description: "Documentation for the official Craft CMS Feed Me plugin",
+  title: 'Feed Me 6.x',
+  description: 'Documentation for the official Craft CMS Feed Me plugin',
 
   // Theme
   // https://vitepress.dev/reference/default-theme-config
@@ -26,17 +26,20 @@ export default defineConfig({
     },
     nav: [
       {
-        text: "More",
+        text: 'More',
         items: [
-          { text: "Documentation", link: "https://craftcms.com/docs/5.x" },
-          { text: "Knowledge Base", link: "https://craftcms.com/knowledge-base" },
-          { text: "Craft Class Reference", link: "https://docs.craftcms.com/api/v5" },
-          { text: "Craftnet API", link: "https://docs.api.craftcms.com/" },
+          {text: 'Documentation', link: 'https://craftcms.com/docs/5.x'},
+          {text: 'Knowledge Base', link: 'https://craftcms.com/knowledge-base'},
+          {
+            text: 'Craft Class Reference',
+            link: 'https://docs.craftcms.com/api/v5',
+          },
+          {text: 'Craftnet API', link: 'https://docs.api.craftcms.com/'},
         ],
       },
     ],
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/craftcms/feed-me' },
+      {icon: 'github', link: 'https://github.com/craftcms/feed-me'},
     ],
     sidebar: sidebarContent,
   },
@@ -53,7 +56,7 @@ export default defineConfig({
   },
 
   // Hooks
-  async transformPageData(pageData, { siteConfig }) {
+  async transformPageData(pageData, {siteConfig}) {
     // console.log(`Handling: ${pageData.title} (${pageData.relativePath})`);
   },
 
