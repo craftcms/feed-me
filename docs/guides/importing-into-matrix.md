@@ -16,7 +16,7 @@ In this example, we'll be importing 2 Entries, which have a single Matrix field 
 
 The below data is what we'll use for this guide:
 
-::: code
+::: code-group
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <entries>
@@ -171,7 +171,7 @@ You'll notice we're using `Matrix` and `MatrixBlock` for the nodes that contain 
 
 For example, you should **not** do:
 
-::: code
+::: code-group
 ```xml
 <MatrixContent>
     <RichTextBlock>
@@ -200,7 +200,7 @@ For example, you should **not** do:
 
 Instead, use the same named node to surround the content for each block:
 
-::: code
+::: code-group
 ```xml
 <MatrixContent>
     <MatrixBlock>
