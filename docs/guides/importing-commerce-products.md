@@ -53,7 +53,7 @@ Save your import data to a file in the root of your project. We’ll assume it�
 
 With your feed data in place, go to Feed Me’s main control panel screen, and select **+ New feed**.
 
-![Setting up a Commerce product feed in Feed Me](../screenshots/feedme-commerce-product-setup-single.png)
+![Setting up a Commerce product feed in Feed Me](../screenshots/feedme-guide-commerce-product-setup-single.png)
 
 Enter the following details:
 
