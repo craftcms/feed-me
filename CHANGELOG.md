@@ -1,5 +1,9 @@
 # Release Notes for Feed Me
 
+## 6.2.2 - 2024-08-14
+
+- Fixed a bug where un-redacted environment variables were being logged to the database. ([#1491](https://github.com/craftcms/feed-me/issues/1491))
+
 ## 6.2.1 - 2024-07-18
 
 - Fixed a PHP error that could occur when importing Assets that had a missing filename. ([#1481](https://github.com/craftcms/feed-me/pull/1481))
