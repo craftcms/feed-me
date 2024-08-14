@@ -67,7 +67,7 @@ return [
                     'categories' => ['feed-me'],
                     
                     // Don't log request and env vars
-                    'logContext' => true,
+                    'logContext' => false,
                     
                     // Minimum level to log
                     'level' => \Psr\Log\LogLevel::INFO,
