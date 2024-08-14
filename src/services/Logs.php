@@ -135,7 +135,10 @@ class Logs extends Component
             ->select('*')
             ->where(['category' => self::LOG_CATEGORY])
             ->orderBy(['log_time' => SORT_DESC])
-            ->from(self::LOG_TABLE);
+            ->from(self::LOG_TABLE)
+
+            // Hard-coded until pagination is implemented
+            ->limit(300);
 
         if ($type) {
             $query->andWhere(['level' => self::logLevelInt($type)]);
