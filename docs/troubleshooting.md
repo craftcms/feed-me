@@ -4,12 +4,12 @@
 
 If you're experiencing slow processing for your feed, try the following:
 
-- Turn off `devMode`. Craft's built-in logging when devMode is switched on will greatly slow down the import process, and causes a high degree of memory overhead.
+- Turn off `devMode`. Craft's built-in logging when devMode is switched on can greatly slow down the import process, and cause a high degree of memory overhead.
 - Similarly, when importing, make sure to disable the debug toolbar under your user account preferences. It can cause high memory overhead and other resource related issues.
-- Consider turning on the `compareContent` [configuration setting](get-started/configuration#configuration-options) to prevent unnecessary content overwriting.
-- Consider selecting the Add Entries option for duplication handling, depending on your requirements.
-- Consider turning off the Backup option for the feed. This will depend on your specific circumstances.
-- Opt for a JSON feed - there is significantly less processing overhead as opposed to XML.
+- Consider turning on the `compareContent` [configuration setting](get-started/configuration.md#configuration-options) to prevent unnecessary content overwriting.
+- Consider selecting the **Add Entries** option for duplication handling, depending on your requirements.
+- Consider turning off feeds’ **Backup** option, on large sites (if you have other rollback options).
+- Check if your feed is available as JSON. PHP can parse JSON much faster than XML documents.
 
 You may also need to adjust the `memory_limit` and `max_execution_time` values in your php.ini file if you run into memory issues.
 

@@ -1,49 +1,27 @@
 # Importing Commerce Products
 
-This guide will serve as a real-world example of importing Commerce Products into [Craft Commerce](http://craftcommerce.com). We'll be importing two T-Shirt products into Commerce. This guide specifically deals with **single-variant** products.
+In addition to Craft’s native element types, Feed Me supports importing to Craft Commerce [products and variants](https://craftcms.com/docs/commerce/5.x/system/products-variants.html).
 
-:::tip
-Looking to import products with multiple Variants? Have a look at the [Importing Commerce Variants](importing-commerce-variants.md) guide.
+This guide is broken down into [single-variant](#single-variant) product feeds and [multi-variant](#multiple-variants) product feeds.
+
+::: tip
+Regardless of how your feed is configured, stock is currently only imported for the first-known [inventory location](https://craftcms.com/docs/commerce/5.x/system/inventory.html#locations).
 :::
+
+## Single Variant
+
+Feeds can provide some variant fields alongside product fields, if those products have a single variant. For example, this feed defines a `sku`, `width`, and `height` alongside the product’s `title`—despite the former being properties of variants:
 
 ### Example Feed Data
 
 The below data is what we'll use for this guide:
 
-::: code-group
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<products>
-    <product>
-        <title>Printed T-Shirt</title>
-        <sku>SHIRT-101</sku>
-        <price>15</price>
-        <stock>500</stock>
-        <length>10</length>
-        <width>25</width>
-        <height>32</height>
-        <weight>500</weight>
-    </product>
-
-    <product>
-        <title>Plain T-Shirt</title>
-        <sku>SHIRT-102</sku>
-        <price>19</price>
-        <unlimitedStock>1</unlimitedStock>
-        <length>9</length>
-        <width>28</width>
-        <height>30</height>
-        <weight>480</weight>
-    </product>
-</products>
-```
-
 ```json
 {
-    "product": [
+    "products": [
         {
             "title": "Printed T-Shirt",
-            "sku": "SHIRT-101",
+            "sku": "SHIRT-PRINTED",
             "price": "15",
             "stock": "500",
             "length": "10",
@@ -53,9 +31,9 @@ The below data is what we'll use for this guide:
         },
         {
             "title": "Plain T-Shirt",
-            "sku": "SHIRT-102",
+            "sku": "SHIRT-PLAIN",
             "price": "19",
-            "unlimitedStock": "1",
+            "inventoryTracked": false,
             "length": "9",
             "width": "28",
             "height": "30",
@@ -64,74 +42,150 @@ The below data is what we'll use for this guide:
     ]
 }
 ```
+
+::: tip
+The units for incoming `length`, `width`, `height`, and `weight` properties are assumed to be those used by the matched element’s [store](https://craftcms.com/docs/commerce/5.x/system/stores.html).
 :::
 
-#### Things to note
+### Setup your Feed
 
-- `sku` is compulsory for each product for any import
-- `length`, `width`, `height` and `weight` should all be units according to your Commerce settings
-- The first product has limited stock, the second unlimited
+Save your import data to a file in the root of your project. We’ll assume it’s named `products.json`, for now.
 
-Choose either the XML or JSON (depending on your preference), and save as a file in the root of your public directory. We'll assume its `http://craft.local/products-feed.xml`.
+With your feed data in place, go to Feed Me’s main control panel screen, and select **+ New feed**.
 
-## Setup your Feed
-
-With your feed data in place, go to Feed Me's main control panel screen, and add a new feed.
-
-![Feedme Matrix Guide Setup](../screenshots/feedme-matrix-guide-setup.png)
+![Setting up a Commerce product feed in Feed Me](../screenshots/feedme-commerce-product-setup-single.png)
 
 Enter the following details:
 
-- **Name** - Products
-- **Feed URL** - `http://craft.local/products-feed.xml`
-- **Feed Type** - _XML or JSON_
-- **Element Type** - Products
-- **Commerce Product Type** - Clothing (or similar)
-- **Import Strategy** - `Create new elements`, and `Update existing elements`
-- **Passkey** - Leave as generated
-- **Backup** - Turn on
+- **Name** — Products
+- **Feed URL** — `@root/products.json`
+- **Feed Type** — JSON
+- **Element Type** — Commerce Product
+- **Commerce Product Type** — Up to you!
+- **Import Strategy** — _Create new elements_, _Update existing elements_, and (optional) _Update search indexes_
+- **Passkey** — Leave as generated
+- **Backup** — Turn on
 
-Click the _Save & Continue_ button to set up the primary element.
+Click **Save & Continue** to set up the feed’s [primary element](#primary-element).
 
-## Primary Element
+### Primary Element
 
-The primary element can be confusing at first, but its vitally important to ensure Feed Me can hone in on the content in your feed correctly. Refer to [Primary Element →](../feature-tour/primary-element.md) for a detailed explanation.
+::: tip
+See the [Primary Element](../feature-tour/primary-element.md) page for a detailed explanation of how to use this screen.
+:::
 
 Enter the following details:
 
-- **Primary Element** - `/products/product`
-- **Pagination URL** - `No Pagination URL`
+- **Primary Element** - `/products` (Our JSON file had a top-level key named `products` that contains an array of product objects)
+- **Pagination URL** - _No Pagination URL_ (All our data is in this file and we don't need to chain together multiple pages of import data)
 
-Click the _Save & Continue_ button to set up the field mapping.
+Click the **Save & Continue** button to set up the [field mapping](#field-mapping).
 
-## Field Mapping
+### Field Mapping
 
 Use the below screenshot as a guide for the data we want to map to our product fields.
 
-![Feedme Products Guide Mapping](../screenshots/feedme-products-guide-mapping.png)
+![Mapping properties and custom fields in a Commerce product feed](../screenshots/feedme-guide-commerce-product-setup-mapping-single.png)
 
-#### Things to note
+- As these are single-variant products, we check the **Is Default** option. This tells Commerce this variant is the default variant for this product.
+- Our unique identifier is the **Variant SKU**. This will work for single- and multi-variant products, because SKUs are globally unique.
+- We have no custom fields for Products setup—but they would appear underneath the **Product Variant Fields** just as they do when [importing into entries](importing-entries.md), or any other element type.
 
-- As these are single variant products, we check the `Is Default` option. This tells Commerce this variant is the default variant for this product.
-- Our unique identifier is the Variant SKU - simply as its unique to each product.
-- We have no custom fields for Products setup - but they would appear underneath the Product Variant Fields as per a regular [Importing into Entries](importing-entries.md) workflow.
+Click the **Save & Continue** button to finalize the feed’s settings and proceed to the status page.
 
-Click the _Save & Import_ button to begin importing your content.
+### Importing
 
-## Importing your Content
-
-Wait for the feed processing to finish. Remember, you can always navigate away from this confirmation screen.
-
-![Feedme Matrix Guide Start](../screenshots/feedme-matrix-guide-start.png)
+Start an import by selecting **Process it now** on the status screen, or returning to the main Feed Me screen and selecting **Run feed**.
 
 :::tip
 If you're having issues, or seeing errors at this point, look at the [Troubleshooting](../troubleshooting.md) section.
 :::
 
-You should now have 2 brand new products in your Clothing product type.
+You should now have two new products in your selected product type:
 
-![Feedme Matrix Guide Finish1](../screenshots/feedme-matrix-guide-finish1.png)
+![A new product and variant](../screenshots/feedme-guide-commerce-product-success-single.png)
 
-![Feedme Matrix Guide Finish2](../screenshots/feedme-matrix-guide-finish2.png)
+## Multiple Variants
 
+The setup process for multi-variant feeds mostly overlaps with how we configured a single-variant feed. Your incoming data must be structured up in such a way that each variant’s content is isolated.
 
+### Example Data
+
+Note that each product in our feed now has a `variants` key, and all the variant-specific properties have been moved into objects nested therein:
+
+```json{7,36}
+{
+    "products": [
+        {
+            "title": "Printed T-Shirt",
+            "featuredImage": "t-shirt-printed.jpg",
+            "description": "The best T-Shirt you'll ever wear",
+            "variants": [
+                {
+                    "title": "Red",
+                    "sku": "SHIRT-PRINTED-RED",
+                    "price": "15",
+                    "stock": "500",
+                    "length": "10",
+                    "width": "25",
+                    "height": "32",
+                    "weight": "500",
+                    "images": ["t-shirt-printed-red.jpg"]
+                },
+                {
+                    "title": "Blue",
+                    "sku": "SHIRT-PRINTED-BLUE",
+                    "price": "15",
+                    "stock": "1000",
+                    "length": "10",
+                    "width": "25",
+                    "height": "32",
+                    "weight": "500",
+                    "images": ["t-shirt-printed-blue.jpg"]
+                }
+            ]
+        },
+        {
+            "title": "Plain T-Shirt",
+            "featuredImage": "t-shirt-plain.jpg",
+            "description": "The second-best T-Shirt you'll ever wear",
+            "variants": [
+                {
+                    "title": "Green",
+                    "sku": "SHIRT-PLAIN-GREEN",
+                    "price": "15",
+                    "stock": "500",
+                    "length": "10",
+                    "width": "25",
+                    "height": "32",
+                    "weight": "500",
+                    "images": ["t-shirt-plain-green.jpg"]
+                },
+                {
+                    "title": "Purple",
+                    "sku": "SHIRT-PLAIN-PURPLE",
+                    "price": "15",
+                    "stock": "1000",
+                    "length": "10",
+                    "width": "25",
+                    "height": "32",
+                    "weight": "500",
+                    "images": ["t-shirt-plain-purple.jpg"]
+                }
+            ]
+        }
+    ]
+}
+```
+
+Let’s assume this file exists alongside `products.json` and is named `products-multivariant.json`.
+
+### Field Mapping
+
+In the **Field Mapping** step, some adjustments are required. Note that fields assigned to variants now have a `/` in their “path,” indicating they are present in the nested `variants` array on each product. Feed Me knows that these properties and fields are mapped to nested elements, and will apply them to each variant present in the data:
+
+![Mapping fields for a multi-variant import](../screenshots/feedme-guide-commerce-product-setup-mapping-multi.png)
+
+::: tip
+Matching elements based on SKU will work for both the product _and_ variant! Feed Me can infer what product to update based on the SKU(s) of nested variants.
+:::

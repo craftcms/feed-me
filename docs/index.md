@@ -1,15 +1,15 @@
 # About Feed Me
 
-Feed Me is a Craft plugin for super-simple importing of content, either once-off or at regular intervals. With support for XML, RSS, ATOM, CSV or JSON feeds, you'll be able to import your content as Entries, Categories, Craft Commerce Products (and variants), and more.
+Feed Me is a content importing and synchronization plugin for [Craft CMS](https://craftcms.com). You can set up one-time and repeatable imports to synchronize XML, RSS, ATOM, CSV or JSON feeds with your existing content types—entries, categories, Craft Commerce products (and variants), and more!
 
 ## Features
 
-- Import data from XML, RSS, ATOM, CSV or JSON feeds, local or remote.
-- Built-in importers for [several element types](content-mapping/element-types), plus an importer API. 
-- Feeds are saved to allow easy re-processing on-demand, or to be used in a Cron job.
-- Simple field-mapping interface to match your feed data with your element fields.
-- Duplication handling - control what happens when feeds are processed again.
-- Uses Craft's Queue service to process feeds in the background.
-- Database backups before each feed processing.
-- Troubleshoot feed processing issues with logs.
-- Grab feed data directly from your twig templates.
+- Import data from local or remote XML, RSS, ATOM, CSV, or JSON sources.
+- Built-in importers for [several element types](content-mapping/element-types.md), plus an extensible [importer API](developers/element-types.md).
+- Persistent feed configuration, allowing re-processing via the control panel, webhooks, or CLI (including CRON).
+- Sophisticated element-matching and field-mapping interface to get content where it needs to go.
+- Automatic duplicate reconciliation for repeated imports.
+- Pagination and background processing for large feeds.
+- Automatic database backups before each feed processing.
+- Troubleshoot feed processing issues with verbose, context-rich logs.
+- Use feed data directly in your Twig templates.

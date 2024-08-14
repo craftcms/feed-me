@@ -48,14 +48,13 @@
       {"text": "Assets", "link": "guides/importing-assets"},
       {"text": "Entries", "link": "guides/importing-entries"},
       {
-        "text": "Commerce Products",
+        "text": "Craft Commerce",
         "link": "guides/importing-commerce-products"
       },
       {
-        "text": "Commerce Variants",
-        "link": "guides/importing-commerce-variants"
+        "text": "Matrix Fields",
+        "link": "guides/importing-into-matrix"
       },
-      {"text": "Matrix Fields", "link": "guides/importing-into-matrix"},
       {
         "text": "Expression Engine",
         "link": "guides/migrating-from-expressionengine"
