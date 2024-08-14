@@ -80,6 +80,7 @@ class Logs extends Component
             'levels' => $this->getLogLevels(),
             'enabled' => $this->isEnabled(),
             'categories' => [self::LOG_CATEGORY],
+            'logVars' => [],
             'prefix' => static function(array $message) {
                 $log = Json::decodeIfJson($message[0]);
                 $feed = $log['feed'] ?? null;
