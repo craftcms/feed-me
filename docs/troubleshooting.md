@@ -15,15 +15,17 @@ You may also need to adjust the `memory_limit` and `max_execution_time` values i
 
 ### Unexpected Results
 
-If you're experiencing unexpected results when running an import, try to isolate the issue by selectively mapping fields until you have a bare-minimum import.
-
-For example, if you're mapping 20+ fields for an Entry import, but it isn't working, try to map just the Title field, and work your way through mapping additional fields until things stop working as expected.
+If you're getting unexpected results when running an import, try to isolate the issue by selectively mapping fields until you have a bare-minimum import. For example, if you're mapping 20+ fields for an entry import, try to map just the **Title** field, and work your way through mapping additional fields until things stop working.
 
 ### Logging
 
-Feed Me create a log event for just about everything it does, including errors and other status information. If you're experiencing issues or unexpected results with a Feed, consult the **Logs** tab first.
+Feed Me records verbose logs as it reads feed data, matches elements, and applies changes. If you're experiencing issues or getting unexpected results with a Feed, consult the **Logs** tab first.
 
 ![The Logs tab](./screenshots/feedme-logs.png)
+
+::: tip
+For some steps, log messages are stored hierarchically, and collapses groups of messages. Expand a group using the **Show detail** action at the right edge of a message.
+:::
 
 ### Debugging
 

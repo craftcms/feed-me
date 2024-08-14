@@ -15,7 +15,11 @@ https://my-project.ddev.site/index.php?action=feed-me/feeds/run-task&direct=1&fe
 - `direct` (required) - Must be set to 1 or true. Tells Feed Me this is a externally-triggered queue job.
 - `feedId` (required) - The ID of the feed you wish to process.
 - `passkey` (required) - A unique, generated identifier for this feed. Ensures not just anyone can trigger the import.
-- `url` (optional) - If your feed URL changes, you can specify it here. Ensure the structure of the feed matches your field mappings.
+- `url` (optional) - If your feed URL changes (or is split/parameterized in some way, like using the current date), you can override it here. Ensure the structure of the feed matches your field mappings.
+
+::: warning
+Feed IDs and passkeys may not be the same, across environments. Always refer to the control panel for the complete URL.
+:::
 
 #### Setup
 
@@ -32,28 +36,30 @@ curl --silent --compressed "https://my-project.ddev.site/index.php?action=feed-m
 
 ### Console command
 
-You can also trigger your feed to process via a console command by passing in a comma-separated list of feed IDs to process. You can also use `limit` and `offset` parameters.
+You can also trigger your feed via Craft’s CLI by passing a comma-separated list of feed IDs:
 
 ```bash
-> php craft feed-me/feeds/queue 1
+php craft feed-me/feeds/queue 1
 
-> php craft feed-me/feeds/queue 1,2,3
-
-> php craft feed-me/feeds/queue 1 --limit=1
-
-> php craft feed-me/feeds/queue 1 --limit=1 --offset=1
-
-> php craft feed-me/feeds/queue 1 --continue-on-error
+php craft feed-me/feeds/queue 1,2,3
 ```
 
-You can also supply a `--all` parameter to push all feeds into the queue. Note that this parameter will ignore any `--limit` and `--offset` parameters supplied.
+You can also use `limit` and `offset` parameters:
 
 ```bash
-> php craft feed-me/feeds/queue --all
-````
+php craft feed-me/feeds/queue 1 --limit=1
 
-Note that the `feed-me/feeds/queue` command will only queue up the importing job. To actually run the import, you will need to run your queue. You can do that by running the `queue/run` command:
+php craft feed-me/feeds/queue 1 --limit=1 --offset=1
 
-```bash
-> php craft queue/run
+php craft feed-me/feeds/queue 1 --continue-on-error
 ```
+
+Use the `--all` flag to push _all_ your feeds into the queue. This parameter ignores `--limit` and `--offset` settings.
+
+```bash
+php craft feed-me/feeds/queue --all
+```
+
+::: warning
+The `feed-me/feeds/queue` command only _queues_ import jobs. To actually execute those jobs, the queue must be running—by default, the queue is triggered when your site is loaded by a client, or a control panel user is active. Projects with many feeds may benefit from setting up a [daemonized runner](https://craftcms.com/docs/5.x/system/queue.html#daemon), or manually running the queue [on a schedule](https://craftcms.com/docs/5.x/system/queue.html#cron).
+:::

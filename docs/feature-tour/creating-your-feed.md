@@ -8,11 +8,21 @@ Setup a name for you feed, so you can easily keep track of what you're importing
 
 ### Feed URL
 
-Provide the URL for your feed. This can be an absolute URL, relative (to the web root) and make use of any [aliases](https://docs.craftcms.com/v3/config/#aliases).
+Provide the URL for your feed. This can be complete URL, an absolute path beneath your site’ web root, a filesystem path, or an [alias](https://craftcms.com/docs/5.x/configure.html#aliases) thereof. These are all valid settings for a **Feed URL**:
+
+- `https://api.myservice.com/v1/products`
+- `/uploads/finishes.json`
+- `@web/artists.xml`
+- `/tmp/crm-export/daily-sales-report.csv`
+- `@root/private/subscribers.json`
+
+::: tip
+If you use the `@web` alias in any URLs, make sure it's defined for console requests.
+:::
 
 ### Feed Type
 
-Set the Feed Type to match the type of data you're importing. Your options are:
+Set the **Feed Type** to match the type of data you're importing. Your options are:
 
 - ATOM
 - CSV
@@ -34,7 +44,7 @@ Select the [element type](../content-mapping/element-types.md) you wish to impor
 
 ### Target Site
 
-If you have a multi-site Craft installation, you'll have an additional “Target Site” setting where you can select which site the elements should be initially saved in. The content will get propagated to your other sites from there, according to your fields’ Translation Method settings.
+Multi-site Craft installations will display an additional **Target Site** setting where you can select which site the elements should be initially saved in. The content will get propagated to your other sites from there, according to your fields’ [Translation Method](https://craftcms.com/docs/5.x/system/fields.html#translation-methods).
 
 ### Import Strategy
 
@@ -59,7 +69,7 @@ Attribute | Description
 
 ### Passkey
 
-A generated, unique string to increase security against imports being run inadvertently. This is mainly used when triggering an import via the direct feed link.
+A generated, unique string to increase security against imports being run inadvertently. This is mainly used when [triggering an import](trigger-import-via-cron.md) via HTTP using the direct feed link.
 
 ### Backup
 
