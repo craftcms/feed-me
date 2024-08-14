@@ -2,7 +2,7 @@
 
 ## 5.7.0 - 2024-08-14
 
-- Added a `feed-me-/logs/clear` console command to clear database logs.
+- Added a `feed-me/logs/clear` console command to clear database logs.
 - Fixed a bug where the logs table would not load with a large number of logs. 
 
 ## 5.6.2 - 2024-08-14
