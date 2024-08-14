@@ -1,6 +1,6 @@
 # Release Notes for Feed Me
 
-## Unreleased
+## 5.7.0 - 2024-08-14
 
 - Added a `feed-me-/logs/clear` console command to clear database logs.
 - Fixed a bug where the logs table would not load with a large number of logs. 
