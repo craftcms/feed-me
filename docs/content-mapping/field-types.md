@@ -469,7 +469,7 @@ Accepts single or multiple values.
 
 ## Third Party
 
-The following third-party fields are supported.
+The following third-party fields are supported, out-of-the-box:
 
 - [Google Maps](https://github.com/doublesecretagency/craft-googlemaps)
 - [Smart Map](https://github.com/doublesecretagency/craft-smartmap)
@@ -477,18 +477,22 @@ The following third-party fields are supported.
 - [Super Table](https://verbb.io/craft-plugins/super-table)
 - [Solspace Calendars](https://solspace.com/craft/calendar)
 - [Digital Products](https://github.com/craftcms/digital-products)
-- [Commerce Products](https://docs.craftcms.com/commerce/v2/products-fields.html)
-- [Commerce Variants](https://docs.craftcms.com/commerce/v2/products-fields.html)
+- [Commerce Products](https://craftcms.com/docs/commerce/v5/reference/fields.html#products-field)
+- [Commerce Variants](https://craftcms.com/docs/commerce/v5/reference/fields.html#variants-field)
 - [Linkit](https://github.com/fruitstudios/linkit)
 - [Typed Link](https://github.com/sebastian-lenz/craft-linkfield)
 
+::: tip
+[Additional field types](../developers/field-types.md) may be supported by their developers!
+:::
+
 ## Element Attributes
 
-For element fields (Assets, Categories, Entries, Tags and Users), you'll want to check against any existing elements. Feed Me gives you the flexibility to choose how to match against existing elements. These will depend on what element it is, but will often be `slug` or `title`.
+For element fields (assets, categories, entries, tags and users), you'll want to check against any existing elements. Feed Me gives you the flexibility to choose how to match against existing elements. These will depend on what element it is, but will often be `slug` or `title`.
 
-What this means in practical terms, is that your feed data can provide the ID, Title or Slug of an Entry - or the ID, Username, Name or Email for a User, and so on.
+In practice, this means that your feed data can provide the **ID**, **Title**, or **Slug** of an entry; or the **ID**, **Username**, **Name** or **Email** for a user; and so on.
 
-For instance, look at the following example feed data we want to import into a Categories field:
+For instance, look at the following example feed data we want to import into a _categories_ field:
 
 :::code
 ```xml
@@ -520,10 +524,14 @@ For instance, look at the following example feed data we want to import into a C
 ```
 :::
 
-Depending on what data your feed contains, you'll need to select the appropriate attribute, to tell Feed Me how to deal with your data.
+Depending on what data your feed contains, you'll need to select the appropriate attribute to tell Feed Me how to deal with your data.
 
-## Inner Element Fields
+::: warning
+You can also match based on custom field values! If you are importing data from a legacy system, consider capturing the external ID in a custom field so you can definitively match up records again, later.
+:::
 
-As each Element (Assets, Categories, Entries, Tags, Users) can have custom fields themselves, Feed Me gives you the chance to map to those fields as well. They'll appear under any row when mapping to an Element field.
+## Inner-Element Fields
 
-See the introduction to field mapping for more information on setting up nested fields.
+As each related element can have custom fields themselves, Feed Me gives you the chance to map nested data to those fields, as well. They'll appear under any row when mapping to a relational field.
+
+See the [introduction to field mapping](../feature-tour/field-mapping.md) for more information on setting up nested fields.
