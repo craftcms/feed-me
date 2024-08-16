@@ -4,11 +4,14 @@ Feed Me supports all native [Craft Fields](https://craftcms.com/docs/5.x/fields.
 
 ### Assets
 
-Accepts single or multiple values. You should supply the filename only, excluding the full path to the asset, but including the filename. If you're uploading remote assets, you'll need to produce fully-qualified URLs.
+Accepts single or multiple values, each one being…
+
+- …a `filename` (excluding any path segments) to match from an existing asset;
+- …a fully-qualified URL (for new, remote assets);
 
 #### Additional Options
 
-- Upload remote asset (choose how to handle existing assets - Replace/Keep/Ignore)
+- Upload remote asset (choose how to handle existing assets — Replace/Keep/Ignore)
 - [Inner-element fields](#inner-element-fields)
 
 :::code
