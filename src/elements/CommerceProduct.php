@@ -495,14 +495,20 @@ class CommerceProduct extends Element
         $updateInventoryLevels = UpdateInventoryLevelCollection::make();
 
         foreach ($variants as $variant) {
-            // Do we have a node for this variant at all?
+            // Is this SKU even present in our import data?
             if (!isset($variantsBySku[$variant->sku])) {
+                continue;
+            }
+
+            if (!$variant->inventoryTracked) {
+                Plugin::info(sprintf('Variant %s is not configured to track stock.', $variant->sku));
+
                 continue;
             }
 
             $stock = $variantsBySku[$variant->sku]['stock'] ?? null;
 
-            // What if the `stock` key wasn't in the incoming data?
+            // What if the `stock` key wasn't in the import data?
             if (is_null($stock)) {
                 Plugin::error(sprintf('No stock value was present in the import data for %s.', $variant->sku));
 
@@ -511,11 +517,6 @@ class CommerceProduct extends Element
 
             // Load InventoryItem model:
             $inventoryItem = $commercePlugin->getInventory()->getInventoryItemByPurchasable($variant);
-
-            if (!$inventoryItem) {
-                // Not tracking, never mind!
-                continue;
-            }
 
             /** @var InventoryLevel $firstInventoryLevel */
             $level = $commercePlugin->getInventory()->getInventoryLevelsForPurchasable($variant)->first();
