@@ -14,7 +14,7 @@ Accepts single or multiple values, each one being…
 - Upload remote asset (choose how to handle existing assets — Replace/Keep/Ignore)
 - [Inner-element fields](#inner-element-fields)
 
-:::code
+::: code-group
 ```xml
 <Asset>my_filename.jpg</Asset>
 
@@ -79,7 +79,7 @@ Accepts single or multiple values.
 - ID
 - Slug
 
-:::code
+::: code-group
 ```xml
 <Category>My Category</Category>
 
@@ -109,7 +109,7 @@ Accepts single or multiple values.
 
 Accepts single or multiple values. You must provide the Value of the option to check, not the Label.
 
-:::code
+::: code-group
 ```xml
 <Checkbox>option1</Checkbox>
 
@@ -139,7 +139,7 @@ Accepts single or multiple values. You must provide the Value of the option to c
 
 Accepts a single valid Colour value - usually in Hexadecimal.
 
-:::code
+::: code-group
 ```xml
 <Color>#ffffff</Color>
 ```
@@ -154,7 +154,7 @@ Accepts a single valid Colour value - usually in Hexadecimal.
 ### Date/Time
 Accepts a single valid date and time string. Supports many different formats, using PHP's [date\_parse](http://php.net/manual/en/function.date-parse.php) function.
 
-:::code
+::: code-group
 ```xml
 <Date>Tue, 24 Feb 2015 09:00:53 +0000</Date>
 <Date>2015-02-24 09:00:53</Date>
@@ -180,7 +180,7 @@ Accepts a single valid date and time string. Supports many different formats, us
 
 Accepts a single value. You must provide the Value of the option to select, not the Label.
 
-:::code
+::: code-group
 ```xml
 <Dropdown>option2</Dropdown>
 ```
@@ -205,7 +205,7 @@ Accepts single or multiple values.
 - ID
 - Slug
 
-:::code
+::: code-group
 ```xml
 <Entry>My Entry</Entry>
 
@@ -235,7 +235,7 @@ Accepts single or multiple values.
 
 Accepts a single value. Can be provided as any boolean-like string.
 
-:::code
+::: code-group
 ```xml
 // 1/0
 <Lightswitch>1</Lightswitch>
@@ -273,7 +273,7 @@ Check out [Importing into Matrix](../guides/importing-into-matrix.md) for a more
 
 Accepts a single value.
 
-:::code
+::: code-group
 ```xml
 <Money>10</Money>
 ```
@@ -289,7 +289,7 @@ Accepts a single value.
 
 Accepts single or multiple values. You must provide the Value of the option to select, not the Label.
 
-:::code
+::: code-group
 ```xml
 <MultiSelect>option1</MultiSelect>
 
@@ -319,7 +319,7 @@ Accepts single or multiple values. You must provide the Value of the option to s
 
 Accepts a single value.
 
-:::code
+::: code-group
 ```xml
 <Number>10</Number>
 ```
@@ -335,7 +335,7 @@ Accepts a single value.
 
 Accepts a single value.
 
-:::code
+::: code-group
 ```xml
 <PlainText>Lorem ipsum dolor sit amet</PlainText>
 ```
@@ -351,7 +351,7 @@ Accepts a single value.
 
 Accepts a single value. You must provide the Value of the option to select, not the Label.
 
-:::code
+::: code-group
 ```xml
 <Radio>option2</Radio>
 ```
@@ -367,7 +367,7 @@ Accepts a single value. You must provide the Value of the option to select, not 
 
 Each Table field row has multiple columns, so you map each field value to a column, rather than the entire Table field. You also group your columns into rows, as shown below.
 
-:::code
+::: code-group
 ```xml
 <Table>
     <Row>
@@ -404,7 +404,7 @@ Accepts single or multiple values.
 - Create tag if it does not exist
 - [Inner-element fields](#inner-element-fields)
 
-:::code
+::: code-group
 ```xml
 <Tag>My Tag</Tag>
 
@@ -444,7 +444,7 @@ Accepts single or multiple values.
 - Username
 - Full Name
 
-:::code
+::: code-group
 ```xml
 <User>123@nothing.com</User>
 
@@ -497,7 +497,7 @@ In practice, this means that your feed data can provide the **ID**, **Title**, o
 
 For instance, look at the following example feed data we want to import into a _categories_ field:
 
-:::code
+::: code-group
 ```xml
 // Title provided
 <Category>My Category</Category>
