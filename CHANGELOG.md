@@ -1,5 +1,14 @@
 # Release Notes for Feed Me
 
+## 6.3.0 - 2024-08-14
+
+- Added a `feed-me/logs/clear` console command to clear database logs.
+- Fixed a bug where the logs table would not load with a large number of logs.
+
+## 6.2.2 - 2024-08-14
+
+- Fixed a bug where un-redacted environment variables were being logged to the database. ([#1491](https://github.com/craftcms/feed-me/issues/1491))
+
 ## 6.2.1 - 2024-07-18
 
 - Fixed a PHP error that could occur when importing Assets that had a missing filename. ([#1481](https://github.com/craftcms/feed-me/pull/1481))
@@ -7,8 +16,11 @@
 
 ## 6.2.0 - 2024-07-09
 
-> **Warning**
-> After updating, you will need to re-map and re-save any feeds that use a Matrix field with a nested complex fields (Google Maps, Table, etc.).
+> [!WARNING]
+> - After updating, you will need to re-map and re-save any feeds that use a Matrix field with a nested complex fields (Google Maps, Table, etc.).
+> - Feed Me now logs to the database by default.
+>   - This may lead to an increase in database size if logs are not cleared. To customize this behavior, see [Customizing Logs](README.md#customizing-logs).
+>   - Consider configuring the `logging` setting to `'error'` to reduce logs.
 
 - Fixed a bug where complex fields (Google Maps, Table, etc.) would not import correctly when nested inside of a Matrix field. ([#1475](https://github.com/craftcms/feed-me/pull/1475))
 - Fixed a PHP error that could occur when importing Entries or Categories with “Default Author” set on the feed mapping. ([#1476](https://github.com/craftcms/feed-me/pull/1476))

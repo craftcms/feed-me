@@ -1,17 +1,20 @@
 # Field Types
 
-Feed Me supports all native [Craft Fields](https://craftcms.com/docs/4.x/fields.html), and even some third-party ones.
+Feed Me supports all native [Craft Fields](https://craftcms.com/docs/5.x/fields.html), and even some third-party ones.
 
 ### Assets
 
-Accepts single or multiple values. You should supply the filename only, excluding the full path to the asset, but including the filename. If you're uploading remote assets, you'll need to produce fully-qualified URLs.
+Accepts single or multiple values, each one being…
+
+- …a `filename` (excluding any path segments) to match from an existing asset;
+- …a fully-qualified URL (for new, remote assets);
 
 #### Additional Options
 
-- Upload remote asset (choose how to handle existing assets - Replace/Keep/Ignore)
+- Upload remote asset (choose how to handle existing assets — Replace/Keep/Ignore)
 - [Inner-element fields](#inner-element-fields)
 
-:::code
+::: code-group
 ```xml
 <Asset>my_filename.jpg</Asset>
 
@@ -76,7 +79,7 @@ Accepts single or multiple values.
 - ID
 - Slug
 
-:::code
+::: code-group
 ```xml
 <Category>My Category</Category>
 
@@ -106,7 +109,7 @@ Accepts single or multiple values.
 
 Accepts single or multiple values. You must provide the Value of the option to check, not the Label.
 
-:::code
+::: code-group
 ```xml
 <Checkbox>option1</Checkbox>
 
@@ -136,7 +139,7 @@ Accepts single or multiple values. You must provide the Value of the option to c
 
 Accepts a single valid Colour value - usually in Hexadecimal.
 
-:::code
+::: code-group
 ```xml
 <Color>#ffffff</Color>
 ```
@@ -151,7 +154,7 @@ Accepts a single valid Colour value - usually in Hexadecimal.
 ### Date/Time
 Accepts a single valid date and time string. Supports many different formats, using PHP's [date\_parse](http://php.net/manual/en/function.date-parse.php) function.
 
-:::code
+::: code-group
 ```xml
 <Date>Tue, 24 Feb 2015 09:00:53 +0000</Date>
 <Date>2015-02-24 09:00:53</Date>
@@ -177,7 +180,7 @@ Accepts a single valid date and time string. Supports many different formats, us
 
 Accepts a single value. You must provide the Value of the option to select, not the Label.
 
-:::code
+::: code-group
 ```xml
 <Dropdown>option2</Dropdown>
 ```
@@ -202,7 +205,7 @@ Accepts single or multiple values.
 - ID
 - Slug
 
-:::code
+::: code-group
 ```xml
 <Entry>My Entry</Entry>
 
@@ -232,7 +235,7 @@ Accepts single or multiple values.
 
 Accepts a single value. Can be provided as any boolean-like string.
 
-:::code
+::: code-group
 ```xml
 // 1/0
 <Lightswitch>1</Lightswitch>
@@ -270,7 +273,7 @@ Check out [Importing into Matrix](../guides/importing-into-matrix.md) for a more
 
 Accepts a single value.
 
-:::code
+::: code-group
 ```xml
 <Money>10</Money>
 ```
@@ -286,7 +289,7 @@ Accepts a single value.
 
 Accepts single or multiple values. You must provide the Value of the option to select, not the Label.
 
-:::code
+::: code-group
 ```xml
 <MultiSelect>option1</MultiSelect>
 
@@ -316,7 +319,7 @@ Accepts single or multiple values. You must provide the Value of the option to s
 
 Accepts a single value.
 
-:::code
+::: code-group
 ```xml
 <Number>10</Number>
 ```
@@ -332,7 +335,7 @@ Accepts a single value.
 
 Accepts a single value.
 
-:::code
+::: code-group
 ```xml
 <PlainText>Lorem ipsum dolor sit amet</PlainText>
 ```
@@ -348,7 +351,7 @@ Accepts a single value.
 
 Accepts a single value. You must provide the Value of the option to select, not the Label.
 
-:::code
+::: code-group
 ```xml
 <Radio>option2</Radio>
 ```
@@ -364,7 +367,7 @@ Accepts a single value. You must provide the Value of the option to select, not 
 
 Each Table field row has multiple columns, so you map each field value to a column, rather than the entire Table field. You also group your columns into rows, as shown below.
 
-:::code
+::: code-group
 ```xml
 <Table>
     <Row>
@@ -401,7 +404,7 @@ Accepts single or multiple values.
 - Create tag if it does not exist
 - [Inner-element fields](#inner-element-fields)
 
-:::code
+::: code-group
 ```xml
 <Tag>My Tag</Tag>
 
@@ -441,7 +444,7 @@ Accepts single or multiple values.
 - Username
 - Full Name
 
-:::code
+::: code-group
 ```xml
 <User>123@nothing.com</User>
 
@@ -469,7 +472,7 @@ Accepts single or multiple values.
 
 ## Third Party
 
-The following third-party fields are supported.
+The following third-party fields are supported, out-of-the-box:
 
 - [Google Maps](https://github.com/doublesecretagency/craft-googlemaps)
 - [Smart Map](https://github.com/doublesecretagency/craft-smartmap)
@@ -477,20 +480,24 @@ The following third-party fields are supported.
 - [Super Table](https://verbb.io/craft-plugins/super-table)
 - [Solspace Calendars](https://solspace.com/craft/calendar)
 - [Digital Products](https://github.com/craftcms/digital-products)
-- [Commerce Products](https://docs.craftcms.com/commerce/v2/products-fields.html)
-- [Commerce Variants](https://docs.craftcms.com/commerce/v2/products-fields.html)
+- [Commerce Products](https://craftcms.com/docs/commerce/v5/reference/fields.html#products-field)
+- [Commerce Variants](https://craftcms.com/docs/commerce/v5/reference/fields.html#variants-field)
 - [Linkit](https://github.com/fruitstudios/linkit)
 - [Typed Link](https://github.com/sebastian-lenz/craft-linkfield)
 
+::: tip
+[Additional field types](../developers/field-types.md) may be supported by their developers!
+:::
+
 ## Element Attributes
 
-For element fields (Assets, Categories, Entries, Tags and Users), you'll want to check against any existing elements. Feed Me gives you the flexibility to choose how to match against existing elements. These will depend on what element it is, but will often be `slug` or `title`.
+For element fields (assets, categories, entries, tags and users), you'll want to check against any existing elements. Feed Me gives you the flexibility to choose how to match against existing elements. These will depend on what element it is, but will often be `slug` or `title`.
 
-What this means in practical terms, is that your feed data can provide the ID, Title or Slug of an Entry - or the ID, Username, Name or Email for a User, and so on.
+In practice, this means that your feed data can provide the **ID**, **Title**, or **Slug** of an entry; or the **ID**, **Username**, **Name** or **Email** for a user; and so on.
 
-For instance, look at the following example feed data we want to import into a Categories field:
+For instance, look at the following example feed data we want to import into a _categories_ field:
 
-:::code
+::: code-group
 ```xml
 // Title provided
 <Category>My Category</Category>
@@ -520,10 +527,14 @@ For instance, look at the following example feed data we want to import into a C
 ```
 :::
 
-Depending on what data your feed contains, you'll need to select the appropriate attribute, to tell Feed Me how to deal with your data.
+Depending on what data your feed contains, you'll need to select the appropriate attribute to tell Feed Me how to deal with your data.
 
-## Inner Element Fields
+::: warning
+You can also match based on custom field values! If you are importing data from a legacy system, consider capturing the external ID in a custom field so you can definitively match up records again, later.
+:::
 
-As each Element (Assets, Categories, Entries, Tags, Users) can have custom fields themselves, Feed Me gives you the chance to map to those fields as well. They'll appear under any row when mapping to an Element field.
+## Inner-Element Fields
 
-See the introduction to field mapping for more information on setting up nested fields.
+As each related element can have custom fields themselves, Feed Me gives you the chance to map nested data to those fields, as well. They'll appear under any row when mapping to a relational field.
+
+See the [introduction to field mapping](../feature-tour/field-mapping.md) for more information on setting up nested fields.

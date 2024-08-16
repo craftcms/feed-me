@@ -6,7 +6,7 @@ Selecting which element type your import targets is the first step in using Feed
 
 The following element types are supported by Feed Me, out of the box:
 
-- **[Core element types](https://craftcms.com/docs/4.x/elements.html):** Assets, categories, entries, tags, and users;
+- **[Core element types](https://craftcms.com/docs/5.x/system/elements.html):** Assets, categories, entries, tags, users, and addresses (via an address custom field);
 - **[Craft Commerce](https://plugins.craftcms.com/commerce):** Products and variants;
 - **[Digital Products](https://plugins.craftcms.com/digital-products):** Digital products;
 - **[Calendar by Solspace](https://plugins.craftcms.com/calendar):** Events;

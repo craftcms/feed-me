@@ -1,0 +1,99 @@
+# VitePress Builder
+#
+# ---
+#
+# This action relies on two environment variables:
+#   - GIT_COMMITTER_NAME (see: `commit` job)
+#   - GIT_COMMITTER_EMAIL (see: `commit` job)
+#
+# Configure these in the repo by visiting Settings > Actions > Variables!
+#
+# In addition, it expects that an `ORG_ACCESS_TOKEN` secret is available, to clone from (and push to) the `pixelandtonic/docs.craftcms.com` repository. This is handled by a second `actions/checkout` step.
+
+name: Build VitePress Documentation
+
+on:
+  push:
+    branches:
+      # Only 6.x, for now (we don’t have a good way to parameterize this into friendly URLs):
+      - 6.x
+  workflow_dispatch:
+
+concurrency:
+  # When a new job is pushed, clear cancel pending ones for the same branch:
+  group: docs-build-${{ github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  # Build job
+  build:
+    name: Build VitePress Site
+    runs-on: ubuntu-latest
+    outputs:
+      short_hash: ${{ steps.hash.outputs.short_hash }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Build with VitePress
+        run: npm run docs:build
+      - name: Save bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: vitepress-output
+          path: docs/.vitepress/dist
+          retention-days: 1 # Only useful for the duration of this workflow!
+      - name: Record hash
+        id: hash
+        run: echo "short_hash=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+  commit:
+    name: Commit artifacts
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          repository: pixelandtonic/docs.craftcms.com
+          token: ${{ secrets.ORG_ACCESS_TOKEN }}
+          path: docs.craftcms.com
+      - name: Download VitePress Output
+        uses: actions/download-artifact@v4
+        with:
+          name: vitepress-output
+          path: build
+      - name: Clear files
+        run: rm -rf docs.craftcms.com/docs/feed-me/v6
+      - name: Move artifacts
+        run: mv build docs.craftcms.com/docs/feed-me/v6
+      - name: Commit changes
+        working-directory: docs.craftcms.com
+        run: |
+          git config user.name "${{ vars.GIT_COMMITTER_NAME }}"
+          git config user.email "${{ vars.GIT_COMMITTER_EMAIL }}"
+          git add --all
+          git commit -a -m "VitePress build: Feed Me 6.x (${{ needs.build.outputs.short_hash }})"
+          git push
+
+  notify:
+    name: Send Slack notification
+    runs-on: ubuntu-latest
+    needs: commit
+    steps:
+      - name: Trigger webhook
+        uses: slackapi/slack-github-action@v1.25.0
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        with:
+          payload: |
+            {
+              "product": "Feed Me ${{ github.ref_name }}",
+              "url": "https://docs.craftcms.com/feed-me/v6"
+            }

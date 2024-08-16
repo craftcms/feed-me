@@ -23,7 +23,7 @@
     "email": "support@craftcms.com",
     "issues": "https://github.com/craftcms/feed-me/issues?state=open",
     "source": "https://github.com/craftcms/feed-me",
-    "docs": "https://docs.craftcms.com/feed-me/v4/",
+    "docs": "https://docs.craftcms.com/feed-me/v6/",
     "rss": "https://github.com/craftcms/feed-me/commits/master.atom"
   },
   "minimum-stability": "dev",

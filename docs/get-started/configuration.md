@@ -47,7 +47,7 @@ return [
 - `logging` - Set the level of logging to do. Possible values are `true` (default) to log everything, `false` to disable logging or `error` to only record errors.
 - `runGcBeforeFeed` - Whether to run the Garbage Collection service before running a feed.
 - `queueTtr` - Set the 'time to reserve' time in seconds, to prevent the job being cancelled after 300 seconds (default).
-- `queueMaxRetry` - Set the maxiumum amount of retries the queue job should have before failing.
+- `queueMaxRetry` - Set the maximum amount of retries the queue job should have before failing.
 - `assetDownloadCurl` - Use curl to download assets from a remote source. Can be used when issues arise using the default implementation.
 - `feedOptions` - Provide an array of any of the above options or [Feed Settings](../feature-tour/feed-overview.md) to set specifically for certain feeds. Use the Feed ID as the key for the array.
 

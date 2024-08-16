@@ -21,9 +21,6 @@ class LogsController extends Controller
         $show = Craft::$app->getRequest()->getParam('show');
         $logEntries = Plugin::$plugin->getLogs()->getLogEntries($show);
 
-        // Limit to 300 for UI
-        $logEntries = array_slice($logEntries, 0, 300);
-
         return $this->renderTemplate('feed-me/logs/index', [
             'show' => $show,
             'logEntries' => $logEntries,
