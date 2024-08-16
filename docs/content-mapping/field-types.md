@@ -1,6 +1,6 @@
 # Field Types
 
-Feed Me supports all native [Craft Fields](https://craftcms.com/docs/4.x/fields.html), and even some third-party ones.
+Feed Me supports all native [Craft Fields](https://craftcms.com/docs/5.x/fields.html), and even some third-party ones.
 
 ### Assets
 
