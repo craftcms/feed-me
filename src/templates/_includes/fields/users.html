@@ -63,12 +63,15 @@
         }) }}
     </div>
 
-    <div class="element-create">
-        {{ feedMeMacro.checkbox({
-            label: 'Create users if they do not exist'|t('feed-me'),
-            name: 'options[create]',
-            value: 1,
-            checked: hash_get(feed.fieldMapping, optionsPath ~ '.create') ?: '',
-        }) }}
-    </div>
+    {# don't allow crating new entries if the only selected source is custom, because we can't ensure all the conditions will be met #}
+    {% if field is defined and field is not empty and field.sources|length == 1 and field.sources.0 starts with 'custom:' == false %}
+        <div class="element-create">
+            {{ feedMeMacro.checkbox({
+                label: 'Create users if they do not exist'|t('feed-me'),
+                name: 'options[create]',
+                value: 1,
+                checked: hash_get(feed.fieldMapping, optionsPath ~ '.create') ?: '',
+            }) }}
+        </div>
+    {% endif %}
 {% endblock %}

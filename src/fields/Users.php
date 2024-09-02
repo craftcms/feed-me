@@ -5,6 +5,7 @@ namespace craft\feedme\fields;
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Element as BaseElement;
+use craft\elements\conditions\ElementConditionInterface;
 use craft\elements\db\UserQuery;
 use craft\elements\User as UserElement;
 use craft\errors\ElementNotFoundException;
@@ -14,7 +15,9 @@ use craft\feedme\helpers\DataHelper;
 use craft\feedme\Plugin;
 use craft\fields\Users as UsersField;
 use craft\helpers\Db;
+use craft\helpers\ElementHelper;
 use craft\helpers\Json;
+use craft\services\ElementSources;
 use Throwable;
 use yii\base\Exception;
 
@@ -86,12 +89,16 @@ class Users extends Field implements FieldInterface
 
         // Get source id's for connecting
         $groupIds = [];
+        $customSources = [];
         $isAdmin = false;
         $status = null;
 
         if (is_array($sources)) {
             // go through sources that start with "group:" and get group uid for those
             foreach ($sources as $source) {
+                if (str_starts_with($source, 'custom:')) {
+                    $customSources[] = ElementHelper::findSource(UserElement::class, $source, ElementSources::CONTEXT_MODAL);
+                }
                 if (str_starts_with($source, 'group:')) {
                     [, $uid] = explode(':', $source);
                     $groupIds[] = Db::idByUid('{{%usergroups}}', $uid);
@@ -110,6 +117,12 @@ class Users extends Field implements FieldInterface
             // or 'inactive'
             if (in_array(UserElement::STATUS_INACTIVE, $sources, true)) {
                 $status[] = UserElement::STATUS_INACTIVE;
+            }
+
+            // if there's only one source, and it's a custom source, make sure $create is nullified;
+            // we don't want to create users for custom sources because of ensuring all the conditions are met
+            if (count($sources) == 1 && !empty($customSources)) {
+                $create = null;
             }
         } elseif ($sources === '*') {
             $groupIds = null;
@@ -147,13 +160,12 @@ class Users extends Field implements FieldInterface
 
             $ids = [];
             $criteria['status'] = null;
-            $criteria['groupId'] = $groupIds;
             $criteria['limit'] = $limit;
             $criteria['where'] = ['=', $columnName, $dataValue];
 
             // If the only source for the Users field is "admins" we don't have to bother with this query.
-            if (!($isAdmin && empty($groupIds))) {
-                $ids = $this->_findUsers($criteria);
+            if (!($isAdmin && empty($groupIds) && empty($customSources))) {
+                $ids = $this->_findUsers($criteria, $groupIds, $customSources);
                 $foundElements = array_merge($foundElements, $ids);
             }
 
@@ -250,12 +262,38 @@ class Users extends Field implements FieldInterface
      * @param $criteria
      * @return array|int[]
      */
-    private function _findUsers($criteria): array
+    private function _findUsers($criteria, $groupIds = null, $customSources = null): array
     {
         $query = UserElement::find();
         Craft::configure($query, $criteria);
 
-        Plugin::info('Search for existing user with query `{i}`', ['i' => json_encode($criteria)]);
+        // if we have any custom sources, we want to modify the query to account for those
+        if (!empty($customSources)) {
+            $conditionsService = Craft::$app->getConditions();
+            foreach ($customSources as $customSource) {
+                /** @var ElementConditionInterface $sourceCondition */
+                $sourceCondition = $conditionsService->createCondition($customSource['condition']);
+                $sourceCondition->modifyQuery($query);
+            }
+        }
+
+        if (!empty($groupIds)) {
+            // now that the custom sources have been accounted for,
+            // we can adjust the group id to include any regular, group sources (group ids)
+            $query->groupId = array_merge($query->groupId ?? [], $groupIds);
+        }
+
+        // we're getting the criteria from conditions now too, so they are not included in the $criteria array;
+        // so, we get all the query criteria, filter out any empty or boolean ones and only show the ones that look to be filled out
+        $showCriteria = $criteria;
+        $allCriteria = $query->getCriteria();
+        foreach ($allCriteria as $key => $criterion) {
+            if (!empty($criterion) && !is_bool($criterion)) {
+                $showCriteria[$key] = $criterion;
+            }
+        }
+
+        Plugin::info('Search for existing user with query `{i}`', ['i' => json_encode($showCriteria)]);
 
         $ids = $query->ids();
 
