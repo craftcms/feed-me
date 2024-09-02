@@ -174,7 +174,7 @@ class Users extends Field implements FieldInterface
             // So if we haven't found a match with the previous query, and field sources contains "admins",
             // we have to look for the user among admins too.
             if ($isAdmin && count($ids) === 0) {
-                unset($criteria['groupId']);
+                $criteria['groupId'] = null;
                 $criteria['admin'] = true;
 
                 $ids = $this->_findUsers($criteria);
