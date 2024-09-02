@@ -7,6 +7,7 @@ use craft\elements\User as UserElement;
 use craft\feedme\Plugin;
 use craft\fields\Checkboxes;
 use craft\fields\Color;
+use craft\fields\Country;
 use craft\fields\Date;
 use craft\fields\Dropdown;
 use craft\fields\Email;
@@ -229,7 +230,7 @@ class FeedMeVariable extends ServiceLocator
             $section = $this->getEntrySourcesByField($field)[0] ?? null;
 
             if ($section) {
-                $source = Craft::$app->getSections()->getEntryTypeById($section->id);
+                $source = $section->getEntryTypes()[0] ?? null;
             }
         } elseif ($type === 'craft\fields\Tags') {
             $source = $this->getTagSourcesByField($field);
