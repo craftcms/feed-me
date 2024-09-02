@@ -65,7 +65,7 @@
     </div>
 
     {# don't allow crating new entries if the only selected source is custom, because we can't ensure all the conditions will be met #}
-    {% if field is defined and field is not empty and field.sources|length == 1 and field.sources.0 starts with 'custom:' == false %}
+    {% if field is defined and craft.feedme.fieldHasOnlyCustomSources(field) == false %}
         <div class="element-create">
             {{ feedMeMacro.checkbox({
                 label: 'Create entries if they do not exist'|t('feed-me'),

@@ -23,6 +23,7 @@ use craft\models\CategoryGroup;
 use craft\models\Section;
 use craft\models\TagGroup;
 use DateTime;
+use Illuminate\Support\Collection;
 use yii\di\ServiceLocator;
 
 /**
@@ -355,5 +356,27 @@ class FeedMeVariable extends ServiceLocator
         ];
 
         return in_array($class, $supportedSubFields, true);
+    }
+
+    /**
+     * Check if the only sources set for a relation field are custom ones.
+     *
+     * @param array|null $field
+     * @return bool
+     */
+    public function fieldHasOnlyCustomSources(?array $field = null): bool
+    {
+        if ($field === null) {
+            return false;
+        }
+
+        if (!isset($field['sources'])) {
+            return false;
+        }
+
+        $sources = new Collection($field['sources']);
+        $nativeSources = $sources->filter(fn(string $source) => !str_starts_with($source, 'custom:'));
+
+        return $nativeSources->isEmpty();
     }
 }
