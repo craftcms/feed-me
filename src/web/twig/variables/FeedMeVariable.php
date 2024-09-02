@@ -12,10 +12,12 @@ use craft\fields\Date;
 use craft\fields\Dropdown;
 use craft\fields\Email;
 use craft\fields\Lightswitch;
+use craft\fields\Money;
 use craft\fields\MultiSelect;
 use craft\fields\Number;
 use craft\fields\PlainText;
 use craft\fields\RadioButtons;
+use craft\fields\Time;
 use craft\fields\Url;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Html;
@@ -344,13 +346,18 @@ class FeedMeVariable extends ServiceLocator
         $supportedSubFields = [
             Checkboxes::class,
             Color::class,
+            Country::class,
             Date::class,
             Dropdown::class,
+            Email::class,
             Lightswitch::class,
+            Money::class,
             MultiSelect::class,
             Number::class,
             PlainText::class,
             RadioButtons::class,
+            Time::class,
+            Url::class,
             'craft\ckeditor\Field',
             'craft\redactor\Field',
         ];
