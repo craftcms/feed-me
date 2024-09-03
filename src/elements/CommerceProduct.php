@@ -177,7 +177,7 @@ class CommerceProduct extends Element
     {
         $this->beforeSave($element, $settings);
 
-        if($this->element->getIsDraft()) {
+        if ($this->element->getIsDraft()) {
             $this->element->setDirtyAttributes(['variants']);
             $this->element = Craft::$app->getDrafts()->applyDraft($this->element);
         }
