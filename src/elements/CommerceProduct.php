@@ -89,6 +89,12 @@ class CommerceProduct extends Element
         parent::init();
 
         // Hook into the process service on each step - we need to re-arrange the feed mapping
+        Event::on(Process::class, Process::EVENT_STEP_BEFORE_ELEMENT_MATCH, function(FeedProcessEvent $event) {
+            if ($event->feed['elementType'] === ProductElement::class) {
+                $this->_checkForVariantMatches($event);
+            }
+        });
+        
         Event::on(Process::class, Process::EVENT_STEP_BEFORE_PARSE_CONTENT, function(FeedProcessEvent $event) {
             if ($event->feed['elementType'] === ProductElement::class) {
                 // at this point we've matched existing elements;
@@ -103,12 +109,6 @@ class CommerceProduct extends Element
                     $event->element->setScenario($originalScenario);
                 }
                 $this->_preParseVariants($event);
-            }
-        });
-
-        Event::on(Process::class, Process::EVENT_STEP_BEFORE_ELEMENT_MATCH, function(FeedProcessEvent $event) {
-            if ($event->feed['elementType'] === ProductElement::class) {
-                $this->_checkForVariantMatches($event);
             }
         });
 
