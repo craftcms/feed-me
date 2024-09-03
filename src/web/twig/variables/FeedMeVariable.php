@@ -361,10 +361,10 @@ class FeedMeVariable extends ServiceLocator
     /**
      * Check if the only sources set for a relation field are custom ones.
      *
-     * @param array|null $field
+     * @param mixed $field
      * @return bool
      */
-    public function fieldHasOnlyCustomSources(?array $field = null): bool
+    public function fieldHasOnlyCustomSources(mixed $field = null): bool
     {
         if ($field === null) {
             return false;
