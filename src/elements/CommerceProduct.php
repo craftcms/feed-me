@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Craft;
 use craft\base\ElementInterface;
 use craft\commerce\collections\UpdateInventoryLevelCollection;
+use craft\commerce\elements\Product;
 use craft\commerce\elements\Product as ProductElement;
 use craft\commerce\elements\Variant as VariantElement;
 use craft\commerce\models\inventory\UpdateInventoryLevel;
@@ -155,6 +156,13 @@ class CommerceProduct extends Element
             $this->element->siteId = $siteId;
         }
 
+        $originalScenario = $this->element->getScenario();
+        $this->element->setScenario(\craft\base\Element::SCENARIO_ESSENTIALS);
+        if (!Craft::$app->getDrafts()->saveElementAsDraft($this->element, null, null, null, false)) {
+            throw new Exception('Unable to create product element as unsaved');
+        }
+        $this->element->setScenario($originalScenario);
+
         return $this->element;
     }
 
@@ -164,6 +172,11 @@ class CommerceProduct extends Element
     public function save($element, $settings): bool
     {
         $this->beforeSave($element, $settings);
+
+        if($this->element->getIsDraft()) {
+            $this->element->setDirtyAttributes(['variants']);
+            $this->element = Craft::$app->getDrafts()->applyDraft($this->element);
+        }
 
         if (!Craft::$app->getElements()->saveElement($this->element, true, true, Hash::get($this->feed, 'updateSearchIndexes'))) {
             $errors = [$this->element->getErrors()];
@@ -275,6 +288,7 @@ class CommerceProduct extends Element
         $feed = $event->feed;
         $feedData = $event->feedData;
         $contentData = $event->contentData;
+        /** @var Product $element */
         $element = $event->element;
 
         $variantMapping = Hash::get($feed, 'fieldMapping.variants');
@@ -432,7 +446,8 @@ class CommerceProduct extends Element
                 $variants[$sku] = new VariantElement();
             }
 
-            $variants[$sku]->product = $element;
+            $variants[$sku]->setOwner($element);
+            $variants[$sku]->setPrimaryOwner($element);
 
             // We are going to handle stock after the product and variants save
             $stock = null;
