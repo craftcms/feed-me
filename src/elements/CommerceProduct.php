@@ -91,6 +91,17 @@ class CommerceProduct extends Element
         // Hook into the process service on each step - we need to re-arrange the feed mapping
         Event::on(Process::class, Process::EVENT_STEP_BEFORE_PARSE_CONTENT, function(FeedProcessEvent $event) {
             if ($event->feed['elementType'] === ProductElement::class) {
+                // at this point we've matched existing elements;
+                // if $event->element->id is null then we haven't found a match so create an unsaved draft of the product
+                // so that the variants can get saved right
+                if (!$event->element->id) {
+                    $originalScenario = $event->element->getScenario();
+                    $event->element->setScenario(\craft\base\Element::SCENARIO_ESSENTIALS);
+                    if (!Craft::$app->getDrafts()->saveElementAsDraft($event->element, null, null, null, false)) {
+                        throw new Exception('Unable to create product element as unsaved');
+                    }
+                    $event->element->setScenario($originalScenario);
+                }
                 $this->_preParseVariants($event);
             }
         });
@@ -155,13 +166,6 @@ class CommerceProduct extends Element
         if ($siteId) {
             $this->element->siteId = $siteId;
         }
-
-        $originalScenario = $this->element->getScenario();
-        $this->element->setScenario(\craft\base\Element::SCENARIO_ESSENTIALS);
-        if (!Craft::$app->getDrafts()->saveElementAsDraft($this->element, null, null, null, false)) {
-            throw new Exception('Unable to create product element as unsaved');
-        }
-        $this->element->setScenario($originalScenario);
 
         return $this->element;
     }
@@ -445,9 +449,6 @@ class CommerceProduct extends Element
             if (!isset($variants[$sku])) {
                 $variants[$sku] = new VariantElement();
             }
-
-            $variants[$sku]->setOwner($element);
-            $variants[$sku]->setPrimaryOwner($element);
 
             // We are going to handle stock after the product and variants save
             $stock = null;
