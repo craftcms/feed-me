@@ -181,7 +181,14 @@ class Assets extends Field implements FieldInterface
                     $urlsToUpload[$key]['value'] = $dataValue;
 
                     if (isset($filenamesFromFeed[$key])) {
-                        $filename = $filenamesFromFeed[$key] . '.' . AssetHelper::getRemoteUrlExtension($urlsToUpload[$key]['value']);
+                        $filename = $filenamesFromFeed[$key];
+
+                        // if we can determine the extension of the remote file, use that extension
+                        $remoteUrlExtension = AssetHelper::getRemoteUrlExtension($urlsToUpload[$key]['value']);
+                        if (!empty($remoteUrlExtension)) {
+                            $filename .= '.' . $remoteUrlExtension;
+                        }
+
                         $urlsToUpload[$key]['newFilename'] = $filename;
                     } else {
                         $filename = AssetHelper::getRemoteUrlFilename($dataValue);
