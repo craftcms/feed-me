@@ -7,14 +7,17 @@ use craft\elements\User as UserElement;
 use craft\feedme\Plugin;
 use craft\fields\Checkboxes;
 use craft\fields\Color;
+use craft\fields\Country;
 use craft\fields\Date;
 use craft\fields\Dropdown;
 use craft\fields\Email;
 use craft\fields\Lightswitch;
+use craft\fields\Money;
 use craft\fields\MultiSelect;
 use craft\fields\Number;
 use craft\fields\PlainText;
 use craft\fields\RadioButtons;
+use craft\fields\Time;
 use craft\fields\Url;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Html;
@@ -230,7 +233,7 @@ class FeedMeVariable extends ServiceLocator
             $section = $this->getEntrySourcesByField($field)[0] ?? null;
 
             if ($section) {
-                $source = Craft::$app->getSections()->getEntryTypeById($section->id);
+                $source = $section->getEntryTypes()[0] ?? null;
             }
         } elseif ($type === 'craft\fields\Tags') {
             $source = $this->getTagSourcesByField($field);
@@ -344,13 +347,18 @@ class FeedMeVariable extends ServiceLocator
         $supportedSubFields = [
             Checkboxes::class,
             Color::class,
+            Country::class,
             Date::class,
             Dropdown::class,
+            Email::class,
             Lightswitch::class,
+            Money::class,
             MultiSelect::class,
             Number::class,
             PlainText::class,
             RadioButtons::class,
+            Time::class,
+            Url::class,
             'craft\ckeditor\Field',
             'craft\redactor\Field',
         ];
