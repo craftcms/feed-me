@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Craft;
 use craft\base\ElementInterface;
 use craft\commerce\collections\UpdateInventoryLevelCollection;
+use craft\commerce\elements\Product;
 use craft\commerce\elements\Product as ProductElement;
 use craft\commerce\elements\Variant as VariantElement;
 use craft\commerce\models\inventory\UpdateInventoryLevel;
@@ -21,6 +22,7 @@ use craft\feedme\Plugin;
 use craft\feedme\services\Process;
 use craft\fields\Matrix;
 use craft\fields\Table;
+use craft\helpers\ArrayHelper;
 use craft\helpers\Json;
 use DateTime;
 use Exception;
@@ -87,15 +89,26 @@ class CommerceProduct extends Element
         parent::init();
 
         // Hook into the process service on each step - we need to re-arrange the feed mapping
-        Event::on(Process::class, Process::EVENT_STEP_BEFORE_PARSE_CONTENT, function(FeedProcessEvent $event) {
-            if ($event->feed['elementType'] === ProductElement::class) {
-                $this->_preParseVariants($event);
-            }
-        });
-
         Event::on(Process::class, Process::EVENT_STEP_BEFORE_ELEMENT_MATCH, function(FeedProcessEvent $event) {
             if ($event->feed['elementType'] === ProductElement::class) {
                 $this->_checkForVariantMatches($event);
+            }
+        });
+        
+        Event::on(Process::class, Process::EVENT_STEP_BEFORE_PARSE_CONTENT, function(FeedProcessEvent $event) {
+            if ($event->feed['elementType'] === ProductElement::class) {
+                // at this point we've matched existing elements;
+                // if $event->element->id is null then we haven't found a match so create an unsaved draft of the product
+                // so that the variants can get saved right
+                if (!$event->element->id) {
+                    $originalScenario = $event->element->getScenario();
+                    $event->element->setScenario(\craft\base\Element::SCENARIO_ESSENTIALS);
+                    if (!Craft::$app->getDrafts()->saveElementAsDraft($event->element, null, null, null, false)) {
+                        throw new Exception('Unable to create product element as unsaved');
+                    }
+                    $event->element->setScenario($originalScenario);
+                }
+                $this->_preParseVariants($event);
             }
         });
 
@@ -163,6 +176,11 @@ class CommerceProduct extends Element
     public function save($element, $settings): bool
     {
         $this->beforeSave($element, $settings);
+
+        if ($this->element->getIsDraft()) {
+            $this->element->setDirtyAttributes(['variants']);
+            $this->element = Craft::$app->getDrafts()->applyDraft($this->element);
+        }
 
         if (!Craft::$app->getElements()->saveElement($this->element, true, true, Hash::get($this->feed, 'updateSearchIndexes'))) {
             $errors = [$this->element->getErrors()];
@@ -274,6 +292,7 @@ class CommerceProduct extends Element
         $feed = $event->feed;
         $feedData = $event->feedData;
         $contentData = $event->contentData;
+        /** @var Product $element */
         $element = $event->element;
 
         $variantMapping = Hash::get($feed, 'fieldMapping.variants');
@@ -431,8 +450,6 @@ class CommerceProduct extends Element
                 $variants[$sku] = new VariantElement();
             }
 
-            $variants[$sku]->product = $element;
-
             // We are going to handle stock after the product and variants save
             $stock = null;
             if (isset($attributeData['stock'])) {
@@ -480,31 +497,64 @@ class CommerceProduct extends Element
 
     private function _inventoryUpdate($event): void
     {
+        /** @var Product $product */
+        $product = $event->element;
+
+        // Index variants by SKU for lookup:
+        $variantsBySku = ArrayHelper::index($event->contentData['variants'], 'sku');
 
         /** @var Commerce $commercePlugin */
         $commercePlugin = Commerce::getInstance();
-        $variants = $event->element->getVariants();
+        $variants = $product->getVariants();
 
+        // Queue up a changeset:
         $updateInventoryLevels = UpdateInventoryLevelCollection::make();
+
         foreach ($variants as $variant) {
-            if ($inventoryItem = $commercePlugin->getInventory()->getInventoryItemByPurchasable($variant)) {
-                /** @var InventoryLevel $firstInventoryLevel */
-                $firstInventoryLevel = $commercePlugin->getInventory()->getInventoryLevelsForPurchasable($variant)->first();
-                if ($firstInventoryLevel && $firstInventoryLevel->getInventoryLocation()) {
-                    $feedData = $event->feedData;
-                    $data = Json::decodeIfJson($event->feedData, true);
-                    $stock = $data['stock'] ?? 0;
-                    $updateInventoryLevels->push(new UpdateInventoryLevel([
-                            'type' => \craft\commerce\enums\InventoryTransactionType::AVAILABLE->value,
-                            'updateAction' => \craft\commerce\enums\InventoryUpdateQuantityType::SET,
-                            'inventoryItem' => $inventoryItem,
-                            'inventoryLocation' => $firstInventoryLevel->getInventoryLocation(),
-                            'quantity' => $stock,
-                            'note' => '',
-                        ])
-                    );
-                }
+            // Is this SKU even present in our import data?
+            if (!isset($variantsBySku[$variant->sku])) {
+                continue;
             }
+
+            if (!$variant->inventoryTracked) {
+                Plugin::info(sprintf('Variant %s is not configured to track stock.', $variant->sku));
+
+                continue;
+            }
+
+            $stock = $variantsBySku[$variant->sku]['stock'] ?? null;
+
+            // What if the `stock` key wasn't in the import data?
+            if (is_null($stock)) {
+                Plugin::error(sprintf('No stock value was present in the import data for %s.', $variant->sku));
+
+                continue;
+            }
+
+            // Load InventoryItem model:
+            $inventoryItem = $commercePlugin->getInventory()->getInventoryItemByPurchasable($variant);
+
+            /** @var InventoryLevel $firstInventoryLevel */
+            $level = $commercePlugin->getInventory()->getInventoryLevelsForPurchasable($variant)->first();
+            $location = $level->getInventoryLocation();
+
+            if (!$level || !$location) {
+                // Again, looks like there's nothing to track…
+                continue;
+            }
+
+            $update = new UpdateInventoryLevel([
+                'type' => \craft\commerce\enums\InventoryTransactionType::AVAILABLE->value,
+                'updateAction' => \craft\commerce\enums\InventoryUpdateQuantityType::SET,
+                'inventoryItem' => $inventoryItem,
+                'inventoryLocation' => $location,
+                'quantity' => $stock,
+                'note' => sprintf('Imported via feed ID #%s', $event->feed['id']),
+            ]);
+
+            $updateInventoryLevels->push($update);
+
+            Plugin::info(sprintf('Updating stock for the default inventory location for %s to %s.', $variant->sku, $stock));
         }
 
         if ($updateInventoryLevels->count() > 0) {
