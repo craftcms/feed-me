@@ -5,6 +5,7 @@
 - Fixed a bug that could occur when uploading files to an Assets field from an external URL and a new filename is provided, but we can't determine the remote file's extension. ([#1506](https://github.com/craftcms/feed-me/pull/1506))
 - Fixed a bug where the fields available to map within a given Entries field could not match the fields from that Entry type's field layout. ([#1503](https://github.com/craftcms/feed-me/pull/1503))
 - Fixed a bug where you could not import an Asset field into a Matrix field if it had a dynamic subpath set. ([#1501](https://github.com/craftcms/feed-me/pull/1501))
+- Fixed a bug where the stock was not updating when importing Product Variants. ([#1490](https://github.com/craftcms/feed-me/pull/1490))
 
 ## 6.3.0 - 2024-08-14
 
