@@ -3,11 +3,13 @@
 namespace craft\feedme\fields;
 
 use Cake\Utility\Hash;
+use craft\elements\Entry;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\helpers\DataHelper;
 use craft\feedme\Plugin;
 use craft\fields\Matrix as MatrixField;
+use craft\helpers\ArrayHelper;
 
 /**
  *
@@ -91,7 +93,7 @@ class Matrix extends Field implements FieldInterface
                 $subFieldInfo['node'] = $nodePath;
 
                 // Parse each field via their own fieldtype service
-                $parsedValue = $this->_parseSubField($this->feedData, $subFieldHandle, $subFieldInfo);
+                $parsedValue = $this->_parseSubField($this->feedData, $subFieldHandle, $subFieldInfo, $blockHandle);
 
                 // Finish up with the content, also sort out cases where there's array content
                 if (isset($fieldData[$key]) && is_array($fieldData[$key])) {
@@ -385,9 +387,10 @@ class Matrix extends Field implements FieldInterface
      * @param $feedData
      * @param $subFieldHandle
      * @param $subFieldInfo
+     * @param $blockHandle entry type handle
      * @return mixed
      */
-    private function _parseSubField($feedData, $subFieldHandle, $subFieldInfo): mixed
+    private function _parseSubField($feedData, $subFieldHandle, $subFieldInfo, $blockHandle = null): mixed
     {
         $subFieldClassHandle = Hash::get($subFieldInfo, 'field');
 
@@ -400,12 +403,24 @@ class Matrix extends Field implements FieldInterface
             $subFieldClassHandle = \craft\fields\Entries::class;
         }
 
+        // mock the nested matrix entry so that the assets field can correctly resolve dynamic path that contains owner in it
+        // e.g. {owner.slug}
+        // see https://github.com/craftcms/feed-me/issues/1477 for more details
+        if ($blockHandle !== null && $subField instanceof \craft\fields\Assets) {
+            $mockNestedEntry = new Entry();
+            $mockNestedEntry->primaryOwnerId = $this->element->id;
+            $mockNestedEntry->ownerId = $this->element->id;
+            $mockNestedEntry->fieldId = $this->field->id;
+            $entryType = ArrayHelper::firstWhere($this->field->getEntryTypes(), 'handle', $blockHandle);
+            $mockNestedEntry->typeId = $entryType->id;
+        }
+
         $class = Plugin::$plugin->fields->getRegisteredField($subFieldClassHandle);
         $class->feedData = $feedData;
         $class->fieldHandle = $subFieldHandle;
         $class->fieldInfo = $subFieldInfo;
         $class->field = $subField;
-        $class->element = $this->element;
+        $class->element = $mockNestedEntry ?? $this->element;
         $class->feed = $this->feed;
 
         // Get our content, parsed by this fields service function
