@@ -234,10 +234,15 @@ class DataTypes extends Component
      */
     public function getFeedData($feedModel, bool $usePrimaryElement = true): mixed
     {
-        $feedDataResponse = $feedModel->getDataType()->getFeed($feedModel->feedUrl, $feedModel, $usePrimaryElement);
+        // Dynamism in the feedUrl -- use twig to inject dates, for example
+        $twig = \Craft::$app->getView()->getTwig();
+        $template = twig_template_from_string($twig, $feedModel->feedUrl);
+        $feedUrl = $template->render([]);
+
+        $feedDataResponse = $feedModel->getDataType()->getFeed($feedUrl, $feedModel, $usePrimaryElement);
 
         $event = new FeedDataEvent([
-            'url' => $feedModel->feedUrl,
+            'url' => $feedUrl,
             'response' => $feedDataResponse,
             'feedId' => $feedModel->id,
         ]);
