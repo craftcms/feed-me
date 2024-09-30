@@ -4,6 +4,10 @@ namespace craft\feedme;
 
 use Craft;
 use craft\base\Model;
+use craft\console\controllers\EntrifyController;
+use craft\events\EntrifyCategoriesEvent;
+use craft\events\EntrifyGlobalSetEvent;
+use craft\events\EntrifyTagsEvent;
 use craft\events\RegisterUrlRulesEvent;
 use craft\feedme\base\PluginTrait;
 use craft\feedme\models\Settings;
@@ -86,6 +90,7 @@ class Plugin extends \craft\base\Plugin
         $this->_registerCpRoutes();
         $this->_registerTwigExtensions();
         $this->_registerVariables();
+        $this->_listenToEvents();
     }
 
     /**
@@ -168,5 +173,37 @@ class Plugin extends \craft\base\Plugin
         Event::on(CraftVariable::class, CraftVariable::EVENT_INIT, function(Event $event) {
             $event->sender->set('feedme', FeedMeVariable::class);
         });
+    }
+
+    /**
+     * Listen to events
+     *
+     * @return void
+     */
+    private function _listenToEvents(): void
+    {
+        Event::on(
+            EntrifyController::class,
+            EntrifyController::EVENT_ENTRIFY_CATEGORIES,
+            function(EntrifyCategoriesEvent $event) {
+                self::$plugin->feeds->entrifyCategoryFeeds($event);
+            }
+        );
+
+        Event::on(
+            EntrifyController::class,
+            EntrifyController::EVENT_ENTRIFY_TAGS,
+            function(EntrifyTagsEvent $event) {
+                self::$plugin->feeds->entrifyTagFeeds($event);
+            }
+        );
+
+        Event::on(
+            EntrifyController::class,
+            EntrifyController::EVENT_ENTRIFY_GLOBAL_SET,
+            function(EntrifyGlobalSetEvent $event) {
+                self::$plugin->feeds->entrifyGlobalSetFeeds($event);
+            }
+        );
     }
 }
