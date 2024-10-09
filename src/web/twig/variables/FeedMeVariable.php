@@ -7,14 +7,17 @@ use craft\elements\User as UserElement;
 use craft\feedme\Plugin;
 use craft\fields\Checkboxes;
 use craft\fields\Color;
+use craft\fields\Country;
 use craft\fields\Date;
 use craft\fields\Dropdown;
 use craft\fields\Email;
 use craft\fields\Lightswitch;
+use craft\fields\Money;
 use craft\fields\MultiSelect;
 use craft\fields\Number;
 use craft\fields\PlainText;
 use craft\fields\RadioButtons;
+use craft\fields\Time;
 use craft\fields\Url;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Html;
@@ -23,6 +26,7 @@ use craft\models\CategoryGroup;
 use craft\models\Section;
 use craft\models\TagGroup;
 use DateTime;
+use Illuminate\Support\Collection;
 use yii\di\ServiceLocator;
 
 /**
@@ -229,7 +233,7 @@ class FeedMeVariable extends ServiceLocator
             $section = $this->getEntrySourcesByField($field)[0] ?? null;
 
             if ($section) {
-                $source = Craft::$app->getSections()->getEntryTypeById($section->id);
+                $source = $section->getEntryTypes()[0] ?? null;
             }
         } elseif ($type === 'craft\fields\Tags') {
             $source = $this->getTagSourcesByField($field);
@@ -294,6 +298,10 @@ class FeedMeVariable extends ServiceLocator
     {
         $type = $field['type'] ?? 'attribute';
 
+        if (isset($field['type']) && $field['handle'] === 'parent') {
+            $type = 'parent';
+        }
+
         if (is_object($field)) {
             $type = get_class($field);
         }
@@ -315,6 +323,7 @@ class FeedMeVariable extends ServiceLocator
         $supportedValues = [
             'assets',
             'attribute',
+            'parent',
         ];
 
         $supported = array_merge($supportedFields, $supportedValues);
@@ -338,17 +347,44 @@ class FeedMeVariable extends ServiceLocator
         $supportedSubFields = [
             Checkboxes::class,
             Color::class,
+            Country::class,
             Date::class,
             Dropdown::class,
+            Email::class,
             Lightswitch::class,
+            Money::class,
             MultiSelect::class,
             Number::class,
             PlainText::class,
             RadioButtons::class,
+            Time::class,
+            Url::class,
             'craft\ckeditor\Field',
             'craft\redactor\Field',
         ];
 
         return in_array($class, $supportedSubFields, true);
+    }
+
+    /**
+     * Check if the only sources set for a relation field are custom ones.
+     *
+     * @param mixed $field
+     * @return bool
+     */
+    public function fieldHasOnlyCustomSources(mixed $field = null): bool
+    {
+        if ($field === null) {
+            return false;
+        }
+
+        if (!isset($field['sources'])) {
+            return false;
+        }
+
+        $sources = new Collection($field['sources']);
+        $nativeSources = $sources->filter(fn(string $source) => !str_starts_with($source, 'custom:'));
+
+        return $nativeSources->isEmpty();
     }
 }

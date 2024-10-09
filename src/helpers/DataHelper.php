@@ -22,11 +22,20 @@ class DataHelper
      * Check if provided value is not set or empty or an array of empties
      *
      * @param $value
+     * @param $allowZero bool Whether to treat zero as an empty value or not
      * @return bool
      */
-    public static function isArrayValueEmpty($value)
+    public static function isArrayValueEmpty($value, $allowZero = false): bool
     {
-        return (!$value || (is_array($value) && empty(array_filter($value))));
+        return (!$value ||
+            (is_array($value) && empty(array_filter($value, function($item) use ($allowZero): bool {
+                if ($allowZero) {
+                    return (!empty($item) || is_numeric($item));
+                }
+
+                return !empty($item);
+            })))
+        );
     }
 
     /**
@@ -60,11 +69,11 @@ class DataHelper
      * @param $fieldInfo
      * @return array|ArrayAccess|mixed
      */
-    public static function fetchArrayValue($feedData, $fieldInfo): mixed
+    public static function fetchArrayValue($feedData, $fieldInfo, $nodeName = 'node'): mixed
     {
         $value = null;
 
-        $node = Hash::get($fieldInfo, 'node');
+        $node = Hash::get($fieldInfo, $nodeName);
 
         $dataDelimiter = Plugin::$plugin->service->getConfig('dataDelimiter');
 
@@ -207,7 +216,7 @@ class DataHelper
 
         // We want to preserve 0 and '0', but if it's empty, return null.
         // https://github.com/craftcms/feed-me/issues/779
-        if (!is_numeric($value) && empty($value)) {
+        if (!is_numeric($value) && !is_bool($value) && empty($value)) {
             return null;
         }
 
@@ -248,23 +257,19 @@ class DataHelper
 
         $fields = $element->getSerializedFieldValues();
         $attributes = $element->attributes;
+        if (isset($attributes['enabled'])) {
+            $attributes['enabledForSite'] = $element->getEnabledForSite();
+        }
 
         foreach ($content as $key => $newValue) {
             $existingValue = Hash::get($fields, $key);
 
-            // If date value, make sure to cast it as a string to compare
-            if ($existingValue instanceof \DateTime || DateTimeHelper::isIso8601($existingValue)) {
-                $existingValue = Db::prepareDateForDb($existingValue);
-            }
+            [$existingValue, $newValue] = self::prepDatesForComparison($existingValue, $newValue);
 
-            // If date value, make sure to cast it as a string to compare
-            if ($newValue instanceof DateTime || DateTimeHelper::isIso8601($newValue)) {
-                $newValue = Db::prepareDateForDb($newValue);
-            }
-
-            // If an empty 'date' value, it's the same as null
-            if (is_array($newValue) && isset($newValue['date']) && $newValue['date'] === '') {
-                $newValue = null;
+            // If array key & values are already within the existing array
+            if (is_array($newValue) && is_array($existingValue) && Hash::contains($existingValue,$newValue)) {
+                unset($trackedChanges[$key]);
+                continue;
             }
 
             // Check for simple fields first
@@ -327,6 +332,33 @@ class DataHelper
         }
 
         return empty($trackedChanges);
+    }
+
+    /**
+     * Prepare dates for comparison.
+     *
+     * @param mixed $firstValue
+     * @param mixed $secondValue
+     * @return array
+     */
+    public static function prepDatesForComparison(mixed $firstValue, mixed $secondValue): array
+    {
+        // If date value, make sure to cast it as a string to compare
+        if ($firstValue instanceof \DateTime || DateTimeHelper::isIso8601($firstValue)) {
+            $firstValue = Db::prepareDateForDb($firstValue);
+        }
+
+        // If date value, make sure to cast it as a string to compare
+        if ($secondValue instanceof DateTime || DateTimeHelper::isIso8601($secondValue)) {
+            $secondValue = Db::prepareDateForDb($secondValue);
+        }
+
+        // If an empty 'date' value, it's the same as null
+        if (is_array($secondValue) && isset($secondValue['date']) && $secondValue['date'] === '') {
+            $secondValue = null;
+        }
+
+        return [$firstValue, $secondValue];
     }
 
     /**
@@ -413,6 +445,15 @@ class DataHelper
             return true;
         }
 
+        // check if both empty
+        if (
+            Hash::check($fields, $key) &&
+            (!is_numeric($firstValue) && !is_bool($firstValue) && empty($firstValue)) &&
+            (!is_numeric($secondValue) && !is_bool($secondValue) && empty($secondValue))
+        ) {
+            return true;
+        }
+
         // Didn't match
         return false;
     }
@@ -426,13 +467,15 @@ class DataHelper
      */
     private static function _recursiveCompare($firstValue, $secondValue): bool
     {
+        [$firstValue, $secondValue] = self::prepDatesForComparison($firstValue, $secondValue);
+
         if (is_array($firstValue) && is_array($secondValue)) {
             // Ignore values that are `null` or empty arrays
             $firstValue = array_filter($firstValue, static function($value) {
-                return !($value === null || $value === []);
+                return !($value === null || $value === '' || $value === []);
             });
             $secondValue = array_filter($secondValue, static function($value) {
-                return !($value === null || $value === []);
+                return !($value === null || $value === '' || $value === []);
             });
 
             // Both values must have the same keys (ignoring order)

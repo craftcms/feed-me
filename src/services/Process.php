@@ -374,9 +374,7 @@ class Process extends Component
             }
         }
 
-        // Set the attributes for the element
-        $element->setAttributes($attributeData, false);
-
+        $contentData = [];
         if (isset($attributeData['enabled'])) {
             // Set the site-specific status as well, but retain all other site statuses
             $enabledForSite = [];
@@ -392,7 +390,14 @@ class Process extends Component
             // Set the global status to true if it's enabled for *any* sites, or if already enabled.
             $element->enabled = in_array(true, $enabledForSite) || $element->enabled;
             $element->setEnabledForSite($enabledForSite);
+            $contentData['enabled'] = $element->enabled;
+            $contentData['enabledForSite'] = $element->getEnabledForSite($element->siteId);
+
+            unset($attributeData['enabled']);
         }
+
+        // Set the attributes for the element
+        $element->setAttributes($attributeData, false);
 
         // Then, do the same for custom fields. Again, this should be done after populating the element attributes
         foreach ($feed['fieldMapping'] as $fieldHandle => $fieldInfo) {
@@ -400,7 +405,9 @@ class Process extends Component
                 $fieldValue = Plugin::$plugin->fields->parseField($feed, $element, $feedData, $fieldHandle, $fieldInfo);
 
                 if ($fieldValue !== null) {
-                    if ($feed['setEmptyValues'] || !empty($fieldValue)) {
+                    if ($feed['setEmptyValues'] ||
+                        (!empty($fieldValue) || is_numeric($fieldValue) || is_bool($fieldValue))
+                    ) {
                         $fieldData[$fieldHandle] = $fieldValue;
                     }
                 }
@@ -429,7 +436,7 @@ class Process extends Component
         }
 
         // We need to keep these separate to apply to the element but required when matching against existing elements
-        $contentData = $attributeData + $fieldData;
+        $contentData += $attributeData + $fieldData;
 
         //
         // It's time to actually save the element!
@@ -637,6 +644,11 @@ class Process extends Component
      */
     private function _backupBeforeFeed($feed): void
     {
+        if (Craft::$app->getConfig()->getGeneral()->backupCommand === false) {
+            Plugin::info('Database not backed up because the backup command is false.');
+            return;
+        }
+
         $logKey = StringHelper::randomString(20);
 
         $limit = Plugin::$plugin->service->getConfig('backupLimit', $feed['id']);

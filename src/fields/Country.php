@@ -3,15 +3,16 @@
 namespace craft\feedme\fields;
 
 use Cake\Utility\Hash;
+use Craft;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
-use craft\fields\Dropdown as DropdownField;
+use craft\fields\Country as CountryField;
 
 /**
  *
  * @property-read string $mappingTemplate
  */
-class Dropdown extends Field implements FieldInterface
+class Country extends Field implements FieldInterface
 {
     // Properties
     // =========================================================================
@@ -19,12 +20,12 @@ class Dropdown extends Field implements FieldInterface
     /**
      * @var string
      */
-    public static string $name = 'Dropdown';
+    public static string $name = 'Country';
 
     /**
      * @var string
      */
-    public static string $class = DropdownField::class;
+    public static string $class = CountryField::class;
 
 
     // Templates
@@ -35,7 +36,7 @@ class Dropdown extends Field implements FieldInterface
      */
     public function getMappingTemplate(): string
     {
-        return 'feed-me/_includes/fields/option-select';
+        return 'feed-me/_includes/fields/country';
     }
 
     // Public Methods
@@ -55,19 +56,27 @@ class Dropdown extends Field implements FieldInterface
         $value = (string) $value;
         $default = Hash::get($this->fieldInfo, 'default');
 
-        $options = Hash::get($this->field, 'settings.options');
+        $options = Craft::$app->getAddresses()->getCountryRepository()->getList(Craft::$app->language);
+
         $match = Hash::get($this->fieldInfo, 'options.match', 'value');
 
-        foreach ($options as $option) {
-            if (
-                (isset($option['value']) && $value === $option[$match]) ||
-                ($match === 'label' && $value === $default && $value === $option['value'])
-            ) {
-                return $option['value'];
+        // if we're matching by value - just look for the key in the $options array or check the default
+        if (($match === 'value' && isset($options[$value])) || $default === $value) {
+            return $value;
+        }
+
+        // if we're looking by label - look for the keys
+        if ($match === 'label') {
+            $found = array_filter($options, function($option) use ($value) {
+                return strcasecmp($option, $value) === 0;
+            });
+
+            if (!empty($found)) {
+                return array_key_first($found);
             }
         }
 
-        if ($this->feed['setEmptyValues'] === 1 && $value === '') {
+        if (empty($value)) {
             return $value;
         }
 

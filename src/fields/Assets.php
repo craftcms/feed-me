@@ -9,6 +9,7 @@ use craft\db\Table;
 use craft\elements\Asset as AssetElement;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
+use craft\feedme\events\AssetFilenameEvent;
 use craft\feedme\helpers\AssetHelper;
 use craft\feedme\helpers\DataHelper;
 use craft\feedme\Plugin;
@@ -23,6 +24,8 @@ use craft\helpers\UrlHelper;
  */
 class Assets extends Field implements FieldInterface
 {
+    public const EVENT_ASSET_FILENAME = 'onAssetFilename';
+
     // Properties
     // =========================================================================
 
@@ -77,14 +80,15 @@ class Assets extends Field implements FieldInterface
 
         $settings = Hash::get($this->field, 'settings');
         $folders = Hash::get($this->field, 'settings.sources');
-        $limit = Hash::get($this->field, 'settings.limit');
+        $limit = Hash::get($this->field, 'settings.maxRelations');
         $targetSiteId = Hash::get($this->field, 'settings.targetSiteId');
         $feedSiteId = Hash::get($this->feed, 'siteId');
+        $match = Hash::get($this->fieldInfo, 'options.match', 'filename');
         $upload = Hash::get($this->fieldInfo, 'options.upload');
         $conflict = Hash::get($this->fieldInfo, 'options.conflict');
         $fields = Hash::get($this->fieldInfo, 'fields');
         $node = Hash::get($this->fieldInfo, 'node');
-        $nodeKey = null;
+        $nodeKey = $this->getArrayKeyFromNode($node);
 
         // Get folder id's for connecting
         $folderIds = $this->field->resolveDynamicPathToFolderId($this->element);
@@ -113,6 +117,25 @@ class Assets extends Field implements FieldInterface
         $urlsToUpload = [];
         $base64ToUpload = [];
 
+        $filenamesFromFeed = $upload ? DataHelper::fetchArrayValue($this->feedData, $this->fieldInfo, 'options.filenameNode') : null;
+        if ($filenamesFromFeed) {
+            // see https://github.com/craftcms/feed-me/issues/1471
+            $filenamesFromFeed = array_splice($filenamesFromFeed, $nodeKey, count($value));
+        }
+
+        // Fire an 'onAssetFilename' event
+        $event = new AssetFilenameEvent([
+            'field' => $this->field,
+            'element' => $this->element,
+            'fieldValue' => $value,
+            'filenames' => $filenamesFromFeed,
+        ]);
+
+        $this->trigger(self::EVENT_ASSET_FILENAME, $event);
+
+        // Allow event to overwrite filenames to be used
+        $filenamesFromFeed = $event->filenames;
+
         foreach ($value as $key => $dataValue) {
             // Prevent empty or blank values (string or array), which match all elements
             if (empty($dataValue) && empty($default)) {
@@ -127,7 +150,7 @@ class Assets extends Field implements FieldInterface
 
             // special provision for falling back on default BaseRelationField value
             // https://github.com/craftcms/feed-me/issues/1195
-            if (trim($dataValue) === '') {
+            if (DataHelper::isArrayValueEmpty($value)) {
                 $foundElements = $default;
                 break;
             }
@@ -155,8 +178,22 @@ class Assets extends Field implements FieldInterface
                 // If we're uploading files, this will need to be an absolute URL. If it is, save until later.
                 // We also don't check for existing assets here, so break out instantly.
                 if ($upload && UrlHelper::isAbsoluteUrl($dataValue)) {
-                    $urlsToUpload[$key] = $dataValue;
-                    $filename = AssetHelper::getRemoteUrlFilename($dataValue);
+                    $urlsToUpload[$key]['value'] = $dataValue;
+
+                    if (isset($filenamesFromFeed[$key])) {
+                        $filename = $filenamesFromFeed[$key];
+
+                        // if we can determine the extension of the remote file, use that extension
+                        $remoteUrlExtension = AssetHelper::getRemoteUrlExtension($urlsToUpload[$key]['value']);
+                        if (!empty($remoteUrlExtension)) {
+                            $filename .= '.' . $remoteUrlExtension;
+                        }
+
+                        $urlsToUpload[$key]['newFilename'] = $filename;
+                    } else {
+                        $filename = AssetHelper::getRemoteUrlFilename($dataValue);
+                        $urlsToUpload[$key]['newFilename'] = null;
+                    }
                 } else {
                     $filename = basename($dataValue);
                 }
@@ -165,7 +202,13 @@ class Assets extends Field implements FieldInterface
                 $criteria['folderId'] = $folderIds;
                 $criteria['kind'] = $settings['allowedKinds'];
                 $criteria['limit'] = $limit;
-                $criteria['filename'] = $filename;
+
+                if ($match === 'id') {
+                    $criteria['id'] = $dataValue;
+                } else {
+                    $criteria['filename'] = $filename;
+                }
+
                 $criteria['includeSubfolders'] = true;
 
                 Craft::configure($query, $criteria);
@@ -184,14 +227,22 @@ class Assets extends Field implements FieldInterface
                     Plugin::info('Skipping asset upload (already exists).');
                 }
             }
-
-            $nodeKey = $this->getArrayKeyFromNode($node);
         }
 
         if ($upload) {
             if ($urlsToUpload) {
-                $uploadedElements = AssetHelper::fetchRemoteImage($urlsToUpload, $this->fieldInfo, $this->feed, $this->field, $this->element);
-                $foundElements = array_merge($foundElements, $uploadedElements);
+                foreach ($urlsToUpload as $item) {
+                    $uploadedElements = AssetHelper::fetchRemoteImage(
+                        [$item['value']],
+                        $this->fieldInfo,
+                        $this->feed,
+                        $this->field,
+                        $this->element,
+                        null,
+                        $item['newFilename']
+                    );
+                    $foundElements = array_merge($foundElements, $uploadedElements);
+                }
             }
 
             if ($base64ToUpload) {

@@ -170,11 +170,16 @@ class Matrix extends Field implements FieldInterface
         $index = 1;
         $resultBlocks = [];
         foreach ($expanded as $blockData) {
-            // all the fields are empty and setEmptyValues is off, ignore the block
+            // if all the fields are empty and setEmptyValues is off, ignore the block
             if (
                 !empty(array_filter(
                     $blockData['fields'],
-                    fn($value) => (is_string($value) && !empty($value)) || (is_array($value) && !empty(array_filter($value)))
+                    fn($value) => (
+                        (is_string($value) && !empty($value)) ||
+                        (is_array($value) && !empty(array_filter($value))) ||
+                        is_bool($value) ||
+                        is_numeric($value)
+                    )
                 ))
             ) {
                 $resultBlocks['new' . $index++] = $blockData;
@@ -271,6 +276,13 @@ class Matrix extends Field implements FieldInterface
         $subFieldClassHandle = Hash::get($subFieldInfo, 'field');
 
         $subField = Hash::extract($this->field->getBlockTypeFields(), '{n}[handle=' . $subFieldHandle . ']')[0];
+
+        if (
+            !$subField instanceof $subFieldClassHandle &&
+            ($subField instanceof \craft\fields\Categories || $subField instanceof \craft\fields\Tags)
+        ) {
+            $subFieldClassHandle = \craft\fields\Entries::class;
+        }
 
         $class = Plugin::$plugin->fields->getRegisteredField($subFieldClassHandle);
         $class->feedData = $feedData;

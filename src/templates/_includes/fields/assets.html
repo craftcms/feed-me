@@ -37,6 +37,20 @@
 
 {% block extraSettings %}
 
+    <div class="element-match assets-matching">
+        <span>{{ 'Data provided for this asset is:'|t('feed-me') }}</span>
+
+        {{ forms.selectField({
+            name: 'options[match]',
+            class: '',
+            value: hash_get(feed.fieldMapping, optionsPath ~ '.match') ?: '',
+            options: [
+                { value: 'filename', label: 'Filename'|t('feed-me') },
+                { value: 'id', label: 'ID'|t('feed-me') },
+            ],
+        }) }}
+    </div>
+
     <div class="assets-uploads">
         {{ feedMeMacro.checkbox({
             label: 'Create asset from URL<span class="asset-label-hide">, if exists:</span>'|t('feed-me')|raw,
@@ -55,5 +69,15 @@
             ],
             value: hash_get(feed.fieldMapping, optionsPath ~ '.conflict') ?: '',
         }) }}
+
+        <div class="asset-filename-node">
+            {{ forms.selectField({
+                label: 'Use this filename for assets created from URL:'|t('feed-me'),
+                name: 'options[filenameNode]',
+                value: hash_get(feed.fieldMapping, optionsPath ~ '.filenameNode') ?: '',
+                options: feedData|filter(option => option.value != 'usedefault'),
+                class: 'selectize fullwidth',
+            }) }}
+        </div>
     </div>
 {% endblock %}

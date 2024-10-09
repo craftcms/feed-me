@@ -52,7 +52,7 @@ class FeedImport extends BaseJob implements RetryableJobInterface
      */
     public function getTtr()
     {
-        return Plugin::$plugin->getSettings()->queueTtr ?? Plugin::getInstance()->queue->ttr;
+        return Plugin::$plugin->service->getConfig('queueTtr', $this->feed->id) ?? Plugin::getInstance()->queue->ttr;
     }
 
     /**
@@ -60,7 +60,7 @@ class FeedImport extends BaseJob implements RetryableJobInterface
      */
     public function canRetry($attempt, $error): bool
     {
-        $attempts = Plugin::$plugin->getSettings()->queueMaxRetry ?? Plugin::getInstance()->queue->attempts;
+        $attempts = Plugin::$plugin->service->getConfig('queueMaxRetry', $this->feed->id) ?? Plugin::getInstance()->queue->attempts;
         return $attempt < $attempts;
     }
 

@@ -69,7 +69,7 @@ class CalendarEvents extends Field implements FieldInterface
         }
 
         $sources = Hash::get($this->field, 'settings.sources');
-        $limit = Hash::get($this->field, 'settings.limit');
+        $limit = Hash::get($this->field, 'settings.maxRelations');
         $targetSiteId = Hash::get($this->field, 'settings.targetSiteId');
         $feedSiteId = Hash::get($this->feed, 'siteId');
         $match = Hash::get($this->fieldInfo, 'options.match', 'title');
@@ -102,7 +102,7 @@ class CalendarEvents extends Field implements FieldInterface
 
             // special provision for falling back on default BaseRelationField value
             // https://github.com/craftcms/feed-me/issues/1195
-            if (trim($dataValue) === '') {
+            if (DataHelper::isArrayValueEmpty($value)) {
                 $foundElements = $default;
                 break;
             }

@@ -15,6 +15,9 @@ use craft\helpers\FileHelper;
 use craft\helpers\Json;
 use craft\helpers\StringHelper;
 use craft\helpers\UrlHelper;
+use craft\models\AssetIndexData;
+use craft\models\FsListing;
+use craft\models\VolumeFolder;
 use Throwable;
 use yii\base\Exception;
 use yii\base\InvalidArgumentException;
@@ -29,11 +32,12 @@ class AssetHelper
      * @param $dstName
      * @param int $chunkSize
      * @param bool $returnbytes
+     * @param int|null $feedId
      * @return bool|int
      */
-    public static function downloadFile($srcName, $dstName, int $chunkSize = 1, bool $returnbytes = true): bool|int
+    public static function downloadFile($srcName, $dstName, int $chunkSize = 1, bool $returnbytes = true, int $feedId = null): bool|int
     {
-        $assetDownloadCurl = Plugin::$plugin->getSettings()->assetDownloadCurl;
+        $assetDownloadCurl = Plugin::$plugin->service->getConfig('assetDownloadCurl', $feedId);
 
         // Provide some legacy support
         if ($assetDownloadCurl) {
@@ -79,6 +83,72 @@ class AssetHelper
     }
 
     /**
+     * Check if the file exists in the FS - if it does, index it (like via asset indexing) and return it
+     * otherwise return false and proceed with creating the asset
+     *
+     * @param $urlFromFeed
+     * @param $fieldInfo
+     * @param $feed
+     * @param $field
+     * @param $element
+     * @param $folderId
+     * @param $newFilename
+     * @return AssetElement|bool
+     * @throws \craft\errors\AssetDisallowedExtensionException
+     * @throws \craft\errors\FsException
+     * @throws \craft\errors\MissingAssetException
+     * @throws \craft\errors\VolumeException
+     * @throws \yii\base\InvalidConfigException
+     */
+    public static function indexExistingFile($urlFromFeed, string $conflict, $field = null, $element = null, $folderId = null, $newFilename = null): AssetElement|bool
+    {
+        // if the conflict strategy is to replace or create, just bail straight away
+        // and allow for creation of the asset even the file exists
+        if ($conflict == AssetElement::SCENARIO_REPLACE || $conflict == AssetElement::SCENARIO_CREATE) {
+            return false;
+        }
+        $folder = self::_getAssetFolder($folderId, $field, $element);
+        $volume = $folder->getVolume();
+        $filename = $newFilename ? AssetsHelper::prepareAssetName($newFilename, false) : self::getRemoteUrlFilename($urlFromFeed);
+
+        // get the url/path of the asset we're supposed to end up with
+        $asset = new AssetElement();
+        $asset->setFilename($filename);
+        $asset->folderId = $folder->id;
+        $asset->folderPath = $folder->path;
+        $asset->volumeId = $volume->id;
+        $targetUrl = AssetsHelper::generateUrl($volume->getFs(), $asset);
+
+        $rootUrl = $volume->getRootUrl() ?? '';
+        $targetPath = str_replace($rootUrl, '', $targetUrl);
+
+        // check if it exists
+        if (!$volume->fileExists($targetPath)) {
+            // if it doesn't - proceed with createAsset()
+            return false;
+        }
+
+        // if it does - index it
+        $listing = new FsListing([
+            'dirname' => pathinfo($targetPath, PATHINFO_DIRNAME),
+            'basename' => pathinfo($targetPath, PATHINFO_BASENAME),
+            'type' => 'file',
+            'dateModified' => $volume->getDateModified($targetPath),
+            'fileSize' => $volume->getFileSize($targetPath),
+        ]);
+
+        $indexEntry = new AssetIndexData([
+            'volumeId' => $volume->id,
+            'uri' => $listing->getUri(),
+            'size' => $listing->getFileSize(),
+            'timestamp' => $listing->getDateModified(),
+            'isDir' => $listing->getIsDir(),
+        ]);
+
+        return Craft::$app->getAssetIndexer()->indexFileByEntry($indexEntry);
+    }
+
+    /**
      * @param array $urls
      * @param $fieldInfo
      * @param $feed
@@ -101,30 +171,36 @@ class AssetHelper
         // user has set to use that instead, so we're good to proceed.
         foreach ($urls as $url) {
             try {
-                $filename = $newFilename ? AssetsHelper::prepareAssetName($newFilename, false) : self::getRemoteUrlFilename($url);
+                $indexedAsset = self::indexExistingFile($url, $conflict, $field, $element, $folderId, $newFilename);
 
-                $fetchedImage = $tempFeedMePath . $filename;
-
-                // But also check if we've downloaded this recently, use the copy in the temp directory
-                $cachedImage = FileHelper::findFiles($tempFeedMePath, [
-                    'only' => [$filename],
-                    'recursive' => false,
-                ]);
-
-                Plugin::info('Fetching remote image `{i}` - `{j}`', ['i' => $url, 'j' => $filename]);
-
-                if (!$cachedImage) {
-                    self::downloadFile($url, $fetchedImage);
+                if ($indexedAsset instanceof AssetElement) {
+                    $uploadedAssets[] = $indexedAsset->id;
                 } else {
-                    $fetchedImage = $cachedImage[0];
-                }
+                    $filename = $newFilename ? AssetsHelper::prepareAssetName($newFilename, false) : self::getRemoteUrlFilename($url);
 
-                $result = self::createAsset($fetchedImage, $filename, $folderId, $field, $element, $conflict, Hash::get($feed, 'updateSearchIndexes'));
+                    $fetchedImage = $tempFeedMePath . $filename;
 
-                if ($result) {
-                    $uploadedAssets[] = $result;
-                } else {
-                    Plugin::error('Failed to create asset from `{i}`', ['i' => $url]);
+                    // But also check if we've downloaded this recently, use the copy in the temp directory
+                    $cachedImage = FileHelper::findFiles($tempFeedMePath, [
+                        'only' => [$filename],
+                        'recursive' => false,
+                    ]);
+
+                    Plugin::info('Fetching remote image `{i}` - `{j}`', ['i' => $url, 'j' => $filename]);
+
+                    if (!$cachedImage) {
+                        self::downloadFile($url, $fetchedImage, 1, true, $feed['id']);
+                    } else {
+                        $fetchedImage = $cachedImage[0];
+                    }
+
+                    $result = self::createAsset($fetchedImage, $filename, $folderId, $field, $element, $conflict, Hash::get($feed, 'updateSearchIndexes'));
+
+                    if ($result) {
+                        $uploadedAssets[] = $result;
+                    } else {
+                        Plugin::error('Failed to create asset from `{i}`', ['i' => $url]);
+                    }
                 }
             } catch (Throwable $e) {
                 if ($field) {
@@ -214,15 +290,7 @@ class AssetHelper
     private static function createAsset(string $tempFilePath, string $filename, ?int $folderId, ?Assets $field, ?ElementInterface $element, string $conflict, bool $updateSearchIndexes): bool|int
     {
         $assets = Craft::$app->getAssets();
-
-        if (!$folderId) {
-            if (!$field) {
-                throw new InvalidArgumentException('$folderId and $field cannot both be null.');
-            }
-            $folderId = $field->resolveDynamicPathToFolderId($element);
-        }
-
-        $folder = $assets->findFolder(['id' => $folderId]);
+        $folder = self::_getAssetFolder($folderId, $field, $element);
 
         // Create the new asset (even if we're setting it to replace)
         $asset = new AssetElement();
@@ -367,5 +435,31 @@ class AssetHelper
         }
 
         return StringHelper::toLowerCase($extension);
+    }
+
+    /**
+     * Find and return folder for an asset by folder id or field and element
+     *
+     * @param int|null $folderId
+     * @param Assets|null $field
+     * @param ElementInterface|null $element
+     * @return VolumeFolder
+     */
+    private static function _getAssetFolder(?int $folderId, ?Assets $field, ?ElementInterface $element): VolumeFolder
+    {
+        if (!$folderId) {
+            if (!$field) {
+                throw new InvalidArgumentException('$folderId and $field cannot both be null.');
+            }
+            $folderId = $field->resolveDynamicPathToFolderId($element);
+        }
+
+        $folder = Craft::$app->getAssets()->findFolder(['id' => $folderId]);
+
+        if (!$folder) {
+            throw new InvalidArgumentException('Cannot find folder by ID.');
+        }
+
+        return $folder;
     }
 }

@@ -58,20 +58,23 @@
 
         {{ forms.selectField({
             name: 'options[match]',
-            class: '',
+            class: 'entries-field-match',
             value: hash_get(feed.fieldMapping, optionsPath ~ '.match') ?: '',
             options: matchAttributes,
         }) }}
     </div>
 
-    <div class="element-create">
-        {{ feedMeMacro.checkbox({
-            label: 'Create entries if they do not exist'|t('feed-me'),
-            name: 'options[create]',
-            value: 1,
-            checked: hash_get(feed.fieldMapping, optionsPath ~ '.create') ?: '',
-        }) }}
-    </div>
+    {# don't allow crating new entries if the only selected source is custom, because we can't ensure all the conditions will be met #}
+    {% if field is defined and craft.feedme.fieldHasOnlyCustomSources(field) == false %}
+        <div class="element-create">
+            {{ feedMeMacro.checkbox({
+                label: 'Create entries if they do not exist'|t('feed-me'),
+                name: 'options[create]',
+                value: 1,
+                checked: hash_get(feed.fieldMapping, optionsPath ~ '.create') ?: '',
+            }) }}
+        </div>
+    {% endif %}
 
     {% if field %}
         <div class="element-groups">
@@ -100,13 +103,14 @@
             {% endfor %}
 
             {% if sources and sources[0] %}
-                <div class="element-group element-group-entrytype" data-items="{{ entryTypes|json_encode }}">
+                {% set selectedTypeId = hash_get(feed.fieldMapping, optionsPath ~ '.group.typeId') ?: '' %}
+                <div class="element-group element-group-entrytype" data-items="{{ entryTypes|json_encode }}" data-selectedTypeId="{{ selectedTypeId }}">
                     <span>{{ 'Type:'|t('feed-me') }}</span>
 
                     {{ forms.selectField({
                         name: 'options[group][typeId]',
                         class: '',
-                        value: hash_get(feed.fieldMapping, optionsPath ~ '.group.typeId') ?: '',
+                        value: selectedTypeId,
                         options: entryTypes['item_' ~ sources[0].id] ?? [],
                     }) }}
                 </div>

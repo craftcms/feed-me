@@ -16,6 +16,7 @@ use craft\feedme\helpers\DataHelper;
 use craft\feedme\helpers\DateHelper;
 use craft\feedme\models\FeedModel;
 use craft\helpers\Db;
+use craft\helpers\ElementHelper;
 use craft\helpers\Json;
 use craft\helpers\StringHelper;
 use DateTime;
@@ -163,7 +164,11 @@ abstract class Element extends Component implements ElementInterface
                     continue;
                 }
 
-                $criteria[$handle] = Db::escapeParam($feedValue);
+                if ($handle === 'parent') {
+                    $criteria['descendantOf'] = Db::escapeParam($feedValue);
+                } else {
+                    $criteria[$handle] = Db::escapeParam($feedValue);
+                }
             }
         }
 
@@ -189,7 +194,7 @@ abstract class Element extends Component implements ElementInterface
         $elementsService = Craft::$app->getElements();
 
         foreach ($elementIds as $elementId) {
-            $elementsService->deleteElementById($elementId, $class);
+            $elementsService->deleteElementById($elementId, $class, $this->feed->siteId);
         }
 
         return true;
@@ -206,7 +211,10 @@ abstract class Element extends Component implements ElementInterface
 
         foreach ($elementIds as $elementId) {
             /** @var BaseElement $element */
-            $element = $elementsService->getElementById($elementId, $class);
+            $element = $elementsService->getElementById($elementId, $class, $this->feed->siteId);
+            // intentionally not checking if the $element was found
+            // so that we don't get a false positive message in the logs
+            // (The following elements have been disabled: {"1":$elementId}.)
             if ($element->enabled) {
                 $element->enabled = false;
                 $elementsService->saveElement($element, true, true, Hash::get($this->feed, 'updateSearchIndexes'));
@@ -306,6 +314,12 @@ abstract class Element extends Component implements ElementInterface
 
         if (Craft::$app->getConfig()->getGeneral()->limitAutoSlugsToAscii) {
             $value = $this->_asciiString($value);
+        }
+
+        // normalize the slug and check if it's valid;
+        // if it is - use it, otherwise _createSlug()
+        if (is_string($value) && ($value = ElementHelper::normalizeSlug($value)) !== '') {
+            return $value;
         }
 
         return $this->_createSlug($value);

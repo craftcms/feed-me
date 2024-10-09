@@ -101,7 +101,7 @@ class SuperTable extends Field implements FieldInterface
 
                 // Finish up with the content, also sort out cases where there's array content
                 if (isset($fieldData[$key]) && is_array($fieldData[$key])) {
-                    $fieldData[$key] = array_merge_recursive($fieldData[$key], $parsedValue);
+                    $fieldData[$key] = is_array($parsedValue) ? array_merge_recursive($fieldData[$key], $parsedValue) : $fieldData[$key];
                 } else {
                     $fieldData[$key] = $parsedValue;
                 }
@@ -122,7 +122,7 @@ class SuperTable extends Field implements FieldInterface
             $parsedValue = $this->_parseSubField($nodePaths, $subFieldHandle, $subFieldInfo);
 
             if (isset($fieldData[$key])) {
-                $fieldData[$key] = array_merge_recursive($fieldData[$key], $parsedValue);
+                $fieldData[$key] = is_array($parsedValue) ? array_merge_recursive($fieldData[$key], $parsedValue) : $fieldData[$key];
             } else {
                 $fieldData[$key] = $parsedValue;
             }
@@ -148,7 +148,13 @@ class SuperTable extends Field implements FieldInterface
             $preppedData[$blockIndex . '.enabled'] = true;
             $preppedData[$blockIndex . '.fields.' . $subFieldHandle] = $value;
 
-            if ((is_string($value) && !empty($value)) || (is_array($value) && !empty(array_filter($value)))) {
+            // if all the fields are empty and setEmptyValues is off, ignore the block
+            if (
+                (is_string($value) && !empty($value)) ||
+                (is_array($value) && !empty(array_filter($value))) ||
+                is_bool($value) ||
+                is_numeric($value)
+            ) {
                 $allEmpty = false;
             }
 
@@ -223,6 +229,13 @@ class SuperTable extends Field implements FieldInterface
         $subFieldClassHandle = Hash::get($subFieldInfo, 'field');
 
         $subField = Hash::extract($this->field->getBlockTypeFields(), '{n}[handle=' . $subFieldHandle . ']')[0];
+
+        if (
+            !$subField instanceof $subFieldClassHandle &&
+            ($subField instanceof \craft\fields\Categories || $subField instanceof \craft\fields\Tags)
+        ) {
+            $subFieldClassHandle = \craft\fields\Entries::class;
+        }
 
         $class = Plugin::$plugin->fields->getRegisteredField($subFieldClassHandle);
         $class->feedData = $feedData;

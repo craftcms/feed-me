@@ -62,6 +62,12 @@
             <h2>{{ 'Unable to proceed to field mapping'|t('feed-me') }}</h2>
             <p>{{ 'Feed Me is unable to find, or parse your provided data. This usually means your URL cannot be reached from your Craft site, or your {feedType} is invalid. Check the logs, and double-check your settings.'|t('feed-me', { feedType: feed.feedType|upper }) }}</p>
 
+            {% if feedMappingData.error is not empty %}
+                <div class="fullpage-error-message">
+                    <code>{{ feedMappingData.error }}</code>
+                </div>
+            {% endif %}
+
             <div class="buttons">
                 <a href="{{ url('feed-me/feeds/' ~ feed.id) }}" class="btn submit">&larr; {{ 'Back to feed'|t('feed-me') }}</a>
                 <a href="{{ url('feed-me/logs') }}" class="btn submit">{{ 'Go to logs'|t('feed-me') }}</a>
