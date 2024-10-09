@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Fixed a bug where Lightswitch fields would not import correctly when nested in a Matrix or Super Table field. ([#1529](https://github.com/craftcms/feed-me/pull/1529))
+- Fixed a bug where Commerce Variant attributes were not respecting the `parseTwig` config setting. ([#1326](https://github.com/craftcms/feed-me/pull/1326))
 
 ## 5.8.0 - 2024-09-25
 
