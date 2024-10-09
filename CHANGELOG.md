@@ -1,5 +1,9 @@
 # Release Notes for Feed Me
 
+## Unreleased
+
+- Fixed a PHP error that would occur when importing Products that had new Variants. ([#1528](https://github.com/craftcms/feed-me/pull/1528))
+
 ## 6.4.0 - 2024-09-25
 
 - Added support for importing into relational fields that have custom sources selected. ([#1504](https://github.com/craftcms/feed-me/pull/1504))
