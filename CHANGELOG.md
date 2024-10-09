@@ -1,6 +1,6 @@
 # Release Notes for Feed Me
 
-## Unreleased
+## 6.4.1 - 2024-10-09
 
 - Fixed a PHP error that would occur when importing Products that had new Variants. ([#1528](https://github.com/craftcms/feed-me/pull/1528))
 - Fixed a bug where Lightswitch fields would not import correctly when nested in a Matrix or Super Table field. ([#1529](https://github.com/craftcms/feed-me/pull/1529))
