@@ -424,6 +424,8 @@ class CommerceProduct extends Element
             }
         }
 
+        $parseTwig = Plugin::$plugin->service->getConfig('parseTwig', $feed['id']);
+
         foreach ($variantData as $variantContent) {
             $attributeData = [];
             $fieldData = [];
@@ -433,7 +435,7 @@ class CommerceProduct extends Element
                 if (Hash::get($fieldInfo, 'attribute')) {
                     $attributeValue = DataHelper::fetchValue(Hash::get($fieldInfo, 'data'), $fieldInfo, $this->feed);
 
-                    $attributeData[$fieldHandle] = $attributeValue;
+                    $attributeData[$fieldHandle] = $parseTwig ? DataHelper::parseFieldDataForElement($attributeValue, $this->element) : $attributeValue;
                 }
             }
 
