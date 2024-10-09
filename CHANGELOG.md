@@ -1,5 +1,9 @@
 # Release Notes for Feed Me
 
+## Unreleased
+
+- Fixed a bug where Lightswitch fields would not import correctly when nested in a Matrix or Super Table field. ([#1529](https://github.com/craftcms/feed-me/pull/1529))
+
 ## 5.8.0 - 2024-09-25
 
 - Added support for importing into relational fields that have custom sources selected. ([#1504](https://github.com/craftcms/feed-me/pull/1504))
