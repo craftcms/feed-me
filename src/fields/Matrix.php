@@ -135,7 +135,7 @@ class Matrix extends Field implements FieldInterface
                         $node = Hash::get($fieldInfo, 'node');
                         if ($node === 'usedefault') {
                             $key = $this->_getBlockKey($nodePathSegments, $blockHandle, $fieldHandle);
-    
+
                             $parsedValue = DataHelper::fetchSimpleValue($this->feedData, $fieldInfo);
                             $attributeData[$key] = $parsedValue;
                         }
@@ -226,18 +226,18 @@ class Matrix extends Field implements FieldInterface
         $index = 1;
         $resultBlocks = [];
         foreach ($expanded as $blockData) {
-            // all the fields are empty and setEmptyValues is off, ignore the block
-            if (isset($blockData['fields'])) {
-                if (
-                    !empty(array_filter(
-                        $blockData['fields'],
-                        fn($value) => (is_string($value) && !empty($value)) || (is_array($value) && !empty(array_filter($value)))
-                    ))
-                ) {
-                    $resultBlocks['new' . $index++] = $blockData;
-                }
-            } else {
-                // if there are no fields in the block data, we can still have just the attributes, e.g. just the title
+            // if all the fields are empty and setEmptyValues is off, ignore the block
+            if (
+                !empty(array_filter(
+                    $blockData['fields'],
+                    fn($value) => (
+                        (is_string($value) && !empty($value)) ||
+                        (is_array($value) && !empty(array_filter($value))) ||
+                        is_bool($value) ||
+                        is_numeric($value)
+                    )
+                ))
+            ) {
                 $resultBlocks['new' . $index++] = $blockData;
             }
         }
