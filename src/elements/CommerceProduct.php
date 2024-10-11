@@ -23,6 +23,7 @@ use craft\feedme\services\Process;
 use craft\fields\Matrix;
 use craft\fields\Table;
 use craft\helpers\ArrayHelper;
+use craft\helpers\ElementHelper;
 use craft\helpers\Json;
 use DateTime;
 use Exception;
@@ -144,12 +145,24 @@ class CommerceProduct extends Element
      */
     public function getQuery($settings, array $params = []): mixed
     {
+        $targetSiteId = Hash::get($settings, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id;
+        if ($this->element !== null) {
+            $productType = $this->element->getType();
+        }
+
         $query = ProductElement::find()
             ->status(null)
-            ->typeId($settings['elementGroup'][ProductElement::class])
-            ->siteId(Hash::get($settings, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id);
-        Craft::configure($query, $params);
+            ->typeId($settings['elementGroup'][ProductElement::class]);
 
+        if (isset($productType) && $productType->propagationMethod === \craft\enums\PropagationMethod::Custom) {
+            $query->site('*')
+                ->preferSites([$targetSiteId])
+                ->unique();
+        } else {
+            $query->siteId($targetSiteId);
+        }
+
+        Craft::configure($query, $params);
         return $query;
     }
 
@@ -167,7 +180,57 @@ class CommerceProduct extends Element
             $this->element->siteId = $siteId;
         }
 
+        /* @var \craft\commerce\models\ProductType $productType */
+        $productType = Commerce::getInstance()->getProductTypes()->getProductTypeById($this->element->typeId);
+
+        // Set the default site status based on the section's settings
+        $enabledForSite = [];
+        foreach ($productType->getSiteSettings() as $siteSettings) {
+            if (
+                $productType->propagationMethod !== \craft\enums\PropagationMethod::Custom ||
+                $siteSettings->siteId == $siteId
+            ) {
+                $enabledForSite[$siteSettings->siteId] = $siteSettings->enabledByDefault;
+            }
+        }
+        $this->element->setEnabledForSite($enabledForSite);
+
         return $this->element;
+    }
+
+    /**
+     * Checks if $existingElement should be propagated to the target site.
+     *
+     * @param $existingElement
+     * @param array $feed
+     * @return ElementInterface|null
+     * @throws \yii\base\Exception
+     * @throws \craft\errors\SiteNotFoundException
+     * @throws \craft\errors\UnsupportedSiteException
+     * @since 5.1.3
+     */
+    public function checkPropagation($existingElement, array $feed)
+    {
+        $targetSiteId = Hash::get($feed, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id;
+
+        // Did the entry come back in a different site?
+        if ($existingElement->siteId != $targetSiteId) {
+            // Skip it if its product type doesn't use the `custom` propagation method
+            if ($existingElement->getSection()->propagationMethod !== \craft\enums\PropagationMethod::Custom) {
+                return $existingElement;
+            }
+
+            // Give the entry a status for the import's target site
+            // (This is how the `custom` propagation method knows which sites the entry should support.)
+            $siteStatuses = ElementHelper::siteStatusesForElement($existingElement);
+            $siteStatuses[$targetSiteId] = $existingElement->getEnabledForSite();
+            $existingElement->setEnabledForSite($siteStatuses);
+
+            // Propagate the entry, and swap $entry with the propagated copy
+            return Craft::$app->getElements()->propagateElement($existingElement, $targetSiteId);
+        }
+
+        return $existingElement;
     }
 
     /**
