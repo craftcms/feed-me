@@ -213,20 +213,20 @@ class CommerceProduct extends Element
     {
         $targetSiteId = Hash::get($feed, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id;
 
-        // Did the entry come back in a different site?
+        // Did the product come back in a different site?
         if ($existingElement->siteId != $targetSiteId) {
             // Skip it if its product type doesn't use the `custom` propagation method
-            if ($existingElement->getSection()->propagationMethod !== \craft\enums\PropagationMethod::Custom) {
+            if ($existingElement->getType()->propagationMethod !== \craft\enums\PropagationMethod::Custom) {
                 return $existingElement;
             }
 
-            // Give the entry a status for the import's target site
-            // (This is how the `custom` propagation method knows which sites the entry should support.)
+            // Give the product a status for the import's target site
+            // (This is how the `custom` propagation method knows which sites the product should support.)
             $siteStatuses = ElementHelper::siteStatusesForElement($existingElement);
             $siteStatuses[$targetSiteId] = $existingElement->getEnabledForSite();
             $existingElement->setEnabledForSite($siteStatuses);
 
-            // Propagate the entry, and swap $entry with the propagated copy
+            // Propagate the product, and swap it with the propagated copy
             return Craft::$app->getElements()->propagateElement($existingElement, $targetSiteId);
         }
 
