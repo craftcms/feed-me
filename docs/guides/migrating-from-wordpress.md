@@ -16,8 +16,6 @@ The first step is to get your data out of WordPress. We’ll assume you’re usi
 Use one or more of the tutorials to set up exports for the data you need. Keep in mind that you can import content in multiple stages via different feeds—you don't have to import (or export) _everything_ at once!
 :::
 
-The “shape” of your exported data is flexible. As long as 
-
 ### WP JSON
 
 If you have a relatively vanilla WordPress installation, you may be able to use the [built-in REST API](https://learn.wordpress.org/tutorial/using-the-wordpress-rest-api/) to dynamically retrieve your site’s content as JSON.
