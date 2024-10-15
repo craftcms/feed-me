@@ -1,4 +1,4 @@
-# Migrating from Wordpress
+# Migrating from WordPress
 
 Migrating from WordPress to Craft can be challenging, but Feed Me greatly simplifies the process of getting data back into Craft once it’s been exported.
 
