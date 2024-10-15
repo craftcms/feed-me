@@ -227,7 +227,18 @@ class CommerceProduct extends Element
             $existingElement->setEnabledForSite($siteStatuses);
 
             // Propagate the product, and swap it with the propagated copy
-            return Craft::$app->getElements()->propagateElement($existingElement, $targetSiteId);
+            $propagatedElement = Craft::$app->getElements()->propagateElement($existingElement, $targetSiteId);
+
+            // we need this so that the variants get propagated too
+            $propagatedElement->setVariants($existingElement->getVariants());
+            $propagatedElement->newSiteIds = [$targetSiteId];
+            $propagatedElement->afterPropagate(false);
+
+            // we're done propagating now
+            $propagatedElement->propagating = false;
+            $propagatedElement->propagatingFrom = null;
+
+            return $propagatedElement;
         }
 
         return $existingElement;
