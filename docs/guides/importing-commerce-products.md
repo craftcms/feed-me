@@ -10,7 +10,7 @@ Looking to import products with multiple Variants? Have a look at the [Importing
 
 The below data is what we'll use for this guide:
 
-::: code
+::: code-group
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <products>

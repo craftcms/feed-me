@@ -6,15 +6,14 @@
     "extends @craftcms/browserslist-config"
   ],
   "devDependencies": {
-    "@craftcms/webpack": "^1.1.2",
     "@craftcms/sass": "^1.1.0",
-    "markdown-it-deflist": "^2.0.3",
-    "vuepress": "^1.5.2",
-    "vuepress-plugin-sitemap": "^2.0.0",
-    "vuepress-theme-craftdocs": "^2.0.8",
+    "@craftcms/webpack": "^1.1.2",
     "husky": "^7.0.4",
     "lint-staged": "^12.4.0",
-    "prettier": "^2.7.1"
+    "markdown-it": "^14.1.0",
+    "markdown-it-deflist": "^2.0.3",
+    "prettier": "^2.7.1",
+    "vitepress": "^1.2.3"
   },
   "scripts": {
     "check-prettier": "prettier --check .",
@@ -23,9 +22,9 @@
     "build": "webpack --node-env=production --progress",
     "dev": "webpack --node-env=dev --mode=development --progress",
     "serve": "webpack-dev-server --node-env=development",
-    "docs:dev": "vuepress dev docs",
-    "docs:build": "vuepress build docs -d docs-build",
-    "docs:sitemap": "vuepress-sitemap -d docs-build -H https://docs.craftcms.com/feed-me/v4/",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs",
     "prepare": "husky install"
   }
 }
