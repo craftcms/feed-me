@@ -243,6 +243,7 @@ class CommerceProduct extends Element
         if ($this->element->getIsDraft()) {
             $this->element->setDirtyAttributes(['variants']);
             $this->element = Craft::$app->getDrafts()->applyDraft($this->element);
+            $this->element->propagateAll = true;
         }
 
         if (!Craft::$app->getElements()->saveElement($this->element, true, true, Hash::get($this->feed, 'updateSearchIndexes'))) {
