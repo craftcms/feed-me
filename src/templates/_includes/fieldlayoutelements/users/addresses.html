@@ -1,0 +1,78 @@
+{# ------------------------ #}
+{# Available Variables #}
+{# ------------------------ #}
+{# Attributes: #}
+{# type, name, handle, instructions, attribute, default, feed, feedData #}
+{# ------------------------ #}
+{# Fields: #}
+{# name, handle, instructions, feed, feedData, field, fieldClass #}
+{# ------------------------ #}
+
+{% import 'feed-me/_macros' as feedMeMacro %}
+{% import '_includes/forms' as forms %}
+
+{# Special case when inside another complex field (Matrix) #}
+{% if parentPath is defined %}
+    {% set prefixPath = parentPath %}
+{% else %}
+    {% set prefixPath = [handle] %}
+{% endif %}
+{#{% set classes = ['complex-field'] %}#}
+
+<tr class="complex-field complex-field-header">
+    <td class="col-field" colspan="3">
+        <div class="field">
+            <div class="heading">
+                <label class="">{{ name }}</label>
+            </div>
+
+            <div class="additional-mapping-fields">
+                {% namespace 'fieldMapping[' ~ prefixPath|join('][') ~ ']' %}
+                    <input type="text" name="nativeField" value="{{ className(nativeField) }}">
+                {% endnamespace %}
+            </div>
+        </div>
+    </td>
+</tr>
+
+{% set fieldLayout = craft.app.fields.getLayoutByType('craft\\elements\\Address') %}
+{% set fields = [] %}
+{#{% set prefixPath = prefixPath|merge(['item']) %}#}
+{% if fieldLayout %}
+    {% for tab in fieldLayout.getTabs() %}
+        {% for layoutField in tab.getElements()|filter(e => e is instance of ('craft\\fieldlayoutelements\\BaseField')) %}
+            {% if layoutField is instance of ('craft\\fieldlayoutelements\\CustomField') %}
+                {% set field = layoutField.getField() %}
+                {% set fieldClass = craft.feedme.fields.getRegisteredField(className(field)) %}
+                {% set path = prefixPath|merge(['fields', field.handle]) %}
+
+                {% set variables = {
+                    name: field.name,
+                    handle: field.handle,
+                    feed: feed,
+                    feedData: feedData,
+                    field: field,
+                    fieldClass: fieldClass,
+                    path: path
+                } %}
+            {% else %}
+                {% set fieldClass = craft.feedme.fields.getRegisteredNativeField(className(layoutField)) %}
+                {% set path = prefixPath|merge(['nativeFields', layoutField.attribute]) %}
+
+                {% set variables = {
+                    name: layoutField.getAttributeLabel(layoutField.attribute),
+                    handle: layoutField.attribute,
+                    feed: feed,
+                    feedData: feedData,
+                    nativeField: layoutField,
+                    fieldClass: fieldClass,
+                    path: path
+                } %}
+            {% endif %}
+
+            {% set template = fieldClass.getMappingTemplate() %}
+
+            {% include template ignore missing with variables only %}
+        {% endfor %}
+    {% endfor %}
+{% endif %}

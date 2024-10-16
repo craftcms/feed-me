@@ -143,16 +143,47 @@ abstract class Field extends Component
     // =========================================================================
 
     /**
-     * @param $elementIds
-     * @param null $nodeKey
+     * Save native field data on the elements.
+     *
+     * @param array $elementIds
+     * @param string|null $nodeKey
+     * @return void
      * @throws Throwable
      * @throws ElementNotFoundException
      * @throws Exception
      */
-    protected function populateElementFields($elementIds, $nodeKey = null): void
+    protected function populateNativeFields(array $elementIds, string $nodeKey = null): void
+    {
+        $this->populateFields($elementIds, $nodeKey, 'native');
+    }
+
+    /**
+     * @param array $elementIds
+     * @param string|null $nodeKey
+     * @return void
+     * @throws Throwable
+     * @throws ElementNotFoundException
+     * @throws Exception
+     */
+    protected function populateElementFields(array $elementIds, string $nodeKey = null): void
+    {
+        $this->populateFields($elementIds, $nodeKey);
+    }
+
+    /**
+     * @param array $elementIds Array of elementIds to populate.
+     * @param string|null $nodeKey
+     * @param string $fieldType Type of field to populate, can be `custom` or `native`.
+     * @return void
+     * @throws Throwable
+     * @throws ElementNotFoundException
+     * @throws Exception
+     */
+    private function populateFields(array $elementIds, string $nodeKey = null, string $fieldType = 'custom'): void
     {
         $elementsService = Craft::$app->getElements();
-        $fields = Hash::get($this->fieldInfo, 'fields');
+        $fieldTypeKey = $fieldType === 'custom' ? 'fields' : 'nativeFields';
+        $fields = Hash::get($this->fieldInfo, $fieldTypeKey);
 
         $fieldData = [];
 
@@ -167,7 +198,6 @@ abstract class Field extends Component
 
                 // Arrayed content doesn't provide defaults because it's unable to determine how many items it _should_ return
                 // This also checks if there was any data that corresponds on the same array index/level as our element
-                /** @phpstan-ignore-next-line */
                 $value = Hash::get($fieldValue, $nodeKey ?? $key, $default);
 
                 if ($value) {
@@ -180,7 +210,11 @@ abstract class Field extends Component
         foreach ($fieldData as $elementId => $fieldContent) {
             $element = $elementsService->getElementById($elementId, null, Hash::get($this->feed, 'siteId'));
 
-            $element->setFieldValues($fieldContent);
+            if ($fieldType === 'native') {
+                $element->setAttributes($fieldContent);
+            } else {
+                $element->setFieldValues($fieldContent);
+            }
 
             Plugin::debug([
                 $this->fieldHandle => [

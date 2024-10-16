@@ -5,6 +5,7 @@ namespace craft\feedme\web\twig\variables;
 use Craft;
 use craft\elements\User as UserElement;
 use craft\feedme\Plugin;
+use craft\fieldlayoutelements\assets\AltField;
 use craft\fields\Checkboxes;
 use craft\fields\Color;
 use craft\fields\Country;
@@ -19,6 +20,7 @@ use craft\fields\PlainText;
 use craft\fields\RadioButtons;
 use craft\fields\Time;
 use craft\fields\Url;
+use craft\helpers\ArrayHelper;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Html;
 use craft\helpers\UrlHelper;
@@ -244,7 +246,7 @@ class FeedMeVariable extends ServiceLocator
         }
 
         if (($fieldLayout = Craft::$app->getFields()->getLayoutById($source->fieldLayoutId)) !== null) {
-            return $fieldLayout->getCustomFields();
+            return ArrayHelper::merge($fieldLayout->getCustomFields(), $fieldLayout->getAvailableNativeFields());
         }
 
         return null;
@@ -361,6 +363,7 @@ class FeedMeVariable extends ServiceLocator
             Url::class,
             'craft\ckeditor\Field',
             'craft\redactor\Field',
+            AltField::class,
         ];
 
         return in_array($class, $supportedSubFields, true);

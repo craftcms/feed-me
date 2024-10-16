@@ -1,0 +1,54 @@
+{# ------------------------ #}
+{# Available Variables #}
+{# ------------------------ #}
+{# Attributes: #}
+{# type, name, handle, instructions, attribute, default, feed, feedData #}
+{# ------------------------ #}
+{# Fields: #}
+{# name, handle, instructions, feed, feedData, field, fieldClass #}
+{# ------------------------ #}
+
+{% import 'feed-me/_macros' as feedMeMacro %}
+{% import '_includes/forms' as forms %}
+
+{# Special case when inside another complex field (Matrix) #}
+{% if path is defined %}
+    {% set prefixPath = path %}
+{% else %}
+    {% set prefixPath = [handle] %}
+{% endif %}
+
+{% namespace 'fieldMapping[' ~ prefixPath|join('][') ~ ']' %}
+    <input type="hidden" name="nativeField" value="{{ className(nativeField) }}">
+{% endnamespace %}
+
+{# we can't only get used address fields or get their adjusted labels like we do in the CP
+                because we don't know for which country will the each address in the dataset be
+#}
+{% set addressFields = {
+    'administrativeArea': 'Administrative Area'|t('feed-me'),
+    'locality': 'Locality'|t('feed-me'),
+    'dependentLocality': 'Dependent Locality'|t('feed-me'),
+    'postalCode': 'Postal Code'|t('feed-me'),
+    'sortingCode': 'Sorting Code'|t('feed-me'),
+    'addressLine1': 'Address Line 1'|t('feed-me'),
+    'addressLine2': 'Address Line 2'|t('feed-me'),
+    'organization': 'Organization'|t('feed-me'),
+    'givenName': 'Given Name'|t('feed-me'),
+    'additionalName': 'Additional Name'|t('feed-me'),
+    'familyName': 'Family Name'|t('feed-me'),
+} %}
+{% set path = prefixPath|merge(['nativeFields', nativeField.attribute]) %}
+{% for handle, label in addressFields %}
+    {% set path = prefixPath|merge(['nativeFields', handle]) %}
+    {% set variables = {
+        name: label,
+        handle: handle,
+        feed: feed,
+        feedData: feedData,
+        attribute: true,
+        path: path,
+    } %}
+
+    {% include 'feed-me/_includes/fields/default' ignore missing with variables only %}
+{% endfor %}

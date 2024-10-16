@@ -9,6 +9,7 @@
 {% set required = required ?? null %}
 {% set attribute = attribute ?? null %}
 {% set field = field ?? null %}
+{% set nativeField = nativeField ?? null %}
 {% set fieldClass = fieldClass ?? null %}
 
 {# Variables to help with fetching value/defaults and namespacing. Should provide an array that reflects the #}
@@ -73,6 +74,10 @@
 
                         {% if field and fieldClass %}
                             <input type="text" name="field" value="{{ className(field) }}">
+                        {% endif %}
+
+                        {% if nativeField and fieldClass %}
+                            <input type="text" name="nativeField" value="{{ className(nativeField) }}">
                         {% endif %}
                     {% endblock %}
                 {% endnamespace %}
@@ -197,26 +202,42 @@
 {% block elementFields %}
     {% if field is defined and elementFields|length %}
         {% for elementField in elementFields %}
-            {% set fieldClass = craft.feedme.fields.getRegisteredField(className(elementField)) %}
-            {% set template = fieldClass.getMappingTemplate() %}
+            {% set elementFieldHandle = elementField['handle'] ?? elementField['attribute'] ?? '' %}
+            {% set nativeField = false %}
 
-            {% if parentPath is defined %}
-                {% set path = parentPath|merge([ 'fields', elementField.handle ]) %}
+            {% if elementField is instance of('craft\\base\\Field')  %}
+                {% set fieldClass = craft.feedme.fields.getRegisteredField(className(elementField)) %}
+                {% if parentPath is defined %}
+                    {% set path = parentPath|merge([ 'fields', elementFieldHandle ]) %}
+                {% else %}
+                    {% set path = [ handle, 'fields', elementFieldHandle ] %}
+                {% endif %}
+                {% set nativeField = false %}
             {% else %}
-                {% set path = [ handle, 'fields', elementField.handle ] %}
+                {% set fieldClass = craft.feedme.fields.getRegisteredNativeField(className(elementField)) %}
+                {% if parentPath is defined %}
+                    {% set path = parentPath|merge([ 'nativeFields', elementFieldHandle ]) %}
+                {% else %}
+                    {% set path = [ handle, 'nativeFields', elementFieldHandle ] %}
+                {% endif %}
+                {% set nativeField = true %}
             {% endif %}
+
+            {% set template = fieldClass.getMappingTemplate() %}
 
             {# Be smart about what we include to child field templates #}
             {% include template ignore missing with {
-                name: elementField.name,
-                handle: elementField.handle,
-                instructionHandle: elementField.handle,
+                name: elementField['name'] ?? elementField['label'] ?? '',
+                handle: elementFieldHandle,
+                instructionHandle: elementFieldHandle,
                 isSubElementField: true,
                 path: path,
 
                 feed: feed,
                 feedData: feedData,
-                field: elementField,
+                field: nativeField ? null : elementField,
+                nativeField: nativeField ? elementField : null,
+
                 fieldClass: fieldClass,
                 feedData: feedData,
             } only %}
