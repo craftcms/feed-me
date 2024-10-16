@@ -242,7 +242,7 @@ class DataTypes extends Component
             'feedId' => $feedModel->id,
         ]);
 
-        Event::trigger(static::class, self::EVENT_AFTER_PARSE_FEED, $event);
+        $this->trigger(self::EVENT_AFTER_PARSE_FEED, $event);
 
         return $event->response;
     }
