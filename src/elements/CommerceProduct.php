@@ -13,6 +13,8 @@ use craft\commerce\elements\Variant as VariantElement;
 use craft\commerce\models\inventory\UpdateInventoryLevel;
 use craft\commerce\models\InventoryLevel;
 use craft\commerce\Plugin as Commerce;
+use craft\commerce\Plugin as CommercePlugin;
+use craft\commerce\services\CatalogPricing;
 use craft\db\Query;
 use craft\feedme\base\Element;
 use craft\feedme\events\FeedProcessEvent;
@@ -51,6 +53,11 @@ class CommerceProduct extends Element
      * @var string
      */
     public static string $class = ProductElement::class;
+
+    /**
+     * @var bool
+     */
+    private bool $_runCatalogPricingJob = false;
 
     // Templates
     // =========================================================================
@@ -125,6 +132,17 @@ class CommerceProduct extends Element
             if ($event->feed['elementType'] === ProductElement::class) {
                 $this->_inventoryUpdate($event);
             }
+        });
+
+        if(defined(CatalogPricing::class.'::EVENT_BEFORE_CREATE_CATALOG_PRICING_JOB')){
+            Event::on(CatalogPricing::class, CatalogPricing::EVENT_BEFORE_CREATE_CATALOG_PRICING_JOB, function( $event) {
+                $event->isValid = $this->_runCatalogPricingJob;
+            });
+        }
+
+        Event::on(Process::class, Process::EVENT_AFTER_PROCESS_FEED, function(FeedProcessEvent $event) {
+            $this->_runCatalogPricingJob = true;
+            CommercePlugin::getInstance()->getCatalogPricing()->createCatalogPricingJob();
         });
     }
 
