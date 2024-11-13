@@ -134,8 +134,8 @@ class CommerceProduct extends Element
             }
         });
 
-        if(defined(CatalogPricing::class.'::EVENT_BEFORE_CREATE_CATALOG_PRICING_JOB')){
-            Event::on(CatalogPricing::class, CatalogPricing::EVENT_BEFORE_CREATE_CATALOG_PRICING_JOB, function( $event) {
+        if (defined(CatalogPricing::class . '::EVENT_BEFORE_CREATE_CATALOG_PRICING_JOB')) {
+            Event::on(CatalogPricing::class, CatalogPricing::EVENT_BEFORE_CREATE_CATALOG_PRICING_JOB, function($event) {
                 $event->isValid = $this->_runCatalogPricingJob;
             });
         }
