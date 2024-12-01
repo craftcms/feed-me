@@ -57,6 +57,7 @@
 - Fixed a bug where importing into Matrix sub fields could use incorrect data when “Use default value” was selected for the field. ([#674](https://github.com/craftcms/feed-me/issues/674), [#1282](https://github.com/craftcms/feed-me/pull/1282))
 - Removed the “Collapsed” checkbox from Matrix feed mapping screens. ([#709](https://github.com/craftcms/feed-me/issues/709), [#1284](https://github.com/craftcms/feed-me/pull/1284))
 - Fixed an XSS vulnerability.
+- Fixed a bug where updating an existing Commerce Product triggers validation. ([#1034](https://github.com/craftcms/feed-me/issues/1034))
 
 ## 4.6.1.1 - 2023-03-24
 
