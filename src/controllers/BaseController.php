@@ -23,6 +23,8 @@ class BaseController extends Controller
      */
     public function actionSettings(): Response
     {
+        $this->requireAdmin();
+
         $settings = Plugin::$plugin->getSettings();
 
         return $this->renderTemplate('feed-me/settings/general', [
