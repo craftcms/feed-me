@@ -1,0 +1,14 @@
+{% extends 'feed-me/_layouts' %}
+
+{% set crumbs = [
+    { label: craft.feedme.getPluginName|t('feed-me'), url: url('feed-me') },
+    { label: "Utilities"|t('feed-me'), url: url('feed-me/utilities') }
+] %}
+
+{% set selectedTab = 'utilities' %}
+
+{% block content %}
+    <a class="btn" href="{{ actionUrl('feed-me/base/clear-tasks') }}">
+        {{ "Clear pending job queue"|t('feed-me') }}
+    </a>
+{% endblock %}

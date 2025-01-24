@@ -43,6 +43,6 @@ class BaseController extends Controller
             ->delete('{{%queue}}')
             ->execute();
 
-        return $this->redirect('feed-me/settings/general');
+        return $this->redirect('feed-me/utilities');
     }
 }
