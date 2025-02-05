@@ -222,4 +222,34 @@ class FeedMeVariable extends ServiceLocator
     {
         return FieldHelper::fieldHasOnlyCustomSources($field);
     }
+
+    /**
+     * Return an array of custom field by which the relation field elements can be matched.
+     *
+     * @param string $className
+     * @param BaseRelationField|null $field
+     * @return array
+     */
+    public function getRelationFieldMatchOptions(string $className, FeedModel $feed, ?BaseRelationField $field = null): array
+    {
+        $allowedFields = [];
+        $matchAttributes = [];
+
+        $feedMeField = match ($className) {
+            Categories::class => \craft\feedme\fields\Categories::class,
+            Entries::class => \craft\feedme\fields\Entries::class,
+            Users::class => \craft\feedme\fields\users::class,
+            default => null,
+        };
+
+        if ($feedMeField !== null) {
+            $allowedFields = $feedMeField::getMatchFields($feed, $field);
+        }
+
+        foreach ($allowedFields as $allowedField) {
+            $matchAttributes[$allowedField->handle] = $allowedField->name;
+        }
+
+        return $matchAttributes;
+    }
 }
