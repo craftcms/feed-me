@@ -3,14 +3,18 @@
 namespace craft\feedme\web\twig\variables;
 
 use Craft;
-use craft\elements\User as UserElement;
+use craft\feedme\helpers\FieldHelper;
+use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
+use craft\fields\BaseRelationField;
+use craft\fields\Categories;
 use craft\fields\Checkboxes;
 use craft\fields\Color;
 use craft\fields\Country;
 use craft\fields\Date;
 use craft\fields\Dropdown;
 use craft\fields\Email;
+use craft\fields\Entries;
 use craft\fields\Icon;
 use craft\fields\Lightswitch;
 use craft\fields\Money;
@@ -20,14 +24,13 @@ use craft\fields\PlainText;
 use craft\fields\RadioButtons;
 use craft\fields\Time;
 use craft\fields\Url;
+use craft\fields\Users;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Html;
 use craft\helpers\UrlHelper;
 use craft\models\CategoryGroup;
-use craft\models\Section;
 use craft\models\TagGroup;
 use DateTime;
-use Illuminate\Support\Collection;
 use yii\di\ServiceLocator;
 
 /**
@@ -141,79 +144,22 @@ class FeedMeVariable extends ServiceLocator
 
     public function getAssetSourcesByField($field): ?array
     {
-        $sources = [];
-
-        if (!$field) {
-            return null;
-        }
-
-        if (is_array($field->sources)) {
-            foreach ($field->sources as $source) {
-                [, $uid] = explode(':', $source);
-
-                $sources[] = Craft::$app->volumes->getVolumeByUid($uid);
-            }
-        } elseif ($field->sources === '*') {
-            $sources = Craft::$app->volumes->getAllVolumes();
-        }
-
-        return $sources;
+        return FieldHelper::getAssetSourcesByField($field);
     }
 
     public function getCategorySourcesByField($field): ?CategoryGroup
     {
-        if (!$field) {
-            return null;
-        }
-
-        [, $uid] = explode(':', $field->source);
-
-        return Craft::$app->categories->getGroupByUid($uid);
+        return FieldHelper::getCategorySourcesByField($field);
     }
 
     public function getEntrySourcesByField($field): ?array
     {
-        $sources = [];
-
-        if (!$field) {
-            return null;
-        }
-
-        if (is_array($field->sources)) {
-            foreach ($field->sources as $source) {
-                if ($source == 'singles') {
-                    foreach (Craft::$app->getEntries()->getAllSections() as $section) {
-                        if ($section->type == 'single') {
-                            $sources[] = $section;
-                        }
-                    }
-                } else {
-                    [, $uid] = explode(':', $source);
-
-                    $section = Craft::$app->getEntries()->getSectionByUid($uid);
-                    // only add to sources, if this was a section that we were able to retrieve (native section's uid)
-                    // https://github.com/craftcms/feed-me/issues/1186
-                    if ($section) {
-                        $sources[] = $section;
-                    }
-                }
-            }
-        } elseif ($field->sources === '*') {
-            $sources = Craft::$app->getEntries()->getAllSections();
-        }
-
-        return $sources;
+        return FieldHelper::getEntrySourcesByField($field);
     }
 
     public function getTagSourcesByField($field): ?TagGroup
     {
-        if (!$field) {
-            return null;
-        }
-
-        [, $uid] = explode(':', $field->source);
-
-        return Craft::$app->tags->getTagGroupByUid($uid);
+        return FieldHelper::getTagSourcesByField($field);
     }
 
 
@@ -223,124 +169,22 @@ class FeedMeVariable extends ServiceLocator
 
     public function getElementLayoutByField($type, $field): ?array
     {
-        $source = null;
-
-        if ($type === 'craft\fields\Assets') {
-            $source = $this->getAssetSourcesByField($field)[0] ?? null;
-        } elseif ($type === 'craft\fields\Categories') {
-            $source = $this->getCategorySourcesByField($field);
-        } elseif ($type === 'craft\fields\Entries') {
-            /** @var Section $section */
-            $section = $this->getEntrySourcesByField($field)[0] ?? null;
-
-            if ($section) {
-                $source = $section->getEntryTypes()[0] ?? null;
-            }
-        } elseif ($type === 'craft\fields\Tags') {
-            $source = $this->getTagSourcesByField($field);
-        }
-
-        if (!$source || !$source->fieldLayoutId) {
-            return null;
-        }
-
-        if (($fieldLayout = Craft::$app->getFields()->getLayoutById($source->fieldLayoutId)) !== null) {
-            return $fieldLayout->getCustomFields();
-        }
-
-        return null;
+        return FieldHelper::getElementLayoutByField($type, $field);
     }
 
     public function getUserLayoutByField(): ?array
     {
-        $layoutId = Craft::$app->getFields()->getLayoutByType(UserElement::class)->id;
-
-        if (!$layoutId) {
-            return null;
-        }
-
-        if (($fieldLayout = Craft::$app->getFields()->getLayoutById($layoutId)) !== null) {
-            return $fieldLayout->getCustomFields();
-        }
-
-        return null;
+        return FieldHelper::getUserLayoutByField();
     }
 
     public function getAssetFolderBySourceId($id): array
     {
-        $folders = Craft::$app->getAssets()->getFolderTreeByVolumeIds([$id]);
-
-        $return = [];
-
-        $return[''] = Craft::t('feed-me', 'Don\'t Import');
-
-        foreach ($folders as $folder) {
-            $return[] = [
-                'value' => 'root',
-                'label' => Craft::t('feed-me', 'Root Folder'),
-            ];
-
-            $children = $folder->getChildren();
-
-            if ($children) {
-                foreach ($children as $childFolder) {
-                    $return[] = [
-                        'value' => $childFolder['id'],
-                        'label' => $childFolder['name'],
-                    ];
-                }
-            }
-        }
-
-        return $return;
+        return FieldHelper::getAssetFolderBySourceId($id);
     }
 
     public function fieldCanBeUniqueId($field): bool
     {
-        $type = $field['type'] ?? 'attribute';
-
-        if (isset($field['type']) && $field['handle'] === 'parent') {
-            $type = 'parent';
-        }
-
-        if (is_object($field)) {
-            $type = get_class($field);
-        }
-
-        $supportedFields = [
-            Checkboxes::class,
-            Color::class,
-            Date::class,
-            Dropdown::class,
-            Email::class,
-            Lightswitch::class,
-            MultiSelect::class,
-            Number::class,
-            PlainText::class,
-            RadioButtons::class,
-            Url::class,
-        ];
-
-        $supportedValues = [
-            'assets',
-            'attribute',
-            'parent',
-        ];
-
-        $supported = array_merge($supportedFields, $supportedValues);
-
-        if (in_array($type, $supported, true)) {
-            return true;
-        }
-
-        // Include any field types that extend one of the above
-        foreach ($supportedFields as $supportedField) {
-            if (is_a($type, $supportedField, true)) {
-                return true;
-            }
-        }
-
-        return false;
+        return FieldHelper::fieldCanBeUniqueId($field);
     }
 
     public function supportedSubField($class): bool
@@ -376,17 +220,6 @@ class FeedMeVariable extends ServiceLocator
      */
     public function fieldHasOnlyCustomSources(mixed $field = null): bool
     {
-        if ($field === null) {
-            return false;
-        }
-
-        if (!isset($field['sources'])) {
-            return false;
-        }
-
-        $sources = new Collection($field['sources']);
-        $nativeSources = $sources->filter(fn(string $source) => !str_starts_with($source, 'custom:'));
-
-        return $nativeSources->isEmpty();
+        return FieldHelper::fieldHasOnlyCustomSources($field);
     }
 }
