@@ -238,7 +238,7 @@ class FeedMeVariable extends ServiceLocator
         $feedMeField = match ($className) {
             Categories::class => \craft\feedme\fields\Categories::class,
             Entries::class => \craft\feedme\fields\Entries::class,
-            Users::class => \craft\feedme\fields\users::class,
+            Users::class => \craft\feedme\fields\Users::class,
             default => null,
         };
 

@@ -276,7 +276,7 @@ class FieldHelper
     {
         return array_filter(
             Craft::$app->getFields()->getAllFields(),
-            fn($field) => $this->fieldCanBeUniqueId($field)
+            fn($field) => static::fieldCanBeUniqueId($field)
         );
     }
 }
