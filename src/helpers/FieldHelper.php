@@ -185,6 +185,12 @@ class FieldHelper
         return $return;
     }
 
+    /**
+     * Returns if the field can be used as a unique identifier.
+     *
+     * @param $field
+     * @return bool
+     */
     public static function fieldCanBeUniqueId($field): bool
     {
         $type = $field['type'] ?? 'attribute';
@@ -261,6 +267,11 @@ class FieldHelper
         return $nativeSources->isEmpty();
     }
 
+    /**
+     * Returns an array of all the custom fields that can be used as a unique id.
+     *
+     * @return array
+     */
     public static function getAllUniqueIdFields(): array
     {
         return array_filter(
