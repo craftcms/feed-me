@@ -12,7 +12,10 @@ use craft\errors\ElementNotFoundException;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\helpers\DataHelper;
+use craft\feedme\helpers\FieldHelper;
+use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
+use craft\fields\BaseRelationField;
 use craft\fields\Users as UsersField;
 use craft\helpers\Db;
 use craft\helpers\ElementHelper;
@@ -207,6 +210,19 @@ class Users extends Field implements FieldInterface
         }
 
         return $foundElements;
+    }
+
+    /**
+     * Returns an array of custom fields that can be used when querying for matching users.
+     * There's only one user layout, so the fields from it are returned.
+     *
+     * @param FeedModel $feed
+     * @param BaseRelationField|null $field
+     * @return array
+     */
+    public static function getMatchFields(FeedModel $feed, ?BaseRelationField $field = null): array
+    {
+        return array_filter(FieldHelper::getUserLayoutByField(), fn($field) => FieldHelper::fieldCanBeUniqueId($field));
     }
 
     // Private Methods

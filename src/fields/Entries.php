@@ -6,17 +6,22 @@ use Cake\Utility\Hash;
 use Craft;
 use craft\base\Element as BaseElement;
 use craft\elements\conditions\ElementConditionInterface;
+use craft\elements\Entry;
 use craft\elements\Entry as EntryElement;
 use craft\errors\ElementNotFoundException;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\helpers\DataHelper;
+use craft\feedme\helpers\FieldHelper;
+use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
+use craft\fields\BaseRelationField;
 use craft\fields\Entries as EntriesField;
 use craft\helpers\Db;
 use craft\helpers\ElementHelper;
 use craft\helpers\Json;
 use craft\services\ElementSources;
+use Illuminate\Support\Collection;
 use Throwable;
 use yii\base\Exception;
 
@@ -238,6 +243,69 @@ class Entries extends Field implements FieldInterface
         }
 
         return $foundElements;
+    }
+
+    /**
+     * Returns an array of custom fields that can be used when querying for matching entries.
+     *
+     * If a field is passed, use the field layouts linked to the sources allowed by the Entries field.
+     * If all the sources are native (sections), then only fields from all those sections entry types field layouts will be returned.
+     * If there's at least one custom source in the mix, the above list will be followed by a list of all the fields.
+     * If only custom sources are selected, return all the fields in the installation.
+     *
+     * @param FeedModel $feed
+     * @param BaseRelationField|null $field
+     * @return array
+     */
+    public static function getMatchFields(FeedModel $feed, ?BaseRelationField $field = null): array
+    {
+        // The field will be null e.g. when importing into a structure section and there's the option to select a parent
+        // the parent is serviced by the entries field markup too, but it doesn't tie into a custom field per se;
+        if ($field === null) {
+            $entryType = Craft::$app->getEntries()->getEntryTypeById($feed->elementGroup[Entry::class]['entryType']);
+            if (!$entryType) {
+                return FieldHelper::getAllUniqueIdFields();
+            }
+
+            $fieldLayout = Craft::$app->getFields()->getLayoutById($entryType->fieldLayoutId);
+            if (!$fieldLayout) {
+                return FieldHelper::getAllUniqueIdFields();
+            }
+
+            return array_filter(
+                $fieldLayout->getCustomFields(),
+                fn($field) => FieldHelper::fieldCanBeUniqueId($field)
+            );
+        } else {
+            // if the Entries field has only custom sources - we have no choice but return all the field
+            if (FieldHelper::fieldHasOnlyCustomSources($field)) {
+                return FieldHelper::getAllUniqueIdFields();
+            }
+
+            // deal with the native sources - sections
+            $sections = FieldHelper::getEntrySourcesByField($field);
+            $entryTypes = [];
+            foreach ($sections as $section) {
+                $entryTypes = [...$entryTypes, ...$section->getEntryTypes()];
+            }
+
+            $allowedFields = [];
+            $entryTypes = Collection::make($entryTypes)->keyBy('id');
+
+            foreach ($entryTypes as $entryType) {
+                $fieldLayout = Craft::$app->getFields()->getLayoutById($entryType->fieldLayoutId);
+                $allowedFields = [...$allowedFields, ...$fieldLayout->getCustomFields()];
+            }
+
+            // if there's a custom source in the mix, we should add all the fields too
+            $customSources = array_filter($field['sources'], (fn(string $source) => str_starts_with($source, 'custom:')));
+
+            if (!empty($customSources)) {
+                $allowedFields = [...$allowedFields, ...Craft::$app->getFields()->getAllFields()];
+            }
+
+            return array_filter($allowedFields, fn($field) => FieldHelper::fieldCanBeUniqueId($field));
+        }
     }
 
 
