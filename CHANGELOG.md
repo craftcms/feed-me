@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- Feed Me settings are now only available when `allowAdminChanges` are set to `true`. ([#1581](https://github.com/craftcms/feed-me/pull/1581))
+- Feed Me settings are now only available to admins and when `allowAdminChanges` is set to `true`. ([#1581](https://github.com/craftcms/feed-me/pull/1581))
 
 ## 5.9.0 - 2024-11-26
 
