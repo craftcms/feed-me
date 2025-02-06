@@ -65,7 +65,7 @@ class FeedMeVariable extends ServiceLocator
             'utilities' => ['label' => Craft::t('feed-me', 'Utilities'), 'url' => UrlHelper::cpUrl('feed-me/utilities')],
         ];
 
-        if (Craft::$app->getUser()->getIsAdmin() && Craft::$app->getConfig()->getGeneral()->allowAdminChanges) {
+        if (Craft::$app->getUser()->getIsAdmin()) {
             $tabs['settings'] = ['label' => Craft::t('feed-me', 'Settings'), 'url' => UrlHelper::cpUrl('feed-me/settings')];
         }
 

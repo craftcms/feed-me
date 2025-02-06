@@ -67,6 +67,11 @@ class Plugin extends \craft\base\Plugin
     public bool $hasCpSection = true;
 
     /**
+     * @inheritdoc
+     */
+    public bool $hasReadOnlyCpSettings = true;
+
+    /**
      * @var Queue|array|string
      * @since 4.5.0
      */
@@ -106,6 +111,14 @@ class Plugin extends \craft\base\Plugin
     public function getSettingsResponse(): mixed
     {
         return Craft::$app->controller->redirect(UrlHelper::cpUrl('feed-me/settings'));
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getReadOnlySettingsResponse(): mixed
+    {
+        return Craft::$app->getResponse()->redirect(UrlHelper::cpUrl('feed-me/settings'));
     }
 
     public function getPluginName(): string
