@@ -5,7 +5,8 @@
 - Improved the experience of mapping relational fields with individual field instances in Craft 5. ([#1585](https://github.com/craftcms/feed-me/issues/1585))
 - Feed Me settings are now only available to admins and when `allowAdminChanges` is set to `true`. ([#1581](https://github.com/craftcms/feed-me/pull/1581))
 - Added support for `formatted` and `raw` subfields in the Google Maps plugin. ([#1587](https://github.com/craftcms/feed-me/pull/1587))
-- Fixed an issue where empty values were not respected for inner-element fields when `setEmptyValues` is set to `true`. ([#1590](https://github.com/craftcms/feed-me/pull/1590))
+- Fixed a bug where empty values were not respected for inner-element fields when `setEmptyValues` is set to `true`. ([#1590](https://github.com/craftcms/feed-me/pull/1590))
+- Fixed a bug where values with an empty string would not be treated as empty if `setEmtpyValues` is set to `true`. ([#1591](https://github.com/craftcms/feed-me/pull/1591))
 
 ## 6.6.1 - 2024-12-01
 
