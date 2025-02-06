@@ -170,7 +170,7 @@ abstract class Field extends Component
                 /** @phpstan-ignore-next-line */
                 $value = Hash::get($fieldValue, $nodeKey ?? $key, $default);
 
-                if ($value) {
+                if (!empty($value) || $this->feed['setEmptyValues']) {
                     $fieldData[$elementId][$fieldHandle] = $value;
                 }
             }
