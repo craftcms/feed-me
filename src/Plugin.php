@@ -155,6 +155,7 @@ class Plugin extends \craft\base\Plugin
                 'feed-me/feeds/run/<feedId:\d+>' => 'feed-me/feeds/run-feed',
                 'feed-me/feeds/status/<feedId:\d+>' => 'feed-me/feeds/status-feed',
                 'feed-me/logs' => 'feed-me/logs/logs',
+                'feed-me/utilities' => ['template' => 'feed-me/utilities/index'],
                 'feed-me/settings/general' => 'feed-me/base/settings',
             ]);
         });
