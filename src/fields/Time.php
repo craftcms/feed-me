@@ -2,6 +2,7 @@
 
 namespace craft\feedme\fields;
 
+use Cake\Utility\Hash;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\helpers\DateHelper;
@@ -51,7 +52,9 @@ class Time extends Field implements FieldInterface
             return null;
         }
 
-        $timeValue = DateHelper::parseTimeString($value);
+        $formatting = Hash::get($this->fieldInfo, 'options.match');
+
+        $timeValue = DateHelper::parseString($value, $formatting);
 
         if ($timeValue) {
             return $timeValue;
