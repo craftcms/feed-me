@@ -655,7 +655,7 @@
     module.exports = factory(
       require('jquery'),
       require('sifter'),
-      require('microplugin'),
+      require('microplugin')
     );
   } else {
     root.Selectize = factory(root.jQuery, root.Sifter, root.MicroPlugin);
@@ -722,7 +722,7 @@
       for (var i = 0; i < this._events[event].length; i++) {
         this._events[event][i].apply(
           this,
-          Array.prototype.slice.call(arguments, 1),
+          Array.prototype.slice.call(arguments, 1)
         );
       }
     },
@@ -1288,7 +1288,7 @@
       if (!self.settings.splitOn && self.settings.delimiter) {
         var delimiterEscaped = self.settings.delimiter.replace(
           /[-\/\\^$*+?.()|[\]{}]/g,
-          '\\$&',
+          '\\$&'
         );
         self.settings.splitOn = new RegExp('\\s*' + delimiterEscaped + '+\\s*');
       }
@@ -1392,7 +1392,7 @@
           if (self.isOpen) {
             self.positionDropdown.apply(self, arguments);
           }
-        },
+        }
       );
       $window.on('mousemove' + eventNS, function () {
         self.ignoreHover = false;
@@ -1593,7 +1593,7 @@
         if (self.settings.splitOn) {
           setTimeout(function () {
             var splitInput = $.trim(self.$control_input.val() || '').split(
-              self.settings.splitOn,
+              self.settings.splitOn
             );
             for (var i = 0, n = splitInput.length; i < n; i++) {
               self.createItem(splitInput[i]);
@@ -2089,14 +2089,14 @@
             .stop()
             .animate(
               {scrollTop: scroll_bottom},
-              animate ? self.settings.scrollDuration : 0,
+              animate ? self.settings.scrollDuration : 0
             );
         } else if (y < scroll) {
           self.$dropdown_content
             .stop()
             .animate(
               {scrollTop: scroll_top},
-              animate ? self.settings.scrollDuration : 0,
+              animate ? self.settings.scrollDuration : 0
             );
         }
       }
@@ -2110,7 +2110,7 @@
       if (self.settings.mode === 'single') return;
 
       self.$activeItems = Array.prototype.slice.apply(
-        self.$control.children(':not(input)').addClass('active'),
+        self.$control.children(':not(input)').addClass('active')
       );
       if (self.$activeItems.length) {
         self.hideInput();
@@ -2227,7 +2227,7 @@
         calculateScore = self.settings.score.apply(this, [query]);
         if (typeof calculateScore !== 'function') {
           throw new Error(
-            'Selectize "score" setting must be a function that returns a function',
+            'Selectize "score" setting must be a function that returns a function'
           );
         }
       }
@@ -2237,7 +2237,7 @@
         self.lastQuery = query;
         result = self.sifter.search(
           query,
-          $.extend(options, {score: calculateScore}),
+          $.extend(options, {score: calculateScore})
         );
         self.currentResults = result;
       } else {
@@ -2345,8 +2345,8 @@
               'optgroup',
               $.extend({}, self.optgroups[optgroup], {
                 html: html_children,
-              }),
-            ),
+              })
+            )
           );
         } else {
           html.push(groups[optgroup].join(''));
@@ -2627,7 +2627,7 @@
     getOption: function (value) {
       return this.getElementWithValue(
         value,
-        this.$dropdown_content.find('[data-selectable]'),
+        this.$dropdown_content.find('[data-selectable]')
       );
     },
 
@@ -2947,7 +2947,7 @@
               escape_html(self.items[i]) +
               '" selected="selected">' +
               escape_html(label) +
-              '</option>',
+              '</option>'
           );
         }
         if (!options.length && !this.$input.attr('multiple')) {
@@ -3112,7 +3112,7 @@
 
       if (self.$activeItems.length) {
         $tail = self.$control.children(
-          '.active:' + (direction > 0 ? 'last' : 'first'),
+          '.active:' + (direction > 0 ? 'last' : 'first')
         );
         caret = self.$control.children(':not(input)').index($tail);
         if (direction > 0) {
@@ -3393,13 +3393,13 @@
         id = data[self.settings.optgroupValueField] || '';
         html = html.replace(
           regex_tag,
-          '<$1 data-group="' + escape_replace(escape_html(id)) + '"',
+          '<$1 data-group="' + escape_replace(escape_html(id)) + '"'
         );
       }
       if (templateName === 'option' || templateName === 'item') {
         html = html.replace(
           regex_tag,
-          '<$1 data-value="' + escape_replace(escape_html(value || '')) + '"',
+          '<$1 data-value="' + escape_replace(escape_html(value || '')) + '"'
         );
       }
 
@@ -3687,7 +3687,7 @@
 
       instance = new Selectize(
         $input,
-        $.extend(true, {}, defaults, settings_element, settings_user),
+        $.extend(true, {}, defaults, settings_element, settings_user)
       );
     });
   };
@@ -3781,7 +3781,7 @@
           );
         },
       },
-      options,
+      options
     );
 
     self.setup = (function () {
@@ -3802,7 +3802,7 @@
         equalizeWidth: true,
         equalizeHeight: true,
       },
-      options,
+      options
     );
 
     this.getAdjacentOption = function ($option, direction) {
@@ -3903,7 +3903,7 @@
         className: 'remove',
         append: true,
       },
-      options,
+      options
     );
 
     var self = this;
