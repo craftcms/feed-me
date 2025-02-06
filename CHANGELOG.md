@@ -1,5 +1,9 @@
 # Release Notes for Feed Me
 
+## Unreleased
+
+- Feed Me settings are now only available when `allowAdminChanges` are set to `true`. ([#1581](https://github.com/craftcms/feed-me/pull/1581))
+
 ## 5.9.0 - 2024-11-26
 
 - Added the `assetDownloadGuzzle` config setting which defaults to `false`. When it is set to `true`, Feed Me will use Guzzle to download assets instead curl directly. ([#1549](https://github.com/craftcms/feed-me/pull/1549))
