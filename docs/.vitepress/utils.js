@@ -7,7 +7,7 @@ function renderInlineCode(tokens, idx, options, env, renderer) {
   var token = tokens[idx];
 
   return `<code v-pre ${renderer.renderAttrs(token)}>${escapeHtml(
-    tokens[idx].content
+    tokens[idx].content,
   )}</code>`;
 }
 
