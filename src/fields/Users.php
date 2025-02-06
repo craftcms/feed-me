@@ -222,7 +222,7 @@ class Users extends Field implements FieldInterface
      */
     public static function getMatchFields(FeedModel $feed, ?BaseRelationField $field = null): array
     {
-        return array_filter(FieldHelper::getUserLayoutByField(), fn($field) => FieldHelper::fieldCanBeUniqueId($field));
+        return array_filter(FieldHelper::getUserLayoutByField() ?? [], fn($field) => FieldHelper::fieldCanBeUniqueId($field));
     }
 
     // Private Methods

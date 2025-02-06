@@ -253,7 +253,7 @@ class Categories extends Field implements FieldInterface
             }
             // otherwise get the layout for the group selected in the field's settings
             return array_filter(
-                FieldHelper::getElementLayoutByField($field::class, $field),
+                FieldHelper::getElementLayoutByField($field::class, $field) ?? [],
                 fn($field) => FieldHelper::fieldCanBeUniqueId($field)
             );
         }
