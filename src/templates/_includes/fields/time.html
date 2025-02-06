@@ -1,0 +1,8 @@
+{% import 'feed-me/_macros' as feedMeMacro %}
+{% import '_includes/forms' as forms %}
+
+{% set default = default ?? {
+    type: 'time',
+} %}
+
+{% extends 'feed-me/_includes/fields/date' %}
