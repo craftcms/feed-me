@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Feed Me now requires Craft CMS 5.6.0 or later.
+- Added support for viewing read-only settings on environments where `allowAdminChanges` is disabled. ([#1592](https://github.com/craftcms/feed-me/issues/1592))
 - Improved the experience of mapping relational fields with individual field instances in Craft 5. ([#1585](https://github.com/craftcms/feed-me/issues/1585))
 - Feed Me settings are now only available to admins and when `allowAdminChanges` is set to `true`. ([#1581](https://github.com/craftcms/feed-me/pull/1581))
 - Added support for `formatted` and `raw` subfields in the Google Maps plugin. ([#1587](https://github.com/craftcms/feed-me/pull/1587))
