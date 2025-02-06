@@ -3,7 +3,7 @@
 ## Unreleased
 
 - Improved the experience of mapping relational fields with individual field instances in Craft 5. ([#1585](https://github.com/craftcms/feed-me/issues/1585))
-- Feed Me settings are now only available when `allowAdminChanges` are set to `true`. ([#1581](https://github.com/craftcms/feed-me/pull/1581))
+- Feed Me settings are now only available to admins and when `allowAdminChanges` is set to `true`. ([#1581](https://github.com/craftcms/feed-me/pull/1581))
 
 ## 6.6.1 - 2024-12-01
 
