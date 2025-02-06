@@ -298,10 +298,9 @@ class Entries extends Field implements FieldInterface
             }
 
             // if there's a custom source in the mix, we should add all the fields too
+            $customSources = [];
             if (is_array($field['sources'])) {
                 $customSources = array_filter($field['sources'], (fn(string $source) => str_starts_with($source, 'custom:')));
-            } else {
-                $customSources = [];
             }
 
             if (!empty($customSources)) {
