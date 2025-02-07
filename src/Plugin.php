@@ -17,6 +17,7 @@ use craft\feedme\services\Service;
 use craft\feedme\web\twig\Extension;
 use craft\feedme\web\twig\variables\FeedMeVariable;
 use craft\helpers\UrlHelper;
+use craft\services\Gc;
 use craft\web\twig\variables\CraftVariable;
 use craft\web\UrlManager;
 use yii\base\Event;
@@ -91,6 +92,7 @@ class Plugin extends \craft\base\Plugin
         $this->_registerCpRoutes();
         $this->_registerTwigExtensions();
         $this->_registerVariables();
+        $this->_registerGc();
     }
 
     /**
@@ -182,5 +184,16 @@ class Plugin extends \craft\base\Plugin
         Event::on(CraftVariable::class, CraftVariable::EVENT_INIT, function(Event $event) {
             $event->sender->set('feedme', FeedMeVariable::class);
         });
+    }
+
+    private function _registerGc(): void
+    {
+        Event::on(
+            Gc::class,
+            Gc::EVENT_RUN,
+            function(Event $event) {
+                $this->getLogs()->prune();
+            }
+        );
     }
 }
