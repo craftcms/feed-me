@@ -81,9 +81,9 @@ class Process extends Component
             $gc = Craft::$app->getGc();
             $gc->deleteAllTrashed = true;
             $gc->run(true);
+        } else {
+            Plugin::getInstance()->getLogs()->prune();
         }
-
-        Plugin::getInstance()->getLogs()->prune();
 
         $this->_data = $feedData;
         $this->_service = $feed->element;
