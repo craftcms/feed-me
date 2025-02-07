@@ -148,8 +148,9 @@ class Process extends Component
 
         // Fire an 'onBeforeProcessFeed' event
         $event = new FeedProcessEvent([
-            'feed' => $feed,
+            'feed' => $return,
             'feedData' => $this->_data,
+            'element' => $feed->element,
         ]);
 
         $this->trigger(self::EVENT_BEFORE_PROCESS_FEED, $event);
@@ -158,7 +159,8 @@ class Process extends Component
             return;
         }
 
-        // Allow event to modify the feed data
+        // Allow event to modify the feed & feed data
+        $return = $event->feed;
         $this->_data = $event->feedData;
 
         // Return the feed data
