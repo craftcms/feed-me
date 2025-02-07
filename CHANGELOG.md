@@ -1,6 +1,6 @@
 # Release Notes for Feed Me
 
-## Unreleased
+## 5.10.0 - 2025-01-07
 
 - Feed Me settings are now only available to admins and when `allowAdminChanges` is set to `true`. ([#1581](https://github.com/craftcms/feed-me/pull/1581))
 - Added support for Craft [Time](https://craftcms.com/docs/5.x/reference/field-types/time.html) fields. ([#1593](https://github.com/craftcms/feed-me/pull/1593))
