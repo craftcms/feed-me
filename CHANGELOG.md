@@ -6,8 +6,9 @@
 - Added support for viewing read-only settings on environments where `allowAdminChanges` is disabled. ([#1592](https://github.com/craftcms/feed-me/issues/1592))
 - Improved the experience of mapping relational fields with individual field instances in Craft 5. ([#1585](https://github.com/craftcms/feed-me/issues/1585))
 - Feed Me settings are now only available to admins and when `allowAdminChanges` is set to `true`. ([#1581](https://github.com/craftcms/feed-me/pull/1581))
-- Added support for Craft [Time](https://craftcms.com/docs/5.x/reference/field-types/time.html) fields. ([#1593](https://github.com/craftcms/feed-me/pull/1593)) 
+- Added support for Craft [Time](https://craftcms.com/docs/5.x/reference/field-types/time.html) fields. ([#1593](https://github.com/craftcms/feed-me/pull/1593))
 - Added support for `formatted` and `raw` subfields in the Google Maps plugin. ([#1587](https://github.com/craftcms/feed-me/pull/1587))
+- Fixed a bug where excessive logs would be generated in the Feed Me logs table in the database. ([#1594](https://github.com/craftcms/feed-me/pull/1594))
 - Fixed a bug where empty values were not respected for inner-element fields when `setEmptyValues` is set to `true`. ([#1590](https://github.com/craftcms/feed-me/pull/1590))
 - Fixed a bug where values with an empty string would not be treated as empty if `setEmtpyValues` is set to `true`. ([#1591](https://github.com/craftcms/feed-me/pull/1591))
 
