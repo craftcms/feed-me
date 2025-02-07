@@ -1,6 +1,6 @@
 # Release Notes for Feed Me
 
-## 5.10.0 - 2025-01-07
+## 6.7.0 - 2025-01-07
 
 - Feed Me now requires Craft CMS 5.6.0 or later.
 - Added support for viewing read-only settings on environments where `allowAdminChanges` is disabled. ([#1592](https://github.com/craftcms/feed-me/issues/1592))
