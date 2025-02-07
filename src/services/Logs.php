@@ -5,7 +5,6 @@ namespace craft\feedme\services;
 use Craft;
 use craft\base\Component;
 use craft\db\Query;
-use craft\db\Table;
 use craft\feedme\Plugin;
 use craft\helpers\App;
 use craft\helpers\Db;
