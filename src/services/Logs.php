@@ -5,6 +5,7 @@ namespace craft\feedme\services;
 use Craft;
 use craft\base\Component;
 use craft\db\Query;
+use craft\db\Table;
 use craft\feedme\Plugin;
 use craft\helpers\App;
 use craft\helpers\Db;
@@ -57,6 +58,7 @@ class Logs extends Component
 
     public const LOG_CATEGORY = 'feed-me';
     public const LOG_TABLE = '{{%feedme_logs}}';
+    public const LOG_TABLE_LIMIT = 300;
 
     public const LOG_LEVEL_MAP = [
         Logger::LEVEL_ERROR => 'error',
@@ -124,6 +126,22 @@ class Logs extends Component
             ->execute();
     }
 
+    public function prune(): void
+    {
+        $ids = (new Query())
+            ->select(['id'])
+            ->from(self::LOG_TABLE)
+            ->orderBy(['log_time' => SORT_DESC])
+            ->limit(self::LOG_TABLE_LIMIT)
+            ->column();
+
+        if (count($ids)) {
+            Craft::$app->getDb()->createCommand()
+                ->delete(self::LOG_TABLE, ['not', ['in', 'id', $ids]])
+                ->execute();
+        }
+    }
+
     /**
      * @param null $type
      * @return array
@@ -138,7 +156,7 @@ class Logs extends Component
             ->from(self::LOG_TABLE)
 
             // Hard-coded until pagination is implemented
-            ->limit(300);
+            ->limit(self::LOG_TABLE_LIMIT);
 
         if ($type) {
             $query->andWhere(['level' => self::logLevelInt($type)]);

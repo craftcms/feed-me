@@ -83,6 +83,8 @@ class Process extends Component
             $gc->run(true);
         }
 
+        Plugin::getInstance()->getLogs()->prune();
+
         $this->_data = $feedData;
         $this->_service = $feed->element;
 
