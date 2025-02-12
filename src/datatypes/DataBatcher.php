@@ -4,13 +4,9 @@
 namespace craft\feedme\datatypes;
 
 use craft\base\Batchable;
-use yii\db\Connection as YiiConnection;
-use yii\db\Query as YiiQuery;
-use yii\db\QueryInterface;
 
 class DataBatcher implements Batchable
 {
-
     public function __construct(
         private array $data,
     ) {

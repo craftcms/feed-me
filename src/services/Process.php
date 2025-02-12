@@ -157,7 +157,7 @@ class Process extends Component
      * @return mixed|void
      * @throws \Exception
      */
-    public function processFeed($step, $feed, &$processedElementIds, $feedData, $batchIndex)
+    public function processFeed($step, $feed, &$processedElementIds, $feedData, $batchIndex = 0)
     {
         $attributeData = [];
         $fieldData = [];
@@ -606,7 +606,7 @@ class Process extends Component
         $feedSettings = $this->beforeProcessFeed($feed, $feedData);
 
         foreach ($feedData as $key => $data) {
-            $this->processFeed($key, $feedSettings, $processedElementIds);
+            $this->processFeed($key, $feedSettings, $processedElementIds, $data);
         }
 
         // Check if we need to paginate the feed to run again
