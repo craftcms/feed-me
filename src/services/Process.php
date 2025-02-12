@@ -603,7 +603,8 @@ class Process extends Component
             return;
         }
 
-        $feedSettings = $this->beforeProcessFeed($feed, $feedData);
+        $this->beforeProcessFeed($feed, $feedData);
+        $feedSettings = $this->getFeedSettings($feed, $feedData);
 
         foreach ($feedData as $key => $data) {
             $this->processFeed($key, $feedSettings, $processedElementIds, $data);
