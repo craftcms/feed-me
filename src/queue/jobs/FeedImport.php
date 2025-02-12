@@ -57,11 +57,6 @@ class FeedImport extends BaseBatchedJob implements RetryableJobInterface
     public mixed $startTime = null;
 
     /**
-     * @inheritdoc
-     */
-    public int $batchSize = 2;
-
-    /**
      * @var array The Feed's settings as prepared by beforeProcessFeed()
      */
     private array $_feedSettings = [];
