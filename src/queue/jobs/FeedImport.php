@@ -113,7 +113,7 @@ class FeedImport extends BaseJob implements RetryableJobInterface
 
             // Check if we need to paginate the feed to run again
             if ($this->feed->getNextPagination()) {
-                Plugin::getInstance()->queue->push(new self([
+                Queue::push(new self([
                     'feed' => $this->feed,
                     'limit' => $this->limit,
                     'offset' => $this->offset,
