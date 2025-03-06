@@ -143,9 +143,7 @@ body.ltr .table-feed-me .thin.action {
   position: relative;
   display: inline-block;
   background-image: linear-gradient(#fff, #fafafa);
-  box-shadow:
-    inset 0 0 0 1px rgba(0, 0, 0, 0.1),
-    0 0 0 1px rgba(0, 0, 0, 0.025),
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.025),
     0 1px 1px rgba(0, 0, 0, 0.1);
 
   &:after {
