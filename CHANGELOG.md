@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Added support for Craft’s batched queue jobs, so that long-running feeds can be processed in batches. ([#1598](https://github.com/craftcms/feed-me/pull/1598))
 - Improved support for importing into Time fields. ([#1595](https://github.com/craftcms/feed-me/pull/1595))
 - Fixed a PHP error that could occur with some plugins that were installed, but Feed Me doesn't support. ([#1596](https://github.com/craftcms/feed-me/pull/1596))
 
