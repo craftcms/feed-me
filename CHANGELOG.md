@@ -1,6 +1,6 @@
 # Release Notes for Feed Me
 
-## 5.11.0 - 2025-03-14
+## 6.8.0 - 2025-03-14
 
 - Added support for Craft’s batched queue jobs, so that long-running feeds can be processed in batches. ([#1598](https://github.com/craftcms/feed-me/pull/1598))
 - Improved support for importing into Time fields. ([#1595](https://github.com/craftcms/feed-me/pull/1595))
