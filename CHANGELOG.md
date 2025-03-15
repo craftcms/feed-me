@@ -1,5 +1,9 @@
 # Release Notes for Feed Me
 
+## Unreleased
+
+- Improved support for importing into Time fields. ([#1595](https://github.com/craftcms/feed-me/pull/1595)) 
+
 ## 6.7.0 - 2025-01-07
 
 - Feed Me now requires Craft CMS 5.6.0 or later.
