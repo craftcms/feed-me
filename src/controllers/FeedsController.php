@@ -9,6 +9,7 @@ use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
 use craft\feedme\queue\jobs\FeedImport;
 use craft\helpers\Json;
+use craft\helpers\Queue;
 use craft\helpers\StringHelper;
 use craft\web\Controller;
 use Exception;
@@ -344,7 +345,7 @@ class FeedsController extends Controller
             Craft::$app->getSession()->setNotice(Craft::t('feed-me', 'Feed processing started.'));
 
             // Create the import task
-            $this->module->queue->push(new FeedImport([
+            Queue::push(new FeedImport([
                 'feed' => $feed,
                 'limit' => $limit,
                 'offset' => $offset,
@@ -363,7 +364,7 @@ class FeedsController extends Controller
 
             // Create the import task only if provided the correct passkey
             if ($proceed) {
-                $this->module->queue->push(new FeedImport([
+                Queue::push(new FeedImport([
                     'feed' => $feed,
                     'limit' => $limit,
                     'offset' => $offset,

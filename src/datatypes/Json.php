@@ -85,6 +85,7 @@ class Json extends DataType implements DataTypeInterface
             $array = Plugin::$plugin->data->findPrimaryElement($primaryElement, $array);
         }
 
+        $this->feedData = $array;
         return ['success' => true, 'data' => $array];
     }
 }

@@ -38,17 +38,12 @@ class Process extends Component
     /**
      * @var
      */
-    private mixed $_time_start = null;
+    public mixed $time_start = null;
 
     /**
      * @var ElementInterface
      */
     private ElementInterface $_service;
-
-    /**
-     * @var array
-     */
-    private array $_data;
 
 
     // Public Methods
@@ -85,13 +80,22 @@ class Process extends Component
             Plugin::getInstance()->getLogs()->prune();
         }
 
-        $this->_data = $feedData;
+        // Set our start time to track feed processing time
+        $this->time_start = microtime(true);
+    }
+
+    /**
+     * @param FeedModel $feed
+     * @param array $feedData
+     * @return array
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function getFeedSettings(FeedModel $feed, array $feedData)
+    {
+        $data = $feedData;
         $this->_service = $feed->element;
 
         $return = $feed->attributes;
-
-        // Set our start time to track feed processing time
-        $this->_time_start = microtime(true);
 
         App::maxPowerCaptain();
 
@@ -135,35 +139,10 @@ class Process extends Component
             $return['existingElements'] = $query->ids();
         }
 
-        // Our main data-parsing function. Handles the actual data values, defaults and field options
-        foreach ($feedData as $key => $nodeData) {
-            if (!is_array($nodeData)) {
-                $nodeData = [$nodeData];
-            }
-
-            $this->_data[$key] = Hash::flatten($nodeData, '/');
-        }
-
-        $this->_data = array_values($this->_data);
-
-        // Fire an 'onBeforeProcessFeed' event
-        $event = new FeedProcessEvent([
-            'feed' => $feed,
-            'feedData' => $this->_data,
-        ]);
-
-        $this->trigger(self::EVENT_BEFORE_PROCESS_FEED, $event);
-
-        if (!$event->isValid) {
-            return;
-        }
-
-        // Allow event to modify the feed data
-        $this->_data = $event->feedData;
-
         // Return the feed data
-        $return['feedData'] = $this->_data;
+        $return['feedData'] = $data;
 
+        Plugin::$stepKey = null;
         Plugin::info('Finished preparing for feed processing.');
 
         return $return;
@@ -174,13 +153,15 @@ class Process extends Component
      * @param $feed
      * @param $processedElementIds
      * @param $feedData
+     * @param $batchIndex
      * @return mixed|void
      * @throws \Exception
      */
-    public function processFeed($step, $feed, &$processedElementIds, $feedData = null)
+    public function processFeed($step, $feed, &$processedElementIds, $feedData, $batchIndex = 0)
     {
         $attributeData = [];
         $fieldData = [];
+        $batchIndex++;
 
         // We can opt-out of updating certain elements if a field is switched on
         $skipUpdateFieldHandle = Plugin::$plugin->service->getConfig('skipUpdateFieldHandle', $feed['id']);
@@ -199,18 +180,15 @@ class Process extends Component
             Plugin::error('Error `{i}`.', ['i' => Json::encode($step)]);
         }
 
-        if (!is_array($this->_data) || empty($this->_data[0])) {
+        if (!is_array($feedData) || empty($feedData)) {
             Plugin::info('There is no data in the feed to process.');
             return;
         }
 
-        Plugin::info('Starting processing of node `#{i}`.', ['i' => ($step + 1)]);
+        Plugin::info('Starting processing of node `#{i}` in batch `{j}`.', ['i' => ($step + 1), 'j' => $batchIndex]);
 
         // Set up a model for this Element Type
         $element = $this->_service->setModel($feed);
-
-        // From the raw data in our feed, we need to fix it up so its Craft-ready for the element and fields
-        $feedData = $feedData ?? $this->_data[$step];
 
         // We need to first find a potentially existing element, and to do that, we need to prep just the fields
         // that are selected as the unique identifier. We prep everything else later on.
@@ -471,7 +449,10 @@ class Process extends Component
             $unchangedContent = DataHelper::compareElementContent($contentData, $existingElement);
 
             if ($unchangedContent) {
-                $info = Craft::t('feed-me', 'Node `#{i}` skipped. No content has changed.', ['i' => ($step + 1)]);
+                $info = Craft::t(
+                    'feed-me',
+                    'Node `#{i}` in batch `{j}` skipped. No content has changed.',
+                    ['i' => ($step + 1), 'j' => $batchIndex]);
 
                 Plugin::info($info);
                 Plugin::debug($info);
@@ -519,7 +500,7 @@ class Process extends Component
             // Store our successfully processed element for feedback in logs, but also in case we're deleting
             $processedElementIds[] = $element->id;
 
-            Plugin::info('Finished processing of node `#{i}`.', ['i' => ($step + 1)]);
+            Plugin::info('Finished processing of node `#{i}` in batch `{j}`.', ['i' => ($step + 1), 'j' => $batchIndex]);
 
             // Sleep if required
             $sleepTime = Plugin::$plugin->service->getConfig('sleepTime', $feed['id']);
@@ -542,8 +523,9 @@ class Process extends Component
      * @param $settings
      * @param $feed
      * @param $processedElementIds
+     * @param $startTime
      */
-    public function afterProcessFeed($settings, $feed, $processedElementIds): void
+    public function afterProcessFeed($settings, $feed, $processedElementIds, $startTime = null): void
     {
         if ((int)DuplicateHelper::isDelete($feed) + (int)DuplicateHelper::isDisable($feed) + (int)DuplicateHelper::isDisableForSite($feed) > 1) {
             Plugin::info("You can't have Delete and Disabled enabled at the same time as an Import Strategy.");
@@ -577,7 +559,8 @@ class Process extends Component
 
         // Log the total time taken to process the feed
         $time_end = microtime(true);
-        $execution_time = number_format(($time_end - $this->_time_start), 2);
+        $time_start = $startTime ?? $this->time_start;
+        $execution_time = number_format(($time_end - $time_start), 2);
 
         Plugin::$stepKey = null;
 
@@ -620,10 +603,11 @@ class Process extends Component
             return;
         }
 
-        $feedSettings = $this->beforeProcessFeed($feed, $feedData);
+        $this->beforeProcessFeed($feed, $feedData);
+        $feedSettings = $this->getFeedSettings($feed, $feedData);
 
         foreach ($feedData as $key => $data) {
-            $this->processFeed($key, $feedSettings, $processedElementIds);
+            $this->processFeed($key, $feedSettings, $processedElementIds, $data);
         }
 
         // Check if we need to paginate the feed to run again
