@@ -300,7 +300,11 @@ class FeedMeVariable extends ServiceLocator
 
     public function fieldCanBeUniqueId($field): bool
     {
-        $type = $field['type'] ?? 'attribute';
+        try {
+            $type = $field['type'] ?? 'attribute';
+        } catch (\Throwable $e) {
+            return false;
+        }
 
         if (isset($field['type']) && $field['handle'] === 'parent') {
             $type = 'parent';
