@@ -52,7 +52,7 @@ class Time extends Field implements FieldInterface
             return null;
         }
 
-        $formatting = Hash::get($this->fieldInfo, 'options.match');
+        $formatting = Hash::get($this->fieldInfo, 'options.match') ?? 'auto';
 
         $timeValue = DateHelper::parseString($value, $formatting);
 
