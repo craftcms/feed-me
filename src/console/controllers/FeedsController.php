@@ -5,6 +5,7 @@ namespace craft\feedme\console\controllers;
 use craft\feedme\Plugin;
 use craft\feedme\queue\jobs\FeedImport;
 use craft\helpers\Console;
+use craft\helpers\Queue;
 use yii\console\Controller;
 use yii\console\ExitCode;
 
@@ -108,7 +109,7 @@ class FeedsController extends Controller
         $this->stdout($feed->name, Console::FG_CYAN);
         $this->stdout(' ... ');
 
-        $this->module->queue->push(new FeedImport([
+        Queue::push(new FeedImport([
             'feed' => $feed,
             'limit' => $limit,
             'offset' => $offset,

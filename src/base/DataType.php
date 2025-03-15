@@ -4,6 +4,7 @@ namespace craft\feedme\base;
 
 use Cake\Utility\Hash;
 use Craft;
+use craft\base\Batchable;
 use craft\base\Component;
 use craft\helpers\UrlHelper;
 
@@ -12,8 +13,16 @@ use craft\helpers\UrlHelper;
  * @property-read mixed $name
  * @property-read mixed $class
  */
-abstract class DataType extends Component
+abstract class DataType extends Component implements Batchable
 {
+    // Properties
+    // =========================================================================
+
+    /**
+     * @var array
+     */
+    protected array $feedData = [];
+
     // Public
     // =========================================================================
 
@@ -58,5 +67,31 @@ abstract class DataType extends Component
 
         // Replace the mapping value with the actual URL
         $feed->paginationUrl = $url;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getSlice(int $offset, int $limit): iterable
+    {
+        $feedData = $this->feedData;
+
+        if ($offset) {
+            $feedData = array_slice($feedData, $offset);
+        }
+
+        if ($limit) {
+            $feedData = array_slice($feedData, 0, $limit);
+        }
+
+        return $feedData;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function count(): int
+    {
+        return count($this->feedData);
     }
 }
