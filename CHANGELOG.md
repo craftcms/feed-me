@@ -4,6 +4,7 @@
 
 - Improved support for importing into Time fields. ([#1595](https://github.com/craftcms/feed-me/pull/1595))
 - Fixed a PHP error that could occur with some plugins that were installed, but Feed Me doesn't support. ([#1596](https://github.com/craftcms/feed-me/pull/1596))
+- Fixed a bug where that could occur that would prevent importing Commerce Variants. ([#1605](https://github.com/craftcms/feed-me/pull/1605))
 
 ## 6.7.0 - 2025-01-07
 
