@@ -2,7 +2,8 @@
 
 ## Unreleased
 
-- Improved support for importing into Time fields. ([#1595](https://github.com/craftcms/feed-me/pull/1595)) 
+- Improved support for importing into Time fields. ([#1595](https://github.com/craftcms/feed-me/pull/1595))
+- Fixed a PHP error that could occur with some plugins that were installed, but Feed Me doesn't support. ([#1596](https://github.com/craftcms/feed-me/pull/1596))
 
 ## 6.7.0 - 2025-01-07
 
