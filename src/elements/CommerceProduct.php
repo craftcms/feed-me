@@ -275,7 +275,7 @@ class CommerceProduct extends Element
         $this->beforeSave($element, $settings);
 
         if ($this->element->getIsDraft()) {
-            $this->element->setDirtyAttributes(['variants']);
+            $this->element->markAsDirty();
             $this->element = Craft::$app->getDrafts()->applyDraft($this->element);
             $this->element->propagateAll = true;
         }
@@ -548,7 +548,7 @@ class CommerceProduct extends Element
             // Create a new variant, or find an existing one to edit
             if (!isset($variants[$sku])) {
                 $variants[$sku] = new VariantElement();
-                $variants[$sku]->product = $element;
+                $variants[$sku]->setOwner($element);
             }
 
             // We are going to handle stock after the product and variants save
