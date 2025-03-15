@@ -1,5 +1,9 @@
 # Release Notes for Feed Me
 
+## Unreleased
+
+- Improved support for importing into Time fields. ([#1595](https://github.com/craftcms/feed-me/pull/1595)) 
+
 ## 5.10.0 - 2025-01-07
 
 - Feed Me settings are now only available to admins and when `allowAdminChanges` is set to `true`. ([#1581](https://github.com/craftcms/feed-me/pull/1581))
