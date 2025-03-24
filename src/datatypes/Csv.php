@@ -112,7 +112,10 @@ class Csv extends DataType implements DataTypeInterface
             $array = Plugin::$plugin->data->findPrimaryElement($primaryElement, $array);
         }
 
-        $this->feedData = $array;
+        if ($array) {
+            $this->feedData = $array;
+        }
+
         return ['success' => true, 'data' => $array];
     }
 

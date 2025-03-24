@@ -93,6 +93,11 @@ class FeedImport extends BaseBatchedJob implements RetryableJobInterface
     {
         $feedData = $this->feed->getFeedData();
 
+        // Do we even have any data to process?
+        if (!$feedData) {
+            return new DataBatcher([]);
+        }
+
         if ($this->offset) {
             $feedData = array_slice($feedData, $this->offset);
         }
@@ -158,8 +163,15 @@ class FeedImport extends BaseBatchedJob implements RetryableJobInterface
     public function execute($queue): void
     {
         $processService = Plugin::$plugin->getProcess();
+        $data = array_filter((array)$this->data());
+
+        if (empty($data)) {
+            Plugin::info('No feed items to process.');
+            return;
+        }
+
         if ($this->itemOffset == 0) {
-            $processService->beforeProcessFeed($this->feed, (array)$this->data());
+            $processService->beforeProcessFeed($this->feed, $data);
         }
 
         if (!$this->startTime) {
@@ -167,7 +179,7 @@ class FeedImport extends BaseBatchedJob implements RetryableJobInterface
         }
 
         if (empty($this->_feedSettings)) {
-            $this->_feedSettings = $processService->getFeedSettings($this->feed, (array)$this->data());
+            $this->_feedSettings = $processService->getFeedSettings($this->feed, $data);
         }
 
         parent::execute($queue);
