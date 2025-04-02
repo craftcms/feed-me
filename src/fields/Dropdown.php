@@ -67,7 +67,7 @@ class Dropdown extends Field implements FieldInterface
             }
         }
 
-        if ($this->feed['setEmptyValues'] === 1 && $value === '') {
+        if ($this->feed['setEmptyValues'] && $value === '') {
             return $value;
         }
 
