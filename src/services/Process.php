@@ -5,9 +5,11 @@ namespace craft\feedme\services;
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
+use craft\base\ElementInterface as CraftElementInterface;
 use craft\elements\User;
 use craft\errors\ShellCommandException;
 use craft\feedme\base\ElementInterface;
+use craft\feedme\events\CompareContentEvent;
 use craft\feedme\events\FeedProcessEvent;
 use craft\feedme\helpers\DataHelper;
 use craft\feedme\helpers\DuplicateHelper;
@@ -30,6 +32,7 @@ class Process extends Component
     public const EVENT_STEP_BEFORE_ELEMENT_SAVE = 'onStepBeforeElementSave';
     public const EVENT_STEP_AFTER_ELEMENT_SAVE = 'onStepElementSave';
     public const EVENT_AFTER_PROCESS_FEED = 'onAfterProcessFeed';
+    public const EVENT_COMPARE_CONTENT = 'onCompareContent';
 
 
     // Properties
@@ -616,6 +619,35 @@ class Process extends Component
         } else {
             $this->afterProcessFeed($feedSettings, $feed, $processedElementIds);
         }
+    }
+
+    /**
+     * Prepare data for content comparison and allow plugins to do so via an event.
+     *
+     * @param array $content
+     * @param CraftElementInterface $element
+     * @param string $key
+     * @param mixed $existingValue
+     * @param mixed $newValue
+     * @return mixed
+     * @since 5.12.0
+     */
+    public function onCompareContent(array $content, CraftElementInterface $element, string $key, mixed $existingValue, mixed $newValue): mixed
+    {
+        [$existingValue, $newValue] = DataHelper::prepDatesForComparison($existingValue, $newValue);
+
+        $event = new CompareContentEvent([
+            'content' => $content,
+            'element' => $element,
+            'handle' => $key,
+            'existingValue' => $existingValue,
+            'newValue' => $newValue,
+        ]);
+
+        $this->trigger(self::EVENT_COMPARE_CONTENT, $event);
+
+        // Allow event to overwrite existing and new value to be used for comparison
+        return [$event->existingValue, $event->newValue];
     }
 
 

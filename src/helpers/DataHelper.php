@@ -264,6 +264,7 @@ class DataHelper
         foreach ($content as $key => $newValue) {
             $existingValue = Hash::get($fields, $key);
 
+            [$existingValue, $newValue] = Plugin::$plugin->process->onCompareContent($content, $element, $key, $existingValue, $newValue);
 
             // Check for simple fields first
             if (self::_compareSimpleValues($fields, $key, $existingValue, $newValue)) {
