@@ -32,6 +32,11 @@ class Process extends Component
     public const EVENT_STEP_BEFORE_ELEMENT_SAVE = 'onStepBeforeElementSave';
     public const EVENT_STEP_AFTER_ELEMENT_SAVE = 'onStepElementSave';
     public const EVENT_AFTER_PROCESS_FEED = 'onAfterProcessFeed';
+
+    /**
+     * @event CompareContentEvent The event that is triggered before content is compared to check for changes.
+     * @since 5.12.0
+     */
     public const EVENT_COMPARE_CONTENT = 'onCompareContent';
 
 
