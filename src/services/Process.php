@@ -636,18 +636,23 @@ class Process extends Component
     {
         [$existingValue, $newValue] = DataHelper::prepDatesForComparison($existingValue, $newValue);
 
-        $event = new CompareContentEvent([
-            'content' => $content,
-            'element' => $element,
-            'handle' => $key,
-            'existingValue' => $existingValue,
-            'newValue' => $newValue,
-        ]);
+        if ($this->hasEventHandlers(self::EVENT_COMPARE_CONTENT)) {
+            $event = new CompareContentEvent([
+                'content' => $content,
+                'element' => $element,
+                'handle' => $key,
+                'existingValue' => $existingValue,
+                'newValue' => $newValue,
+            ]);
 
-        $this->trigger(self::EVENT_COMPARE_CONTENT, $event);
+            $this->trigger(self::EVENT_COMPARE_CONTENT, $event);
+
+            // Allow event to overwrite existing and new value to be used for comparison
+            return [$event->existingValue, $event->newValue];
+        }
 
         // Allow event to overwrite existing and new value to be used for comparison
-        return [$event->existingValue, $event->newValue];
+        return [$existingValue, $newValue];
     }
 
 
