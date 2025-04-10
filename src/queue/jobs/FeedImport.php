@@ -161,7 +161,6 @@ class FeedImport extends BaseBatchedJob implements RetryableJobInterface
             $data = $event->feedData;
 
             $processService->beforeProcessFeed($this->feed, $data);
-
         }
 
         if (!$this->startTime) {
