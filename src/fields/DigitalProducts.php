@@ -130,7 +130,8 @@ class DigitalProducts extends Field implements FieldInterface
             $criteria['status'] = null;
             $criteria['typeId'] = $typeIds;
             $criteria['limit'] = $limit;
-            $criteria[$match] = Db::escapeParam($dataValue);
+            // prep the $dataValue for matching
+            $criteria[$match] = DataHelper::prepValueForElementMatch($dataValue);
 
             Craft::configure($query, $criteria);
 

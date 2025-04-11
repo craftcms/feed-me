@@ -155,7 +155,8 @@ class Users extends Field implements FieldInterface
             $ids = [];
             $criteria['status'] = null;
             $criteria['limit'] = $limit;
-            $criteria[$match] = Db::escapeParam($dataValue);
+            // prep the $dataValue for matching
+            $criteria[$match] = DataHelper::prepValueForElementMatch($dataValue);
 
             // If the only source for the Users field is "admins" we don't have to bother with this query.
             if (!($isAdmin && empty($groupIds) && empty($customSources))) {
