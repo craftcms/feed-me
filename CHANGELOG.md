@@ -1,5 +1,9 @@
 # Release Notes for Feed Me
 
+## Unreleased
+
+- Fixed an error that could occur when running a feed with nothing to process. ([#1611](https://github.com/craftcms/feed-me/pull/1611))
+
 ## 5.11.0 - 2025-03-14
 
 - Added support for Craft’s batched queue jobs, so that long-running feeds can be processed in batches. ([#1598](https://github.com/craftcms/feed-me/pull/1598))
