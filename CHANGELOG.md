@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Fixed an error that could occur when running a feed with nothing to process. ([#1611](https://github.com/craftcms/feed-me/pull/1611))
+- Fixed a bug where duplicate users could get created when importing entry authors with a matching email address. ([#1612](https://github.com/craftcms/feed-me/pull/1612))
 
 ## 6.8.0 - 2025-03-14
 - 
