@@ -101,6 +101,31 @@ class Matrix extends Field implements FieldInterface
                 } else {
                     $fieldData[$key] = $parsedValue;
                 }
+
+                foreach ($blocks as $blockHandle => $fields) {
+                    if (isset($fields['fields'])) {
+                        foreach ($fields['fields'] as $fieldHandle => $fieldInfo) {
+                            $node = Hash::get($fieldInfo, 'node');
+                            if ($node === 'usedefault') {
+                                $key = $this->_getBlockKey($nodePathSegments, $blockHandle, $fieldHandle);
+
+                                $parsedValue = DataHelper::fetchSimpleValue($this->feedData, $fieldInfo);
+                                $fieldData[$key] = $parsedValue;
+                            }
+                        }
+                    }
+                    if (isset($fields['attributes'])) {
+                        foreach ($fields['attributes'] as $fieldHandle => $fieldInfo) {
+                            $node = Hash::get($fieldInfo, 'node');
+                            if ($node === 'usedefault') {
+                                $key = $this->_getBlockKey($nodePathSegments, $blockHandle, $fieldHandle);
+
+                                $parsedValue = DataHelper::fetchSimpleValue($this->feedData, $fieldInfo);
+                                $attributeData[$key] = $parsedValue;
+                            }
+                        }
+                    }
+                }
             }
 
             if ($attributeInfo) {
@@ -115,31 +140,6 @@ class Matrix extends Field implements FieldInterface
                     $attributeData[$key] = is_array($parsedValue) ? array_merge_recursive($attributeData[$key], $parsedValue) : $attributeData[$key];
                 } else {
                     $attributeData[$key] = $parsedValue;
-                }
-            }
-
-            foreach ($blocks as $blockHandle => $fields) {
-                if (isset($fields['fields'])) {
-                    foreach ($fields['fields'] as $fieldHandle => $fieldInfo) {
-                        $node = Hash::get($fieldInfo, 'node');
-                        if ($node === 'usedefault') {
-                            $key = $this->_getBlockKey($nodePathSegments, $blockHandle, $fieldHandle);
-
-                            $parsedValue = DataHelper::fetchSimpleValue($this->feedData, $fieldInfo);
-                            $fieldData[$key] = $parsedValue;
-                        }
-                    }
-                }
-                if (isset($fields['attributes'])) {
-                    foreach ($fields['attributes'] as $fieldHandle => $fieldInfo) {
-                        $node = Hash::get($fieldInfo, 'node');
-                        if ($node === 'usedefault') {
-                            $key = $this->_getBlockKey($nodePathSegments, $blockHandle, $fieldHandle);
-
-                            $parsedValue = DataHelper::fetchSimpleValue($this->feedData, $fieldInfo);
-                            $attributeData[$key] = $parsedValue;
-                        }
-                    }
                 }
             }
         }
