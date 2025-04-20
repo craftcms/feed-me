@@ -4,6 +4,7 @@
 
 - Fixed an error that could occur when running a feed with nothing to process. ([#1611](https://github.com/craftcms/feed-me/pull/1611))
 - Fixed a bug where importing into a Matrix field with “Use default value” selected, subfields could use the default value in certain scenarios. ([#1613](https://github.com/craftcms/feed-me/pull/1613))
+- Fixed a bug that could occur on PostgreSQL when using the `setEmptyValues` feed setting. ([#1620](https://github.com/craftcms/feed-me/pull/1620))
 
 ## 5.11.0 - 2025-03-14
 
