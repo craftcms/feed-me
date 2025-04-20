@@ -71,7 +71,7 @@ class DefaultField extends Field implements FieldInterface
         // if the normalizeValue above returns null, which can happen for e.g. plain text field and a value of a single space
         // we also need to ensure that an empty string is returned, not the value as that can be null after normalization
         // https://github.com/craftcms/feed-me/issues/1560
-        if ($this->feed['setEmptyValues'] === 1 && empty($value)) {
+        if ($this->feed['setEmptyValues'] && empty($value)) {
             return '';
         }
 
