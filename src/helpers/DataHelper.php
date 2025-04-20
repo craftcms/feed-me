@@ -454,6 +454,17 @@ class DataHelper
             return true;
         }
 
+        // and if everything else failed, we might have a situation where the $fields[$key] value is empty (null)
+        // in which case Hash::extract will return an empty array and therefore Hash::check fill return false
+        // and the values won't actually be compared
+        // @see https://github.com/craftcms/feed-me/issues/1615
+        if (
+            array_key_exists($key, $fields) &&
+            (!is_numeric($firstValue) && !is_bool($firstValue) && empty($firstValue)) &&
+            (!is_numeric($secondValue) && !is_bool($secondValue) && empty($secondValue))) {
+            return true;
+        }
+
         // Didn't match
         return false;
     }
