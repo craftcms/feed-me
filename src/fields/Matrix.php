@@ -53,6 +53,10 @@ class Matrix extends Field implements FieldInterface
 
         $blocks = Hash::get($this->fieldInfo, 'blocks');
 
+        if ($blocks === null) {
+            return null;
+        }
+
         // Before we do anything, we need to extract the data from our feed and normalise it. This is especially
         // complex due to sub-fields, which each can be a variety of fields and formats, compounded by multiple or
         // Matrix blocks - we don't know! We also need to be careful of the order data is in the feed to be
