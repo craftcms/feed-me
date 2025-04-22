@@ -103,7 +103,7 @@ class DataHelper
                     }
                     $value = array_merge($value, $delimitedValues);
                 } else {
-                    $value[] = $nodeValue;
+                    $value = $nodeValue;
                 }
             }
         }
