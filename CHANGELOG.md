@@ -2,12 +2,14 @@
 
 ## Unreleased
 
+- Added a `Process::EVENT_COMPARE_CONTENT` to give plugins a chance to manipulate feed data before any content comparison is done. ([#1623](https://github.com/craftcms/feed-me/pull/1623))
 - Fixed an error that could occur when running a feed with nothing to process. ([#1611](https://github.com/craftcms/feed-me/pull/1611))
 - Fixed a bug where duplicate users could get created when importing entry authors with a matching email address. ([#1612](https://github.com/craftcms/feed-me/pull/1612))
 - Fixed a bug where importing into a Matrix field with “Use default value” selected, subfields could use the default value in certain scenarios. ([#1613](https://github.com/craftcms/feed-me/pull/1613))
 - Fixed a bug that could occur on PostgreSQL when using the `setEmptyValues` feed setting. ([#1620](https://github.com/craftcms/feed-me/pull/1620))
 - Fixed a bug that could occur when saving empty ("") values if `compareContent` and “Set Empty Values” were both enabled. ([#1621](https://github.com/craftcms/feed-me/pull/1621))
 - Fixed a bug that could occur when importing into a Matrix field with no blocks. ([#1622](https://github.com/craftcms/feed-me/pull/1622))
+- Fixed a regression that happened in 5.3.0 where imports into relational field would not remove existing relations if it was required. ([#1623](https://github.com/craftcms/feed-me/pull/1623))
 
 ## 6.8.0 - 2025-03-14
 - 
