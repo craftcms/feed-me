@@ -264,13 +264,7 @@ class DataHelper
         foreach ($content as $key => $newValue) {
             $existingValue = Hash::get($fields, $key);
 
-            [$existingValue, $newValue] = self::prepDatesForComparison($existingValue, $newValue);
-
-            // If array key & values are already within the existing array
-            if (is_array($newValue) && is_array($existingValue) && Hash::contains($existingValue,$newValue)) {
-                unset($trackedChanges[$key]);
-                continue;
-            }
+            [$existingValue, $newValue] = Plugin::$plugin->process->onCompareContent($content, $element, $key, $existingValue, $newValue);
 
             // Check for simple fields first
             if (self::_compareSimpleValues($fields, $key, $existingValue, $newValue)) {
