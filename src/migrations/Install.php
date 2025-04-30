@@ -11,6 +11,7 @@ class Install extends Migration
 
     public function safeUp(): bool
     {
+        $this->removeTables();
         $this->createTables();
 
         return true;
