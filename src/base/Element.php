@@ -345,7 +345,12 @@ abstract class Element extends Component implements ElementInterface
      */
     protected function parseDateAttribute($value, $formatting): ?DateTime
     {
-        $dateValue = DateHelper::parseString($value, $formatting);
+        if (empty($formatting)) {
+            $dateValue = DateHelper::parseString($value);
+        } else {
+            $dateValue = DateHelper::parseString($value, $formatting);
+        }
+
         if ($dateValue instanceof Carbon) {
             $dateValue = $dateValue->toDateTime();
         }
