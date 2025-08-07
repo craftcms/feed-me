@@ -11,7 +11,8 @@ class Install extends Migration
 
     public function safeUp(): bool
     {
-        $this->removeTables();
+        $this->archiveTableIfExists('{{%feedme_feeds}}');
+        $this->archiveTableIfExists('{{%feedme_logs}}');
         $this->createTables();
 
         return true;
