@@ -164,10 +164,16 @@ class Logs extends Component
         $logEntries = $query->collect()->reduce(function(Collection $logs, array $row) {
             $json = Json::decodeIfJson($row['message']);
             $key = $json['key'] ?? $logs->count();
+
+            if ($json['message']) {
+                $message = $json['feed'] ? $json['feed'] . ': ' . $json['message'] : $json['message'];
+            } else {
+                $message = $json;
+            }
             $log = [
                 'type' => self::logLevelName($row['level']),
                 'date' => Db::prepareDateForDb($row['log_time']),
-                'message' => $json['message'] ?? $json,
+                'message' => $message,
                 'key' => $key,
             ];
 
