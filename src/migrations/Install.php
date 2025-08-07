@@ -11,8 +11,7 @@ class Install extends Migration
 
     public function safeUp(): bool
     {
-        $this->archiveTableIfExists('{{%feedme_feeds}}');
-        $this->archiveTableIfExists('{{%feedme_logs}}');
+        $this->archiveTables();
         $this->createTables();
 
         return true;
@@ -67,6 +66,12 @@ class Install extends Migration
 
         $this->createIndex('idx_log_level', '{{%feedme_logs}}', 'level');
         $this->createIndex('idx_log_category', '{{%feedme_logs}}', 'category');
+    }
+
+    protected function archiveTables(): void
+    {
+        $this->archiveTableIfExists('{{%feedme_feeds}}');
+        $this->archiveTableIfExists('{{%feedme_logs}}');
     }
 
     protected function removeTables(): void
