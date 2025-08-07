@@ -76,7 +76,7 @@ class Checkboxes extends Field implements FieldInterface
 
         // if custom options are allowed, and we still have values left in the $value variable - process those too
         if ($customOptions && !empty($value)) {
-            foreach($value as $dataValue) {
+            foreach ($value as $dataValue) {
                 $preppedData[] = $dataValue;
             }
         }
