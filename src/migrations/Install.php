@@ -11,7 +11,6 @@ class Install extends Migration
 
     public function safeUp(): bool
     {
-        $this->archiveTables();
         $this->createTables();
 
         return true;
@@ -29,6 +28,7 @@ class Install extends Migration
 
     protected function createTables(): void
     {
+        $this->archiveTableIfExists('{{%feedme_feeds}}');
         $this->createTable('{{%feedme_feeds}}', [
             'id' => $this->primaryKey(),
             'name' => $this->string()->notNull(),
@@ -55,6 +55,7 @@ class Install extends Migration
         ]);
 
         // @see \craft\feedme\migrations\m240611_134740_create_logs_table
+        $this->archiveTableIfExists('{{%feedme_logs}}');
         $this->createTable('{{%feedme_logs}}', [
             'id' => $this->bigPrimaryKey(),
             'level' => $this->integer(),
@@ -66,12 +67,6 @@ class Install extends Migration
 
         $this->createIndex('idx_log_level', '{{%feedme_logs}}', 'level');
         $this->createIndex('idx_log_category', '{{%feedme_logs}}', 'category');
-    }
-
-    protected function archiveTables(): void
-    {
-        $this->archiveTableIfExists('{{%feedme_feeds}}');
-        $this->archiveTableIfExists('{{%feedme_logs}}');
     }
 
     protected function removeTables(): void
