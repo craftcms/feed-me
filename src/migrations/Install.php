@@ -11,6 +11,9 @@ class Install extends Migration
 
     public function safeUp(): bool
     {
+        // first check if any tables already exist and if they do, remove them
+        $this->removeTables();
+        // and now create new tables
         $this->createTables();
 
         return true;
