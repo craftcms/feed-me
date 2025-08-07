@@ -55,19 +55,29 @@ class Checkboxes extends Field implements FieldInterface
         $preppedData = [];
 
         $options = Hash::get($this->field, 'settings.options');
+        $customOptions = Hash::get($this->field, 'settings.customOptions', false);
         $match = Hash::get($this->fieldInfo, 'options.match', 'value');
 
         foreach ($options as $option) {
-            foreach ($value as $dataValue) {
+            foreach ($value as $key => $dataValue) {
                 if ($dataValue === $option[$match]) {
                     $preppedData[] = $option['value'];
+                    unset($value[$key]);
                 }
 
                 // special case for when mapping by label, but also using a default value
                 // which relies on $option['value']
                 if (empty($dataValue) && in_array($option['value'], $default)) {
                     $preppedData[] = $option['value'];
+                    unset($value[$key]);
                 }
+            }
+        }
+
+        // if custom options are allowed, and we still have values left in the $value variable - process those too
+        if ($customOptions && !empty($value)) {
+            foreach($value as $dataValue) {
+                $preppedData[] = $dataValue;
             }
         }
 
