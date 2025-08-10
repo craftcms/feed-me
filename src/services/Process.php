@@ -84,6 +84,14 @@ class Process extends Component
             $gc = Craft::$app->getGc();
             $gc->deleteAllTrashed = true;
             $gc->run(true);
+
+            // close DB connection so that \PDO::ATTR_EMULATE_PREPARES is set back to false;
+            // https://github.com/yiisoft/yii2/blob/2.0.52/framework/db/pgsql/QueryBuilder.php#L225
+            // this caused an SQL error when using pgsql and attempting to match existing elements
+            // based on e.g. title that consists of only a number;
+            // "SQLSTATE[42883]: Undefined function: 7 ERROR: operator does not exist: character varying = bigint LINE 8"
+            // "HINT: No operator matches the given name and argument types. You might need to add explicit type casts."
+            Craft::$app->getDb()->close();
         } else {
             Plugin::getInstance()->getLogs()->prune();
         }
