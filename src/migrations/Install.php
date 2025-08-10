@@ -28,6 +28,7 @@ class Install extends Migration
 
     protected function createTables(): void
     {
+        $this->archiveTableIfExists('{{%feedme_feeds}}');
         $this->createTable('{{%feedme_feeds}}', [
             'id' => $this->primaryKey(),
             'name' => $this->string()->notNull(),
@@ -54,6 +55,7 @@ class Install extends Migration
         ]);
 
         // @see \craft\feedme\migrations\m240611_134740_create_logs_table
+        $this->archiveTableIfExists('{{%feedme_logs}}');
         $this->createTable('{{%feedme_logs}}', [
             'id' => $this->bigPrimaryKey(),
             'level' => $this->integer(),
