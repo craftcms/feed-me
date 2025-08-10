@@ -9,6 +9,7 @@
 - Fixed a bug that could occur when saving empty ("") values if `compareContent` and “Set Empty Values” were both enabled. ([#1621](https://github.com/craftcms/feed-me/pull/1621))
 - Fixed a bug that could occur when importing into a Matrix field with no blocks. ([#1622](https://github.com/craftcms/feed-me/pull/1622))
 - Fixed a regression that happened in 5.3.0 where imports into relational field would not remove existing relations if it was required. ([#1623](https://github.com/craftcms/feed-me/pull/1623))
+- Fixed a regression where `EVENT_BEFORE_PROCESS_FEED` was called once per batch and not once per page. ([#1628](https://github.com/craftcms/feed-me/pull/1628))
 
 ## 5.11.0 - 2025-03-14
 
