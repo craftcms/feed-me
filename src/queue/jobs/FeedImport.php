@@ -119,21 +119,6 @@ class FeedImport extends BaseBatchedJob implements RetryableJobInterface
 
         $data = array_values($data);
 
-        // Fire an 'onBeforeProcessFeed' event
-        $event = new FeedProcessEvent([
-            'feed' => $this->feed,
-            'feedData' => $data,
-        ]);
-
-        Plugin::$plugin->process->trigger(Process::EVENT_BEFORE_PROCESS_FEED, $event);
-
-        if (!$event->isValid) {
-            return new DataBatcher([]);
-        }
-
-        // Allow event to modify the feed data
-        $data = $event->feedData;
-
         return new DataBatcher($data);
     }
 
@@ -169,8 +154,23 @@ class FeedImport extends BaseBatchedJob implements RetryableJobInterface
             Plugin::info('No feed items to process.');
             return;
         }
-
+      
         if ($this->itemOffset == 0) {
+            // Fire an 'onBeforeProcessFeed' event
+            $event = new FeedProcessEvent([
+                'feed' => $this->feed,
+                'feedData' => $data,
+            ]);
+
+            Plugin::$plugin->process->trigger(Process::EVENT_BEFORE_PROCESS_FEED, $event);
+
+            if (!$event->isValid) {
+                return;
+            }
+
+            // Allow event to modify the feed data
+            $data = $event->feedData;
+
             $processService->beforeProcessFeed($this->feed, $data);
         }
 
