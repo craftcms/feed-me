@@ -51,6 +51,7 @@ class RadioButtons extends Field implements FieldInterface
         $default = Hash::get($this->fieldInfo, 'default');
 
         $options = Hash::get($this->field, 'settings.options');
+        $customOptions = Hash::get($this->field, 'settings.customOptions', false);
         $match = Hash::get($this->fieldInfo, 'options.match', 'value');
 
         foreach ($options as $option) {
@@ -62,7 +63,8 @@ class RadioButtons extends Field implements FieldInterface
             }
         }
 
-        if (empty($value)) {
+        // if value is empty or the field supports adding custom options - return the value
+        if (empty($value) || $customOptions) {
             return $value;
         }
 
