@@ -264,13 +264,7 @@ class DataHelper
         foreach ($content as $key => $newValue) {
             $existingValue = Hash::get($fields, $key);
 
-            [$existingValue, $newValue] = self::prepDatesForComparison($existingValue, $newValue);
-
-            // If array key & values are already within the existing array
-            if (is_array($newValue) && is_array($existingValue) && Hash::contains($existingValue,$newValue)) {
-                unset($trackedChanges[$key]);
-                continue;
-            }
+            [$existingValue, $newValue] = Plugin::$plugin->process->onCompareContent($content, $element, $key, $existingValue, $newValue);
 
             // Check for simple fields first
             if (self::_compareSimpleValues($fields, $key, $existingValue, $newValue)) {
@@ -451,6 +445,17 @@ class DataHelper
             (!is_numeric($firstValue) && !is_bool($firstValue) && empty($firstValue)) &&
             (!is_numeric($secondValue) && !is_bool($secondValue) && empty($secondValue))
         ) {
+            return true;
+        }
+
+        // and if everything else failed, we might have a situation where the $fields[$key] value is empty (null)
+        // in which case Hash::extract will return an empty array and therefore Hash::check fill return false
+        // and the values won't actually be compared
+        // @see https://github.com/craftcms/feed-me/issues/1615
+        if (
+            array_key_exists($key, $fields) &&
+            (!is_numeric($firstValue) && !is_bool($firstValue) && empty($firstValue)) &&
+            (!is_numeric($secondValue) && !is_bool($secondValue) && empty($secondValue))) {
             return true;
         }
 

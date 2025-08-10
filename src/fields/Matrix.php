@@ -53,6 +53,10 @@ class Matrix extends Field implements FieldInterface
 
         $blocks = Hash::get($this->fieldInfo, 'blocks');
 
+        if ($blocks === null) {
+            return null;
+        }
+
         // Before we do anything, we need to extract the data from our feed and normalise it. This is especially
         // complex due to sub-fields, which each can be a variety of fields and formats, compounded by multiple or
         // Matrix blocks - we don't know! We also need to be careful of the order data is in the feed to be
@@ -97,16 +101,16 @@ class Matrix extends Field implements FieldInterface
                 } else {
                     $fieldData[$key] = $parsedValue;
                 }
-            }
 
-            foreach ($blocks as $blockHandle => $fields) {
-                foreach ($fields['fields'] as $fieldHandle => $fieldInfo) {
-                    $node = Hash::get($fieldInfo, 'node');
-                    if ($node === 'usedefault') {
-                        $key = $this->_getBlockKey($nodePathSegments, $blockHandle, $fieldHandle);
+                foreach ($blocks as $blockHandle => $fields) {
+                    foreach ($fields['fields'] as $fieldHandle => $fieldInfo) {
+                        $node = Hash::get($fieldInfo, 'node');
+                        if ($node === 'usedefault') {
+                            $key = $this->_getBlockKey($nodePathSegments, $blockHandle, $fieldHandle);
 
-                        $parsedValue = DataHelper::fetchSimpleValue($this->feedData, $fieldInfo);
-                        $fieldData[$key] = $parsedValue;
+                            $parsedValue = DataHelper::fetchSimpleValue($this->feedData, $fieldInfo);
+                            $fieldData[$key] = $parsedValue;
+                        }
                     }
                 }
             }
