@@ -230,7 +230,7 @@ class Matrix extends Field implements FieldInterface
         $index = 1;
         $resultBlocks = [];
         foreach ($expanded as $blockData) {
-            // if all the fields are empty and setEmptyValues is off, ignore the block
+            // if all the fields are empty and setEmptyValues is off and there's no title or slug being set, ignore the block
             if (
                 !empty(array_filter(
                     $blockData['fields'],
@@ -240,7 +240,8 @@ class Matrix extends Field implements FieldInterface
                         is_bool($value) ||
                         is_numeric($value)
                     )
-                ))
+                )) ||
+                (!empty($blockData['title']) || !empty($blockData['slug']))
             ) {
                 $resultBlocks['new' . $index++] = $blockData;
             }
