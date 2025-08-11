@@ -1,6 +1,6 @@
 # Release Notes for Feed Me
 
-## Unreleased
+## 5.12.0 - 2025-08-10
 
 - Added a `Process::EVENT_COMPARE_CONTENT` to give plugins a chance to manipulate feed data before any content comparison is done. ([#1623](https://github.com/craftcms/feed-me/pull/1623))
 - Fixed an error that could occur when running a feed with nothing to process. ([#1611](https://github.com/craftcms/feed-me/pull/1611))
