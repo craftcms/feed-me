@@ -11,6 +11,7 @@
 - Fixed an issue that could occur when running garbage collection before importing a feed when using PostgreSQL. ([#1632](https://github.com/craftcms/feed-me/pull/1632))
 - Fixed a regression that happened in 5.3.0 where imports into relational field would not remove existing relations if it was required. ([#1623](https://github.com/craftcms/feed-me/pull/1623))
 - Fixed a regression where `EVENT_BEFORE_PROCESS_FEED` was called once per batch and not once per page. ([#1628](https://github.com/craftcms/feed-me/pull/1628))
+- Fixed a regression where the feed name prefix was no longer showing up in the Logs tab in the Control Panel. ([#1660](https://github.com/craftcms/feed-me/pull/1660))
 
 ## 5.11.0 - 2025-03-14
 
