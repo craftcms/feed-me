@@ -1,6 +1,6 @@
 # Release Notes for Feed Me
 
-## 5.12.0 - 2025-08-10
+## 6.9.0 - 2025-08-10
 
 - Added a `Process::EVENT_COMPARE_CONTENT` to give plugins a chance to manipulate feed data before any content comparison is done. ([#1623](https://github.com/craftcms/feed-me/pull/1623))
 - Added support for importing custom options to the Radio Buttons and Checkboxes field types. ([#1658](https://github.com/craftcms/feed-me/pull/1658))
