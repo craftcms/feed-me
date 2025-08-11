@@ -58,7 +58,7 @@ class AssetHelper
         $assetDownloadGuzzle = Plugin::$plugin->service->getConfig('assetDownloadGuzzle', $feedId);
         if ($assetDownloadGuzzle) {
             $response = null;
-            $client = Plugin::$plugin->service->createGuzzleClient();
+            $client = Plugin::$plugin->service->createGuzzleClient($feedId);
             try {
                 $response = $client->get($srcName, ['sink' => $fp]);
             } catch (Throwable $e) {
