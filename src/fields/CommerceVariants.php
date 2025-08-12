@@ -10,6 +10,7 @@ use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\helpers\DataHelper;
 use craft\feedme\Plugin;
+use craft\helpers\Db;
 use craft\helpers\Json;
 
 /**
@@ -83,7 +84,7 @@ class CommerceVariants extends Field implements FieldInterface
         if (is_array($sources)) {
             foreach ($sources as $source) {
                 [, $uid] = explode(':', $source);
-                $typeIds[] = $uid;
+                $typeIds[] = Db::idByUid('{{%commerce_producttypes}}', $uid);
             }
         } elseif ($sources === '*') {
             $typeIds = null;
