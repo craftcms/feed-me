@@ -200,7 +200,7 @@ abstract class Field extends Component
                 // This also checks if there was any data that corresponds on the same array index/level as our element
                 $value = Hash::get($fieldValue, $nodeKey ?? $key, $default);
 
-                if ($value) {
+                if (!empty($value) || $this->feed['setEmptyValues']) {
                     $fieldData[$elementId][$fieldHandle] = $value;
                 }
             }

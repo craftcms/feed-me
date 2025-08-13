@@ -83,6 +83,10 @@ class Xml extends DataType implements DataTypeInterface
             $array = Plugin::$plugin->data->findPrimaryElement($primaryElement, $array);
         }
 
+        if ($array) {
+            $this->feedData = $array;
+        }
+
         return ['success' => true, 'data' => $array];
     }
 }

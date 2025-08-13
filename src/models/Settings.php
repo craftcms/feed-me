@@ -102,4 +102,10 @@ class Settings extends Model
      * @var bool
      */
     public bool $assetDownloadCurl = false;
+
+    /**
+     * @var bool
+     * @since 5.9.0
+     */
+    public bool $assetDownloadGuzzle = false;
 }

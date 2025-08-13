@@ -4,7 +4,7 @@ The primary element can be confusing at first, but its vitally important to ensu
 
 Take the following example:
 
-::: code
+::: code-group
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <rss>

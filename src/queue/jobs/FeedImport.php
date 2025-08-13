@@ -2,10 +2,16 @@
 
 namespace craft\feedme\queue\jobs;
 
+use Cake\Utility\Hash;
 use Craft;
+use craft\base\Batchable;
+use craft\feedme\datatypes\DataBatcher;
+use craft\feedme\events\FeedProcessEvent;
 use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
-use craft\queue\BaseJob;
+use craft\feedme\services\Process;
+use craft\helpers\Queue;
+use craft\queue\BaseBatchedJob;
 use Throwable;
 use yii\queue\RetryableJobInterface;
 
@@ -13,7 +19,7 @@ use yii\queue\RetryableJobInterface;
  *
  * @property-read mixed $ttr
  */
-class FeedImport extends BaseJob implements RetryableJobInterface
+class FeedImport extends BaseBatchedJob implements RetryableJobInterface
 {
     // Properties
     // =========================================================================
@@ -44,6 +50,22 @@ class FeedImport extends BaseJob implements RetryableJobInterface
      */
     public bool $continueOnError = true;
 
+    /**
+     * @var mixed The Unix timestamp with microseconds of when the feed import started being processed
+     * @since 5.11.0
+     */
+    public mixed $startTime = null;
+
+    /**
+     * @var array The Feed's settings as prepared by beforeProcessFeed()
+     */
+    private array $_feedSettings = [];
+
+    /**
+     * @var int The index of currently processed item in current batch
+     */
+    private int $_index = 0;
+
     // Public Methods
     // =========================================================================
 
@@ -65,72 +87,119 @@ class FeedImport extends BaseJob implements RetryableJobInterface
     }
 
     /**
+     * @inheritdoc
+     */
+    protected function loadData(): Batchable
+    {
+        $feedData = $this->feed->getFeedData();
+
+        // Do we even have any data to process?
+        if (!$feedData) {
+            return new DataBatcher([]);
+        }
+
+        if ($this->offset) {
+            $feedData = array_slice($feedData, $this->offset);
+        }
+
+        if ($this->limit) {
+            $feedData = array_slice($feedData, 0, $this->limit);
+        }
+
+        $data = $feedData;
+
+        // Our main data-parsing function. Handles the actual data values, defaults and field options
+        foreach ($feedData as $key => $nodeData) {
+            if (!is_array($nodeData)) {
+                $nodeData = [$nodeData];
+            }
+
+            $data[$key] = Hash::flatten($nodeData, '/');
+        }
+
+        $data = array_values($data);
+
+        return new DataBatcher($data);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function processItem(mixed $item): void
+    {
+        try {
+            Plugin::$plugin->process->processFeed($this->_index, $this->_feedSettings, $this->processedElementIds, $item, $this->batchIndex);
+        } catch (Throwable $e) {
+            if (!$this->continueOnError) {
+                throw $e;
+            }
+
+            // We want to catch any issues in each iteration of the loop (and log them), but this allows the
+            // rest of the feed to continue processing.
+            Plugin::error('`{e} - {f}: {l}`.', ['e' => $e->getMessage(), 'f' => basename($e->getFile()), 'l' => $e->getLine()]);
+            Craft::$app->getErrorHandler()->logException($e);
+        }
+
+        $this->_index++;
+    }
+    /**
      * @inheritDoc
      */
     public function execute($queue): void
     {
-        try {
-            $feedData = $this->feed->getFeedData();
+        $processService = Plugin::$plugin->getProcess();
+        $data = array_filter((array)$this->data());
 
-            if ($this->offset) {
-                $feedData = array_slice($feedData, $this->offset);
-            }
+        if (empty($data)) {
+            Plugin::info('No feed items to process.');
+            return;
+        }
+      
+        if ($this->itemOffset == 0) {
+            // Fire an 'onBeforeProcessFeed' event
+            $event = new FeedProcessEvent([
+                'feed' => $this->feed,
+                'feedData' => $data,
+            ]);
 
-            if ($this->limit) {
-                $feedData = array_slice($feedData, 0, $this->limit);
-            }
+            Plugin::$plugin->process->trigger(Process::EVENT_BEFORE_PROCESS_FEED, $event);
 
-            // Do we even have any data to process?
-            if (!$feedData) {
-                Plugin::info('No feed items to process.');
+            if (!$event->isValid) {
                 return;
             }
 
-            $feedSettings = Plugin::$plugin->process->beforeProcessFeed($this->feed, $feedData);
+            // Allow event to modify the feed data
+            $data = $event->feedData;
 
-            $feedData = $feedSettings['feedData'];
+            $processService->beforeProcessFeed($this->feed, $data);
+        }
 
-            $totalSteps = count($feedData);
+        if (!$this->startTime) {
+            $this->startTime = $processService->time_start;
+        }
 
-            $index = 0;
+        if (empty($this->_feedSettings)) {
+            $this->_feedSettings = $processService->getFeedSettings($this->feed, $data);
+        }
 
-            foreach ($feedData as $data) {
-                try {
-                    Plugin::$plugin->process->processFeed($index, $feedSettings, $this->processedElementIds);
-                } catch (Throwable $e) {
-                    if (!$this->continueOnError) {
-                        throw $e;
-                    }
+        parent::execute($queue);
 
-                    // We want to catch any issues in each iteration of the loop (and log them), but this allows the
-                    // rest of the feed to continue processing.
-                    Plugin::error('`{e} - {f}: {l}`.', ['e' => $e->getMessage(), 'f' => basename($e->getFile()), 'l' => $e->getLine()]);
-                    Craft::$app->getErrorHandler()->logException($e);
-                }
-
-                $this->setProgress($queue, $index++ / $totalSteps);
-            }
-
-            // Check if we need to paginate the feed to run again
+        // Check if we need to paginate the feed to run again
+        if ($this->itemOffset == $this->totalItems()) {
             if ($this->feed->getNextPagination()) {
-                Plugin::getInstance()->queue->push(new self([
+                Queue::push(new self([
                     'feed' => $this->feed,
                     'limit' => $this->limit,
                     'offset' => $this->offset,
                     'processedElementIds' => $this->processedElementIds,
+                    'startTime' => $this->startTime,
                 ]));
             } else {
                 // Only perform the afterProcessFeed function after any/all pagination is done
-                Plugin::$plugin->process->afterProcessFeed($feedSettings, $this->feed, $this->processedElementIds);
+                $processService->afterProcessFeed($this->_feedSettings, $this->feed, $this->processedElementIds, $this->startTime);
             }
-        } catch (Throwable $e) {
-            // Even though we catch errors on each step of the loop, make sure to catch errors that can be anywhere
-            // else in this function, just to be super-safe and not cause the queue job to die.
-            Plugin::error('`{e} - {f}: {l}`.', ['e' => $e->getMessage(), 'f' => basename($e->getFile()), 'l' => $e->getLine()]);
-            Craft::$app->getErrorHandler()->logException($e);
         }
     }
-
 
     // Protected Methods
     // =========================================================================

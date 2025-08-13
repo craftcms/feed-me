@@ -12,6 +12,7 @@ use craft\feedme\events\FeedEvent;
 use craft\feedme\models\FeedModel;
 use craft\feedme\records\FeedRecord;
 use craft\helpers\Json;
+use craft\helpers\StringHelper;
 use Exception;
 use Throwable;
 
@@ -192,6 +193,7 @@ class Feeds extends Component
     public function duplicateFeed($feed): bool
     {
         $feed->id = null;
+        $feed->passkey = StringHelper::randomString(10);
 
         return $this->saveFeed($feed);
     }

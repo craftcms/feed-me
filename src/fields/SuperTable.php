@@ -148,7 +148,13 @@ class SuperTable extends Field implements FieldInterface
             $preppedData[$blockIndex . '.enabled'] = true;
             $preppedData[$blockIndex . '.fields.' . $subFieldHandle] = $value;
 
-            if ((is_string($value) && !empty($value)) || (is_array($value) && !empty(array_filter($value)))) {
+            // if all the fields are empty and setEmptyValues is off, ignore the block
+            if (
+                (is_string($value) && !empty($value)) ||
+                (is_array($value) && !empty(array_filter($value))) ||
+                is_bool($value) ||
+                is_numeric($value)
+            ) {
                 $allEmpty = false;
             }
 

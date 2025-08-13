@@ -65,11 +65,14 @@ class DefaultField extends Field implements FieldInterface
             $value = $this->field->normalizeValue($value);
         }
 
-        // if we're setting empty values and the value is an empty string - return it
+        // if we're setting empty values and the value is empty - return an empty string
         // otherwise HtmlField will serialize it to null, and we setEmptyValues won't take effect
         // https://github.com/craftcms/feed-me/issues/1321
-        if ($this->feed['setEmptyValues'] === 1 && $value === '') {
-            return $value;
+        // if the normalizeValue above returns null, which can happen for e.g. plain text field and a value of a single space
+        // we also need to ensure that an empty string is returned, not the value as that can be null after normalization
+        // https://github.com/craftcms/feed-me/issues/1560
+        if ($this->feed['setEmptyValues'] && empty($value)) {
+            return '';
         }
 
         // Lastly, get each field to prepare values how they should

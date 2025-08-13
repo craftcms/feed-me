@@ -39,6 +39,7 @@ use craft\feedme\fields\SmartMap;
 use craft\feedme\fields\SuperTable;
 use craft\feedme\fields\Table;
 use craft\feedme\fields\Tags;
+use craft\feedme\fields\Time;
 use craft\feedme\fields\TypedLink;
 use craft\feedme\fields\Users;
 use craft\helpers\Component as ComponentHelper;
@@ -172,6 +173,7 @@ class Fields extends Component
                 RadioButtons::class,
                 Table::class,
                 Tags::class,
+                Time::class,
                 Users::class,
 
                 // Third-Party

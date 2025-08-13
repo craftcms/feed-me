@@ -5,6 +5,7 @@ namespace craft\feedme\fields;
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Element as BaseElement;
+use craft\elements\conditions\ElementConditionInterface;
 use craft\elements\Entry as EntryElement;
 use craft\errors\ElementNotFoundException;
 use craft\feedme\base\Field;
@@ -13,7 +14,9 @@ use craft\feedme\helpers\DataHelper;
 use craft\feedme\Plugin;
 use craft\fields\Entries as EntriesField;
 use craft\helpers\Db;
+use craft\helpers\ElementHelper;
 use craft\helpers\Json;
+use craft\services\ElementSources;
 use Throwable;
 use yii\base\Exception;
 
@@ -94,6 +97,7 @@ class Entries extends Field implements FieldInterface
         $nodeKey = null;
 
         $sectionIds = [];
+        $customSources = [];
 
         if (is_array($sources)) {
             foreach ($sources as $source) {
@@ -103,9 +107,20 @@ class Entries extends Field implements FieldInterface
                         $sectionIds[] = ($section->type == 'single') ? $section->id : '';
                     }
                 } else {
-                    [, $uid] = explode(':', $source);
-                    $sectionIds[] = Db::idByUid('{{%sections}}', $uid);
+                    // if the source starts with "custom:", it's a custom source, and we can't treat it like a section
+                    if (str_starts_with($source, 'custom:')) {
+                        $customSources[] = ElementHelper::findSource(EntryElement::class, $source, ElementSources::CONTEXT_FIELD);
+                    } else {
+                        [, $uid] = explode(':', $source);
+                        $sectionIds[] = Db::idByUid('{{%sections}}', $uid);
+                    }
                 }
+            }
+
+            // if there's only one source, and it's a custom source, make sure $create is nullified;
+            // we don't want to create entries for custom sources because of ensuring all the conditions are met
+            if (count($sources) == 1 && !empty($customSources)) {
+                $create = null;
             }
         } elseif ($sources === '*') {
             $sectionIds = null;
@@ -157,13 +172,38 @@ class Entries extends Field implements FieldInterface
             }
 
             $criteria['status'] = null;
-            $criteria['sectionId'] = $sectionIds;
             $criteria['limit'] = $limit;
             $criteria['where'] = ['=', $columnName, $dataValue];
 
             Craft::configure($query, $criteria);
 
-            Plugin::info('Search for existing entry with query `{i}`', ['i' => Json::encode($criteria)]);
+            // if we have any custom sources, we want to modify the query to account for those
+            if (!empty($customSources)) {
+                $conditionsService = Craft::$app->getConditions();
+                foreach ($customSources as $customSource) {
+                    /** @var ElementConditionInterface $sourceCondition */
+                    $sourceCondition = $conditionsService->createCondition($customSource['condition']);
+                    $sourceCondition->modifyQuery($query);
+                }
+            }
+
+            if (!empty($sectionIds)) {
+                // now that the custom sources have been accounted for,
+                // we can adjust the section id to include any regular, section sources (section ids)
+                $query->sectionId = array_merge($query->sectionId ?? [], $sectionIds);
+            }
+
+            // we're getting the criteria from conditions now too, so they are not included in the $criteria array;
+            // so, we get all the query criteria, filter out any empty or boolean ones and only show the ones that look to be filled out
+            $showCriteria = $criteria;
+            $allCriteria = $query->getCriteria();
+            foreach ($allCriteria as $key => $criterion) {
+                if (!empty($criterion) && !is_bool($criterion)) {
+                    $showCriteria[$key] = $criterion;
+                }
+            }
+
+            Plugin::info('Search for existing entry with query `{i}`', ['i' => Json::encode($showCriteria)]);
 
             $ids = $query->ids();
 

@@ -17,6 +17,7 @@ use craft\feedme\services\Service;
 use craft\feedme\web\twig\Extension;
 use craft\feedme\web\twig\variables\FeedMeVariable;
 use craft\helpers\UrlHelper;
+use craft\services\Gc;
 use craft\web\twig\variables\CraftVariable;
 use craft\web\UrlManager;
 use yii\base\Event;
@@ -62,7 +63,7 @@ class Plugin extends \craft\base\Plugin
     }
 
     public string $minVersionRequired = '4.4.8';
-    public string $schemaVersion = '5.1.0.1';
+    public string $schemaVersion = '5.1.1';
     public bool $hasCpSettings = true;
     public bool $hasCpSection = true;
 
@@ -86,6 +87,7 @@ class Plugin extends \craft\base\Plugin
         $this->_registerCpRoutes();
         $this->_registerTwigExtensions();
         $this->_registerVariables();
+        $this->_registerGc();
     }
 
     /**
@@ -155,6 +157,7 @@ class Plugin extends \craft\base\Plugin
                 'feed-me/feeds/run/<feedId:\d+>' => 'feed-me/feeds/run-feed',
                 'feed-me/feeds/status/<feedId:\d+>' => 'feed-me/feeds/status-feed',
                 'feed-me/logs' => 'feed-me/logs/logs',
+                'feed-me/utilities' => ['template' => 'feed-me/utilities/index'],
                 'feed-me/settings/general' => 'feed-me/base/settings',
             ]);
         });
@@ -168,5 +171,16 @@ class Plugin extends \craft\base\Plugin
         Event::on(CraftVariable::class, CraftVariable::EVENT_INIT, function(Event $event) {
             $event->sender->set('feedme', FeedMeVariable::class);
         });
+    }
+
+    private function _registerGc(): void
+    {
+        Event::on(
+            Gc::class,
+            Gc::EVENT_RUN,
+            function(Event $event) {
+                $this->getLogs()->prune();
+            }
+        );
     }
 }

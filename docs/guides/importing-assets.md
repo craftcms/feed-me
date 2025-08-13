@@ -20,7 +20,7 @@ This will scan the folder and add images into Craft as assets.
 
 This data is what we’ll use for this guide:
 
-::: code
+::: code-group
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <Images>

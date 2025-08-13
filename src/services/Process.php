@@ -5,9 +5,11 @@ namespace craft\feedme\services;
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
+use craft\base\ElementInterface as CraftElementInterface;
 use craft\elements\User;
 use craft\errors\ShellCommandException;
 use craft\feedme\base\ElementInterface;
+use craft\feedme\events\CompareContentEvent;
 use craft\feedme\events\FeedProcessEvent;
 use craft\feedme\helpers\DataHelper;
 use craft\feedme\helpers\DuplicateHelper;
@@ -31,6 +33,12 @@ class Process extends Component
     public const EVENT_STEP_AFTER_ELEMENT_SAVE = 'onStepElementSave';
     public const EVENT_AFTER_PROCESS_FEED = 'onAfterProcessFeed';
 
+    /**
+     * @event CompareContentEvent The event that is triggered before content is compared to check for changes.
+     * @since 5.12.0
+     */
+    public const EVENT_COMPARE_CONTENT = 'onCompareContent';
+
 
     // Properties
     // =========================================================================
@@ -38,17 +46,12 @@ class Process extends Component
     /**
      * @var
      */
-    private mixed $_time_start = null;
+    public mixed $time_start = null;
 
     /**
      * @var ElementInterface
      */
     private ElementInterface $_service;
-
-    /**
-     * @var array
-     */
-    private array $_data;
 
 
     // Public Methods
@@ -81,15 +84,34 @@ class Process extends Component
             $gc = Craft::$app->getGc();
             $gc->deleteAllTrashed = true;
             $gc->run(true);
+
+            // close DB connection so that \PDO::ATTR_EMULATE_PREPARES is set back to false;
+            // https://github.com/yiisoft/yii2/blob/2.0.52/framework/db/pgsql/QueryBuilder.php#L225
+            // this caused an SQL error when using pgsql and attempting to match existing elements
+            // based on e.g. title that consists of only a number;
+            // "SQLSTATE[42883]: Undefined function: 7 ERROR: operator does not exist: character varying = bigint LINE 8"
+            // "HINT: No operator matches the given name and argument types. You might need to add explicit type casts."
+            Craft::$app->getDb()->close();
+        } else {
+            Plugin::getInstance()->getLogs()->prune();
         }
 
-        $this->_data = $feedData;
+        // Set our start time to track feed processing time
+        $this->time_start = microtime(true);
+    }
+
+    /**
+     * @param FeedModel $feed
+     * @param array $feedData
+     * @return array
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function getFeedSettings(FeedModel $feed, array $feedData)
+    {
+        $data = $feedData;
         $this->_service = $feed->element;
 
         $return = $feed->attributes;
-
-        // Set our start time to track feed processing time
-        $this->_time_start = microtime(true);
 
         App::maxPowerCaptain();
 
@@ -133,35 +155,10 @@ class Process extends Component
             $return['existingElements'] = $query->ids();
         }
 
-        // Our main data-parsing function. Handles the actual data values, defaults and field options
-        foreach ($feedData as $key => $nodeData) {
-            if (!is_array($nodeData)) {
-                $nodeData = [$nodeData];
-            }
-
-            $this->_data[$key] = Hash::flatten($nodeData, '/');
-        }
-
-        $this->_data = array_values($this->_data);
-
-        // Fire an 'onBeforeProcessFeed' event
-        $event = new FeedProcessEvent([
-            'feed' => $feed,
-            'feedData' => $this->_data,
-        ]);
-
-        $this->trigger(self::EVENT_BEFORE_PROCESS_FEED, $event);
-
-        if (!$event->isValid) {
-            return;
-        }
-
-        // Allow event to modify the feed data
-        $this->_data = $event->feedData;
-
         // Return the feed data
-        $return['feedData'] = $this->_data;
+        $return['feedData'] = $data;
 
+        Plugin::$stepKey = null;
         Plugin::info('Finished preparing for feed processing.');
 
         return $return;
@@ -172,14 +169,16 @@ class Process extends Component
      * @param $feed
      * @param $processedElementIds
      * @param $feedData
+     * @param $batchIndex
      * @return mixed|void
      * @throws \Exception
      */
-    public function processFeed($step, $feed, &$processedElementIds, $feedData = null)
+    public function processFeed($step, $feed, &$processedElementIds, $feedData, $batchIndex = 0)
     {
         $attributeData = [];
         $fieldData = [];
         $nativeFieldData = [];
+        $batchIndex++;
 
         // We can opt-out of updating certain elements if a field is switched on
         $skipUpdateFieldHandle = Plugin::$plugin->service->getConfig('skipUpdateFieldHandle', $feed['id']);
@@ -198,18 +197,15 @@ class Process extends Component
             Plugin::error('Error `{i}`.', ['i' => Json::encode($step)]);
         }
 
-        if (!is_array($this->_data) || empty($this->_data[0])) {
+        if (!is_array($feedData) || empty($feedData)) {
             Plugin::info('There is no data in the feed to process.');
             return;
         }
 
-        Plugin::info('Starting processing of node `#{i}`.', ['i' => ($step + 1)]);
+        Plugin::info('Starting processing of node `#{i}` in batch `{j}`.', ['i' => ($step + 1), 'j' => $batchIndex]);
 
         // Set up a model for this Element Type
         $element = $this->_service->setModel($feed);
-
-        // From the raw data in our feed, we need to fix it up so its Craft-ready for the element and fields
-        $feedData = $feedData ?? $this->_data[$step];
 
         // We need to first find a potentially existing element, and to do that, we need to prep just the fields
         // that are selected as the unique identifier. We prep everything else later on.
@@ -492,7 +488,10 @@ class Process extends Component
             $unchangedContent = DataHelper::compareElementContent($contentData, $existingElement);
 
             if ($unchangedContent) {
-                $info = Craft::t('feed-me', 'Node `#{i}` skipped. No content has changed.', ['i' => ($step + 1)]);
+                $info = Craft::t(
+                    'feed-me',
+                    'Node `#{i}` in batch `{j}` skipped. No content has changed.',
+                    ['i' => ($step + 1), 'j' => $batchIndex]);
 
                 Plugin::info($info);
                 Plugin::debug($info);
@@ -540,7 +539,7 @@ class Process extends Component
             // Store our successfully processed element for feedback in logs, but also in case we're deleting
             $processedElementIds[] = $element->id;
 
-            Plugin::info('Finished processing of node `#{i}`.', ['i' => ($step + 1)]);
+            Plugin::info('Finished processing of node `#{i}` in batch `{j}`.', ['i' => ($step + 1), 'j' => $batchIndex]);
 
             // Sleep if required
             $sleepTime = Plugin::$plugin->service->getConfig('sleepTime', $feed['id']);
@@ -563,8 +562,9 @@ class Process extends Component
      * @param $settings
      * @param $feed
      * @param $processedElementIds
+     * @param $startTime
      */
-    public function afterProcessFeed($settings, $feed, $processedElementIds): void
+    public function afterProcessFeed($settings, $feed, $processedElementIds, $startTime = null): void
     {
         if ((int)DuplicateHelper::isDelete($feed) + (int)DuplicateHelper::isDisable($feed) + (int)DuplicateHelper::isDisableForSite($feed) > 1) {
             Plugin::info("You can't have Delete and Disabled enabled at the same time as an Import Strategy.");
@@ -598,7 +598,8 @@ class Process extends Component
 
         // Log the total time taken to process the feed
         $time_end = microtime(true);
-        $execution_time = number_format(($time_end - $this->_time_start), 2);
+        $time_start = $startTime ?? $this->time_start;
+        $execution_time = number_format(($time_end - $time_start), 2);
 
         Plugin::$stepKey = null;
 
@@ -641,10 +642,11 @@ class Process extends Component
             return;
         }
 
-        $feedSettings = $this->beforeProcessFeed($feed, $feedData);
+        $this->beforeProcessFeed($feed, $feedData);
+        $feedSettings = $this->getFeedSettings($feed, $feedData);
 
         foreach ($feedData as $key => $data) {
-            $this->processFeed($key, $feedSettings, $processedElementIds);
+            $this->processFeed($key, $feedSettings, $processedElementIds, $data);
         }
 
         // Check if we need to paginate the feed to run again
@@ -653,6 +655,40 @@ class Process extends Component
         } else {
             $this->afterProcessFeed($feedSettings, $feed, $processedElementIds);
         }
+    }
+
+    /**
+     * Prepare data for content comparison and allow plugins to do so via an event.
+     *
+     * @param array $content
+     * @param CraftElementInterface $element
+     * @param string $key
+     * @param mixed $existingValue
+     * @param mixed $newValue
+     * @return mixed
+     * @since 5.12.0
+     */
+    public function onCompareContent(array $content, CraftElementInterface $element, string $key, mixed $existingValue, mixed $newValue): mixed
+    {
+        [$existingValue, $newValue] = DataHelper::prepDatesForComparison($existingValue, $newValue);
+
+        if ($this->hasEventHandlers(self::EVENT_COMPARE_CONTENT)) {
+            $event = new CompareContentEvent([
+                'content' => $content,
+                'element' => $element,
+                'handle' => $key,
+                'existingValue' => $existingValue,
+                'newValue' => $newValue,
+            ]);
+
+            $this->trigger(self::EVENT_COMPARE_CONTENT, $event);
+
+            // Allow event to overwrite existing and new value to be used for comparison
+            return [$event->existingValue, $event->newValue];
+        }
+
+        // Allow event to overwrite existing and new value to be used for comparison
+        return [$existingValue, $newValue];
     }
 
 
@@ -667,6 +703,11 @@ class Process extends Component
      */
     private function _backupBeforeFeed($feed): void
     {
+        if (Craft::$app->getConfig()->getGeneral()->backupCommand === false) {
+            Plugin::info('Database not backed up because the backup command is false.');
+            return;
+        }
+
         $logKey = StringHelper::randomString(20);
 
         $limit = Plugin::$plugin->service->getConfig('backupLimit', $feed['id']);

@@ -1,5 +1,9 @@
 # About Feed Me
 
+::: warning
+You are viewing documentation for Feed Me 4.x and 5.x. [Click here](https://docs.craftcms.com/feed-me/v6) to view the latest version (6.x, compatible with Craft 5.x). Most concepts are portable between versions, but only the latest documentation is receiving updates.
+:::
+
 Feed Me is a Craft plugin for super-simple importing of content, either once-off or at regular intervals. With support for XML, RSS, ATOM, CSV or JSON feeds, you'll be able to import your content as Entries, Categories, Craft Commerce Products (and variants), and more.
 
 ## Features

@@ -8,14 +8,17 @@ use craft\feedme\Plugin;
 use craft\fieldlayoutelements\assets\AltField;
 use craft\fields\Checkboxes;
 use craft\fields\Color;
+use craft\fields\Country;
 use craft\fields\Date;
 use craft\fields\Dropdown;
 use craft\fields\Email;
 use craft\fields\Lightswitch;
+use craft\fields\Money;
 use craft\fields\MultiSelect;
 use craft\fields\Number;
 use craft\fields\PlainText;
 use craft\fields\RadioButtons;
+use craft\fields\Time;
 use craft\fields\Url;
 use craft\helpers\ArrayHelper;
 use craft\helpers\DateTimeHelper;
@@ -25,6 +28,7 @@ use craft\models\CategoryGroup;
 use craft\models\Section;
 use craft\models\TagGroup;
 use DateTime;
+use Illuminate\Support\Collection;
 use yii\di\ServiceLocator;
 
 /**
@@ -56,8 +60,12 @@ class FeedMeVariable extends ServiceLocator
         $tabs = [
             'feeds' => ['label' => Craft::t('feed-me', 'Feeds'), 'url' => UrlHelper::cpUrl('feed-me/feeds')],
             'logs' => ['label' => Craft::t('feed-me', 'Logs'), 'url' => UrlHelper::cpUrl('feed-me/logs')],
-            'settings' => ['label' => Craft::t('feed-me', 'Settings'), 'url' => UrlHelper::cpUrl('feed-me/settings')],
+            'utilities' => ['label' => Craft::t('feed-me', 'Utilities'), 'url' => UrlHelper::cpUrl('feed-me/utilities')],
         ];
+
+        if (Craft::$app->getUser()->getIsAdmin() && Craft::$app->getConfig()->getGeneral()->allowAdminChanges) {
+            $tabs['settings'] = ['label' => Craft::t('feed-me', 'Settings'), 'url' => UrlHelper::cpUrl('feed-me/settings')];
+        }
 
         if (!is_array($enabledTabs)) {
             return $tabs;
@@ -231,7 +239,7 @@ class FeedMeVariable extends ServiceLocator
             $section = $this->getEntrySourcesByField($field)[0] ?? null;
 
             if ($section) {
-                $source = Craft::$app->getSections()->getEntryTypeById($section->id);
+                $source = $section->getEntryTypes()[0] ?? null;
             }
         } elseif ($type === 'craft\fields\Tags') {
             $source = $this->getTagSourcesByField($field);
@@ -294,7 +302,11 @@ class FeedMeVariable extends ServiceLocator
 
     public function fieldCanBeUniqueId($field): bool
     {
-        $type = $field['type'] ?? 'attribute';
+        try {
+            $type = $field['type'] ?? 'attribute';
+        } catch (\Throwable $e) {
+            return false;
+        }
 
         if (isset($field['type']) && $field['handle'] === 'parent') {
             $type = 'parent';
@@ -345,18 +357,45 @@ class FeedMeVariable extends ServiceLocator
         $supportedSubFields = [
             Checkboxes::class,
             Color::class,
+            Country::class,
             Date::class,
             Dropdown::class,
+            Email::class,
             Lightswitch::class,
+            Money::class,
             MultiSelect::class,
             Number::class,
             PlainText::class,
             RadioButtons::class,
+            Time::class,
+            Url::class,
             'craft\ckeditor\Field',
             'craft\redactor\Field',
             AltField::class,
         ];
 
         return in_array($class, $supportedSubFields, true);
+    }
+
+    /**
+     * Check if the only sources set for a relation field are custom ones.
+     *
+     * @param mixed $field
+     * @return bool
+     */
+    public function fieldHasOnlyCustomSources(mixed $field = null): bool
+    {
+        if ($field === null) {
+            return false;
+        }
+
+        if (!isset($field['sources'])) {
+            return false;
+        }
+
+        $sources = new Collection($field['sources']);
+        $nativeSources = $sources->filter(fn(string $source) => !str_starts_with($source, 'custom:'));
+
+        return $nativeSources->isEmpty();
     }
 }

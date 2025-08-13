@@ -53,10 +53,25 @@ class AssetHelper
             return fclose($fp);
         }
 
+        $fp = fopen($dstName, 'wb');
+
+        $assetDownloadGuzzle = Plugin::$plugin->service->getConfig('assetDownloadGuzzle', $feedId);
+        if ($assetDownloadGuzzle) {
+            $response = null;
+            $client = Plugin::$plugin->service->createGuzzleClient($feedId);
+            try {
+                $response = $client->get($srcName, ['sink' => $fp]);
+            } catch (Throwable $e) {
+            }
+
+            fclose($fp);
+
+            return $response?->getStatusCode() === 200;
+        }
+
         $newChunkSize = $chunkSize * (1024 * 1024);
         $bytesCount = 0;
         $handle = fopen($srcName, 'rb');
-        $fp = fopen($dstName, 'wb');
 
         if ($handle === false) {
             return false;

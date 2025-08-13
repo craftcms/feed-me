@@ -21,6 +21,7 @@
 {% set title = (feed.id) ? feed.name : 'Create a new feed'|t('feed-me') %}
 {% set noTabs = true %}
 {% set fullPageForm = true %}
+{% set backupsDisabled = craft.app.config.general.backupCommand is same as(false)  %}
 
 {% set buttons %}
     <div class="buttons">
@@ -206,6 +207,9 @@
         instructions: 'Perform a full backup each time this feed is processed.'|t('feed-me'),
         name: 'backup',
         on: (feed.id) ? feed.backup : true,
+        containerAttributes: backupsDisabled ? {class: ['disabled']} : {},
+        tip: backupsDisabled ? 'Backups are disabled while the backup command is `false`.'|t('feed-me'),
+        disabled: backupsDisabled,
     }) }}
 
     {{ forms.lightswitchField({
