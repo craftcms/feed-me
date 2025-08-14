@@ -4,13 +4,13 @@ namespace craft\feedme\fieldlayoutelements\addresses;
 
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
-use craft\fieldlayoutelements\addresses\AddressField as CraftAddressField;
+use craft\fieldlayoutelements\FullNameField as CraftFullNameField;
 
 /**
  *
  * @property-read string $mappingTemplate
  */
-class AddressField extends Field implements FieldInterface
+class FullNameField extends Field implements FieldInterface
 {
     // Properties
     // =========================================================================
@@ -18,12 +18,12 @@ class AddressField extends Field implements FieldInterface
     /**
      * @var string
      */
-    public static string $name = 'AddressField';
+    public static string $name = 'FullNameField';
 
     /**
      * @var string
      */
-    public static string $class = CraftAddressField::class;
+    public static string $class = CraftFullNameField::class;
 
 
     // Templates
@@ -34,7 +34,7 @@ class AddressField extends Field implements FieldInterface
      */
     public function getMappingTemplate(): string
     {
-        return 'feed-me/_includes/fieldlayoutelements/addresses/address';
+        return 'feed-me/_includes/fieldlayoutelements/full-name';
     }
 
     // Public Methods

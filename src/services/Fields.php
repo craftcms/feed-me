@@ -10,6 +10,8 @@ use craft\errors\MissingComponentException;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\events\FieldEvent;
 use craft\feedme\events\RegisterFeedMeFieldsEvent;
+use craft\feedme\fieldlayoutelements\addresses\FullNameField;
+use craft\feedme\fieldlayoutelements\addresses\LatLongField;
 use craft\feedme\fieldlayoutelements\assets\Alt;
 use craft\feedme\fieldlayoutelements\users\Addresses;
 use craft\feedme\fields\Assets;
@@ -209,6 +211,8 @@ class Fields extends Component
             'nativeFields' => [
                 Addresses::class, // user addresses
                 AddressField::class, // address field within user addresses
+                LatLongField::class, // lat/long field within user addresses
+                FullNameField::class, // full name field within user addresses
                 Alt::class,
             ],
         ]);
