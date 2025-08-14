@@ -8,6 +8,7 @@ use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
 use craft\fields\BaseRelationField;
 use craft\fields\Categories;
+use craft\fieldlayoutelements\assets\AltField;
 use craft\fields\Checkboxes;
 use craft\fields\Color;
 use craft\fields\Country;
@@ -25,6 +26,7 @@ use craft\fields\RadioButtons;
 use craft\fields\Time;
 use craft\fields\Url;
 use craft\fields\Users;
+use craft\helpers\ArrayHelper;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Html;
 use craft\helpers\UrlHelper;
@@ -211,6 +213,7 @@ class FeedMeVariable extends ServiceLocator
             Url::class,
             'craft\ckeditor\Field',
             'craft\redactor\Field',
+            AltField::class,
         ];
 
         return in_array($class, $supportedSubFields, true);

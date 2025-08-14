@@ -13,4 +13,9 @@ class RegisterFeedMeFieldsEvent extends Event
      * @var array
      */
     public array $fields = [];
+
+    /**
+     * @var array
+     */
+    public array $nativeFields = [];
 }
