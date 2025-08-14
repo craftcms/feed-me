@@ -42,6 +42,7 @@ use craft\feedme\fields\Tags;
 use craft\feedme\fields\Time;
 use craft\feedme\fields\TypedLink;
 use craft\feedme\fields\Users;
+use craft\feedme\fieldlayoutelements\addresses\AddressField;
 use craft\helpers\Component as ComponentHelper;
 use yii\base\InvalidConfigException;
 
@@ -206,8 +207,9 @@ class Fields extends Component
 
         $event = new RegisterFeedMeFieldsEvent([
             'nativeFields' => [
-                Addresses::class,
-                Alt::class
+                Addresses::class, // user addresses
+                AddressField::class, // address field within user addresses
+                Alt::class,
             ],
         ]);
 

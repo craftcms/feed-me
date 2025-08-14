@@ -94,8 +94,8 @@ class Addresses extends Field implements FieldInterface
         $attributeValues = [];
         foreach ($nativeFields as $fieldHandle => $fieldInfo) {
             $default = Hash::get($fieldInfo, 'default');
-            //$fieldValue = DataHelper::fetchArrayValue($this->feedData, $fieldInfo);
-            $fieldValue = DataHelper::fetchValue($this->feedData, $fieldInfo, $this->feed);
+            $fieldValue = DataHelper::fetchArrayValue($this->feedData, $fieldInfo);
+            //$fieldValue = DataHelper::fetchValue($this->feedData, $fieldInfo, $this->feed);
 
             // Find the class to deal with the attribute
             $name = 'parse' . ucwords($fieldHandle);
@@ -138,7 +138,7 @@ class Addresses extends Field implements FieldInterface
                 $node = Hash::get($fieldInfo, 'node');
                 if ($node) {
                     $nodeSegments = explode('/', $node);
-                    $regex = str_replace('//', '/', implode('\/\d?\/', $nodeSegments));
+                    $regex = '^' . str_replace('//', '/', implode('\/\d?\/', $nodeSegments)) . '$';
                     $matches = preg_grep('/' . $regex . '/', array_keys($this->feedData));
                     if (count($matches) > $noAddresses) {
                         $noAddresses = count($matches);

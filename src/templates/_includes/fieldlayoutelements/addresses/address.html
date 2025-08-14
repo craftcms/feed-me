@@ -33,11 +33,11 @@
     'sortingCode': 'Sorting Code'|t('feed-me'),
     'addressLine1': 'Address Line 1'|t('feed-me'),
     'addressLine2': 'Address Line 2'|t('feed-me'),
-    'organization': 'Organization'|t('feed-me'),
+} %}
+{#'organization': 'Organization'|t('feed-me'),
     'givenName': 'Given Name'|t('feed-me'),
     'additionalName': 'Additional Name'|t('feed-me'),
-    'familyName': 'Family Name'|t('feed-me'),
-} %}
+    'familyName': 'Family Name'|t('feed-me'),#}
 {% set path = prefixPath|merge(['nativeFields', nativeField.attribute]) %}
 {% for handle, label in addressFields %}
     {% set path = prefixPath|merge(['nativeFields', handle]) %}
