@@ -10,6 +10,7 @@ use craft\errors\MissingComponentException;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\events\FieldEvent;
 use craft\feedme\events\RegisterFeedMeFieldsEvent;
+use craft\feedme\fieldlayoutelements\addresses\AddressField;
 use craft\feedme\fieldlayoutelements\addresses\FullNameField;
 use craft\feedme\fieldlayoutelements\addresses\LatLongField;
 use craft\feedme\fieldlayoutelements\assets\Alt;
@@ -44,7 +45,6 @@ use craft\feedme\fields\Tags;
 use craft\feedme\fields\Time;
 use craft\feedme\fields\TypedLink;
 use craft\feedme\fields\Users;
-use craft\feedme\fieldlayoutelements\addresses\AddressField;
 use craft\helpers\Component as ComponentHelper;
 use yii\base\InvalidConfigException;
 
