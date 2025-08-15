@@ -619,6 +619,18 @@ class Process extends Component
             return;
         }
 
+        $data = $feedData;
+
+        foreach ($feedData as $key => $nodeData) {
+            if (!is_array($nodeData)) {
+                $nodeData = [$nodeData];
+            }
+
+            $data[$key] = Hash::flatten($nodeData, '/');
+        }
+
+        $feedData = array_values($data);
+
         $this->beforeProcessFeed($feed, $feedData);
         $feedSettings = $this->getFeedSettings($feed, $feedData);
 
