@@ -15,6 +15,7 @@ use craft\fields\Number;
 use craft\fields\PlainText;
 use craft\fields\RadioButtons;
 use craft\fields\Url;
+use craft\helpers\ArrayHelper;
 use craft\models\CategoryGroup;
 use craft\models\Section;
 use craft\models\TagGroup;
@@ -135,7 +136,7 @@ class FieldHelper
         }
 
         if (($fieldLayout = Craft::$app->getFields()->getLayoutById($source->fieldLayoutId)) !== null) {
-            return $fieldLayout->getCustomFields();
+            return ArrayHelper::merge($fieldLayout->getCustomFields(), $fieldLayout->getAvailableNativeFields());
         }
 
         return null;

@@ -10,6 +10,7 @@ use craft\elements\Asset as AssetElement;
 use craft\elements\User as UserElement;
 use craft\errors\VolumeException;
 use craft\feedme\base\Element;
+use craft\feedme\fields\Addresses;
 use craft\feedme\helpers\AssetHelper;
 use craft\feedme\helpers\DataHelper;
 use craft\helpers\UrlHelper;
@@ -335,6 +336,18 @@ class User extends Element
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
 
         $this->status = $value;
+    }
+
+    protected function parseAddresses($feedData, $fieldInfo): mixed
+    {
+        $class = new Addresses();
+        $class->feedData = $feedData;
+        $class->fieldInfo = $fieldInfo;
+        $class->element = $this->element;
+
+        $parsedValue = $class->parseField();
+
+        return $parsedValue;
     }
 
     // Private Methods

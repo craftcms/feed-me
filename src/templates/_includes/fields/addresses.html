@@ -26,11 +26,23 @@
                 <label class="">{{ name }}</label>
             </div>
 
-{#            <div class="additional-mapping-fields">#}
-{#                {% namespace 'fieldMapping[' ~ prefixPath|join('][') ~ ']' %}#}
-{#                    <input type="text" name="nativeField" value="{{ className(nativeField) }}">#}
-{#                {% endnamespace %}#}
-{#            </div>#}
+            <div class="additional-mapping-fields">
+                {% if attribute is defined and attribute %}
+                    {% namespace 'fieldMapping[' ~ prefixPath|join('][') ~ ']' %}
+                        <input type="text" name="attribute" value="true">
+                    {% endnamespace %}
+                {% endif %}
+                {% if nativeField is defined %}
+                    {% namespace 'fieldMapping[' ~ prefixPath|join('][') ~ ']' %}
+                        <input type="text" name="nativeField" value="{{ nativeField is string ? nativeField : className(nativeField) }}">
+                    {% endnamespace %}
+                {% endif %}
+                {% if field is defined %}
+                    {% namespace 'fieldMapping[' ~ prefixPath|join('][') ~ ']' %}
+                        <input type="text" name="field" value="{{ className(field) }}">
+                    {% endnamespace %}
+                {% endif %}
+            </div>
         </div>
     </td>
 </tr>

@@ -13,7 +13,7 @@ use craft\feedme\events\RegisterFeedMeFieldsEvent;
 use craft\feedme\fieldlayoutelements\addresses\FullNameField;
 use craft\feedme\fieldlayoutelements\addresses\LatLongField;
 use craft\feedme\fieldlayoutelements\assets\Alt;
-use craft\feedme\fieldlayoutelements\users\Addresses;
+use craft\feedme\fields\Addresses;
 use craft\feedme\fields\Assets;
 use craft\feedme\fields\CalendarEvents;
 use craft\feedme\fields\Categories;
@@ -160,6 +160,7 @@ class Fields extends Component
 
         $event = new RegisterFeedMeFieldsEvent([
             'fields' => [
+                Addresses::class,
                 Assets::class,
                 Categories::class,
                 Checkboxes::class,
@@ -211,10 +212,9 @@ class Fields extends Component
 
         $event = new RegisterFeedMeFieldsEvent([
             'nativeFields' => [
-                Addresses::class, // user addresses
-                AddressField::class, // address field within user addresses
-                LatLongField::class, // lat/long field within user addresses
-                FullNameField::class, // full name field within user addresses
+                AddressField::class, // address field within addresses
+                LatLongField::class, // lat/long field within addresses
+                FullNameField::class, // full name field within addresses
                 Alt::class,
             ],
         ]);
