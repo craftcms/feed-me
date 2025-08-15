@@ -1,5 +1,9 @@
 # Release Notes for Feed Me
 
+## Unreleased
+
+- Fixed a bug where you could not import Commerce Variant data into a field that specified Product Type sources. ([#1652](https://github.com/craftcms/feed-me/pull/1652))
+
 ## 5.12.0 - 2025-08-10
 
 - Added a `Process::EVENT_COMPARE_CONTENT` to give plugins a chance to manipulate feed data before any content comparison is done. ([#1623](https://github.com/craftcms/feed-me/pull/1623))
