@@ -7,6 +7,7 @@ use Craft;
 use craft\base\Element;
 use craft\base\ElementInterface;
 use craft\elements\Address as AddressElement;
+use craft\elements\ElementCollection;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\helpers\DataHelper;
@@ -79,11 +80,10 @@ class Addresses extends Field implements FieldInterface
                 $this->populateElementFields([$element->id], $i);
             }
 
-            // returning just the address id
-            $fieldValue[] = $element->id;
+            $fieldValue[] = $element;
         }
 
-        return $fieldValue;
+        return ElementCollection::make($fieldValue);
     }
 
     private function handleNativeFields(ElementInterface $element, array $nativeFields, int $nodeKey): void
