@@ -6,6 +6,7 @@ use Craft;
 use craft\feedme\helpers\FieldHelper;
 use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
+use craft\fieldlayoutelements\assets\AltField;
 use craft\fields\BaseRelationField;
 use craft\fields\Categories;
 use craft\fields\Checkboxes;
@@ -211,6 +212,7 @@ class FeedMeVariable extends ServiceLocator
             Url::class,
             'craft\ckeditor\Field',
             'craft\redactor\Field',
+            AltField::class,
         ];
 
         return in_array($class, $supportedSubFields, true);

@@ -10,6 +10,11 @@ use craft\errors\MissingComponentException;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\events\FieldEvent;
 use craft\feedme\events\RegisterFeedMeFieldsEvent;
+use craft\feedme\fieldlayoutelements\addresses\AddressField;
+use craft\feedme\fieldlayoutelements\addresses\FullNameField;
+use craft\feedme\fieldlayoutelements\addresses\LatLongField;
+use craft\feedme\fieldlayoutelements\assets\Alt;
+use craft\feedme\fields\Addresses;
 use craft\feedme\fields\Assets;
 use craft\feedme\fields\CalendarEvents;
 use craft\feedme\fields\Categories;
@@ -57,6 +62,15 @@ class Fields extends Component
     public const EVENT_BEFORE_PARSE_FIELD = 'onBeforeParseField';
     public const EVENT_AFTER_PARSE_FIELD = 'onAfterParseField';
 
+    /**
+     * @since 6.10.0
+     */
+    public const EVENT_BEFORE_PARSE_NATIVE_FIELD = 'onBeforeParseNativeField';
+    /**
+     * @since 6.10.0
+     */
+    public const EVENT_AFTER_PARSE_NATIVE_FIELD = 'onAfterParseNativeField';
+
 
     // Properties
     // =========================================================================
@@ -65,6 +79,11 @@ class Fields extends Component
      * @var array
      */
     private array $_fields = [];
+
+    /**
+     * @var array
+     */
+    private array $_nativeFields = [];
 
     // Public Methods
     // =========================================================================
@@ -88,6 +107,19 @@ class Fields extends Component
 
             $this->_fields[$handle] = $field;
         }
+
+        foreach ($this->getRegisteredNativeFields() as $fieldClass) {
+            $field = $this->createField($fieldClass);
+
+            // Does this native field exist in Craft right now?
+            if (!class_exists($field::$class)) {
+                continue;
+            }
+
+            $handle = $field::$class;
+
+            $this->_nativeFields[$handle] = $field;
+        }
     }
 
     /**
@@ -98,6 +130,17 @@ class Fields extends Component
     public function getRegisteredField($handle): mixed
     {
         return $this->_fields[$handle] ?? $this->createField(DefaultField::class);
+    }
+
+    /**
+     * @param $handle
+     * @return ComponentInterface|mixed
+     * @throws InvalidConfigException
+     * @since 6.10.0
+     */
+    public function getRegisteredNativeField($handle): mixed
+    {
+        return $this->_nativeFields[$handle] ?? $this->createField(DefaultField::class);
     }
 
     /**
@@ -125,6 +168,7 @@ class Fields extends Component
 
         $event = new RegisterFeedMeFieldsEvent([
             'fields' => [
+                Addresses::class,
                 Assets::class,
                 Categories::class,
                 Checkboxes::class,
@@ -162,6 +206,31 @@ class Fields extends Component
         $this->trigger(self::EVENT_REGISTER_FEED_ME_FIELDS, $event);
 
         return $event->fields;
+    }
+
+
+    /**
+     * @return array
+     * @since 6.10.0
+     */
+    public function getRegisteredNativeFields(): array
+    {
+        if (count($this->_nativeFields)) {
+            return $this->_nativeFields;
+        }
+
+        $event = new RegisterFeedMeFieldsEvent([
+            'nativeFields' => [
+                AddressField::class, // address field within addresses
+                LatLongField::class, // lat/long field within addresses
+                FullNameField::class, // full name field within addresses
+                Alt::class,
+            ],
+        ]);
+
+        $this->trigger(self::EVENT_REGISTER_FEED_ME_FIELDS, $event);
+
+        return $event->nativeFields;
     }
 
     /**
@@ -250,6 +319,56 @@ class Fields extends Component
             'parsedValue' => $parsedValue,
         ]);
         $this->trigger(self::EVENT_AFTER_PARSE_FIELD, $event);
+        return $event->parsedValue;
+    }
+
+    /**
+     * @param $feed
+     * @param $element
+     * @param $feedData
+     * @param $fieldHandle
+     * @param $fieldInfo
+     * @return mixed
+     * @since 6.10.0
+     */
+    public function parseNativeField($feed, $element, $feedData, $fieldHandle, $fieldInfo): mixed
+    {
+        if ($this->hasEventHandlers(self::EVENT_BEFORE_PARSE_NATIVE_FIELD)) {
+            $this->trigger(self::EVENT_BEFORE_PARSE_NATIVE_FIELD, new FieldEvent([
+                'feedData' => $feedData,
+                'fieldHandle' => $fieldHandle,
+                'fieldInfo' => $fieldInfo,
+                'element' => $element,
+                'feed' => $feed,
+            ]));
+        }
+
+        $fieldClassHandle = Hash::get($fieldInfo, 'nativeField');
+
+        $fieldLayout = Craft::$app->getFields()->getLayoutByType($element::class);
+        $field = $fieldLayout->getField($fieldHandle);
+
+        // Find the class to deal with the attribute
+        $class = $this->getRegisteredNativeField($fieldClassHandle);
+        $class->feedData = $feedData;
+        $class->fieldHandle = $fieldHandle;
+        $class->fieldInfo = $fieldInfo;
+        $class->field = $field;
+        $class->element = $element;
+        $class->feed = $feed;
+
+        // Get that sweet data
+        $parsedValue = $class->parseField();
+
+        $event = new FieldEvent([
+            'feedData' => $feedData,
+            'fieldHandle' => $fieldHandle,
+            'fieldInfo' => $fieldInfo,
+            'element' => $element,
+            'feed' => $feed,
+            'parsedValue' => $parsedValue,
+        ]);
+        $this->trigger(self::EVENT_AFTER_PARSE_NATIVE_FIELD, $event);
         return $event->parsedValue;
     }
 }

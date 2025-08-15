@@ -128,6 +128,30 @@
     </tbody>
 </table>
 
+
+<h2>{{ 'Addresses'|t('feed-me') }}</h2>
+
+<table class="feedme-mapping data fullwidth collapsible">
+    <thead>
+        <th>{{ 'Field'|t('feed-me') }}</th>
+        <th>{{ 'Feed Element'|t('feed-me') }}</th>
+        <th>{{ 'Default Value'|t('feed-me') }}</th>
+    </thead>
+    <tbody>
+        {% set template = 'addresses' %}
+        {% set variables = {
+            name: 'Addresses',
+            handle: 'addresses',
+            feed: feed,
+            feedData: feedData,
+            attribute: true
+        } %}
+
+        {% include 'feed-me/_includes/fields/' ~ template ignore missing with variables only %}
+    </tbody>
+</table>
+
+
 {% set tabs = craft.app.fields.getLayoutByType('craft\\elements\\User').getTabs() %}
 
 {% for tab in tabs %}
@@ -145,9 +169,17 @@
             {% for layoutField in tab.getElements()|filter(e => e is instance of('craft\\fieldlayoutelements\\CustomField')) %}
                 {% set field = layoutField.getField() %}
                 {% set fieldClass = craft.feedme.fields.getRegisteredField(className(field)) %}
-                {% set template = fieldClass.getMappingTemplate() %}
 
-                {% set variables = { name: field.name, handle: field.handle, feed: feed, feedData: feedData, field: field, fieldClass: fieldClass } %}
+                {% set variables = {
+                    name: field.name,
+                    handle: field.handle,
+                    feed: feed,
+                    feedData: feedData,
+                    field: field,
+                    fieldClass: fieldClass
+                } %}
+
+                {% set template = fieldClass.getMappingTemplate() %}
 
                 {% include template ignore missing with variables only %}
             {% endfor %}
