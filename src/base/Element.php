@@ -285,7 +285,7 @@ abstract class Element extends Component implements ElementInterface
     {
         $addressesFields = [];
 
-        foreach($settings['fieldMapping'] as $handle => $value) {
+        foreach ($settings['fieldMapping'] as $handle => $value) {
             if (isset($value['field']) && $value['field'] === Addresses::class) {
                 $addressesFields[] = $handle;
             }
