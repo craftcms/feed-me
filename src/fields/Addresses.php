@@ -7,6 +7,7 @@ use Craft;
 use craft\base\Element;
 use craft\base\ElementInterface;
 use craft\elements\Address as AddressElement;
+use craft\elements\ElementCollection;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\helpers\DataHelper;
@@ -79,12 +80,11 @@ class Addresses extends Field implements FieldInterface
             if ($element && $fields) {
                 $this->populateElementFields([$element->id], $i);
             }
-
-            // returning just the address id for compareElementContent check
-            $fieldValue[] = $element->id;
+            
+            $fieldValue[] = $element;
         }
 
-        return $fieldValue;
+        return ElementCollection::make($fieldValue);
     }
 
     private function handleNativeFields(ElementInterface $element, array $nativeFields, int $nodeKey): void
@@ -160,8 +160,13 @@ class Addresses extends Field implements FieldInterface
     {
         $element = new AddressElement();
         $element->setScenario(Element::SCENARIO_ESSENTIALS);
-        $element->setOwner($this->element);
-        $element->setPrimaryOwner($this->element);
+
+        if ($this->field) {
+            $element->setOwner($this->element);
+            $element->fieldId = $this->field->id;
+        } else {
+            $element->setPrimaryOwner($this->element);
+        }
 
         // native fields have to go first!
         if ($nativeFields) {
