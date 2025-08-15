@@ -1,0 +1,57 @@
+{# ------------------------ #}
+{# Available Variables #}
+{# ------------------------ #}
+{# Attributes: #}
+{# type, name, handle, instructions, attribute, default, feed, feedData #}
+{# ------------------------ #}
+{# Fields: #}
+{# name, handle, instructions, feed, feedData, field, fieldClass #}
+{# ------------------------ #}
+
+{% import 'feed-me/_macros' as feedMeMacro %}
+{% import '_includes/forms' as forms %}
+
+
+{% if path is defined %}
+    {% set prefixPath = path %}
+{% else %}
+    {% set prefixPath = [handle] %}
+{% endif %}
+
+{% set path = prefixPath %}
+{% set variables = {
+    name: 'Full Name',
+    handle: 'fullName',
+    feed: feed,
+    feedData: feedData,
+    attribute: true,
+    path: path,
+} %}
+
+{% include 'feed-me/_includes/fields/default' ignore missing with variables only %}
+
+
+{% set path = prefixPath|slice(0,-1)|merge(['firstName']) %}
+{% set variables = {
+    name: 'First Name',
+    handle: 'firstName',
+    feed: feed,
+    feedData: feedData,
+    attribute: true,
+    path: path,
+} %}
+
+{% include 'feed-me/_includes/fields/default' ignore missing with variables only %}
+
+
+{% set path = prefixPath|slice(0,-1)|merge(['lastName']) %}
+{% set variables = {
+    name: 'Last Name',
+    handle: 'lastName',
+    feed: feed,
+    feedData: feedData,
+    attribute: true,
+    path: path,
+} %}
+
+{% include 'feed-me/_includes/fields/default' ignore missing with variables only %}
