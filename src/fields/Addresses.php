@@ -158,12 +158,10 @@ class Addresses extends Field implements FieldInterface
     {
         $element = new AddressElement();
         $element->setScenario(Element::SCENARIO_ESSENTIALS);
+        $element->setPrimaryOwner($this->element);
 
         if ($this->field) {
-            $element->setOwner($this->element);
             $element->fieldId = $this->field->id;
-        } else {
-            $element->setPrimaryOwner($this->element);
         }
 
         // native fields have to go first!
