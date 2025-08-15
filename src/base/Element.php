@@ -9,7 +9,6 @@ use Craft;
 use craft\base\Component;
 use craft\base\Element as BaseElement;
 use craft\base\ElementInterface as CraftElementInterface;
-use craft\db\Table;
 use craft\elements\db\ElementQuery;
 use craft\feedme\events\ElementEvent;
 use craft\feedme\helpers\BaseHelper;
