@@ -1,5 +1,9 @@
 # Release Notes for Feed Me
 
+## Unreleased
+
+- It is now possible to map Promotional Price when importing Commerce Products. ([#1664](https://github.com/craftcms/feed-me/issues/1664))
+
 ## 6.9.0 - 2025-08-10
 
 - Added a `Process::EVENT_COMPARE_CONTENT` to give plugins a chance to manipulate feed data before any content comparison is done. ([#1623](https://github.com/craftcms/feed-me/pull/1623))
