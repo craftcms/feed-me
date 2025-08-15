@@ -1,6 +1,6 @@
 # Release Notes for Feed Me
 
-## Unreleased
+## 6.10.0 - 2025-08-15
 
 - Added support for importing into Craft’s native Alternative Text field for Assets. ([#1470](https://github.com/craftcms/feed-me/pull/1460))
 - Added support for importing into Craft’s native Address field. ([#1470](https://github.com/craftcms/feed-me/pull/1460))
