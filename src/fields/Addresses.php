@@ -72,15 +72,14 @@ class Addresses extends Field implements FieldInterface
         $noAddresses = $this->getNumberOfAddresses($fieldGroups);
 
         for ($i = 0; $i < $noAddresses; $i++) {
-            // we have to find/create Address element here
-            // todo - should we allow finding an existing address? if so, what should we map by? id and custom fields?
+            // we have to create Address element here
             $element = $this->_createElement($nativeFields, $i);
 
             // if we were able to save the address, and we have fields to process, go ahead and do that
             if ($element && $fields) {
                 $this->populateElementFields([$element->id], $i);
             }
-            
+
             $fieldValue[] = $element;
         }
 
@@ -93,7 +92,6 @@ class Addresses extends Field implements FieldInterface
         foreach ($nativeFields as $fieldHandle => $fieldInfo) {
             $default = Hash::get($fieldInfo, 'default');
             $fieldValue = DataHelper::fetchArrayValue($this->feedData, $fieldInfo);
-            //$fieldValue = DataHelper::fetchValue($this->feedData, $fieldInfo, $this->feed);
 
             // Find the class to deal with the attribute
             $name = 'parse' . ucwords($fieldHandle);
