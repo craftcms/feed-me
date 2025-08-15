@@ -338,6 +338,12 @@ class User extends Element
         $this->status = $value;
     }
 
+    /**
+     * @param $feedData
+     * @param $fieldInfo
+     * @return mixed
+     * @since 6.10.0
+     */
     protected function parseAddresses($feedData, $fieldInfo): mixed
     {
         $class = new Addresses();
