@@ -2,10 +2,24 @@
 
 ## Unreleased
 
+- Added support for importing into Craft’s native Alternative Text field for Assets. ([#1470](https://github.com/craftcms/feed-me/pull/1460))
+- Added support for importing into Craft’s native Address field. ([#1470](https://github.com/craftcms/feed-me/pull/1460))
 - Added the ability to map the Promotional Price when importing Commerce Products. ([#1665](https://github.com/craftcms/feed-me/pull/1665))
-- Fixed a PHP error that could occur when importing an array of elements into a related field when using the Debug option. ([#1667](https://github.com/craftcms/feed-me/pull/1667))
+- Added `craft\feedme\base\Field::populateNativeFields()`.
+- Added `craft\feedme\events\RegisterFeedMeFieldsEvent::$nativeFields`.
+- Added `craft\feedme\fieldlayoutelements\addresses\AddressField`.
+- Added `craft\feedme\fieldlayoutelements\addresses\FullNameField`.
+- Added `craft\feedme\fieldlayoutelements\addresses\LatLongField`.
+- Added `craft\feedme\fieldlayoutelements\assets\Alt`.
+- Added `craft\feedme\fieldlayoutelements\users\Addresses`.
+- Added `craft\feedme\services\Fields::EVENT_BEFORE_PARSE_NATIVE_FIELD`.
+- Added `craft\feedme\services\Fields::EVENT_AFTER_PARSE_NATIVE_FIELD`.
+- Added `craft\feedme\services\Fields::getRegisteredNativeField()`.
+- Added `craft\feedme\services\Fields::getRegisteredNativeFields()`.
+- Added `craft\feedme\services\Fields::parseNativeField()`.
 - Fixed a bug where you could not import Commerce Variant data into a field that specified Product Type sources. ([#1652](https://github.com/craftcms/feed-me/pull/1652))
-- Fixed a bug where feed data could differ when running the feed with debugging enabled. ([#1670](https://github.com/craftcms/feed-me/pull/1670)) 
+- Fixed a bug where feed data could differ when running the feed with debugging enabled. ([#1670](https://github.com/craftcms/feed-me/pull/1670))
+- Fixed a PHP error that could occur when importing an array of elements into a related field when using the Debug option. ([#1667](https://github.com/craftcms/feed-me/pull/1667))
 
 ## 6.9.0 - 2025-08-10
 
