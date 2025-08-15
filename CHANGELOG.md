@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Added the ability to map the Promotional Price when importing Commerce Products. ([#1665](https://github.com/craftcms/feed-me/pull/1665))
+- Fixed a PHP error that could occur when importing an array of elements into a related field when using the Debug option. ([#1667](https://github.com/craftcms/feed-me/pull/1667))
 
 ## 6.9.0 - 2025-08-10
 
