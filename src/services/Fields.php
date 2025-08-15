@@ -60,7 +60,13 @@ class Fields extends Component
     public const EVENT_REGISTER_FEED_ME_FIELDS = 'registerFeedMeFields';
     public const EVENT_BEFORE_PARSE_FIELD = 'onBeforeParseField';
     public const EVENT_AFTER_PARSE_FIELD = 'onAfterParseField';
+    /**
+     * @since 5.13.0
+     */
     public const EVENT_BEFORE_PARSE_NATIVE_FIELD = 'onBeforeParseNativeField';
+    /**
+     * @since 5.13.0
+     */
     public const EVENT_AFTER_PARSE_NATIVE_FIELD = 'onAfterParseNativeField';
 
 
@@ -126,8 +132,9 @@ class Fields extends Component
 
     /**
      * @param $handle
-     * @return ComponentInterface|MissingDataType|mixed
+     * @return ComponentInterface|mixed
      * @throws InvalidConfigException
+     * @since 5.13.0
      */
     public function getRegisteredNativeField($handle): mixed
     {
@@ -200,6 +207,7 @@ class Fields extends Component
 
     /**
      * @return array
+     * @since 5.13.0
      */
     public function getRegisteredNativeFields(): array
     {
@@ -318,6 +326,7 @@ class Fields extends Component
      * @param $fieldHandle
      * @param $fieldInfo
      * @return mixed
+     * @since 5.13.0
      */
     public function parseNativeField($feed, $element, $feedData, $fieldHandle, $fieldInfo): mixed
     {

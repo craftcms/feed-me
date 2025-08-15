@@ -7,8 +7,8 @@ use craft\feedme\base\FieldInterface;
 use craft\fieldlayoutelements\addresses\AddressField as CraftAddressField;
 
 /**
- *
  * @property-read string $mappingTemplate
+ * @since 5.13.0
  */
 class AddressField extends Field implements FieldInterface
 {

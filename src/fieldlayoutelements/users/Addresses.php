@@ -15,8 +15,8 @@ use craft\fieldlayoutelements\users\AddressesField as AddressesField;
 use craft\helpers\Json;
 
 /**
- *
  * @property-read string $mappingTemplate
+ * @since 5.13.0
  */
 class Addresses extends Field implements FieldInterface
 {

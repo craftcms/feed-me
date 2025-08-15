@@ -7,8 +7,8 @@ use craft\feedme\base\FieldInterface;
 use craft\fieldlayoutelements\assets\AltField;
 
 /**
- *
  * @property-read string $mappingTemplate
+ * @since 5.13.0
  */
 class Alt extends Field implements FieldInterface
 {
