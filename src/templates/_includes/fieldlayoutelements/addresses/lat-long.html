@@ -1,0 +1,47 @@
+{# ------------------------ #}
+{# Available Variables #}
+{# ------------------------ #}
+{# Attributes: #}
+{# type, name, handle, instructions, attribute, default, feed, feedData #}
+{# ------------------------ #}
+{# Fields: #}
+{# name, handle, instructions, feed, feedData, field, fieldClass #}
+{# ------------------------ #}
+
+{% import 'feed-me/_macros' as feedMeMacro %}
+{% import '_includes/forms' as forms %}
+
+{# Special case when inside another complex field (Matrix) #}
+{% if path is defined %}
+    {% set prefixPath = path %}
+{% else %}
+    {% set prefixPath = [handle] %}
+{% endif %}
+
+{% namespace 'fieldMapping[' ~ prefixPath|join('][') ~ ']' %}
+    <input type="hidden" name="nativeField" value="{{ className(nativeField) }}">
+{% endnamespace %}
+
+{% set path = prefixPath|merge(['nativeFields', 'latitude']) %}
+{% set variables = {
+    name: 'Latitude',
+    handle: 'latitude',
+    feed: feed,
+    feedData: feedData,
+    attribute: true,
+    path: path,
+} %}
+
+{% include 'feed-me/_includes/fields/default' ignore missing with variables only %}
+
+{% set path = prefixPath|merge(['nativeFields', 'longitude']) %}
+{% set variables = {
+    name: 'Longitude',
+    handle: 'longitude',
+    feed: feed,
+    feedData: feedData,
+    attribute: true,
+    path: path,
+} %}
+
+{% include 'feed-me/_includes/fields/default' ignore missing with variables only %}

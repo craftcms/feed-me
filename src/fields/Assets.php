@@ -87,6 +87,7 @@ class Assets extends Field implements FieldInterface
         $upload = Hash::get($this->fieldInfo, 'options.upload');
         $conflict = Hash::get($this->fieldInfo, 'options.conflict');
         $fields = Hash::get($this->fieldInfo, 'fields');
+        $nativeFields = Hash::get($this->fieldInfo, 'nativeFields');
         $node = Hash::get($this->fieldInfo, 'node');
         $nodeKey = $this->getArrayKeyFromNode($node);
 
@@ -259,6 +260,12 @@ class Assets extends Field implements FieldInterface
         // Check for any sub-fields for the element
         if ($fields) {
             $this->populateElementFields($foundElements, $nodeKey);
+        }
+
+        // this is used by the sub-fields of the assets field; not when importing into Asset element directly;
+        // when importing into Asset element directly, src/fieldlayoutelements/assets/Alt.php is used
+        if ($nativeFields) {
+            $this->populateNativeFields($foundElements, $nodeKey);
         }
 
         $foundElements = array_unique($foundElements);
