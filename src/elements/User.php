@@ -161,6 +161,16 @@ class User extends Element
         if ($groupsIds) {
             Craft::$app->users->assignUserToGroups($this->element->id, $groupsIds);
         }
+
+        $addresses = Hash::get($data, 'addresses');
+        if ($addresses) {
+            foreach ($addresses as $address) {
+                if (empty($address->primaryOwnerId)) {
+                    $address->primaryOwnerId = $this->element->id;
+                    Craft::$app->getElements()->saveElement($address);
+                }
+            }
+        }
     }
 
     /**
