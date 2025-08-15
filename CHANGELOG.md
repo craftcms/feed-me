@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Fixed a bug where you could not import Commerce Variant data into a field that specified Product Type sources. ([#1652](https://github.com/craftcms/feed-me/pull/1652))
+- Fixed a bug where feed data could differ when running the feed with debugging enabled. ([#1670](https://github.com/craftcms/feed-me/pull/1670)) 
 
 ## 5.12.0 - 2025-08-10
 
