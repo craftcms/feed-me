@@ -268,7 +268,11 @@ class Entries extends Field implements FieldInterface
                 return FieldHelper::getAllUniqueIdFields();
             }
 
-            $fieldLayout = Craft::$app->getFields()->getLayoutById($entryType->fieldLayoutId);
+            $fieldLayout = null;
+            if ($entryType->fieldLayoutId) {
+                $fieldLayout = Craft::$app->getFields()->getLayoutById($entryType->fieldLayoutId);
+            }
+
             if (!$fieldLayout) {
                 return FieldHelper::getAllUniqueIdFields();
             }
@@ -294,8 +298,12 @@ class Entries extends Field implements FieldInterface
             $entryTypes = Collection::make($entryTypes)->keyBy('id');
 
             foreach ($entryTypes as $entryType) {
-                $fieldLayout = Craft::$app->getFields()->getLayoutById($entryType->fieldLayoutId);
-                $allowedFields = [...$allowedFields, ...$fieldLayout->getCustomFields()];
+                if ($entryType->fieldLayoutId) {
+                    $fieldLayout = Craft::$app->getFields()->getLayoutById($entryType->fieldLayoutId);
+                    if ($fieldLayout) {
+                        $allowedFields = [...$allowedFields, ...$fieldLayout->getCustomFields()];
+                    }
+                }
             }
 
             // if there's a custom source in the mix, we should add all the fields too

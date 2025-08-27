@@ -241,7 +241,11 @@ class Categories extends Field implements FieldInterface
             if (!$categoryGroup) {
                 return FieldHelper::getAllUniqueIdFields();
             }
-            $fieldLayout = Craft::$app->getFields()->getLayoutById($categoryGroup->fieldLayoutId);
+
+            $fieldLayout = null;
+            if ($categoryGroup->fieldLayoutId) {
+                $fieldLayout = Craft::$app->getFields()->getLayoutById($categoryGroup->fieldLayoutId);
+            }
             if (!$fieldLayout) {
                 return FieldHelper::getAllUniqueIdFields();
             }
