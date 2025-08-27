@@ -253,10 +253,15 @@ class Categories extends Field implements FieldInterface
                 return FieldHelper::getAllUniqueIdFields();
             }
             // otherwise get the layout for the group selected in the field's settings
-            return array_filter(
-                FieldHelper::getElementLayoutByField($field::class, $field) ?? [],
-                fn($field) => FieldHelper::fieldCanBeUniqueId($field)
-            );
+            $group = FieldHelper::getCategorySourcesByField($field);
+            if (!$group) {
+                return FieldHelper::getAllUniqueIdFields();
+            }
+
+            $fieldLayout = Craft::$app->getFields()->getLayoutById($group->fieldLayoutId);
+            $allowedFields = $fieldLayout?->getCustomFields() ?? [];
+
+            return array_filter($allowedFields, fn($field) => FieldHelper::fieldCanBeUniqueId($field));
         }
     }
 
