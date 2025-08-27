@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Fixed a PHP error that would occur on the feed mapping page on some installations. ([#1678](https://github.com/craftcms/feed-me/pull/1678))
+- Fixed a PHP error that could occur on the feed mapping page when processing an entry type that has an entries field linked to a single. ([#1675](https://github.com/craftcms/feed-me/pull/1675))
 
 ## 6.10.0 - 2025-08-15
 
