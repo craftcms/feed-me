@@ -219,9 +219,9 @@ class Matrix extends Field implements FieldInterface
             }
         }
 
-        // if there's nothing in the prepped data, return null, as if mapping doesn't exist
+        // if there's nothing in the prepped data, return an empty array, this will remove any existing blocks
         if (empty($preppedData)) {
-            return null;
+            return [];
         }
 
         $expanded = Hash::expand($preppedData);
