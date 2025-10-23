@@ -219,9 +219,11 @@ class Matrix extends Field implements FieldInterface
             }
         }
 
-        // if there's nothing in the prepped data, return null, as if mapping doesn't exist
+        // if there's nothing in the prepped data,
+        // if setEmptyValues is on, return an empty array so that existing blocks are removed,
+        // otherwise return null, as if mapping doesn't exist
         if (empty($preppedData)) {
-            return null;
+            return $this->feed['setEmptyValues'] ? [] : null;
         }
 
         $expanded = Hash::expand($preppedData);
