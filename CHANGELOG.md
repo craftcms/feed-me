@@ -1,5 +1,9 @@
 # Release Notes for Feed Me
 
+## Unreleased
+
+- Fixed an error that could occur when setting up mappings if a field had been deleted, but not removed from the field layout. ([#1687](https://github.com/craftcms/feed-me/pull/1687))
+
 ## 6.10.1 - 2025-08-27
 
 - Fixed a PHP error that would occur on the feed mapping page on some installations. ([#1678](https://github.com/craftcms/feed-me/pull/1678))
