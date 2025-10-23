@@ -1,5 +1,9 @@
 # Release Notes for Feed Me
 
+## Unreleased
+
+- Fixed a bug where some imported assets would end up with a double file extension. ([#1688](https://github.com/craftcms/feed-me/pull/1688))
+
 ## 5.13.0 - 2025-08-15
 
 - Added support for importing into Craft’s native Alternative Text field for Assets. ([#1470](https://github.com/craftcms/feed-me/pull/1460))
