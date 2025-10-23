@@ -16,6 +16,7 @@ use craft\feedme\Plugin;
 use craft\fields\Assets as AssetsField;
 use craft\helpers\Db;
 use craft\helpers\Json;
+use craft\helpers\StringHelper;
 use craft\helpers\UrlHelper;
 
 /**
@@ -187,7 +188,11 @@ class Assets extends Field implements FieldInterface
                         // if we can determine the extension of the remote file, use that extension
                         $remoteUrlExtension = AssetHelper::getRemoteUrlExtension($urlsToUpload[$key]['value']);
                         if (!empty($remoteUrlExtension)) {
-                            $filename .= '.' . $remoteUrlExtension;
+                            $localExtension = StringHelper::toLowerCase(pathinfo($filename, PATHINFO_EXTENSION));
+                            if ($localExtension !== $remoteUrlExtension) {
+                                $filename = pathinfo($filename, PATHINFO_FILENAME);
+                                $filename .= '.' . $remoteUrlExtension;
+                            }
                         }
 
                         $urlsToUpload[$key]['newFilename'] = $filename;
