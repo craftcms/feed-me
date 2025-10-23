@@ -1,6 +1,6 @@
 # Release Notes for Feed Me
 
-## Unreleased
+## 5.13.1 - 2025-10-23
 
 - Fixed a bug where some imported assets would end up with a double file extension. ([#1688](https://github.com/craftcms/feed-me/pull/1688))
 - Fixed a bug where `setEmptyValues` wasn’t being respected for Matrix Blocks in some scenarios. ([#1689](https://github.com/craftcms/feed-me/pull/1689))
