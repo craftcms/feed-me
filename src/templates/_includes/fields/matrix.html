@@ -108,37 +108,39 @@
                     </tr>
 
                     {% for layoutField in tab.getElements()|filter(e => e is instance of('craft\\fieldlayoutelements\\CustomField')) %}
-                        {% set field = layoutField.getField() %}
-                        {% set fieldClass = craft.feedme.fields.getRegisteredField(className(field)) %}
-                        {% set template = fieldClass.getMappingTemplate() %}
+                        {% set field = craft.feedme.fields.getFieldFromLayoutElement(layoutField) %}
+                        {% if field %}
+                            {% set fieldClass = craft.feedme.fields.getRegisteredField(className(field)) %}
+                            {% set template = fieldClass.getMappingTemplate() %}
 
-                        {% set nameLabel = entryType.name ~ ': ' ~ field.name %}
-                        {% set instructionsHandle = handle ~ '[' ~ entryType.handle ~ '][' ~ field.handle ~ ']' %}
+                            {% set nameLabel = entryType.name ~ ': ' ~ field.name %}
+                            {% set instructionsHandle = handle ~ '[' ~ entryType.handle ~ '][' ~ field.handle ~ ']' %}
 
-                        {% set parentPath = [ handle, 'blocks', entryType.handle, 'fields', field.handle ] %}
+                            {% set parentPath = [ handle, 'blocks', entryType.handle, 'fields', field.handle ] %}
 
-                        {% set variables = {
-                            name: field.name,
-                            handle: field.handle,
-                            feed: feed,
-                            feedData: feedData,
-                            field: field,
-                            fieldClass: fieldClass,
-                            path: parentPath,
-                            parentPath: parentPath,
-                            classes: ['inner-matrix']
-                        }
-                        %}
+                            {% set variables = {
+                                name: field.name,
+                                handle: field.handle,
+                                feed: feed,
+                                feedData: feedData,
+                                field: field,
+                                fieldClass: fieldClass,
+                                path: parentPath,
+                                parentPath: parentPath,
+                                classes: ['inner-matrix']
+                            }
+                            %}
 
-                        {% if fieldClass is instance of ('craft\\feedme\\fields\\Matrix') %}
-                            {% include template ignore missing with {
-                                nestedField: true,
-                                nameLabel: field.name,
-                                instructionsHandle: field.handle,
-                                instructions: 'Importing to a matrix in a matrix isn\'t yet supported.'
-                            } only %}
-                        {% else %}
-                            {% include template ignore missing with variables only %}
+                            {% if fieldClass is instance of ('craft\\feedme\\fields\\Matrix') %}
+                                {% include template ignore missing with {
+                                    nestedField: true,
+                                    nameLabel: field.name,
+                                    instructionsHandle: field.handle,
+                                    instructions: 'Importing to a matrix in a matrix isn\'t yet supported.'
+                                } only %}
+                            {% else %}
+                                {% include template ignore missing with variables only %}
+                            {% endif %}
                         {% endif %}
                     {% endfor %}
                 {% endfor %}

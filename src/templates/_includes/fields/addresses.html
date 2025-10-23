@@ -53,20 +53,23 @@
 {% if fieldLayout %}
     {% for tab in fieldLayout.getTabs() %}
         {% for layoutField in tab.getElements()|filter(e => e is instance of ('craft\\fieldlayoutelements\\BaseField')) %}
+            {% set fieldClass = null %}
             {% if layoutField is instance of ('craft\\fieldlayoutelements\\CustomField') %}
-                {% set field = layoutField.getField() %}
-                {% set fieldClass = craft.feedme.fields.getRegisteredField(className(field)) %}
-                {% set path = prefixPath|merge(['fields', field.handle]) %}
+                {% set field = craft.feedme.fields.getFieldFromLayoutElement(layoutField) %}
+                {% if field %}
+                    {% set fieldClass = craft.feedme.fields.getRegisteredField(className(field)) %}
+                    {% set path = prefixPath|merge(['fields', field.handle]) %}
 
-                {% set variables = {
-                    name: field.name,
-                    handle: field.handle,
-                    feed: feed,
-                    feedData: feedData,
-                    field: field,
-                    fieldClass: fieldClass,
-                    path: path
-                } %}
+                    {% set variables = {
+                        name: field.name,
+                        handle: field.handle,
+                        feed: feed,
+                        feedData: feedData,
+                        field: field,
+                        fieldClass: fieldClass,
+                        path: path
+                    } %}
+                {% endif %}
             {% else %}
                 {% set fieldClass = craft.feedme.fields.getRegisteredNativeField(className(layoutField)) %}
                 {% set path = prefixPath|merge(['nativeFields', layoutField.attribute]) %}
@@ -82,9 +85,11 @@
                 } %}
             {% endif %}
 
-            {% set template = fieldClass.getMappingTemplate() %}
+            {% if fieldClass %}
+                {% set template = fieldClass.getMappingTemplate() %}
 
-            {% include template ignore missing with variables only %}
+                {% include template ignore missing with variables only %}
+            {% endif %}
         {% endfor %}
     {% endfor %}
 {% endif %}

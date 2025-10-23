@@ -6,6 +6,9 @@ use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
 use craft\base\ComponentInterface;
+use craft\base\FieldInterface as CraftFieldInterface;
+use craft\base\FieldLayoutElement;
+use craft\errors\FieldNotFoundException;
 use craft\errors\MissingComponentException;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\events\FieldEvent;
@@ -370,5 +373,21 @@ class Fields extends Component
         ]);
         $this->trigger(self::EVENT_AFTER_PARSE_NATIVE_FIELD, $event);
         return $event->parsedValue;
+    }
+
+    /**
+     * @param FieldLayoutElement $layoutElement
+     * @return CraftFieldInterface|null
+     */
+    public function getFieldFromLayoutElement(FieldLayoutElement $layoutElement): ?CraftFieldInterface
+    {
+        try {
+            $field = $layoutElement->getField();
+        } catch (FieldNotFoundException $e) {
+            // if we can't find the field - return null
+            return null;
+        }
+
+        return $field;
     }
 }
