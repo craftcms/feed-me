@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Fixed a bug where some imported assets would end up with a double file extension. ([#1688](https://github.com/craftcms/feed-me/pull/1688))
+- Fixed a bug where `setEmptyValues` wasn’t being respected for Matrix Blocks in some scenarios. ([#1689](https://github.com/craftcms/feed-me/pull/1689))
 
 ## 5.13.0 - 2025-08-15
 
