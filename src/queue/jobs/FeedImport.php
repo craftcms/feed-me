@@ -9,7 +9,10 @@ use craft\feedme\datatypes\DataBatcher;
 use craft\feedme\events\FeedProcessEvent;
 use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
+use craft\feedme\records\SequencesRecord;
 use craft\feedme\services\Process;
+use craft\helpers\Db;
+use craft\helpers\Json;
 use craft\helpers\Queue;
 use craft\queue\BaseBatchedJob;
 use Throwable;
@@ -197,6 +200,8 @@ class FeedImport extends BaseBatchedJob implements RetryableJobInterface
             } else {
                 // Only perform the afterProcessFeed function after any/all pagination is done
                 $processService->afterProcessFeed($this->_feedSettings, $this->feed, $this->processedElementIds, $this->startTime);
+
+                $this->maybeProcessSequencedFeeds($this->feed->id);
             }
         }
     }
@@ -210,5 +215,52 @@ class FeedImport extends BaseBatchedJob implements RetryableJobInterface
     protected function defaultDescription(): string
     {
         return Craft::t('feed-me', 'Running {name} feed.', ['name' => $this->feed->name]);
+    }
+
+    /**
+     * Check if the feed that was just processed was part of a sequence.
+     * If so, check if there are any other feeds left in the same sequence, and if there are, process the next one.
+     *
+     * @param $id
+     * @return void
+     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\db\Exception
+     */
+    protected function maybeProcessSequencedFeeds($id): void
+    {
+        // find the key of the feed in feedme_sequences table
+        $sequenceKey = SequencesRecord::find()
+            ->select('key')
+            ->where(['feedId' => $id])
+            ->scalar();
+
+        // if there is one, delete the row with the current feed ID from it and then get the next feed key and queue it up
+        if ($sequenceKey) {
+            Db::delete('{{%feedme_sequences}}', ['feedId' => $id, 'key' => $sequenceKey]);
+
+            $nextFeed = SequencesRecord::find()
+                ->select(['feedId', 'options'])
+                ->where(['key' => $sequenceKey])
+                ->one();
+
+            if ($nextFeed) {
+                $feed = Plugin::getInstance()->getFeeds()->getFeedById($nextFeed['feedId']);
+                $nextFeedId = $nextFeed['feedId'];
+                $options = Json::decode($nextFeed['options']);
+
+                if (!$feed) {
+                    // if we didn't find a feed with this ID, check if we have a next one
+                    Plugin::error("Invalid feed ID: $nextFeedId");
+                    $this->maybeProcessSequencedFeeds($nextFeedId);
+                } else {
+                    Queue::push(new FeedImport([
+                        'feed' => $feed,
+                        'limit' => $options['limit'],
+                        'offset' => $options['offset'],
+                        'continueOnError' => $options['continueOnError'],
+                    ]));
+                }
+            }
+        }
     }
 }
