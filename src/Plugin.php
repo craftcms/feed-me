@@ -16,10 +16,12 @@ use craft\feedme\services\Process;
 use craft\feedme\services\Service;
 use craft\feedme\web\twig\Extension;
 use craft\feedme\web\twig\variables\FeedMeVariable;
+use craft\helpers\Db;
 use craft\helpers\UrlHelper;
 use craft\services\Gc;
 use craft\web\twig\variables\CraftVariable;
 use craft\web\UrlManager;
+use DateTime;
 use yii\base\Event;
 use yii\di\Instance;
 use yii\queue\Queue;
@@ -63,7 +65,7 @@ class Plugin extends \craft\base\Plugin
     }
 
     public string $minVersionRequired = '4.4.8';
-    public string $schemaVersion = '5.1.1';
+    public string $schemaVersion = '5.14.0';
     public bool $hasCpSettings = true;
     public bool $hasCpSection = true;
 
@@ -180,7 +182,20 @@ class Plugin extends \craft\base\Plugin
             Gc::EVENT_RUN,
             function(Event $event) {
                 $this->getLogs()->prune();
+                $this->_deleteStaleSequences();
             }
         );
+    }
+
+    /**
+     * Delete stale feed processing sequences.
+     *
+     * @return void
+     * @throws \yii\db\Exception
+     */
+    private function _deleteStaleSequences(): void
+    {
+        $condition = ['<', 'timestamp', Db::prepareDateForDb(new DateTime('2 weeks ago'))];
+        Db::delete('{{%feedme_sequences}}', $condition);
     }
 }

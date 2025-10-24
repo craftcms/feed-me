@@ -1,5 +1,8 @@
 # Release Notes for Feed Me
 
+## Unreleased
+- Multiple feeds queued via single CLI command are now processed sequentially, even if they’re batched. ([#1695](https://github.com/craftcms/feed-me/issues/1695)) 
+
 ## 5.13.1 - 2025-10-23
 
 - Fixed a bug where some imported assets would end up with a double file extension. ([#1688](https://github.com/craftcms/feed-me/pull/1688))
