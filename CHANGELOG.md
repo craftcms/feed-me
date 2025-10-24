@@ -1,5 +1,8 @@
 # Release Notes for Feed Me
 
+## Unreleased
+- Multiple feeds queued via single CLI command are now processed sequentially, even if they’re batched. ([#1695](https://github.com/craftcms/feed-me/issues/1695)) 
+
 ## 6.10.2 - 2025-10-23
 
 - Fixed an error that could occur when setting up mappings if a field had been deleted, but not removed from the field layout. ([#1687](https://github.com/craftcms/feed-me/pull/1687))

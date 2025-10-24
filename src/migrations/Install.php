@@ -67,6 +67,19 @@ class Install extends Migration
 
         $this->createIndex('idx_log_level', '{{%feedme_logs}}', 'level');
         $this->createIndex('idx_log_category', '{{%feedme_logs}}', 'category');
+
+
+        $this->archiveTableIfExists('{{%feedme_sequences}}');
+        $this->createTable('{{%feedme_sequences}}', [
+            'id' => $this->primaryKey(),
+            'key' => $this->string()->notNull(),
+            'feedId' => $this->integer()->notNull(),
+            'options' => $this->text(),
+            'timestamp' => $this->dateTime()->notNull(),
+        ]);
+
+        $this->createIndex('idx_sequence_key', '{{%feedme_sequences}}', 'key');
+        $this->createIndex('idx_sequence_feedId', '{{%feedme_sequences}}', 'feedId');
     }
 
     protected function removeTables(): void
