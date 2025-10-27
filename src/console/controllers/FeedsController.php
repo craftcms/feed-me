@@ -2,6 +2,7 @@
 
 namespace craft\feedme\console\controllers;
 
+use craft\console\Controller;
 use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
 use craft\feedme\queue\jobs\FeedImport;
@@ -12,7 +13,6 @@ use craft\helpers\Db;
 use craft\helpers\Json;
 use craft\helpers\Queue;
 use craft\helpers\StringHelper;
-use yii\console\Controller;
 use yii\console\ExitCode;
 
 /**
