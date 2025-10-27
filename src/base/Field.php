@@ -243,9 +243,9 @@ abstract class Field extends Component
         $nodeKey = null;
 
         if (!empty($nodeName)) {
-            preg_match('/\/(\d+)\//', $nodeName, $matches);
-            if (isset($matches[1])) {
-                $nodeKey = $matches[1];
+            preg_match_all('/\/(\d+)\//', $nodeName, $matches);
+            if (!empty($matches[1])) {
+                $nodeKey = end($matches[1]);
             }
         }
 
