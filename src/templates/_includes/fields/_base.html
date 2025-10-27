@@ -176,7 +176,10 @@
                             {% set elements = [] %}
 
                             {% for elementId in defaultValue %}
-                                {% set elements = elements|merge([ craft.app.elements.getElementById(elementId) ]) %}
+                                {% set element = craft.app.elements.getElementById(elementId) %}
+                                {% if element is not empty %}
+                                    {% set elements = elements|merge([element]) %}
+                                {% endif %}
                             {% endfor %}
 
                             {{ forms.elementSelectField({
