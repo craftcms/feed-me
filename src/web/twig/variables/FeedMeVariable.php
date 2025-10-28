@@ -104,7 +104,7 @@ class FeedMeVariable extends ServiceLocator
                     continue;
                 }
 
-                $values[$value[$index]] = Html::encode($value[$label]);
+                $values[$value[$index]] = $value[$label];
             }
         }
 

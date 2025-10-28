@@ -58,11 +58,10 @@ $(function () {
 
     var currentValue = $('.element-child-group select').val();
 
-    var newOptions =
-      '<option value="">' + Craft.t('feed-me', 'None') + '</option>';
+    var newOptions = [$('<option />').val('').text(Craft.t('feed-me', 'None'))];
     $.each(entryTypes, function (index, value) {
       if (index) {
-        newOptions += '<option value="' + index + '">' + value + '</option>';
+        newOptions.push($('<option/>').val(index).text(value));
       }
     });
 
