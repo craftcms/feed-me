@@ -22,7 +22,6 @@ use craft\fields\Time;
 use craft\fields\Url;
 use craft\helpers\ArrayHelper;
 use craft\helpers\DateTimeHelper;
-use craft\helpers\Html;
 use craft\helpers\UrlHelper;
 use craft\models\CategoryGroup;
 use craft\models\Section;
@@ -104,7 +103,7 @@ class FeedMeVariable extends ServiceLocator
                     continue;
                 }
 
-                $values[$value[$index]] = Html::encode($value[$label]);
+                $values[$value[$index]] = $value[$label];
             }
         }
 
