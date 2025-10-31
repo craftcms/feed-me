@@ -1,7 +1,9 @@
 # Release Notes for Feed Me
 
 ## Unreleased
-- Multiple feeds queued via single CLI command are now processed sequentially, even if they’re batched. ([#1695](https://github.com/craftcms/feed-me/issues/1695)) 
+
+- Multiple feeds queued via a single CLI command are now processed sequentially, even if they’re batched. ([#1695](https://github.com/craftcms/feed-me/issues/1695))
+- Feed Me CLI commands now support Craft’s `--isolated` flag to ensure they execute in one environment in a multi-compute setup. ([#1676](https://github.com/craftcms/feed-me/issues/1676))
 
 ## 6.10.2 - 2025-10-23
 
