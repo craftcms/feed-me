@@ -5,6 +5,7 @@
 - Multiple feeds queued via a single CLI command are now processed sequentially, even if they’re batched. ([#1695](https://github.com/craftcms/feed-me/issues/1695))
 - Feed Me CLI commands now support Craft’s `--isolated` flag to ensure they execute in one environment in a multi-compute setup. ([#1676](https://github.com/craftcms/feed-me/issues/1676))
 - Fixed a PHP error that could occur on the field mapping screen if you have a feed that references an asset as a default value for an asset field, and that asset was deleted. ([#1699](https://github.com/craftcms/feed-me/pull/1699))
+- Fixed a bug where section names that had characters like `&` in them were getting double encoded. ([#1693](https://github.com/craftcms/feed-me/pull/1693))
 
 ## 6.10.2 - 2025-10-23
 
