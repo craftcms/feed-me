@@ -240,7 +240,10 @@ class Assets extends Field implements FieldInterface
             if ($urlsToUpload) {
                 foreach ($urlsToUpload as $item) {
                     $folderId = null;
-                    if ($conflict == AssetElement::SCENARIO_REPLACE && !empty($item['foundElementId'])) {
+                    if (
+                        ($conflict == AssetElement::SCENARIO_REPLACE || $conflict == AssetElement::SCENARIO_CREATE) &&
+                        !empty($item['foundElementId'])
+                    ) {
                         $existingAsset = Craft::$app->getElements()->getElementById($item['foundElementId'], AssetElement::class);
                         $folderId = $existingAsset?->folderId;
                     }
