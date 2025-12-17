@@ -13,9 +13,17 @@
 
 {% set classes = ['complex-field'] %}
 
+{% set prefixPath = [] %}
+{% if handle is defined %}
+    {% set prefixPath = [handle] %}
+{% endif %}
+{% if parentPath is defined %}
+    {% set prefixPath = parentPath %}
+{% endif %}
+
 <div class="additional-mapping-fields">
-    {% if handle is defined %}
-    {% namespace 'fieldMapping[' ~ handle ~ ']' %}
+    {% if prefixPath is not empty %}
+    {% namespace 'fieldMapping[' ~ prefixPath|join('][') ~ ']' %}
         <input type="text" name="field" value="{{ className(field) }}">
     {% endnamespace %}
     {% endif %}
@@ -50,7 +58,7 @@
                 {% set nameLabel = field.name %}
                 {% set instructionsHandle = handle ~ '[' ~ field.handle ~ ']' %}
 
-                {% set parentPath = [ handle, 'fields', field.handle ] %}
+                {% set parentPath = prefixPath|merge(['fields', field.handle ]) %}
 
                 {% set variables = {
                     name: field.name,
@@ -65,8 +73,16 @@
                 }
                 %}
 
-
-                {% include template ignore missing with variables only %}
+                {% if fieldClass is instance of ('craft\\feedme\\fields\\ContentBlock') %}
+                    {% include template ignore missing with {
+                        nestedField: true,
+                        nameLabel: field.name,
+                        instructionsHandle: field.handle,
+                        instructions: 'Importing to a content block in a content block isn\'t yet supported.'
+                    } only %}
+                {% else %}
+                    {% include template ignore missing with variables only %}
+                {% endif %}
             {% endif %}
         {% endfor %}
     {% endfor %}
