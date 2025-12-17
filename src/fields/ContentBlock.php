@@ -6,7 +6,6 @@ use Cake\Utility\Hash;
 use craft\elements\Entry;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
-use craft\feedme\helpers\DataHelper;
 use craft\feedme\Plugin;
 use craft\fields\ContentBlock as ContentBlockField;
 use craft\helpers\ArrayHelper;
