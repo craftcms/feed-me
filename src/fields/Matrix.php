@@ -266,16 +266,11 @@ class Matrix extends Field implements FieldInterface
      */
     private function _getBlockKey(array $nodePathSegments, string $blockHandle, string $fieldHandle): string
     {
+        // keep iterating through the $nodePathSegments until we
+        // either reach a numeric value - use it, or the end of the array in which case we want to use zero
         $blockIndex = Hash::get($nodePathSegments, 1);
-
         if (!is_numeric($blockIndex)) {
-            // Try to check if its only one-level deep (only importing one block type)
-            // which is particularly common for JSON.
-            $blockIndex = Hash::get($nodePathSegments, 2);
-
-            if (!is_numeric($blockIndex)) {
-                $blockIndex = 0;
-            }
+            return $this->_getBlockKey(array_slice($nodePathSegments, 1), $blockHandle, $fieldHandle);
         }
 
         return $blockIndex . '.' . $blockHandle . '.' . $fieldHandle;

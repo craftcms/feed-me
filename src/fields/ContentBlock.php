@@ -129,31 +129,6 @@ class ContentBlock extends Field implements FieldInterface
     // =========================================================================
 
     /**
-     * Get block's key
-     *
-     * @param array $nodePathSegments
-     * @param string $blockHandle
-     * @param string $fieldHandle
-     * @return string
-     */
-    private function _getBlockKey(array $nodePathSegments, string $blockHandle, string $fieldHandle): string
-    {
-        $blockIndex = Hash::get($nodePathSegments, 1);
-
-        if (!is_numeric($blockIndex)) {
-            // Try to check if its only one-level deep (only importing one block type)
-            // which is particularly common for JSON.
-            $blockIndex = Hash::get($nodePathSegments, 2);
-
-            if (!is_numeric($blockIndex)) {
-                $blockIndex = 0;
-            }
-        }
-
-        return $blockIndex . '.' . $blockHandle . '.' . $fieldHandle;
-    }
-
-    /**
      * @param $nodePath
      * @param $blocks
      * @return array|null|string
@@ -167,6 +142,20 @@ class ContentBlock extends Field implements FieldInterface
             $node = Hash::get($subFieldInfo, 'node');
 
             $nestedFieldNodes = Hash::extract($subFieldInfo, 'fields.{*}.node');
+            $nestedBlockNodes = Hash::extract($subFieldInfo, 'blocks.{*}.{*}.{*}.node');
+
+            if ($nestedBlockNodes) {
+                foreach ($nestedBlockNodes as $nestedBlockNode) {
+                    if ($feedPath == $nestedBlockNode) {
+                        return [
+                            'subFieldHandle' => $subFieldHandle,
+                            'subFieldInfo' => $subFieldInfo,
+                            'nodePath' => $nodePath,
+                            'isComplexField' => true,
+                        ];
+                    }
+                }
+            }
 
             if ($nestedFieldNodes) {
                 foreach ($nestedFieldNodes as $nestedFieldNode) {

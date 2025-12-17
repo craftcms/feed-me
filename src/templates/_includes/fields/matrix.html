@@ -13,9 +13,18 @@
 
 {% set classes = ['complex-field'] %}
 
+{% set ownerPath = [] %}
+{% if handle is defined %}
+    {% set ownerPath = [handle] %}
+{% endif %}
+{% if parentPath is defined %}
+    {% set ownerPath = parentPath %}
+{% endif %}
+
+
 <div class="additional-mapping-fields">
-    {% if handle is defined %}
-    {% namespace 'fieldMapping[' ~ handle ~ ']' %}
+    {% if ownerPath is not empty %}
+    {% namespace 'fieldMapping[' ~ ownerPath|join('][') ~ ']' %}
         <input type="text" name="field" value="{{ className(field) }}">
     {% endnamespace %}
     {% endif %}
@@ -35,7 +44,7 @@
 
                 <td class="col-map" colspan="2">
                     <div class="field-extra-settings">
-                        {% set blockPath = [ handle, 'blocks', entryType.handle ] %}
+                        {% set blockPath = ownerPath|merge([ 'blocks', entryType.handle ]) %}
 
                         {% set disabled = hash_get(feed.fieldMapping, blockPath|join('.') ~ '.disabled') ?: '' %}
 
@@ -76,7 +85,7 @@
 
             {% for field in fields %}
                 {% set template = field.type ?? 'default' %}
-                {% set parentPath = [ handle, 'blocks', entryType.handle, 'attributes', field.handle ] %}
+                {% set parentPath = ownerPath | merge([ 'blocks', entryType.handle, 'attributes', field.handle ]) %}
                 {% set variables = field|merge({
                     feed: feed,
                     feedData: feedData,
@@ -116,7 +125,7 @@
                             {% set nameLabel = entryType.name ~ ': ' ~ field.name %}
                             {% set instructionsHandle = handle ~ '[' ~ entryType.handle ~ '][' ~ field.handle ~ ']' %}
 
-                            {% set parentPath = [ handle, 'blocks', entryType.handle, 'fields', field.handle ] %}
+                            {% set parentPath = ownerPath|merge([ 'blocks', entryType.handle, 'fields', field.handle ]) %}
 
                             {% set variables = {
                                 name: field.name,
@@ -128,8 +137,7 @@
                                 path: parentPath,
                                 parentPath: parentPath,
                                 classes: ['inner-matrix']
-                            }
-                            %}
+                            } %}
 
                             {% if fieldClass is instance of ('craft\\feedme\\fields\\Matrix') %}
                                 {% include template ignore missing with {
