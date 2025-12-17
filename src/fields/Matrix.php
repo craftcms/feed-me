@@ -270,7 +270,12 @@ class Matrix extends Field implements FieldInterface
         // either reach a numeric value - use it, or the end of the array in which case we want to use zero
         $blockIndex = Hash::get($nodePathSegments, 1);
         if (!is_numeric($blockIndex)) {
-            return $this->_getBlockKey(array_slice($nodePathSegments, 1), $blockHandle, $fieldHandle);
+            $nodePathSegments = array_slice($nodePathSegments, 1);
+            if (count($nodePathSegments) > 1) {
+                return $this->_getBlockKey($nodePathSegments, $blockHandle, $fieldHandle);
+            } else {
+                $blockIndex = 0;
+            }
         }
 
         return $blockIndex . '.' . $blockHandle . '.' . $fieldHandle;
