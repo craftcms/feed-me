@@ -146,6 +146,13 @@
                                     instructionsHandle: field.handle,
                                     instructions: 'Importing to a matrix in a matrix isn\'t yet supported.'
                                 } only %}
+                            {% elseif fieldClass is instance of ('craft\\feedme\\fields\\ContentBlock') %}
+                                {% include template ignore missing with {
+                                    nestedField: true,
+                                    nameLabel: field.name,
+                                    instructionsHandle: field.handle,
+                                    instructions: 'Importing to a content block in a matrix isn\'t yet supported.'
+                                } only %}
                             {% else %}
                                 {% include template ignore missing with variables only %}
                             {% endif %}
