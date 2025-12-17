@@ -13,18 +13,18 @@
 
 {% set classes = ['complex-field'] %}
 
-{% set ownerPath = [] %}
+{% set prefixPath = [] %}
 {% if handle is defined %}
-    {% set ownerPath = [handle] %}
+    {% set prefixPath = [handle] %}
 {% endif %}
 {% if parentPath is defined %}
-    {% set ownerPath = parentPath %}
+    {% set prefixPath = parentPath %}
 {% endif %}
 
 
 <div class="additional-mapping-fields">
-    {% if ownerPath is not empty %}
-    {% namespace 'fieldMapping[' ~ ownerPath|join('][') ~ ']' %}
+    {% if prefixPath is not empty %}
+    {% namespace 'fieldMapping[' ~ prefixPath|join('][') ~ ']' %}
         <input type="text" name="field" value="{{ className(field) }}">
     {% endnamespace %}
     {% endif %}
@@ -44,7 +44,7 @@
 
                 <td class="col-map" colspan="2">
                     <div class="field-extra-settings">
-                        {% set blockPath = ownerPath|merge([ 'blocks', entryType.handle ]) %}
+                        {% set blockPath = prefixPath|merge([ 'blocks', entryType.handle ]) %}
 
                         {% set disabled = hash_get(feed.fieldMapping, blockPath|join('.') ~ '.disabled') ?: '' %}
 
@@ -85,7 +85,7 @@
 
             {% for field in fields %}
                 {% set template = field.type ?? 'default' %}
-                {% set parentPath = ownerPath | merge([ 'blocks', entryType.handle, 'attributes', field.handle ]) %}
+                {% set parentPath = prefixPath | merge([ 'blocks', entryType.handle, 'attributes', field.handle ]) %}
                 {% set variables = field|merge({
                     feed: feed,
                     feedData: feedData,
@@ -125,7 +125,7 @@
                             {% set nameLabel = entryType.name ~ ': ' ~ field.name %}
                             {% set instructionsHandle = handle ~ '[' ~ entryType.handle ~ '][' ~ field.handle ~ ']' %}
 
-                            {% set parentPath = ownerPath|merge([ 'blocks', entryType.handle, 'fields', field.handle ]) %}
+                            {% set parentPath = prefixPath|merge([ 'blocks', entryType.handle, 'fields', field.handle ]) %}
 
                             {% set variables = {
                                 name: field.name,
