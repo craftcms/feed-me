@@ -184,7 +184,8 @@ class Matrix extends Field implements FieldInterface
                         (is_string($value) && !empty($value)) ||
                         (is_array($value) && !empty(array_filter($value))) ||
                         is_bool($value) ||
-                        is_numeric($value)
+                        is_numeric($value) ||
+                        is_object($value) // this is used by e.g. Date field where a Carbon object can be returned
                     )
                 ))
             ) {
