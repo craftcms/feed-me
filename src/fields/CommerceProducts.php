@@ -65,7 +65,7 @@ class CommerceProducts extends Field implements FieldInterface
         }
 
         $match = Hash::get($this->fieldInfo, 'options.match', 'title');
-        $specialMatchCase = in_array($match, ['title', 'slug']);
+        $specialMatchCase = in_array($match, ['title', 'slug', 'defaultSku']);
 
         // if value from the feed is empty and default is not set
         // return an empty array; no point bothering further
