@@ -115,7 +115,8 @@ class Assets extends Field implements FieldInterface
             }
         }
 
-        $foundElements = [];
+        // Initialize arrays with proper structure to preserve positions
+        $foundElements = array_fill_keys(array_keys($value), null);
         $urlsToUpload = [];
         $base64ToUpload = [];
 
@@ -222,7 +223,11 @@ class Assets extends Field implements FieldInterface
                 Plugin::info('Search for existing asset with query `{i}`', ['i' => Json::encode($criteria)]);
 
                 $ids = $query->ids();
-                $foundElements = array_merge($foundElements, $ids);
+                
+                // Preserve array positions instead of using array_merge which destroys position mapping
+                foreach ($ids as $id) {
+                    $foundElements[$key] = $id;
+                }
 
                 Plugin::info('Found `{i}` existing assets: `{j}`', ['i' => count($foundElements), 'j' => Json::encode($foundElements)]);
 
@@ -237,7 +242,7 @@ class Assets extends Field implements FieldInterface
 
         if ($upload) {
             if ($urlsToUpload) {
-                foreach ($urlsToUpload as $item) {
+                foreach ($urlsToUpload as $uploadKey => $item) {
                     $uploadedElements = AssetHelper::fetchRemoteImage(
                         [$item['value']],
                         $this->fieldInfo,
@@ -247,13 +252,25 @@ class Assets extends Field implements FieldInterface
                         null,
                         $item['newFilename']
                     );
-                    $foundElements = array_merge($foundElements, $uploadedElements);
+                    
+                    // Preserve position instead of array_merge which would destroy position mapping
+                    if (!empty($uploadedElements)) {
+                        $foundElements[$uploadKey] = $uploadedElements[0];
+                    }
                 }
             }
 
             if ($base64ToUpload) {
                 $uploadedElements = AssetHelper::createBase64Image($base64ToUpload, $this->fieldInfo, $this->feed, $this->field, $this->element);
-                $foundElements = array_merge($foundElements, $uploadedElements);
+                
+                // Preserve positions instead of array_merge which would destroy position mapping
+                $uploadIndex = 0;
+                foreach ($base64ToUpload as $b64Key => $b64Value) {
+                    if (isset($uploadedElements[$uploadIndex])) {
+                        $foundElements[$b64Key] = $uploadedElements[$uploadIndex];
+                        $uploadIndex++;
+                    }
+                }
             }
         }
 
@@ -272,6 +289,11 @@ class Assets extends Field implements FieldInterface
         if ($nativeFields) {
             $this->populateNativeFields($foundElements, $nodeKey);
         }
+
+        // Remove null values while preserving array keys for proper field mapping
+        $foundElements = array_filter($foundElements, function($element) {
+            return $element !== null;
+        });
 
         $foundElements = array_unique($foundElements);
 
