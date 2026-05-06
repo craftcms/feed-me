@@ -24,13 +24,13 @@
     "issues": "https://github.com/craftcms/feed-me/issues?state=open",
     "source": "https://github.com/craftcms/feed-me",
     "docs": "https://docs.craftcms.com/feed-me/v6/",
-    "rss": "https://github.com/craftcms/feed-me/commits/master.atom"
+    "rss": "https://github.com/craftcms/feed-me/commits/6.x.atom"
   },
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
     "php": "^8.2",
-    "craftcms/cms": "^5.6.0",
+    "craftcms/cms": "^5.6.0|^6.0.0-alpha.1",
     "cakephp/utility": "^5.0.0",
     "jakeasmith/http_build_url": "^1.0",
     "nesbot/carbon": "^2.10|^3.0.0",
@@ -56,7 +56,7 @@
   "extra": {
     "name": "Feed Me",
     "handle": "feed-me",
-    "documentationUrl": "https://docs.craftcms.com/feed-me/v4/"
+    "documentationUrl": "https://docs.craftcms.com/feed-me/v6/"
   },
   "scripts": {
     "check-cs": "ecs check --ansi",
