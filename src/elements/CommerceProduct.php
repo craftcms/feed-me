@@ -6,9 +6,14 @@ use Cake\Utility\Hash;
 use Carbon\Carbon;
 use Craft;
 use craft\base\ElementInterface;
+use craft\commerce\collections\UpdateInventoryLevelCollection;
+use craft\commerce\elements\Product;
 use craft\commerce\elements\Product as ProductElement;
 use craft\commerce\elements\Variant as VariantElement;
+use craft\commerce\models\inventory\UpdateInventoryLevel;
+use craft\commerce\models\InventoryLevel;
 use craft\commerce\Plugin as Commerce;
+use craft\commerce\queue\jobs\CatalogPricing;
 use craft\db\Query;
 use craft\feedme\base\Element;
 use craft\feedme\events\FeedProcessEvent;
@@ -18,10 +23,14 @@ use craft\feedme\Plugin;
 use craft\feedme\services\Process;
 use craft\fields\Matrix;
 use craft\fields\Table;
+use craft\helpers\ArrayHelper;
+use craft\helpers\ElementHelper;
 use craft\helpers\Json;
 use DateTime;
 use Exception;
 use yii\base\Event;
+use yii\queue\PushEvent;
+use yii\queue\Queue;
 
 /**
  *
@@ -45,6 +54,12 @@ class CommerceProduct extends Element
      * @var string
      */
     public static string $class = ProductElement::class;
+
+    /**
+     * @var bool
+     * @since x.x.x
+     */
+    private bool $_runCatalogPricingJob = false;
 
     // Templates
     // =========================================================================
@@ -84,15 +99,26 @@ class CommerceProduct extends Element
         parent::init();
 
         // Hook into the process service on each step - we need to re-arrange the feed mapping
-        Event::on(Process::class, Process::EVENT_STEP_BEFORE_PARSE_CONTENT, function(FeedProcessEvent $event) {
-            if ($event->feed['elementType'] === ProductElement::class) {
-                $this->_preParseVariants($event);
-            }
-        });
-
         Event::on(Process::class, Process::EVENT_STEP_BEFORE_ELEMENT_MATCH, function(FeedProcessEvent $event) {
             if ($event->feed['elementType'] === ProductElement::class) {
                 $this->_checkForVariantMatches($event);
+            }
+        });
+
+        Event::on(Process::class, Process::EVENT_STEP_BEFORE_PARSE_CONTENT, function(FeedProcessEvent $event) {
+            if ($event->feed['elementType'] === ProductElement::class) {
+                // at this point we've matched existing elements;
+                // if $event->element->id is null then we haven't found a match so create an unsaved draft of the product
+                // so that the variants can get saved right
+                if (!$event->element->id) {
+                    $originalScenario = $event->element->getScenario();
+                    $event->element->setScenario(\craft\base\Element::SCENARIO_ESSENTIALS);
+                    if (!Craft::$app->getDrafts()->saveElementAsDraft($event->element, null, null, null, false)) {
+                        throw new Exception('Unable to create product element as unsaved');
+                    }
+                    $event->element->setScenario($originalScenario);
+                }
+                $this->_preParseVariants($event);
             }
         });
 
@@ -100,6 +126,27 @@ class CommerceProduct extends Element
         Event::on(Process::class, Process::EVENT_STEP_BEFORE_ELEMENT_SAVE, function(FeedProcessEvent $event) {
             if ($event->feed['elementType'] === ProductElement::class) {
                 $this->_parseVariants($event);
+            }
+        });
+
+        // We can only update stock after the purchasable elements have been saved
+        Event::on(Process::class, Process::EVENT_STEP_AFTER_ELEMENT_SAVE, function(FeedProcessEvent $event) {
+            if ($event->feed['elementType'] === ProductElement::class) {
+                $this->_inventoryUpdate($event);
+            }
+        });
+
+        // While imports are happening don't process any catalog pricing jobs
+        Event::on(Queue::class, Queue::EVENT_BEFORE_PUSH, function(PushEvent $event) {
+            if ($event->job instanceof CatalogPricing && !$this->_runCatalogPricingJob) {
+                $event->handled = true;
+            }
+        });
+
+        // After the feed has run, create a catalog pricing job to update the pricing
+        Event::on(Process::class, Process::EVENT_AFTER_PROCESS_FEED, function(FeedProcessEvent $event) {
+            if (Craft::$app->getPlugins()->isPluginEnabled('commerce') && $this->_runCatalogPricingJob = true) {
+                Commerce::getInstance()->getCatalogPricing()->createCatalogPricingJob();
             }
         });
     }
@@ -121,12 +168,24 @@ class CommerceProduct extends Element
      */
     public function getQuery($settings, array $params = []): mixed
     {
+        $targetSiteId = Hash::get($settings, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id;
+        if ($this->element !== null) {
+            $productType = $this->element->getType();
+        }
+
         $query = ProductElement::find()
             ->status(null)
-            ->typeId($settings['elementGroup'][ProductElement::class])
-            ->siteId(Hash::get($settings, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id);
-        Craft::configure($query, $params);
+            ->typeId($settings['elementGroup'][ProductElement::class]);
 
+        if (isset($productType) && $productType->propagationMethod === \craft\enums\PropagationMethod::Custom) {
+            $query->site('*')
+                ->preferSites([$targetSiteId])
+                ->unique();
+        } else {
+            $query->siteId($targetSiteId);
+        }
+
+        Craft::configure($query, $params);
         return $query;
     }
 
@@ -144,7 +203,68 @@ class CommerceProduct extends Element
             $this->element->siteId = $siteId;
         }
 
+        /* @var \craft\commerce\models\ProductType $productType */
+        $productType = Commerce::getInstance()->getProductTypes()->getProductTypeById($this->element->typeId);
+
+        // Set the default site status based on the section's settings
+        $enabledForSite = [];
+        foreach ($productType->getSiteSettings() as $siteSettings) {
+            if (
+                $productType->propagationMethod !== \craft\enums\PropagationMethod::Custom ||
+                $siteSettings->siteId == $siteId
+            ) {
+                $enabledForSite[$siteSettings->siteId] = $siteSettings->enabledByDefault;
+            }
+        }
+        $this->element->setEnabledForSite($enabledForSite);
+
         return $this->element;
+    }
+
+    /**
+     * Checks if $existingElement should be propagated to the target site.
+     *
+     * @param $existingElement
+     * @param array $feed
+     * @return ElementInterface|null
+     * @throws \yii\base\Exception
+     * @throws \craft\errors\SiteNotFoundException
+     * @throws \craft\errors\UnsupportedSiteException
+     * @since 5.1.3
+     */
+    public function checkPropagation($existingElement, array $feed)
+    {
+        $targetSiteId = Hash::get($feed, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id;
+
+        // Did the product come back in a different site?
+        if ($existingElement->siteId != $targetSiteId) {
+            // Skip it if its product type doesn't use the `custom` propagation method
+            if ($existingElement->getType()->propagationMethod !== \craft\enums\PropagationMethod::Custom) {
+                return $existingElement;
+            }
+
+            // Give the product a status for the import's target site
+            // (This is how the `custom` propagation method knows which sites the product should support.)
+            $siteStatuses = ElementHelper::siteStatusesForElement($existingElement);
+            $siteStatuses[$targetSiteId] = $existingElement->getEnabledForSite();
+            $existingElement->setEnabledForSite($siteStatuses);
+
+            // Propagate the product, and swap it with the propagated copy
+            $propagatedElement = Craft::$app->getElements()->propagateElement($existingElement, $targetSiteId);
+
+            // we need this so that the variants get propagated too
+            $propagatedElement->setVariants($existingElement->getVariants());
+            $propagatedElement->newSiteIds = [$targetSiteId];
+            $propagatedElement->afterPropagate(false);
+
+            // we're done propagating now
+            $propagatedElement->propagating = false;
+            $propagatedElement->propagatingFrom = null;
+
+            return $propagatedElement;
+        }
+
+        return $existingElement;
     }
 
     /**
@@ -153,6 +273,12 @@ class CommerceProduct extends Element
     public function save($element, $settings): bool
     {
         $this->beforeSave($element, $settings);
+
+        if ($this->element->getIsDraft()) {
+            $this->element->markAsDirty();
+            $this->element = Craft::$app->getDrafts()->applyDraft($this->element);
+            $this->element->propagateAll = true;
+        }
 
         if (!Craft::$app->getElements()->saveElement($this->element, true, true, Hash::get($this->feed, 'updateSearchIndexes'))) {
             $errors = [$this->element->getErrors()];
@@ -264,6 +390,7 @@ class CommerceProduct extends Element
         $feed = $event->feed;
         $feedData = $event->feedData;
         $contentData = $event->contentData;
+        /** @var Product $element */
         $element = $event->element;
 
         $variantMapping = Hash::get($feed, 'fieldMapping.variants');
@@ -421,19 +548,30 @@ class CommerceProduct extends Element
             // Create a new variant, or find an existing one to edit
             if (!isset($variants[$sku])) {
                 $variants[$sku] = new VariantElement();
+                $variants[$sku]->setOwner($element);
             }
 
-            $variants[$sku]->product = $element;
+            // We are going to handle stock after the product and variants save
+            $stock = null;
+            if (isset($attributeData['stock'])) {
+                $stock = $attributeData['stock'];
+                unset($attributeData['stock']);
+            }
 
             // Set the attributes for the element
             $variants[$sku]->setAttributes($attributeData, false);
+
+            // Restore it to attribute data
+            if ($stock !== null) {
+                $attributeData['stock'] = $stock;
+            }
 
             // Then, do the same for custom fields. Again, this should be done after populating the element attributes
             foreach ($variantContent as $fieldHandle => $fieldInfo) {
                 if (Hash::get($fieldInfo, 'field')) {
                     $data = Hash::get($fieldInfo, 'data');
 
-                    $fieldValue = Plugin::$plugin->fields->parseField($feed, $element, $data, $fieldHandle, $fieldInfo);
+                    $fieldValue = Plugin::$plugin->fields->parseField($feed, $variants[$sku], $data, $fieldHandle, $fieldInfo);
 
                     if ($fieldValue !== null) {
                         $fieldData[$fieldHandle] = $fieldValue;
@@ -456,6 +594,73 @@ class CommerceProduct extends Element
         $event->feedData = $feedData;
         $event->contentData = $contentData;
         $event->element = $element;
+    }
+
+    private function _inventoryUpdate($event): void
+    {
+        /** @var Product $product */
+        $product = $event->element;
+
+        // Index variants by SKU for lookup:
+        $variantsBySku = ArrayHelper::index($event->contentData['variants'], 'sku');
+
+        /** @var Commerce $commercePlugin */
+        $commercePlugin = Commerce::getInstance();
+        $variants = $product->getVariants();
+
+        // Queue up a changeset:
+        $updateInventoryLevels = UpdateInventoryLevelCollection::make();
+
+        foreach ($variants as $variant) {
+            // Is this SKU even present in our import data?
+            if (!isset($variantsBySku[$variant->sku])) {
+                continue;
+            }
+
+            if (!$variant->inventoryTracked) {
+                Plugin::info(sprintf('Variant %s is not configured to track stock.', $variant->sku));
+
+                continue;
+            }
+
+            $stock = $variantsBySku[$variant->sku]['stock'] ?? null;
+
+            // What if the `stock` key wasn't in the import data?
+            if (is_null($stock)) {
+                Plugin::error(sprintf('No stock value was present in the import data for %s.', $variant->sku));
+
+                continue;
+            }
+
+            // Load InventoryItem model:
+            $inventoryItem = $commercePlugin->getInventory()->getInventoryItemByPurchasable($variant);
+
+            /** @var InventoryLevel $firstInventoryLevel */
+            $level = $commercePlugin->getInventory()->getInventoryLevelsForPurchasable($variant)->first();
+            $location = $level->getInventoryLocation();
+
+            if (!$level || !$location) {
+                // Again, looks like there's nothing to track…
+                continue;
+            }
+
+            $update = new UpdateInventoryLevel([
+                'type' => \craft\commerce\enums\InventoryTransactionType::AVAILABLE->value,
+                'updateAction' => \craft\commerce\enums\InventoryUpdateQuantityType::SET,
+                'inventoryItem' => $inventoryItem,
+                'inventoryLocation' => $location,
+                'quantity' => $stock,
+                'note' => sprintf('Imported via feed ID #%s', $event->feed['id']),
+            ]);
+
+            $updateInventoryLevels->push($update);
+
+            Plugin::info(sprintf('Updating stock for the default inventory location for %s to %s.', $variant->sku, $stock));
+        }
+
+        if ($updateInventoryLevels->count() > 0) {
+            Commerce::getInstance()->getInventory()->executeUpdateInventoryLevels($updateInventoryLevels);
+        }
     }
 
     /**

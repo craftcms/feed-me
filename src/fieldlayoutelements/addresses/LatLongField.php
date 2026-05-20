@@ -8,7 +8,7 @@ use craft\fieldlayoutelements\addresses\LatLongField as CraftLatLongField;
 
 /**
  * @property-read string $mappingTemplate
- * @since 5.13.0
+ * @since 6.10.0
  */
 class LatLongField extends Field implements FieldInterface
 {

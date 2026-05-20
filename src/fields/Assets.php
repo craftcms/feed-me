@@ -223,6 +223,7 @@ class Assets extends Field implements FieldInterface
 
                 $ids = $query->ids();
                 $foundElements = array_merge($foundElements, $ids);
+                $urlsToUpload[$key]['foundElementId'] = !empty($ids) ? reset($ids) : null;
 
                 Plugin::info('Found `{i}` existing assets: `{j}`', ['i' => count($foundElements), 'j' => Json::encode($foundElements)]);
 
@@ -238,13 +239,22 @@ class Assets extends Field implements FieldInterface
         if ($upload) {
             if ($urlsToUpload) {
                 foreach ($urlsToUpload as $item) {
+                    $folderId = null;
+                    if (
+                        ($conflict == AssetElement::SCENARIO_REPLACE || $conflict == AssetElement::SCENARIO_CREATE) &&
+                        !empty($item['foundElementId'])
+                    ) {
+                        $existingAsset = Craft::$app->getElements()->getElementById($item['foundElementId'], AssetElement::class);
+                        $folderId = $existingAsset?->folderId;
+                    }
+
                     $uploadedElements = AssetHelper::fetchRemoteImage(
                         [$item['value']],
                         $this->fieldInfo,
                         $this->feed,
                         $this->field,
                         $this->element,
-                        null,
+                        $folderId,
                         $item['newFilename']
                     );
                     $foundElements = array_merge($foundElements, $uploadedElements);

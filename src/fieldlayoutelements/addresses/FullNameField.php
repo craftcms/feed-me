@@ -8,7 +8,7 @@ use craft\fieldlayoutelements\FullNameField as CraftFullNameField;
 
 /**
  * @property-read string $mappingTemplate
- * @since 5.13.0
+ * @since 6.10.0
  */
 class FullNameField extends Field implements FieldInterface
 {

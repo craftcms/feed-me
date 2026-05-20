@@ -1,6 +1,6 @@
 <?php
 
-namespace craft\feedme\fieldlayoutelements\users;
+namespace craft\feedme\fields;
 
 use Cake\Utility\Hash;
 use Craft;
@@ -12,12 +12,12 @@ use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\helpers\DataHelper;
 use craft\feedme\Plugin;
-use craft\fieldlayoutelements\users\AddressesField as AddressesField;
+use craft\fields\Addresses as AddressesField;
 use craft\helpers\Json;
 
 /**
  * @property-read string $mappingTemplate
- * @since 5.13.0
+ * @since 6.10.0
  */
 class Addresses extends Field implements FieldInterface
 {
@@ -48,7 +48,7 @@ class Addresses extends Field implements FieldInterface
      */
     public function getMappingTemplate(): string
     {
-        return 'feed-me/_includes/fieldlayoutelements/users/addresses';
+        return 'feed-me/_includes/fields/addresses';
     }
 
     // Public Methods
@@ -158,7 +158,11 @@ class Addresses extends Field implements FieldInterface
     {
         $element = new AddressElement();
         $element->setScenario(Element::SCENARIO_ESSENTIALS);
-        $element->setOwner($this->element);
+        $element->setPrimaryOwner($this->element);
+
+        if ($this->field) {
+            $element->fieldId = $this->field->id;
+        }
 
         // native fields have to go first!
         if ($nativeFields) {

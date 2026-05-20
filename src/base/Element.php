@@ -15,6 +15,7 @@ use craft\feedme\helpers\BaseHelper;
 use craft\feedme\helpers\DataHelper;
 use craft\feedme\helpers\DateHelper;
 use craft\feedme\models\FeedModel;
+use craft\fields\Addresses;
 use craft\helpers\Db;
 use craft\helpers\ElementHelper;
 use craft\helpers\Json;
@@ -281,6 +282,28 @@ abstract class Element extends Component implements ElementInterface
      */
     public function afterSave($data, $settings): void
     {
+        $addressesFields = [];
+
+        foreach ($settings['fieldMapping'] as $handle => $value) {
+            if (isset($value['field']) && $value['field'] === Addresses::class) {
+                $addressesFields[] = $handle;
+            }
+        }
+
+        if (!empty($addressesFields)) {
+            foreach ($addressesFields as $handle) {
+                $addresses = Hash::get($data, $handle);
+                if ($addresses) {
+                    foreach ($addresses as $address) {
+                        if (empty($address->primaryOwnerId)) {
+                            $address->primaryOwnerId = $this->element->id;
+                            Craft::$app->getElements()->saveElement($address);
+                        }
+                    }
+                }
+            }
+        }
+        $t = 1;
     }
 
     // Protected Methods

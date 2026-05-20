@@ -9,12 +9,12 @@ import {renderInlineCode} from './utils.js';
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   // App
-  base: '/feed-me/v4/',
+  base: '/feed-me/v6/',
   ignoreDeadLinks: true,
 
   // Documents
   head: headContent,
-  title: 'Feed Me 4.x',
+  title: 'Feed Me 6.x',
   description: 'Documentation for the official Craft CMS Feed Me plugin',
 
   // Theme
@@ -28,11 +28,11 @@ export default defineConfig({
       {
         text: 'More',
         items: [
-          {text: 'Documentation', link: 'https://craftcms.com/docs/4.x'},
+          {text: 'Documentation', link: 'https://craftcms.com/docs/5.x'},
           {text: 'Knowledge Base', link: 'https://craftcms.com/knowledge-base'},
           {
             text: 'Craft Class Reference',
-            link: 'https://docs.craftcms.com/api/v4',
+            link: 'https://docs.craftcms.com/api/v5',
           },
           {text: 'Craftnet API', link: 'https://docs.api.craftcms.com/'},
         ],
@@ -62,7 +62,7 @@ export default defineConfig({
 
   // Sitemap
   sitemap: {
-    hostname: 'https://docs.craftcms.com/feed-me/v4',
+    hostname: 'https://docs.craftcms.com/feed-me/v6',
   },
 
   // Builds

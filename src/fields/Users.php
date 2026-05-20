@@ -12,7 +12,10 @@ use craft\errors\ElementNotFoundException;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\helpers\DataHelper;
+use craft\feedme\helpers\FieldHelper;
+use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
+use craft\fields\BaseRelationField;
 use craft\fields\Users as UsersField;
 use craft\helpers\Db;
 use craft\helpers\ElementHelper;
@@ -149,19 +152,11 @@ class Users extends Field implements FieldInterface
                 break;
             }
 
-            // Because we can match on element attributes and custom fields, AND we're directly using SQL
-            // queries in our `where` below, we need to check if we need a prefix for custom fields accessing
-            // the content table.
-            $columnName = $match;
-
-            if (Craft::$app->getFields()->getFieldByHandle($match)) {
-                $columnName = Craft::$app->getFields()->oldFieldColumnPrefix . $match;
-            }
-
             $ids = [];
             $criteria['status'] = null;
             $criteria['limit'] = $limit;
-            $criteria['where'] = ['=', $columnName, $dataValue];
+            // prep the $dataValue for matching
+            $criteria[$match] = DataHelper::prepValueForElementMatch($dataValue);
 
             // If the only source for the Users field is "admins" we don't have to bother with this query.
             if (!($isAdmin && empty($groupIds) && empty($customSources))) {
@@ -216,6 +211,19 @@ class Users extends Field implements FieldInterface
         }
 
         return $foundElements;
+    }
+
+    /**
+     * Returns an array of custom fields that can be used when querying for matching users.
+     * There's only one user layout, so the fields from it are returned.
+     *
+     * @param FeedModel $feed
+     * @param BaseRelationField|null $field
+     * @return array
+     */
+    public static function getMatchFields(FeedModel $feed, ?BaseRelationField $field = null): array
+    {
+        return array_filter(FieldHelper::getUserLayoutByField() ?? [], fn($field) => FieldHelper::fieldCanBeUniqueId($field));
     }
 
     // Private Methods

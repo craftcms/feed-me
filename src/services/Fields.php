@@ -6,6 +6,9 @@ use Cake\Utility\Hash;
 use Craft;
 use craft\base\Component;
 use craft\base\ComponentInterface;
+use craft\base\FieldInterface as CraftFieldInterface;
+use craft\base\FieldLayoutElement;
+use craft\errors\FieldNotFoundException;
 use craft\errors\MissingComponentException;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\events\FieldEvent;
@@ -14,7 +17,7 @@ use craft\feedme\fieldlayoutelements\addresses\AddressField;
 use craft\feedme\fieldlayoutelements\addresses\FullNameField;
 use craft\feedme\fieldlayoutelements\addresses\LatLongField;
 use craft\feedme\fieldlayoutelements\assets\Alt;
-use craft\feedme\fieldlayoutelements\users\Addresses;
+use craft\feedme\fields\Addresses;
 use craft\feedme\fields\Assets;
 use craft\feedme\fields\CalendarEvents;
 use craft\feedme\fields\Categories;
@@ -29,6 +32,7 @@ use craft\feedme\fields\Dropdown;
 use craft\feedme\fields\Entries;
 use craft\feedme\fields\EntriesSubset;
 use craft\feedme\fields\GoogleMaps;
+use craft\feedme\fields\Icon;
 use craft\feedme\fields\Lightswitch;
 use craft\feedme\fields\Linkit;
 use craft\feedme\fields\Matrix;
@@ -60,12 +64,13 @@ class Fields extends Component
     public const EVENT_REGISTER_FEED_ME_FIELDS = 'registerFeedMeFields';
     public const EVENT_BEFORE_PARSE_FIELD = 'onBeforeParseField';
     public const EVENT_AFTER_PARSE_FIELD = 'onAfterParseField';
+
     /**
-     * @since 5.13.0
+     * @since 6.10.0
      */
     public const EVENT_BEFORE_PARSE_NATIVE_FIELD = 'onBeforeParseNativeField';
     /**
-     * @since 5.13.0
+     * @since 6.10.0
      */
     public const EVENT_AFTER_PARSE_NATIVE_FIELD = 'onAfterParseNativeField';
 
@@ -134,7 +139,7 @@ class Fields extends Component
      * @param $handle
      * @return ComponentInterface|mixed
      * @throws InvalidConfigException
-     * @since 5.13.0
+     * @since 6.10.0
      */
     public function getRegisteredNativeField($handle): mixed
     {
@@ -166,6 +171,7 @@ class Fields extends Component
 
         $event = new RegisterFeedMeFieldsEvent([
             'fields' => [
+                Addresses::class,
                 Assets::class,
                 Categories::class,
                 Checkboxes::class,
@@ -175,6 +181,7 @@ class Fields extends Component
                 Date::class,
                 Dropdown::class,
                 Entries::class,
+                Icon::class,
                 Lightswitch::class,
                 Matrix::class,
                 MultiSelect::class,
@@ -207,7 +214,7 @@ class Fields extends Component
 
     /**
      * @return array
-     * @since 5.13.0
+     * @since 6.10.0
      */
     public function getRegisteredNativeFields(): array
     {
@@ -217,10 +224,9 @@ class Fields extends Component
 
         $event = new RegisterFeedMeFieldsEvent([
             'nativeFields' => [
-                Addresses::class, // user addresses
-                AddressField::class, // address field within user addresses
-                LatLongField::class, // lat/long field within user addresses
-                FullNameField::class, // full name field within user addresses
+                AddressField::class, // address field within addresses
+                LatLongField::class, // lat/long field within addresses
+                FullNameField::class, // full name field within addresses
                 Alt::class,
             ],
         ]);
@@ -281,7 +287,7 @@ class Fields extends Component
         // get the field by handle, check if the type hasn't changed since the feed was last saved;
         // if it hasn't changed - proceed as before
         // if it has changed - assume that we've entrified and adjust the $fieldClassHandle
-        $field = Craft::$app->getFields()->getFieldByHandle($fieldHandle);
+        $field = $element->getFieldLayout()->getFieldByHandle($fieldHandle);
         if (
             !$field instanceof $fieldClassHandle &&
             ($field instanceof \craft\fields\Categories || $field instanceof \craft\fields\Tags)
@@ -326,7 +332,7 @@ class Fields extends Component
      * @param $fieldHandle
      * @param $fieldInfo
      * @return mixed
-     * @since 5.13.0
+     * @since 6.10.0
      */
     public function parseNativeField($feed, $element, $feedData, $fieldHandle, $fieldInfo): mixed
     {
@@ -367,5 +373,21 @@ class Fields extends Component
         ]);
         $this->trigger(self::EVENT_AFTER_PARSE_NATIVE_FIELD, $event);
         return $event->parsedValue;
+    }
+
+    /**
+     * @param FieldLayoutElement $layoutElement
+     * @return CraftFieldInterface|null
+     */
+    public function getFieldFromLayoutElement(FieldLayoutElement $layoutElement): ?CraftFieldInterface
+    {
+        try {
+            $field = $layoutElement->getField();
+        } catch (FieldNotFoundException $e) {
+            // if we can't find the field - return null
+            return null;
+        }
+
+        return $field;
     }
 }
