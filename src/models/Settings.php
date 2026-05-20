@@ -108,4 +108,11 @@ class Settings extends Model
      * @since 5.9.0
      */
     public bool $assetDownloadGuzzle = false;
+
+    /**
+     * Whether the pagination URL should allow path/relative URL values
+     * @var bool
+     * @since 5.15.0
+     */
+    public bool $allowPathInPaginationUrl = false;
 }
