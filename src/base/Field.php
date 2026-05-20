@@ -151,7 +151,7 @@ abstract class Field extends Component
      * @throws Throwable
      * @throws ElementNotFoundException
      * @throws Exception
-     * @since 5.13.0
+     * @since 6.10.0
      */
     protected function populateNativeFields(array $elementIds, string $nodeKey = null): void
     {

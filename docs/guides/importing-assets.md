@@ -7,7 +7,7 @@ Not only can you use Asset importing to create/upload image files, you can also 
 Below we’ll look at a real-world example of importing a collection of remote images into Craft.
 
 :::tip
-If you’ve already got local image files ready to import, you can skip Feed Me and [update asset indexes](https://craftcms.com/docs/3.x/assets.html#updating-asset-indexes):
+If you’ve already got local image files ready to import, you can skip Feed Me and [update asset indexes](https://craftcms.com/docs/5.x/reference/element-types/assets.html#updating-asset-indexes):
 
 1. Copy the image files/folders into your volume’s root folder.
 2. In the control panel, go to **Utilities** → **Asset Indexes**.

@@ -6,17 +6,22 @@ use Cake\Utility\Hash;
 use Craft;
 use craft\base\Element as BaseElement;
 use craft\elements\conditions\ElementConditionInterface;
+use craft\elements\Entry;
 use craft\elements\Entry as EntryElement;
 use craft\errors\ElementNotFoundException;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\helpers\DataHelper;
+use craft\feedme\helpers\FieldHelper;
+use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
+use craft\fields\BaseRelationField;
 use craft\fields\Entries as EntriesField;
 use craft\helpers\Db;
 use craft\helpers\ElementHelper;
 use craft\helpers\Json;
 use craft\services\ElementSources;
+use Illuminate\Support\Collection;
 use Throwable;
 use yii\base\Exception;
 
@@ -103,7 +108,7 @@ class Entries extends Field implements FieldInterface
             foreach ($sources as $source) {
                 // When singles is selected as the only option to search in, it doesn't contain any ids...
                 if ($source == 'singles') {
-                    foreach (Craft::$app->getSections()->getAllSections() as $section) {
+                    foreach (Craft::$app->getEntries()->getAllSections() as $section) {
                         $sectionIds[] = ($section->type == 'single') ? $section->id : '';
                     }
                 } else {
@@ -162,18 +167,10 @@ class Entries extends Field implements FieldInterface
                 }
             }
 
-            // Because we can match on element attributes and custom fields, AND we're directly using SQL
-            // queries in our `where` below, we need to check if we need a prefix for custom fields accessing
-            // the content table.
-            $columnName = $match;
-
-            if (Craft::$app->getFields()->getFieldByHandle($match)) {
-                $columnName = Craft::$app->getFields()->oldFieldColumnPrefix . $match;
-            }
-
             $criteria['status'] = null;
             $criteria['limit'] = $limit;
-            $criteria['where'] = ['=', $columnName, $dataValue];
+            // prep the $dataValue for matching
+            $criteria[$match] = DataHelper::prepValueForElementMatch($dataValue);
 
             Craft::configure($query, $criteria);
 
@@ -249,6 +246,80 @@ class Entries extends Field implements FieldInterface
         return $foundElements;
     }
 
+    /**
+     * Returns an array of custom fields that can be used when querying for matching entries.
+     *
+     * If a field is passed, use the field layouts linked to the sources allowed by the Entries field.
+     * If all the sources are native (sections), then only fields from all those sections entry types field layouts will be returned.
+     * If there's at least one custom source in the mix, the above list will be followed by a list of all the fields.
+     * If only custom sources are selected, return all the fields in the installation.
+     *
+     * @param FeedModel $feed
+     * @param BaseRelationField|null $field
+     * @return array
+     */
+    public static function getMatchFields(FeedModel $feed, ?BaseRelationField $field = null): array
+    {
+        // The field will be null e.g. when importing into a structure section and there's the option to select a parent
+        // the parent is serviced by the entries field markup too, but it doesn't tie into a custom field per se;
+        if ($field === null) {
+            $entryType = Craft::$app->getEntries()->getEntryTypeById($feed->elementGroup[Entry::class]['entryType']);
+            if (!$entryType) {
+                return FieldHelper::getAllUniqueIdFields();
+            }
+
+            $fieldLayout = null;
+            if ($entryType->fieldLayoutId) {
+                $fieldLayout = Craft::$app->getFields()->getLayoutById($entryType->fieldLayoutId);
+            }
+
+            if (!$fieldLayout) {
+                return FieldHelper::getAllUniqueIdFields();
+            }
+
+            return array_filter(
+                $fieldLayout->getCustomFields(),
+                fn($field) => FieldHelper::fieldCanBeUniqueId($field)
+            );
+        } else {
+            // if the Entries field has only custom sources - we have no choice but return all the field
+            if (FieldHelper::fieldHasOnlyCustomSources($field)) {
+                return FieldHelper::getAllUniqueIdFields();
+            }
+
+            // deal with the native sources - sections
+            $sections = FieldHelper::getEntrySourcesByField($field);
+            $entryTypes = [];
+            foreach ($sections as $section) {
+                $entryTypes = [...$entryTypes, ...$section->getEntryTypes()];
+            }
+
+            $allowedFields = [];
+            $entryTypes = Collection::make($entryTypes)->keyBy('id');
+
+            foreach ($entryTypes as $entryType) {
+                if ($entryType->fieldLayoutId) {
+                    $fieldLayout = Craft::$app->getFields()->getLayoutById($entryType->fieldLayoutId);
+                    if ($fieldLayout) {
+                        $allowedFields = [...$allowedFields, ...$fieldLayout->getCustomFields()];
+                    }
+                }
+            }
+
+            // if there's a custom source in the mix, we should add all the fields too
+            $customSources = [];
+            if (is_array($field['sources'])) {
+                $customSources = array_filter($field['sources'], (fn(string $source) => str_starts_with($source, 'custom:')));
+            }
+
+            if (!empty($customSources)) {
+                $allowedFields = [...$allowedFields, ...Craft::$app->getFields()->getAllFields()];
+            }
+
+            return array_filter($allowedFields, fn($field) => FieldHelper::fieldCanBeUniqueId($field));
+        }
+    }
+
 
     // Private Methods
     // =========================================================================
@@ -267,11 +338,11 @@ class Entries extends Field implements FieldInterface
 
         // Bit of backwards-compatibility here, if not explicitly set, grab the first globally
         if (!$sectionId) {
-            $sectionId = Craft::$app->getSections()->getAllSectionIds()[0];
+            $sectionId = Craft::$app->getEntries()->getAllSectionIds()[0];
         }
 
         if (!$typeId) {
-            $typeId = Craft::$app->getSections()->getEntryTypesBySectionId($sectionId)[0]->id;
+            $typeId = Craft::$app->getEntries()->getEntryTypesBySectionId($sectionId)[0]->id;
         }
 
         $element = new EntryElement();
@@ -280,7 +351,7 @@ class Entries extends Field implements FieldInterface
         $element->typeId = $typeId;
 
         $siteId = Hash::get($this->feed, 'siteId');
-        $section = Craft::$app->getSections()->getSectionById($element->sectionId);
+        $section = Craft::$app->getEntries()->getSectionById($element->sectionId);
 
         if ($siteId) {
             $element->siteId = $siteId;

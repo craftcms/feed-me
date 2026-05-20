@@ -356,6 +356,32 @@ class DataHelper
     }
 
     /**
+     * Prepares given value for finding an element by it.
+     *
+     * @param mixed $value
+     * @return mixed
+     */
+    public static function prepValueForElementMatch(mixed $value): mixed
+    {
+        if (is_array($value)) {
+            array_walk($value, fn($v) => Db::escapeParam($v));
+        } elseif (is_string($value)) {
+            $value = Db::escapeParam($value);
+        }
+
+        // ensure that if the value is exactly "or" or "and" (case-insensitive), we escape it too
+        $operators = ['or', 'and'];
+        foreach ($operators as $operator) {
+            if (is_string($value) && strcasecmp($value, $operator) === 0) {
+                $value = "=$value";
+                break;
+            }
+        }
+
+        return $value;
+    }
+
+    /**
      * @param $array1
      * @param $array2
      * @return bool|array

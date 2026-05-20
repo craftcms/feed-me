@@ -1,10 +1,10 @@
 # Using in your Templates
 
-While you can create a feed queue job to insert data as elements, there are times which you may prefer to capture feed data on-demand, rather than saving as an entry. You can easily do this through your twig templates using the below.
+While you can create a feed queue job to insert data as elements, there are times when you may prefer to capture feed data on-demand. You can easily do this in your Twig templates using Feed Me’s API.
 
 Feeds are cached for performance (default to 60 seconds), which can be set by a tag parameter, or in the plugin settings.
 
-```twig
+```twig{5}
 {% set params = {
     url: 'http://path.to/feed/',
     type: 'xml',
@@ -19,9 +19,13 @@ Feeds are cached for performance (default to 60 seconds), which can be set by a 
 {% endfor %}
 ```
 
+::: danger
+Do not issue requests to user-supplied URLs! If you must parameterize a feed URL, validate the incoming data, first.
+:::
+
 #### Parameters
 
-- `url` (string, required) - URL to the feed.
+- `url` (string, required) - URL or path to the feed.
 - `type` (string, optional) - The type of feed you're fetching data from. Valid options are json or xml (defaults to xml).
 - `element` (string, optional) - Element to start feed from. Useful for deep feeds.
 - `cache` (bool or number, optional) - Whether or not to cache the request. If true, will use the default as set in the plugin settings, or if a number, will use that as its duration. Setting to false will disable cache completely.

@@ -27,9 +27,21 @@
             </div>
 
             <div class="additional-mapping-fields">
-                {% namespace 'fieldMapping[' ~ prefixPath|join('][') ~ ']' %}
-                    <input type="text" name="nativeField" value="{{ className(nativeField) }}">
-                {% endnamespace %}
+                {% if attribute is defined and attribute %}
+                    {% namespace 'fieldMapping[' ~ prefixPath|join('][') ~ ']' %}
+                        <input type="text" name="attribute" value="true">
+                    {% endnamespace %}
+                {% endif %}
+                {% if nativeField is defined %}
+                    {% namespace 'fieldMapping[' ~ prefixPath|join('][') ~ ']' %}
+                        <input type="text" name="nativeField" value="{{ nativeField is string ? nativeField : className(nativeField) }}">
+                    {% endnamespace %}
+                {% endif %}
+                {% if field is defined %}
+                    {% namespace 'fieldMapping[' ~ prefixPath|join('][') ~ ']' %}
+                        <input type="text" name="field" value="{{ className(field) }}">
+                    {% endnamespace %}
+                {% endif %}
             </div>
         </div>
     </td>
@@ -41,20 +53,23 @@
 {% if fieldLayout %}
     {% for tab in fieldLayout.getTabs() %}
         {% for layoutField in tab.getElements()|filter(e => e is instance of ('craft\\fieldlayoutelements\\BaseField')) %}
+            {% set fieldClass = null %}
             {% if layoutField is instance of ('craft\\fieldlayoutelements\\CustomField') %}
-                {% set field = layoutField.getField() %}
-                {% set fieldClass = craft.feedme.fields.getRegisteredField(className(field)) %}
-                {% set path = prefixPath|merge(['fields', field.handle]) %}
+                {% set field = craft.feedme.fields.getFieldFromLayoutElement(layoutField) %}
+                {% if field %}
+                    {% set fieldClass = craft.feedme.fields.getRegisteredField(className(field)) %}
+                    {% set path = prefixPath|merge(['fields', field.handle]) %}
 
-                {% set variables = {
-                    name: field.name,
-                    handle: field.handle,
-                    feed: feed,
-                    feedData: feedData,
-                    field: field,
-                    fieldClass: fieldClass,
-                    path: path
-                } %}
+                    {% set variables = {
+                        name: field.name,
+                        handle: field.handle,
+                        feed: feed,
+                        feedData: feedData,
+                        field: field,
+                        fieldClass: fieldClass,
+                        path: path
+                    } %}
+                {% endif %}
             {% else %}
                 {% set fieldClass = craft.feedme.fields.getRegisteredNativeField(className(layoutField)) %}
                 {% set path = prefixPath|merge(['nativeFields', layoutField.attribute]) %}
@@ -70,9 +85,11 @@
                 } %}
             {% endif %}
 
-            {% set template = fieldClass.getMappingTemplate() %}
+            {% if fieldClass %}
+                {% set template = fieldClass.getMappingTemplate() %}
 
-            {% include template ignore missing with variables only %}
+                {% include template ignore missing with variables only %}
+            {% endif %}
         {% endfor %}
     {% endfor %}
 {% endif %}

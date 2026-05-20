@@ -23,25 +23,25 @@
     "email": "support@craftcms.com",
     "issues": "https://github.com/craftcms/feed-me/issues?state=open",
     "source": "https://github.com/craftcms/feed-me",
-    "docs": "https://docs.craftcms.com/feed-me/v4/",
+    "docs": "https://docs.craftcms.com/feed-me/v6/",
     "rss": "https://github.com/craftcms/feed-me/commits/master.atom"
   },
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
-    "php": "^8.0.2",
-    "craftcms/cms": "^4.6.0",
-    "cakephp/utility": "^3.3.12",
+    "php": "^8.2",
+    "craftcms/cms": "^5.6.0",
+    "cakephp/utility": "^5.0.0",
     "jakeasmith/http_build_url": "^1.0",
-    "nesbot/carbon": "^1.22 || ^2.10",
-    "league/csv": "^8.2 || ^9.0",
+    "nesbot/carbon": "^2.10|^3.0.0",
+    "league/csv": "^9.0",
     "seld/jsonlint": "^1.7"
   },
   "require-dev": {
     "craftcms/ecs": "dev-main",
     "craftcms/phpstan": "dev-main",
-    "codeception/codeception": "^4.0.0",
-    "codeception/module-asserts": "^1.3"
+    "codeception/codeception": "^5.0.11",
+    "codeception/module-asserts": "^3.0.0"
   },
   "autoload": {
     "psr-4": {
@@ -65,7 +65,7 @@
   },
   "config": {
     "platform": {
-      "php": "8.0.2"
+      "php": "8.2"
     },
     "allow-plugins": {
       "yiisoft/yii2-composer": true,
