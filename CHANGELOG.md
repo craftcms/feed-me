@@ -1,5 +1,9 @@
 # Release Notes for Feed Me
 
+## Unreleased
+
+- Fixed a bug where imported entries weren’t getting post dates on Craft 5.10+. ([#1735](https://github.com/craftcms/feed-me/issues/1735))
+
 ## 6.11.0 - 2025-10-30
 
 - Multiple feeds queued via a single CLI command are now processed sequentially, even if they’re batched. ([#1695](https://github.com/craftcms/feed-me/issues/1695))
