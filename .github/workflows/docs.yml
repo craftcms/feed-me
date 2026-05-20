@@ -15,8 +15,8 @@ name: Build VitePress Documentation
 on:
   push:
     branches:
-      # We don’t have a good way to parameterize this into friendly URLs, so it's maintained per-branch:
-      - 4.x
+      # Only 6.x, for now (we don’t have a good way to parameterize this into friendly URLs):
+      - 6.x
   workflow_dispatch:
 
 concurrency:
@@ -73,16 +73,16 @@ jobs:
           name: vitepress-output
           path: build
       - name: Clear files
-        run: rm -rf docs.craftcms.com/docs/feed-me/v4
+        run: rm -rf docs.craftcms.com/docs/feed-me/v6
       - name: Move artifacts
-        run: mv build docs.craftcms.com/docs/feed-me/v4
+        run: mv build docs.craftcms.com/docs/feed-me/v6
       - name: Commit changes
         working-directory: docs.craftcms.com
         run: |
           git config user.name "${{ vars.GIT_COMMITTER_NAME }}"
           git config user.email "${{ vars.GIT_COMMITTER_EMAIL }}"
           git add --all
-          git commit -a -m "VitePress build: Feed Me 4.x (${{ needs.build.outputs.short_hash }})"
+          git commit -a -m "VitePress build: Feed Me 6.x (${{ needs.build.outputs.short_hash }})"
           git push
 
   notify:
@@ -98,5 +98,5 @@ jobs:
           payload: |
             {
               "product": "Feed Me ${{ github.ref_name }}",
-              "url": "https://docs.craftcms.com/feed-me/v4"
+              "url": "https://docs.craftcms.com/feed-me/v6"
             }

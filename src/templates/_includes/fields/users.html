@@ -42,18 +42,16 @@
 
         {% set matchAttributes = [
             { value: 'email', label: 'Email'|t('feed-me') },
-            { value: 'elements.id', label: 'ID'|t('feed-me') },
+            { value: 'id', label: 'ID'|t('feed-me') },
             { value: 'username', label: 'Username'|t('feed-me') },
             { value: 'fullName', label: 'Full Name'|t('feed-me') },
         ] %}
 
-        {% for field in craft.app.fields.getAllFields() %}
-            {% if craft.feedme.fieldCanBeUniqueId(field) %}
-                {# Check for columnSuffix (since 3.7) #}
-                {% set suffix = field['columnSuffix'] is defined and field.columnSuffix|length  ? '_' ~ field.columnSuffix : '' %}
-                {% set matchAttributes = matchAttributes|merge({ ('field_' ~ field.handle ~ suffix): field.name }) %}
-            {% endif %}
-        {% endfor %}
+        {% if field is defined and field is not empty %}
+            {% set matchAttributes = matchAttributes|merge(craft.feedme.getRelationFieldMatchOptions(className(field), feed, field)) %}
+        {% else %}
+            {% set matchAttributes = matchAttributes|merge(craft.feedme.getRelationFieldMatchOptions('craft\\fields\\Users', feed, null)) %}
+        {% endif %}
 
         {{ forms.selectField({
             name: 'options[match]',

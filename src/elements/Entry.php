@@ -22,6 +22,7 @@ use yii\base\Exception;
 
 /**
  *
+ * @property EntryElement $element
  * @property-read string $mappingTemplate
  * @property-read array $groups
  * @property-write mixed $model
@@ -78,7 +79,7 @@ class Entry extends Element
      */
     public function getGroups(): array
     {
-        $editable = Craft::$app->getSections()->getEditableSections();
+        $editable = Craft::$app->getEntries()->getEditableSections();
         $groups = [];
 
         foreach ($editable as $section) {
@@ -107,7 +108,7 @@ class Entry extends Element
             ->sectionId($settings['elementGroup'][EntryElement::class]['section'])
             ->typeId($settings['elementGroup'][EntryElement::class]['entryType']);
 
-        if (isset($section) && $section->propagationMethod === Section::PROPAGATION_METHOD_CUSTOM) {
+        if (isset($section) && $section->propagationMethod === \craft\enums\PropagationMethod::Custom) {
             $query->site('*')
                 ->preferSites([$targetSiteId])
                 ->unique();
@@ -128,7 +129,7 @@ class Entry extends Element
         $this->element->sectionId = $settings['elementGroup'][EntryElement::class]['section'];
         $this->element->typeId = $settings['elementGroup'][EntryElement::class]['entryType'];
 
-        $section = Craft::$app->getSections()->getSectionById($this->element->sectionId);
+        $section = Craft::$app->getEntries()->getSectionById($this->element->sectionId);
         $siteId = Hash::get($settings, 'siteId');
 
         if ($siteId) {
@@ -139,7 +140,7 @@ class Entry extends Element
         $enabledForSite = [];
         foreach ($section->getSiteSettings() as $siteSettings) {
             if (
-                $section->propagationMethod !== Section::PROPAGATION_METHOD_CUSTOM ||
+                $section->propagationMethod !== \craft\enums\PropagationMethod::Custom ||
                 $siteSettings->siteId == $siteId
             ) {
                 $enabledForSite[$siteSettings->siteId] = $siteSettings->enabledByDefault;
@@ -168,7 +169,7 @@ class Entry extends Element
         // Did the entry come back in a different site?
         if ($existingElement->siteId != $targetSiteId) {
             // Skip it if its section doesn't use the `custom` propagation method
-            if ($existingElement->getSection()->propagationMethod !== Section::PROPAGATION_METHOD_CUSTOM) {
+            if ($existingElement->getSection()->propagationMethod !== \craft\enums\PropagationMethod::Custom) {
                 return $existingElement;
             }
 
@@ -183,6 +184,26 @@ class Entry extends Element
         }
 
         return $existingElement;
+    }
+
+    public function beforeSave($element, $settings): bool
+    {
+        if (!parent::beforeSave($element, $settings)) {
+            return false;
+        }
+
+        if (!$this->element->postDate && $this->element->enabled) {
+            // Default the post date to the current date/time
+            $this->element->postDate = new DateTime();
+            // ...without the seconds
+            $this->element->postDate->setTimestamp($this->element->postDate->getTimestamp() - ($this->element->postDate->getTimestamp() % 60));
+            // ...unless an expiry date is set in the past
+            if ($this->element->expiryDate && $this->element->postDate >= $this->element->expiryDate) {
+                $this->element->postDate = (clone $this->element->expiryDate)->modify('-1 day');
+            }
+        }
+
+        return true;
     }
 
     // Protected Methods
@@ -239,7 +260,7 @@ class Entry extends Element
         }
 
         if ($node === 'usedefault' || $value === $default) {
-            $match = 'elements.id';
+            $match = 'id';
         }
 
         if (is_array($value)) {
@@ -247,8 +268,7 @@ class Entry extends Element
         }
 
         $query = EntryElement::find()
-            ->status(null)
-            ->andWhere(['=', $match, $value]);
+            ->status(null);
 
         if (isset($this->feed['siteId']) && $this->feed['siteId']) {
             $query->siteId($this->feed['siteId']);
@@ -259,6 +279,8 @@ class Entry extends Element
             $query->sectionId($this->element->sectionId);
         }
 
+        // using $query->andWhere() doesn't work for custom fields
+        Craft::configure($query, [$match => $value]);
         $element = $query->one();
 
         if ($element) {
@@ -298,14 +320,14 @@ class Entry extends Element
     /**
      * @param $feedData
      * @param $fieldInfo
-     * @return int|null
+     * @return array|null
      * @throws Throwable
      * @throws ElementNotFoundException
      * @throws Exception
      */
-    protected function parseAuthorId($feedData, $fieldInfo): ?int
+    protected function parseAuthorIds($feedData, $fieldInfo): ?array
     {
-        $value = $this->fetchSimpleValue($feedData, $fieldInfo);
+        $values = $this->fetchArrayValue($feedData, $fieldInfo);
         $default = DataHelper::fetchDefaultArrayValue($fieldInfo);
 
         $match = Hash::get($fieldInfo, 'options.match');
@@ -313,46 +335,49 @@ class Entry extends Element
         $node = Hash::get($fieldInfo, 'node');
 
         // Element lookups must have a value to match against
-        if ($value === null || $value === '') {
+        if (empty($values)) {
             return null;
         }
 
-        if ($node === 'usedefault' || $value === $default) {
-            $match = 'elements.id';
+        if ($node === 'usedefault' || $values === $default) {
+            $match = 'id';
         }
 
-        if (is_array($value)) {
-            $value = $value[0];
-        }
-
-        if ($match === 'fullName') {
-            $element = UserElement::findOne(['search' => $value, 'status' => null]);
-        } else {
-            $element = UserElement::find()
-                ->status(null)
-                ->andWhere(['=', $match, $value])
-                ->one();
-        }
-
-        if ($element) {
-            return $element->id;
-        }
-
-        // Check if we should create the element. But only if email is provided (for the moment)
-        if ($create && $match === 'email') {
-            $element = new UserElement();
-            $element->username = $value;
-            $element->email = $value;
-
-            if (!Craft::$app->getElements()->saveElement($element, true, true, Hash::get($this->feed, 'updateSearchIndexes'))) {
-                Plugin::error('Entry error: Could not create author - `{e}`.', ['e' => Json::encode($element->getErrors())]);
+        $matchedIds = null;
+        foreach ($values as $value) {
+            $hasMatch = false;
+            if ($match === 'fullName') {
+                $element = UserElement::findOne(['search' => $value, 'status' => null]);
             } else {
-                Plugin::info('Author `#{id}` added.', ['id' => $element->id]);
+                $query = UserElement::find()
+                    ->status(null);
+
+                // using $query->andWhere() doesn't work for custom fields
+                Craft::configure($query, [$match => $value]);
+                $element = $query->one();
             }
 
-            return $element->id;
+            if ($element) {
+                $hasMatch = true;
+                $matchedIds[] = $element->id;
+            }
+
+            // Check if we should create the element. But only if email is provided (for the moment)
+            if (!$hasMatch && $create && $match === 'email') {
+                $element = new UserElement();
+                $element->username = $value;
+                $element->email = $value;
+
+                if (!Craft::$app->getElements()->saveElement($element, true, true, Hash::get($this->feed, 'updateSearchIndexes'))) {
+                    Plugin::error('Entry error: Could not create author - `{e}`.', ['e' => Json::encode($element->getErrors())]);
+                } else {
+                    Plugin::info('Author `#{id}` added.', ['id' => $element->id]);
+                }
+
+                $matchedIds[] = $element->id;
+            }
         }
 
-        return null;
+        return $matchedIds;
     }
 }

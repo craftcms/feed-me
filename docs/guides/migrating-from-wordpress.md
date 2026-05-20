@@ -8,15 +8,21 @@ Consider reviewing the [updated recommendations](https://craftcms.com/knowledge-
 While we are happy to support Feed Me and the `wp-import` extension, we are unable to offer help with third-party WordPress export tools. This guide provides some general recommendations, but may not be a turn-key solution for every WordPress installation!
 :::
 
-### Create export from WordPress
+## Create export from WordPress
 
-The first step is to get our data out of WordPress. In our experience, the best community-maintained plugin is [WP All Export](https://en-au.wordpress.org/plugins/wp-all-export/), which you can download for free. It'll produce an XML file of your content and supports all native fields, Advanced Custom Fields, WooCommerce, Custom Taxonomies and Custom Post Types.
+### Plugin Exporters
+
+The first step is to get your data out of WordPress. We’ll assume you’re using the free [WP All Export](https://wordpress.org/plugins/wp-all-export/) plugin. It'll produce an XML file of your content and supports all native fields, Advanced Custom Fields, WooCommerce, custom taxonomies, and custom post types.
+
+Use one or more of the tutorials to set up exports for the data you need. Keep in mind that you can import content in multiple stages via different feeds—you don't have to import (or export) _everything_ at once!
 
 ::: warning
 Make sure the WordPress `ID` is present for every record you export.
 :::
 
-We'll not be covering the ins-and-outs of how to export your content from WordPress—the plugin page above has an excellent video explaining it better than we can. Our recommendation is to essentially select every bit of data you can to export out, then setup Feed Me to import what you need.
+### WP JSON
+
+If you have a relatively vanilla WordPress installation, you may be able to use the [built-in REST API](https://learn.wordpress.org/tutorial/using-the-wordpress-rest-api/) to dynamically retrieve your site’s content as JSON.
 
 ### Feed Me Settings
 

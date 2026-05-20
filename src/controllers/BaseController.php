@@ -23,12 +23,13 @@ class BaseController extends Controller
      */
     public function actionSettings(): Response
     {
-        $this->requireAdmin();
+        $this->requireAdmin(false);
 
         $settings = Plugin::$plugin->getSettings();
 
         return $this->renderTemplate('feed-me/settings/general', [
             'settings' => $settings,
+            'readOnly' => !Craft::$app->getConfig()->getGeneral()->allowAdminChanges,
         ]);
     }
 

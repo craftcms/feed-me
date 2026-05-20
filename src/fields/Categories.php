@@ -5,12 +5,16 @@ namespace craft\feedme\fields;
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\Element as BaseElement;
+use craft\elements\Category;
 use craft\elements\Category as CategoryElement;
 use craft\elements\conditions\ElementConditionInterface;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\helpers\DataHelper;
+use craft\feedme\helpers\FieldHelper;
+use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
+use craft\fields\BaseRelationField;
 use craft\fields\Categories as CategoriesField;
 use craft\helpers\Db;
 use craft\helpers\ElementHelper;
@@ -143,21 +147,14 @@ class Categories extends Field implements FieldInterface
                 }
             }
 
-            // Because we can match on element attributes and custom fields, AND we're directly using SQL
-            // queries in our `where` below, we need to check if we need a prefix for custom fields accessing
-            // the content table.
-            $columnName = $match;
-
-            if (Craft::$app->getFields()->getFieldByHandle($match)) {
-                $columnName = Craft::$app->getFields()->oldFieldColumnPrefix . $match;
-            }
-
             if ($groupId) {
                 $criteria['groupId'] = $groupId;
             }
+
             $criteria['status'] = null;
             $criteria['limit'] = $limit;
-            $criteria['where'] = ['=', $columnName, $dataValue];
+            // prep the $dataValue for matching
+            $criteria[$match] = DataHelper::prepValueForElementMatch($dataValue);
 
             Craft::configure($query, $criteria);
 
@@ -221,6 +218,55 @@ class Categories extends Field implements FieldInterface
         }
 
         return $foundElements;
+    }
+
+    /**
+     * Returns an array of custom fields that can be used when querying for matching categories.
+     *
+     * If a field is passed, use the field layout linked to the source (category group) selected in the Categories field's settings.
+     * If the source is native (it's a category group), only return the custom fields from its layout.
+     * If the source is custom, return all the fields in the installation.
+     *
+     * @param FeedModel $feed
+     * @param BaseRelationField|null $field
+     * @return array
+     */
+    public static function getMatchFields(FeedModel $feed, ?BaseRelationField $field = null): array
+    {
+        // The field will be null e.g. when importing into a categories group with maintain hierarchy turned on;
+        // in that case, there's the option to select a parent;
+        // the parent is serviced by the categories field markup too, but it doesn't tie into a custom field per se;
+        if ($field === null) {
+            $categoryGroup = Craft::$app->getCategories()->getGroupById($feed->elementGroup[Category::class]);
+            if (!$categoryGroup) {
+                return FieldHelper::getAllUniqueIdFields();
+            }
+
+            $fieldLayout = null;
+            if ($categoryGroup->fieldLayoutId) {
+                $fieldLayout = Craft::$app->getFields()->getLayoutById($categoryGroup->fieldLayoutId);
+            }
+            if (!$fieldLayout) {
+                return FieldHelper::getAllUniqueIdFields();
+            }
+
+            return array_filter($fieldLayout->getCustomFields(), fn($field) => FieldHelper::fieldCanBeUniqueId($field));
+        } else {
+            // if the Categories field has only custom source - we have no choice but return all the field
+            if (FieldHelper::fieldHasOnlyCustomSources($field)) {
+                return FieldHelper::getAllUniqueIdFields();
+            }
+            // otherwise get the layout for the group selected in the field's settings
+            $group = FieldHelper::getCategorySourcesByField($field);
+            if (!$group) {
+                return FieldHelper::getAllUniqueIdFields();
+            }
+
+            $fieldLayout = Craft::$app->getFields()->getLayoutById($group->fieldLayoutId);
+            $allowedFields = $fieldLayout?->getCustomFields() ?? [];
+
+            return array_filter($allowedFields, fn($field) => FieldHelper::fieldCanBeUniqueId($field));
+        }
     }
 
     // Private Methods

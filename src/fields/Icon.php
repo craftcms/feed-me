@@ -4,13 +4,14 @@ namespace craft\feedme\fields;
 
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
+use craft\fields\Icon as IconField;
 use craft\helpers\Json;
 
 /**
  *
  * @property-read string $mappingTemplate
  */
-class DefaultField extends Field implements FieldInterface
+class Icon extends Field implements FieldInterface
 {
     // Properties
     // =========================================================================
@@ -18,12 +19,13 @@ class DefaultField extends Field implements FieldInterface
     /**
      * @var string
      */
-    public static string $name = 'Default';
+    public static string $name = 'Icon';
 
     /**
      * @var string
      */
-    public static string $class = 'craft\fields\Default';
+    public static string $class = IconField::class;
+
 
     // Templates
     // =========================================================================
@@ -33,7 +35,7 @@ class DefaultField extends Field implements FieldInterface
      */
     public function getMappingTemplate(): string
     {
-        return 'feed-me/_includes/fields/default';
+        return 'feed-me/_includes/fields/icon';
     }
 
     // Public Methods
@@ -65,17 +67,22 @@ class DefaultField extends Field implements FieldInterface
             $value = $this->field->normalizeValue($value, $this->element);
         }
 
-        // if we're setting empty values and the value is empty - return an empty string
+        // if we're setting empty values and the value is an empty string - return it
         // otherwise HtmlField will serialize it to null, and we setEmptyValues won't take effect
         // https://github.com/craftcms/feed-me/issues/1321
-        // if the normalizeValue above returns null, which can happen for e.g. plain text field and a value of a single space
-        // we also need to ensure that an empty string is returned, not the value as that can be null after normalization
-        // https://github.com/craftcms/feed-me/issues/1560
-        if ($this->feed['setEmptyValues'] && empty($value)) {
-            return '';
+        if ($this->feed['setEmptyValues'] === 1 && $value === '') {
+            return $value;
         }
 
         // Lastly, get each field to prepare values how they should
         return $this->field->serializeValue($value, $this->element);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function fetchValue(): mixed
+    {
+        return (string) parent::fetchValue();
     }
 }
