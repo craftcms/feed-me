@@ -1,6 +1,6 @@
 # Release Notes for Feed Me
 
-## Unreleased
+## 6.12.0 - 2026-05-20
 
 - Added the `allowPathInPaginationUrl` config setting. ([#1710](https://github.com/craftcms/feed-me/pull/1710))
 - Fixed a bug where imported entries weren’t getting post dates on Craft 5.10+. ([#1735](https://github.com/craftcms/feed-me/issues/1735))
