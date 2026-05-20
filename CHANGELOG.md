@@ -5,6 +5,7 @@
 - Added the `allowPathInPaginationUrl` config setting. ([#1710](https://github.com/craftcms/feed-me/pull/1710))
 - Fixed a bug where imported entries weren’t getting post dates on Craft 5.10+. ([#1735](https://github.com/craftcms/feed-me/issues/1735))
 - Fixed a bug where new assets could be created when “Replace existing asset” was selected for an Assets field. ([#1704](https://github.com/craftcms/feed-me/issues/1704)) 
+- Fixed a bug where some nested Matrix entries weren’t getting imported. ([#1707](https://github.com/craftcms/feed-me/issues/1707)) 
 
 ## 6.11.0 - 2025-10-30
 
