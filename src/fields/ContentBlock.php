@@ -8,7 +8,6 @@ use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\Plugin;
 use craft\fields\ContentBlock as ContentBlockField;
-use craft\helpers\ArrayHelper;
 
 /**
  *
@@ -223,7 +222,7 @@ class ContentBlock extends Field implements FieldInterface
         $class->fieldHandle = $subFieldHandle;
         $class->fieldInfo = $subFieldInfo;
         $class->field = $subField;
-        $class->element = $mockNestedEntry ?? $this->element;
+        $class->element = $this->element;
         $class->feed = $this->feed;
 
         // Get our content, parsed by this fields service function
