@@ -3,6 +3,8 @@
 namespace craft\feedme\web\twig\variables;
 
 use Craft;
+use craft\commerce\fields\Products;
+use craft\commerce\fields\Variants;
 use craft\feedme\helpers\FieldHelper;
 use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
@@ -244,6 +246,8 @@ class FeedMeVariable extends ServiceLocator
             Categories::class => \craft\feedme\fields\Categories::class,
             Entries::class => \craft\feedme\fields\Entries::class,
             Users::class => \craft\feedme\fields\Users::class,
+            // yes, this mapping is intentional because the logic in getMatchFields() is almost the same for products and variants
+            Products::class, Variants::class => \craft\feedme\fields\CommerceProducts::class,
             default => null,
         };
 
