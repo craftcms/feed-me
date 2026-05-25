@@ -160,11 +160,16 @@ class FieldHelper
             $source = static::getCommerceProductSourcesByField($field)[0] ?? null;
         }
 
-        if (!$source || !$source->fieldLayoutId) {
+        $fieldLayoutParam = 'fieldLayoutId';
+        if ($type === 'craft\commerce\fields\Variants') {
+            $fieldLayoutParam = 'variantFieldLayoutId';
+        }
+
+        if (!$source || !$source->$fieldLayoutParam) {
             return null;
         }
 
-        if (($fieldLayout = Craft::$app->getFields()->getLayoutById($source->fieldLayoutId)) !== null) {
+        if (($fieldLayout = Craft::$app->getFields()->getLayoutById($source->$fieldLayoutParam)) !== null) {
             return ArrayHelper::merge($fieldLayout->getCustomFields(), $fieldLayout->getAvailableNativeFields());
         }
 
