@@ -121,6 +121,7 @@ class FieldHelper
             foreach ($field->sources as $source) {
                 [, $uid] = explode(':', $source);
 
+                /** @phpstan-ignore-next-line */
                 $productType = CommercePlugin::getInstance()->getProductTypes()->getProductTypeByUid($uid);
                 // only add to product types, if this was a section that we were able to retrieve (native section's uid)
                 // https://github.com/craftcms/feed-me/issues/1186
@@ -129,6 +130,7 @@ class FieldHelper
                 }
             }
         } elseif ($field->sources === '*') {
+            /** @phpstan-ignore-next-line */
             $sources = CommercePlugin::getInstance()->getProductTypes()->getAllProductTypes();
         }
 
