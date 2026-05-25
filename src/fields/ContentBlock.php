@@ -129,8 +129,7 @@ class ContentBlock extends Field implements FieldInterface
 
     /**
      * @param $nodePath
-     * @param $blocks
-     * @return array|null|string
+     * @return array|null
      */
     private function _getFieldMappingInfoForNodePath($nodePath, $fields): ?array
     {
@@ -206,7 +205,7 @@ class ContentBlock extends Field implements FieldInterface
      * @param $blockHandle entry type handle
      * @return mixed
      */
-    private function _parseSubField($feedData, $subFieldHandle, $subFieldInfo, $blockHandle = null): mixed
+    private function _parseSubField($feedData, $subFieldHandle, $subFieldInfo): mixed
     {
         $subFieldClassHandle = Hash::get($subFieldInfo, 'field');
 
@@ -217,18 +216,6 @@ class ContentBlock extends Field implements FieldInterface
             ($subField instanceof \craft\fields\Categories || $subField instanceof \craft\fields\Tags)
         ) {
             $subFieldClassHandle = \craft\fields\Entries::class;
-        }
-
-        // mock the nested matrix entry so that the assets field can correctly resolve dynamic path that contains owner in it
-        // e.g. {owner.slug}
-        // see https://github.com/craftcms/feed-me/issues/1477 for more details
-        if ($blockHandle !== null && $subField instanceof \craft\fields\Assets) {
-            $mockNestedEntry = new Entry();
-            $mockNestedEntry->primaryOwnerId = $this->element->id;
-            $mockNestedEntry->ownerId = $this->element->id;
-            $mockNestedEntry->fieldId = $this->field->id;
-            $entryType = ArrayHelper::firstWhere($this->field->getEntryTypes(), 'handle', $blockHandle);
-            $mockNestedEntry->typeId = $entryType->id;
         }
 
         $class = Plugin::$plugin->fields->getRegisteredField($subFieldClassHandle);
