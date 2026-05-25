@@ -201,7 +201,6 @@ class ContentBlock extends Field implements FieldInterface
      * @param $feedData
      * @param $subFieldHandle
      * @param $subFieldInfo
-     * @param $blockHandle entry type handle
      * @return mixed
      */
     private function _parseSubField($feedData, $subFieldHandle, $subFieldInfo): mixed
