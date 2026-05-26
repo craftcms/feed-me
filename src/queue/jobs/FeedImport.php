@@ -153,6 +153,8 @@ class FeedImport extends BaseBatchedJob implements RetryableJobInterface
         $processService = Plugin::$plugin->getProcess();
         $data = array_filter((array)$this->data());
 
+        // we want to set this early (before EVENT_BEFORE_PROCESS_FEED event), or the logging won't be accurate in case there's no data
+        Plugin::$feedName = $this->feed->name;
         if (empty($data)) {
             Plugin::info("No feed items to process.");
             $this->maybeProcessSequencedFeeds($this->feed->id);
