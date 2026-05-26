@@ -70,7 +70,7 @@
 
                         <td data-title="{{ 'Timestamp'|t('feed-me') }}">
                             <code>
-                                {{ logEntry.date|date('short') ~ ' ' ~ logEntry.date|time('short') }}
+                                {{ logEntry.date|datetime('short', withTimeZone: true) }}
                             </code>
                         </td>
                     </tr>
