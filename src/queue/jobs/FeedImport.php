@@ -154,7 +154,8 @@ class FeedImport extends BaseBatchedJob implements RetryableJobInterface
         $data = array_filter((array)$this->data());
 
         if (empty($data)) {
-            Plugin::info('No feed items to process.');
+            Plugin::info("No feed items to process.");
+            $this->maybeProcessSequencedFeeds($this->feed->id);
             return;
         }
       
