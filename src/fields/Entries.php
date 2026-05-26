@@ -233,7 +233,11 @@ class Entries extends Field implements FieldInterface
         // https://github.com/craftcms/feed-me/issues/1418
         if ($foundElements && $maintainHierarchy && Plugin::$plugin->service->getConfig('compareContent', $this->feed['id'])) {
             // get elements by IDs
-            $elements = EntryElement::find()->id($foundElements)->siteId($criteria['siteId'])->all();
+            $query = EntryElement::find()->id($foundElements);
+            if (Craft::$app->getIsMultiSite()) {
+                $query->siteId = $criteria['siteId'] ?? Craft::$app->getSites()->getCurrentSite()->id;
+            }
+            $elements = $query->all();
             Craft::$app->getStructures()->fillGapsInElements($elements);
             $foundElements = array_map(fn($element) => $element->id, $elements);
         }
