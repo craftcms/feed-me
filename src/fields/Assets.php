@@ -238,7 +238,7 @@ class Assets extends Field implements FieldInterface
 
         if ($upload) {
             if ($urlsToUpload) {
-                foreach ($urlsToUpload as $item) {
+                foreach ($urlsToUpload as $key => $item) {
                     $folderId = null;
                     if (
                         ($conflict == AssetElement::SCENARIO_REPLACE || $conflict == AssetElement::SCENARIO_CREATE) &&
@@ -257,13 +257,15 @@ class Assets extends Field implements FieldInterface
                         $folderId,
                         $item['newFilename']
                     );
-                    $foundElements = array_merge($foundElements, $uploadedElements);
+                    array_splice($foundElements, $key, 0, $uploadedElements);
                 }
             }
 
             if ($base64ToUpload) {
-                $uploadedElements = AssetHelper::createBase64Image($base64ToUpload, $this->fieldInfo, $this->feed, $this->field, $this->element);
-                $foundElements = array_merge($foundElements, $uploadedElements);
+                foreach ($base64ToUpload as $key => $base64) {
+                    $uploadedElement = AssetHelper::createBase64Image([$base64], $this->fieldInfo, $this->feed, $this->field, $this->element);
+                    array_splice($foundElements, $key, 0, $uploadedElement);
+                }
             }
         }
 
