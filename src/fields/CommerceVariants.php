@@ -90,6 +90,22 @@ class CommerceVariants extends Field implements FieldInterface
             $typeIds = null;
         }
 
+        // In multi-site, there's currently no way to query across all sites - we use the current site
+        // See https://github.com/craftcms/cms/issues/2854
+        if (Craft::$app->getIsMultiSite()) {
+            if ($targetSiteId) {
+                $criteria['siteId'] = Craft::$app->getSites()->getSiteByUid($targetSiteId)->id;
+            } elseif ($feedSiteId) {
+                $criteria['siteId'] = $feedSiteId;
+            } else {
+                $criteria['siteId'] = Craft::$app->getSites()->getCurrentSite()->id;
+            }
+        }
+
+        $criteria['status'] = null;
+        $criteria['typeId'] = $typeIds;
+        $criteria['limit'] = $limit;
+
         $foundElements = [];
 
         foreach ($value as $dataValue) {
@@ -114,21 +130,6 @@ class CommerceVariants extends Field implements FieldInterface
 
             $query = VariantElement::find();
 
-            // In multi-site, there's currently no way to query across all sites - we use the current site
-            // See https://github.com/craftcms/cms/issues/2854
-            if (Craft::$app->getIsMultiSite()) {
-                if ($targetSiteId) {
-                    $criteria['siteId'] = Craft::$app->getSites()->getSiteByUid($targetSiteId)->id;
-                } elseif ($feedSiteId) {
-                    $criteria['siteId'] = $feedSiteId;
-                } else {
-                    $criteria['siteId'] = Craft::$app->getSites()->getCurrentSite()->id;
-                }
-            }
-
-            $criteria['status'] = null;
-            $criteria['typeId'] = $typeIds;
-            $criteria['limit'] = $limit;
             // prep the $dataValue for matching
             $criteria[$match] = DataHelper::prepValueForElementMatch($dataValue);
 
