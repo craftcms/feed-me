@@ -4,6 +4,7 @@
 
 - Added the ability to map Commerce Products and Variants relation fields, so they work like other relation fields. ([#1736](https://github.com/craftcms/feed-me/pull/1736))
 - You can now match Commerce Product values based on a default SKU. ([#1736](https://github.com/craftcms/feed-me/pull/1736))
+- Fixed a bug where importing addresses might fail if the address had an expected format. ([#1737](https://github.com/craftcms/feed-me/pull/1737))
 
 ## 6.12.0 - 2026-05-20
 
