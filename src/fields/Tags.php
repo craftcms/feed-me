@@ -89,6 +89,22 @@ class Tags extends Field implements FieldInterface
         [, $groupUid] = explode(':', $source);
         $groupId = Db::idByUid('{{%taggroups}}', $groupUid);
 
+        // In multi-site, there's currently no way to query across all sites - we use the current site
+        // See https://github.com/craftcms/cms/issues/2854
+        if (Craft::$app->getIsMultiSite()) {
+            if ($targetSiteId) {
+                $criteria['siteId'] = Craft::$app->getSites()->getSiteByUid($targetSiteId)->id;
+            } elseif ($feedSiteId) {
+                $criteria['siteId'] = $feedSiteId;
+            } else {
+                $criteria['siteId'] = Craft::$app->getSites()->getCurrentSite()->id;
+            }
+        }
+
+        $criteria['status'] = null;
+        $criteria['groupId'] = $groupId;
+        $criteria['limit'] = $limit;
+
         $foundElements = [];
 
         foreach ($value as $dataValue) {
@@ -112,21 +128,6 @@ class Tags extends Field implements FieldInterface
 
             $query = TagElement::find();
 
-            // In multi-site, there's currently no way to query across all sites - we use the current site
-            // See https://github.com/craftcms/cms/issues/2854
-            if (Craft::$app->getIsMultiSite()) {
-                if ($targetSiteId) {
-                    $criteria['siteId'] = Craft::$app->getSites()->getSiteByUid($targetSiteId)->id;
-                } elseif ($feedSiteId) {
-                    $criteria['siteId'] = $feedSiteId;
-                } else {
-                    $criteria['siteId'] = Craft::$app->getSites()->getCurrentSite()->id;
-                }
-            }
-
-            $criteria['status'] = null;
-            $criteria['groupId'] = $groupId;
-            $criteria['limit'] = $limit;
             // prep the $dataValue for matching
             $criteria[$match] = DataHelper::prepValueForElementMatch($dataValue);
 
