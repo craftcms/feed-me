@@ -3,6 +3,7 @@
 namespace craft\feedme\helpers;
 
 use Craft;
+use craft\commerce\Plugin as CommercePlugin;
 use craft\elements\User as UserElement;
 use craft\fields\Checkboxes;
 use craft\fields\Color;
@@ -108,6 +109,34 @@ class FieldHelper
         return Craft::$app->tags->getTagGroupByUid($uid);
     }
 
+    public static function getCommerceProductSourcesByField($field): ?array
+    {
+        $sources = [];
+
+        if (!$field) {
+            return null;
+        }
+
+        if (is_array($field->sources)) {
+            foreach ($field->sources as $source) {
+                [, $uid] = explode(':', $source);
+
+                /** @phpstan-ignore-next-line */
+                $productType = CommercePlugin::getInstance()->getProductTypes()->getProductTypeByUid($uid);
+                // only add to product types, if this was a section that we were able to retrieve (native section's uid)
+                // https://github.com/craftcms/feed-me/issues/1186
+                if ($productType) {
+                    $sources[] = $productType;
+                }
+            }
+        } elseif ($field->sources === '*') {
+            /** @phpstan-ignore-next-line */
+            $sources = CommercePlugin::getInstance()->getProductTypes()->getAllProductTypes();
+        }
+
+        return $sources;
+    }
+
     //
     // Helper functions for element fields in getting their inner-element field layouts
     //
@@ -129,13 +158,20 @@ class FieldHelper
             }
         } elseif ($type === 'craft\fields\Tags') {
             $source = static::getTagSourcesByField($field);
+        } elseif ($type === 'craft\commerce\fields\Products' || $type === 'craft\commerce\fields\Variants') {
+            $source = static::getCommerceProductSourcesByField($field)[0] ?? null;
         }
 
-        if (!$source || !$source->fieldLayoutId) {
+        $fieldLayoutParam = 'fieldLayoutId';
+        if ($type === 'craft\commerce\fields\Variants') {
+            $fieldLayoutParam = 'variantFieldLayoutId';
+        }
+
+        if (!$source || !$source->$fieldLayoutParam) {
             return null;
         }
 
-        if (($fieldLayout = Craft::$app->getFields()->getLayoutById($source->fieldLayoutId)) !== null) {
+        if (($fieldLayout = Craft::$app->getFields()->getLayoutById($source->$fieldLayoutParam)) !== null) {
             return ArrayHelper::merge($fieldLayout->getCustomFields(), $fieldLayout->getAvailableNativeFields());
         }
 
