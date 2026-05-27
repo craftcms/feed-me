@@ -1,5 +1,10 @@
 # Release Notes for Feed Me
 
+## Unreleased
+
+- Added the ability to map Commerce Products and Variants relation fields, so they work like other relation fields. ([#1736](https://github.com/craftcms/feed-me/pull/1736))
+- You can now match Commerce Product values based on a default SKU. ([#1736](https://github.com/craftcms/feed-me/pull/1736))
+
 ## 6.12.0 - 2026-05-20
 
 - Added the `allowPathInPaginationUrl` config setting. ([#1710](https://github.com/craftcms/feed-me/pull/1710))
