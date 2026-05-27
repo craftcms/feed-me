@@ -1,0 +1,112 @@
+{# ------------------------ #}
+{# Available Variables #}
+{# ------------------------ #}
+{# Attributes: #}
+{# type, name, handle, instructions, attribute, default, feed, feedData #}
+{# ------------------------ #}
+{# Fields: #}
+{# name, handle, instructions, feed, feedData, field, fieldClass #}
+{# ------------------------ #}
+
+{% import 'feed-me/_macros' as feedMeMacro %}
+{% import '_includes/forms' as forms %}
+
+{% set classes = ['complex-field'] %}
+
+{% set prefixPath = [] %}
+{% if handle is defined %}
+    {% set prefixPath = [handle] %}
+{% endif %}
+{% if parentPath is defined %}
+    {% set prefixPath = parentPath %}
+{% endif %}
+
+<div class="additional-mapping-fields">
+    {% if prefixPath is not empty %}
+    {% namespace 'fieldMapping[' ~ prefixPath|join('][') ~ ']' %}
+        <input type="text" name="field" value="{{ className(field) }}">
+    {% endnamespace %}
+    {% endif %}
+</div>
+
+{% if field is defined %}
+    <tr class="complex-field complex-field-header">
+        <td class="col-field">
+            <div class="field">
+                <div class="heading">
+                    <label class="">{{ name }}</label>
+                </div>
+            </div>
+        </td>
+
+        <td class="col-map" colspan="2">
+            <div class="field-extra-settings">
+
+            </div>
+        </td>
+    </tr>
+
+    {% set tabs = field.getFieldLayout().getTabs() %}
+
+    {% for tab in tabs %}
+        {% for layoutField in tab.getElements()|filter(e => e is instance of('craft\\fieldlayoutelements\\CustomField')) %}
+            {% set field = craft.feedme.fields.getFieldFromLayoutElement(layoutField) %}
+            {% if field %}
+                {% set fieldClass = craft.feedme.fields.getRegisteredField(className(field)) %}
+                {% set template = fieldClass.getMappingTemplate() %}
+
+                {% set nameLabel = field.name %}
+                {% set instructionsHandle = handle ~ '[' ~ field.handle ~ ']' %}
+
+                {% set parentPath = prefixPath|merge(['fields', field.handle ]) %}
+
+                {% set variables = {
+                    name: field.name,
+                    handle: field.handle,
+                    feed: feed,
+                    feedData: feedData,
+                    field: field,
+                    fieldClass: fieldClass,
+                    path: parentPath,
+                    parentPath: parentPath,
+                    classes: ['inner-matrix']
+                }
+                %}
+
+                {% if fieldClass is instance of ('craft\\feedme\\fields\\ContentBlock') %}
+                    {% include template ignore missing with {
+                        nestedField: true,
+                        nameLabel: field.name,
+                        instructionsHandle: field.handle,
+                        instructions: 'Importing to a content block in a content block isn\'t yet supported.'
+                    } only %}
+                {% else %}
+                    {% include template ignore missing with variables only %}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+    </tr>
+{% endif %}
+
+{% if field is not defined and nestedField is defined %}
+    <tr class="inner-matrix">
+        <td class="col-field">
+            <div class="field">
+                <div class="heading">
+                    <label>{{ nameLabel|t('site') }}</label>
+                    <div class="instructions">
+                        <code>{{ instructionsHandle }}</code>
+                    </div>
+                </div>
+            </div>
+        </td>
+
+        <td class="col-map">
+            <em>{{ instructions }}</em>
+        </td>
+
+        <td class="col-default">
+        </td>
+    </tr>
+{% endif %}
