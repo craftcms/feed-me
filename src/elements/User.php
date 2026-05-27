@@ -360,6 +360,7 @@ class User extends Element
         $class->feedData = $feedData;
         $class->fieldInfo = $fieldInfo;
         $class->element = $this->element;
+        $class->feed = $this->feed;
 
         $parsedValue = $class->parseField();
 
