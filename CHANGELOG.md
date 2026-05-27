@@ -4,6 +4,8 @@
 
 - Added the ability to map Commerce Products and Variants relation fields, so they work like other relation fields. ([#1736](https://github.com/craftcms/feed-me/pull/1736))
 - You can now match Commerce Product values based on a default SKU. ([#1736](https://github.com/craftcms/feed-me/pull/1736))
+- Improved the performance of importing relational fields in my scenarios. ([#1743](https://github.com/craftcms/feed-me/pull/1743))
+- Feed logs now display the data and time in the user’s preferred timezone. ([#1744](https://github.com/craftcms/feed-me/pull/1744))
 - Fixed a bug where importing addresses might fail if the address had an expected format. ([#1737](https://github.com/craftcms/feed-me/pull/1737))
 - Fixed a bug where, if you queued up multiple feeds and one of them didn’t have any data, the feeds after it wouldn’t get processed. ([#1738](https://github.com/craftcms/feed-me/pull/1738))
 - Fixed a bug where feed logging would get the previous feed’s name under certain circumstances. ([#1738](https://github.com/craftcms/feed-me/pull/1738))
