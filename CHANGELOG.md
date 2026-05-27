@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Feed Me now requires Craft 5.8.0+.
 - Added the ability to map Commerce Products and Variants relation fields, so they work like other relation fields. ([#1736](https://github.com/craftcms/feed-me/pull/1736))
 - You can now match Commerce Product values based on a default SKU. ([#1736](https://github.com/craftcms/feed-me/pull/1736))
 - Improved the performance of importing relational fields in my scenarios. ([#1743](https://github.com/craftcms/feed-me/pull/1743))
