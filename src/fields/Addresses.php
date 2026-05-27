@@ -134,7 +134,7 @@ class Addresses extends Field implements FieldInterface
                 $node = Hash::get($fieldInfo, 'node');
                 if ($node) {
                     $nodeSegments = explode('/', $node);
-                    $regex = '^' . str_replace('//', '/', implode('\/\d?\/', $nodeSegments)) . '$';
+                    $regex = '^' . str_replace('//', '/', implode('\/(?:\d+\/)?', $nodeSegments)) . '$';
                     $matches = preg_grep('/' . $regex . '/', array_keys($this->feedData));
                     if (count($matches) > $noAddresses) {
                         $noAddresses = count($matches);
