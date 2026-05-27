@@ -9,7 +9,9 @@
 - Fixed a bug where feed logging would get the previous feed’s name under certain circumstances. ([#1738](https://github.com/craftcms/feed-me/pull/1738))
 - Fixed a bug where importing assets could apply metadata to the incorrect assets in the feed are URLs, or they are base64 encoded data. ([#1739](https://github.com/craftcms/feed-me/pull/1739))
 - Fixed a bug where importing custom fields on an Address might not be imported. ([#1741](https://github.com/craftcms/feed-me/pull/1741))
-- 
+- Fixes a bug where importing into an Entries field with `maintainHierarchy` enabled would lose previously found entries if they existed on a site other than the current one. ([#1742](https://github.com/craftcms/feed-me/pull/1742))
+
+Similar code also exists for the Categories field, but category elements always exist in all sites; this is not an issue there.
 
 ## 6.12.0 - 2026-05-20
 
