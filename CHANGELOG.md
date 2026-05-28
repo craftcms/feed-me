@@ -1,6 +1,10 @@
 # Release Notes for Feed Me
 
-## Unreleased
+## 6.13.0.1 - 2026-05-28
+
+- Fixed changelog.
+
+## 6.13.0 - 2026-05-27
 
 - Feed Me now requires Craft 5.8.0+.
 - Added the ability to import into a Content Block type field, including inside of a one-level deep Matrix field. ([#1711](https://github.com/craftcms/feed-me/pull/1711))
