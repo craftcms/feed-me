@@ -20,8 +20,13 @@ use craft\feedme\events\RegisterFeedMeDataTypesEvent;
 use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
 use craft\helpers\Component as ComponentHelper;
+use craft\helpers\FileHelper;
+use craft\helpers\UrlHelper;
+use CraftCms\UrlValidator\UrlValidationException;
+use CraftCms\UrlValidator\UrlValidator;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Support\Collection;
 use yii\base\Event;
 use yii\base\InvalidConfigException;
 
@@ -185,6 +190,16 @@ class DataTypes extends Component
                 ]);
             }
 
+            if (!$this->isFilepathAllowed($filepath)) {
+                $response = ['success' => false, 'error' => 'Access to this file path is not permitted.'];
+
+                return $this->_triggerEventAfterFetchFeed([
+                    'url' => $url,
+                    'feedId' => $feedId,
+                    'response' => $response,
+                ]);
+            }
+
             $data = @file_get_contents($filepath);
 
             $error = error_get_last();
@@ -204,9 +219,12 @@ class DataTypes extends Component
             ]);
         }
 
+        $extraOptions = $this->validateFeedUrl($url, $feedId);
+
         try {
             $client = Plugin::$plugin->service->createGuzzleClient($feedId);
             $options = Plugin::$plugin->service->getRequestOptions($feedId);
+            $options = array_merge($options, $extraOptions);
 
             $resp = $client->request('GET', $url, $options);
             $data = (string)$resp->getBody();
@@ -492,5 +510,125 @@ class DataTypes extends Component
         Event::trigger(static::class, self::EVENT_AFTER_FETCH_FEED, $event);
 
         return $event->response;
+    }
+
+    private function validateFeedUrl(string $url, ?int $feedId = null): array
+    {
+        // if we got here, then it doesn't look like a local filesystem path
+        $extraOptions = [];
+        $urlLooksLocal = false;
+        $parts = parse_url($url);
+
+        if (UrlHelper::isAbsoluteUrl($url) || UrlHelper::isProtocolRelativeUrl($url)) {
+            $allSiteUrls = Collection::make(Craft::$app->getSites()->getAllSites(true))
+                ->map(fn($site) => $site->getBaseUrl());
+
+            $feedUrlBase = $parts['host'] . (array_key_exists('port', $parts) && isset($parts['port']) ? ':' . $parts['port'] : '');
+
+            // if it's a protocol relative URL, remove the scheme from the site URLs
+            if (UrlHelper::isProtocolRelativeUrl($url)) {
+                $allSiteUrls = $allSiteUrls->map(function($siteUrl) {
+                    $scheme = parse_url($siteUrl, PHP_URL_SCHEME);
+                    if (str_starts_with($siteUrl, $scheme)) {
+                        $siteUrl = substr($siteUrl, strlen($scheme) + 3);
+                    }
+
+                    return $siteUrl;
+                });
+            } else {
+                // if it's an absolute URL - prepend the feed URL with the scheme
+                $feedUrlBase = $parts['scheme'] . '://' . $feedUrlBase;
+            }
+
+            // check if the base of the feed's URL matches the base URL of any of the sites in this installation (including disabled ones)
+            $urlLooksLocal = !empty(array_filter($allSiteUrls->toArray(), fn($siteUrl) => str_starts_with($siteUrl, $feedUrlBase)));
+        }
+
+        // if the URL doesn't look local (e.g. the base URL doesn't match any of the sites in this installation)
+        if (!$urlLooksLocal) {
+            // validate
+            $validator = new UrlValidator();
+            try {
+                // Returns the validated IP addresses the host resolves to.
+                $ips = $validator->validate($url);
+
+                $host = $parts['host'];
+                $port = $parts['port'] ?? ($parts['scheme'] === 'https' ? 443 : 80);
+
+                $extraOptions = [
+                    'curl' => [
+                        // Pin the hostname/port to the IPs we just validated.
+                        CURLOPT_RESOLVE => ["$host:$port:" . implode(',', $ips)],
+                    ],
+                ];
+            } catch (UrlValidationException $e) {
+                // The URL, or an IP it resolves to, is disallowed.
+                $response = ['success' => false, 'error' => $e->getMessage()];
+                return $this->_triggerEventAfterFetchFeed([
+                    'url' => $url,
+                    'feedId' => $feedId,
+                    'response' => $response,
+                ]);
+            }
+        }
+        // otherwise, it looks local, so allow that URL
+
+        return $extraOptions;
+    }
+
+    private function isFilepathAllowed(string $filepath): bool
+    {
+        // disallow if $filepath is directly in the filesystem's root (e.g. /myfile.json)
+        $parent = dirname($filepath);
+        if ($parent === dirname($parent)) {
+            return false;
+        }
+
+        // disallow if the filename starts with a dot
+        $basename = basename($filepath);
+        if (str_starts_with($basename, '.')) {
+            return false;
+        }
+
+
+        // disallow if the $filepath is within one of the sensitive directories
+        // app-based disallow list
+        $sensitiveDirs = [
+            Craft::$app->getBasePath(),
+            Craft::$app->path->getConfigPath(),
+            Craft::$app->path->getVendorPath(),
+            Craft::$app->path->getStoragePath(),
+        ];
+
+        // windows-based disallow list
+        if (PHP_OS_FAMILY === 'Windows') {
+            $winRoot = rtrim($_SERVER['SystemRoot'] ?? 'C:\\Windows', '\\');
+            $drive = substr($winRoot, 0, 3); // e.g. "C:\"
+            $sensitiveDirs = array_merge($sensitiveDirs, [
+                $winRoot, // C:\Windows
+                $drive . 'Users', // C:\Users
+                $drive . 'Program Files',
+                $drive . 'Program Files (x86)',
+                $drive . 'ProgramData',
+            ]);
+        } else {
+            // non-windows-based disallow list
+            $sensitiveDirs = array_merge($sensitiveDirs, [
+                '/boot',
+                '/dev',
+                '/etc',
+                '/proc',
+                '/root',
+                '/sys',
+            ]);
+        }
+
+        foreach ($sensitiveDirs as $dir) {
+            if ($filepath === $dir || FileHelper::isWithin($filepath, $dir)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

@@ -35,7 +35,8 @@
     "jakeasmith/http_build_url": "^1.0",
     "nesbot/carbon": "^2.10|^3.0.0",
     "league/csv": "^9.0",
-    "seld/jsonlint": "^1.7"
+    "seld/jsonlint": "^1.7",
+    "craftcms/url-validator": "^1.0"
   },
   "require-dev": {
     "craftcms/ecs": "dev-main",
