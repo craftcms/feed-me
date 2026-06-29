@@ -590,37 +590,33 @@ class DataTypes extends Component
             return false;
         }
 
+        // disallow if the $filepath is within one of the system directories
+        if (Craft::$app->getSecurity()->isSystemDir($filepath)) {
+            return false;
+        }
 
         // disallow if the $filepath is within one of the sensitive directories
-        // app-based disallow list
-        $sensitiveDirs = [
-            Craft::$app->getBasePath(),
-            Craft::$app->path->getConfigPath(),
-            Craft::$app->path->getVendorPath(),
-            Craft::$app->path->getStoragePath(),
-        ];
-
         // windows-based disallow list
         if (PHP_OS_FAMILY === 'Windows') {
             $winRoot = rtrim($_SERVER['SystemRoot'] ?? 'C:\\Windows', '\\');
             $drive = substr($winRoot, 0, 3); // e.g. "C:\"
-            $sensitiveDirs = array_merge($sensitiveDirs, [
+            $sensitiveDirs = [
                 $winRoot, // C:\Windows
                 $drive . 'Users', // C:\Users
                 $drive . 'Program Files',
                 $drive . 'Program Files (x86)',
                 $drive . 'ProgramData',
-            ]);
+            ];
         } else {
             // non-windows-based disallow list
-            $sensitiveDirs = array_merge($sensitiveDirs, [
+            $sensitiveDirs = [
                 '/boot',
                 '/dev',
                 '/etc',
                 '/proc',
                 '/root',
                 '/sys',
-            ]);
+            ];
         }
 
         foreach ($sensitiveDirs as $dir) {
