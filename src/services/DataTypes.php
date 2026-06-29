@@ -515,63 +515,35 @@ class DataTypes extends Component
     private function validateFeedUrl(string $url, ?int $feedId = null): array
     {
         // if we got here, then it doesn't look like a local filesystem path
-        $extraOptions = [];
-        $urlLooksLocal = false;
-        $parts = parse_url($url);
+        // validate
+        $validator = new UrlValidator(options: [
+            'ipv4FilterFlags' => FILTER_FLAG_NO_RES_RANGE,
+            'ipv6FilterFlags' => FILTER_FLAG_NO_RES_RANGE
+        ]);
+        try {
+            // Returns the validated IP addresses the host resolves to.
+            $ips = $validator->validate($url);
 
-        if (UrlHelper::isAbsoluteUrl($url) || UrlHelper::isProtocolRelativeUrl($url)) {
-            $allSiteUrls = Collection::make(Craft::$app->getSites()->getAllSites(true))
-                ->map(fn($site) => $site->getBaseUrl());
+            $parts = parse_url($url);
+            $host = $parts['host'];
+            $port = $parts['port'] ?? ($parts['scheme'] === 'https' ? 443 : 80);
 
-            $feedUrlBase = $parts['host'] . (array_key_exists('port', $parts) && isset($parts['port']) ? ':' . $parts['port'] : '');
+            $extraOptions = [
+                'curl' => [
+                    // Pin the hostname/port to the IPs we just validated.
+                    CURLOPT_RESOLVE => ["$host:$port:" . implode(',', $ips)],
+                ],
+            ];
+        } catch (UrlValidationException $e) {
+            // The URL, or an IP it resolves to, is disallowed.
+            $response = ['success' => false, 'error' => $e->getMessage()];
 
-            // if it's a protocol relative URL, remove the scheme from the site URLs
-            if (UrlHelper::isProtocolRelativeUrl($url)) {
-                $allSiteUrls = $allSiteUrls->map(function($siteUrl) {
-                    $scheme = parse_url($siteUrl, PHP_URL_SCHEME);
-                    if (str_starts_with($siteUrl, $scheme)) {
-                        $siteUrl = substr($siteUrl, strlen($scheme) + 3);
-                    }
-
-                    return $siteUrl;
-                });
-            } else {
-                // if it's an absolute URL - prepend the feed URL with the scheme
-                $feedUrlBase = $parts['scheme'] . '://' . $feedUrlBase;
-            }
-
-            // check if the base of the feed's URL matches the base URL of any of the sites in this installation (including disabled ones)
-            $urlLooksLocal = !empty(array_filter($allSiteUrls->toArray(), fn($siteUrl) => str_starts_with($siteUrl, $feedUrlBase)));
+            return $this->_triggerEventAfterFetchFeed([
+                'url' => $url,
+                'feedId' => $feedId,
+                'response' => $response,
+            ]);
         }
-
-        // if the URL doesn't look local (e.g. the base URL doesn't match any of the sites in this installation)
-        if (!$urlLooksLocal) {
-            // validate
-            $validator = new UrlValidator();
-            try {
-                // Returns the validated IP addresses the host resolves to.
-                $ips = $validator->validate($url);
-
-                $host = $parts['host'];
-                $port = $parts['port'] ?? ($parts['scheme'] === 'https' ? 443 : 80);
-
-                $extraOptions = [
-                    'curl' => [
-                        // Pin the hostname/port to the IPs we just validated.
-                        CURLOPT_RESOLVE => ["$host:$port:" . implode(',', $ips)],
-                    ],
-                ];
-            } catch (UrlValidationException $e) {
-                // The URL, or an IP it resolves to, is disallowed.
-                $response = ['success' => false, 'error' => $e->getMessage()];
-                return $this->_triggerEventAfterFetchFeed([
-                    'url' => $url,
-                    'feedId' => $feedId,
-                    'response' => $response,
-                ]);
-            }
-        }
-        // otherwise, it looks local, so allow that URL
 
         return $extraOptions;
     }
