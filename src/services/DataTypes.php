@@ -21,12 +21,10 @@ use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
 use craft\helpers\Component as ComponentHelper;
 use craft\helpers\FileHelper;
-use craft\helpers\UrlHelper;
 use CraftCms\UrlValidator\UrlValidationException;
 use CraftCms\UrlValidator\UrlValidator;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
-use Illuminate\Support\Collection;
 use yii\base\Event;
 use yii\base\InvalidConfigException;
 
@@ -518,7 +516,7 @@ class DataTypes extends Component
         // validate
         $validator = new UrlValidator(options: [
             'ipv4FilterFlags' => FILTER_FLAG_NO_RES_RANGE,
-            'ipv6FilterFlags' => FILTER_FLAG_NO_RES_RANGE
+            'ipv6FilterFlags' => FILTER_FLAG_NO_RES_RANGE,
         ]);
         try {
             // Returns the validated IP addresses the host resolves to.
