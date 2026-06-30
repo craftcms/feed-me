@@ -19,6 +19,7 @@ use craft\feedme\events\FeedDataEvent;
 use craft\feedme\events\RegisterFeedMeDataTypesEvent;
 use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
+use craft\helpers\App;
 use craft\helpers\Component as ComponentHelper;
 use craft\helpers\FileHelper;
 use CraftCms\UrlValidator\UrlValidationException;
@@ -548,51 +549,15 @@ class DataTypes extends Component
 
     private function isFilepathAllowed(string $filepath): bool
     {
-        // disallow if $filepath is directly in the filesystem's root (e.g. /myfile.json)
-        $parent = dirname($filepath);
-        if ($parent === dirname($parent)) {
-            return false;
-        }
-
         // disallow if the filename starts with a dot
         $basename = basename($filepath);
         if (str_starts_with($basename, '.')) {
             return false;
         }
 
-        // disallow if the $filepath is within one of the system directories
-        if (Craft::$app->getSecurity()->isSystemDir($filepath)) {
+        // disallow if the $filepath is within one of the restricted directories
+        if (Craft::$app->getSecurity()->isRestrictedDir($filepath)) {
             return false;
-        }
-
-        // disallow if the $filepath is within one of the sensitive directories
-        // windows-based disallow list
-        if (PHP_OS_FAMILY === 'Windows') {
-            $winRoot = rtrim($_SERVER['SystemRoot'] ?? 'C:\\Windows', '\\');
-            $drive = substr($winRoot, 0, 3); // e.g. "C:\"
-            $sensitiveDirs = [
-                $winRoot, // C:\Windows
-                $drive . 'Users', // C:\Users
-                $drive . 'Program Files',
-                $drive . 'Program Files (x86)',
-                $drive . 'ProgramData',
-            ];
-        } else {
-            // non-windows-based disallow list
-            $sensitiveDirs = [
-                '/boot',
-                '/dev',
-                '/etc',
-                '/proc',
-                '/root',
-                '/sys',
-            ];
-        }
-
-        foreach ($sensitiveDirs as $dir) {
-            if ($filepath === $dir || FileHelper::isWithin($filepath, $dir)) {
-                return false;
-            }
         }
 
         return true;
