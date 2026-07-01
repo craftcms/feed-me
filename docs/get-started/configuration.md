@@ -46,7 +46,7 @@ return [
 - `backupLimit` — Set a limit to the number of backups to keep.
 - `dataDelimiter` — Feed Me will try and split field values based on this delimiter. Useful for [table](https://craftcms.com/docs/5.x/reference/field-types/table.html), [checkboxes](https://craftcms.com/docs/5.x/reference/field-types/checkboxes.html), and [multiselect](https://craftcms.com/docs/5.x/reference/field-types/multi-select.html) fields.
 - `csvColumnDelimiter` — Optionally set the delimiter for columns in CSVs before fetching the content.
-- `parseTwig` — Whether to parse field data and default values for Twig. Disabled by default.
+- `parseTwig` — Whether to parse field data and default values for Twig. Disabled by default. If you enable this option, you should also ensure that [`enableTwigSandbox` is enabled](https://craftcms.com/docs/5.x/reference/config/general.html#enabletwigsandbox) in your Craft CMS installation to prevent malicious code from being executed.
 - `sleepTime` — Add the number of seconds to sleep after each feed item has been processed.
 - `logging` — Set the level of logging to do. Possible values are `true` (default) to log everything, `false` to disable logging or `error` to only record errors.
 - `runGcBeforeFeed` — Whether to run the Garbage Collection service before running a feed.
