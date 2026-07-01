@@ -19,7 +19,11 @@ use craft\feedme\events\FeedDataEvent;
 use craft\feedme\events\RegisterFeedMeDataTypesEvent;
 use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
+use craft\helpers\App;
 use craft\helpers\Component as ComponentHelper;
+use craft\helpers\FileHelper;
+use CraftCms\UrlValidator\UrlValidationException;
+use CraftCms\UrlValidator\UrlValidator;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use yii\base\Event;
@@ -185,6 +189,16 @@ class DataTypes extends Component
                 ]);
             }
 
+            if (!$this->isFilepathAllowed($filepath)) {
+                $response = ['success' => false, 'error' => 'Access to this file path is not permitted.'];
+
+                return $this->_triggerEventAfterFetchFeed([
+                    'url' => $url,
+                    'feedId' => $feedId,
+                    'response' => $response,
+                ]);
+            }
+
             $data = @file_get_contents($filepath);
 
             $error = error_get_last();
@@ -204,9 +218,12 @@ class DataTypes extends Component
             ]);
         }
 
+        $extraOptions = $this->validateFeedUrl($url, $feedId);
+
         try {
             $client = Plugin::$plugin->service->createGuzzleClient($feedId);
             $options = Plugin::$plugin->service->getRequestOptions($feedId);
+            $options = array_merge($options, $extraOptions);
 
             $resp = $client->request('GET', $url, $options);
             $data = (string)$resp->getBody();
@@ -492,5 +509,57 @@ class DataTypes extends Component
         Event::trigger(static::class, self::EVENT_AFTER_FETCH_FEED, $event);
 
         return $event->response;
+    }
+
+    private function validateFeedUrl(string $url, ?int $feedId = null): array
+    {
+        // if we got here, then it doesn't look like a local filesystem path
+        // validate
+        $validator = new UrlValidator(options: [
+            'ipv4FilterFlags' => FILTER_FLAG_NO_RES_RANGE,
+            'ipv6FilterFlags' => FILTER_FLAG_NO_RES_RANGE,
+        ]);
+        try {
+            // Returns the validated IP addresses the host resolves to.
+            $ips = $validator->validate($url);
+
+            $parts = parse_url($url);
+            $host = $parts['host'];
+            $port = $parts['port'] ?? ($parts['scheme'] === 'https' ? 443 : 80);
+
+            $extraOptions = [
+                'curl' => [
+                    // Pin the hostname/port to the IPs we just validated.
+                    CURLOPT_RESOLVE => ["$host:$port:" . implode(',', $ips)],
+                ],
+            ];
+        } catch (UrlValidationException $e) {
+            // The URL, or an IP it resolves to, is disallowed.
+            $response = ['success' => false, 'error' => $e->getMessage()];
+
+            return $this->_triggerEventAfterFetchFeed([
+                'url' => $url,
+                'feedId' => $feedId,
+                'response' => $response,
+            ]);
+        }
+
+        return $extraOptions;
+    }
+
+    private function isFilepathAllowed(string $filepath): bool
+    {
+        // disallow if the filename starts with a dot
+        $basename = basename($filepath);
+        if (str_starts_with($basename, '.')) {
+            return false;
+        }
+
+        // disallow if the $filepath is within one of the restricted directories
+        if (Craft::$app->getSecurity()->isRestrictedDir($filepath)) {
+            return false;
+        }
+
+        return true;
     }
 }
