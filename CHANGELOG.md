@@ -1,6 +1,6 @@
 # Release Notes for Feed Me
 
-## Unreleased
+## 6.14.0 - 2026-07-08
 
 - Fixed a [high-severity](https://github.com/craftcms/cms/security/policy#severity--remediation) Remote Code Execution (RCE) vulnerability when the when `parseTwig` config setting is enabled. (HCKRT-1508)
 - Fixed a [high-severity](https://github.com/craftcms/cms/security/policy#severity--remediation) SSRF vulnerability. (HCKRT-1507)
