@@ -2,11 +2,11 @@
 {% import 'feed-me/_macros' as feedMeMacro %}
 
 {% if feed.elementGroup %}
-    {% set sectionId = feed.elementGroup[feed.elementType].section %}
-    {% set entryTypeId = feed.elementGroup[feed.elementType].entryType %}
+    {% set sectionUid = feed.elementGroup[feed.elementType].section %}
+    {% set entryTypeUid = feed.elementGroup[feed.elementType].entryType %}
 
-    {% set section = craft.app.sections.getSectionById(sectionId) %}
-    {% set entryType = craft.app.sections.getEntryTypeById(entryTypeId) %}
+    {% set section = craft.app.sections.getSectionByUid(sectionUid) %}
+    {% set entryType = craft.app.sections.getEntryTypeByUid(entryTypeUid) %}
 {% endif %}
 
 

@@ -10,6 +10,8 @@ use craft\feedme\base\Element;
 use craft\feedme\base\ElementInterface;
 use craft\feedme\helpers\DuplicateHelper;
 use craft\feedme\Plugin;
+use craft\helpers\Db;
+use craft\helpers\Json;
 use DateTime;
 
 /**
@@ -253,5 +255,52 @@ class FeedModel extends Model
             [['name', 'feedUrl', 'feedType', 'elementType', 'duplicateHandle', 'passkey'], 'required'],
             [['backup', 'setEmptyValues'], 'boolean'],
         ];
+    }
+
+    /**
+     * Retrieves the attributes in a format for a record
+     *
+     * @return array An array containing the record attributes
+     */
+    public function getRecordAttributes(): array
+    {
+        $attributes = [
+            "name" => $this->name,
+            "feedUrl" => $this->feedUrl,
+            "feedType" => $this->feedType,
+            "primaryElement" => $this->primaryElement,
+            "elementType" => $this->elementType,
+            "siteId" => $this->siteId,
+            "singleton" => $this->singleton,
+            "duplicateHandle" => $this->duplicateHandle,
+            "updateSearchIndexes" => $this->updateSearchIndexes,
+            "paginationNode" => $this->paginationNode,
+            "passkey" => $this->passkey,
+            "backup" => $this->backup,
+            "setEmptyValues" => $this->setEmptyValues,
+
+            // These might be automatically updated, but in the case of writing
+            // the feed record to a file, we want these values.
+            "dateCreated" => Db::prepareDateForDb($this->dateCreated),
+            "dateUpdated" => Db::prepareDateForDb($this->dateUpdated)
+        ];
+
+        if ($this->elementGroup) {
+            $attributes["elementGroup"] = Json::encode($this->elementGroup);
+        }
+
+        if ($this->duplicateHandle) {
+            $attributes["duplicateHandle"] = Json::encode($this->duplicateHandle);
+        }
+
+        if ($this->fieldMapping) {
+            $attributes["fieldMapping"] = Json::encode($this->fieldMapping);
+        }
+
+        if ($this->fieldUnique) {
+            $attributes["fieldUnique"] = Json::encode($this->fieldUnique);
+        }
+
+        return $attributes;
     }
 }
