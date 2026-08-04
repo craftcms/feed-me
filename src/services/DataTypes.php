@@ -237,7 +237,7 @@ class DataTypes extends Component
         // Dynamism in the feedUrl -- use twig to inject dates, for example
         $twig = \Craft::$app->getView()->getTwig();
         $template = twig_template_from_string($twig, $feedModel->feedUrl);
-        $feedUrl = $template->render([]);
+        $feedUrl = Craft::getAlias($template->render([]));
 
         $feedDataResponse = $feedModel->getDataType()->getFeed($feedUrl, $feedModel, $usePrimaryElement);
 
