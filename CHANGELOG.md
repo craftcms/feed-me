@@ -2,8 +2,8 @@
 
 ## 6.14.0 - 2026-07-08
 
-- Fixed a [high-severity](https://github.com/craftcms/cms/security/policy#severity--remediation) Remote Code Execution (RCE) vulnerability when the `parseTwig` config setting is enabled. (GHSA-r7f2-vrpq-8xhm)
-- Fixed a [high-severity](https://github.com/craftcms/cms/security/policy#severity--remediation) SSRF vulnerability. (GHSA-xhcc-j4vq-7qvh)
+- Fixed a [high-severity](https://github.com/craftcms/cms/security/policy#severity--remediation) Remote Code Execution (RCE) vulnerability when the `parseTwig` config setting is enabled. ([GHSA-r7f2-vrpq-8xhm](https://github.com/craftcms/feed-me/security/advisories/GHSA-r7f2-vrpq-8xhm))
+- Fixed a [high-severity](https://github.com/craftcms/cms/security/policy#severity--remediation) SSRF vulnerability. ([GHSA-xhcc-j4vq-7qvh](https://github.com/craftcms/feed-me/security/advisories/GHSA-xhcc-j4vq-7qvh))
 
 ## 6.13.0.1 - 2026-05-28
 
