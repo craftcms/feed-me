@@ -18,6 +18,8 @@ use craft\helpers\UrlHelper;
 use craft\models\AssetIndexData;
 use craft\models\FsListing;
 use craft\models\VolumeFolder;
+use CraftCms\UrlValidator\UrlValidationException;
+use CraftCms\UrlValidator\UrlValidator;
 use Throwable;
 use yii\base\Exception;
 use yii\base\InvalidArgumentException;
@@ -37,6 +39,48 @@ class AssetHelper
      */
     public static function downloadFile($srcName, $dstName, int $chunkSize = 1, bool $returnbytes = true, int $feedId = null): bool|int
     {
+        $curlOptResolve = null;
+        $srcName = Craft::getAlias($srcName);
+
+        if (@file_exists($srcName)) {
+            error_clear_last();
+
+            $srcName = realpath($srcName);
+
+            if (!$srcName) {
+                return false;
+            }
+
+            // disallow if the filename starts with a dot
+            $basename = basename($srcName);
+            if (str_starts_with($basename, '.')) {
+                return false;
+            }
+
+            // disallow if the $srcName is within one of the restricted directories
+            if (Craft::$app->getSecurity()->isRestrictedDir($srcName)) {
+                return false;
+            }
+        } else {
+            // validate
+            $validator = new UrlValidator(options: [
+                'ipv4FilterFlags' => FILTER_FLAG_NO_RES_RANGE,
+                'ipv6FilterFlags' => FILTER_FLAG_NO_RES_RANGE,
+            ]);
+            try {
+                // Returns the validated IP addresses the host resolves to.
+                $ips = $validator->validate($srcName);
+
+                $parts = parse_url($srcName);
+                $host = $parts['host'];
+                $port = $parts['port'] ?? ($parts['scheme'] === 'https' ? 443 : 80);
+
+                $curlOptResolve = ["$host:$port:" . implode(',', $ips)];
+            } catch (UrlValidationException $e) {
+                return false;
+            }
+        }
+
         $assetDownloadCurl = Plugin::$plugin->service->getConfig('assetDownloadCurl', $feedId);
 
         // Provide some legacy support
@@ -46,6 +90,10 @@ class AssetHelper
 
             curl_setopt($ch, CURLOPT_FILE, $fp);
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+            if ($curlOptResolve !== null) {
+                // Pin the hostname/port to the IPs we just validated.
+                curl_setopt($ch, CURLOPT_RESOLVE, $curlOptResolve);
+            }
 
             curl_exec($ch);
             curl_close($ch);
