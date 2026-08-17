@@ -251,18 +251,23 @@ class AssetHelper
 
                     Plugin::info('Fetching remote image `{i}` - `{j}`', ['i' => $url, 'j' => $filename]);
 
+                    $downloadFileResult = true;
                     if (!$cachedImage) {
-                        self::downloadFile($url, $fetchedImage, 1, true, $feed['id']);
+                        $downloadFileResult = self::downloadFile($url, $fetchedImage, 1, true, $feed['id']);
                     } else {
                         $fetchedImage = $cachedImage[0];
                     }
 
-                    $result = self::createAsset($fetchedImage, $filename, $folderId, $field, $element, $conflict, Hash::get($feed, 'updateSearchIndexes'));
-
-                    if ($result) {
-                        $uploadedAssets[] = $result;
-                    } else {
+                    if ($downloadFileResult === false) {
                         Plugin::error('Failed to create asset from `{i}`', ['i' => $url]);
+                    } else {
+                        $result = self::createAsset($fetchedImage, $filename, $folderId, $field, $element, $conflict, Hash::get($feed, 'updateSearchIndexes'));
+
+                        if ($result) {
+                            $uploadedAssets[] = $result;
+                        } else {
+                            Plugin::error('Failed to create asset from `{i}`', ['i' => $url]);
+                        }
                     }
                 }
             } catch (Throwable $e) {
