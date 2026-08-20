@@ -1,5 +1,9 @@
 # Release Notes for Feed Me
 
+## Unreleased
+
+- Fixed a bug where a “No stock value was present” error was logged for Commerce Product variants even when the Stock field was set to “Don’t import”. ([#1748](https://github.com/craftcms/feed-me/issues/1748))
+
 ## 6.14.0 - 2026-07-08
 
 - Fixed a [high-severity](https://github.com/craftcms/cms/security/policy#severity--remediation) Remote Code Execution (RCE) vulnerability when the `parseTwig` config setting is enabled. ([GHSA-r7f2-vrpq-8xhm](https://github.com/craftcms/feed-me/security/advisories/GHSA-r7f2-vrpq-8xhm))
