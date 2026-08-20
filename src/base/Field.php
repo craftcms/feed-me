@@ -212,7 +212,7 @@ abstract class Field extends Component
             $element = $elementsService->getElementById($elementId, null, Hash::get($this->feed, 'siteId'));
 
             if ($fieldType === 'native') {
-                $element->setAttributes($fieldContent);
+                $element->setAttributes($fieldContent, false);
             } else {
                 $element->setFieldValues($fieldContent);
             }
