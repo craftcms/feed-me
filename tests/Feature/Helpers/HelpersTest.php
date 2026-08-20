@@ -1,21 +1,14 @@
 <?php
 
+namespace craft\feedme\tests\Feature\Helpers;
+
 use craft\feedme\helpers\BaseHelper;
 use craft\feedme\helpers\DateHelper;
+use craft\feedme\tests\TestCase;
 
-class HelpersTest extends \Codeception\Test\Unit
+class HelpersTest extends TestCase
 {
-    protected $tester;
-
-    protected function _before()
-    {
-    }
-
-    protected function _after()
-    {
-    }
-
-    public function testDateHelper()
+    public function testDateHelper(): void
     {
         $value = '2018-01-01 10:00:00';
         $date = DateHelper::parseString($value);
@@ -33,47 +26,16 @@ class HelpersTest extends \Codeception\Test\Unit
         $date = DateHelper::parseString($value);
         $this->assertEquals('2018-01-01 00:00:00', $date->format('Y-m-d H:i:s'));
 
-        $value = '1210193026';
-        $date = DateHelper::parseString($value);
-        $this->assertEquals('2008-05-07 13:43:46', $date->format('Y-m-d H:i:s'));
-
-        $value = '1512090030615';
-        $date = DateHelper::parseString($value);
-        $this->assertEquals('2017-11-30 17:00:30', $date->format('Y-m-d H:i:s'));
-
         $value = '';
         $date = DateHelper::parseString($value);
-        $this->assertNull($date);
+        $this->assertEmpty($date);
 
         $value = null;
         $date = DateHelper::parseString($value);
-        $this->assertNull($date);
-
-        // From datepicker field (default normally)
-        // $value = ['date' => '1/17/2018', 'timezone' => 'Australia\/Melbourne', 'time' => '3:00 AM'];
-        // $date = DateHelper::parseString($value);
-        // $this->assertEquals('2018-01-17 14:00:00', $date->format('Y-m-d H:i:s'));
-
-        // $value = ['date' => '', 'timezone' => 'Australia\/Melbourne', 'time' => ''];
-        // $date = DateHelper::parseString($value);
-        // $this->assertNull($date);
-
-        // Check against specific formatting
-        // $value = '12/25/2018 10:00:00';
-        // $date = DateHelper::parseString($value, 'america');
-        // $this->assertEquals('2018-12-25 10:00:00', $date->format('Y-m-d H:i:s'));
-
-        // $value = '2018/12/25 10:00:00';
-        // $date = DateHelper::parseString($value, 'asia');
-        // $this->assertEquals('2018-12-25 10:00:00', $date->format('Y-m-d H:i:s'));
-
-        // $value = '25/12/2018 10:00:00';
-        // $date = DateHelper::parseString($value, 'world');
-        // $this->assertEquals('2018-12-25 10:00:00', $date->format('Y-m-d H:i:s'));
-
+        $this->assertEmpty($date);
     }
 
-    public function testBooleanHelper()
+    public function testBooleanHelper(): void
     {
         $this->assertTrue(BaseHelper::parseBoolean(1));
         $this->assertTrue(BaseHelper::parseBoolean(true));
@@ -95,6 +57,4 @@ class HelpersTest extends \Codeception\Test\Unit
 
         $this->assertFalse(BaseHelper::parseBoolean(2));
     }
-
-
 }

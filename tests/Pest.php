@@ -5,12 +5,15 @@
  * @license https://craftcms.github.io/license/
  */
 
+use craft\feedme\tests\TestCase;
+use craft\feedme\tests\UnitTestCase;
 use craft\test\TestSetup;
 
 ini_set('date.timezone', 'UTC');
 date_default_timezone_set('UTC');
 
 define('CRAFT_TESTS_PATH', __DIR__);
+define('CRAFT_ROOT_PATH', dirname(__DIR__));
 define('CRAFT_STORAGE_PATH', __DIR__ . '/_craft/storage');
 define('CRAFT_TEMPLATES_PATH', __DIR__ . '/_craft/templates');
 define('CRAFT_CONFIG_PATH', __DIR__ . '/_craft/config');
@@ -24,3 +27,6 @@ TestSetup::configureCraft();
 
 // Set the @webroot alias so that the cpresources folder is created in the correct directory
 Craft::setAlias('@webroot', __DIR__ . '/_craft/web');
+
+uses(TestCase::class)->in('Feature');
+uses(UnitTestCase::class)->in('Unit');

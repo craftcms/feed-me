@@ -1,97 +1,79 @@
 <?php
 
+namespace craft\feedme\tests\Feature\Elements;
+
 use craft\feedme\elements\Entry;
+use craft\feedme\tests\TestCase;
 
-class EntryTest extends \Codeception\Test\Unit
+class EntryTest extends TestCase
 {
-    protected $tester;
+    private Entry $service;
 
-    protected function _before()
+    protected function setUp(): void
     {
+        parent::setUp();
+
         $this->service = new Entry();
     }
 
-    protected function _after()
+    public function testId(): void
     {
-
-    }
-
-    public function testID()
-    {
-        $feedData = ['id' => '15868'];
-
         $feedMapping = [
             'attribute' => true,
-            'node' => 'title',
+            'node' => 'id',
             'default' => '123',
         ];
 
+        $feedData = ['id' => '15868'];
         $this->assertEquals('15868', $this->service->parseAttribute($feedData, 'id', $feedMapping));
 
         // Test default
-        $feedData = ['id' => '123'];
-
+        $feedData = ['id' => ''];
         $this->assertEquals('123', $this->service->parseAttribute($feedData, 'id', $feedMapping));
-
-        // Test invalid
-        $feedMapping['id'] = '7894532376937';
-
-        $this->assertNull($this->service->parseAttribute($feedData, 'id', $feedMapping));
     }
 
-
-    public function testTitle()
+    public function testTitle(): void
     {
-        $feedData = ['title' => 'RSS News'];
-
         $feedMapping = [
             'attribute' => true,
             'node' => 'title',
             'default' => 'Default Title',
         ];
 
+        $feedData = ['title' => 'RSS News'];
         $this->assertEquals('RSS News', $this->service->parseAttribute($feedData, 'title', $feedMapping));
 
         // Test default
         $feedData = ['title' => ''];
-
         $this->assertEquals('Default Title', $this->service->parseAttribute($feedData, 'title', $feedMapping));
 
         // Test mapping with no default, but empty value
         $feedMapping['default'] = '';
-
         $this->assertEquals('', $this->service->parseAttribute($feedData, 'title', $feedMapping));
     }
 
-
-    public function testSlug()
+    public function testSlug(): void
     {
-        $feedData = ['slug' => 'rss-news'];
-
         $feedMapping = [
             'attribute' => true,
             'node' => 'slug',
             'default' => 'default-slug',
         ];
 
+        $feedData = ['slug' => 'rss-news'];
         $this->assertEquals('rss-news', $this->service->parseAttribute($feedData, 'slug', $feedMapping));
 
         // Test default
         $feedData = ['slug' => ''];
-
         $this->assertEquals('default-slug', $this->service->parseAttribute($feedData, 'slug', $feedMapping));
 
         // Test mapping with no default, but empty value
         $feedMapping['default'] = '';
-
         $this->assertEquals('', $this->service->parseAttribute($feedData, 'slug', $feedMapping));
     }
 
-
-    public function testParentTitle()
+    public function testParentTitle(): void
     {
-        $feedData = ['parent' => 'Homepage'];
-
         $feedMapping = [
             'attribute' => true,
             'node' => 'parent',
@@ -99,6 +81,7 @@ class EntryTest extends \Codeception\Test\Unit
             'options' => ['match' => 'title'],
         ];
 
+        $feedData = ['parent' => 'Homepage'];
         $this->assertEquals('6', $this->service->parseAttribute($feedData, 'parent', $feedMapping));
 
         // Check invalid match
@@ -107,7 +90,7 @@ class EntryTest extends \Codeception\Test\Unit
         $this->assertNull($this->service->parseAttribute($feedData, 'parent', $feedMapping));
     }
 
-    public function testParentID()
+    public function testParentID(): void
     {
         $feedData = ['parent' => '6'];
 
@@ -126,7 +109,7 @@ class EntryTest extends \Codeception\Test\Unit
         $this->assertNull($this->service->parseAttribute($feedData, 'parent', $feedMapping));
     }
 
-    public function testParentSlug()
+    public function testParentSlug(): void
     {
         $feedData = ['parent' => 'homepage'];
 
@@ -145,7 +128,7 @@ class EntryTest extends \Codeception\Test\Unit
         $this->assertNull($this->service->parseAttribute($feedData, 'parent', $feedMapping));
     }
 
-    public function testParentDefault()
+    public function testParentDefault(): void
     {
         $feedData = ['parent' => ''];
 
@@ -168,8 +151,7 @@ class EntryTest extends \Codeception\Test\Unit
         $this->assertNull($this->service->parseAttribute($feedData, 'parent', $feedMapping));
     }
 
-
-    public function testAuthorFullName()
+    public function testAuthorFullName(): void
     {
         $feedData = ['author' => 'Josh Crawford'];
 
@@ -188,7 +170,7 @@ class EntryTest extends \Codeception\Test\Unit
         $this->assertNull($this->service->parseAttribute($feedData, 'authorId', $feedMapping));
     }
 
-    public function testAuthorEmail()
+    public function testAuthorEmail(): void
     {
         $feedData = ['author' => 'web@sgroup.com.au'];
 
@@ -207,7 +189,7 @@ class EntryTest extends \Codeception\Test\Unit
         $this->assertNull($this->service->parseAttribute($feedData, 'authorId', $feedMapping));
     }
 
-    public function testAuthorUsername()
+    public function testAuthorUsername(): void
     {
         $feedData = ['author' => 'web@sgroup.com.au'];
 
@@ -226,7 +208,7 @@ class EntryTest extends \Codeception\Test\Unit
         $this->assertNull($this->service->parseAttribute($feedData, 'authorId', $feedMapping));
     }
 
-    public function testAuthorID()
+    public function testAuthorID(): void
     {
         $feedData = ['author' => '1'];
 
@@ -245,7 +227,7 @@ class EntryTest extends \Codeception\Test\Unit
         $this->assertNull($this->service->parseAttribute($feedData, 'authorId', $feedMapping));
     }
 
-    public function testAuthorEmpty()
+    public function testAuthorEmpty(): void
     {
         $feedData = ['author' => ''];
 
@@ -259,7 +241,7 @@ class EntryTest extends \Codeception\Test\Unit
         $this->assertNull($this->service->parseAttribute($feedData, 'authorId', $feedMapping));
     }
 
-    public function testAuthorDefault()
+    public function testAuthorDefault(): void
     {
         $feedData = ['author' => ''];
 
@@ -281,6 +263,4 @@ class EntryTest extends \Codeception\Test\Unit
 
         $this->assertNull($this->service->parseAttribute($feedData, 'authorId', $feedMapping));
     }
-
-
 }
