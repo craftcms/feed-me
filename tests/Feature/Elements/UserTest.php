@@ -89,4 +89,37 @@ class UserTest extends TestCase
 
         $this->assertSame([(string)$this->newGroup->id], array_values($groupIds));
     }
+
+    public function testParseStatus(): void
+    {
+        $feedMapping = ['attribute' => true, 'node' => 'status'];
+
+        // parseStatus() just records the value onto $this->status for `afterSave()` to act on
+        // later - it doesn't return anything itself.
+        $this->service->parseAttribute(['status' => UserElement::STATUS_SUSPENDED], 'status', $feedMapping);
+
+        $this->assertSame(UserElement::STATUS_SUSPENDED, $this->service->status);
+    }
+
+    public function testParsePreferredLocale(): void
+    {
+        $feedMapping = ['attribute' => true, 'node' => 'locale'];
+        $validLocale = Craft::$app->getI18n()->getAppLocaleIds()[0];
+
+        $this->assertSame(
+            $validLocale,
+            $this->service->parseAttribute(['locale' => $validLocale], 'preferredLocale', $feedMapping),
+        );
+
+        $this->assertNull(
+            $this->service->parseAttribute(['locale' => 'not-a-real-locale'], 'preferredLocale', $feedMapping),
+        );
+
+        // An explicitly empty value is passed straight through (rather than being rejected as
+        // "not a valid locale"), so it can be used to clear the user's preferred locale.
+        $this->assertSame(
+            '',
+            $this->service->parseAttribute(['locale' => ''], 'preferredLocale', $feedMapping),
+        );
+    }
 }
