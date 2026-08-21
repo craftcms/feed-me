@@ -8,8 +8,10 @@
 namespace craft\feedme\tests\Helpers;
 
 use Craft;
+use craft\elements\Category;
 use craft\elements\Entry;
 use craft\elements\User;
+use craft\models\UserGroup;
 use Faker\Factory;
 use Faker\Generator;
 use yii\base\Exception;
@@ -63,6 +65,41 @@ class ElementFactory
         }
 
         return $user;
+    }
+
+    public static function createCategory(array $attributes = []): Category
+    {
+        $group = Craft::$app->getCategories()->getAllGroups()[0] ?? null;
+        if (!$group) {
+            throw new Exception('No category groups are available to create a test category in.');
+        }
+
+        $category = new Category();
+        $category->groupId = $group->id;
+        $category->title = self::faker()->sentence(3);
+
+        Craft::configure($category, $attributes);
+
+        if (!Craft::$app->getElements()->saveElement($category, true, true, true)) {
+            throw new Exception('Could not create test category: ' . implode(', ', $category->getErrorSummary(true)));
+        }
+
+        return $category;
+    }
+
+    public static function createUserGroup(array $attributes = []): UserGroup
+    {
+        $group = new UserGroup();
+        $group->name = self::faker()->unique()->word();
+        $group->handle = self::faker()->unique()->word();
+
+        Craft::configure($group, $attributes);
+
+        if (!Craft::$app->getUserGroups()->saveGroup($group)) {
+            throw new Exception('Could not create test user group: ' . json_encode($group->getErrors()));
+        }
+
+        return $group;
     }
 
     private static function faker(): Generator
