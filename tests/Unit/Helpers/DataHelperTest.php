@@ -101,6 +101,29 @@ class DataHelperTest extends UnitTestCase
         );
     }
 
+    public function testFetchValue(): void
+    {
+        // Zero and "0" must be preserved rather than treated as empty.
+        // https://github.com/craftcms/feed-me/issues/779
+        $this->assertSame('0', DataHelper::fetchValue(['count' => '0'], ['node' => 'count']));
+        $this->assertSame(0, DataHelper::fetchValue(['count' => 0], ['node' => 'count']));
+
+        // A genuinely empty (non-numeric) value normalizes to null.
+        $this->assertNull(DataHelper::fetchValue(['count' => ''], ['node' => 'count']));
+
+        // A single-item array collapses to its scalar value.
+        $this->assertSame('News', DataHelper::fetchValue(['tags' => 'News'], ['node' => 'tags']));
+
+        // With `setEmptyValues` on, an explicit empty string is returned as-is (rather than
+        // being normalized to null), so it can overwrite existing content. (`default` must be
+        // an explicit empty string here too, otherwise the empty node value gets substituted
+        // with an unset/null default before this check even runs.)
+        $this->assertSame(
+            '',
+            DataHelper::fetchValue(['title' => ''], ['node' => 'title', 'default' => ''], ['setEmptyValues' => true]),
+        );
+    }
+
     public function testPrepValueForElementMatch(): void
     {
         // Plain values pass through unescaped by this method's return value (escapeParam mutates

@@ -59,4 +59,20 @@ class EntriesFieldTest extends TestCase
 
         $this->assertSame([], $this->service->parseField());
     }
+
+    public function testEmptyValueWithConfiguredDefaultFallsBackToDefault(): void
+    {
+        // When the feed value is empty but a default IS configured (and the node isn't the
+        // 'usedefault' sentinel), the default is used as-is rather than either matching nothing
+        // or - worse - matching every entry via an empty query criterion.
+        // https://github.com/craftcms/feed-me/issues/1195
+        $this->service->fieldInfo = [
+            'node' => 'related',
+            'default' => (string)$this->entry->id,
+            'options' => ['match' => 'title'],
+        ];
+        $this->service->feedData = ['related' => ''];
+
+        $this->assertSame([(string)$this->entry->id], $this->service->parseField());
+    }
 }
