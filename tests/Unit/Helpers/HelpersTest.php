@@ -1,13 +1,13 @@
 <?php
 
-namespace craft\feedme\tests\Feature\Helpers;
+namespace craft\feedme\tests\Unit\Helpers;
 
 use craft\feedme\helpers\BaseHelper;
 use craft\feedme\helpers\DateHelper;
-use craft\feedme\tests\TestCase;
+use craft\feedme\tests\UnitTestCase;
 use craft\fields\data\ColorData;
 
-class HelpersTest extends TestCase
+class HelpersTest extends UnitTestCase
 {
     public function testDateHelperRegionalFormats(): void
     {
