@@ -5,9 +5,100 @@ namespace craft\feedme\tests\Feature\Helpers;
 use craft\feedme\helpers\BaseHelper;
 use craft\feedme\helpers\DateHelper;
 use craft\feedme\tests\TestCase;
+use craft\fields\data\ColorData;
 
 class HelpersTest extends TestCase
 {
+    public function testDateHelperRegionalFormats(): void
+    {
+        // month/day are always assumed in that order regardless of region - only the resulting
+        // month/day/year positions taken from the string differ.
+        $date = DateHelper::parseString('03/15/2018 10:00:00', 'america');
+        $this->assertEquals('2018-03-15 10:00:00', $date->format('Y-m-d H:i:s'));
+
+        $date = DateHelper::parseString('03/15/18 10:00:00', 'america-short');
+        $this->assertEquals('2018-03-15 10:00:00', $date->format('Y-m-d H:i:s'));
+
+        $date = DateHelper::parseString('2018/03/15 10:00:00', 'asia');
+        $this->assertEquals('2018-03-15 10:00:00', $date->format('Y-m-d H:i:s'));
+
+        $date = DateHelper::parseString('15/03/2018 10:00:00', 'world');
+        $this->assertEquals('2018-03-15 10:00:00', $date->format('Y-m-d H:i:s'));
+
+        $date = DateHelper::parseString('20180315 10:00:00', 'yyyymmdd');
+        $this->assertEquals('2018-03-15 10:00:00', $date->format('Y-m-d H:i:s'));
+
+        $date = DateHelper::parseString('180315 10:00:00', 'yymmdd');
+        $this->assertEquals('2018-03-15 10:00:00', $date->format('Y-m-d H:i:s'));
+
+        // Digit groups are year+day+month for these formats (note the digit order differs from
+        // the input used for the yyyymmdd/yymmdd cases above).
+        $date = DateHelper::parseString('20181503 10:00:00', 'yyyyddmm');
+        $this->assertEquals('2018-03-15 10:00:00', $date->format('Y-m-d H:i:s'));
+
+        $date = DateHelper::parseString('181503 10:00:00', 'yyddmm');
+        $this->assertEquals('2018-03-15 10:00:00', $date->format('Y-m-d H:i:s'));
+    }
+
+    public function testDateHelperTimestamps(): void
+    {
+        $date = DateHelper::parseString(1512090030, 'seconds');
+        $this->assertEquals('2017-11-30 17:00:30', $date->format('Y-m-d H:i:s'));
+
+        $date = DateHelper::parseString(1512090030615, 'milliseconds');
+        $this->assertEquals('2017-11-30 17:00:30', $date->format('Y-m-d H:i:s'));
+    }
+
+    public function testDateHelperDateTimePicker(): void
+    {
+        // A fully-populated date/time-picker array gets converted to a real date. (The exact
+        // time isn't asserted here, since parsing it goes through locale-specific formatting.)
+        $date = DateHelper::parseString(['date' => '2018-03-15', 'time' => '10:00 AM']);
+        $this->assertEquals('2018-03-15', $date->format('Y-m-d'));
+
+        // A partially-empty date/time-picker array is treated as an explicit "clear the date"
+        // value, rather than falling back to a default.
+        $this->assertSame('', DateHelper::parseString(['date' => '', 'time' => '10:00 AM']));
+        $this->assertSame('', DateHelper::parseString(['date' => '2018-03-15', 'time' => '']));
+    }
+
+    public function testParseTimeString(): void
+    {
+        $date = DateHelper::parseTimeString('10:00 AM');
+        $this->assertEquals('10:00:00', $date->format('H:i:s'));
+
+        $this->assertNull(DateHelper::parseTimeString(''));
+    }
+
+    public function testParseColor(): void
+    {
+        $this->assertSame('#ff0000', BaseHelper::parseColor('#ff0000'));
+
+        // Adds a missing leading '#'.
+        $this->assertSame('#ff0000', BaseHelper::parseColor('ff0000'));
+
+        // Expands 3-character shorthand to 6.
+        $this->assertSame('#ffffff', BaseHelper::parseColor('fff'));
+
+        $this->assertNull(BaseHelper::parseColor(''));
+        $this->assertNull(BaseHelper::parseColor('#'));
+
+        // An already-normalized ColorData instance passes straight through.
+        $color = new ColorData('#ff0000');
+        $this->assertSame($color, BaseHelper::parseColor($color));
+    }
+
+    public function testGetBrowserName(): void
+    {
+        $this->assertSame('Firefox', BaseHelper::getBrowserName('Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/117.0'));
+        $this->assertSame('Other', BaseHelper::getBrowserName('curl/7.64.1'));
+
+        // `getBrowserName()` uses `strpos($userAgent, 'Opera')` as a boolean check, so a match at
+        // position 0 (falsy in PHP) is wrongly treated as "not found" and falls through to the
+        // next check instead of returning 'Opera'. Documenting the current (buggy) behavior.
+        $this->assertSame('Chrome', BaseHelper::getBrowserName('Opera Chrome/1.0'));
+    }
+
     public function testDateHelper(): void
     {
         $value = '2018-01-01 10:00:00';
