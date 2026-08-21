@@ -163,19 +163,6 @@ class EntryTest extends TestCase
         $this->assertNull($this->service->parseAttribute($feedData, 'parent', $feedMapping));
     }
 
-    public function testAuthorFullName(): void
-    {
-        // 'fullName' matching goes through `UserElement::findOne(['search' => ...])`, i.e. MySQL
-        // InnoDB full-text search - which only sees committed data. Since every test here runs
-        // inside a rolled-back transaction (see TestCase), a user created earlier in this same
-        // test can never be found this way, no matter how correctly it's indexed. Skipped until
-        // this suite has a non-transactional way to test full-text-dependent matching.
-        $this->markTestSkipped(
-            'fullName author matching relies on MySQL full-text search, which only sees committed '
-            . 'data - incompatible with this suite\'s per-test transaction rollback.',
-        );
-    }
-
     public function testAuthorEmail(): void
     {
         $feedData = ['author' => $this->author->email];
