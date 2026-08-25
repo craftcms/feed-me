@@ -8,6 +8,7 @@
 - Fixed a bug where entries created via the Entries field mapping might not get a Post Date set under specific circumstances. ([#1755](https://github.com/craftcms/feed-me/pull/1755))
 - Fixed a bug where a “No stock value was present” error was logged for Commerce Product variants even when the Stock field was set to “Don’t import”. ([#1760](https://github.com/craftcms/feed-me/pull/1760))
 - Fixed a bug where users trying to use a URL field as a unique identifier would get an error since Craft 5.4.10.1. ([#1756](https://github.com/craftcms/feed-me/pull/1756))
+- Fixed a bug where couldn't import text into a native alt field for an asset, but only via Assets field and the sub-field mechanism. ([#1761](https://github.com/craftcms/feed-me/pull/1761))
 - Fixed a [high-severity](https://github.com/craftcms/cms/security/policy#severity--remediation) SSRF vulnerability. (GHSA-wq63-9pmc-5mwx)
 
 ## 6.14.0 - 2026-07-08
