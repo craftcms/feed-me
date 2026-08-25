@@ -1,5 +1,9 @@
 # Release Notes for Feed Me
 
+## Unreleased
+
+- Fixed a bug where importing into an Asset field by ID only searched the default upload volume, not all volumes the field has access to. ([#1755](https://github.com/craftcms/feed-me/pull/1755))
+
 ## 6.14.0 - 2026-07-08
 
 - Fixed a [high-severity](https://github.com/craftcms/cms/security/policy#severity--remediation) Remote Code Execution (RCE) vulnerability when the `parseTwig` config setting is enabled. ([GHSA-r7f2-vrpq-8xhm](https://github.com/craftcms/feed-me/security/advisories/GHSA-r7f2-vrpq-8xhm))
