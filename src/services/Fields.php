@@ -35,6 +35,7 @@ use craft\feedme\fields\EntriesSubset;
 use craft\feedme\fields\GoogleMaps;
 use craft\feedme\fields\Icon;
 use craft\feedme\fields\Lightswitch;
+use craft\feedme\fields\Link;
 use craft\feedme\fields\Linkit;
 use craft\feedme\fields\Matrix;
 use craft\feedme\fields\MissingField;
@@ -185,6 +186,7 @@ class Fields extends Component
                 Entries::class,
                 Icon::class,
                 Lightswitch::class,
+                Link::class,
                 Matrix::class,
                 MultiSelect::class,
                 Number::class,
