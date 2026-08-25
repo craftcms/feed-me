@@ -161,14 +161,18 @@ abstract class Element extends Component implements ElementInterface
                 }
 
                 // We need a value to check against
-                if (is_string($feedValue) && $feedValue === '') {
-                    continue;
-                }
+                if (is_string($feedValue)) {
+                    if ($feedValue === '') {
+                        continue;
+                    }
 
-                if ($handle === 'parent') {
-                    $criteria['descendantOf'] = Db::escapeParam($feedValue);
+                    if ($handle === 'parent') {
+                        $criteria['descendantOf'] = Db::escapeParam($feedValue);
+                    } else {
+                        $criteria[$handle] = Db::escapeParam($feedValue);
+                    }
                 } else {
-                    $criteria[$handle] = Db::escapeParam($feedValue);
+                    throw new Exception('Cannot match on a non-string value for ' . $handle . '.');
                 }
             }
         }
