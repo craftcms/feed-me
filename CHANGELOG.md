@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Added support for importing into Craft's native Link field. ([#1757](https://github.com/craftcms/feed-me/pull/1757))
 - Fixed a bug where importing into an Asset field by ID only searched the default upload volume, not all volumes the field has access to. ([#1755](https://github.com/craftcms/feed-me/pull/1755))
 
 ## 6.14.0 - 2026-07-08
