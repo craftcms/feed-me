@@ -2,7 +2,9 @@
 
 ## Unreleased
 
-- Fixed a bug where a “No stock value was present” error was logged for Commerce Product variants even when the Stock field was set to “Don’t import”. ([#1748](https://github.com/craftcms/feed-me/issues/1748))
+- Added support for importing into Craft's native Link field. ([#1757](https://github.com/craftcms/feed-me/pull/1757))
+- Fixed a bug where importing into an Asset field by ID only searched the default upload volume, not all volumes the field has access to. ([#1755](https://github.com/craftcms/feed-me/pull/1755))
+- Fixed a bug where a “No stock value was present” error was logged for Commerce Product variants even when the Stock field was set to “Don’t import”. ([#1760](https://github.com/craftcms/feed-me/pull/1760))
 
 ## 6.14.0 - 2026-07-08
 
