@@ -1,6 +1,6 @@
 # Release Notes for Feed Me
 
-## Unreleased
+## 6.15.0 - 2026-08-25
 
 - Added support for importing into Craft's native Link field. ([#1757](https://github.com/craftcms/feed-me/pull/1757))
 - Removed the Feed Me specific "Clear pending job queue" utility. ([#1759](https://github.com/craftcms/feed-me/pull/1759))
