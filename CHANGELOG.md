@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Added support for importing into Craft's native Link field. ([#1757](https://github.com/craftcms/feed-me/pull/1757))
+- Removed the Feed Me specific "Clear pending job queue" utility. ([#1759](https://github.com/craftcms/feed-me/pull/1759))
 - Fixed a bug where importing into an Asset field by ID only searched the default upload volume, not all volumes the field has access to. ([#1755](https://github.com/craftcms/feed-me/pull/1755))
 - Fixed a bug where entries created via the Entries field mapping might not get a Post Date set under specific circumstances. ([#1755](https://github.com/craftcms/feed-me/pull/1755))
 
