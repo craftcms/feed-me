@@ -6,6 +6,7 @@
 - Removed the Feed Me specific "Clear pending job queue" utility. ([#1759](https://github.com/craftcms/feed-me/pull/1759))
 - Fixed a bug where importing into an Asset field by ID only searched the default upload volume, not all volumes the field has access to. ([#1755](https://github.com/craftcms/feed-me/pull/1755))
 - Fixed a bug where entries created via the Entries field mapping might not get a Post Date set under specific circumstances. ([#1755](https://github.com/craftcms/feed-me/pull/1755))
+- Fixed a bug where a “No stock value was present” error was logged for Commerce Product variants even when the Stock field was set to “Don’t import”. ([#1760](https://github.com/craftcms/feed-me/pull/1760))
 
 ## 6.14.0 - 2026-07-08
 
