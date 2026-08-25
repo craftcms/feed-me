@@ -15,7 +15,6 @@ use craft\fields\MultiSelect;
 use craft\fields\Number;
 use craft\fields\PlainText;
 use craft\fields\RadioButtons;
-use craft\fields\Url;
 use craft\helpers\ArrayHelper;
 use craft\models\CategoryGroup;
 use craft\models\Section;
@@ -255,7 +254,6 @@ class FieldHelper
             Number::class,
             PlainText::class,
             RadioButtons::class,
-            Url::class,
         ];
 
         $supportedValues = [
