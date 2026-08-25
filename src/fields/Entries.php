@@ -21,6 +21,7 @@ use craft\helpers\Db;
 use craft\helpers\ElementHelper;
 use craft\helpers\Json;
 use craft\services\ElementSources;
+use DateTime;
 use Illuminate\Support\Collection;
 use Throwable;
 use yii\base\Exception;
@@ -377,6 +378,12 @@ class Entries extends Field implements FieldInterface
 
                 break;
             }
+        }
+
+        if (!$element->postDate && ($element->enabled || $element->enabledForSite)) {
+            // Default the post date to the current date/time, without the seconds
+            $element->postDate = new DateTime();
+            $element->postDate->setTimestamp($element->postDate->getTimestamp() - ($element->postDate->getTimestamp() % 60));
         }
 
         $element->setScenario(BaseElement::SCENARIO_ESSENTIALS);
