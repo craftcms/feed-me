@@ -6,8 +6,10 @@ use Craft;
 use craft\elements\User as UserElement;
 use craft\feedme\fields\Users;
 use craft\feedme\tests\Helpers\ElementFactory;
+use craft\feedme\tests\Helpers\FieldServiceFactory;
 use craft\feedme\tests\TestCase;
 use craft\fields\Users as UsersField;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class UsersFieldTest extends TestCase
 {
@@ -21,33 +23,25 @@ class UsersFieldTest extends TestCase
 
         $this->user = ElementFactory::createUser();
 
-        $this->service = new Users();
         // `sources: '*'` means "search every group" - avoids having to resolve a specific
         // source UID for the field settings.
-        $this->service->field = new UsersField(['sources' => '*']);
-        $this->service->feed = ['id' => 1, 'siteId' => null];
+        $this->service = FieldServiceFactory::create(Users::class, new UsersField(['sources' => '*']));
     }
 
-    public function testMatchByEmail(): void
+    public static function matchTypeProvider(): array
     {
-        $this->service->fieldInfo = ['node' => 'author', 'options' => ['match' => 'email']];
-        $this->service->feedData = ['author' => $this->user->email];
-
-        $this->assertSame([$this->user->id], $this->service->parseField());
+        return [
+            'email' => ['email'],
+            'username' => ['username'],
+            'id' => ['id'],
+        ];
     }
 
-    public function testMatchByUsername(): void
+    #[DataProvider('matchTypeProvider')]
+    public function testMatchesByType(string $matchType): void
     {
-        $this->service->fieldInfo = ['node' => 'author', 'options' => ['match' => 'username']];
-        $this->service->feedData = ['author' => $this->user->username];
-
-        $this->assertSame([$this->user->id], $this->service->parseField());
-    }
-
-    public function testMatchById(): void
-    {
-        $this->service->fieldInfo = ['node' => 'author', 'options' => ['match' => 'id']];
-        $this->service->feedData = ['author' => (string)$this->user->id];
+        $this->service->fieldInfo = ['node' => 'author', 'options' => ['match' => $matchType]];
+        $this->service->feedData = ['author' => $matchType === 'id' ? (string)$this->user->id : $this->user->{$matchType}];
 
         $this->assertSame([$this->user->id], $this->service->parseField());
     }

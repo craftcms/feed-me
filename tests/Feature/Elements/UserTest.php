@@ -8,6 +8,7 @@ use craft\feedme\elements\User;
 use craft\feedme\tests\Helpers\ElementFactory;
 use craft\feedme\tests\TestCase;
 use craft\models\UserGroup;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class UserTest extends TestCase
 {
@@ -35,36 +36,28 @@ class UserTest extends TestCase
         $this->service->element = UserElement::find()->id($this->element->id)->status(null)->one();
     }
 
-    public function testMatchById(): void
+    public static function groupMatchTypeProvider(): array
+    {
+        return [
+            'id' => ['id'],
+            'name' => ['name'],
+            'handle' => ['handle'],
+        ];
+    }
+
+    #[DataProvider('groupMatchTypeProvider')]
+    public function testMatchesByType(string $matchType): void
     {
         $feedMapping = ['attribute' => true, 'node' => 'groups'];
 
-        $groupIds = $this->service->parseAttribute(['groups' => (string)$this->newGroup->id], 'groups', $feedMapping);
+        $value = $matchType === 'id' ? (string)$this->newGroup->id : $this->newGroup->{$matchType};
+        $groupIds = $this->service->parseAttribute(['groups' => $value], 'groups', $feedMapping);
 
         // Numeric matches are passed straight through without casting, so this comes back as a
         // numeric string rather than an int - assertContainsEquals compares loosely.
         $this->assertContainsEquals($this->newGroup->id, $groupIds);
         // Existing group assignments are kept unless `removeFromExisting` is set.
         $this->assertContainsEquals($this->existingGroup->id, $groupIds);
-    }
-
-    public function testMatchByName(): void
-    {
-        $feedMapping = ['attribute' => true, 'node' => 'groups'];
-
-        $groupIds = $this->service->parseAttribute(['groups' => $this->newGroup->name], 'groups', $feedMapping);
-
-        $this->assertContains($this->newGroup->id, $groupIds);
-        $this->assertContains($this->existingGroup->id, $groupIds);
-    }
-
-    public function testMatchByHandle(): void
-    {
-        $feedMapping = ['attribute' => true, 'node' => 'groups'];
-
-        $groupIds = $this->service->parseAttribute(['groups' => $this->newGroup->handle], 'groups', $feedMapping);
-
-        $this->assertContains($this->newGroup->id, $groupIds);
     }
 
     public function testNoMatchLeavesExistingGroupsUntouched(): void

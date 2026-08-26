@@ -9,6 +9,8 @@ use craft\feedme\tests\TestCase;
 
 class CategoryTest extends TestCase
 {
+    use ParsesParentAttributeTests;
+
     private Category $service;
 
     private CategoryElement $parentCategory;
@@ -26,82 +28,13 @@ class CategoryTest extends TestCase
         $this->service->element->groupId = $this->parentCategory->groupId;
     }
 
-    public function testParentTitle(): void
+    protected function parentMatchService(): Category
     {
-        $feedMapping = [
-            'attribute' => true,
-            'node' => 'parent',
-            'default' => '',
-            'options' => ['match' => 'title'],
-        ];
-
-        $feedData = ['parent' => $this->parentCategory->title];
-        $this->assertEquals($this->parentCategory->id, $this->service->parseAttribute($feedData, 'parent', $feedMapping));
-
-        // Check invalid match
-        $feedData = ['parent' => $this->parentCategory->title . '-nonexistent'];
-
-        $this->assertNull($this->service->parseAttribute($feedData, 'parent', $feedMapping));
+        return $this->service;
     }
 
-    public function testParentId(): void
+    protected function parentElement(): CategoryElement
     {
-        $feedData = ['parent' => (string)$this->parentCategory->id];
-
-        $feedMapping = [
-            'attribute' => true,
-            'node' => 'parent',
-            'default' => '',
-            'options' => ['match' => 'id'],
-        ];
-
-        $this->assertEquals($this->parentCategory->id, $this->service->parseAttribute($feedData, 'parent', $feedMapping));
-
-        // Check invalid match
-        $feedData = ['parent' => $this->parentCategory->id + 999999];
-
-        $this->assertNull($this->service->parseAttribute($feedData, 'parent', $feedMapping));
-    }
-
-    public function testParentSlug(): void
-    {
-        $feedData = ['parent' => $this->parentCategory->slug];
-
-        $feedMapping = [
-            'attribute' => true,
-            'node' => 'parent',
-            'default' => '',
-            'options' => ['match' => 'slug'],
-        ];
-
-        $this->assertEquals($this->parentCategory->id, $this->service->parseAttribute($feedData, 'parent', $feedMapping));
-
-        // Check invalid match
-        $feedData = ['parent' => $this->parentCategory->slug . '-nonexistent'];
-
-        $this->assertNull($this->service->parseAttribute($feedData, 'parent', $feedMapping));
-    }
-
-    public function testParentDefault(): void
-    {
-        $feedData = ['parent' => ''];
-
-        $feedMapping = [
-            'attribute' => true,
-            'node' => 'parent',
-            'default' => (string)$this->parentCategory->id,
-            'options' => ['match' => 'title'],
-        ];
-
-        $this->assertEquals($this->parentCategory->id, $this->service->parseAttribute($feedData, 'parent', $feedMapping));
-
-        $feedMapping = [
-            'attribute' => true,
-            'node' => 'parent',
-            'default' => '',
-            'options' => ['match' => 'title'],
-        ];
-
-        $this->assertNull($this->service->parseAttribute($feedData, 'parent', $feedMapping));
+        return $this->parentCategory;
     }
 }

@@ -6,6 +6,7 @@ use craft\elements\User as UserElement;
 use craft\feedme\elements\CalenderEvent;
 use craft\feedme\tests\Helpers\ElementFactory;
 use craft\feedme\tests\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class CalenderEventTest extends TestCase
 {
@@ -21,56 +22,34 @@ class CalenderEventTest extends TestCase
         $this->author = ElementFactory::createUser();
     }
 
-    public function testAuthorIdByEmail(): void
+    public static function authorMatchTypeProvider(): array
     {
-        $feedData = ['author' => $this->author->email];
-
-        $feedMapping = [
-            'attribute' => true,
-            'node' => 'author',
-            'options' => ['match' => 'email'],
+        return [
+            'email' => ['email'],
+            'username' => ['username'],
+            'id' => ['id'],
         ];
-
-        $this->assertEquals($this->author->id, $this->service->parseAttribute($feedData, 'authorId', $feedMapping));
-
-        // Check invalid match
-        $feedData = ['author' => 'nonexistent-' . $this->author->email];
-
-        $this->assertNull($this->service->parseAttribute($feedData, 'authorId', $feedMapping));
     }
 
-    public function testAuthorIdByUsername(): void
+    #[DataProvider('authorMatchTypeProvider')]
+    public function testAuthorIdMatchesByType(string $matchType): void
     {
-        $feedData = ['author' => $this->author->username];
+        $value = $matchType === 'id' ? (string)$this->author->id : $this->author->{$matchType};
+        $feedData = ['author' => $value];
 
         $feedMapping = [
             'attribute' => true,
             'node' => 'author',
-            'options' => ['match' => 'username'],
+            'options' => ['match' => $matchType],
         ];
 
         $this->assertEquals($this->author->id, $this->service->parseAttribute($feedData, 'authorId', $feedMapping));
 
-        // Check invalid match
-        $feedData = ['author' => 'nonexistent-' . $this->author->username];
-
-        $this->assertNull($this->service->parseAttribute($feedData, 'authorId', $feedMapping));
-    }
-
-    public function testAuthorIdById(): void
-    {
-        $feedData = ['author' => (string)$this->author->id];
-
-        $feedMapping = [
-            'attribute' => true,
-            'node' => 'author',
-            'options' => ['match' => 'id'],
-        ];
-
-        $this->assertEquals($this->author->id, $this->service->parseAttribute($feedData, 'authorId', $feedMapping));
-
-        // Check invalid match
-        $feedData = ['author' => $this->author->id + 999999];
+        // Check invalid match.
+        $invalidValue = $matchType === 'id'
+            ? $this->author->id + ElementFactory::NONEXISTENT_ID_OFFSET
+            : 'nonexistent-' . $value;
+        $feedData = ['author' => $invalidValue];
 
         $this->assertNull($this->service->parseAttribute($feedData, 'authorId', $feedMapping));
     }

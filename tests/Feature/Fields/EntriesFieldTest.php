@@ -5,8 +5,10 @@ namespace craft\feedme\tests\Feature\Fields;
 use craft\elements\Entry as EntryElement;
 use craft\feedme\fields\Entries;
 use craft\feedme\tests\Helpers\ElementFactory;
+use craft\feedme\tests\Helpers\FieldServiceFactory;
 use craft\feedme\tests\TestCase;
 use craft\fields\Entries as EntriesField;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class EntriesFieldTest extends TestCase
 {
@@ -20,25 +22,24 @@ class EntriesFieldTest extends TestCase
 
         $this->entry = ElementFactory::createEntry();
 
-        $this->service = new Entries();
         // `sources: '*'` means "search every section" - avoids having to resolve a specific
         // source UID for the field settings.
-        $this->service->field = new EntriesField(['sources' => '*']);
-        $this->service->feed = ['id' => 1, 'siteId' => null];
+        $this->service = FieldServiceFactory::create(Entries::class, new EntriesField(['sources' => '*']));
     }
 
-    public function testMatchByTitle(): void
+    public static function matchTypeProvider(): array
     {
-        $this->service->fieldInfo = ['node' => 'related', 'options' => ['match' => 'title']];
-        $this->service->feedData = ['related' => $this->entry->title];
-
-        $this->assertSame([$this->entry->id], $this->service->parseField());
+        return [
+            'title' => ['title'],
+            'id' => ['id'],
+        ];
     }
 
-    public function testMatchById(): void
+    #[DataProvider('matchTypeProvider')]
+    public function testMatchesByType(string $matchType): void
     {
-        $this->service->fieldInfo = ['node' => 'related', 'options' => ['match' => 'id']];
-        $this->service->feedData = ['related' => (string)$this->entry->id];
+        $this->service->fieldInfo = ['node' => 'related', 'options' => ['match' => $matchType]];
+        $this->service->feedData = ['related' => $matchType === 'id' ? (string)$this->entry->id : $this->entry->title];
 
         $this->assertSame([$this->entry->id], $this->service->parseField());
     }

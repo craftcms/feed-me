@@ -7,9 +7,12 @@ use craft\elements\User as UserElement;
 use craft\feedme\elements\Entry;
 use craft\feedme\tests\Helpers\ElementFactory;
 use craft\feedme\tests\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class EntryTest extends TestCase
 {
+    use ParsesParentAttributeTests;
+
     private Entry $service;
 
     private EntryElement $parentEntry;
@@ -26,6 +29,16 @@ class EntryTest extends TestCase
         $this->service->element = new EntryElement();
         $this->parentEntry = ElementFactory::createEntry();
         $this->author = ElementFactory::createUser();
+    }
+
+    protected function parentMatchService(): Entry
+    {
+        return $this->service;
+    }
+
+    protected function parentElement(): EntryElement
+    {
+        return $this->parentEntry;
     }
 
     public function testId(): void
@@ -84,138 +97,35 @@ class EntryTest extends TestCase
         $this->assertEquals('', $this->service->parseAttribute($feedData, 'slug', $feedMapping));
     }
 
-    public function testParentTitle(): void
+    public static function authorMatchTypeProvider(): array
     {
-        $feedMapping = [
-            'attribute' => true,
-            'node' => 'parent',
-            'default' => '',
-            'options' => ['match' => 'title'],
+        return [
+            'email' => ['email'],
+            'username' => ['username'],
+            'id' => ['id'],
         ];
-
-        $feedData = ['parent' => $this->parentEntry->title];
-        $this->assertEquals($this->parentEntry->id, $this->service->parseAttribute($feedData, 'parent', $feedMapping));
-
-        // Check invalid match
-        $feedData = ['parent' => $this->parentEntry->title . '-nonexistent'];
-
-        $this->assertNull($this->service->parseAttribute($feedData, 'parent', $feedMapping));
     }
 
-    public function testParentID(): void
+    #[DataProvider('authorMatchTypeProvider')]
+    public function testAuthorMatchesByType(string $matchType): void
     {
-        $feedData = ['parent' => (string)$this->parentEntry->id];
-
-        $feedMapping = [
-            'attribute' => true,
-            'node' => 'parent',
-            'default' => '',
-            'options' => ['match' => 'id'],
-        ];
-
-        $this->assertEquals($this->parentEntry->id, $this->service->parseAttribute($feedData, 'parent', $feedMapping));
-
-        // Check invalid match
-        $feedData = ['parent' => $this->parentEntry->id + 999999];
-
-        $this->assertNull($this->service->parseAttribute($feedData, 'parent', $feedMapping));
-    }
-
-    public function testParentSlug(): void
-    {
-        $feedData = ['parent' => $this->parentEntry->slug];
-
-        $feedMapping = [
-            'attribute' => true,
-            'node' => 'parent',
-            'default' => '',
-            'options' => ['match' => 'slug'],
-        ];
-
-        $this->assertEquals($this->parentEntry->id, $this->service->parseAttribute($feedData, 'parent', $feedMapping));
-
-        // Check invalid match
-        $feedData = ['parent' => $this->parentEntry->slug . '-nonexistent'];
-
-        $this->assertNull($this->service->parseAttribute($feedData, 'parent', $feedMapping));
-    }
-
-    public function testParentDefault(): void
-    {
-        $feedData = ['parent' => ''];
-
-        $feedMapping = [
-            'attribute' => true,
-            'node' => 'parent',
-            'default' => (string)$this->parentEntry->id,
-            'options' => ['match' => 'title'],
-        ];
-
-        $this->assertEquals($this->parentEntry->id, $this->service->parseAttribute($feedData, 'parent', $feedMapping));
-
-        $feedMapping = [
-            'attribute' => true,
-            'node' => 'parent',
-            'default' => '',
-            'options' => ['match' => 'title'],
-        ];
-
-        $this->assertNull($this->service->parseAttribute($feedData, 'parent', $feedMapping));
-    }
-
-    public function testAuthorEmail(): void
-    {
-        $feedData = ['author' => $this->author->email];
+        $value = $matchType === 'id' ? (string)$this->author->id : $this->author->{$matchType};
+        $feedData = ['author' => $value];
 
         $feedMapping = [
             'attribute' => true,
             'node' => 'author',
             'default' => '',
-            'options' => ['match' => 'email'],
+            'options' => ['match' => $matchType],
         ];
 
         $this->assertEquals([$this->author->id], $this->service->parseAttribute($feedData, 'authorIds', $feedMapping));
 
-        // Check invalid match
-        $feedData = ['author' => 'nonexistent-' . $this->author->email];
-
-        $this->assertNull($this->service->parseAttribute($feedData, 'authorIds', $feedMapping));
-    }
-
-    public function testAuthorUsername(): void
-    {
-        $feedData = ['author' => $this->author->username];
-
-        $feedMapping = [
-            'attribute' => true,
-            'node' => 'author',
-            'default' => '',
-            'options' => ['match' => 'username'],
-        ];
-
-        $this->assertEquals([$this->author->id], $this->service->parseAttribute($feedData, 'authorIds', $feedMapping));
-
-        // Check invalid match
-        $feedData = ['author' => 'nonexistent-' . $this->author->username];
-
-        $this->assertNull($this->service->parseAttribute($feedData, 'authorIds', $feedMapping));
-    }
-
-    public function testAuthorID(): void
-    {
-        $feedData = ['author' => (string)$this->author->id];
-
-        $feedMapping = [
-            'attribute' => true,
-            'node' => 'author',
-            'default' => '',
-            'options' => ['match' => 'id'],
-        ];
-
-        $this->assertEquals([$this->author->id], $this->service->parseAttribute($feedData, 'authorIds', $feedMapping));
-
-        // Check invalid match
-        $feedData = ['author' => $this->author->id + 999999];
+        // Check invalid match.
+        $invalidValue = $matchType === 'id'
+            ? $this->author->id + ElementFactory::NONEXISTENT_ID_OFFSET
+            : 'nonexistent-' . $value;
+        $feedData = ['author' => $invalidValue];
 
         $this->assertNull($this->service->parseAttribute($feedData, 'authorIds', $feedMapping));
     }

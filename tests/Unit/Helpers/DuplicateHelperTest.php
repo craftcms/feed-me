@@ -3,6 +3,7 @@
 namespace craft\feedme\tests\Unit\Helpers;
 
 use craft\feedme\helpers\DuplicateHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class DuplicateHelperTest extends TestCase
@@ -27,33 +28,21 @@ class DuplicateHelperTest extends TestCase
         $this->assertFalse(DuplicateHelper::contains(['add', 'update'], 'add', true));
     }
 
-    public function testIsAdd(): void
+    public static function isXMethodProvider(): array
     {
-        $this->assertTrue(DuplicateHelper::isAdd(['duplicateHandle' => ['add']]));
-        $this->assertFalse(DuplicateHelper::isAdd(['duplicateHandle' => ['update']]));
+        return [
+            'isAdd' => ['isAdd', 'add'],
+            'isUpdate' => ['isUpdate', 'update'],
+            'isDisable' => ['isDisable', 'disable'],
+            'isDisableForSite' => ['isDisableForSite', 'disableForSite'],
+            'isDelete' => ['isDelete', 'delete'],
+        ];
     }
 
-    public function testIsUpdate(): void
+    #[DataProvider('isXMethodProvider')]
+    public function testIsXMethodMatchesItsOwnHandle(string $method, string $handle): void
     {
-        $this->assertTrue(DuplicateHelper::isUpdate(['duplicateHandle' => ['update']]));
-        $this->assertFalse(DuplicateHelper::isUpdate(['duplicateHandle' => ['add']]));
-    }
-
-    public function testIsDisable(): void
-    {
-        $this->assertTrue(DuplicateHelper::isDisable(['duplicateHandle' => ['disable']]));
-        $this->assertFalse(DuplicateHelper::isDisable(['duplicateHandle' => ['add']]));
-    }
-
-    public function testIsDisableForSite(): void
-    {
-        $this->assertTrue(DuplicateHelper::isDisableForSite(['duplicateHandle' => ['disableForSite']]));
-        $this->assertFalse(DuplicateHelper::isDisableForSite(['duplicateHandle' => ['add']]));
-    }
-
-    public function testIsDelete(): void
-    {
-        $this->assertTrue(DuplicateHelper::isDelete(['duplicateHandle' => ['delete']]));
-        $this->assertFalse(DuplicateHelper::isDelete(['duplicateHandle' => ['add']]));
+        $this->assertTrue(DuplicateHelper::$method(['duplicateHandle' => [$handle]]));
+        $this->assertFalse(DuplicateHelper::$method(['duplicateHandle' => ['add' === $handle ? 'update' : 'add']]));
     }
 }

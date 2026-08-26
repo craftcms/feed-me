@@ -6,37 +6,32 @@ use craft\feedme\helpers\BaseHelper;
 use craft\feedme\helpers\DateHelper;
 use craft\feedme\tests\UnitTestCase;
 use craft\fields\data\ColorData;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class HelpersTest extends UnitTestCase
 {
-    public function testDateHelperRegionalFormats(): void
+    public static function regionalDateFormatProvider(): array
+    {
+        return [
+            'america' => ['03/15/2018 10:00:00', 'america'],
+            'america-short' => ['03/15/18 10:00:00', 'america-short'],
+            'asia' => ['2018/03/15 10:00:00', 'asia'],
+            'world' => ['15/03/2018 10:00:00', 'world'],
+            'yyyymmdd' => ['20180315 10:00:00', 'yyyymmdd'],
+            'yymmdd' => ['180315 10:00:00', 'yymmdd'],
+            // Digit groups are year+day+month for these formats (note the digit order differs
+            // from the input used for the yyyymmdd/yymmdd cases above).
+            'yyyyddmm' => ['20181503 10:00:00', 'yyyyddmm'],
+            'yyddmm' => ['181503 10:00:00', 'yyddmm'],
+        ];
+    }
+
+    #[DataProvider('regionalDateFormatProvider')]
+    public function testDateHelperRegionalFormats(string $value, string $format): void
     {
         // month/day are always assumed in that order regardless of region - only the resulting
         // month/day/year positions taken from the string differ.
-        $date = DateHelper::parseString('03/15/2018 10:00:00', 'america');
-        $this->assertEquals('2018-03-15 10:00:00', $date->format('Y-m-d H:i:s'));
-
-        $date = DateHelper::parseString('03/15/18 10:00:00', 'america-short');
-        $this->assertEquals('2018-03-15 10:00:00', $date->format('Y-m-d H:i:s'));
-
-        $date = DateHelper::parseString('2018/03/15 10:00:00', 'asia');
-        $this->assertEquals('2018-03-15 10:00:00', $date->format('Y-m-d H:i:s'));
-
-        $date = DateHelper::parseString('15/03/2018 10:00:00', 'world');
-        $this->assertEquals('2018-03-15 10:00:00', $date->format('Y-m-d H:i:s'));
-
-        $date = DateHelper::parseString('20180315 10:00:00', 'yyyymmdd');
-        $this->assertEquals('2018-03-15 10:00:00', $date->format('Y-m-d H:i:s'));
-
-        $date = DateHelper::parseString('180315 10:00:00', 'yymmdd');
-        $this->assertEquals('2018-03-15 10:00:00', $date->format('Y-m-d H:i:s'));
-
-        // Digit groups are year+day+month for these formats (note the digit order differs from
-        // the input used for the yyyymmdd/yymmdd cases above).
-        $date = DateHelper::parseString('20181503 10:00:00', 'yyyyddmm');
-        $this->assertEquals('2018-03-15 10:00:00', $date->format('Y-m-d H:i:s'));
-
-        $date = DateHelper::parseString('181503 10:00:00', 'yyddmm');
+        $date = DateHelper::parseString($value, $format);
         $this->assertEquals('2018-03-15 10:00:00', $date->format('Y-m-d H:i:s'));
     }
 
