@@ -9,6 +9,7 @@ namespace craft\feedme\tests;
 
 use Craft;
 use craft\config\DbConfig;
+use craft\feedme\tests\Helpers\ElementFactory;
 use craft\helpers\App;
 use craft\test\TestSetup;
 use craft\web\Application;
@@ -76,6 +77,8 @@ class TestCase extends BaseTestCase
 
         Craft::$app->getDb()->open();
         $this->transaction = Craft::$app->getDb()->beginTransaction();
+
+        ElementFactory::resetFaker();
     }
 
     protected function tearDown(): void

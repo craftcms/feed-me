@@ -8,6 +8,7 @@
 namespace craft\feedme\tests;
 
 use Craft;
+use craft\feedme\tests\Helpers\ElementFactory;
 use craft\web\Application;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 
@@ -41,5 +42,12 @@ class UnitTestCase extends BaseTestCase
         }
 
         self::$craftBooted = true;
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        ElementFactory::resetFaker();
     }
 }

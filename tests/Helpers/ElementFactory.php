@@ -181,6 +181,17 @@ class ElementFactory
     }
 
     /**
+     * Resets Faker's `unique()` tracking. The `$faker` Generator is a static singleton that
+     * survives the whole test process, but `unique()` only ever grows its "already used" set -
+     * without a reset between tests, a long run risks exhausting small pools (like `word()`)
+     * and throwing `OverflowException`.
+     */
+    public static function resetFaker(): void
+    {
+        self::faker()->unique(true);
+    }
+
+    /**
      * A random handle that's guaranteed not to collide with Craft's reserved handle words (e.g.
      * "id", "title") - a plain `faker()->unique()->word()` occasionally generates one of those.
      */

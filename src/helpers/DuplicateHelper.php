@@ -36,6 +36,13 @@ class DuplicateHelper
      */
     public static function contains($handles, $handle, bool $only = false): bool
     {
+        // `duplicateHandle` is nullable on FeedModel and never re-validated on the read path
+        // (e.g. a feed row saved via `saveFeed($model, false)`, or one that predates this
+        // field) - treat a missing/non-array value as "no handles set" rather than crashing.
+        if (!is_array($handles)) {
+            return false;
+        }
+
         if (in_array($handle, $handles, true)) {
             if ($only) {
                 if (count($handles) == 1) {

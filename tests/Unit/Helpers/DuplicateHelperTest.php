@@ -28,6 +28,16 @@ class DuplicateHelperTest extends TestCase
         $this->assertFalse(DuplicateHelper::contains(['add', 'update'], 'add', true));
     }
 
+    public function testContainsHandlesNonArrayInput(): void
+    {
+        // `duplicateHandle` is nullable and never re-validated on the read path Process.php
+        // uses, so a malformed/legacy feed row can reach here with it missing or null - this
+        // should report "no match" rather than crash (`in_array()`/`count()` throw a TypeError
+        // on a non-array $haystack).
+        $this->assertFalse(DuplicateHelper::contains(null, 'add'));
+        $this->assertFalse(DuplicateHelper::contains(null, 'add', true));
+    }
+
     public static function isXMethodProvider(): array
     {
         return [
@@ -44,5 +54,11 @@ class DuplicateHelperTest extends TestCase
     {
         $this->assertTrue(DuplicateHelper::$method(['duplicateHandle' => [$handle]]));
         $this->assertFalse(DuplicateHelper::$method(['duplicateHandle' => ['add' === $handle ? 'update' : 'add']]));
+    }
+
+    #[DataProvider('isXMethodProvider')]
+    public function testIsXMethodHandlesNullDuplicateHandle(string $method): void
+    {
+        $this->assertFalse(DuplicateHelper::$method(['duplicateHandle' => null]));
     }
 }
