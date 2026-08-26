@@ -1,0 +1,118 @@
+{# ------------------------ #}
+{# Available Variables #}
+{# ------------------------ #}
+{# Attributes: #}
+{# type, name, handle, instructions, attribute, default, feed, feedData #}
+{# ------------------------ #}
+{# Fields: #}
+{# name, handle, instructions, feed, feedData, field, fieldClass #}
+{# ------------------------ #}
+
+{% import 'feed-me/_macros' as feedMeMacro %}
+{% import '_includes/forms' as forms %}
+
+{# Special case when inside another complex field (Matrix) #}
+{% if parentPath is defined %}
+    {% set prefixPath = parentPath %}
+{% else %}
+    {% set prefixPath = [handle] %}
+{% endif %}
+
+{% set classes = ['complex-field'] %}
+
+<tr class="complex-field complex-field-header">
+    <td class="col-field" colspan="3">
+        <div class="field">
+            <div class="heading">
+                <label class="">{{ name }}</label>
+            </div>
+
+            <div class="additional-mapping-fields">
+                {% namespace 'fieldMapping[' ~ prefixPath|join('][') ~ ']' %}
+                    <input type="text" name="field" value="{{ className(field) }}">
+                {% endnamespace %}
+            </div>
+        </div>
+    </td>
+</tr>
+
+{% set subfields = {
+    type: 'Type'|t('feed-me'),
+    value: 'Value'|t('feed-me'),
+} %}
+
+{% if field is defined and field.showLabelField %}
+    {% set subfields = subfields|merge({ label: 'Label'|t('feed-me') }) %}
+{% endif %}
+
+{% set advancedFieldLabels = {
+    urlSuffix: 'URL Suffix'|t('feed-me'),
+    target: 'Open in a new tab'|t('feed-me'),
+    title: 'Title Text'|t('feed-me'),
+    class: 'Class Name'|t('feed-me'),
+    id: 'ID'|t('feed-me'),
+    rel: 'Relation (rel)'|t('feed-me'),
+    ariaLabel: 'ARIA Label'|t('feed-me'),
+    download: 'Download'|t('feed-me'),
+    filename: 'Filename'|t('feed-me'),
+} %}
+
+{% if field is defined %}
+    {% for advancedField in field.advancedFields %}
+        {% set subfields = subfields|merge({ (advancedField): advancedFieldLabels[advancedField] }) %}
+
+        {% if advancedField == 'download' %}
+            {% set subfields = subfields|merge({ filename: advancedFieldLabels.filename }) %}
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+{% for key, col in subfields %}
+    {% set nameLabel = col %}
+    {% set instructionsHandle = handle ~ '[' ~ key ~ ']' %}
+
+    {% set path = prefixPath|merge([ 'fields', key ]) %}
+
+    {% set default = {
+        type: 'text',
+    } %}
+
+    {% if key == 'type' and field is defined %}
+        {% set typeOptions = [] %}
+
+        {% for typeId, linkType in field.getLinkTypes() %}
+            {% set typeOptions = typeOptions|merge([{ label: linkType.displayName(), value: typeId }]) %}
+        {% endfor %}
+
+        {% set default = {
+            type: 'select',
+            options: typeOptions,
+        } %}
+    {% elseif key == 'target' %}
+        {% set default = {
+            type: 'select',
+            options: [
+                { label: 'Don’t import'|t('feed-me'), value: '' },
+                { label: 'Open in a new tab'|t('feed-me'), value: '_blank' },
+            ],
+        } %}
+    {% elseif key == 'download' %}
+        {% set default = {
+            type: 'select',
+            options: [
+                { label: 'No'|t('feed-me'), value: '' },
+                { label: 'Yes'|t('feed-me'), value: '1' },
+            ],
+        } %}
+    {% endif %}
+
+    {% embed 'feed-me/_includes/fields/_base' %}
+        {% block additionalFieldSettings %}
+
+        {% endblock %}
+
+        {% block fieldSettings %}
+
+        {% endblock %}
+    {% endembed %}
+{% endfor %}

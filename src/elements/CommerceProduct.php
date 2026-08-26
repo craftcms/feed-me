@@ -627,7 +627,11 @@ class CommerceProduct extends Element
 
             // What if the `stock` key wasn't in the import data?
             if (is_null($stock)) {
-                Plugin::error(sprintf('No stock value was present in the import data for %s.', $variant->sku));
+                // Only log an error if we don't have stock value, but the stock was mapped and not set to 'noimport'
+                $variantMapping = Hash::get($event->feed, 'fieldMapping.variants');
+                if (isset($variantMapping['stock']['node']) && $variantMapping['stock']['node'] !== 'noimport') {
+                    Plugin::error(sprintf('No stock value was present in the import data for %s.', $variant->sku));
+                }
 
                 continue;
             }

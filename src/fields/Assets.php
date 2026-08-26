@@ -92,10 +92,13 @@ class Assets extends Field implements FieldInterface
         $node = Hash::get($this->fieldInfo, 'node');
         $nodeKey = $this->getArrayKeyFromNode($node);
 
-        // Get folder id's for connecting
-        $folderIds = $this->field->resolveDynamicPathToFolderId($this->element);
-
-        if (!$folderIds) {
+        // by default, don't narrow down by folder IDs
+        $folderIds = null;
+        // if the field is restricted to a specific folder, use only that folder ID
+        if ($this->field->restrictLocation) {
+            $folderIds = $this->field->resolveDynamicPathToFolderId($this->element);
+        } else {
+            // otherwise get folder IDs in all the volumes that are allowed by the field
             if (is_array($folders)) {
                 foreach ($folders as $folder) {
                     [, $uid] = explode(':', $folder);
@@ -110,8 +113,6 @@ class Assets extends Field implements FieldInterface
 
                     $folderIds = array_merge($folderIds, $ids);
                 }
-            } elseif ($folders === '*') {
-                $folderIds = null;
             }
         }
 
