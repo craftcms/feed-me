@@ -65,12 +65,6 @@ class CalenderEvent extends Element
      */
     private array $selectDates = [];
 
-    /**
-     * @var bool
-     */
-    private static bool $processEventsRegistered = false;
-
-
     // Templates
     // =========================================================================
 
@@ -108,24 +102,15 @@ class CalenderEvent extends Element
     {
         parent::init();
 
-        // Event::on() is a class-level (static) registration, but init() runs on every
-        // CalenderEvent instantiation - guard against re-registering on every construction, and
-        // resolve the current registered instance inside the handler rather than closing over
-        // $this, so the handler always acts on whichever instance is actually in use.
-        if (self::$processEventsRegistered) {
-            return;
-        }
-        self::$processEventsRegistered = true;
-
-        Event::on(Process::class, Process::EVENT_STEP_BEFORE_ELEMENT_SAVE, static function(FeedProcessEvent $event) {
+        Event::on(Process::class, Process::EVENT_STEP_BEFORE_ELEMENT_SAVE, function(FeedProcessEvent $event) {
             if ($event->feed['elementType'] === EventElement::class) {
-                Plugin::$plugin->elements->getRegisteredElement(EventElement::class)->_onBeforeElementSave($event);
+                $this->_onBeforeElementSave($event);
             }
         });
 
-        Event::on(Process::class, Process::EVENT_STEP_AFTER_ELEMENT_SAVE, static function(FeedProcessEvent $event) {
+        Event::on(Process::class, Process::EVENT_STEP_AFTER_ELEMENT_SAVE, function(FeedProcessEvent $event) {
             if ($event->feed['elementType'] === EventElement::class) {
-                Plugin::$plugin->elements->getRegisteredElement(EventElement::class)->_onAfterElementSave($event);
+                $this->_onAfterElementSave($event);
             }
         });
     }
