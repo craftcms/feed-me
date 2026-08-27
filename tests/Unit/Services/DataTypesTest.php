@@ -44,6 +44,20 @@ class DataTypesTest extends UnitTestCase
         $this->assertSame('News', $mapping['tags']);
     }
 
+    public function testCreateDataTypeWithUnresolvableClass(): void
+    {
+        // createDataType() is declared to return DataTypeInterface, and falls back to
+        // `new MissingDataType($config)` when the configured class can't be resolved - but
+        // MissingDataType only implements MissingComponentInterface, not DataTypeInterface (its
+        // parent DataType doesn't implement it either). Pinning down what actually happens here:
+        // PHP enforces declared return types at runtime regardless of the `@var` docblock, so
+        // this is expected to throw rather than degrade gracefully - the same shape of bug
+        // already found and documented in Fields::createField()/MissingField.
+        $this->expectException(\TypeError::class);
+
+        Plugin::$plugin->data->createDataType('craft\\feedme\\tests\\NotARealDataType');
+    }
+
     public function testFindPrimaryElement(): void
     {
         $parsed = ['channel' => ['item' => [['title' => 'One'], ['title' => 'Two']]]];
