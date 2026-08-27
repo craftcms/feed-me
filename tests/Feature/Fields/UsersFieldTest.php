@@ -9,10 +9,11 @@ use craft\feedme\tests\Helpers\ElementFactory;
 use craft\feedme\tests\Helpers\FieldServiceFactory;
 use craft\feedme\tests\TestCase;
 use craft\fields\Users as UsersField;
-use PHPUnit\Framework\Attributes\DataProvider;
 
 class UsersFieldTest extends TestCase
 {
+    use MatchesRelatedByTypeTests;
+
     private Users $service;
 
     private UserElement $user;
@@ -37,30 +38,19 @@ class UsersFieldTest extends TestCase
         ];
     }
 
-    #[DataProvider('matchTypeProvider')]
-    public function testMatchesByType(string $matchType): void
+    protected function relatedFieldService(): Users
     {
-        $this->service->fieldInfo = ['node' => 'author', 'options' => ['match' => $matchType]];
-        $this->service->feedData = ['author' => $matchType === 'id' ? (string)$this->user->id : $this->user->{$matchType}];
-
-        $this->assertSame([$this->user->id], $this->service->parseField());
+        return $this->service;
     }
 
-    public function testNoMatchReturnsNull(): void
+    protected function relatedSubject(): UserElement
     {
-        $this->service->fieldInfo = ['node' => 'author', 'options' => ['match' => 'email']];
-        $this->service->feedData = ['author' => 'nonexistent-' . $this->user->email];
-
-        // No matches found and nothing to fall back to - relation gets cleared, not left alone.
-        $this->assertNull($this->service->parseField());
+        return $this->user;
     }
 
-    public function testEmptyValueReturnsEmptyArray(): void
+    protected function relatedFieldNode(): string
     {
-        $this->service->fieldInfo = ['node' => 'author', 'options' => ['match' => 'email']];
-        $this->service->feedData = ['author' => ''];
-
-        $this->assertSame([], $this->service->parseField());
+        return 'author';
     }
 
     public function testUsedefaultReturnsDefaultArrayAsIs(): void

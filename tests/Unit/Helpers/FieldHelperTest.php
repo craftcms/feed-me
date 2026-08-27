@@ -3,11 +3,11 @@
 namespace craft\feedme\tests\Unit\Helpers;
 
 use craft\feedme\helpers\FieldHelper;
-use craft\feedme\tests\UnitTestCase;
 use craft\fields\Matrix;
 use craft\fields\PlainText;
+use PHPUnit\Framework\TestCase;
 
-class FieldHelperTest extends UnitTestCase
+class FieldHelperTest extends TestCase
 {
     public function testFieldCanBeUniqueId(): void
     {

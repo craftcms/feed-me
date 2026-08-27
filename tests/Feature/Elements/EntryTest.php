@@ -11,6 +11,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 
 class EntryTest extends TestCase
 {
+    use MatchesAuthorByTypeTests;
     use ParsesParentAttributeTests;
 
     private Entry $service;
@@ -41,107 +42,64 @@ class EntryTest extends TestCase
         return $this->parentEntry;
     }
 
-    public function testId(): void
+    protected function authorMatchService(): Entry
     {
-        $feedMapping = [
-            'attribute' => true,
-            'node' => 'id',
-            'default' => '123',
-        ];
-
-        $feedData = ['id' => '15868'];
-        $this->assertEquals('15868', $this->service->parseAttribute($feedData, 'id', $feedMapping));
-
-        // Test default
-        $feedData = ['id' => ''];
-        $this->assertEquals('123', $this->service->parseAttribute($feedData, 'id', $feedMapping));
+        return $this->service;
     }
 
-    public function testTitle(): void
+    protected function authorSubject(): UserElement
     {
-        $feedMapping = [
-            'attribute' => true,
-            'node' => 'title',
-            'default' => 'Default Title',
-        ];
-
-        $feedData = ['title' => 'RSS News'];
-        $this->assertEquals('RSS News', $this->service->parseAttribute($feedData, 'title', $feedMapping));
-
-        // Test default
-        $feedData = ['title' => ''];
-        $this->assertEquals('Default Title', $this->service->parseAttribute($feedData, 'title', $feedMapping));
-
-        // Test mapping with no default, but empty value
-        $feedMapping['default'] = '';
-        $this->assertEquals('', $this->service->parseAttribute($feedData, 'title', $feedMapping));
+        return $this->author;
     }
 
-    public function testSlug(): void
+    protected function authorMatchAttribute(): string
     {
-        $feedMapping = [
-            'attribute' => true,
-            'node' => 'slug',
-            'default' => 'default-slug',
-        ];
-
-        $feedData = ['slug' => 'rss-news'];
-        $this->assertEquals('rss-news', $this->service->parseAttribute($feedData, 'slug', $feedMapping));
-
-        // Test default
-        $feedData = ['slug' => ''];
-        $this->assertEquals('default-slug', $this->service->parseAttribute($feedData, 'slug', $feedMapping));
-
-        // Test mapping with no default, but empty value
-        $feedMapping['default'] = '';
-        $this->assertEquals('', $this->service->parseAttribute($feedData, 'slug', $feedMapping));
+        return 'authorIds';
     }
 
-    public static function authorMatchTypeProvider(): array
+    protected function authorMatchExpected(UserElement $author): mixed
+    {
+        return [$author->id];
+    }
+
+    protected function authorMatchFeedMapping(string $matchType): array
     {
         return [
-            'email' => ['email'],
-            'username' => ['username'],
-            'id' => ['id'],
-        ];
-    }
-
-    #[DataProvider('authorMatchTypeProvider')]
-    public function testAuthorMatchesByType(string $matchType): void
-    {
-        $value = $matchType === 'id' ? (string)$this->author->id : $this->author->{$matchType};
-        $feedData = ['author' => $value];
-
-        $feedMapping = [
             'attribute' => true,
             'node' => 'author',
             'default' => '',
             'options' => ['match' => $matchType],
         ];
-
-        $this->assertEquals([$this->author->id], $this->service->parseAttribute($feedData, 'authorIds', $feedMapping));
-
-        // Check invalid match.
-        $invalidValue = $matchType === 'id'
-            ? $this->author->id + ElementFactory::NONEXISTENT_ID_OFFSET
-            : 'nonexistent-' . $value;
-        $feedData = ['author' => $invalidValue];
-
-        $this->assertNull($this->service->parseAttribute($feedData, 'authorIds', $feedMapping));
     }
 
-    public function testAuthorEmpty(): void
+    public static function simpleAttributeProvider(): array
     {
-        $feedData = ['author' => ''];
+        return [
+            'id' => ['id', '123', '15868'],
+            'title' => ['title', 'Default Title', 'RSS News'],
+            'slug' => ['slug', 'default-slug', 'rss-news'],
+        ];
+    }
 
+    #[DataProvider('simpleAttributeProvider')]
+    public function testSimpleAttributeParsesWithDefault(string $attribute, string $default, string $value): void
+    {
         $feedMapping = [
             'attribute' => true,
-            'node' => 'author',
-            'default' => '',
-            'options' => ['match' => 'id'],
+            'node' => $attribute,
+            'default' => $default,
         ];
 
-        $this->assertNull($this->service->parseAttribute($feedData, 'authorIds', $feedMapping));
+        $feedData = [$attribute => $value];
+        $this->assertEquals($value, $this->service->parseAttribute($feedData, $attribute, $feedMapping));
+
+        // Test default
+        $feedData = [$attribute => ''];
+        $this->assertEquals($default, $this->service->parseAttribute($feedData, $attribute, $feedMapping));
+
+        // Test mapping with no default, but empty value
+        $feedMapping['default'] = '';
+        $this->assertEquals('', $this->service->parseAttribute($feedData, $attribute, $feedMapping));
     }
 
     public function testAuthorDefault(): void

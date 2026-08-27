@@ -8,10 +8,11 @@ use craft\feedme\tests\Helpers\ElementFactory;
 use craft\feedme\tests\Helpers\FieldServiceFactory;
 use craft\feedme\tests\TestCase;
 use craft\fields\Entries as EntriesField;
-use PHPUnit\Framework\Attributes\DataProvider;
 
 class EntriesFieldTest extends TestCase
 {
+    use MatchesRelatedByTypeTests;
+
     private Entries $service;
 
     private EntryElement $entry;
@@ -35,30 +36,19 @@ class EntriesFieldTest extends TestCase
         ];
     }
 
-    #[DataProvider('matchTypeProvider')]
-    public function testMatchesByType(string $matchType): void
+    protected function relatedFieldService(): Entries
     {
-        $this->service->fieldInfo = ['node' => 'related', 'options' => ['match' => $matchType]];
-        $this->service->feedData = ['related' => $matchType === 'id' ? (string)$this->entry->id : $this->entry->title];
-
-        $this->assertSame([$this->entry->id], $this->service->parseField());
+        return $this->service;
     }
 
-    public function testNoMatchReturnsNull(): void
+    protected function relatedSubject(): EntryElement
     {
-        $this->service->fieldInfo = ['node' => 'related', 'options' => ['match' => 'title']];
-        $this->service->feedData = ['related' => $this->entry->title . '-nonexistent'];
-
-        // No matches found and nothing to fall back to - relation gets cleared, not left alone.
-        $this->assertNull($this->service->parseField());
+        return $this->entry;
     }
 
-    public function testEmptyValueReturnsEmptyArray(): void
+    protected function relatedFieldNode(): string
     {
-        $this->service->fieldInfo = ['node' => 'related', 'options' => ['match' => 'title']];
-        $this->service->feedData = ['related' => ''];
-
-        $this->assertSame([], $this->service->parseField());
+        return 'related';
     }
 
     public function testEmptyValueWithConfiguredDefaultFallsBackToDefault(): void

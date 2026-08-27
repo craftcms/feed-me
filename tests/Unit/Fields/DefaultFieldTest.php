@@ -3,6 +3,7 @@
 namespace craft\feedme\tests\Unit\Fields;
 
 use craft\feedme\fields\DefaultField;
+use craft\feedme\tests\Helpers\FieldServiceFactory;
 use craft\feedme\tests\UnitTestCase;
 use craft\fields\PlainText;
 
@@ -14,11 +15,9 @@ class DefaultFieldTest extends UnitTestCase
     {
         parent::setUp();
 
-        $this->service = new DefaultField();
         // DefaultField handles the generic case for simple field types - PlainText is a
         // representative stand-in with real normalizeValue()/serializeValue() behavior.
-        $this->service->field = new PlainText();
-        $this->service->feed = ['setEmptyValues' => false];
+        $this->service = FieldServiceFactory::create(DefaultField::class, new PlainText(), ['setEmptyValues' => false]);
     }
 
     public function testArrayValueIsJsonEncoded(): void

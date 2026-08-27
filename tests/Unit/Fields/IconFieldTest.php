@@ -3,6 +3,7 @@
 namespace craft\feedme\tests\Unit\Fields;
 
 use craft\feedme\fields\Icon;
+use craft\feedme\tests\Helpers\FieldServiceFactory;
 use craft\feedme\tests\UnitTestCase;
 use craft\fields\Icon as IconField;
 
@@ -14,8 +15,7 @@ class IconFieldTest extends UnitTestCase
     {
         parent::setUp();
 
-        $this->service = new Icon();
-        $this->service->field = new IconField();
+        $this->service = FieldServiceFactory::create(Icon::class, new IconField());
         $this->service->fieldInfo = ['node' => 'value'];
     }
 
