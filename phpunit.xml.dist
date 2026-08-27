@@ -11,12 +11,4 @@
             <directory suffix="Test.php">./tests/Feature</directory>
         </testsuite>
     </testsuites>
-    <php>
-        <!-- Use a database dedicated to running tests — NOT the same database as your local dev site. -->
-        <env name="DB_DSN" value="mysql:host=db;port=3306;dbname=test"/>
-        <env name="DB_USER" value="db"/>
-        <env name="DB_PASSWORD" value="db"/>
-        <env name="DB_SCHEMA" value="public"/>
-        <env name="DB_TABLE_PREFIX" value=""/>
-    </php>
 </phpunit>

@@ -8,6 +8,16 @@
 use craft\feedme\tests\TestCase;
 use craft\feedme\tests\UnitTestCase;
 use craft\test\TestSetup;
+use Dotenv\Dotenv;
+use Dotenv\Repository\Adapter\PutenvAdapter;
+use Dotenv\Repository\RepositoryBuilder;
+
+$envRepository = RepositoryBuilder::createWithDefaultAdapters()
+    ->addAdapter(PutenvAdapter::class)
+    ->immutable()
+    ->make();
+
+Dotenv::create($envRepository, __DIR__ . '/_craft', '.env')->safeLoad();
 
 ini_set('date.timezone', 'UTC');
 date_default_timezone_set('UTC');

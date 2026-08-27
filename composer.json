@@ -42,7 +42,8 @@
     "craftcms/ecs": "dev-main",
     "craftcms/phpstan": "dev-main",
     "pestphp/pest": "^3.0",
-    "fakerphp/faker": "^1.19.0"
+    "fakerphp/faker": "^1.19.0",
+    "vlucas/phpdotenv": "^5.7"
   },
   "autoload": {
     "psr-4": {
