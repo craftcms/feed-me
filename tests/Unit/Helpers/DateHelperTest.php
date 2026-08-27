@@ -14,7 +14,9 @@ class DateHelperTest extends UnitTestCase
             'america' => ['03/15/2018 10:00:00', 'america'],
             'america-short' => ['03/15/18 10:00:00', 'america-short'],
             'asia' => ['2018/03/15 10:00:00', 'asia'],
+            'asia-short' => ['18/03/15 10:00:00', 'asia-short'],
             'world' => ['15/03/2018 10:00:00', 'world'],
+            'world-short' => ['15/03/18 10:00:00', 'world-short'],
             'yyyymmdd' => ['20180315 10:00:00', 'yyyymmdd'],
             'yymmdd' => ['180315 10:00:00', 'yymmdd'],
             // Digit groups are year+day+month for these formats (note the digit order differs
@@ -35,6 +37,11 @@ class DateHelperTest extends UnitTestCase
 
     public function testDateHelperTimestamps(): void
     {
+        // These expected values are only correct under America/Los_Angeles (UTC-8) - Pest.php
+        // sets date_default_timezone_set('UTC'), but booting Craft::$app reads system.timeZone
+        // from project config, which defaults to America/Los_Angeles on a fresh install and
+        // silently overrides it. If that default ever changes, these assertions need updating
+        // too - they're not actually testing DateHelper against UTC.
         $date = DateHelper::parseString(1512090030, 'seconds');
         $this->assertEquals('2017-11-30 17:00:30', $date->format('Y-m-d H:i:s'));
 
@@ -86,6 +93,11 @@ class DateHelperTest extends UnitTestCase
         $this->assertEmpty($date);
 
         $value = null;
+        $date = DateHelper::parseString($value);
+        $this->assertEmpty($date);
+
+        // '0' is treated the same as null/'' - a common "empty" sentinel in feed data.
+        $value = '0';
         $date = DateHelper::parseString($value);
         $this->assertEmpty($date);
     }

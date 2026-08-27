@@ -2,6 +2,7 @@
 
 namespace craft\feedme\tests\Feature\Services;
 
+use Craft;
 use craft\elements\Entry as EntryElement;
 use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
@@ -10,6 +11,7 @@ use craft\feedme\tests\Helpers\ElementFactory;
 use craft\feedme\tests\TestCase;
 use craft\models\EntryType;
 use craft\models\Section;
+use craft\services\Elements as ElementsService;
 
 class ProcessTest extends TestCase
 {
@@ -158,5 +160,31 @@ class ProcessTest extends TestCase
 
         $this->assertNull(EntryElement::find()->status(null)->id($missing->id)->one());
         $this->assertNotNull(EntryElement::find()->status(null)->id($keep->id)->one());
+    }
+
+    public function testSkipsSaveWhenContentUnchanged(): void
+    {
+        $this->runFeed($this->makeFeed(['duplicateHandle' => ['update']]), [
+            ['slug' => 'fixed-slug', 'title' => 'Same Title'],
+        ]);
+
+        $saveEventFired = false;
+        $handler = function() use (&$saveEventFired) {
+            $saveEventFired = true;
+        };
+
+        Craft::$app->getElements()->on(ElementsService::EVENT_BEFORE_SAVE_ELEMENT, $handler);
+
+        try {
+            // Same slug and title as the first run - compareContent (on by default) should skip
+            // the save entirely rather than re-saving identical content.
+            $this->runFeed($this->makeFeed(['duplicateHandle' => ['update']]), [
+                ['slug' => 'fixed-slug', 'title' => 'Same Title'],
+            ]);
+        } finally {
+            Craft::$app->getElements()->off(ElementsService::EVENT_BEFORE_SAVE_ELEMENT, $handler);
+        }
+
+        $this->assertFalse($saveEventFired);
     }
 }

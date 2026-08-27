@@ -58,5 +58,9 @@ class BaseHelperTest extends UnitTestCase
         $this->assertFalse(BaseHelper::parseBoolean('disabled'));
 
         $this->assertFalse(BaseHelper::parseBoolean(2));
+
+        // Array input is a distinct branch that returns void/null, not false like every other
+        // unrecognized value.
+        $this->assertNull(BaseHelper::parseBoolean(['yes']));
     }
 }

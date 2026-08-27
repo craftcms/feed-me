@@ -26,6 +26,11 @@ class FieldHelperTest extends TestCase
         $this->assertTrue(FieldHelper::fieldCanBeUniqueId(['type' => 'anything', 'handle' => 'parent']));
 
         $this->assertFalse(FieldHelper::fieldCanBeUniqueId(['type' => 'unsupported-type', 'handle' => 'someField']));
+
+        // A value that isn't array-accessible (e.g. a plain object with no ArrayAccess
+        // implementation) throws on `$field['type']` - caught by the method's own try/catch,
+        // which returns false rather than ever reaching the is_object() classification below it.
+        $this->assertFalse(FieldHelper::fieldCanBeUniqueId(new \stdClass()));
     }
 
     public function testFieldHasOnlyCustomSources(): void

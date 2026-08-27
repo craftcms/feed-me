@@ -56,10 +56,6 @@ class GoogleSheetTest extends UnitTestCase
 
     public function testRaggedRowLongerThanHeaderReturnsGracefulError(): void
     {
-        // `$headers[$j]` is an undefined-array-key read for the extra column, which Craft's own
-        // error handler promotes to an exception in this environment - so this doesn't reach the
-        // blank_heading_N fallback (that only covers a *blank* header cell, not a *missing* one);
-        // it's caught by getFeed()'s own catch block and fails gracefully instead of crashing.
         $result = $this->fetch(['values' => [['id', 'title'], ['1', 'Foo', 'extra']]]);
 
         $this->assertFalse($result['success']);
