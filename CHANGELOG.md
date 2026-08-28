@@ -1,6 +1,6 @@
 # Release Notes for Feed Me
 
-## Unreleased
+## 6.15.1 - 2026-08-28
 
 - Fixed a bug where importing into an assets field that doesn’t have "All volumes" selected and doesn’t restrict uploads to a single location would throw an error. ([#1764](https://github.com/craftcms/feed-me/pull/1764))
 
