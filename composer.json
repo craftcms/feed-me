@@ -57,7 +57,7 @@
   "extra": {
     "name": "Feed Me",
     "handle": "feed-me",
-    "documentationUrl": "https://docs.craftcms.com/feed-me/v4/"
+    "documentationUrl": "https://docs.craftcms.com/feed-me/v6"
   },
   "scripts": {
     "check-cs": "ecs check --ansi",
