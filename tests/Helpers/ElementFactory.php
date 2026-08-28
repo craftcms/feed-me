@@ -8,10 +8,12 @@
 namespace craft\feedme\tests\Helpers;
 
 use Craft;
+use craft\elements\Asset;
 use craft\elements\Category;
 use craft\elements\Entry;
 use craft\elements\User;
 use craft\fieldlayoutelements\entries\EntryTitleField;
+use craft\fs\Local;
 use craft\models\CategoryGroup;
 use craft\models\CategoryGroup_SiteSettings;
 use craft\models\EntryType;
@@ -20,6 +22,7 @@ use craft\models\FieldLayoutTab;
 use craft\models\Section;
 use craft\models\Section_SiteSettings;
 use craft\models\UserGroup;
+use craft\models\Volume;
 use Faker\Factory;
 use Faker\Generator;
 use yii\base\Exception;
@@ -98,6 +101,63 @@ class ElementFactory
         }
 
         return $category;
+    }
+
+    /**
+     * Creates a local-filesystem volume with its own dedicated temp directory, so tests can
+     * create real assets inside it without touching any other volume's files.
+     */
+    public static function createVolume(array $attributes = []): Volume
+    {
+        $path = sys_get_temp_dir() . '/feed-me-tests-' . self::uniqueHandle();
+        mkdir($path, 0777, true);
+
+        $fs = new Local(['name' => self::faker()->unique()->word(), 'handle' => self::uniqueHandle(), 'path' => $path]);
+        if (!Craft::$app->getFs()->saveFilesystem($fs)) {
+            throw new Exception('Could not create test filesystem: ' . implode(', ', $fs->getErrorSummary(true)));
+        }
+
+        $volume = new Volume([
+            'name' => self::faker()->unique()->word(),
+            'handle' => self::uniqueHandle(),
+            'fs' => $fs->handle,
+        ]);
+
+        Craft::configure($volume, $attributes);
+
+        if (!Craft::$app->getVolumes()->saveVolume($volume)) {
+            throw new Exception('Could not create test volume: ' . implode(', ', $volume->getErrorSummary(true)));
+        }
+
+        return $volume;
+    }
+
+    /**
+     * Creates a real asset in the given volume's root folder, backed by an actual temp file on
+     * disk (Craft's asset-creation flow requires a real `tempFilePath` to move into place).
+     */
+    public static function createAsset(Volume $volume, array $attributes = []): Asset
+    {
+        $folder = Craft::$app->getAssets()->getRootFolderByVolumeId($volume->id);
+
+        $tempFilePath = sys_get_temp_dir() . '/feed-me-tests-asset-' . self::uniqueHandle() . '.txt';
+        file_put_contents($tempFilePath, 'test asset content');
+
+        $asset = new Asset();
+        $asset->tempFilePath = $tempFilePath;
+        $asset->setFilename(self::uniqueHandle() . '.txt');
+        $asset->newFolderId = $folder->id;
+        $asset->volumeId = $volume->id;
+        $asset->avoidFilenameConflicts = true;
+        $asset->setScenario(Asset::SCENARIO_CREATE);
+
+        Craft::configure($asset, $attributes);
+
+        if (!Craft::$app->getElements()->saveElement($asset, true, true, true)) {
+            throw new Exception('Could not create test asset: ' . implode(', ', $asset->getErrorSummary(true)));
+        }
+
+        return $asset;
     }
 
     public static function createUserGroup(array $attributes = []): UserGroup

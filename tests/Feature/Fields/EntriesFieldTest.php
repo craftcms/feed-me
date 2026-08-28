@@ -66,4 +66,26 @@ class EntriesFieldTest extends TestCase
 
         $this->assertSame([(string)$this->entry->id], $this->service->parseField());
     }
+
+    public function testCreatedEntryGetsAPostDate(): void
+    {
+        // https://github.com/craftcms/feed-me/issues/1747 and
+        // https://github.com/craftcms/feed-me/issues/1752 - entries created via "Create entries
+        // if they do not exist" used to be saved without a post date, leaving them stuck in the
+        // `pending` status even though the section enables entries by default.
+        $this->service->fieldInfo = [
+            'node' => 'related',
+            'options' => ['match' => 'title', 'create' => true],
+        ];
+        $this->service->feedData = ['related' => 'A brand new related entry'];
+
+        $ids = $this->service->parseField();
+
+        $this->assertCount(1, $ids);
+
+        $createdEntry = EntryElement::find()->id($ids[0])->status(null)->one();
+
+        $this->assertNotNull($createdEntry->postDate);
+        $this->assertSame(EntryElement::STATUS_LIVE, $createdEntry->status);
+    }
 }
