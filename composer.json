@@ -43,7 +43,8 @@
     "craftcms/phpstan": "dev-main",
     "pestphp/pest": "^3.0",
     "fakerphp/faker": "^1.19.0",
-    "vlucas/phpdotenv": "^5.7"
+    "vlucas/phpdotenv": "^5.7",
+    "phpstan/phpstan": "^2.2"
   },
   "autoload": {
     "psr-4": {
