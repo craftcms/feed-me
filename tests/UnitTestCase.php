@@ -38,6 +38,10 @@ class UnitTestCase extends BaseTestCase
         Craft::$app = $app;
 
         if (!Craft::$app->getPlugins()->getPlugin('feed-me')) {
+            $pluginsService = Craft::$app->getPlugins();
+            $storedInfo = new \ReflectionProperty($pluginsService, '_storedPluginInfo');
+            $storedInfo->setValue($pluginsService, ['feed-me' => ['enabled' => true]]);
+
             Craft::$app->getPlugins()->createPlugin('feed-me');
         }
 

@@ -37,16 +37,16 @@ class DateHelperTest extends UnitTestCase
 
     public function testDateHelperTimestamps(): void
     {
-        // These expected values are only correct under America/Los_Angeles (UTC-8) - Pest.php
-        // sets date_default_timezone_set('UTC'), but booting Craft::$app reads system.timeZone
-        // from project config, which defaults to America/Los_Angeles on a fresh install and
-        // silently overrides it. If that default ever changes, these assertions need updating
-        // too - they're not actually testing DateHelper against UTC.
+        // Convert to UTC explicitly before asserting - `Carbon::createFromTimestamp()` /
+        // `createFromTimestampMs()` render using PHP's ambient default timezone, which Craft's
+        // app boot silently sets from `system.timeZone` project config (not necessarily UTC,
+        // regardless of what Pest.php sets at bootstrap). Asserting in UTC makes this test
+        // depend only on the fixed input timestamp, not on that ambient state.
         $date = DateHelper::parseString(1512090030, 'seconds');
-        $this->assertEquals('2017-11-30 17:00:30', $date->format('Y-m-d H:i:s'));
+        $this->assertEquals('2017-12-01 01:00:30', $date->setTimezone('UTC')->format('Y-m-d H:i:s'));
 
         $date = DateHelper::parseString(1512090030615, 'milliseconds');
-        $this->assertEquals('2017-11-30 17:00:30', $date->format('Y-m-d H:i:s'));
+        $this->assertEquals('2017-12-01 01:00:30', $date->setTimezone('UTC')->format('Y-m-d H:i:s'));
     }
 
     public function testDateHelperDateTimePicker(): void
