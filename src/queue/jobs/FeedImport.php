@@ -244,6 +244,7 @@ class FeedImport extends BaseBatchedJob implements RetryableJobInterface
             $nextFeed = SequencesRecord::find()
                 ->select(['feedId', 'options'])
                 ->where(['key' => $sequenceKey])
+                ->orderBy(['id' => SORT_ASC])
                 ->one();
 
             if ($nextFeed) {
