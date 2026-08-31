@@ -23,18 +23,18 @@ use PHPUnit\Framework\TestCase as BaseTestCase;
  */
 class UnitTestCase extends BaseTestCase
 {
-    private static bool $craftBooted = false;
+    private static bool $suiteBooted = false;
 
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
 
-        if (self::$craftBooted) {
+        if (self::$suiteBooted) {
             return;
         }
 
         /** @var Application $app */
-        $app = Craft::createObject(require CRAFT_CONFIG_PATH . '/test.php');
+        $app = Craft::createObject(TestCase::createTestCraftObjectConfig());
         Craft::$app = $app;
 
         if (!Craft::$app->getPlugins()->getPlugin('feed-me')) {
@@ -45,7 +45,7 @@ class UnitTestCase extends BaseTestCase
             Craft::$app->getPlugins()->createPlugin('feed-me');
         }
 
-        self::$craftBooted = true;
+        self::$suiteBooted = true;
     }
 
     protected function setUp(): void
