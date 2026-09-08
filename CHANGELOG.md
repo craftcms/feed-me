@@ -1,5 +1,9 @@
 # Release Notes for Feed Me
 
+## Unreleased
+
+- Fixed a bug where values that don’t parse to a string — such as Number and Lightswitch fields, and numeric element attributes like `id` — could no longer be used as unique identifiers, as of 6.15.0. This also broke Commerce Product feeds that match on Variant SKU. ([#1767](https://github.com/craftcms/feed-me/issues/1767))
+
 ## 6.15.1 - 2026-08-28
 
 - Fixed a bug where importing into an assets field that doesn’t have "All volumes" selected and doesn’t restrict uploads to a single location would throw an error. ([#1764](https://github.com/craftcms/feed-me/pull/1764))

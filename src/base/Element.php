@@ -21,7 +21,9 @@ use craft\helpers\ElementHelper;
 use craft\helpers\Json;
 use craft\helpers\StringHelper;
 use DateTime;
+use DateTimeInterface;
 use Exception;
+use Stringable;
 
 /**
  *
@@ -155,25 +157,42 @@ abstract class Element extends Component implements ElementInterface
         foreach ($settings['fieldUnique'] as $handle => $value) {
             $feedValue = Hash::get($data, $handle);
 
-            if (!is_null($feedValue)) {
-                if (is_object($feedValue) && get_class($feedValue) === 'DateTime') {
-                    $feedValue = $feedValue->format('Y-m-d H:i:s');
-                }
+            if ($feedValue === null) {
+                continue;
+            }
 
-                // We need a value to check against
-                if (is_string($feedValue)) {
-                    if ($feedValue === '') {
-                        continue;
-                    }
+            // Normalize the values that fields are allowed to parse to, so they can be
+            // matched as strings. Number fields parse to ints/floats, Lightswitch fields
+            // to bools, and Date fields to DateTime or Carbon instances.
+            if ($feedValue instanceof DateTimeInterface) {
+                $feedValue = $feedValue->format('Y-m-d H:i:s');
+            } elseif (is_bool($feedValue)) {
+                $feedValue = $feedValue ? '1' : '0';
+            } elseif (is_int($feedValue) || is_float($feedValue)) {
+                $feedValue = (string)$feedValue;
+            } elseif ($feedValue instanceof Stringable) {
+                $feedValue = (string)$feedValue;
+            }
 
-                    if ($handle === 'parent') {
-                        $criteria['descendantOf'] = Db::escapeParam($feedValue);
-                    } else {
-                        $criteria[$handle] = Db::escapeParam($feedValue);
-                    }
-                } else {
-                    throw new Exception('Cannot match on a non-string value for ' . $handle . '.');
-                }
+            // Arrays and other objects can't be matched against, so bail with something
+            // readable rather than letting Db::escapeParam() throw a TypeError.
+            if (!is_string($feedValue)) {
+                throw new Exception(sprintf(
+                    'Cannot match on a value of type %s for `%s`. Choose a different unique identifier.',
+                    get_debug_type($feedValue),
+                    $handle,
+                ));
+            }
+
+            // We need a value to check against
+            if ($feedValue === '') {
+                continue;
+            }
+
+            if ($handle === 'parent') {
+                $criteria['descendantOf'] = Db::escapeParam($feedValue);
+            } else {
+                $criteria[$handle] = Db::escapeParam($feedValue);
             }
         }
 
