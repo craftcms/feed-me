@@ -46,6 +46,14 @@ class GoogleSheet extends DataType implements DataTypeInterface
         try {
             $content = JsonHelper::decode($data, true);
 
+            if (!is_array($content) || !is_array($content['values'] ?? null)) {
+                $error = 'Invalid data: missing or malformed "values" key.';
+
+                Plugin::error($error);
+
+                return ['success' => false, 'error' => $error];
+            }
+
             $headers = array_shift($content['values']);
             $rows = $content['values'];
 

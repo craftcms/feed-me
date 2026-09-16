@@ -65,7 +65,6 @@ class CalenderEvent extends Element
      */
     private array $selectDates = [];
 
-
     // Templates
     // =========================================================================
 

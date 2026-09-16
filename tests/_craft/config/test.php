@@ -31,7 +31,9 @@ $config['vendorPath'] = $vendorPath;
 $config = ArrayHelper::merge($config, [
     'components' => [
         'sites' => [
-            'currentSite' => 'default'
+            // Matches the site handle `craft\test\TestSetup::setupCraftDb()` creates when
+            // installing Craft into an empty test database (see tests/TestCase.php).
+            'currentSite' => 'defaultSite'
         ]
     ],
 ]);
