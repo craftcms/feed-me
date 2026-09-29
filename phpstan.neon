@@ -7,7 +7,6 @@ parameters:
         - src
     excludePaths:
         - src/elements/CalenderEvent.php
-        - src/elements/Comment.php
         - src/elements/CommerceProduct.php
         - src/elements/DigitalProduct.php
         - src/fields/CalendarEvents.php
