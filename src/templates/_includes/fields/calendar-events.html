@@ -28,15 +28,21 @@
     <div class="element-match">
         <span>{{ 'Data provided for this calendar event is:'|t('feed-me') }}</span>
 
+        {% set matchAttributes = [
+            { value: 'title', label: 'Title'|t('feed-me') },
+            { value: 'id', label: 'ID'|t('feed-me') },
+            { value: 'slug', label: 'Slug'|t('feed-me') },
+        ] %}
+
+        {% if field is defined and field is not empty %}
+            {% set matchAttributes = matchAttributes|merge(craft.feedme.getRelationFieldMatchOptions(className(field), feed, field)) %}
+        {% endif %}
+
         {{ forms.selectField({
             name: 'options[match]',
             class: '',
             value: hash_get(feed.fieldMapping, optionsPath ~ '.match') ?: '',
-            options: [
-                { value: 'title', label: 'Title'|t('feed-me') },
-                { value: 'id', label: 'ID'|t('feed-me') },
-                { value: 'slug', label: 'Slug'|t('feed-me') },
-            ],
+            options: matchAttributes,
         }) }}
     </div>
 {% endblock %}
