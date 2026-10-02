@@ -6,6 +6,7 @@ use Cake\Utility\Hash;
 use craft\elements\Entry;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
+use craft\feedme\helpers\BaseHelper;
 use craft\feedme\helpers\DataHelper;
 use craft\feedme\Plugin;
 use craft\fields\Matrix as MatrixField;
@@ -203,6 +204,11 @@ class Matrix extends Field implements FieldInterface
             $blockIndex = 'new' . $blockHandle . ((int)$handles[0] + 1);
             $subFieldHandle = $handles[2];
 
+            // Per-block status, overriding the entry type's "Disabled" setting
+            if ($subFieldHandle === 'enabled') {
+                $value = $this->_parseEnabled($value, $blockHandle);
+            }
+
             $preppedData[$blockIndex . '.' . $subFieldHandle] = $value;
 
             // if type, enabled and collapsed are not set, set them now;
@@ -256,6 +262,37 @@ class Matrix extends Field implements FieldInterface
 
     // Private Methods
     // =========================================================================
+
+    /**
+     * Normalises a block's mapped enabled value. Accepts boolean-like values
+     * (true/false, 1/0, yes/no) or an element status ('live'/'disabled'), which
+     * parseBoolean() would otherwise read as false. An empty value falls back to
+     * the entry type's "Disabled" setting.
+     *
+     * @param mixed $value
+     * @param string $blockHandle
+     * @return bool
+     */
+    private function _parseEnabled(mixed $value, string $blockHandle): bool
+    {
+        if ($value === null || $value === '') {
+            return !Hash::get($this->fieldInfo, 'blocks.' . $blockHandle . '.disabled', false);
+        }
+
+        if (is_string($value)) {
+            $status = strtolower(trim($value));
+
+            if ($status === 'live') {
+                return true;
+            }
+
+            if ($status === 'disabled') {
+                return false;
+            }
+        }
+
+        return (bool)BaseHelper::parseBoolean($value);
+    }
 
     /**
      * Get block's key
