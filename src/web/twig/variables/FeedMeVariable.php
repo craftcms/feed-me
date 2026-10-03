@@ -248,6 +248,7 @@ class FeedMeVariable extends ServiceLocator
             // yes, this mapping is intentional because the logic in getMatchFields() is almost the same for products and variants
             /** @phpstan-ignore-next-line */
             Products::class, Variants::class => \craft\feedme\fields\CommerceProducts::class,
+            'Solspace\Calendar\FieldTypes\EventFieldType' => \craft\feedme\fields\CalendarEvents::class,
             default => null,
         };
 
