@@ -86,7 +86,7 @@
             {% set fields = fields|push({
                 name: 'Enabled'|t('feed-me'),
                 handle: 'enabled',
-                instructions: 'If not set, the “Disabled” setting above applies.'|t('feed-me'),
+                instructions: 'Overrides the “Disabled” setting above for each block. Blocks without a value are enabled.'|t('feed-me'),
                 default: {},
             }) %}
 

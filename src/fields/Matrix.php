@@ -206,7 +206,7 @@ class Matrix extends Field implements FieldInterface
 
             // Per-block status, overriding the entry type's "Disabled" setting
             if ($subFieldHandle === 'enabled') {
-                $value = $this->_parseEnabled($value, $blockHandle);
+                $value = $this->_parseEnabled($value);
             }
 
             $preppedData[$blockIndex . '.' . $subFieldHandle] = $value;
@@ -266,17 +266,16 @@ class Matrix extends Field implements FieldInterface
     /**
      * Normalises a block's mapped enabled value. Accepts boolean-like values
      * (true/false, 1/0, yes/no) or an element status ('live'/'disabled'), which
-     * parseBoolean() would otherwise read as false. An empty value falls back to
-     * the entry type's "Disabled" setting.
+     * parseBoolean() would otherwise read as false. A block with no value is
+     * enabled, matching Feed Me's default for blocks.
      *
      * @param mixed $value
-     * @param string $blockHandle
      * @return bool
      */
-    private function _parseEnabled(mixed $value, string $blockHandle): bool
+    private function _parseEnabled(mixed $value): bool
     {
         if ($value === null || $value === '') {
-            return !Hash::get($this->fieldInfo, 'blocks.' . $blockHandle . '.disabled', false);
+            return true;
         }
 
         if (is_string($value)) {
