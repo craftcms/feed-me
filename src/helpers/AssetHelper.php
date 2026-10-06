@@ -5,7 +5,6 @@ namespace craft\feedme\helpers;
 use Cake\Utility\Hash;
 use Craft;
 use craft\base\ElementInterface;
-use craft\base\Field;
 use craft\elements\Asset as AssetElement;
 use craft\errors\ElementNotFoundException;
 use craft\feedme\Plugin;
@@ -19,7 +18,6 @@ use craft\models\AssetIndexData;
 use craft\models\FsListing;
 use craft\models\VolumeFolder;
 use CraftCms\UrlValidator\UrlValidationException;
-use CraftCms\UrlValidator\UrlValidator;
 use Throwable;
 use yii\base\Exception;
 use yii\base\InvalidArgumentException;
@@ -63,19 +61,9 @@ class AssetHelper
             }
         } else {
             // validate
-            $validator = new UrlValidator(options: [
-                'ipv4FilterFlags' => FILTER_FLAG_NO_RES_RANGE,
-                'ipv6FilterFlags' => FILTER_FLAG_NO_RES_RANGE,
-            ]);
             try {
-                // Returns the validated IP addresses the host resolves to.
-                $ips = $validator->validate($srcName);
-
-                $parts = parse_url($srcName);
-                $host = $parts['host'];
-                $port = $parts['port'] ?? ($parts['scheme'] === 'https' ? 443 : 80);
-
-                $curlOptResolve = ["$host:$port:" . implode(',', $ips)];
+                $ips = BaseHelper::validateUrl($srcName);
+                $curlOptResolve = BaseHelper::resolvedHostWithIps($srcName, $ips);
             } catch (UrlValidationException $e) {
                 return false;
             }
@@ -474,18 +462,31 @@ class AssetHelper
 
         // If we can't easily determine the extension of the url, fetch it
         if (!$extension) {
+            // validate
+            try {
+                $ips = BaseHelper::validateUrl($url);
+                $curlOptResolve = BaseHelper::resolvedHostWithIps($url, $ips);
+            } catch (UrlValidationException $e) {
+                return '';
+            }
+
             $client = Plugin::$plugin->service->createGuzzleClient();
             $response = null;
+            $options = [];
+            if ($curlOptResolve) {
+                // Pin the hostname/port to the IPs we just validated.
+                $options['curl'] = [CURLOPT_RESOLVE => $curlOptResolve];
+            }
 
             // Try using HEAD requests (for performance), if it fails use GET
             try {
-                $response = $client->head($url);
+                $response = $client->head($url, $options);
             } catch (Throwable $e) {
             }
 
             try {
                 if (!$response) {
-                    $response = $client->get($url);
+                    $response = $client->get($url, $options);
                 }
             } catch (Throwable $e) {
             }

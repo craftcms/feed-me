@@ -5,6 +5,8 @@ namespace craft\feedme\helpers;
 use Craft;
 use craft\fields\data\ColorData;
 use craft\validators\ColorValidator;
+use CraftCms\UrlValidator\UrlValidationException;
+use CraftCms\UrlValidator\UrlValidator;
 
 class BaseHelper
 {
@@ -139,5 +141,43 @@ class BaseHelper
         }
 
         return 'Other';
+    }
+
+    /**
+     * Validates given URL using the craftcms/url-validator.
+     * Returns the resolved IP addresses if validation is successful.
+     * Throws UrlValidationException is validation fails.
+     *
+     * @param string $url The URL to validate
+     * @throws UrlValidationException
+     * @return bool|array
+     */
+    public static function validateUrl(string $url): bool|array
+    {
+        // validate
+        $validator = new UrlValidator(options: [
+            'ipv4FilterFlags' => FILTER_FLAG_NO_RES_RANGE,
+            'ipv6FilterFlags' => FILTER_FLAG_NO_RES_RANGE,
+        ]);
+
+        // Returns the validated IP addresses the host resolves to.
+        // (or throw if validation fails)
+        return $validator->validate($url);
+    }
+
+    /**
+     * Accepts URL and a list of validated IPs and returns the resolved host:port:ips array.
+     *
+     * @param string $url
+     * @param array $ips
+     * @return string[]
+     */
+    public static function resolvedHostWithIps(string $url, array $ips): array
+    {
+        $parts = parse_url($url);
+        $host = $parts['host'];
+        $port = $parts['port'] ?? ($parts['scheme'] === 'https' ? 443 : 80);
+
+        return ["$host:$port:" . implode(',', $ips)];
     }
 }
