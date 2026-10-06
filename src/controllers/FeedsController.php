@@ -17,7 +17,6 @@ use Throwable;
 use yii\base\ExitException;
 use yii\web\BadRequestHttpException;
 use yii\web\ForbiddenHttpException;
-use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
 /**
