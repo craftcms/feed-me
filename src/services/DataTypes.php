@@ -22,7 +22,6 @@ use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
 use craft\helpers\Component as ComponentHelper;
 use CraftCms\UrlValidator\UrlValidationException;
-use CraftCms\UrlValidator\UrlValidator;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use yii\base\Event;
