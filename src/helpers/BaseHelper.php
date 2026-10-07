@@ -176,7 +176,7 @@ class BaseHelper
     {
         $parts = parse_url($url);
         $host = $parts['host'];
-        $port = $parts['port'] ?? ($parts['scheme'] === 'https' ? 443 : 80);
+        $port = $parts['port'] ?? (strtolower($parts['scheme']) === 'https' ? 443 : 80);
 
         return ["$host:$port:" . implode(',', $ips)];
     }

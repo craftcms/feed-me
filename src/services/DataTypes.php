@@ -221,12 +221,6 @@ class DataTypes extends Component
         try {
             $ips = BaseHelper::validateUrl($url);
             $curlOptResolve = BaseHelper::resolvedHostWithIps($url, $ips);
-            $extraOptions = [
-                'curl' => [
-                    // Pin the hostname/port to the IPs we just validated.
-                    CURLOPT_RESOLVE => $curlOptResolve,
-                ],
-            ];
         } catch (UrlValidationException $e) {
             // the error will be logged from the datatype that called this method, so let's not duplicate that here
             return $this->_triggerEventAfterFetchFeed([
@@ -239,7 +233,8 @@ class DataTypes extends Component
         try {
             $client = Plugin::$plugin->service->createGuzzleClient($feedId);
             $options = Plugin::$plugin->service->getRequestOptions($feedId);
-            $options = array_merge($options, $extraOptions);
+            // Pin the hostname/port to the IPs we just validated.
+            $options['curl'][CURLOPT_RESOLVE] = $curlOptResolve;
 
             $resp = $client->request('GET', $url, $options);
             $data = (string)$resp->getBody();
