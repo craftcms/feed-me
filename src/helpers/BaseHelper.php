@@ -183,13 +183,25 @@ class BaseHelper
      *
      * @param string $url
      * @param array $ips
-     * @return string[]
+     * @return string[]|null
      */
-    public static function resolvedHostWithIps(string $url, array $ips): array
+    public static function resolvedHostWithIps(string $url, array $ips): ?array
     {
         $parts = parse_url($url);
-        $host = $parts['host'];
-        $port = $parts['port'] ?? (strtolower($parts['scheme']) === 'https' ? 443 : 80);
+
+        // this can happen on seriously malformed URLs
+        if (!is_array($parts)) {
+            return null;
+        }
+
+        $host = $parts['host'] ?? '';
+        $scheme = $parts['scheme'] ?? '';
+
+        if ($host === '' || $scheme === '') {
+            return null;
+        }
+
+        $port = $parts['port'] ?? (strtolower($scheme) === 'https' ? 443 : 80);
 
         return ["$host:$port:" . implode(',', $ips)];
     }

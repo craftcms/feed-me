@@ -232,8 +232,10 @@ class DataTypes extends Component
         try {
             $client = Plugin::$plugin->service->createGuzzleClient($feedId);
             $options = Plugin::$plugin->service->getRequestOptions($feedId);
-            // Pin the hostname/port to the IPs we just validated.
-            $options['curl'][CURLOPT_RESOLVE] = $curlOptResolve;
+            if ($curlOptResolve !== null) {
+                // Pin the hostname/port to the IPs we just validated.
+                $options['curl'][CURLOPT_RESOLVE] = $curlOptResolve;
+            }
 
             $resp = $client->request('GET', $url, $options);
             $data = (string)$resp->getBody();
