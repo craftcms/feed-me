@@ -472,8 +472,11 @@ class AssetHelper
 
             $client = Plugin::$plugin->service->createGuzzleClient();
             $response = null;
-            // Pin the hostname/port to the IPs we just validated.
-            $options = ['curl' => [CURLOPT_RESOLVE => $curlOptResolve]];
+            $options = [];
+            if ($curlOptResolve !== null) {
+                // Pin the hostname/port to the IPs we just validated.
+                $options = ['curl' => [CURLOPT_RESOLVE => $curlOptResolve]];
+            }
 
             // Try using HEAD requests (for performance), if it fails use GET
             try {
