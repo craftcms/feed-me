@@ -172,7 +172,7 @@ class DataTypes extends Component
         $url = Craft::getAlias($url);
 
         // Does this look like a local filesystem path?
-        if (@file_exists($url)) {
+        if (BaseHelper::isLocalPath($url) && @file_exists($url)) {
             error_clear_last();
 
             $filepath = realpath($url);

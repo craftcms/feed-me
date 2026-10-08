@@ -42,7 +42,7 @@ class AssetHelper
         $curlOptResolve = null;
         $srcName = Craft::getAlias($srcName);
 
-        if (@file_exists($srcName)) {
+        if (BaseHelper::isLocalPath($srcName) && @file_exists($srcName)) {
             error_clear_last();
 
             $srcName = realpath($srcName);
