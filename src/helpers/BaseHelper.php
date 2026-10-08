@@ -5,6 +5,8 @@ namespace craft\feedme\helpers;
 use Craft;
 use craft\fields\data\ColorData;
 use craft\validators\ColorValidator;
+use CraftCms\UrlValidator\UrlValidationException;
+use CraftCms\UrlValidator\UrlValidator;
 
 class BaseHelper
 {
@@ -142,7 +144,7 @@ class BaseHelper
     }
 
     /**
-     * Checks if the path can be considered local based on its scheme (or lack of).
+     *  Checks if the path can be considered local based on its scheme (or lack of).
      *
      * @param string $path
      * @return bool
@@ -152,5 +154,55 @@ class BaseHelper
         $scheme = parse_url($path, PHP_URL_SCHEME);
 
         return $scheme === null || $scheme === false || strlen($scheme) === 1 || strtolower($scheme) === 'file';
+    }
+
+    /**
+     * Validates given URL using the craftcms/url-validator.
+     * Returns the resolved IP addresses if validation is successful.
+     * Throws UrlValidationException is validation fails.
+     *
+     * @param string $url The URL to validate
+     * @throws UrlValidationException
+     * @return bool|array
+     */
+    public static function validateUrl(string $url): bool|array
+    {
+        // validate
+        $validator = new UrlValidator(options: [
+            'ipv4FilterFlags' => FILTER_FLAG_NO_RES_RANGE,
+            'ipv6FilterFlags' => FILTER_FLAG_NO_RES_RANGE,
+        ]);
+
+        // Returns the validated IP addresses the host resolves to.
+        // (or throw if validation fails)
+        return $validator->validate($url);
+    }
+
+    /**
+     * Accepts URL and a list of validated IPs and returns the resolved host:port:ips array.
+     *
+     * @param string $url
+     * @param array $ips
+     * @return string[]|null
+     */
+    public static function resolvedHostWithIps(string $url, array $ips): ?array
+    {
+        $parts = parse_url($url);
+
+        // this can happen on seriously malformed URLs
+        if (!is_array($parts)) {
+            return null;
+        }
+
+        $host = $parts['host'] ?? '';
+        $scheme = $parts['scheme'] ?? '';
+
+        if ($host === '' || $scheme === '') {
+            return null;
+        }
+
+        $port = $parts['port'] ?? (strtolower($scheme) === 'https' ? 443 : 80);
+
+        return ["$host:$port:" . implode(',', $ips)];
     }
 }
