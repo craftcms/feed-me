@@ -22,7 +22,6 @@ use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
 use craft\helpers\Component as ComponentHelper;
 use CraftCms\UrlValidator\UrlValidationException;
-use CraftCms\UrlValidator\UrlValidator;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use yii\base\Event;
@@ -217,12 +216,26 @@ class DataTypes extends Component
             ]);
         }
 
-        $extraOptions = $this->validateFeedUrl($url, $feedId);
+        // validate
+        try {
+            $ips = BaseHelper::validateUrl($url);
+            $curlOptResolve = BaseHelper::resolvedHostWithIps($url, $ips);
+        } catch (UrlValidationException $e) {
+            // the error will be logged from the datatype that called this method, so let's not duplicate that here
+            return $this->_triggerEventAfterFetchFeed([
+                'url' => $url,
+                'feedId' => $feedId,
+                'response' => ['success' => false, 'error' => $e->getMessage()],
+            ]);
+        }
 
         try {
             $client = Plugin::$plugin->service->createGuzzleClient($feedId);
             $options = Plugin::$plugin->service->getRequestOptions($feedId);
-            $options = array_merge($options, $extraOptions);
+            if ($curlOptResolve !== null) {
+                // Pin the hostname/port to the IPs we just validated.
+                $options['curl'][CURLOPT_RESOLVE] = $curlOptResolve;
+            }
 
             $resp = $client->request('GET', $url, $options);
             $data = (string)$resp->getBody();
@@ -508,42 +521,6 @@ class DataTypes extends Component
         Event::trigger(static::class, self::EVENT_AFTER_FETCH_FEED, $event);
 
         return $event->response;
-    }
-
-    private function validateFeedUrl(string $url, ?int $feedId = null): array
-    {
-        // if we got here, then it doesn't look like a local filesystem path
-        // validate
-        $validator = new UrlValidator(options: [
-            'ipv4FilterFlags' => FILTER_FLAG_NO_RES_RANGE,
-            'ipv6FilterFlags' => FILTER_FLAG_NO_RES_RANGE,
-        ]);
-        try {
-            // Returns the validated IP addresses the host resolves to.
-            $ips = $validator->validate($url);
-
-            $parts = parse_url($url);
-            $host = $parts['host'];
-            $port = $parts['port'] ?? ($parts['scheme'] === 'https' ? 443 : 80);
-
-            $extraOptions = [
-                'curl' => [
-                    // Pin the hostname/port to the IPs we just validated.
-                    CURLOPT_RESOLVE => ["$host:$port:" . implode(',', $ips)],
-                ],
-            ];
-        } catch (UrlValidationException $e) {
-            // The URL, or an IP it resolves to, is disallowed.
-            $response = ['success' => false, 'error' => $e->getMessage()];
-
-            return $this->_triggerEventAfterFetchFeed([
-                'url' => $url,
-                'feedId' => $feedId,
-                'response' => $response,
-            ]);
-        }
-
-        return $extraOptions;
     }
 
     private function isFilepathAllowed(string $filepath): bool
