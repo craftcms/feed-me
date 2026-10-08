@@ -17,6 +17,7 @@ use craft\feedme\datatypes\Rss;
 use craft\feedme\datatypes\Xml;
 use craft\feedme\events\FeedDataEvent;
 use craft\feedme\events\RegisterFeedMeDataTypesEvent;
+use craft\feedme\helpers\BaseHelper;
 use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
 use craft\helpers\Component as ComponentHelper;
@@ -172,7 +173,7 @@ class DataTypes extends Component
         $url = Craft::getAlias($url);
 
         // Does this look like a local filesystem path?
-        if (@file_exists($url)) {
+        if (BaseHelper::isLocalPath($url) && @file_exists($url)) {
             error_clear_last();
 
             $filepath = realpath($url);
