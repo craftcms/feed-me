@@ -37,6 +37,7 @@ use craft\feedme\fields\Icon;
 use craft\feedme\fields\Lightswitch;
 use craft\feedme\fields\Link;
 use craft\feedme\fields\Linkit;
+use craft\feedme\fields\Mapbox;
 use craft\feedme\fields\Matrix;
 use craft\feedme\fields\MissingField;
 use craft\feedme\fields\Money;
@@ -203,6 +204,7 @@ class Fields extends Component
                 EntriesSubset::class,
                 GoogleMaps::class,
                 Linkit::class,
+                Mapbox::class,
                 SimpleMap::class,
                 SmartMap::class,
                 SuperTable::class,

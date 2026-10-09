@@ -1,5 +1,9 @@
 # Release Notes for Feed Me
 
+## Unreleased
+
+- Added support for importing into Mapbox Address fields.
+
 ## 6.15.2 - 2026-09-15
 
 - Fixed a [moderate-severity](https://github.com/craftcms/cms/security/policy#severity--remediation) authorization bypass vulnerability. (GHSA-h39w-mqrj-63wh)
