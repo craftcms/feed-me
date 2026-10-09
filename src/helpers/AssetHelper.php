@@ -17,13 +17,20 @@ use craft\helpers\UrlHelper;
 use craft\models\AssetIndexData;
 use craft\models\FsListing;
 use craft\models\VolumeFolder;
+use CraftCms\UrlValidator\GuzzleMiddleware;
 use CraftCms\UrlValidator\UrlValidationException;
+use GuzzleHttp\RequestOptions;
 use Throwable;
 use yii\base\Exception;
 use yii\base\InvalidArgumentException;
 
 class AssetHelper
 {
+    /**
+     * @var int The maximum number of redirects followed when downloading a file.
+     */
+    private const MAX_REDIRECTS = 10;
+
     // Public Methods
     // =========================================================================
 
@@ -62,8 +69,7 @@ class AssetHelper
         } else {
             // validate
             try {
-                $ips = BaseHelper::validateUrl($srcName);
-                $curlOptResolve = BaseHelper::resolvedHostWithIps($srcName, $ips);
+                $curlOptResolve = BaseHelper::urlValidator()->curlResolve($srcName);
             } catch (UrlValidationException $e) {
                 return false;
             }
@@ -73,18 +79,49 @@ class AssetHelper
 
         // Provide some legacy support
         if ($assetDownloadCurl) {
-            $ch = curl_init($srcName);
             $fp = fopen($dstName, 'wb');
+            $url = $srcName;
+            $redirects = 0;
 
-            curl_setopt($ch, CURLOPT_FILE, $fp);
-            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-            if ($curlOptResolve !== null) {
-                // Pin the hostname/port to the IPs we just validated.
-                curl_setopt($ch, CURLOPT_RESOLVE, $curlOptResolve);
+            while (true) {
+                $ch = curl_init($url);
+
+                // only keep the body of the final response
+                ftruncate($fp, 0);
+                rewind($fp);
+
+                curl_setopt($ch, CURLOPT_FILE, $fp);
+                // redirects are followed manually, so that each redirect target can be validated
+                curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
+                if ($curlOptResolve !== null) {
+                    curl_setopt($ch, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
+                    // Pin the hostname/port to the IPs we just validated.
+                    curl_setopt($ch, CURLOPT_RESOLVE, $curlOptResolve);
+                }
+
+                curl_exec($ch);
+                $statusCode = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+                $redirectUrl = curl_getinfo($ch, CURLINFO_REDIRECT_URL);
+                unset($ch);
+
+                if ($curlOptResolve === null || $statusCode < 300 || $statusCode >= 400 || !$redirectUrl) {
+                    break;
+                }
+
+                try {
+                    if (self::MAX_REDIRECTS <= $redirects++) {
+                        throw new UrlValidationException("Too many redirects for $srcName.");
+                    }
+
+                    $curlOptResolve = BaseHelper::urlValidator()->curlResolve($redirectUrl);
+                } catch (UrlValidationException $e) {
+                    fclose($fp);
+
+                    return false;
+                }
+
+                $url = $redirectUrl;
             }
-
-            curl_exec($ch);
-            curl_close($ch);
 
             return fclose($fp);
         }
@@ -96,7 +133,19 @@ class AssetHelper
             $response = null;
             $client = Plugin::$plugin->service->createGuzzleClient($feedId);
             try {
-                $response = $client->get($srcName, ['sink' => $fp]);
+                $options = ['sink' => $fp];
+                if ($curlOptResolve) {
+                    // Pin the hostname/port to the IPs we just validated.
+                    $options['curl'] = [CURLOPT_RESOLVE => $curlOptResolve];
+                }
+
+                // validate and pin every redirect target too
+                if (!GuzzleMiddleware::attach($client, BaseHelper::urlValidator())) {
+                    // the client uses a custom handler, so only the pinned URL can be validated; don't follow redirects
+                    $options[RequestOptions::ALLOW_REDIRECTS] = false;
+                }
+
+                $response = $client->get($srcName, $options);
             } catch (Throwable $e) {
             }
 
@@ -107,10 +156,41 @@ class AssetHelper
 
         $newChunkSize = $chunkSize * (1024 * 1024);
         $bytesCount = 0;
-        $handle = fopen($srcName, 'rb');
+        $url = $srcName;
+        $context = null;
+        if ($curlOptResolve !== null) {
+            // redirects are followed manually, so that each redirect target can be validated
+            $context = stream_context_create(['http' => ['follow_location' => 0]]);
+        }
+
+        $handle = fopen($url, 'rb', false, $context);
 
         if ($handle === false) {
             return false;
+        }
+
+        $redirects = 0;
+        while ($context !== null && ($location = self::getRedirectLocation($handle)) !== null) {
+            fclose($handle);
+
+            try {
+                if (self::MAX_REDIRECTS <= $redirects++) {
+                    throw new UrlValidationException("Too many redirects for $srcName.");
+                }
+
+                $url = BaseHelper::resolveRedirectUrl($url, $location);
+                BaseHelper::urlValidator()->validate($url);
+            } catch (Throwable $e) {
+                fclose($fp);
+
+                return false;
+            }
+
+            $handle = fopen($url, 'rb', false, $context);
+
+            if ($handle === false) {
+                return false;
+            }
         }
 
         while (!feof($handle)) {
@@ -464,18 +544,20 @@ class AssetHelper
         if (!$extension) {
             // validate
             try {
-                $ips = BaseHelper::validateUrl($url);
-                $curlOptResolve = BaseHelper::resolvedHostWithIps($url, $ips);
+                $curlOptResolve = BaseHelper::urlValidator()->curlResolve($url);
             } catch (UrlValidationException $e) {
                 return '';
             }
 
             $client = Plugin::$plugin->service->createGuzzleClient();
             $response = null;
-            $options = [];
-            if ($curlOptResolve !== null) {
-                // Pin the hostname/port to the IPs we just validated.
-                $options = ['curl' => [CURLOPT_RESOLVE => $curlOptResolve]];
+            // Pin the hostname/port to the IPs we just validated.
+            $options = ['curl' => [CURLOPT_RESOLVE => $curlOptResolve]];
+
+            // validate and pin every redirect target too
+            if (!GuzzleMiddleware::attach($client, BaseHelper::urlValidator())) {
+                // the client uses a custom handler, so only the pinned URL can be validated; don't follow redirects
+                $options[RequestOptions::ALLOW_REDIRECTS] = false;
             }
 
             // Try using HEAD requests (for performance), if it fails use GET
@@ -504,6 +586,29 @@ class AssetHelper
         }
 
         return StringHelper::toLowerCase($extension);
+    }
+
+    /**
+     * Returns the Location header of an HTTP stream's response if it's a redirect.
+     *
+     * @param resource $handle
+     * @return string|null
+     */
+    private static function getRedirectLocation($handle): ?string
+    {
+        $headers = stream_get_meta_data($handle)['wrapper_data'] ?? null;
+
+        if (!is_array($headers) || !preg_match('/^HTTP\/\S+\s+3\d\d\b/i', $headers[0] ?? '')) {
+            return null;
+        }
+
+        foreach ($headers as $header) {
+            if (stripos($header, 'Location:') === 0) {
+                return trim(substr($header, 9));
+            }
+        }
+
+        return null;
     }
 
     /**

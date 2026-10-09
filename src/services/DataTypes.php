@@ -21,9 +21,11 @@ use craft\feedme\helpers\BaseHelper;
 use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
 use craft\helpers\Component as ComponentHelper;
+use CraftCms\UrlValidator\GuzzleMiddleware;
 use CraftCms\UrlValidator\UrlValidationException;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\RequestOptions;
 use yii\base\Event;
 use yii\base\InvalidConfigException;
 
@@ -218,8 +220,7 @@ class DataTypes extends Component
 
         // validate
         try {
-            $ips = BaseHelper::validateUrl($url);
-            $curlOptResolve = BaseHelper::resolvedHostWithIps($url, $ips);
+            $curlOptResolve = BaseHelper::urlValidator()->curlResolve($url);
         } catch (UrlValidationException $e) {
             // the error will be logged from the datatype that called this method, so let's not duplicate that here
             return $this->_triggerEventAfterFetchFeed([
@@ -232,9 +233,13 @@ class DataTypes extends Component
         try {
             $client = Plugin::$plugin->service->createGuzzleClient($feedId);
             $options = Plugin::$plugin->service->getRequestOptions($feedId);
-            if ($curlOptResolve !== null) {
-                // Pin the hostname/port to the IPs we just validated.
-                $options['curl'][CURLOPT_RESOLVE] = $curlOptResolve;
+            // Pin the hostname/port to the IPs we just validated.
+            $options['curl'][CURLOPT_RESOLVE] = $curlOptResolve;
+
+            // validate and pin every redirect target too
+            if (!GuzzleMiddleware::attach($client, BaseHelper::urlValidator())) {
+                // the client uses a custom handler, so only the pinned URL can be validated; don't follow redirects
+                $options[RequestOptions::ALLOW_REDIRECTS] = false;
             }
 
             $resp = $client->request('GET', $url, $options);
