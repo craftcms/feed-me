@@ -1,6 +1,6 @@
 # Release Notes for Feed Me
 
-## Unreleased
+## 6.16.1 2026-10-11
 
 - Fixed [medium-severity](https://github.com/craftcms/cms/security/policy#severity--remediation) SSRF vulnerabilities. (GHSA-g2p2-gwh8-c64r, GHSA-g8mg-7c85-qg77)
 
