@@ -2,7 +2,12 @@
 
 ## Unreleased
 
-- - Fixed a [high-severity](https://github.com/craftcms/cms/security/policy#severity--remediation) missing authorization vulnerability. (GHSA-jq8j-33m8-2rhx)
+> [!WARNING]
+> Feed and asset URLs that resolve to private IP addresses are now rejected, unless their hostname is listed in the `allowedPrivateHosts` config setting.
+> See [Configuration > Example `allowedPrivateHosts`](https://docs.craftcms.com/feed-me/v6/get-started/configuration.html#example-allowedprivatehosts) on how to do that.
+
+- Fixed a [medium-severity](https://github.com/craftcms/cms/security/policy#severity--remediation) SSRF vulnerability.
+- Fixed a [high-severity](https://github.com/craftcms/cms/security/policy#severity--remediation) missing authorization vulnerability. (GHSA-jq8j-33m8-2rhx)
 
 ## 6.15.2 - 2026-09-15
 

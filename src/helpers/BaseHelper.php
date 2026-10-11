@@ -3,10 +3,12 @@
 namespace craft\feedme\helpers;
 
 use Craft;
+use craft\feedme\Plugin;
 use craft\fields\data\ColorData;
 use craft\validators\ColorValidator;
-use CraftCms\UrlValidator\UrlValidationException;
 use CraftCms\UrlValidator\UrlValidator;
+use GuzzleHttp\Psr7\Uri;
+use GuzzleHttp\Psr7\UriResolver;
 
 class BaseHelper
 {
@@ -157,52 +159,27 @@ class BaseHelper
     }
 
     /**
-     * Validates given URL using the craftcms/url-validator.
-     * Returns the resolved IP addresses if validation is successful.
-     * Throws UrlValidationException is validation fails.
+     * Returns the URL validator configured for Feed Me.
      *
-     * @param string $url The URL to validate
-     * @throws UrlValidationException
-     * @return bool|array
+     * @return UrlValidator
      */
-    public static function validateUrl(string $url): bool|array
+    public static function urlValidator(): UrlValidator
     {
-        // validate
-        $validator = new UrlValidator(options: [
-            'ipv4FilterFlags' => FILTER_FLAG_NO_RES_RANGE,
-            'ipv6FilterFlags' => FILTER_FLAG_NO_RES_RANGE,
+        return new UrlValidator(options: [
+            // only the hosts listed in config/feed-me.php can resolve to private IP addresses
+            'allowedPrivateHosts' => Plugin::$plugin->getSettings()->allowedPrivateHosts,
         ]);
-
-        // Returns the validated IP addresses the host resolves to.
-        // (or throw if validation fails)
-        return $validator->validate($url);
     }
 
     /**
-     * Accepts URL and a list of validated IPs and returns the resolved host:port:ips array.
+     * Resolves a redirect location (which can be relative) against the URL that returned it.
      *
-     * @param string $url
-     * @param array $ips
-     * @return string[]|null
+     * @param string $baseUrl
+     * @param string $location
+     * @return string
      */
-    public static function resolvedHostWithIps(string $url, array $ips): ?array
+    public static function resolveRedirectUrl(string $baseUrl, string $location): string
     {
-        $parts = parse_url($url);
-
-        // this can happen on seriously malformed URLs
-        if (!is_array($parts)) {
-            return null;
-        }
-
-        $host = $parts['host'] ?? '';
-        $scheme = $parts['scheme'] ?? '';
-
-        if ($host === '' || $scheme === '') {
-            return null;
-        }
-
-        $port = $parts['port'] ?? (strtolower($scheme) === 'https' ? 443 : 80);
-
-        return ["$host:$port:" . implode(',', $ips)];
+        return (string)UriResolver::resolve(new Uri($baseUrl), new Uri($location));
     }
 }
