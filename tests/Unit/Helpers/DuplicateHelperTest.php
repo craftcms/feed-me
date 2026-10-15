@@ -1,0 +1,48 @@
+<?php
+
+namespace craft\feedme\tests\Unit\Helpers;
+
+use craft\feedme\helpers\DuplicateHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
+
+class DuplicateHelperTest extends TestCase
+{
+    public function testGetFriendly(): void
+    {
+        $this->assertSame('Add & Update', DuplicateHelper::getFriendly(['add', 'update']));
+        $this->assertSame('Disable', DuplicateHelper::getFriendly(['disable']));
+        $this->assertSame('', DuplicateHelper::getFriendly([]));
+    }
+
+    public function testContains(): void
+    {
+        $this->assertTrue(DuplicateHelper::contains(['add', 'update'], 'add'));
+        $this->assertFalse(DuplicateHelper::contains(['add', 'update'], 'delete'));
+    }
+
+    public function testContainsOnly(): void
+    {
+        // With $only, the handle must be the sole entry in the list to match.
+        $this->assertTrue(DuplicateHelper::contains(['add'], 'add', true));
+        $this->assertFalse(DuplicateHelper::contains(['add', 'update'], 'add', true));
+    }
+
+    public static function isXMethodProvider(): array
+    {
+        return [
+            'isAdd' => ['isAdd', 'add'],
+            'isUpdate' => ['isUpdate', 'update'],
+            'isDisable' => ['isDisable', 'disable'],
+            'isDisableForSite' => ['isDisableForSite', 'disableForSite'],
+            'isDelete' => ['isDelete', 'delete'],
+        ];
+    }
+
+    #[DataProvider('isXMethodProvider')]
+    public function testIsXMethodMatchesItsOwnHandle(string $method, string $handle): void
+    {
+        $this->assertTrue(DuplicateHelper::$method(['duplicateHandle' => [$handle]]));
+        $this->assertFalse(DuplicateHelper::$method(['duplicateHandle' => ['add' === $handle ? 'update' : 'add']]));
+    }
+}

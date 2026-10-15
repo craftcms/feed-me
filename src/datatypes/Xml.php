@@ -44,10 +44,12 @@ class Xml extends DataType implements DataTypeInterface
         $data = $response['data'];
 
         // Parse the XML string into an array
-        try {
-            // Allow parsing errors to be caught
-            libxml_use_internal_errors(true);
+        // Allow parsing errors to be caught - libxml_use_internal_errors() returns the previous
+        // setting, so it can be restored (and the error buffer cleared) afterwards rather than
+        // leaving this process-global setting permanently flipped for any other XML parsing.
+        $previousLibxmlSetting = libxml_use_internal_errors(true);
 
+        try {
             $array = XmlParser::build($data);
             $array = XmlParser::toArray($array);
         } catch (Exception $e) {
@@ -62,6 +64,9 @@ class Xml extends DataType implements DataTypeInterface
             Craft::$app->getErrorHandler()->logException($e);
 
             return ['success' => false, 'error' => $error];
+        } finally {
+            libxml_clear_errors();
+            libxml_use_internal_errors($previousLibxmlSetting);
         }
 
         // Make sure it's indeed an array!
