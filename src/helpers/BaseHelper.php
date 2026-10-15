@@ -3,8 +3,13 @@
 namespace craft\feedme\helpers;
 
 use Craft;
+use craft\feedme\Plugin;
 use craft\fields\data\ColorData;
+use craft\helpers\FileHelper;
 use craft\validators\ColorValidator;
+use CraftCms\UrlValidator\UrlValidator;
+use GuzzleHttp\Psr7\Uri;
+use GuzzleHttp\Psr7\UriResolver;
 
 class BaseHelper
 {
@@ -139,5 +144,102 @@ class BaseHelper
         }
 
         return 'Other';
+    }
+
+    /**
+     *  Checks if the path can be considered local based on its scheme (or lack of).
+     *
+     * @param string $path
+     * @return bool
+     */
+    public static function isLocalPath(string $path): bool
+    {
+        $scheme = parse_url($path, PHP_URL_SCHEME);
+
+        return $scheme === null || $scheme === false || strlen($scheme) === 1 || strtolower($scheme) === 'file';
+    }
+
+    /**
+     * Checks if the path is located within a Craft system directory or a sensitive OS directory.
+     *
+     * @param string $path
+     * @return bool
+     */
+    public static function isRestrictedPath(string $path): bool
+    {
+        $path = FileHelper::absolutePath($path, '/');
+
+        // is it located within a Craft-specific system directory
+        if (Craft::$app->getSecurity()->isSystemDir($path)) {
+            return true;
+        }
+
+        // is it located within a sensitive os directory
+        // windows-based sensitive directories
+        if (PHP_OS_FAMILY === 'Windows') {
+            // is it located directly in the filesystem's root (e.g. C:\myfile.json, \\server\sharename\myfile.json)
+            // we're using forward slashes cause FileHelper::absolutePath() already normalized this path
+            if (preg_match('#^(?:[A-Za-z]:/[^/]+|//[^/]+/[^/]+/[^/]+)$#', $path)) {
+                return true;
+            }
+
+            $winRoot = FileHelper::normalizePath($_SERVER['SystemRoot'] ?? 'C:\\Windows');
+            $drive = substr($winRoot, 0, 3); // e.g. "C:/" because we've normalized it
+            $sensitiveDirs = [
+                $winRoot, // C:/Windows
+                $drive . 'Program Files',
+                $drive . 'Program Files (x86)',
+                $drive . 'ProgramData',
+            ];
+        } else {
+            // is it located directly in the filesystem's root (e.g. /myfile.json)
+            $parent = dirname($path);
+            if ($parent === dirname($parent)) {
+                return true;
+            }
+
+            // non-windows-based sensitive directories
+            $sensitiveDirs = [
+                '/boot',
+                '/dev',
+                '/etc',
+                '/proc',
+                '/root',
+                '/sys',
+            ];
+        }
+
+        foreach ($sensitiveDirs as $dir) {
+            if ($path === $dir || FileHelper::isWithin($path, $dir)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns the URL validator configured for Feed Me.
+     *
+     * @return UrlValidator
+     */
+    public static function urlValidator(): UrlValidator
+    {
+        return new UrlValidator(options: [
+            // only the hosts listed in config/feed-me.php can resolve to private IP addresses
+            'allowedPrivateHosts' => Plugin::$plugin->getSettings()->allowedPrivateHosts,
+        ]);
+    }
+
+    /**
+     * Resolves a redirect location (which can be relative) against the URL that returned it.
+     *
+     * @param string $baseUrl
+     * @param string $location
+     * @return string
+     */
+    public static function resolveRedirectUrl(string $baseUrl, string $location): string
+    {
+        return (string)UriResolver::resolve(new Uri($baseUrl), new Uri($location));
     }
 }
