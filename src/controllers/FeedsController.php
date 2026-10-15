@@ -36,6 +36,23 @@ class FeedsController extends Controller
     // =========================================================================
 
     /**
+     * @inheritdoc
+     */
+    public function beforeAction($action): bool
+    {
+        if (!parent::beforeAction($action)) {
+            return false;
+        }
+
+        $unguardedActions = ['run-task'];
+        if (!in_array($action->id, $unguardedActions)) {
+            $this->requirePermission('accessPlugin-feed-me');
+        }
+
+        return true;
+    }
+
+    /**
      * @return Response
      */
     public function actionFeedsIndex(): Response
