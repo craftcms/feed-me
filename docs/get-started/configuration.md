@@ -24,6 +24,8 @@ return [
         'queueTtr' => null,
         'queueMaxRetry' => 5,
         'assetDownloadCurl' => false,
+        'assetDownloadGuzzle' => false,
+        'allowedPrivateHosts' => [],
         'feedOptions' => [
             '1' => [
                 'feedUrl' => 'https://specialurl.io/feed.json',
@@ -46,7 +48,7 @@ return [
 - `backupLimit` — Set a limit to the number of backups to keep.
 - `dataDelimiter` — Feed Me will try and split field values based on this delimiter. Useful for [table](https://craftcms.com/docs/5.x/reference/field-types/table.html), [checkboxes](https://craftcms.com/docs/5.x/reference/field-types/checkboxes.html), and [multiselect](https://craftcms.com/docs/5.x/reference/field-types/multi-select.html) fields.
 - `csvColumnDelimiter` — Optionally set the delimiter for columns in CSVs before fetching the content.
-- `parseTwig` — Whether to parse field data and default values for Twig. Disabled by default.
+- `parseTwig` — Whether to parse field data and default values for Twig. Disabled by default. If you enable this option, you should also ensure that [`enableTwigSandbox` is enabled](https://craftcms.com/docs/4.x/config/general.html#enabletwigsandbox) in your Craft CMS installation to prevent malicious code from being executed.
 - `sleepTime` — Add the number of seconds to sleep after each feed item has been processed.
 - `logging` — Set the level of logging to do. Possible values are `true` (default) to log everything, `false` to disable logging or `error` to only record errors.
 - `runGcBeforeFeed` — Whether to run the Garbage Collection service before running a feed.
@@ -54,6 +56,7 @@ return [
 - `queueMaxRetry` — Set the maximum amount of retries the queue job should have before failing.
 - `assetDownloadCurl` — Use curl to download assets from a remote source. Can be used when issues arise using the default implementation.
 - `assetDownloadGuzzle` — Use Guzzle to download assets from a remote source. Can be used when issues arise using the default implementation.
+- `allowedPrivateHosts` — Hostnames that are allowed to resolve to private IP addresses (e.g. `10.0.0.0/8`, `192.168.0.0/16`), for feeds and assets served from internal services. By default, URLs that resolve to private IP addresses are rejected. Can only be set in `config/feed-me.php`, and not per feed via `feedOptions`. See [Example `allowedPrivateHosts`](#example-allowedprivatehosts).
 - `feedOptions` — Provide an array of any of the above options (or [feed settings](../feature-tour/feed-overview.md)) to set or override for specific feeds, keyed by their existing feed IDs. _Note that feed IDs may be different across environments!_
 
 #### Example `requestOptions`
@@ -73,6 +76,23 @@ See [Guzzle Options](https://docs.guzzlephp.org/en/stable/request-options.html) 
     ],
 ],
 ```
+
+#### Example `allowedPrivateHosts`
+
+Use an exact hostname, or a leading `*.` wildcard to match any subdomain (`*.site.testing.local` matches `api.site.testing.local`, but not `site.testing.local` itself):
+
+```php
+'allowedPrivateHosts' => [
+    'feeds.internal',
+    '*.ddev.site',
+],
+```
+
+Only the private IP range check is relaxed for these hosts. Loopback, link-local and cloud metadata addresses are still rejected.
+
+::: warning
+Only list hostnames whose DNS you control, and list individual services rather than whole internal domains.
+:::
 
 ## Control Panel
 

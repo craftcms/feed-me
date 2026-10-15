@@ -16,6 +16,7 @@ use Exception;
 use Throwable;
 use yii\base\ExitException;
 use yii\web\BadRequestHttpException;
+use yii\web\ForbiddenHttpException;
 use yii\web\Response;
 
 /**
@@ -34,6 +35,23 @@ class FeedsController extends Controller
 
     // Public Methods
     // =========================================================================
+
+    /**
+     * @inheritdoc
+     */
+    public function beforeAction($action): bool
+    {
+        if (!parent::beforeAction($action)) {
+            return false;
+        }
+
+        $unguardedActions = ['run-task'];
+        if (!in_array($action->id, $unguardedActions)) {
+            $this->requirePermission('accessPlugin-feed-me');
+        }
+
+        return true;
+    }
 
     /**
      * @return Response
@@ -321,12 +339,16 @@ class FeedsController extends Controller
     // =========================================================================
 
     /**
-     * @param $feed
+     * @param FeedModel|null $feed
      * @return bool|null
      * @throws MissingComponentException
      */
-    private function _runImportTask($feed): ?bool
+    private function _runImportTask(?FeedModel $feed): ?bool
     {
+        if ($feed == null) {
+            return null;
+        }
+
         $request = Craft::$app->getRequest();
 
         $direct = $request->getParam('direct');
@@ -341,16 +363,30 @@ class FeedsController extends Controller
 
         // Are we running from the CP?
         if ($request->getIsCpRequest()) {
-            // if not using the direct param for this request, do UI stuff
-            Craft::$app->getSession()->setNotice(Craft::t('feed-me', 'Feed processing started.'));
+            // since it's a CP request, either require logged in user with access to the Feed Me plugin or a valid passkey
+            if (
+                !(
+                    (!empty($passkey) && hash_equals((string)$feed->passkey, (string)$passkey)) ||
+                    Craft::$app->getUser()->checkPermission('accessPlugin-feed-me')
+                )
+            ) {
+                throw new ForbiddenHttpException('User is not authorized to perform this action or invalid passkey provided.');
+            }
 
-            // Create the import task
-            Queue::push(new FeedImport([
-                'feed' => $feed,
-                'limit' => $limit,
-                'offset' => $offset,
-                'processedElementIds' => $processedElementIds,
-            ]));
+            if (!$direct) {
+                // if not using the direct param for this request, do UI stuff
+                Craft::$app->getSession()->setNotice(Craft::t('feed-me', 'Feed processing started.'));
+
+                // Create the import task
+                Queue::push(new FeedImport([
+                    'feed' => $feed,
+                    'limit' => $limit,
+                    'offset' => $offset,
+                    'processedElementIds' => $processedElementIds,
+                ]));
+
+                return true;
+            }
         }
 
         // If not, are we running directly?
@@ -360,7 +396,7 @@ class FeedsController extends Controller
                 $feed->feedUrl = $url;
             }
 
-            $proceed = $passkey == $feed['passkey'];
+            $proceed = !empty($passkey) && hash_equals((string)$feed->passkey, (string)$passkey);
 
             // Create the import task only if provided the correct passkey
             if ($proceed) {
