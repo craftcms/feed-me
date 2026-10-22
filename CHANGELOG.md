@@ -15,7 +15,7 @@
 
 ## 6.15.2 - 2026-09-15
 
-- Fixed a [moderate-severity](https://github.com/craftcms/cms/security/policy#severity--remediation) authorization bypass vulnerability. (GHSA-h39w-mqrj-63wh)
+- Fixed a [moderate-severity](https://github.com/craftcms/cms/security/policy#severity--remediation) authorization bypass vulnerability. ([GHSA-h39w-mqrj-63wh](https://github.com/craftcms/feed-me/security/advisories/GHSA-h39w-mqrj-63wh))
 
 ## 6.15.1 - 2026-08-28
 
