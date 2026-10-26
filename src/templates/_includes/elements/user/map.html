@@ -71,6 +71,18 @@
         ],
     },
 }, {
+    name: 'Admin',
+    handle: 'admin',
+    instructions: 'Whether the user should be an admin. Accepts boolean-like values. Empty values leave the user’s admin status unchanged.'|t('feed-me'),
+    default: {
+        type: 'select',
+        options: [
+            { label: 'Don’t import'|t('feed-me'), value: '' },
+            { label: 'Yes'|t('feed-me'), value: '1' },
+            { label: 'No'|t('feed-me'), value: '0' },
+        ],
+    },
+}, {
     name: 'User ID',
     handle: 'id',
     instructions: '<strong class="error">Warning: </strong>This should only be used for an existing Craft User ID.'|t('feed-me'),

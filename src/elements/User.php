@@ -12,6 +12,7 @@ use craft\errors\VolumeException;
 use craft\feedme\base\Element;
 use craft\feedme\fields\Addresses;
 use craft\feedme\helpers\AssetHelper;
+use craft\feedme\helpers\BaseHelper;
 use craft\feedme\helpers\DataHelper;
 use craft\helpers\UrlHelper;
 use craft\records\User as UserRecord;
@@ -346,6 +347,24 @@ class User extends Element
         $value = $this->fetchSimpleValue($feedData, $fieldInfo);
 
         $this->status = $value;
+    }
+
+    /**
+     * Returns whether the user should be an admin. Empty values leave the user's admin status unchanged.
+     *
+     * @param $feedData
+     * @param $fieldInfo
+     * @return bool|null
+     */
+    protected function parseAdmin($feedData, $fieldInfo): ?bool
+    {
+        $value = $this->fetchSimpleValue($feedData, $fieldInfo);
+
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        return (bool)BaseHelper::parseBoolean($value);
     }
 
     /**
