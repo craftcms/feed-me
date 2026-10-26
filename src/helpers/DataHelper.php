@@ -234,7 +234,7 @@ class DataHelper
             // Make sure to wrap in try/catch, as if this is a literal '{' in content somewhere
             // it won't be a field handle tag, causing the Twig Lexer to freak out. We ignore those errors
             try {
-                $value = Craft::$app->getView()->renderObjectTemplate($value, $element);
+                $value = Craft::$app->getView()->renderSandboxedObjectTemplate($value, $element);
             } catch (Throwable $e) {
             }
         }

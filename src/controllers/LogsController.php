@@ -13,6 +13,20 @@ class LogsController extends Controller
     // =========================================================================
 
     /**
+     * @inheritdoc
+     */
+    public function beforeAction($action): bool
+    {
+        if (!parent::beforeAction($action)) {
+            return false;
+        }
+
+        $this->requirePermission('accessPlugin-feed-me');
+
+        return true;
+    }
+
+    /**
      * @return Response
      * @throws \yii\base\Exception
      */
