@@ -1,7 +1,8 @@
 # Release Notes for Feed Me
 
-## Unreleased
+## 5.15.0 - 2026-10-25
 
+- Feed Me now requires Craft 4.17.0 or later.
 - Fixed a [high-severity](https://github.com/craftcms/cms/security/policy#severity--remediation) Remote Code Execution (RCE) vulnerability when the `parseTwig` config setting is enabled. ([GHSA-r7f2-vrpq-8xhm](https://github.com/craftcms/feed-me/security/advisories/GHSA-r7f2-vrpq-8xhm))
 - Fixed a [high-severity](https://github.com/craftcms/cms/security/policy#severity--remediation) SSRF vulnerability. ([GHSA-xhcc-j4vq-7qvh](https://github.com/craftcms/feed-me/security/advisories/GHSA-xhcc-j4vq-7qvh))
 - Fixed a [high-severity](https://github.com/craftcms/cms/security/policy#severity--remediation) SSRF vulnerability. ([GHSA-wq63-9pmc-5mwx](https://github.com/craftcms/feed-me/security/advisories/GHSA-wq63-9pmc-5mwx))
