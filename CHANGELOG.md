@@ -1,5 +1,14 @@
 # Release Notes for Feed Me
 
+## Unreleased
+
+- Fixed a [high-severity](https://github.com/craftcms/cms/security/policy#severity--remediation) Remote Code Execution (RCE) vulnerability when the `parseTwig` config setting is enabled. ([GHSA-r7f2-vrpq-8xhm](https://github.com/craftcms/feed-me/security/advisories/GHSA-r7f2-vrpq-8xhm))
+- Fixed a [high-severity](https://github.com/craftcms/cms/security/policy#severity--remediation) SSRF vulnerability. ([GHSA-xhcc-j4vq-7qvh](https://github.com/craftcms/feed-me/security/advisories/GHSA-xhcc-j4vq-7qvh))
+- Fixed a [high-severity](https://github.com/craftcms/cms/security/policy#severity--remediation) SSRF vulnerability. ([GHSA-wq63-9pmc-5mwx](https://github.com/craftcms/feed-me/security/advisories/GHSA-wq63-9pmc-5mwx))
+- Fixed a [high-severity](https://github.com/craftcms/cms/security/policy#severity--remediation) missing authorization vulnerability. (GHSA-jq8j-33m8-2rhx)
+- Fixed a [medium-severity](https://github.com/craftcms/cms/security/policy#severity--remediation) authorization bypass vulnerability. ([GHSA-h39w-mqrj-63wh](https://github.com/craftcms/feed-me/security/advisories/GHSA-h39w-mqrj-63wh))
+- Fixed [medium-severity](https://github.com/craftcms/cms/security/policy#severity--remediation) SSRF vulnerabilities. (GHSA-g2p2-gwh8-c64r, GHSA-g8mg-7c85-qg77, GHSA-v533-4rcx-hc48)
+
 ## 5.14.0 - 2025-10-30
 
 - Multiple feeds queued via a single CLI command are now processed sequentially, even if they’re batched. ([#1695](https://github.com/craftcms/feed-me/issues/1695))
