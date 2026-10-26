@@ -102,6 +102,23 @@ class Entry extends Element
     /**
      * @inheritDoc
      */
+    public function parseAttribute($feedData, $fieldHandle, $fieldInfo): mixed
+    {
+        // Unpublished drafts may not have a title yet, so leave it unset rather than failing to parse it
+        if ($fieldHandle === 'title' && $this->_isDraftItem($feedData)) {
+            $value = $this->fetchSimpleValue($feedData, $fieldInfo);
+
+            if ($value === null || $value === '') {
+                return null;
+            }
+        }
+
+        return parent::parseAttribute($feedData, $fieldHandle, $fieldInfo);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getQuery($settings, array $params = []): mixed
     {
         $targetSiteId = Hash::get($settings, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id;
@@ -275,15 +292,7 @@ class Entry extends Element
      */
     protected function parseDraft($feedData, $fieldInfo): bool
     {
-        $value = $this->fetchSimpleValue($feedData, $fieldInfo);
-
-        if ($value === null || $value === '') {
-            $this->_isDraft = false;
-        } elseif (is_string($value) && strtolower(trim($value)) === EntryElement::STATUS_DRAFT) {
-            $this->_isDraft = true;
-        } else {
-            $this->_isDraft = (bool)BaseHelper::parseBoolean($value);
-        }
+        $this->_isDraft = $this->_isDraftValue($this->fetchSimpleValue($feedData, $fieldInfo));
 
         return $this->_isDraft;
     }
@@ -478,5 +487,41 @@ class Entry extends Element
         }
 
         return $node !== 'usedefault' || (string)Hash::get($settings, 'fieldMapping.draft.default') !== '';
+    }
+
+    /**
+     * Returns whether the feed item is a draft, according to the feed's Draft attribute mapping.
+     *
+     * @param $feedData
+     * @return bool
+     */
+    private function _isDraftItem($feedData): bool
+    {
+        if (!$this->feed || !$this->_importsDrafts($this->feed)) {
+            return false;
+        }
+
+        return $this->_isDraftValue($this->fetchSimpleValue($feedData, $this->feed->fieldMapping['draft']));
+    }
+
+    /**
+     * Returns whether a Draft attribute value means the item is a draft.
+     *
+     * Accepts boolean-like values, or an element status ('draft' is a draft).
+     *
+     * @param mixed $value
+     * @return bool
+     */
+    private function _isDraftValue(mixed $value): bool
+    {
+        if ($value === null || $value === '') {
+            return false;
+        }
+
+        if (is_string($value) && strtolower(trim($value)) === EntryElement::STATUS_DRAFT) {
+            return true;
+        }
+
+        return (bool)BaseHelper::parseBoolean($value);
     }
 }
