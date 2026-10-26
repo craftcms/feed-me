@@ -20,6 +20,9 @@
 
 {% set classes = ['complex-field'] %}
 
+{# Flat mapping saved before Link fields had a dedicated parser - show it against the Value sub-field #}
+{% set legacyMapping = not hash_get(feed.fieldMapping, prefixPath|join('.') ~ '.fields') ? hash_get(feed.fieldMapping, prefixPath|join('.')) : null %}
+
 <tr class="complex-field complex-field-header">
     <td class="col-field" colspan="3">
         <div class="field">
@@ -72,6 +75,18 @@
     {% set instructionsHandle = handle ~ '[' ~ key ~ ']' %}
 
     {% set path = prefixPath|merge([ 'fields', key ]) %}
+    {% set legacyNode = null %}
+    {% set legacyDefault = null %}
+
+    {% if legacyMapping %}
+        {% if key == 'type' %}
+            {% set legacyNode = 'usedefault' %}
+            {% set legacyDefault = 'url' %}
+        {% elseif key == 'value' %}
+            {% set legacyNode = legacyMapping.node ?? null %}
+            {% set legacyDefault = legacyMapping.default ?? null %}
+        {% endif %}
+    {% endif %}
 
     {% set default = {
         type: 'text',
