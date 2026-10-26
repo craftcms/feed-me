@@ -1,8 +1,26 @@
 # Release Notes for Feed Me
 
+
 ## Unreleased
 
 - Fixed a bug where values that don’t parse to a string — such as Number and Lightswitch fields, and numeric element attributes like `id` — could no longer be used as unique identifiers, as of 6.15.0. This also broke Commerce Product feeds that match on Variant SKU. ([#1767](https://github.com/craftcms/feed-me/issues/1767))
+
+## 6.16.1 2026-10-11
+
+- Fixed [medium-severity](https://github.com/craftcms/cms/security/policy#severity--remediation) SSRF vulnerabilities. (GHSA-g2p2-gwh8-c64r, GHSA-g8mg-7c85-qg77)
+
+## 6.16.0 2026-10-11
+
+> [!WARNING]
+> Feed and asset URLs that resolve to private IP addresses are now rejected, unless their hostname is listed in the `allowedPrivateHosts` config setting.
+> See [Configuration > Example `allowedPrivateHosts`](https://docs.craftcms.com/feed-me/v6/get-started/configuration.html#example-allowedprivatehosts) on how to do that.
+
+- Fixed a [medium-severity](https://github.com/craftcms/cms/security/policy#severity--remediation) SSRF vulnerability. (GHSA-v533-4rcx-hc48)
+- Fixed a [high-severity](https://github.com/craftcms/cms/security/policy#severity--remediation) missing authorization vulnerability. (GHSA-jq8j-33m8-2rhx)
+
+## 6.15.2 - 2026-09-15
+
+- Fixed a [moderate-severity](https://github.com/craftcms/cms/security/policy#severity--remediation) authorization bypass vulnerability. ([GHSA-h39w-mqrj-63wh](https://github.com/craftcms/feed-me/security/advisories/GHSA-h39w-mqrj-63wh))
 
 ## 6.15.1 - 2026-08-28
 
@@ -16,8 +34,8 @@
 - Fixed a bug where entries created via the Entries field mapping might not get a Post Date set under specific circumstances. ([#1755](https://github.com/craftcms/feed-me/pull/1755))
 - Fixed a bug where a “No stock value was present” error was logged for Commerce Product variants even when the Stock field was set to “Don’t import”. ([#1760](https://github.com/craftcms/feed-me/pull/1760))
 - Fixed a bug where users trying to use a URL field as a unique identifier would get an error since Craft 5.4.10.1. ([#1756](https://github.com/craftcms/feed-me/pull/1756))
-- Fixed a bug where couldn’t import text into a native alt field for an asset, but only via Assets field and the sub-field mechanism. ([#1761](https://github.com/craftcms/feed-me/pull/1761))
-- Fixed a [high-severity](https://github.com/craftcms/cms/security/policy#severity--remediation) SSRF vulnerability. (GHSA-wq63-9pmc-5mwx)
+- Fixed a bug where you couldn’t import text into a native alt field for an asset, but only via an Assets field and the sub-field mechanism. ([#1761](https://github.com/craftcms/feed-me/pull/1761))
+- Fixed a [high-severity](https://github.com/craftcms/cms/security/policy#severity--remediation) SSRF vulnerability. ([GHSA-wq63-9pmc-5mwx](https://github.com/craftcms/feed-me/security/advisories/GHSA-wq63-9pmc-5mwx))
 
 ## 6.14.0 - 2026-07-08
 
