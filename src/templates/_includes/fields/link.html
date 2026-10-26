@@ -75,18 +75,8 @@
     {% set instructionsHandle = handle ~ '[' ~ key ~ ']' %}
 
     {% set path = prefixPath|merge([ 'fields', key ]) %}
-    {% set legacyNode = null %}
-    {% set legacyDefault = null %}
-
-    {% if legacyMapping %}
-        {% if key == 'type' %}
-            {% set legacyNode = 'usedefault' %}
-            {% set legacyDefault = 'url' %}
-        {% elseif key == 'value' %}
-            {% set legacyNode = legacyMapping.node ?? null %}
-            {% set legacyDefault = legacyMapping.default ?? null %}
-        {% endif %}
-    {% endif %}
+    {% set legacyNode = key == 'value' ? (legacyMapping.node ?? null) : null %}
+    {% set legacyDefault = key == 'value' ? (legacyMapping.default ?? null) : null %}
 
     {% set default = {
         type: 'text',
