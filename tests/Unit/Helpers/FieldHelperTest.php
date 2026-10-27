@@ -3,8 +3,10 @@
 namespace craft\feedme\tests\Unit\Helpers;
 
 use craft\feedme\helpers\FieldHelper;
+use craft\fields\Link;
 use craft\fields\Matrix;
 use craft\fields\PlainText;
+use craft\fields\Url;
 
 test('field can be unique id', function() {
     // A real field object is classified by its class name.
@@ -27,6 +29,14 @@ test('field can be unique id', function() {
     // implementation) throws on `$field['type']` - caught by the method's own try/catch,
     // which returns false rather than ever reaching the is_object() classification below it.
     expect(FieldHelper::fieldCanBeUniqueId(new \stdClass()))->toBeFalse();
+});
+
+test('url and link fields cannot be unique ids', function() {
+    // https://github.com/craftcms/feed-me/issues/1750 - the Url field type maps to the Link field
+    // (since Craft 5.3.0), whose value isn't a simple string, so it can't be used to match an
+    // existing element.
+    expect(FieldHelper::fieldCanBeUniqueId(new Url()))->toBeFalse();
+    expect(FieldHelper::fieldCanBeUniqueId(new Link()))->toBeFalse();
 });
 
 test('field has only custom sources', function() {

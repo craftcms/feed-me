@@ -111,3 +111,11 @@ it('preps value for element match', function() {
     expect(DataHelper::prepValueForElementMatch('or'))->toBe('=or');
     expect(DataHelper::prepValueForElementMatch('AND'))->toBe('=AND');
 });
+
+it('preps non-string values for element match', function() {
+    // https://github.com/craftcms/feed-me/issues/1645 - an array of values (e.g. multiple
+    // related elements, as seen when using the Debug option) used to throw a TypeError, as it
+    // was passed straight to `Db::escapeParam()` and `strcasecmp()`, which only take strings.
+    expect(DataHelper::prepValueForElementMatch(['foo', 'or']))->toBe(['foo', 'or']);
+    expect(DataHelper::prepValueForElementMatch(123))->toBe(123);
+});

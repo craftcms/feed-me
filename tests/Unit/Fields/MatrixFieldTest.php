@@ -2,8 +2,19 @@
 
 namespace craft\feedme\tests\Unit\Fields;
 
+use craft\elements\Entry;
 use craft\feedme\fields\Matrix;
+use craft\fieldlayoutelements\CustomField;
+use craft\fields\Date;
+use craft\fields\Matrix as MatrixField;
+use craft\fields\PlainText;
+use craft\helpers\StringHelper;
+use craft\models\EntryType;
+use craft\models\FieldLayout;
+use craft\models\FieldLayoutTab;
+use DateTime;
 use ReflectionMethod;
+use ReflectionProperty;
 
 beforeEach(function() {
     $this->service = new Matrix();
@@ -40,4 +51,83 @@ test('running out of segments defaults to index zero', function() {
 
     expect(getBlockKey(['MatrixBlock'], 'blockHandle', 'fieldHandle'))
         ->toBe('0.blockHandle.fieldHandle');
+});
+
+/**
+ * Builds a Matrix field with a single in-memory `block` entry type that has a `text` (Plain Text)
+ * and a `date` (Date) field, so parseField() can resolve the nested fields without the database.
+ */
+function matrixFieldWithTextAndDate(): MatrixField
+{
+    $fieldLayout = new FieldLayout(['type' => Entry::class]);
+    $tab = new FieldLayoutTab(['layout' => $fieldLayout]);
+    $tab->setElements([
+        new CustomField(new PlainText(['handle' => 'text', 'uid' => StringHelper::UUID()])),
+        new CustomField(new Date(['handle' => 'date', 'uid' => StringHelper::UUID()])),
+    ]);
+    $fieldLayout->setTabs([$tab]);
+
+    $entryType = new EntryType(['handle' => 'block']);
+    $entryType->setFieldLayout($fieldLayout);
+
+    $field = new MatrixField(['handle' => 'matrix']);
+    (new ReflectionProperty(MatrixField::class, '_entryTypes'))->setValue($field, [$entryType]);
+
+    return $field;
+}
+
+/**
+ * Parses `$feedData` into a `matrix` field, with the `block` entry type's `title`, `text` and
+ * `date` mapped to the `title`, `text` and `date` nodes.
+ */
+function parseMatrix(array $feedData): mixed
+{
+    $service = new Matrix();
+    $service->field = matrixFieldWithTextAndDate();
+    $service->feed = ['id' => 1, 'siteId' => null, 'setEmptyValues' => false];
+    $service->feedData = $feedData;
+    $service->fieldInfo = [
+        'blocks' => [
+            'block' => [
+                'attributes' => [
+                    'title' => ['node' => 'matrix/title'],
+                ],
+                'fields' => [
+                    'text' => ['node' => 'matrix/text', 'field' => PlainText::class],
+                    'date' => ['node' => 'matrix/date', 'field' => Date::class, 'options' => ['match' => 'auto']],
+                ],
+            ],
+        ],
+    ];
+
+    return $service->parseField();
+}
+
+test('a block with only a title is kept', function() {
+    // https://github.com/craftcms/feed-me/issues/1626 - a nested entry that only had its title
+    // set (with all its mapped custom fields empty) was treated as empty and not imported.
+    $blocks = parseMatrix([
+        'matrix/0/title' => 'Just a title',
+        'matrix/0/text' => '',
+    ]);
+
+    expect($blocks)->toHaveCount(1);
+    expect($blocks['new1']['title'])->toBe('Just a title');
+});
+
+test('a block with only a date is kept', function() {
+    // https://github.com/craftcms/feed-me/issues/1707 - the Date field service returns a
+    // DateTime object, which wasn't considered a non-empty value, so a nested entry whose only
+    // value was a date was treated as empty and not imported.
+    $blocks = parseMatrix([
+        'matrix/0/text' => '',
+        'matrix/0/date' => '2026-01-15',
+    ]);
+
+    expect($blocks)->toHaveCount(1);
+    expect($blocks['new1']['fields']['date'])->toBeInstanceOf(DateTime::class);
+});
+
+test('a block with only empty values is ignored', function() {
+    expect(parseMatrix(['matrix/0/text' => '']))->toBe([]);
 });

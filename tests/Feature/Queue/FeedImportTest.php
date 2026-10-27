@@ -109,6 +109,18 @@ it('is a no-op when there is no feed data', function() {
     expect(Craft::$app->getQueue()->getTotalJobs())->toBe($totalJobsBefore);
 });
 
+it('logs an empty feed under its own name', function() {
+    // https://github.com/craftcms/feed-me/issues/1725 - the feed name used for logging was only
+    // set once there was data to process, so an empty feed got logged under the previous
+    // feed's name.
+    $this->feedRows = [];
+    Plugin::$feedName = 'Previous feed';
+
+    runJob(new FeedImport(['feed' => makeFeed(['name' => 'Empty feed'])]));
+
+    expect(Plugin::$feedName)->toBe('Empty feed');
+});
+
 it('imports all rows on execute', function() {
     $this->feedRows = [
         ['slug' => 'row-a', 'title' => 'Row A'],
