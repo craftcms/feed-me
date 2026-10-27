@@ -18,12 +18,14 @@ class LinkFieldTest extends UnitTestCase
         $this->service = FieldServiceFactory::create(Link::class, new LinkField());
     }
 
-    public function testNoFieldsMappingReturnsNull(): void
+    public function testLegacyMappingReturnsValueAsString(): void
     {
+        // A flat mapping saved before Link fields had sub-field mappings is still supported,
+        // and returns a string so that Craft can auto-detect the link type.
         $this->service->fieldInfo = ['node' => 'link'];
         $this->service->feedData = ['link' => 'https://example.com'];
 
-        $this->assertNull($this->service->parseField());
+        $this->assertSame('https://example.com', $this->service->parseField());
     }
 
     public function testAllSubFieldsResolvingEmptyReturnsNull(): void

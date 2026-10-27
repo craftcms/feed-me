@@ -9,6 +9,7 @@ namespace craft\feedme\tests;
 
 use Craft;
 use craft\config\DbConfig;
+use craft\db\Connection;
 use craft\enums\CmsEdition;
 use craft\feedme\tests\Helpers\ElementFactory;
 use craft\helpers\App;
@@ -42,11 +43,22 @@ class TestCase extends BaseTestCase
             return;
         }
 
+        // Wipe the DB before booting Craft - otherwise the app loads the previous run's installed
+        // plugins on init, and installPlugin() below would think Feed Me is already installed.
+        /** @var Connection $db */
+        $db = Craft::createObject(array_merge(
+            App::dbConfig(self::createConfigService()->getDb()),
+            // There's no app yet to resolve the default `cache` component from.
+            ['schemaCache' => null],
+        ));
+        TestSetup::cleanseDb($db);
+        $db->close();
+
         /** @var Application $app */
         $app = Craft::createObject(self::createTestCraftObjectConfig());
         Craft::$app = $app;
 
-        self::setUpDb(true);
+        self::setUpDb();
 
         Craft::$app->setEdition(CmsEdition::Pro);
 
@@ -162,15 +174,11 @@ class TestCase extends BaseTestCase
         return is_string($path) ? str_replace("\\", '/', $path) : false;
     }
 
-    protected static function setUpDb(bool $cleanseDb = false): void
+    protected static function setUpDb(): void
     {
         $db = Craft::$app->getDb();
         $db->schemaCache = false;
         $db->emulatePrepare = false;
-
-        if ($cleanseDb) {
-            TestSetup::cleanseDb($db);
-        }
 
         if ($db->schema->getTableNames() === []) {
             $site = new Site([
