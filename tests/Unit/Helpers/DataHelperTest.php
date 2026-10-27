@@ -3,137 +3,111 @@
 namespace craft\feedme\tests\Unit\Helpers;
 
 use craft\feedme\helpers\DataHelper;
-use craft\feedme\tests\UnitTestCase;
 
-class DataHelperTest extends UnitTestCase
-{
-    public function testIsArrayValueEmpty(): void
-    {
-        $this->assertTrue(DataHelper::isArrayValueEmpty(null));
-        $this->assertTrue(DataHelper::isArrayValueEmpty(''));
-        $this->assertTrue(DataHelper::isArrayValueEmpty([]));
-        $this->assertTrue(DataHelper::isArrayValueEmpty(['', null]));
-        $this->assertFalse(DataHelper::isArrayValueEmpty(['a']));
-        $this->assertFalse(DataHelper::isArrayValueEmpty('a'));
+test('is array value empty', function() {
+    expect(DataHelper::isArrayValueEmpty(null))->toBeTrue();
+    expect(DataHelper::isArrayValueEmpty(''))->toBeTrue();
+    expect(DataHelper::isArrayValueEmpty([]))->toBeTrue();
+    expect(DataHelper::isArrayValueEmpty(['', null]))->toBeTrue();
+    expect(DataHelper::isArrayValueEmpty(['a']))->toBeFalse();
+    expect(DataHelper::isArrayValueEmpty('a'))->toBeFalse();
 
-        // Zero is empty by default...
-        $this->assertTrue(DataHelper::isArrayValueEmpty([0]));
-        $this->assertTrue(DataHelper::isArrayValueEmpty(['0']));
-        // ...unless $allowZero is set.
-        $this->assertFalse(DataHelper::isArrayValueEmpty([0], true));
-        $this->assertFalse(DataHelper::isArrayValueEmpty(['0'], true));
-    }
+    // Zero is empty by default...
+    expect(DataHelper::isArrayValueEmpty([0]))->toBeTrue();
+    expect(DataHelper::isArrayValueEmpty(['0']))->toBeTrue();
+    // ...unless $allowZero is set.
+    expect(DataHelper::isArrayValueEmpty([0], true))->toBeFalse();
+    expect(DataHelper::isArrayValueEmpty(['0'], true))->toBeFalse();
+});
 
-    public function testFetchSimpleValue(): void
-    {
-        $fieldInfo = ['node' => 'title', 'default' => 'Default Title'];
+it('fetches simple value', function() {
+    $fieldInfo = ['node' => 'title', 'default' => 'Default Title'];
 
-        $this->assertSame('Feed Title', DataHelper::fetchSimpleValue(['title' => ' Feed Title '], $fieldInfo));
-        $this->assertSame('Default Title', DataHelper::fetchSimpleValue(['title' => ''], $fieldInfo));
-        $this->assertSame('Default Title', DataHelper::fetchSimpleValue(['title' => null], $fieldInfo));
-        $this->assertNull(DataHelper::fetchSimpleValue([], ['node' => 'title', 'default' => '']));
-    }
+    expect(DataHelper::fetchSimpleValue(['title' => ' Feed Title '], $fieldInfo))->toBe('Feed Title');
+    expect(DataHelper::fetchSimpleValue(['title' => ''], $fieldInfo))->toBe('Default Title');
+    expect(DataHelper::fetchSimpleValue(['title' => null], $fieldInfo))->toBe('Default Title');
+    expect(DataHelper::fetchSimpleValue([], ['node' => 'title', 'default' => '']))->toBeNull();
+});
 
-    public function testFetchDefaultArrayValue(): void
-    {
-        $this->assertSame([], DataHelper::fetchDefaultArrayValue(['default' => '']));
-        $this->assertSame([], DataHelper::fetchDefaultArrayValue(['default' => null]));
-        $this->assertSame(['1'], DataHelper::fetchDefaultArrayValue(['default' => '1']));
-        $this->assertSame(['1', '2'], DataHelper::fetchDefaultArrayValue(['default' => ['1', '2']]));
-    }
+it('fetches default array value', function() {
+    expect(DataHelper::fetchDefaultArrayValue(['default' => '']))->toBe([]);
+    expect(DataHelper::fetchDefaultArrayValue(['default' => null]))->toBe([]);
+    expect(DataHelper::fetchDefaultArrayValue(['default' => '1']))->toBe(['1']);
+    expect(DataHelper::fetchDefaultArrayValue(['default' => ['1', '2']]))->toBe(['1', '2']);
+});
 
-    public function testFetchArrayValue(): void
-    {
-        $fieldInfo = ['node' => 'tags'];
+it('fetches array value', function() {
+    $fieldInfo = ['node' => 'tags'];
 
-        $this->assertSame(['News'], DataHelper::fetchArrayValue(['tags' => 'News'], $fieldInfo));
+    expect(DataHelper::fetchArrayValue(['tags' => 'News'], $fieldInfo))->toBe(['News']);
 
-        // The default `dataDelimiter` ('-|-') splits a single value into multiple.
-        $this->assertSame(['News', 'Sports'], DataHelper::fetchArrayValue(['tags' => 'News-|-Sports'], $fieldInfo));
+    // The default `dataDelimiter` ('-|-') splits a single value into multiple.
+    expect(DataHelper::fetchArrayValue(['tags' => 'News-|-Sports'], $fieldInfo))->toBe(['News', 'Sports']);
 
-        // Trims whitespace around delimited values.
-        $this->assertSame(['News', 'Sports'], DataHelper::fetchArrayValue(['tags' => ' News -|- Sports '], $fieldInfo));
+    // Trims whitespace around delimited values.
+    expect(DataHelper::fetchArrayValue(['tags' => ' News -|- Sports '], $fieldInfo))->toBe(['News', 'Sports']);
 
-        // Feed paths with numeric array segments (e.g. `MatrixBlock/0/Images`) match against
-        // the mapped node (`MatrixBlock/Images`) with the numbers stripped out.
-        $this->assertSame(
-            ['one.jpg', 'two.jpg'],
-            DataHelper::fetchArrayValue(
-                ['MatrixBlock/0/Images' => 'one.jpg', 'MatrixBlock/1/Images' => 'two.jpg'],
-                ['node' => 'MatrixBlock/Images'],
-            ),
-        );
+    // Feed paths with numeric array segments (e.g. `MatrixBlock/0/Images`) match against
+    // the mapped node (`MatrixBlock/Images`) with the numbers stripped out.
+    expect(DataHelper::fetchArrayValue(
+        ['MatrixBlock/0/Images' => 'one.jpg', 'MatrixBlock/1/Images' => 'two.jpg'],
+        ['node' => 'MatrixBlock/Images'],
+    ))->toBe(['one.jpg', 'two.jpg']);
 
-        // The 'usedefault' node is a sentinel meaning "always use the configured default".
-        $this->assertSame(
-            ['fallback'],
-            DataHelper::fetchArrayValue(['tags' => 'News'], ['node' => 'usedefault', 'default' => 'fallback']),
-        );
-    }
+    // The 'usedefault' node is a sentinel meaning "always use the configured default".
+    expect(DataHelper::fetchArrayValue(['tags' => 'News'], ['node' => 'usedefault', 'default' => 'fallback']))
+        ->toBe(['fallback']);
+});
 
-    public function testArrayCompare(): void
-    {
-        // No differences.
-        $this->assertFalse(DataHelper::arrayCompare(['a' => 1], ['a' => 1]));
+test('array compare', function() {
+    // No differences.
+    expect(DataHelper::arrayCompare(['a' => 1], ['a' => 1]))->toBeFalse();
 
-        // Changed value.
-        $this->assertSame(
-            [0 => ['a' => 1], 1 => ['a' => 2]],
-            DataHelper::arrayCompare(['a' => 1], ['a' => 2]),
-        );
+    // Changed value.
+    expect(DataHelper::arrayCompare(['a' => 1], ['a' => 2]))
+        ->toBe([0 => ['a' => 1], 1 => ['a' => 2]]);
 
-        // Key only in the first array.
-        $this->assertSame(
-            [0 => ['a' => 1]],
-            DataHelper::arrayCompare(['a' => 1], []),
-        );
+    // Key only in the first array.
+    expect(DataHelper::arrayCompare(['a' => 1], []))
+        ->toBe([0 => ['a' => 1]]);
 
-        // Key only in the second array.
-        $this->assertSame(
-            [1 => ['a' => 1]],
-            DataHelper::arrayCompare([], ['a' => 1]),
-        );
+    // Key only in the second array.
+    expect(DataHelper::arrayCompare([], ['a' => 1]))
+        ->toBe([1 => ['a' => 1]]);
 
-        // Recurses into nested arrays.
-        $this->assertSame(
-            [0 => ['a' => ['b' => 1]], 1 => ['a' => ['b' => 2]]],
-            DataHelper::arrayCompare(['a' => ['b' => 1]], ['a' => ['b' => 2]]),
-        );
-    }
+    // Recurses into nested arrays.
+    expect(DataHelper::arrayCompare(['a' => ['b' => 1]], ['a' => ['b' => 2]]))
+        ->toBe([0 => ['a' => ['b' => 1]], 1 => ['a' => ['b' => 2]]]);
+});
 
-    public function testFetchValue(): void
-    {
-        // Zero and "0" must be preserved rather than treated as empty.
-        // https://github.com/craftcms/feed-me/issues/779
-        $this->assertSame('0', DataHelper::fetchValue(['count' => '0'], ['node' => 'count']));
-        $this->assertSame(0, DataHelper::fetchValue(['count' => 0], ['node' => 'count']));
+it('fetches value', function() {
+    // Zero and "0" must be preserved rather than treated as empty.
+    // https://github.com/craftcms/feed-me/issues/779
+    expect(DataHelper::fetchValue(['count' => '0'], ['node' => 'count']))->toBe('0');
+    expect(DataHelper::fetchValue(['count' => 0], ['node' => 'count']))->toBe(0);
 
-        // A genuinely empty (non-numeric) value normalizes to null.
-        $this->assertNull(DataHelper::fetchValue(['count' => ''], ['node' => 'count']));
+    // A genuinely empty (non-numeric) value normalizes to null.
+    expect(DataHelper::fetchValue(['count' => ''], ['node' => 'count']))->toBeNull();
 
-        // A single-item array collapses to its scalar value.
-        $this->assertSame('News', DataHelper::fetchValue(['tags' => 'News'], ['node' => 'tags']));
+    // A single-item array collapses to its scalar value.
+    expect(DataHelper::fetchValue(['tags' => 'News'], ['node' => 'tags']))->toBe('News');
 
-        // With `setEmptyValues` on, an explicit empty string is returned as-is (rather than
-        // being normalized to null), so it can overwrite existing content. (`default` must be
-        // an explicit empty string here too, otherwise the empty node value gets substituted
-        // with an unset/null default before this check even runs.)
-        $this->assertSame(
-            '',
-            DataHelper::fetchValue(['title' => ''], ['node' => 'title', 'default' => ''], ['setEmptyValues' => true]),
-        );
-    }
+    // With `setEmptyValues` on, an explicit empty string is returned as-is (rather than
+    // being normalized to null), so it can overwrite existing content. (`default` must be
+    // an explicit empty string here too, otherwise the empty node value gets substituted
+    // with an unset/null default before this check even runs.)
+    expect(DataHelper::fetchValue(['title' => ''], ['node' => 'title', 'default' => ''], ['setEmptyValues' => true]))
+        ->toBe('');
+});
 
-    public function testPrepValueForElementMatch(): void
-    {
-        // Plain values pass through unescaped by this method's return value (escapeParam mutates
-        // in place for arrays, but returns the (escaped) value for strings).
-        $this->assertSame('foo', DataHelper::prepValueForElementMatch('foo'));
+it('preps value for element match', function() {
+    // Plain values pass through unescaped by this method's return value (escapeParam mutates
+    // in place for arrays, but returns the (escaped) value for strings).
+    expect(DataHelper::prepValueForElementMatch('foo'))->toBe('foo');
 
-        // The literal strings "or"/"and" are special in Craft's query syntax, so they get an
-        // explicit `=` prefix (preserving original casing) to force an exact match rather than
-        // being parsed as operators.
-        $this->assertSame('=or', DataHelper::prepValueForElementMatch('or'));
-        $this->assertSame('=AND', DataHelper::prepValueForElementMatch('AND'));
-    }
-}
+    // The literal strings "or"/"and" are special in Craft's query syntax, so they get an
+    // explicit `=` prefix (preserving original casing) to force an exact match rather than
+    // being parsed as operators.
+    expect(DataHelper::prepValueForElementMatch('or'))->toBe('=or');
+    expect(DataHelper::prepValueForElementMatch('AND'))->toBe('=AND');
+});

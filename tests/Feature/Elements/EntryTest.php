@@ -6,125 +6,75 @@ use craft\elements\Entry as EntryElement;
 use craft\elements\User as UserElement;
 use craft\feedme\elements\Entry;
 use craft\feedme\tests\Helpers\ElementFactory;
-use craft\feedme\tests\TestCase;
-use PHPUnit\Framework\Attributes\DataProvider;
+use function craft\feedme\tests\Helpers\matchesAuthorByType;
+use function craft\feedme\tests\Helpers\parsesParentAttribute;
 
-class EntryTest extends TestCase
-{
-    use MatchesAuthorByTypeTests;
-    use ParsesParentAttributeTests;
+beforeEach(function() {
+    $this->service = new Entry();
+    // parseParent() assigns onto $this->service->element (the entry being imported into),
+    // so it needs to be a real element rather than null, same as a real import would set via setModel().
+    $this->service->element = new EntryElement();
+    $this->parent = ElementFactory::createEntry();
+    $this->author = ElementFactory::createUser();
+});
 
-    private Entry $service;
+parsesParentAttribute();
 
-    private EntryElement $parentEntry;
+matchesAuthorByType(
+    attribute: 'authorIds',
+    expected: fn(UserElement $author) => [$author->id],
+    feedMapping: fn(string $matchType) => [
+        'attribute' => true,
+        'node' => 'author',
+        'default' => '',
+        'options' => ['match' => $matchType],
+    ],
+);
 
-    private UserElement $author;
+it('parses a simple attribute with a default', function(string $attribute, string $default, string $value) {
+    $feedMapping = [
+        'attribute' => true,
+        'node' => $attribute,
+        'default' => $default,
+    ];
 
-    protected function setUp(): void
-    {
-        parent::setUp();
+    $feedData = [$attribute => $value];
+    expect($this->service->parseAttribute($feedData, $attribute, $feedMapping))->toEqual($value);
 
-        $this->service = new Entry();
-        // parseParent() assigns onto $this->service->element (the entry being imported into),
-        // so it needs to be a real element rather than null, same as a real import would set via setModel().
-        $this->service->element = new EntryElement();
-        $this->parentEntry = ElementFactory::createEntry();
-        $this->author = ElementFactory::createUser();
-    }
+    // Test default
+    $feedData = [$attribute => ''];
+    expect($this->service->parseAttribute($feedData, $attribute, $feedMapping))->toEqual($default);
 
-    protected function parentMatchService(): Entry
-    {
-        return $this->service;
-    }
+    // Test mapping with no default, but empty value
+    $feedMapping['default'] = '';
+    expect($this->service->parseAttribute($feedData, $attribute, $feedMapping))->toEqual('');
+})->with([
+    'id' => ['id', '123', '15868'],
+    'title' => ['title', 'Default Title', 'RSS News'],
+    'slug' => ['slug', 'default-slug', 'rss-news'],
+]);
 
-    protected function parentElement(): EntryElement
-    {
-        return $this->parentEntry;
-    }
+it('uses the author default', function() {
+    // 'usedefault' is Feed Me's "always use the configured default, regardless of feed
+    // data" sentinel node value (see the "Use default value" mapping option) - it's the
+    // only way `parseAuthorIds()` applies a default, unlike the generic simple-value fallback.
+    $feedData = ['author' => 'irrelevant'];
 
-    protected function authorMatchService(): Entry
-    {
-        return $this->service;
-    }
+    $feedMapping = [
+        'attribute' => true,
+        'node' => 'usedefault',
+        'default' => (string)$this->author->id,
+        'options' => ['match' => 'title'],
+    ];
 
-    protected function authorSubject(): UserElement
-    {
-        return $this->author;
-    }
+    expect($this->service->parseAttribute($feedData, 'authorIds', $feedMapping))->toEqual([$this->author->id]);
 
-    protected function authorMatchAttribute(): string
-    {
-        return 'authorIds';
-    }
+    $feedMapping = [
+        'attribute' => true,
+        'node' => 'usedefault',
+        'default' => '',
+        'options' => ['match' => 'title'],
+    ];
 
-    protected function authorMatchExpected(UserElement $author): mixed
-    {
-        return [$author->id];
-    }
-
-    protected function authorMatchFeedMapping(string $matchType): array
-    {
-        return [
-            'attribute' => true,
-            'node' => 'author',
-            'default' => '',
-            'options' => ['match' => $matchType],
-        ];
-    }
-
-    public static function simpleAttributeProvider(): array
-    {
-        return [
-            'id' => ['id', '123', '15868'],
-            'title' => ['title', 'Default Title', 'RSS News'],
-            'slug' => ['slug', 'default-slug', 'rss-news'],
-        ];
-    }
-
-    #[DataProvider('simpleAttributeProvider')]
-    public function testSimpleAttributeParsesWithDefault(string $attribute, string $default, string $value): void
-    {
-        $feedMapping = [
-            'attribute' => true,
-            'node' => $attribute,
-            'default' => $default,
-        ];
-
-        $feedData = [$attribute => $value];
-        $this->assertEquals($value, $this->service->parseAttribute($feedData, $attribute, $feedMapping));
-
-        // Test default
-        $feedData = [$attribute => ''];
-        $this->assertEquals($default, $this->service->parseAttribute($feedData, $attribute, $feedMapping));
-
-        // Test mapping with no default, but empty value
-        $feedMapping['default'] = '';
-        $this->assertEquals('', $this->service->parseAttribute($feedData, $attribute, $feedMapping));
-    }
-
-    public function testAuthorDefault(): void
-    {
-        // 'usedefault' is Feed Me's "always use the configured default, regardless of feed
-        // data" sentinel node value (see the "Use default value" mapping option) - it's the
-        // only way `parseAuthorIds()` applies a default, unlike the generic simple-value fallback.
-        $feedData = ['author' => 'irrelevant'];
-
-        $feedMapping = [
-            'attribute' => true,
-            'node' => 'usedefault',
-            'default' => (string)$this->author->id,
-            'options' => ['match' => 'title'],
-        ];
-
-        $this->assertEquals([$this->author->id], $this->service->parseAttribute($feedData, 'authorIds', $feedMapping));
-
-        $feedMapping = [
-            'attribute' => true,
-            'node' => 'usedefault',
-            'default' => '',
-            'options' => ['match' => 'title'],
-        ];
-
-        $this->assertNull($this->service->parseAttribute($feedData, 'authorIds', $feedMapping));
-    }
-}
+    expect($this->service->parseAttribute($feedData, 'authorIds', $feedMapping))->toBeNull();
+});

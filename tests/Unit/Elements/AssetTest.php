@@ -3,36 +3,21 @@
 namespace craft\feedme\tests\Unit\Elements;
 
 use craft\feedme\elements\Asset;
-use craft\feedme\tests\UnitTestCase;
 
-class AssetTest extends UnitTestCase
-{
-    private Asset $service;
+beforeEach(function() {
+    $this->service = new Asset();
+});
 
-    protected function setUp(): void
-    {
-        parent::setUp();
+it('parses filename from absolute url', function() {
+    $feedMapping = ['attribute' => true, 'node' => 'image'];
 
-        $this->service = new Asset();
-    }
+    expect($this->service->parseAttribute(['image' => 'http://example.com/path/photo.jpg'], 'filename', $feedMapping))
+        ->toBe('photo.jpg');
+});
 
-    public function testParseFilenameFromAbsoluteUrl(): void
-    {
-        $feedMapping = ['attribute' => true, 'node' => 'image'];
+it('parses filename from local path', function() {
+    $feedMapping = ['attribute' => true, 'node' => 'image'];
 
-        $this->assertSame(
-            'photo.jpg',
-            $this->service->parseAttribute(['image' => 'http://example.com/path/photo.jpg'], 'filename', $feedMapping),
-        );
-    }
-
-    public function testParseFilenameFromLocalPath(): void
-    {
-        $feedMapping = ['attribute' => true, 'node' => 'image'];
-
-        $this->assertSame(
-            'photo.jpg',
-            $this->service->parseAttribute(['image' => '/var/some/local/path/photo.jpg'], 'filename', $feedMapping),
-        );
-    }
-}
+    expect($this->service->parseAttribute(['image' => '/var/some/local/path/photo.jpg'], 'filename', $feedMapping))
+        ->toBe('photo.jpg');
+});

@@ -5,45 +5,39 @@ namespace craft\feedme\tests\Unit\Helpers;
 use craft\feedme\helpers\FieldHelper;
 use craft\fields\Matrix;
 use craft\fields\PlainText;
-use PHPUnit\Framework\TestCase;
 
-class FieldHelperTest extends TestCase
-{
-    public function testFieldCanBeUniqueId(): void
-    {
-        // A real field object is classified by its class name.
-        $this->assertTrue(FieldHelper::fieldCanBeUniqueId(new PlainText()));
-        $this->assertFalse(FieldHelper::fieldCanBeUniqueId(new Matrix()));
+test('field can be unique id', function() {
+    // A real field object is classified by its class name.
+    expect(FieldHelper::fieldCanBeUniqueId(new PlainText()))->toBeTrue();
+    expect(FieldHelper::fieldCanBeUniqueId(new Matrix()))->toBeFalse();
 
-        // A plain attribute array with no 'type' defaults to 'attribute', which is supported.
-        $this->assertTrue(FieldHelper::fieldCanBeUniqueId([]));
+    // A plain attribute array with no 'type' defaults to 'attribute', which is supported.
+    expect(FieldHelper::fieldCanBeUniqueId([]))->toBeTrue();
 
-        // The 'assets' shorthand value is explicitly supported. ('handle' must be present
-        // alongside 'type' - the method assumes both keys are always set together.)
-        $this->assertTrue(FieldHelper::fieldCanBeUniqueId(['type' => 'assets', 'handle' => 'assets']));
+    // The 'assets' shorthand value is explicitly supported. ('handle' must be present
+    // alongside 'type' - the method assumes both keys are always set together.)
+    expect(FieldHelper::fieldCanBeUniqueId(['type' => 'assets', 'handle' => 'assets']))->toBeTrue();
 
-        // A 'parent' handle is always treated as supported, regardless of its declared type.
-        $this->assertTrue(FieldHelper::fieldCanBeUniqueId(['type' => 'anything', 'handle' => 'parent']));
+    // A 'parent' handle is always treated as supported, regardless of its declared type.
+    expect(FieldHelper::fieldCanBeUniqueId(['type' => 'anything', 'handle' => 'parent']))->toBeTrue();
 
-        $this->assertFalse(FieldHelper::fieldCanBeUniqueId(['type' => 'unsupported-type', 'handle' => 'someField']));
+    expect(FieldHelper::fieldCanBeUniqueId(['type' => 'unsupported-type', 'handle' => 'someField']))->toBeFalse();
 
-        // A value that isn't array-accessible (e.g. a plain object with no ArrayAccess
-        // implementation) throws on `$field['type']` - caught by the method's own try/catch,
-        // which returns false rather than ever reaching the is_object() classification below it.
-        $this->assertFalse(FieldHelper::fieldCanBeUniqueId(new \stdClass()));
-    }
+    // A value that isn't array-accessible (e.g. a plain object with no ArrayAccess
+    // implementation) throws on `$field['type']` - caught by the method's own try/catch,
+    // which returns false rather than ever reaching the is_object() classification below it.
+    expect(FieldHelper::fieldCanBeUniqueId(new \stdClass()))->toBeFalse();
+});
 
-    public function testFieldHasOnlyCustomSources(): void
-    {
-        $this->assertFalse(FieldHelper::fieldHasOnlyCustomSources(null));
-        $this->assertFalse(FieldHelper::fieldHasOnlyCustomSources([]));
+test('field has only custom sources', function() {
+    expect(FieldHelper::fieldHasOnlyCustomSources(null))->toBeFalse();
+    expect(FieldHelper::fieldHasOnlyCustomSources([]))->toBeFalse();
 
-        // Single 'source' field (Categories/Tags-style).
-        $this->assertFalse(FieldHelper::fieldHasOnlyCustomSources(['source' => 'group:some-uid']));
-        $this->assertTrue(FieldHelper::fieldHasOnlyCustomSources(['source' => 'custom:some-uid']));
+    // Single 'source' field (Categories/Tags-style).
+    expect(FieldHelper::fieldHasOnlyCustomSources(['source' => 'group:some-uid']))->toBeFalse();
+    expect(FieldHelper::fieldHasOnlyCustomSources(['source' => 'custom:some-uid']))->toBeTrue();
 
-        // Multi 'sources' field (Entries/Users-style).
-        $this->assertTrue(FieldHelper::fieldHasOnlyCustomSources(['sources' => ['custom:a', 'custom:b']]));
-        $this->assertFalse(FieldHelper::fieldHasOnlyCustomSources(['sources' => ['custom:a', 'section:b']]));
-    }
-}
+    // Multi 'sources' field (Entries/Users-style).
+    expect(FieldHelper::fieldHasOnlyCustomSources(['sources' => ['custom:a', 'custom:b']]))->toBeTrue();
+    expect(FieldHelper::fieldHasOnlyCustomSources(['sources' => ['custom:a', 'section:b']]))->toBeFalse();
+});

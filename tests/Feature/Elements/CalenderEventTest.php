@@ -5,50 +5,19 @@ namespace craft\feedme\tests\Feature\Elements;
 use craft\elements\User as UserElement;
 use craft\feedme\elements\CalenderEvent;
 use craft\feedme\tests\Helpers\ElementFactory;
-use craft\feedme\tests\TestCase;
+use function craft\feedme\tests\Helpers\matchesAuthorByType;
 
-class CalenderEventTest extends TestCase
-{
-    use MatchesAuthorByTypeTests;
+beforeEach(function() {
+    $this->service = new CalenderEvent();
+    $this->author = ElementFactory::createUser();
+});
 
-    private CalenderEvent $service;
-
-    private UserElement $author;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->service = new CalenderEvent();
-        $this->author = ElementFactory::createUser();
-    }
-
-    protected function authorMatchService(): CalenderEvent
-    {
-        return $this->service;
-    }
-
-    protected function authorSubject(): UserElement
-    {
-        return $this->author;
-    }
-
-    protected function authorMatchAttribute(): string
-    {
-        return 'authorId';
-    }
-
-    protected function authorMatchExpected(UserElement $author): mixed
-    {
-        return $author->id;
-    }
-
-    protected function authorMatchFeedMapping(string $matchType): array
-    {
-        return [
-            'attribute' => true,
-            'node' => 'author',
-            'options' => ['match' => $matchType],
-        ];
-    }
-}
+matchesAuthorByType(
+    attribute: 'authorId',
+    expected: fn(UserElement $author) => $author->id,
+    feedMapping: fn(string $matchType) => [
+        'attribute' => true,
+        'node' => 'author',
+        'options' => ['match' => $matchType],
+    ],
+);

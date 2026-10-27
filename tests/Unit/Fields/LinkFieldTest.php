@@ -4,104 +4,90 @@ namespace craft\feedme\tests\Unit\Fields;
 
 use craft\feedme\fields\Link;
 use craft\feedme\tests\Helpers\FieldServiceFactory;
-use craft\feedme\tests\UnitTestCase;
 use craft\fields\Link as LinkField;
 
-class LinkFieldTest extends UnitTestCase
-{
-    private Link $service;
+beforeEach(function() {
+    $this->service = FieldServiceFactory::create(Link::class, new LinkField());
+});
 
-    protected function setUp(): void
-    {
-        parent::setUp();
+test('legacy mapping returns value as string', function() {
+    // A flat mapping saved before Link fields had sub-field mappings is still supported,
+    // and returns a string so that Craft can auto-detect the link type.
+    $this->service->fieldInfo = ['node' => 'link'];
+    $this->service->feedData = ['link' => 'https://example.com'];
 
-        $this->service = FieldServiceFactory::create(Link::class, new LinkField());
-    }
+    expect($this->service->parseField())->toBe('https://example.com');
+});
 
-    public function testLegacyMappingReturnsValueAsString(): void
-    {
-        // A flat mapping saved before Link fields had sub-field mappings is still supported,
-        // and returns a string so that Craft can auto-detect the link type.
-        $this->service->fieldInfo = ['node' => 'link'];
-        $this->service->feedData = ['link' => 'https://example.com'];
+test('all sub fields resolving empty returns null', function() {
+    $this->service->fieldInfo = [
+        'node' => 'link',
+        'fields' => [
+            'value' => ['node' => 'linkValue'],
+        ],
+    ];
+    $this->service->feedData = ['somethingElse' => 'https://example.com'];
 
-        $this->assertSame('https://example.com', $this->service->parseField());
-    }
+    expect($this->service->parseField())->toBeNull();
+});
 
-    public function testAllSubFieldsResolvingEmptyReturnsNull(): void
-    {
-        $this->service->fieldInfo = [
-            'node' => 'link',
-            'fields' => [
-                'value' => ['node' => 'linkValue'],
-            ],
-        ];
-        $this->service->feedData = ['somethingElse' => 'https://example.com'];
+test('type defaults to url when not mapped', function() {
+    // https://github.com/craftcms/feed-me/issues/1510 - Link values used to import
+    // incorrectly because no link type was ever set on the prepped data.
+    $this->service->fieldInfo = [
+        'node' => 'link',
+        'fields' => [
+            'value' => ['node' => 'linkValue'],
+        ],
+    ];
+    $this->service->feedData = ['linkValue' => 'https://example.com'];
 
-        $this->assertNull($this->service->parseField());
-    }
+    $result = $this->service->parseField();
 
-    public function testTypeDefaultsToUrlWhenNotMapped(): void
-    {
-        // https://github.com/craftcms/feed-me/issues/1510 - Link values used to import
-        // incorrectly because no link type was ever set on the prepped data.
-        $this->service->fieldInfo = [
-            'node' => 'link',
-            'fields' => [
-                'value' => ['node' => 'linkValue'],
-            ],
-        ];
-        $this->service->feedData = ['linkValue' => 'https://example.com'];
+    expect($result['type'])->toBe('url');
+    expect($result['value'])->toBe('https://example.com');
+});
 
-        $result = $this->service->parseField();
+test('explicitly mapped type is not overridden', function() {
+    $this->service->fieldInfo = [
+        'node' => 'link',
+        'fields' => [
+            'type' => ['node' => 'linkType'],
+            'value' => ['node' => 'linkValue'],
+        ],
+    ];
+    $this->service->feedData = [
+        'linkType' => 'email',
+        'linkValue' => 'person@example.com',
+    ];
 
-        $this->assertSame('url', $result['type']);
-        $this->assertSame('https://example.com', $result['value']);
-    }
+    $result = $this->service->parseField();
 
-    public function testExplicitlyMappedTypeIsNotOverridden(): void
-    {
-        $this->service->fieldInfo = [
-            'node' => 'link',
-            'fields' => [
-                'type' => ['node' => 'linkType'],
-                'value' => ['node' => 'linkValue'],
-            ],
-        ];
-        $this->service->feedData = [
-            'linkType' => 'email',
-            'linkValue' => 'person@example.com',
-        ];
+    expect($result['type'])->toBe('email');
+    expect($result['value'])->toBe('person@example.com');
+});
 
-        $result = $this->service->parseField();
+test('label and advanced fields pass through when mapped', function() {
+    // https://github.com/craftcms/feed-me/issues/1754 - the Link field mapping used to
+    // only expose a single generic value input; label/advanced sub-fields like `target`
+    // now map through into the returned data.
+    $this->service->fieldInfo = [
+        'node' => 'link',
+        'fields' => [
+            'value' => ['node' => 'linkValue'],
+            'label' => ['node' => 'linkLabel'],
+            'target' => ['node' => 'linkTarget'],
+        ],
+    ];
+    $this->service->feedData = [
+        'linkValue' => 'https://example.com',
+        'linkLabel' => 'Visit us',
+        'linkTarget' => '_blank',
+    ];
 
-        $this->assertSame('email', $result['type']);
-        $this->assertSame('person@example.com', $result['value']);
-    }
+    $result = $this->service->parseField();
 
-    public function testLabelAndAdvancedFieldsPassThroughWhenMapped(): void
-    {
-        // https://github.com/craftcms/feed-me/issues/1754 - the Link field mapping used to
-        // only expose a single generic value input; label/advanced sub-fields like `target`
-        // now map through into the returned data.
-        $this->service->fieldInfo = [
-            'node' => 'link',
-            'fields' => [
-                'value' => ['node' => 'linkValue'],
-                'label' => ['node' => 'linkLabel'],
-                'target' => ['node' => 'linkTarget'],
-            ],
-        ];
-        $this->service->feedData = [
-            'linkValue' => 'https://example.com',
-            'linkLabel' => 'Visit us',
-            'linkTarget' => '_blank',
-        ];
-
-        $result = $this->service->parseField();
-
-        $this->assertSame('https://example.com', $result['value']);
-        $this->assertSame('Visit us', $result['label']);
-        $this->assertSame('_blank', $result['target']);
-    }
-}
+    expect($result['value'])->toBe('https://example.com');
+    expect($result['label'])->toBe('Visit us');
+    expect($result['target'])->toBe('_blank');
+});

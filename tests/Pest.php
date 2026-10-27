@@ -58,5 +58,7 @@ TestSetup::configureCraft();
 // Set the @webroot alias so that the cpresources folder is created in the correct directory
 Craft::setAlias('@webroot', __DIR__ . '/_craft/web');
 
+require_once __DIR__ . '/Helpers/SharedTests.php';
+
 uses(TestCase::class)->in('Feature');
 uses(UnitTestCase::class)->in('Unit');

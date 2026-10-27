@@ -3,17 +3,11 @@
 namespace craft\feedme\tests\Feature;
 
 use Craft;
-use craft\feedme\tests\TestCase;
 
-class InstallTest extends TestCase
-{
-    public function testCraftHasDatabase(): void
-    {
-        $this->assertTrue(Craft::$app->getDb()->getIsActive());
-    }
+test('craft has a database', function() {
+    expect(Craft::$app->getDb()->getIsActive())->toBeTrue();
+});
 
-    public function testFeedMeIsInstalled(): void
-    {
-        $this->assertNotNull(Craft::$app->plugins->getPlugin('feed-me'));
-    }
-}
+test('feed me is installed', function() {
+    expect(Craft::$app->plugins->getPlugin('feed-me'))->not->toBeNull();
+});

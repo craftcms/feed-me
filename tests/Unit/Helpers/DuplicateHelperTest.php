@@ -3,46 +3,31 @@
 namespace craft\feedme\tests\Unit\Helpers;
 
 use craft\feedme\helpers\DuplicateHelper;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\TestCase;
 
-class DuplicateHelperTest extends TestCase
-{
-    public function testGetFriendly(): void
-    {
-        $this->assertSame('Add & Update', DuplicateHelper::getFriendly(['add', 'update']));
-        $this->assertSame('Disable', DuplicateHelper::getFriendly(['disable']));
-        $this->assertSame('', DuplicateHelper::getFriendly([]));
-    }
+it('gets friendly', function() {
+    expect(DuplicateHelper::getFriendly(['add', 'update']))->toBe('Add & Update');
+    expect(DuplicateHelper::getFriendly(['disable']))->toBe('Disable');
+    expect(DuplicateHelper::getFriendly([]))->toBe('');
+});
 
-    public function testContains(): void
-    {
-        $this->assertTrue(DuplicateHelper::contains(['add', 'update'], 'add'));
-        $this->assertFalse(DuplicateHelper::contains(['add', 'update'], 'delete'));
-    }
+test('contains', function() {
+    expect(DuplicateHelper::contains(['add', 'update'], 'add'))->toBeTrue();
+    expect(DuplicateHelper::contains(['add', 'update'], 'delete'))->toBeFalse();
+});
 
-    public function testContainsOnly(): void
-    {
-        // With $only, the handle must be the sole entry in the list to match.
-        $this->assertTrue(DuplicateHelper::contains(['add'], 'add', true));
-        $this->assertFalse(DuplicateHelper::contains(['add', 'update'], 'add', true));
-    }
+test('contains only', function() {
+    // With $only, the handle must be the sole entry in the list to match.
+    expect(DuplicateHelper::contains(['add'], 'add', true))->toBeTrue();
+    expect(DuplicateHelper::contains(['add', 'update'], 'add', true))->toBeFalse();
+});
 
-    public static function isXMethodProvider(): array
-    {
-        return [
-            'isAdd' => ['isAdd', 'add'],
-            'isUpdate' => ['isUpdate', 'update'],
-            'isDisable' => ['isDisable', 'disable'],
-            'isDisableForSite' => ['isDisableForSite', 'disableForSite'],
-            'isDelete' => ['isDelete', 'delete'],
-        ];
-    }
-
-    #[DataProvider('isXMethodProvider')]
-    public function testIsXMethodMatchesItsOwnHandle(string $method, string $handle): void
-    {
-        $this->assertTrue(DuplicateHelper::$method(['duplicateHandle' => [$handle]]));
-        $this->assertFalse(DuplicateHelper::$method(['duplicateHandle' => ['add' === $handle ? 'update' : 'add']]));
-    }
-}
+test('is x method matches its own handle', function(string $method, string $handle) {
+    expect(DuplicateHelper::$method(['duplicateHandle' => [$handle]]))->toBeTrue();
+    expect(DuplicateHelper::$method(['duplicateHandle' => ['add' === $handle ? 'update' : 'add']]))->toBeFalse();
+})->with([
+    'isAdd' => ['isAdd', 'add'],
+    'isUpdate' => ['isUpdate', 'update'],
+    'isDisable' => ['isDisable', 'disable'],
+    'isDisableForSite' => ['isDisableForSite', 'disableForSite'],
+    'isDelete' => ['isDelete', 'delete'],
+]);

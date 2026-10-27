@@ -5,7 +5,6 @@ namespace craft\feedme\tests\Unit\Elements;
 use Carbon\Carbon;
 use craft\base\ElementInterface as CraftElementInterface;
 use craft\feedme\base\Element;
-use craft\feedme\tests\UnitTestCase;
 use craft\fields\data\ColorData;
 use DateTime;
 use DateTimeImmutable;
@@ -21,123 +20,107 @@ use stdClass;
  * give DateTime or Carbon instances. Those all need to survive matching. Arrays
  * and other objects can't be matched against and should throw.
  */
-class MatchExistingElementTest extends UnitTestCase
+
+/**
+ * Runs a value through matchExistingElement() and returns the criteria it built.
+ */
+function criteriaFor($feedValue, string $handle = 'externalId'): array
 {
-    /**
-     * Runs a value through matchExistingElement() and returns the criteria it built.
-     */
-    private function criteriaFor($feedValue, string $handle = 'externalId'): array
-    {
-        $element = new class extends Element {
-            public array $criteria = [];
+    $element = new class() extends Element {
+        public array $criteria = [];
 
-            public static function displayName(): string
-            {
-                return 'Test';
-            }
+        public static function displayName(): string
+        {
+            return 'Test';
+        }
 
-            public function getGroups(): array
-            {
-                return [];
-            }
+        public function getGroups(): array
+        {
+            return [];
+        }
 
-            public function getGroupsTemplate(): string
-            {
-                return '';
-            }
+        public function getGroupsTemplate(): string
+        {
+            return '';
+        }
 
-            public function getColumnTemplate(): string
-            {
-                return '';
-            }
+        public function getColumnTemplate(): string
+        {
+            return '';
+        }
 
-            public function getMappingTemplate(): string
-            {
-                return '';
-            }
+        public function getMappingTemplate(): string
+        {
+            return '';
+        }
 
-            public function setModel($settings): CraftElementInterface
-            {
-                throw new LogicException('Not used by these tests.');
-            }
+        public function setModel($settings): CraftElementInterface
+        {
+            throw new LogicException('Not used by these tests.');
+        }
 
-            public function getQuery($settings, $params = []): mixed
-            {
-                $this->criteria = $params;
+        public function getQuery($settings, $params = []): mixed
+        {
+            $this->criteria = $params;
 
-                return new class {
-                    public function one()
-                    {
-                        return null;
-                    }
-                };
-            }
-        };
+            return new class() {
+                public function one()
+                {
+                    return null;
+                }
+            };
+        }
+    };
 
-        $element->matchExistingElement([$handle => $feedValue], [
-            'fieldUnique' => [$handle => 1],
-            // Skip the "no criteria to match on" guard, so we can assert on skipped values.
-            'singleton' => true,
-        ]);
+    $element->matchExistingElement([$handle => $feedValue], [
+        'fieldUnique' => [$handle => 1],
+        // Skip the "no criteria to match on" guard, so we can assert on skipped values.
+        'singleton' => true,
+    ]);
 
-        return $element->criteria;
-    }
-
-    public function testMatchesOnNumbers(): void
-    {
-        // A Number field used as an external ID — the common case.
-        $this->assertEquals(['externalId' => '999624'], $this->criteriaFor(999624));
-        $this->assertEquals(['externalId' => '-5'], $this->criteriaFor(-5));
-        $this->assertEquals(['externalId' => '12.5'], $this->criteriaFor(12.5));
-    }
-
-    public function testMatchesOnBooleans(): void
-    {
-        $this->assertEquals(['externalId' => '1'], $this->criteriaFor(true));
-        $this->assertEquals(['externalId' => '0'], $this->criteriaFor(false));
-    }
-
-    public function testMatchesOnDates(): void
-    {
-        $expected = ['externalId' => '2018-01-01 10:00:00'];
-
-        $this->assertEquals($expected, $this->criteriaFor(new DateTime('2018-01-01 10:00:00')));
-        $this->assertEquals($expected, $this->criteriaFor(new DateTimeImmutable('2018-01-01 10:00:00')));
-        $this->assertEquals($expected, $this->criteriaFor(new Carbon('2018-01-01 10:00:00')));
-    }
-
-    public function testMatchesOnStringables(): void
-    {
-        $this->assertEquals(['externalId' => '#ff0000'], $this->criteriaFor(new ColorData('#ff0000')));
-    }
-
-    public function testMatchesOnStringsAndStillEscapes(): void
-    {
-        $this->assertEquals(['externalId' => 'abc'], $this->criteriaFor('abc'));
-        $this->assertEquals(['externalId' => 'a\,b\*c'], $this->criteriaFor('a,b*c'));
-        $this->assertEquals(['externalId' => '\>=5'], $this->criteriaFor('>=5'));
-    }
-
-    public function testSkipsEmptyValues(): void
-    {
-        $this->assertEquals([], $this->criteriaFor(null));
-        $this->assertEquals([], $this->criteriaFor(''));
-    }
-
-    public function testThrowsOnArrays(): void
-    {
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Cannot match on a value of type array for `externalId`.');
-
-        // What a Link field parses to.
-        $this->criteriaFor(['type' => 'url', 'value' => 'https://craftcms.com']);
-    }
-
-    public function testThrowsOnNonStringableObjects(): void
-    {
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Cannot match on a value of type stdClass for `externalId`.');
-
-        $this->criteriaFor(new stdClass());
-    }
+    return $element->criteria;
 }
+
+it('matches on numbers', function() {
+    // A Number field used as an external ID — the common case.
+    expect(criteriaFor(999624))->toEqual(['externalId' => '999624']);
+    expect(criteriaFor(-5))->toEqual(['externalId' => '-5']);
+    expect(criteriaFor(12.5))->toEqual(['externalId' => '12.5']);
+});
+
+it('matches on booleans', function() {
+    expect(criteriaFor(true))->toEqual(['externalId' => '1']);
+    expect(criteriaFor(false))->toEqual(['externalId' => '0']);
+});
+
+it('matches on dates', function() {
+    $expected = ['externalId' => '2018-01-01 10:00:00'];
+
+    expect(criteriaFor(new DateTime('2018-01-01 10:00:00')))->toEqual($expected);
+    expect(criteriaFor(new DateTimeImmutable('2018-01-01 10:00:00')))->toEqual($expected);
+    expect(criteriaFor(new Carbon('2018-01-01 10:00:00')))->toEqual($expected);
+});
+
+it('matches on stringables', function() {
+    expect(criteriaFor(new ColorData('#ff0000')))->toEqual(['externalId' => '#ff0000']);
+});
+
+it('matches on strings and still escapes', function() {
+    expect(criteriaFor('abc'))->toEqual(['externalId' => 'abc']);
+    expect(criteriaFor('a,b*c'))->toEqual(['externalId' => 'a\,b\*c']);
+    expect(criteriaFor('>=5'))->toEqual(['externalId' => '\>=5']);
+});
+
+it('skips empty values', function() {
+    expect(criteriaFor(null))->toEqual([]);
+    expect(criteriaFor(''))->toEqual([]);
+});
+
+it('throws on arrays', function() {
+    // What a Link field parses to.
+    criteriaFor(['type' => 'url', 'value' => 'https://craftcms.com']);
+})->throws(Exception::class, 'Cannot match on a value of type array for `externalId`.');
+
+it('throws on non stringable objects', function() {
+    criteriaFor(new stdClass());
+})->throws(Exception::class, 'Cannot match on a value of type stdClass for `externalId`.');
