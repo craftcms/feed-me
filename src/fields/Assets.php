@@ -111,7 +111,7 @@ class Assets extends Field implements FieldInterface
                         ->where(['volumeId' => $volumeId])
                         ->column();
 
-                    $folderIds = array_merge($folderIds, $ids);
+                    $folderIds = array_merge($folderIds ?? [], $ids);
                 }
             }
         }

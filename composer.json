@@ -36,7 +36,7 @@
     "nesbot/carbon": "^2.10|^3.0.0",
     "league/csv": "^9.0",
     "seld/jsonlint": "^1.7",
-    "craftcms/url-validator": "^1.0"
+    "craftcms/url-validator": "^1.2"
   },
   "require-dev": {
     "craftcms/ecs": "dev-main",
@@ -59,7 +59,7 @@
   "extra": {
     "name": "Feed Me",
     "handle": "feed-me",
-    "documentationUrl": "https://docs.craftcms.com/feed-me/v4/"
+    "documentationUrl": "https://docs.craftcms.com/feed-me/v6"
   },
   "scripts": {
     "check-cs": "ecs check --ansi",

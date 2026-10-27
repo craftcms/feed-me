@@ -15,4 +15,3 @@ parameters:
         - src/fields/DigitalProducts.php
         - src/fields/SimpleMap.php
         - src/fields/SuperTable.php
-        - src/fields/CommerceProducts.php
