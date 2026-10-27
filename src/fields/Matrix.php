@@ -273,26 +273,46 @@ class Matrix extends Field implements FieldInterface
      * them, so the index only lines up when every block has the same type. Limiting the data to the one block
      * keeps them in step.
      *
+     * Blocks are found the same way as `_getBlockKey()`, so data without an index (e.g. a sub-field mapped
+     * alongside the element field, rather than within it) belongs to the first block.
+     *
      * @param string $nodePath
      * @return array
      */
     private function _getBlockFeedData(string $nodePath): array
     {
-        if (!preg_match('/^(.*?\/)(\d+)\//', $nodePath, $matches)) {
-            return [$this->feedData, $nodePath];
-        }
-
-        $blockPrefix = $matches[1] . $matches[2] . '/';
-        $newPrefix = $matches[1] . '0/';
+        $blockIndex = $this->_getBlockIndex($nodePath);
         $blockData = [];
 
         foreach ($this->feedData as $path => $value) {
-            if (str_starts_with($path, $blockPrefix)) {
-                $blockData[$newPrefix . substr($path, strlen($blockPrefix))] = $value;
+            if ($this->_getBlockIndex($path) === $blockIndex) {
+                $blockData[$this->_resetBlockIndex($path)] = $value;
             }
         }
 
-        return [$blockData, $newPrefix . substr($nodePath, strlen($blockPrefix))];
+        return [$blockData, $this->_resetBlockIndex($nodePath)];
+    }
+
+    /**
+     * Returns the block index of a node path: its first numeric segment after the first, or 0 if there isn't one.
+     *
+     * @param string $nodePath
+     * @return int
+     */
+    private function _getBlockIndex(string $nodePath): int
+    {
+        return preg_match('/^.+?\/(\d+)(\/|$)/', $nodePath, $matches) ? (int)$matches[1] : 0;
+    }
+
+    /**
+     * Sets the block index of a node path to 0.
+     *
+     * @param string $nodePath
+     * @return string
+     */
+    private function _resetBlockIndex(string $nodePath): string
+    {
+        return preg_replace('/^(.+?\/)\d+(\/|$)/', '${1}0$2', $nodePath, 1);
     }
 
     /**
