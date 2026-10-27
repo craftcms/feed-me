@@ -474,6 +474,12 @@ class Matrix extends Field implements FieldInterface
         }
 
         $class = Plugin::$plugin->fields->getRegisteredField($subFieldClassHandle);
+
+        // A nested Matrix would otherwise share this instance, and overwrite its properties mid-parse
+        if ($class instanceof self) {
+            $class = clone $class;
+        }
+
         $class->feedData = $feedData;
         $class->fieldHandle = $subFieldHandle;
         $class->fieldInfo = $subFieldInfo;
