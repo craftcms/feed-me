@@ -41,6 +41,7 @@
   "require-dev": {
     "craftcms/ecs": "dev-main",
     "craftcms/phpstan": "dev-main",
+    "phpstan/phpstan": "^2.1",
     "codeception/codeception": "^5.0.11",
     "codeception/module-asserts": "^3.0.0"
   },
