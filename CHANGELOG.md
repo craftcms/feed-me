@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Fixed a bug where Link field mappings saved before Feed Me 6.15.0 were ignored. ([#1766](https://github.com/craftcms/feed-me/issues/1766))
+- Fixed a bug where values that don’t parse to a string could no longer be used as unique identifiers, as of 6.15.0. ([#1767](https://github.com/craftcms/feed-me/issues/1767))
 
 ## 6.16.1 2026-10-11
 
