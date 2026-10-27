@@ -11,9 +11,9 @@ class ElementTest extends TestCase
 {
     public function testMatchExistingElementMatchesOnStringUniqueIdentifierValue(): void
     {
-        // Companion to the #1750 regression test in Unit/Base/ElementTest.php - confirms the
-        // fix (throwing only for non-string values) didn't also break matching on ordinary
-        // string unique-identifier values, like `title`.
+        // Companion to the #1750 regression tests in Unit/Elements/MatchExistingElementTest.php -
+        // confirms the fix (throwing only for unmatchable values) didn't also break matching on
+        // ordinary string unique-identifier values, like `title`.
         $entry = ElementFactory::createEntry();
 
         $service = new Entry();

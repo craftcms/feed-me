@@ -14,6 +14,7 @@ use craft\elements\Entry;
 use craft\elements\User;
 use craft\fieldlayoutelements\entries\EntryTitleField;
 use craft\fs\Local;
+use craft\helpers\FileHelper;
 use craft\models\CategoryGroup;
 use craft\models\CategoryGroup_SiteSettings;
 use craft\models\EntryType;
@@ -42,6 +43,11 @@ class ElementFactory
     public const NONEXISTENT_ID_OFFSET = 999999;
 
     private static ?Generator $faker = null;
+
+    /**
+     * Temp files/directories created on disk, which the DB rollback doesn't clean up.
+     */
+    private static array $tempPaths = [];
 
     public static function createEntry(array $attributes = []): Entry
     {
@@ -111,6 +117,7 @@ class ElementFactory
     {
         $path = sys_get_temp_dir() . '/feed-me-tests-' . self::uniqueHandle();
         mkdir($path, 0777, true);
+        self::$tempPaths[] = $path;
 
         $fs = new Local(['name' => self::faker()->unique()->word(), 'handle' => self::uniqueHandle(), 'path' => $path]);
         if (!Craft::$app->getFs()->saveFilesystem($fs)) {
@@ -142,6 +149,7 @@ class ElementFactory
 
         $tempFilePath = sys_get_temp_dir() . '/feed-me-tests-asset-' . self::uniqueHandle() . '.txt';
         file_put_contents($tempFilePath, 'test asset content');
+        self::$tempPaths[] = $tempFilePath;
 
         $asset = new Asset();
         $asset->tempFilePath = $tempFilePath;
@@ -241,14 +249,37 @@ class ElementFactory
     }
 
     /**
-     * Resets Faker's `unique()` tracking. The `$faker` Generator is a static singleton that
-     * survives the whole test process, but `unique()` only ever grows its "already used" set -
-     * without a reset between tests, a long run risks exhausting small pools (like `word()`)
-     * and throwing `OverflowException`.
+     * Resets Faker's `unique()` tracking and reseeds it. The `$faker` Generator is a static
+     * singleton that survives the whole test process, but `unique()` only ever grows its
+     * "already used" set - without a reset between tests, a long run risks exhausting small
+     * pools (like `word()`) and throwing `OverflowException`.
+     *
+     * Seeding from the test name keeps each test's data reproducible between runs, while still
+     * differing between tests - project config (e.g. filesystems) isn't rolled back with the DB,
+     * so reusing the same handles in every test would collide.
+     *
+     * @param string $seedKey
      */
-    public static function resetFaker(): void
+    public static function resetFaker(string $seedKey): void
     {
+        self::faker()->seed(crc32($seedKey));
         self::faker()->unique(true);
+    }
+
+    /**
+     * Removes any temp files/directories created on disk since the last call.
+     */
+    public static function cleanUpTempPaths(): void
+    {
+        foreach (self::$tempPaths as $path) {
+            if (is_dir($path)) {
+                FileHelper::removeDirectory($path);
+            } elseif (file_exists($path)) {
+                unlink($path);
+            }
+        }
+
+        self::$tempPaths = [];
     }
 
     /**

@@ -214,9 +214,10 @@ class FeedImportTest extends TestCase
         $this->feedRows = [];
 
         // The currently-running feed - doesn't need to be persisted, `SequencesRecord.feedId`
-        // isn't foreign-keyed.
+        // isn't foreign-keyed. Uses an ID no saved feed can get, since auto-increment values
+        // aren't rolled back with each test's transaction.
         $currentFeed = $this->makeFeed();
-        $currentFeed->id = 555;
+        $currentFeed->id = ElementFactory::NONEXISTENT_ID_OFFSET + 1;
 
         // The real next feed in the chain, persisted so getFeedById() can resolve it.
         $nextFeed = $this->makeFeed(['name' => 'Next feed']);
@@ -237,7 +238,7 @@ class FeedImportTest extends TestCase
         $this->assertSame($nextFeed->id, $this->newestQueueJob()->feed->id);
     }
 
-    public function testPaginationContinuationResetsContinueOnError(): void
+    public function testPaginationContinuationKeepsContinueOnError(): void
     {
         // `nextPage` is a plain top-level key rather than part of `items`, so it survives
         // primaryElement slicing (which runs after pagination-node lookup) and resolves as a
@@ -265,9 +266,8 @@ class FeedImportTest extends TestCase
 
         $pushedJob = $this->newestQueueJob();
         $this->assertInstanceOf(FeedImport::class, $pushedJob);
-        // Documents current behavior - the pagination continuation job's constructor args don't
-        // include continueOnError, so it silently resets to the property default (true) even
-        // though this run's original job had it set to false.
-        $this->assertTrue($pushedJob->continueOnError);
+        // The pagination continuation job must carry over continueOnError, rather than silently
+        // resetting to the property default (true).
+        $this->assertFalse($pushedJob->continueOnError);
     }
 }

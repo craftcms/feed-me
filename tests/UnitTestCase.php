@@ -23,15 +23,20 @@ use PHPUnit\Framework\TestCase as BaseTestCase;
  */
 class UnitTestCase extends BaseTestCase
 {
-    private static bool $suiteBooted = false;
+    /**
+     * The app this class booted - see {@see TestCase::$bootedApp} for why this isn't a bool.
+     */
+    private static ?Application $bootedApp = null;
 
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
 
-        if (self::$suiteBooted) {
+        if (self::$bootedApp !== null && Craft::$app === self::$bootedApp) {
             return;
         }
+
+        TestCase::resetAppState();
 
         /** @var Application $app */
         $app = Craft::createObject(TestCase::createTestCraftObjectConfig());
@@ -45,13 +50,13 @@ class UnitTestCase extends BaseTestCase
             Craft::$app->getPlugins()->createPlugin('feed-me');
         }
 
-        self::$suiteBooted = true;
+        self::$bootedApp = Craft::$app;
     }
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        ElementFactory::resetFaker();
+        ElementFactory::resetFaker(static::class . '::' . $this->nameWithDataSet());
     }
 }

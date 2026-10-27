@@ -197,6 +197,7 @@ class FeedImport extends BaseBatchedJob implements RetryableJobInterface
                     'feed' => $this->feed,
                     'limit' => $this->limit,
                     'offset' => $this->offset,
+                    'continueOnError' => $this->continueOnError,
                     'processedElementIds' => $this->processedElementIds,
                     'startTime' => $this->startTime,
                 ]));
