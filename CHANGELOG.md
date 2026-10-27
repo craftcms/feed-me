@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Added support for importing into Mapbox Address fields. ([#1774](https://github.com/craftcms/feed-me/pull/1774))
 - Added the ability to match SolSpace Calendar Events by custom fields. ([#1772](https://github.com/craftcms/feed-me/pull/1772))
 - Fixed an “Integrity Constraint Violation” database error that could occur when importing new elements with nested content. ([#1773](https://github.com/craftcms/feed-me/issues/1773)) 
 
