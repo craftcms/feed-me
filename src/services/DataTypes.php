@@ -17,13 +17,15 @@ use craft\feedme\datatypes\Rss;
 use craft\feedme\datatypes\Xml;
 use craft\feedme\events\FeedDataEvent;
 use craft\feedme\events\RegisterFeedMeDataTypesEvent;
+use craft\feedme\helpers\BaseHelper;
 use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
 use craft\helpers\Component as ComponentHelper;
+use CraftCms\UrlValidator\GuzzleMiddleware;
 use CraftCms\UrlValidator\UrlValidationException;
-use CraftCms\UrlValidator\UrlValidator;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\RequestOptions;
 use yii\base\Event;
 use yii\base\InvalidConfigException;
 
@@ -172,7 +174,7 @@ class DataTypes extends Component
         $url = Craft::getAlias($url);
 
         // Does this look like a local filesystem path?
-        if (@file_exists($url)) {
+        if (BaseHelper::isLocalPath($url) && @file_exists($url)) {
             error_clear_last();
 
             $filepath = realpath($url);
@@ -216,12 +218,29 @@ class DataTypes extends Component
             ]);
         }
 
-        $extraOptions = $this->validateFeedUrl($url, $feedId);
+        // validate
+        try {
+            $curlOptResolve = BaseHelper::urlValidator()->curlResolve($url);
+        } catch (UrlValidationException $e) {
+            // the error will be logged from the datatype that called this method, so let's not duplicate that here
+            return $this->_triggerEventAfterFetchFeed([
+                'url' => $url,
+                'feedId' => $feedId,
+                'response' => ['success' => false, 'error' => $e->getMessage()],
+            ]);
+        }
 
         try {
             $client = Plugin::$plugin->service->createGuzzleClient($feedId);
             $options = Plugin::$plugin->service->getRequestOptions($feedId);
-            $options = array_merge($options, $extraOptions);
+            // Pin the hostname/port to the IPs we just validated.
+            $options['curl'][CURLOPT_RESOLVE] = $curlOptResolve;
+
+            // validate and pin every redirect target too
+            if (!GuzzleMiddleware::attach($client, BaseHelper::urlValidator())) {
+                // the client uses a custom handler, so only the pinned URL can be validated; don't follow redirects
+                $options[RequestOptions::ALLOW_REDIRECTS] = false;
+            }
 
             $resp = $client->request('GET', $url, $options);
             $data = (string)$resp->getBody();
@@ -507,42 +526,6 @@ class DataTypes extends Component
         Event::trigger(static::class, self::EVENT_AFTER_FETCH_FEED, $event);
 
         return $event->response;
-    }
-
-    private function validateFeedUrl(string $url, ?int $feedId = null): array
-    {
-        // if we got here, then it doesn't look like a local filesystem path
-        // validate
-        $validator = new UrlValidator(options: [
-            'ipv4FilterFlags' => FILTER_FLAG_NO_RES_RANGE,
-            'ipv6FilterFlags' => FILTER_FLAG_NO_RES_RANGE,
-        ]);
-        try {
-            // Returns the validated IP addresses the host resolves to.
-            $ips = $validator->validate($url);
-
-            $parts = parse_url($url);
-            $host = $parts['host'];
-            $port = $parts['port'] ?? ($parts['scheme'] === 'https' ? 443 : 80);
-
-            $extraOptions = [
-                'curl' => [
-                    // Pin the hostname/port to the IPs we just validated.
-                    CURLOPT_RESOLVE => ["$host:$port:" . implode(',', $ips)],
-                ],
-            ];
-        } catch (UrlValidationException $e) {
-            // The URL, or an IP it resolves to, is disallowed.
-            $response = ['success' => false, 'error' => $e->getMessage()];
-
-            return $this->_triggerEventAfterFetchFeed([
-                'url' => $url,
-                'feedId' => $feedId,
-                'response' => $response,
-            ]);
-        }
-
-        return $extraOptions;
     }
 
     private function isFilepathAllowed(string $filepath): bool

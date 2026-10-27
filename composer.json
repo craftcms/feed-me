@@ -36,11 +36,12 @@
     "nesbot/carbon": "^2.10|^3.0.0",
     "league/csv": "^9.0",
     "seld/jsonlint": "^1.7",
-    "craftcms/url-validator": "^1.0"
+    "craftcms/url-validator": "^1.2"
   },
   "require-dev": {
     "craftcms/ecs": "dev-main",
     "craftcms/phpstan": "dev-main",
+    "phpstan/phpstan": "^2.1",
     "codeception/codeception": "^5.0.11",
     "codeception/module-asserts": "^3.0.0"
   },
