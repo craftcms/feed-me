@@ -1,6 +1,6 @@
 # Release Notes for Feed Me
 
-## Unreleased
+## 6.17.0 - 2016-10-27
 
 - Added support for importing into Mapbox Address fields. ([#1774](https://github.com/craftcms/feed-me/pull/1774))
 - Added the ability to match SolSpace Calendar Events by custom fields. ([#1772](https://github.com/craftcms/feed-me/pull/1772))
