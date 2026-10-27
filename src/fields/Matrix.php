@@ -95,9 +95,16 @@ class Matrix extends Field implements FieldInterface
                 // Swap out the node-path stored in the field-mapping info, because
                 // it'll be generic MatrixBlock/Images not MatrixBlock/0/Images/0 like we need
                 $subFieldInfo['node'] = $nodePath;
+                $subFeedData = $this->feedData;
+
+                // Element sub-fields (e.g. an asset's caption) are looked up by the block's index, so give
+                // the field only this block's data, re-indexed to match
+                if (Hash::get($subFieldInfo, 'fields') || Hash::get($subFieldInfo, 'nativeFields')) {
+                    [$subFeedData, $subFieldInfo['node']] = $this->_getBlockFeedData($nodePath);
+                }
 
                 // Parse each field via their own fieldtype service
-                $parsedValue = $this->_parseSubField($this->feedData, $subFieldHandle, $subFieldInfo, $blockHandle);
+                $parsedValue = $this->_parseSubField($subFeedData, $subFieldHandle, $subFieldInfo, $blockHandle);
 
                 // Finish up with the content, also sort out cases where there's array content
                 if (isset($fieldData[$key]) && is_array($fieldData[$key])) {
@@ -256,6 +263,37 @@ class Matrix extends Field implements FieldInterface
 
     // Private Methods
     // =========================================================================
+
+    /**
+     * Returns the feed data for the block a node path belongs to, with the block re-indexed as the first item,
+     * along with the node path re-indexed to match.
+     *
+     * Element fields resolve their sub-field values (e.g. an asset's caption) by the first index in the node path,
+     * e.g. 3 for `MatrixBlock/3/Images/0/url`, but the sub-field values are fetched from every block that has
+     * them, so the index only lines up when every block has the same type. Limiting the data to the one block
+     * keeps them in step.
+     *
+     * @param string $nodePath
+     * @return array
+     */
+    private function _getBlockFeedData(string $nodePath): array
+    {
+        if (!preg_match('/^(.*?\/)(\d+)\//', $nodePath, $matches)) {
+            return [$this->feedData, $nodePath];
+        }
+
+        $blockPrefix = $matches[1] . $matches[2] . '/';
+        $newPrefix = $matches[1] . '0/';
+        $blockData = [];
+
+        foreach ($this->feedData as $path => $value) {
+            if (str_starts_with($path, $blockPrefix)) {
+                $blockData[$newPrefix . substr($path, strlen($blockPrefix))] = $value;
+            }
+        }
+
+        return [$blockData, $newPrefix . substr($nodePath, strlen($blockPrefix))];
+    }
 
     /**
      * Get block's key
