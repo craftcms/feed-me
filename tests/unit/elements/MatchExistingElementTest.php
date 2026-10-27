@@ -1,9 +1,17 @@
 <?php
 
+namespace craft\feedme\tests\Unit\Elements;
+
 use Carbon\Carbon;
 use craft\base\ElementInterface as CraftElementInterface;
 use craft\feedme\base\Element;
+use craft\feedme\tests\UnitTestCase;
 use craft\fields\data\ColorData;
+use DateTime;
+use DateTimeImmutable;
+use Exception;
+use LogicException;
+use stdClass;
 
 /**
  * Covers the value normalization in Element::matchExistingElement().
@@ -13,10 +21,8 @@ use craft\fields\data\ColorData;
  * give DateTime or Carbon instances. Those all need to survive matching. Arrays
  * and other objects can't be matched against and should throw.
  */
-class MatchExistingElementTest extends \Codeception\Test\Unit
+class MatchExistingElementTest extends UnitTestCase
 {
-    protected $tester;
-
     /**
      * Runs a value through matchExistingElement() and returns the criteria it built.
      */
@@ -77,7 +83,7 @@ class MatchExistingElementTest extends \Codeception\Test\Unit
         return $element->criteria;
     }
 
-    public function testMatchesOnNumbers()
+    public function testMatchesOnNumbers(): void
     {
         // A Number field used as an external ID — the common case.
         $this->assertEquals(['externalId' => '999624'], $this->criteriaFor(999624));
@@ -85,13 +91,13 @@ class MatchExistingElementTest extends \Codeception\Test\Unit
         $this->assertEquals(['externalId' => '12.5'], $this->criteriaFor(12.5));
     }
 
-    public function testMatchesOnBooleans()
+    public function testMatchesOnBooleans(): void
     {
         $this->assertEquals(['externalId' => '1'], $this->criteriaFor(true));
         $this->assertEquals(['externalId' => '0'], $this->criteriaFor(false));
     }
 
-    public function testMatchesOnDates()
+    public function testMatchesOnDates(): void
     {
         $expected = ['externalId' => '2018-01-01 10:00:00'];
 
@@ -100,25 +106,25 @@ class MatchExistingElementTest extends \Codeception\Test\Unit
         $this->assertEquals($expected, $this->criteriaFor(new Carbon('2018-01-01 10:00:00')));
     }
 
-    public function testMatchesOnStringables()
+    public function testMatchesOnStringables(): void
     {
         $this->assertEquals(['externalId' => '#ff0000'], $this->criteriaFor(new ColorData('#ff0000')));
     }
 
-    public function testMatchesOnStringsAndStillEscapes()
+    public function testMatchesOnStringsAndStillEscapes(): void
     {
         $this->assertEquals(['externalId' => 'abc'], $this->criteriaFor('abc'));
         $this->assertEquals(['externalId' => 'a\,b\*c'], $this->criteriaFor('a,b*c'));
         $this->assertEquals(['externalId' => '\>=5'], $this->criteriaFor('>=5'));
     }
 
-    public function testSkipsEmptyValues()
+    public function testSkipsEmptyValues(): void
     {
         $this->assertEquals([], $this->criteriaFor(null));
         $this->assertEquals([], $this->criteriaFor(''));
     }
 
-    public function testThrowsOnArrays()
+    public function testThrowsOnArrays(): void
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Cannot match on a value of type array for `externalId`.');
@@ -127,7 +133,7 @@ class MatchExistingElementTest extends \Codeception\Test\Unit
         $this->criteriaFor(['type' => 'url', 'value' => 'https://craftcms.com']);
     }
 
-    public function testThrowsOnNonStringableObjects()
+    public function testThrowsOnNonStringableObjects(): void
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Cannot match on a value of type stdClass for `externalId`.');
