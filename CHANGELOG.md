@@ -1,5 +1,11 @@
 # Release Notes for Feed Me
 
+## 6.17.0 - 2016-10-27
+
+- Added support for importing into Mapbox Address fields. ([#1774](https://github.com/craftcms/feed-me/pull/1774))
+- Added the ability to match SolSpace Calendar Events by custom fields. ([#1772](https://github.com/craftcms/feed-me/pull/1772))
+- Fixed an “Integrity Constraint Violation” database error that could occur when importing new elements with nested content. ([#1773](https://github.com/craftcms/feed-me/issues/1773)) 
+
 ## 6.16.2 2026-10-26
 
 - Fixed a bug where Link field mappings saved before Feed Me 6.15.0 were ignored. ([#1766](https://github.com/craftcms/feed-me/issues/1766))
@@ -24,12 +30,12 @@
 
 ## 6.15.1 - 2026-08-28
 
-- Fixed a bug where importing into an assets field that doesn’t have "All volumes" selected and doesn’t restrict uploads to a single location would throw an error. ([#1764](https://github.com/craftcms/feed-me/pull/1764))
+- Fixed a bug where importing into an assets field that doesn’t have “All volumes” selected and doesn’t restrict uploads to a single location would throw an error. ([#1764](https://github.com/craftcms/feed-me/pull/1764))
 
 ## 6.15.0 - 2026-08-25
 
 - Added support for importing into Craft’s native Link field. ([#1757](https://github.com/craftcms/feed-me/pull/1757))
-- Removed the Feed Me specific "Clear pending job queue" utility. ([#1759](https://github.com/craftcms/feed-me/pull/1759))
+- Removed the Feed Me specific “Clear pending job queue” utility. ([#1759](https://github.com/craftcms/feed-me/pull/1759))
 - Fixed a bug where importing into an Asset field by ID only searched the default upload volume, not all volumes the field has access to. ([#1755](https://github.com/craftcms/feed-me/pull/1755))
 - Fixed a bug where entries created via the Entries field mapping might not get a Post Date set under specific circumstances. ([#1755](https://github.com/craftcms/feed-me/pull/1755))
 - Fixed a bug where a “No stock value was present” error was logged for Commerce Product variants even when the Stock field was set to “Don’t import”. ([#1760](https://github.com/craftcms/feed-me/pull/1760))
