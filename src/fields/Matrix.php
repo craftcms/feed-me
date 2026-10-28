@@ -159,6 +159,11 @@ class Matrix extends Field implements FieldInterface
             $subFieldInfo = Hash::get($complexInfo, 'info');
             $nodePaths = Hash::get($complexInfo, 'data');
 
+            // A nested Matrix finds its blocks by the first index in each node path, so drop this block's index
+            if (Hash::get($subFieldInfo, 'field') === MatrixField::class) {
+                $nodePaths = $this->_removeBlockIndex($nodePaths);
+            }
+
             $parsedValue = $this->_parseSubField($nodePaths, $subFieldHandle, $subFieldInfo);
 
             if ($parsedValue !== null) {
@@ -283,6 +288,46 @@ class Matrix extends Field implements FieldInterface
     }
 
     /**
+     * Returns every node mapped within a nested Matrix field's blocks, including their attributes and the
+     * nodes of their own complex fields.
+     *
+     * @param array $subFieldInfo
+     * @return array
+     */
+    private function _getNestedMatrixNodes(array $subFieldInfo): array
+    {
+        $nodes = [];
+
+        foreach (Hash::flatten(Hash::get($subFieldInfo, 'blocks', [])) as $path => $value) {
+            if (str_ends_with($path, '.node')) {
+                $nodes[] = $value;
+            }
+        }
+
+        return $nodes;
+    }
+
+    /**
+     * Removes the block index from each node path, so the nested Matrix's own block index is the first one,
+     * e.g. `MatrixBlock/3/Nested/1/title` becomes `MatrixBlock/Nested/1/title`.
+     *
+     * The block index is the first numeric segment after the first segment, as used by `_getBlockKey()`.
+     *
+     * @param array $nodePaths
+     * @return array
+     */
+    private function _removeBlockIndex(array $nodePaths): array
+    {
+        $result = [];
+
+        foreach ($nodePaths as $nodePath => $value) {
+            $result[preg_replace('/^(.+?)\/\d+(\/|$)/', '$1$2', $nodePath, 1)] = $value;
+        }
+
+        return $result;
+    }
+
+    /**
      * @param $nodePath
      * @param $blocks
      * @return array|null|string
@@ -299,6 +344,11 @@ class Matrix extends Field implements FieldInterface
                 $node = Hash::get($subFieldInfo, 'node');
 
                 $nestedFieldNodes = Hash::extract($subFieldInfo, 'fields.{*}.node');
+
+                // A nested Matrix has its nodes mapped on its own blocks' fields and attributes
+                if (Hash::get($subFieldInfo, 'blocks')) {
+                    $nestedFieldNodes = $this->_getNestedMatrixNodes($subFieldInfo);
+                }
 
                 if ($nestedFieldNodes) {
                     foreach ($nestedFieldNodes as $nestedFieldNode) {
@@ -424,6 +474,12 @@ class Matrix extends Field implements FieldInterface
         }
 
         $class = Plugin::$plugin->fields->getRegisteredField($subFieldClassHandle);
+
+        // A nested Matrix would otherwise share this instance, and overwrite its properties mid-parse
+        if ($class instanceof self) {
+            $class = clone $class;
+        }
+
         $class->feedData = $feedData;
         $class->fieldHandle = $subFieldHandle;
         $class->fieldInfo = $subFieldInfo;
