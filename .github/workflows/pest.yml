@@ -1,0 +1,135 @@
+name: Pest
+on:
+  workflow_call:
+    secrets:
+      packagist_username:
+        required: false
+      packagist_token:
+        required: false
+    inputs:
+      craft_version:
+        default: '5'
+        type: string
+      php_versions:
+        required: true
+        type: string
+      working_directory:
+        default: '.'
+        type: string
+jobs:
+  # Run tests in the matrix
+  tests:
+    runs-on: ${{ matrix.operating-system }}
+    defaults:
+      run:
+        working-directory: ${{ inputs.working_directory }}
+    strategy:
+      matrix:
+        operating-system: ["ubuntu-latest"]
+        php-versions: ${{ fromJSON(inputs.php_versions) }}
+        db: ["mysql", "pgsql"]
+    name: PHP ${{ matrix.php-versions }} on ${{ matrix.db }}
+    env:
+      PHP_EXTENSIONS: ctype,curl,dom,iconv,imagick,intl,json,mbstring,openssl,pcre,pdo,reflection,spl,zip
+    services:
+      # Install Postgres
+      pgsql:
+        image: ${{ (matrix.db == 'pgsql') && 'postgres:latest' || '' }}
+        env:
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: mysecretpassword
+          POSTGRES_DB: craft_test
+        ports:
+          - 5432:5432
+        # Set health checks to wait until Postgres has started
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 3
+      # Install MySQL
+      mysql:
+        image: ${{ (matrix.db == 'mysql') && 'mysql:8.0' || '' }}
+        env:
+          MYSQL_ROOT_PASSWORD: mysecretpassword
+          MYSQL_DATABASE: craft_test
+          MYSQL_AUTHENTICATION_PLUGIN: mysql_native_password
+        # Set health checks to wait until mysql has started
+        options: --health-cmd="mysqladmin ping" --health-interval 10s --health-timeout 5s --health-retries 5
+        ports:
+          - 3306:3306
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set default test command environment variable
+        run: |
+          echo "TEST_COMMAND=./vendor/bin/pest tests" >> $GITHUB_ENV
+#      - name: Set test command for the code coverage environment
+#        run: |
+#          echo "TEST_COMMAND=./vendor/bin/pest tests" >> $GITHUB_ENV
+#        if: ${{ (matrix.php-versions == '8.1' || matrix.php-versions == '8.2') && matrix.db == 'mysql' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop') }}
+      - name: Setup cache environment
+        id: extcache
+        uses: shivammathur/cache-extensions@v1
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: ${{ env.PHP_EXTENSIONS }}
+          key: extension-cache-v4 # change to clear the extension cache.
+      - name: Cache extensions
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.extcache.outputs.dir }}
+          key: ${{ steps.extcache.outputs.key }}
+          restore-keys: ${{ steps.extcache.outputs.key }}
+      - name: Setup PHP
+        id: setup-php
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: ${{ env.PHP_EXTENSIONS }}
+          # error_reporting = E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED
+          ini-values: post_max_size=256M, max_execution_time=180, memory_limit=512M, error_reporting=6143
+          ini-file: development
+          tools: composer:v2
+        env:
+          COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMPOSER_AUTH_JSON: |
+            {
+              "http-basic": {
+                "repo.packagist.com": {
+                  "username": "${{ secrets.packagist_username }}",
+                  "password": "${{ secrets.packagist_token }}"
+                }
+              }
+            }
+      - name: Print PHP version
+        run: echo ${{ steps.setup-php.outputs.php-version }}
+      - name: Setup problem matchers for PHP
+        run: echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+      - name: Copy tests .env
+        run: cp tests/_craft/.env.example.${{ matrix.db }} tests/_craft/.env
+      - name: Update .env creds
+        run: |
+          sed -i \
+            -e 's/^DB_DSN=.*/DB_DSN=${{ matrix.db }}:host=127.0.0.1;port=${{ matrix.db == 'mysql' && '3306' || '5432' }};dbname=craft_test/' \
+            -e 's/^DB_USER=.*/DB_USER=root/' \
+            -e 's/^DB_PASSWORD=.*/DB_PASSWORD=mysecretpassword/' \
+            tests/_craft/.env
+      - name: Cache Composer dependencies
+        id: composer-cache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+      - uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+      - name: Set version
+        run: composer config version "${{ inputs.craft_version }}.x-dev"
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --no-ansi --no-progress
+      - name: MySQL import timezones
+        if: ${{ matrix.db == 'mysql' }}
+        run: |
+          mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql --host=127.0.0.1 --port=3306 --user=root --password=mysecretpassword mysql
+      - name: Run tests
+        run: ${{ env.TEST_COMMAND }}
+#      # Only upload code coverage in specific scenarios
+#      - name: Upload coverage to Codecov
+#        if: ${{ (matrix.php-versions == '8.1' || matrix.php-versions == '8.2') && matrix.db == 'mysql' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop') }}}}
+#        uses: codecov/codecov-action@v2
