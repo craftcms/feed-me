@@ -1,0 +1,35 @@
+<?php
+
+namespace craft\feedme\tests\Feature\Base;
+
+use craft\elements\Entry as EntryElement;
+use craft\feedme\elements\Entry;
+use craft\feedme\tests\Helpers\ElementFactory;
+
+it('matches an existing element on a string unique identifier value', function() {
+    // Companion to the #1750 regression tests in Unit/Elements/MatchExistingElementTest.php -
+    // confirms the fix (throwing only for unmatchable values) didn't also break matching on
+    // ordinary string unique-identifier values, like `title`.
+    $entry = ElementFactory::createEntry();
+
+    $service = new Entry();
+    $service->element = new EntryElement();
+
+    $settings = [
+        'fieldUnique' => ['title' => true],
+        'singleton' => false,
+        'elementGroup' => [
+            EntryElement::class => [
+                'section' => $entry->sectionId,
+                'entryType' => $entry->typeId,
+            ],
+        ],
+    ];
+
+    $data = ['title' => $entry->title];
+
+    $matched = $service->matchExistingElement($data, $settings);
+
+    expect($matched)->not->toBeNull();
+    expect($matched->id)->toBe($entry->id);
+});

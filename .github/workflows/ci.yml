@@ -23,3 +23,11 @@ jobs:
     secrets:
       token: ${{ secrets.GITHUB_TOKEN }}
       slack_webhook_url: ${{ secrets.SLACK_PLUGIN_WEBHOOK_URL }}
+  pest:
+    name: Pest
+    needs: ci
+    uses: ./.github/workflows/pest.yml
+    with:
+      craft_version: '5'
+      php_versions: '["8.2", "8.3", "8.4"]'
+    secrets: inherit
