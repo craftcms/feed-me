@@ -25,9 +25,9 @@ jobs:
         working-directory: ${{ inputs.working_directory }}
     strategy:
       matrix:
-        operating-system: ["ubuntu-latest"]
+        operating-system: ['ubuntu-latest']
         php-versions: ${{ fromJSON(inputs.php_versions) }}
-        db: ["mysql", "pgsql"]
+        db: ['mysql', 'pgsql']
     name: PHP ${{ matrix.php-versions }} on ${{ matrix.db }}
     env:
       PHP_EXTENSIONS: ctype,curl,dom,iconv,imagick,intl,json,mbstring,openssl,pcre,pdo,reflection,spl,zip
@@ -60,10 +60,10 @@ jobs:
       - name: Set default test command environment variable
         run: |
           echo "TEST_COMMAND=./vendor/bin/pest tests" >> $GITHUB_ENV
-#      - name: Set test command for the code coverage environment
-#        run: |
-#          echo "TEST_COMMAND=./vendor/bin/pest tests" >> $GITHUB_ENV
-#        if: ${{ (matrix.php-versions == '8.1' || matrix.php-versions == '8.2') && matrix.db == 'mysql' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop') }}
+      #      - name: Set test command for the code coverage environment
+      #        run: |
+      #          echo "TEST_COMMAND=./vendor/bin/pest tests" >> $GITHUB_ENV
+      #        if: ${{ (matrix.php-versions == '8.1' || matrix.php-versions == '8.2') && matrix.db == 'mysql' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop') }}
       - name: Setup cache environment
         id: extcache
         uses: shivammathur/cache-extensions@v1
