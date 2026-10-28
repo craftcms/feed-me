@@ -168,3 +168,68 @@ it('skips the save when content is unchanged', function() {
 
     expect($saveEventFired)->toBeFalse();
 });
+
+it('does not apply an incoming id to a new element', function() {
+    // https://github.com/craftcms/feed-me/issues/1773 - a mapped `id` is only used to match
+    // existing elements; it used to be set on the element itself, so saving a new element
+    // tried to update a non-existent row.
+    $feed = makeProcessFeed([
+        'fieldMapping' => [
+            'id' => ['attribute' => true, 'node' => 'id', 'default' => ''],
+            'slug' => ['attribute' => true, 'node' => 'slug', 'default' => ''],
+            'title' => ['attribute' => true, 'node' => 'title', 'default' => ''],
+        ],
+        'duplicateHandle' => ['add'],
+    ]);
+
+    runFeed($feed, [
+        ['id' => 999999, 'slug' => 'fixed-slug', 'title' => 'Original Title'],
+    ]);
+
+    $entry = EntryElement::find()->status(null)->slug('fixed-slug')->one();
+    expect($entry)->not->toBeNull();
+    expect($entry->id)->not->toEqual(999999);
+});
+
+it('does not apply an incoming id to a matched element', function() {
+    // https://github.com/craftcms/feed-me/issues/1773
+    $existing = ElementFactory::createEntry(['sectionId' => $this->section->id, 'typeId' => $this->entryType->id]);
+
+    $feed = makeProcessFeed([
+        'fieldMapping' => [
+            'id' => ['attribute' => true, 'node' => 'id', 'default' => ''],
+            'slug' => ['attribute' => true, 'node' => 'slug', 'default' => ''],
+            'title' => ['attribute' => true, 'node' => 'title', 'default' => ''],
+        ],
+        'duplicateHandle' => ['update'],
+    ]);
+
+    runFeed($feed, [
+        ['id' => 999999, 'slug' => $existing->slug, 'title' => 'Updated Title'],
+    ]);
+
+    $updated = EntryElement::find()->status(null)->id($existing->id)->one();
+    expect($updated->title)->toBe('Updated Title');
+    expect(EntryElement::find()->status(null)->sectionId($this->section->id)->count())->toEqual(1);
+});
+
+it('still matches existing elements by id', function() {
+    $existing = ElementFactory::createEntry(['sectionId' => $this->section->id, 'typeId' => $this->entryType->id]);
+
+    $feed = makeProcessFeed([
+        'fieldMapping' => [
+            'id' => ['attribute' => true, 'node' => 'id', 'default' => ''],
+            'title' => ['attribute' => true, 'node' => 'title', 'default' => ''],
+        ],
+        'fieldUnique' => ['id' => 1],
+        'duplicateHandle' => ['update'],
+    ]);
+
+    runFeed($feed, [
+        ['id' => $existing->id, 'title' => 'Updated Title'],
+    ]);
+
+    $updated = EntryElement::find()->status(null)->id($existing->id)->one();
+    expect($updated->title)->toBe('Updated Title');
+    expect(EntryElement::find()->status(null)->sectionId($this->section->id)->count())->toEqual(1);
+});
