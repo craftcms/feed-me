@@ -95,9 +95,16 @@ class Matrix extends Field implements FieldInterface
                 // Swap out the node-path stored in the field-mapping info, because
                 // it'll be generic MatrixBlock/Images not MatrixBlock/0/Images/0 like we need
                 $subFieldInfo['node'] = $nodePath;
+                $subFeedData = $this->feedData;
+
+                // Element sub-fields (e.g. an asset's caption) are looked up by the block's index, so give
+                // the field only this block's data, re-indexed to match
+                if (Hash::get($subFieldInfo, 'fields') || Hash::get($subFieldInfo, 'nativeFields')) {
+                    [$subFeedData, $subFieldInfo['node']] = $this->_getBlockFeedData($nodePath);
+                }
 
                 // Parse each field via their own fieldtype service
-                $parsedValue = $this->_parseSubField($this->feedData, $subFieldHandle, $subFieldInfo, $blockHandle);
+                $parsedValue = $this->_parseSubField($subFeedData, $subFieldHandle, $subFieldInfo, $blockHandle);
 
                 // Finish up with the content, also sort out cases where there's array content
                 if (isset($fieldData[$key]) && is_array($fieldData[$key])) {
@@ -256,6 +263,57 @@ class Matrix extends Field implements FieldInterface
 
     // Private Methods
     // =========================================================================
+
+    /**
+     * Returns the feed data for the block a node path belongs to, with the block re-indexed as the first item,
+     * along with the node path re-indexed to match.
+     *
+     * Element fields resolve their sub-field values (e.g. an asset's caption) by the first index in the node path,
+     * e.g. 3 for `MatrixBlock/3/Images/0/url`, but the sub-field values are fetched from every block that has
+     * them, so the index only lines up when every block has the same type. Limiting the data to the one block
+     * keeps them in step.
+     *
+     * Blocks are found the same way as `_getBlockKey()`, so data without an index (e.g. a sub-field mapped
+     * alongside the element field, rather than within it) belongs to the first block.
+     *
+     * @param string $nodePath
+     * @return array
+     */
+    private function _getBlockFeedData(string $nodePath): array
+    {
+        $blockIndex = $this->_getBlockIndex($nodePath);
+        $blockData = [];
+
+        foreach ($this->feedData as $path => $value) {
+            if ($this->_getBlockIndex($path) === $blockIndex) {
+                $blockData[$this->_resetBlockIndex($path)] = $value;
+            }
+        }
+
+        return [$blockData, $this->_resetBlockIndex($nodePath)];
+    }
+
+    /**
+     * Returns the block index of a node path: its first numeric segment after the first, or 0 if there isn't one.
+     *
+     * @param string $nodePath
+     * @return int
+     */
+    private function _getBlockIndex(string $nodePath): int
+    {
+        return preg_match('/^.+?\/(\d+)(\/|$)/', $nodePath, $matches) ? (int)$matches[1] : 0;
+    }
+
+    /**
+     * Sets the block index of a node path to 0.
+     *
+     * @param string $nodePath
+     * @return string
+     */
+    private function _resetBlockIndex(string $nodePath): string
+    {
+        return preg_replace('/^(.+?\/)\d+(\/|$)/', '${1}0$2', $nodePath, 1);
+    }
 
     /**
      * Get block's key
