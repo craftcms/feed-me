@@ -235,7 +235,7 @@ class Matrix extends Field implements FieldInterface
             // if all the fields are empty and setEmptyValues is off and there's no title or slug being set, ignore the block
             if (
                 !empty(array_filter(
-                    $blockData['fields'],
+                    $blockData['fields'] ?? [],
                     fn($value) => (
                         (is_string($value) && !empty($value)) ||
                         (is_array($value) && !empty(array_filter($value))) ||
