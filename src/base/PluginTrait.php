@@ -4,6 +4,7 @@ namespace craft\feedme\base;
 
 use Craft;
 use craft\feedme\Plugin;
+use craft\feedme\services\FeedConfigStorage;
 use craft\feedme\services\DataTypes;
 use craft\feedme\services\Elements;
 use craft\feedme\services\Feeds;
@@ -77,6 +78,15 @@ trait PluginTrait
 
     // Public Methods
     // =========================================================================
+
+    /**
+     * @return FeedConfigStorage
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function getFeedConfigStorage(): FeedConfigStorage
+    {
+        return $this->get('feedConfigStorage');
+    }
 
     /**
      * @return DataTypes

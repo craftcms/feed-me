@@ -280,7 +280,7 @@ class Entries extends Field implements FieldInterface
         $element->typeId = $typeId;
 
         $siteId = Hash::get($this->feed, 'siteId');
-        $section = Craft::$app->getSections()->getSectionById($element->sectionId);
+        $section = $element->getSection();
 
         if ($siteId) {
             $element->siteId = $siteId;

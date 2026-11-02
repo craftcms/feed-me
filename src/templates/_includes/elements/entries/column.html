@@ -1,9 +1,9 @@
-{% set sectionId = feed.elementGroup[elementType].section %}
-{% set entryTypeId = feed.elementGroup[elementType].entryType %}
+{% set sectionUid = feed.elementGroup[elementType].section %}
+{% set entryTypeUid = feed.elementGroup[elementType].entryType %}
 
-{% if sectionId and entryTypeId %}
-    {% set section = craft.app.sections.getSectionById(sectionId) %}
-    {% set entryType = craft.app.sections.getEntryTypeById(entryTypeId) %}
+{% if sectionUid and entryTypeUid %}
+    {% set section = craft.app.sections.getSectionByUid(sectionUid) %}
+    {% set entryType = craft.app.sections.getEntryTypeByUid(entryTypeUid) %}
 
     {% if section and entryType %}
         <span class="element-group">{{ section.name }}</span>
