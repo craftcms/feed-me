@@ -72,6 +72,18 @@
             { label: 'Disabled', value: '0' },
         ],
     },
+}, {
+    name: 'Draft',
+    handle: 'draft',
+    instructions: 'Save as an unpublished draft. Accepts boolean-like values, or a status of “draft”. When mapped, existing drafts are matched and updated, then published once this is no longer true. Published entries are never turned into drafts.'|t('feed-me'),
+    default: {
+        type: 'select',
+        options: [
+            { label: 'Don’t import'|t('feed-me'), value: '' },
+            { label: 'Yes'|t('feed-me'), value: '1' },
+            { label: 'No'|t('feed-me'), value: '0' },
+        ],
+    },
 }]) %}
 
 {#{% if craft.app.isMultiSite() %}

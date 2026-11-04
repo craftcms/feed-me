@@ -10,6 +10,7 @@ use craft\elements\Entry as EntryElement;
 use craft\elements\User as UserElement;
 use craft\errors\ElementNotFoundException;
 use craft\feedme\base\Element;
+use craft\feedme\helpers\BaseHelper;
 use craft\feedme\helpers\DataHelper;
 use craft\feedme\models\ElementGroup;
 use craft\feedme\Plugin;
@@ -43,6 +44,11 @@ class Entry extends Element
      * @var string
      */
     public static string $class = EntryElement::class;
+
+    /**
+     * @var bool Whether the feed item being processed is a draft, from the mapped Draft attribute
+     */
+    private bool $_isDraft = false;
 
     // Templates
     // =========================================================================
@@ -96,6 +102,23 @@ class Entry extends Element
     /**
      * @inheritDoc
      */
+    public function parseAttribute($feedData, $fieldHandle, $fieldInfo): mixed
+    {
+        // Unpublished drafts may not have a title yet, so leave it unset rather than failing to parse it
+        if ($fieldHandle === 'title' && $this->_isDraftItem($feedData)) {
+            $value = $this->fetchSimpleValue($feedData, $fieldInfo);
+
+            if ($value === null || $value === '') {
+                return null;
+            }
+        }
+
+        return parent::parseAttribute($feedData, $fieldHandle, $fieldInfo);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getQuery($settings, array $params = []): mixed
     {
         $targetSiteId = Hash::get($settings, 'siteId') ?: Craft::$app->getSites()->getPrimarySite()->id;
@@ -107,6 +130,13 @@ class Entry extends Element
             ->status(null)
             ->sectionId($settings['elementGroup'][EntryElement::class]['section'])
             ->typeId($settings['elementGroup'][EntryElement::class]['entryType']);
+
+        // Match (and disable) unpublished drafts alongside entries when drafts are imported
+        if ($this->_importsDrafts($settings)) {
+            $query->drafts(null)
+                ->canonicalsOnly()
+                ->savedDraftsOnly();
+        }
 
         if (isset($section) && $section->propagationMethod === \craft\enums\PropagationMethod::Custom) {
             $query->site('*')
@@ -125,6 +155,7 @@ class Entry extends Element
      */
     public function setModel($settings): ElementInterface
     {
+        $this->_isDraft = false;
         $this->element = new EntryElement();
         $this->element->sectionId = $settings['elementGroup'][EntryElement::class]['section'];
         $this->element->typeId = $settings['elementGroup'][EntryElement::class]['entryType'];
@@ -206,8 +237,65 @@ class Entry extends Element
         return true;
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function save($element, $settings): bool
+    {
+        if (!$this->_importsDrafts($settings)) {
+            return parent::save($element, $settings);
+        }
+
+        // New drafts are saved as unpublished drafts
+        if ($this->_isDraft && !$element->id) {
+            if (!$this->beforeSave($element, $settings)) {
+                return true;
+            }
+
+            return Craft::$app->getDrafts()->saveElementAsDraft($this->element, $this->element->getAuthorId());
+        }
+
+        if (!parent::save($element, $settings)) {
+            return false;
+        }
+
+        // Publish unpublished drafts that are no longer drafts in the feed. Their ID is kept, so they
+        // continue to match. Existing entries are never turned back into drafts.
+        if (!$this->_isDraft && $this->element->getIsUnpublishedDraft()) {
+            // Reload the draft, as cloning the matched element drops its draft behavior
+            $draft = EntryElement::find()
+                ->drafts()
+                ->id($this->element->id)
+                ->siteId($this->element->siteId)
+                ->status(null)
+                ->one();
+
+            if ($draft) {
+                $this->element = Craft::$app->getDrafts()->applyDraft($draft);
+            }
+        }
+
+        return true;
+    }
+
     // Protected Methods
     // =========================================================================
+
+    /**
+     * Returns whether the feed item should be saved as an unpublished draft.
+     *
+     * Accepts boolean-like values, or an element status ('draft' is a draft).
+     *
+     * @param $feedData
+     * @param $fieldInfo
+     * @return bool
+     */
+    protected function parseDraft($feedData, $fieldInfo): bool
+    {
+        $this->_isDraft = $this->_isDraftValue($this->fetchSimpleValue($feedData, $fieldInfo));
+
+        return $this->_isDraft;
+    }
 
     /**
      * @param $feedData
@@ -379,5 +467,61 @@ class Entry extends Element
         }
 
         return $matchedIds;
+    }
+
+    // Private Methods
+    // =========================================================================
+
+    /**
+     * Returns whether the feed maps the Draft attribute, either to a feed node or a default value.
+     *
+     * @param $settings
+     * @return bool
+     */
+    private function _importsDrafts($settings): bool
+    {
+        $node = Hash::get($settings, 'fieldMapping.draft.node');
+
+        if ($node === null || $node === '' || $node === 'noimport') {
+            return false;
+        }
+
+        return $node !== 'usedefault' || (string)Hash::get($settings, 'fieldMapping.draft.default') !== '';
+    }
+
+    /**
+     * Returns whether the feed item is a draft, according to the feed's Draft attribute mapping.
+     *
+     * @param $feedData
+     * @return bool
+     */
+    private function _isDraftItem($feedData): bool
+    {
+        if (!$this->feed || !$this->_importsDrafts($this->feed)) {
+            return false;
+        }
+
+        return $this->_isDraftValue($this->fetchSimpleValue($feedData, $this->feed->fieldMapping['draft']));
+    }
+
+    /**
+     * Returns whether a Draft attribute value means the item is a draft.
+     *
+     * Accepts boolean-like values, or an element status ('draft' is a draft).
+     *
+     * @param mixed $value
+     * @return bool
+     */
+    private function _isDraftValue(mixed $value): bool
+    {
+        if ($value === null || $value === '') {
+            return false;
+        }
+
+        if (is_string($value) && strtolower(trim($value)) === EntryElement::STATUS_DRAFT) {
+            return true;
+        }
+
+        return (bool)BaseHelper::parseBoolean($value);
     }
 }
