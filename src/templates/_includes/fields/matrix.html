@@ -83,6 +83,13 @@
                 }) %}
             {% endif %}
 
+            {% set fields = fields|push({
+                name: 'Enabled'|t('feed-me'),
+                handle: 'enabled',
+                instructions: 'Each block’s status. Blocks without a value are imported as enabled.'|t('feed-me'),
+                default: {},
+            }) %}
+
             {% for field in fields %}
                 {% set template = field.type ?? 'default' %}
                 {% set parentPath = prefixPath | merge([ 'blocks', entryType.handle, 'attributes', field.handle ]) %}
