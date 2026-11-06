@@ -175,8 +175,11 @@ class Entry extends Element
 
             // Give the entry a status for the import's target site
             // (This is how the `custom` propagation method knows which sites the entry should support.)
+            // Use the section's default status for that site, like setModel() does for new entries,
+            // rather than the status of whichever site the entry was found on.
             $siteStatuses = ElementHelper::siteStatusesForElement($existingElement);
-            $siteStatuses[$targetSiteId] = $existingElement->getEnabledForSite();
+            $siteSettings = $existingElement->getSection()->getSiteSettings()[$targetSiteId] ?? null;
+            $siteStatuses[$targetSiteId] = $siteSettings?->enabledByDefault ?? $existingElement->getEnabledForSite();
             $existingElement->setEnabledForSite($siteStatuses);
 
             // Propagate the entry, and swap $entry with the propagated copy
