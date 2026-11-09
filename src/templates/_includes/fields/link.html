@@ -188,7 +188,7 @@
                         {{ forms.text({
                             name: 'options[folderPath]',
                             value: hash_get(feed.fieldMapping, optionsPath ~ '.folderPath') ?: '',
-                            placeholder: 'e.g. downloads/files'|t('feed-me'),
+                            placeholder: 'e.g. downloads/{slug}'|t('feed-me'),
                         }) }}
                     </div>
                 {% endif %}

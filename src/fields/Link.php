@@ -5,6 +5,7 @@ namespace craft\feedme\fields;
 use Cake\Utility\Hash;
 use Craft;
 use craft\db\Table;
+use craft\errors\InvalidSubpathException;
 use craft\elements\Asset as AssetElement;
 use craft\elements\Category as CategoryElement;
 use craft\elements\Entry as EntryElement;
@@ -17,6 +18,7 @@ use craft\feedme\Plugin;
 use craft\fields\Link as LinkField;
 use craft\fields\linktypes\Asset as AssetLinkType;
 use craft\fields\linktypes\BaseElementLinkType;
+use craft\helpers\Assets as AssetsHelper;
 use craft\helpers\Db;
 use craft\helpers\Json;
 use craft\helpers\UrlHelper;
@@ -297,9 +299,18 @@ class Link extends Field implements FieldInterface
             $volume = $volumeId ? Craft::$app->getVolumes()->getVolumeById($volumeId) : null;
         }
 
-        // The folder is created if it doesn't exist
-        $folderPath = trim((string)Hash::get($elementInfo, 'options.folderPath'), '/');
-        $folder = $volume ? Craft::$app->getAssets()->ensureFolderByFullPathAndVolume($folderPath, $volume) : null;
+        // The folder path can be dynamic like an Assets field's upload location (e.g. `{slug}`), rendered against
+        // the element being imported. The folder is created if it doesn't exist.
+        $folder = null;
+
+        if ($volume) {
+            try {
+                [$folderPath, $folder] = AssetsHelper::resolveSubpath($volume, trim((string)Hash::get($elementInfo, 'options.folderPath'), '/'), $this->element);
+                $folder ??= Craft::$app->getAssets()->ensureFolderByFullPathAndVolume($folderPath, $volume);
+            } catch (InvalidSubpathException $e) {
+                Plugin::error('`{handle}` - Invalid folder path `{path}`.', ['handle' => $this->fieldHandle, 'path' => $e->subpath]);
+            }
+        }
 
         if (!$folder) {
             Plugin::error('`{handle}` - No folder to upload `{url}` to.', ['handle' => $this->fieldHandle, 'url' => $url]);
