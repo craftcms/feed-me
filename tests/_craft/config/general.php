@@ -9,4 +9,5 @@
 
 return [
     'devMode' => true,
+    'isSystemLive' => true,
 ];

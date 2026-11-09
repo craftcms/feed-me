@@ -73,6 +73,7 @@ Field Type | Developer
 [Entries Subset](https://plugins.craftcms.com/entriessubset) | Nathaniel Hammond
 [Google Maps](https://plugins.craftcms.com/google-maps) | Double Secret Agency
 [Linkit](https://plugins.craftcms.com/linkit) | Pressed Digital
+[Mapbox](https://plugins.craftcms.com/mapbox) | Double Secret Agency
 [Simplemap](https://plugins.craftcms.com/simplemap) | Ether Creative
 [Super Table](https://plugins.craftcms.com/supertable) | Verbb
 [Typed Link](https://plugins.craftcms.com/typedlinkfield) | Sebastian Lenz

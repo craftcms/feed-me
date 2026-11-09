@@ -21,6 +21,7 @@ use craft\helpers\Db;
 use craft\helpers\ElementHelper;
 use craft\helpers\Json;
 use craft\services\ElementSources;
+use DateTime;
 use Illuminate\Support\Collection;
 use Throwable;
 use yii\base\Exception;
@@ -131,6 +132,21 @@ class Entries extends Field implements FieldInterface
             $sectionIds = null;
         }
 
+        // In multi-site, there's currently no way to query across all sites - we use the current site
+        // See https://github.com/craftcms/cms/issues/2854
+        if (Craft::$app->getIsMultiSite()) {
+            if ($targetSiteId) {
+                $criteria['siteId'] = Craft::$app->getSites()->getSiteByUid($targetSiteId)->id;
+            } elseif ($feedSiteId) {
+                $criteria['siteId'] = $feedSiteId;
+            } else {
+                $criteria['siteId'] = Craft::$app->getSites()->getCurrentSite()->id;
+            }
+        }
+
+        $criteria['status'] = null;
+        $criteria['limit'] = $limit;
+
         $foundElements = [];
 
         foreach ($value as $dataValue) {
@@ -155,20 +171,6 @@ class Entries extends Field implements FieldInterface
 
             $query = EntryElement::find();
 
-            // In multi-site, there's currently no way to query across all sites - we use the current site
-            // See https://github.com/craftcms/cms/issues/2854
-            if (Craft::$app->getIsMultiSite()) {
-                if ($targetSiteId) {
-                    $criteria['siteId'] = Craft::$app->getSites()->getSiteByUid($targetSiteId)->id;
-                } elseif ($feedSiteId) {
-                    $criteria['siteId'] = $feedSiteId;
-                } else {
-                    $criteria['siteId'] = Craft::$app->getSites()->getCurrentSite()->id;
-                }
-            }
-
-            $criteria['status'] = null;
-            $criteria['limit'] = $limit;
             // prep the $dataValue for matching
             $criteria[$match] = DataHelper::prepValueForElementMatch($dataValue);
 
@@ -233,7 +235,11 @@ class Entries extends Field implements FieldInterface
         // https://github.com/craftcms/feed-me/issues/1418
         if ($foundElements && $maintainHierarchy && Plugin::$plugin->service->getConfig('compareContent', $this->feed['id'])) {
             // get elements by IDs
-            $elements = EntryElement::find()->id($foundElements)->all();
+            $query = EntryElement::find()->id($foundElements);
+            if (Craft::$app->getIsMultiSite()) {
+                $query->siteId = $criteria['siteId'] ?? Craft::$app->getSites()->getCurrentSite()->id;
+            }
+            $elements = $query->all();
             Craft::$app->getStructures()->fillGapsInElements($elements);
             $foundElements = array_map(fn($element) => $element->id, $elements);
         }
@@ -372,6 +378,12 @@ class Entries extends Field implements FieldInterface
 
                 break;
             }
+        }
+
+        if (!$element->postDate && ($element->enabled || $element->enabledForSite)) {
+            // Default the post date to the current date/time, without the seconds
+            $element->postDate = new DateTime();
+            $element->postDate->setTimestamp($element->postDate->getTimestamp() - ($element->postDate->getTimestamp() % 60));
         }
 
         $element->setScenario(BaseElement::SCENARIO_ESSENTIALS);

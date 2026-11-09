@@ -233,7 +233,9 @@ class FeedModel extends Model
      */
     public function getNextPagination(): bool
     {
-        if (!$this->paginationUrl || !filter_var($this->paginationUrl, FILTER_VALIDATE_URL)) {
+        $allowPathInPaginationUrl = Plugin::$plugin->service->getConfig('allowPathInPaginationUrl', $this->id);
+
+        if (!$this->paginationUrl || (!$allowPathInPaginationUrl && !filter_var($this->paginationUrl, FILTER_VALIDATE_URL))) {
             return false;
         }
 

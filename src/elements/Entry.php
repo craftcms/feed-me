@@ -22,6 +22,7 @@ use yii\base\Exception;
 
 /**
  *
+ * @property EntryElement $element
  * @property-read string $mappingTemplate
  * @property-read array $groups
  * @property-write mixed $model
@@ -183,6 +184,26 @@ class Entry extends Element
         }
 
         return $existingElement;
+    }
+
+    public function beforeSave($element, $settings): bool
+    {
+        if (!parent::beforeSave($element, $settings)) {
+            return false;
+        }
+
+        if (!$this->element->postDate && $this->element->enabled) {
+            // Default the post date to the current date/time
+            $this->element->postDate = new DateTime();
+            // ...without the seconds
+            $this->element->postDate->setTimestamp($this->element->postDate->getTimestamp() - ($this->element->postDate->getTimestamp() % 60));
+            // ...unless an expiry date is set in the past
+            if ($this->element->expiryDate && $this->element->postDate >= $this->element->expiryDate) {
+                $this->element->postDate = (clone $this->element->expiryDate)->modify('-1 day');
+            }
+        }
+
+        return true;
     }
 
     // Protected Methods

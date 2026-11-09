@@ -6,6 +6,7 @@ use Cake\Utility\Hash;
 use Craft;
 use craft\base\Batchable;
 use craft\base\Component;
+use craft\feedme\Plugin;
 use craft\helpers\UrlHelper;
 
 /**
@@ -61,7 +62,8 @@ abstract class DataType extends Component implements Batchable
         $url = Craft::getAlias($url);
 
         // if the feed provides a root relative URL, make it whole again based on the feed.
-        if ($url && UrlHelper::isRootRelativeUrl($url)) {
+        $allowPathInPaginationUrl = Plugin::$plugin->service->getConfig('allowPathInPaginationUrl', $feed->id);
+        if ($url && !$allowPathInPaginationUrl && UrlHelper::isRootRelativeUrl($url)) {
             $url = UrlHelper::hostInfo($feed->feedUrl) . $url;
         }
 

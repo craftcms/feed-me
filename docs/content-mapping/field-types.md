@@ -475,6 +475,7 @@ Accepts single or multiple values.
 The following third-party fields are supported, out-of-the-box:
 
 - [Google Maps](https://github.com/doublesecretagency/craft-googlemaps)
+- [Mapbox](https://github.com/doublesecretagency/craft-mapbox)
 - [Smart Map](https://github.com/doublesecretagency/craft-smartmap)
 - [Simple Map](https://github.com/ethercreative/simplemap)
 - [Super Table](https://verbb.io/craft-plugins/super-table)

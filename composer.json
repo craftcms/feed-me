@@ -30,18 +30,21 @@
   "prefer-stable": true,
   "require": {
     "php": "^8.2",
-    "craftcms/cms": "^5.6.0|^6.0.0-alpha.1",
+    "craftcms/cms": "^5.10.9|^6.0.0-alpha.1",
     "cakephp/utility": "^5.0.0",
     "jakeasmith/http_build_url": "^1.0",
     "nesbot/carbon": "^2.10|^3.0.0",
     "league/csv": "^9.0",
-    "seld/jsonlint": "^1.7"
+    "seld/jsonlint": "^1.7",
+    "craftcms/url-validator": "^1.2"
   },
   "require-dev": {
     "craftcms/ecs": "dev-main",
     "craftcms/phpstan": "dev-main",
-    "codeception/codeception": "^5.0.11",
-    "codeception/module-asserts": "^3.0.0"
+    "pestphp/pest": "^3.0",
+    "fakerphp/faker": "^1.19.0",
+    "vlucas/phpdotenv": "^5.7",
+    "phpstan/phpstan": "^2.2"
   },
   "autoload": {
     "psr-4": {
@@ -56,12 +59,13 @@
   "extra": {
     "name": "Feed Me",
     "handle": "feed-me",
-    "documentationUrl": "https://docs.craftcms.com/feed-me/v6/"
+    "documentationUrl": "https://docs.craftcms.com/feed-me/v6"
   },
   "scripts": {
     "check-cs": "ecs check --ansi",
     "fix-cs": "ecs check --ansi --fix",
-    "phpstan": "phpstan --memory-limit=1G"
+    "phpstan": "phpstan --memory-limit=1G",
+    "test": "pest --colors=always"
   },
   "config": {
     "platform": {
@@ -69,7 +73,8 @@
     },
     "allow-plugins": {
       "yiisoft/yii2-composer": true,
-      "craftcms/plugin-installer": true
+      "craftcms/plugin-installer": true,
+      "pestphp/pest-plugin": true
     }
   }
 }

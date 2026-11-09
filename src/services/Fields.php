@@ -24,6 +24,7 @@ use craft\feedme\fields\Categories;
 use craft\feedme\fields\Checkboxes;
 use craft\feedme\fields\CommerceProducts;
 use craft\feedme\fields\CommerceVariants;
+use craft\feedme\fields\ContentBlock;
 use craft\feedme\fields\Country;
 use craft\feedme\fields\Date;
 use craft\feedme\fields\DefaultField;
@@ -34,7 +35,9 @@ use craft\feedme\fields\EntriesSubset;
 use craft\feedme\fields\GoogleMaps;
 use craft\feedme\fields\Icon;
 use craft\feedme\fields\Lightswitch;
+use craft\feedme\fields\Link;
 use craft\feedme\fields\Linkit;
+use craft\feedme\fields\Mapbox;
 use craft\feedme\fields\Matrix;
 use craft\feedme\fields\MissingField;
 use craft\feedme\fields\Money;
@@ -177,12 +180,14 @@ class Fields extends Component
                 Checkboxes::class,
                 CommerceProducts::class,
                 CommerceVariants::class,
+                ContentBlock::class,
                 Country::class,
                 Date::class,
                 Dropdown::class,
                 Entries::class,
                 Icon::class,
                 Lightswitch::class,
+                Link::class,
                 Matrix::class,
                 MultiSelect::class,
                 Number::class,
@@ -199,6 +204,7 @@ class Fields extends Component
                 EntriesSubset::class,
                 GoogleMaps::class,
                 Linkit::class,
+                Mapbox::class,
                 SimpleMap::class,
                 SmartMap::class,
                 SuperTable::class,

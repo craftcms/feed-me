@@ -7,7 +7,7 @@ use craft\base\Component;
 use craft\db\Query;
 use craft\feedme\Plugin;
 use craft\helpers\App;
-use craft\helpers\Db;
+use craft\helpers\DateTimeHelper;
 use craft\helpers\Json;
 use Exception;
 use Illuminate\Support\Collection;
@@ -172,7 +172,7 @@ class Logs extends Component
             }
             $log = [
                 'type' => self::logLevelName($row['level']),
-                'date' => Db::prepareDateForDb($row['log_time']),
+                'date' => DateTimeHelper::toDateTime($row['log_time']),
                 'message' => $message,
                 'key' => $key,
             ];

@@ -7,8 +7,12 @@ use Craft;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\helpers\DataHelper;
+use craft\feedme\helpers\FieldHelper;
+use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
+use craft\fields\BaseRelationField;
 use craft\helpers\Json;
+use Solspace\Calendar\Calendar;
 use Solspace\Calendar\Elements\Event as EventElement;
 
 /**
@@ -44,6 +48,45 @@ class CalendarEvents extends Field implements FieldInterface
     public function getMappingTemplate(): string
     {
         return 'feed-me/_includes/fields/calendar-events';
+    }
+
+    // Static Methods
+    // =========================================================================
+
+    /**
+     * Returns the custom fields that can be used to match existing events: those
+     * in the field layouts of the calendars the field is limited to (or all
+     * calendars), which can be used as a unique identifier.
+     *
+     * @param FeedModel $feed
+     * @param BaseRelationField|null $field
+     * @return array
+     */
+    public static function getMatchFields(FeedModel $feed, ?BaseRelationField $field = null): array
+    {
+        $calendarsService = Calendar::getInstance()?->calendars;
+
+        if (!$calendarsService) {
+            return [];
+        }
+
+        // Sources are stored as `calendar:{id}`; '*' means every calendar
+        $sources = $field?->sources;
+        $calendars = is_array($sources)
+            ? array_map(fn(string $source) => $calendarsService->getCalendarById((int)explode(':', $source)[1]), $sources)
+            : $calendarsService->getAllCalendars();
+
+        $allowedFields = [];
+
+        foreach (array_filter($calendars) as $calendar) {
+            $fieldLayout = $calendar->getFieldLayout();
+
+            if ($fieldLayout) {
+                $allowedFields = [...$allowedFields, ...$fieldLayout->getCustomFields()];
+            }
+        }
+
+        return array_filter($allowedFields, fn($field) => FieldHelper::fieldCanBeUniqueId($field));
     }
 
     // Public Methods
@@ -86,6 +129,22 @@ class CalendarEvents extends Field implements FieldInterface
             $typeIds = null;
         }
 
+        // In multi-site, there's currently no way to query across all sites - we use the current site
+        // See https://github.com/craftcms/cms/issues/2854
+        if (Craft::$app->getIsMultiSite()) {
+            if ($targetSiteId) {
+                $criteria['siteId'] = Craft::$app->getSites()->getSiteByUid($targetSiteId)->id;
+            } elseif ($feedSiteId) {
+                $criteria['siteId'] = $feedSiteId;
+            } else {
+                $criteria['siteId'] = Craft::$app->getSites()->getCurrentSite()->id;
+            }
+        }
+
+        $criteria['status'] = null;
+        $criteria['typeId'] = $typeIds;
+        $criteria['limit'] = $limit;
+
         $foundElements = [];
 
         foreach ($value as $dataValue) {
@@ -109,21 +168,6 @@ class CalendarEvents extends Field implements FieldInterface
 
             $query = EventElement::find();
 
-            // In multi-site, there's currently no way to query across all sites - we use the current site
-            // See https://github.com/craftcms/cms/issues/2854
-            if (Craft::$app->getIsMultiSite()) {
-                if ($targetSiteId) {
-                    $criteria['siteId'] = Craft::$app->getSites()->getSiteByUid($targetSiteId)->id;
-                } elseif ($feedSiteId) {
-                    $criteria['siteId'] = $feedSiteId;
-                } else {
-                    $criteria['siteId'] = Craft::$app->getSites()->getCurrentSite()->id;
-                }
-            }
-
-            $criteria['status'] = null;
-            $criteria['typeId'] = $typeIds;
-            $criteria['limit'] = $limit;
             // prep the $dataValue for matching
             $criteria[$match] = DataHelper::prepValueForElementMatch($dataValue);
 

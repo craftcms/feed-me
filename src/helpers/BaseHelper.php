@@ -3,8 +3,12 @@
 namespace craft\feedme\helpers;
 
 use Craft;
+use craft\feedme\Plugin;
 use craft\fields\data\ColorData;
 use craft\validators\ColorValidator;
+use CraftCms\UrlValidator\UrlValidator;
+use GuzzleHttp\Psr7\Uri;
+use GuzzleHttp\Psr7\UriResolver;
 
 class BaseHelper
 {
@@ -139,5 +143,43 @@ class BaseHelper
         }
 
         return 'Other';
+    }
+
+    /**
+     *  Checks if the path can be considered local based on its scheme (or lack of).
+     *
+     * @param string $path
+     * @return bool
+     */
+    public static function isLocalPath(string $path): bool
+    {
+        $scheme = parse_url($path, PHP_URL_SCHEME);
+
+        return $scheme === null || $scheme === false || strlen($scheme) === 1 || strtolower($scheme) === 'file';
+    }
+
+    /**
+     * Returns the URL validator configured for Feed Me.
+     *
+     * @return UrlValidator
+     */
+    public static function urlValidator(): UrlValidator
+    {
+        return new UrlValidator(options: [
+            // only the hosts listed in config/feed-me.php can resolve to private IP addresses
+            'allowedPrivateHosts' => Plugin::$plugin->getSettings()->allowedPrivateHosts,
+        ]);
+    }
+
+    /**
+     * Resolves a redirect location (which can be relative) against the URL that returned it.
+     *
+     * @param string $baseUrl
+     * @param string $location
+     * @return string
+     */
+    public static function resolveRedirectUrl(string $baseUrl, string $location): string
+    {
+        return (string)UriResolver::resolve(new Uri($baseUrl), new Uri($location));
     }
 }
