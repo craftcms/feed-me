@@ -121,3 +121,78 @@
         {% endblock %}
     {% endembed %}
 {% endfor %}
+
+{# Element link types (e.g. Asset, Entry): the element to link to, and how to find it #}
+{% if field is defined %}
+    {% for typeId, elementLinkType in craft.feedme.getLinkElementTypes(field) %}
+        {% set nameLabel = '{type} to link to'|t('feed-me', { type: elementLinkType.name }) %}
+        {% set instructionsHandle = handle ~ '[' ~ typeId ~ ']' %}
+        {% set path = prefixPath|merge([ 'elements', typeId ]) %}
+        {% set legacyNode = null %}
+        {% set legacyDefault = null %}
+        {% set default = null %}
+
+        {% embed 'feed-me/_includes/fields/_base' %}
+            {% block fieldSettings %}
+
+            {% endblock %}
+
+            {% block extraSettings %}
+                {% import 'feed-me/_macros' as feedMeMacro %}
+                {% import '_includes/forms' as forms %}
+
+                <div class="element-match">
+                    <span>{{ 'Data provided for this {type} is:'|t('feed-me', { type: elementLinkType.name|lower }) }}</span>
+
+                    {{ forms.selectField({
+                        name: 'options[match]',
+                        value: hash_get(feed.fieldMapping, optionsPath ~ '.match') ?: 'id',
+                        options: elementLinkType.matchOptions,
+                    }) }}
+                </div>
+
+                {% if elementLinkType.volumeOptions %}
+                    <div class="element-create">
+                        {{ feedMeMacro.checkbox({
+                            label: 'Upload the asset if it doesn’t exist'|t('feed-me'),
+                            name: 'options[upload]',
+                            value: 1,
+                            checked: hash_get(feed.fieldMapping, optionsPath ~ '.upload') ?: '',
+                        }) }}
+                    </div>
+
+                    <div class="element-match">
+                        <span>{{ 'URL to upload from:'|t('feed-me') }}</span>
+
+                        {{ forms.selectField({
+                            name: 'url[node]',
+                            value: hash_get(feed.fieldMapping, path|join('.') ~ '.url.node') ?: '',
+                            options: feedData,
+                            class: 'selectize fullwidth',
+                        }) }}
+                    </div>
+
+                    <div class="element-match">
+                        <span>{{ 'Volume to upload to:'|t('feed-me') }}</span>
+
+                        {{ forms.selectField({
+                            name: 'options[volume]',
+                            value: hash_get(feed.fieldMapping, optionsPath ~ '.volume') ?: '',
+                            options: elementLinkType.volumeOptions,
+                        }) }}
+                    </div>
+
+                    <div class="element-match">
+                        <span>{{ 'Folder path (created if it doesn’t exist):'|t('feed-me') }}</span>
+
+                        {{ forms.text({
+                            name: 'options[folderPath]',
+                            value: hash_get(feed.fieldMapping, optionsPath ~ '.folderPath') ?: '',
+                            placeholder: 'e.g. downloads/{slug}'|t('feed-me'),
+                        }) }}
+                    </div>
+                {% endif %}
+            {% endblock %}
+        {% endembed %}
+    {% endfor %}
+{% endif %}

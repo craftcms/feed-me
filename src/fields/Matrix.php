@@ -300,6 +300,13 @@ class Matrix extends Field implements FieldInterface
 
                 $nestedFieldNodes = Hash::extract($subFieldInfo, 'fields.{*}.node');
 
+                // A Link field also has nodes for the elements it links to
+                $nestedFieldNodes = array_merge(
+                    $nestedFieldNodes,
+                    Hash::extract($subFieldInfo, 'elements.{*}.node'),
+                    Hash::extract($subFieldInfo, 'elements.{*}.url.node'),
+                );
+
                 if ($nestedFieldNodes) {
                     foreach ($nestedFieldNodes as $nestedFieldNode) {
                         if ($feedPath == $nestedFieldNode) {
