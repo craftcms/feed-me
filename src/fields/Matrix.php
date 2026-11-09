@@ -7,6 +7,7 @@ use craft\elements\Entry;
 use craft\feedme\base\Field;
 use craft\feedme\base\FieldInterface;
 use craft\feedme\helpers\DataHelper;
+use craft\feedme\helpers\FieldHelper;
 use craft\feedme\Plugin;
 use craft\fields\Matrix as MatrixField;
 use craft\helpers\ArrayHelper;
@@ -377,7 +378,7 @@ class Matrix extends Field implements FieldInterface
      * @return array
      * @throws \yii\base\InvalidConfigException
      */
-    private function _getEntryTypeFields(MatrixField $field): array
+    private function _getEntryTypeFields($field): array
     {
         $fields = [];
         if (!empty($entryTypes = $field->getEntryTypes())) {
@@ -414,7 +415,7 @@ class Matrix extends Field implements FieldInterface
         // mock the nested matrix entry so that the assets field can correctly resolve dynamic path that contains owner in it
         // e.g. {owner.slug}
         // see https://github.com/craftcms/feed-me/issues/1477 for more details
-        if ($blockHandle !== null && $subField instanceof \craft\fields\Assets) {
+        if ($blockHandle !== null && is_a(FieldHelper::fieldClass($subField), \craft\fields\Assets::class, true)) {
             $mockNestedEntry = new Entry();
             $mockNestedEntry->primaryOwnerId = $this->element->id;
             $mockNestedEntry->ownerId = $this->element->id;

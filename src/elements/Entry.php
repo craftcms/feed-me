@@ -126,8 +126,8 @@ class Entry extends Element
     public function setModel($settings): ElementInterface
     {
         $this->element = new EntryElement();
-        $this->element->sectionId = $settings['elementGroup'][EntryElement::class]['section'];
-        $this->element->typeId = $settings['elementGroup'][EntryElement::class]['entryType'];
+        $this->element->sectionId = (int)$settings['elementGroup'][EntryElement::class]['section'];
+        $this->element->typeId = (int)$settings['elementGroup'][EntryElement::class]['entryType'];
 
         $section = Craft::$app->getEntries()->getSectionById($this->element->sectionId);
         $siteId = Hash::get($settings, 'siteId');
