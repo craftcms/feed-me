@@ -6,7 +6,7 @@
 
 // ==========================================================================
 
-function initFeedMe() {
+$(function () {
   if (typeof Craft.FeedMe === typeof undefined) {
     Craft.FeedMe = {};
   }
@@ -311,12 +311,4 @@ function initFeedMe() {
 
     $(this).parents('form').submit();
   });
-}
-
-// Craft 6 mounts control panel screens after the document is ready, and runs
-// Craft.whenReady() callbacks once the screen is in the DOM
-if (typeof Craft.whenReady === 'function') {
-  Craft.whenReady(initFeedMe);
-} else {
-  $(initFeedMe);
-}
+});
