@@ -1,5 +1,9 @@
 # Release Notes for Feed Me
 
+## Unreleased
+
+- Added Craft CMS 6 compatibility, via the `craftcms/yii2-adapter` package. ([#1731](https://github.com/craftcms/feed-me/pull/1731))
+
 ## 6.17.0 - 2016-10-27
 
 - Added support for importing into Mapbox Address fields. ([#1774](https://github.com/craftcms/feed-me/pull/1774))

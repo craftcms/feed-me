@@ -6,7 +6,7 @@
     {{ forms.selectField({
         label: 'Global Set'|t('feed-me'),
         instructions: 'Choose the global set you want to save your feed data to.'|t('feed-me'),
-        class: 'element-parent-group',
+        fieldClass: 'element-parent-group',
         id: 'elementGroup-' ~ elementType ~ '-global-set',
         name: 'elementGroup[' ~ elementType ~ '][globalSet]',
         options: craft.feedme.getSelectOptions(element.groups|map(s => s.model)),
