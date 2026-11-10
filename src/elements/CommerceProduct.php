@@ -156,11 +156,20 @@ class CommerceProduct extends Element
      */
     public function getGroups(): array
     {
-        if (Commerce::getInstance()) {
-            return Commerce::getInstance()->getProductTypes()->getEditableProductTypes();
+        $commerce = Commerce::getInstance();
+
+        if (!$commerce) {
+            return [];
         }
 
-        return [];
+        $productTypes = $commerce->getProductTypes();
+
+        // Commerce 6 renamed getEditableProductTypes() to getCreatableProductTypes()
+        if (method_exists($productTypes, 'getCreatableProductTypes')) {
+            return $productTypes->getCreatableProductTypes();
+        }
+
+        return $productTypes->getEditableProductTypes();
     }
 
     /**
