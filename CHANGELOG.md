@@ -3,6 +3,8 @@
 ## Unreleased
 
 - Added Craft CMS 6 compatibility, via the `craftcms/yii2-adapter` package. ([#1731](https://github.com/craftcms/feed-me/pull/1731))
+- Fixed a bug where feed screens showed two sets of save buttons on Craft 6.
+- Fixed a bug where saving a feed without an import strategy failed without saying why.
 
 ## 6.17.0 - 2016-10-27
 

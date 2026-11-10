@@ -132,6 +132,7 @@
         value: 'add',
         checked: not feed.singleton and 'add' in (feed.duplicateHandle ?? ['add']),
         disabled: feed.singleton,
+        errors: feed.getErrors('duplicateHandle'),
     }) }}
 
     {{ forms.checkboxField({
