@@ -116,16 +116,22 @@ $(function () {
 
   // for categories and entries - only show "create if they do not exist" if matching done by "title"
   // for users - only show "create if they do not exist" if matching done by "email"
+  // Craft 5 puts the class on the select's container; Craft 6 puts it on the select itself
+  var categoriesMatchSelect =
+    '.categories-field-match select, select.categories-field-match';
+  var entriesMatchSelect =
+    '.entries-field-match select, select.entries-field-match';
+  var usersMatchSelect = '.users-field-match select, select.users-field-match';
+
   $(
-    '.categories-field-match select, .entries-field-match select, .users-field-match select'
+    [categoriesMatchSelect, entriesMatchSelect, usersMatchSelect].join(', ')
   ).on('change', function (e) {
     var match = 'title';
-    var $selectParent = $(this).parent();
     var $elementCreateContainer = $(this)
       .parents('.field-extra-settings')
       .find('.element-create');
 
-    if ($selectParent.hasClass('users-field-match')) {
+    if ($(this).closest('.users-field-match').length) {
       match = 'email';
     }
 
@@ -139,9 +145,9 @@ $(function () {
   });
 
   // On-load, hide/show element create container
-  $('.categories-field-match select').trigger('change');
-  $('.entries-field-match select').trigger('change');
-  $('.users-field-match select').trigger('change');
+  $(categoriesMatchSelect).trigger('change');
+  $(entriesMatchSelect).trigger('change');
+  $(usersMatchSelect).trigger('change');
 
   // For Assets, only show the upload options if we decide to upload
   $('.assets-uploads input').on('change', function (e) {

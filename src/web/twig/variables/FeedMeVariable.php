@@ -215,7 +215,7 @@ class FeedMeVariable extends ServiceLocator
             AltField::class,
         ];
 
-        return in_array($class, $supportedSubFields, true);
+        return in_array(FieldHelper::fieldClass($class), array_map([FieldHelper::class, 'fieldClass'], $supportedSubFields), true);
     }
 
     /**
@@ -236,12 +236,12 @@ class FeedMeVariable extends ServiceLocator
      * @param BaseRelationField|null $field
      * @return array
      */
-    public function getRelationFieldMatchOptions(string $className, FeedModel $feed, ?BaseRelationField $field = null): array
+    public function getRelationFieldMatchOptions(string $className, FeedModel $feed, $field = null): array
     {
         $allowedFields = [];
         $matchAttributes = [];
 
-        $feedMeField = match ($className) {
+        $feedMeField = match (FieldHelper::fieldClass($className)) {
             Categories::class => \craft\feedme\fields\Categories::class,
             Entries::class => \craft\feedme\fields\Entries::class,
             Users::class => \craft\feedme\fields\Users::class,

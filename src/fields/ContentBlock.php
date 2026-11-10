@@ -186,7 +186,7 @@ class ContentBlock extends Field implements FieldInterface
      * @return array
      * @throws \yii\base\InvalidConfigException
      */
-    private function _getSubFields(ContentBlockField $field): array
+    private function _getSubFields($field): array
     {
         $fields = [];
         foreach ($field->getFieldLayout()?->getCustomFields() as $subField) {

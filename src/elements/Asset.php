@@ -111,7 +111,7 @@ class Asset extends Element
     public function setModel($settings): ElementInterface
     {
         $this->element = new AssetElement();
-        $this->element->volumeId = $settings['elementGroup'][AssetElement::class];
+        $this->element->volumeId = (int)$settings['elementGroup'][AssetElement::class];
 
         $siteId = Hash::get($settings, 'siteId');
 

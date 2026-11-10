@@ -252,7 +252,8 @@ class FeedModel extends Model
     public function rules(): array
     {
         return [
-            [['name', 'feedUrl', 'feedType', 'elementType', 'duplicateHandle', 'passkey'], 'required'],
+            [['name', 'feedUrl', 'feedType', 'elementType', 'passkey'], 'required'],
+            [['duplicateHandle'], 'required', 'message' => Craft::t('feed-me', 'Choose at least one import strategy.')],
             [['backup', 'setEmptyValues'], 'boolean'],
         ];
     }

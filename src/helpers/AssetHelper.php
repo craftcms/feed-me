@@ -231,7 +231,7 @@ class AssetHelper
      * @throws \craft\errors\VolumeException
      * @throws \yii\base\InvalidConfigException
      */
-    public static function indexExistingFile($urlFromFeed, string $conflict, $field = null, $element = null, $folderId = null, $newFilename = null): AssetElement|bool
+    public static function indexExistingFile($urlFromFeed, string $conflict, $field = null, $element = null, $folderId = null, $newFilename = null): ElementInterface|bool
     {
         // if the conflict strategy is to replace or create, just bail straight away
         // and allow for creation of the asset even the file exists
@@ -304,7 +304,7 @@ class AssetHelper
             try {
                 $indexedAsset = self::indexExistingFile($url, $conflict, $field, $element, $folderId, $newFilename);
 
-                if ($indexedAsset instanceof AssetElement) {
+                if ($indexedAsset instanceof ElementInterface) {
                     $uploadedAssets[] = $indexedAsset->id;
                 } else {
                     $filename = $newFilename ? AssetsHelper::prepareAssetName($newFilename, false) : self::getRemoteUrlFilename($url);
@@ -423,7 +423,7 @@ class AssetHelper
      * @throws \craft\errors\VolumeException
      * @throws \yii\base\InvalidConfigException
      */
-    private static function createAsset(string $tempFilePath, string $filename, ?int $folderId, ?Assets $field, ?ElementInterface $element, string $conflict, bool $updateSearchIndexes): bool|int
+    private static function createAsset(string $tempFilePath, string $filename, ?int $folderId, $field, ?ElementInterface $element, string $conflict, bool $updateSearchIndexes): bool|int
     {
         $assets = Craft::$app->getAssets();
         $folder = self::_getAssetFolder($folderId, $field, $element);
@@ -619,7 +619,7 @@ class AssetHelper
      * @param ElementInterface|null $element
      * @return VolumeFolder
      */
-    private static function _getAssetFolder(?int $folderId, ?Assets $field, ?ElementInterface $element): VolumeFolder
+    private static function _getAssetFolder(?int $folderId, $field, ?ElementInterface $element): VolumeFolder
     {
         if (!$folderId) {
             if (!$field) {

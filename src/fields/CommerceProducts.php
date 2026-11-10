@@ -177,7 +177,7 @@ class CommerceProducts extends Field implements FieldInterface
      * @param BaseRelationField|null $field
      * @return array
      */
-    public static function getMatchFields(FeedModel $feed, ?BaseRelationField $field = null): array
+    public static function getMatchFields(FeedModel $feed, $field = null): array
     {
         $fieldLayoutParam = 'fieldLayoutId';
         if ($field instanceof Variants) {

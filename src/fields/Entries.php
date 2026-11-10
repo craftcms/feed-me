@@ -264,7 +264,7 @@ class Entries extends Field implements FieldInterface
      * @param BaseRelationField|null $field
      * @return array
      */
-    public static function getMatchFields(FeedModel $feed, ?BaseRelationField $field = null): array
+    public static function getMatchFields(FeedModel $feed, $field = null): array
     {
         // The field will be null e.g. when importing into a structure section and there's the option to select a parent
         // the parent is serviced by the entries field markup too, but it doesn't tie into a custom field per se;

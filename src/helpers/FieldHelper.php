@@ -26,6 +26,39 @@ class FieldHelper
     // Public Methods
     // =========================================================================
 
+    /**
+     * Returns the class name Feed Me knows a field or field layout element type by.
+     *
+     * On Craft 6, `craftcms/yii2-adapter` provides Craft 5 class names as aliases of native classes, or, for
+     * field types, as `craft\fields\*` subclasses of the native classes the fields actually use. This resolves
+     * both to the same name, so either can be compared with the names Feed Me registers its handlers for.
+     *
+     * @param string|object|null $field The field, field layout element, or class name
+     * @return string|null
+     */
+    public static function fieldClass(string|object|null $field): ?string
+    {
+        $class = is_object($field) ? get_class($field) : $field;
+
+        // Field types are namespaced; leave other values, such as `attribute`, as they are
+        if (!is_string($class) || !str_contains($class, '\\') || !class_exists($class)) {
+            return $class;
+        }
+
+        // Resolve class aliases
+        $class = (new \ReflectionClass($class))->getName();
+
+        if (str_starts_with($class, 'CraftCms\\Cms\\Field\\')) {
+            $legacyClass = 'craft\\fields\\' . substr($class, strlen('CraftCms\\Cms\\Field\\'));
+
+            if (class_exists($legacyClass) && is_subclass_of($legacyClass, $class)) {
+                return $legacyClass;
+            }
+        }
+
+        return $class;
+    }
+
     //
     // Helper functions for element fields to get their first source. This is tricky as some elements
     // support multiple sources (Entries, Users), whilst others can only have one (Tags, Categories)
@@ -143,6 +176,7 @@ class FieldHelper
     public static function getElementLayoutByField($type, $field): ?array
     {
         $source = null;
+        $type = static::fieldClass($type);
 
         if ($type === 'craft\fields\Assets') {
             $source = static::getAssetSourcesByField($field)[0] ?? null;
@@ -229,18 +263,18 @@ class FieldHelper
      */
     public static function fieldCanBeUniqueId($field): bool
     {
-        try {
-            $type = $field['type'] ?? 'attribute';
-        } catch (\Throwable $e) {
-            return false;
-        }
-
-        if (isset($field['type']) && $field['handle'] === 'parent') {
-            $type = 'parent';
-        }
-
         if (is_object($field)) {
-            $type = get_class($field);
+            $type = static::fieldClass($field);
+        } else {
+            try {
+                $type = static::fieldClass($field['type'] ?? 'attribute');
+            } catch (\Throwable $e) {
+                return false;
+            }
+
+            if (isset($field['type']) && $field['handle'] === 'parent') {
+                $type = 'parent';
+            }
         }
 
         $supportedFields = [
