@@ -1,0 +1,70 @@
+<?php
+
+namespace craft\feedme\fields;
+
+use Cake\Utility\Hash;
+use craft\feedme\base\Field;
+use craft\feedme\base\FieldInterface;
+use craft\feedme\helpers\DataHelper;
+
+/**
+ *
+ * @property-read string $mappingTemplate
+ */
+class Mapbox extends Field implements FieldInterface
+{
+    // Properties
+    // =========================================================================
+
+    /**
+     * @var string
+     */
+    public static string $name = 'Mapbox';
+
+    /**
+     * @var string
+     */
+    public static string $class = 'doublesecretagency\mapbox\fields\AddressField';
+
+    // Templates
+    // =========================================================================
+
+    /**
+     * @inheritDoc
+     */
+    public function getMappingTemplate(): string
+    {
+        return 'feed-me/_includes/fields/mapbox';
+    }
+
+    // Public Methods
+    // =========================================================================
+
+    /**
+     * @inheritDoc
+     */
+    public function parseField(): mixed
+    {
+        $preppedData = [];
+
+        $fields = Hash::get($this->fieldInfo, 'fields');
+
+        if (!$fields) {
+            return null;
+        }
+
+        foreach ($fields as $subFieldHandle => $subFieldInfo) {
+            $value = DataHelper::fetchValue($this->feedData, $subFieldInfo, $this->feed);
+            if ($value !== null) {
+                $preppedData[$subFieldHandle] = $value;
+            }
+        }
+
+        // Protect against sending an empty array
+        if (!$preppedData) {
+            return null;
+        }
+
+        return $preppedData;
+    }
+}

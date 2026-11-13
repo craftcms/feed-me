@@ -16,6 +16,7 @@ use craft\feedme\helpers\DuplicateHelper;
 use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
 use craft\helpers\App;
+use craft\helpers\ArrayHelper;
 use craft\helpers\FileHelper;
 use craft\helpers\Json;
 use craft\helpers\StringHelper;
@@ -394,7 +395,7 @@ class Process extends Component
         }
 
         // Set the attributes for the element
-        $element->setAttributes($attributeData, false);
+        $element->setAttributes(ArrayHelper::without($attributeData, 'id'), false);
 
         foreach ($feed['fieldMapping'] as $fieldHandle => $fieldInfo) {
             if (Hash::get($fieldInfo, 'nativeField')) {
@@ -449,7 +450,8 @@ class Process extends Component
             }
 
             // Set the attributes and fields again
-            $element->setAttributes($attributeData, false);
+            // The ID is only used for matching existing elements - never apply it to the element itself
+            $element->setAttributes(ArrayHelper::without($attributeData, 'id'), false);
             $element->setAttributes($nativeFieldData, false);
             $element->setFieldValues($fieldData);
         }

@@ -51,7 +51,7 @@ class Link extends Field implements FieldInterface
         $fields = Hash::get($this->fieldInfo, 'fields');
 
         if (!$fields) {
-            return null;
+            return $this->parseLegacyMapping();
         }
 
         foreach ($fields as $subFieldHandle => $subFieldInfo) {
@@ -76,5 +76,28 @@ class Link extends Field implements FieldInterface
         }
 
         return $preppedData;
+    }
+
+    // Private Methods
+    // =========================================================================
+
+    /**
+     * Parses a flat mapping saved before Link fields had a dedicated parser.
+     */
+    private function parseLegacyMapping(): ?string
+    {
+        $value = $this->fetchValue();
+
+        // see DefaultField::parseField() - allow empty strings when setting empty values
+        if ($value === '' && $this->feed['setEmptyValues']) {
+            return '';
+        }
+
+        if ($value === null || $value === '' || !is_scalar($value)) {
+            return null;
+        }
+
+        // return a string (rather than an array) so that the field can auto-detect the link type
+        return (string)$value;
     }
 }

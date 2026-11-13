@@ -145,7 +145,7 @@ class Settings extends Model
             'allowedPrivateHosts',
             'clientOptions',
             'requestOptions',
-            'feedOptions'
+            'feedOptions',
         ];
     }
 }
