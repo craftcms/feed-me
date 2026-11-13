@@ -24,7 +24,7 @@ return [
         'queueTtr' => null,
         'queueMaxRetry' => 5,
         'assetDownloadCurl' => false,
-        'assetDownloadGuzzle' => false,
+        'assetDownloadGuzzle' => true,
         'allowedPrivateHosts' => [],
         'feedOptions' => [
             '1' => [
@@ -54,10 +54,16 @@ return [
 - `runGcBeforeFeed` — Whether to run the Garbage Collection service before running a feed.
 - `queueTtr` — Set the 'time to reserve' time in seconds, to prevent the job being cancelled after 300 seconds (default).
 - `queueMaxRetry` — Set the maximum amount of retries the queue job should have before failing.
-- `assetDownloadCurl` — Use curl to download assets from a remote source. Can be used when issues arise using the default implementation.
-- `assetDownloadGuzzle` — Use Guzzle to download assets from a remote source. Can be used when issues arise using the default implementation.
+- `assetDownloadGuzzle` — _Deprecated._ Whether to use Guzzle to download assets from a remote source. Defaults to `true`. When set to `false`, Feed Me will use curl if `assetDownloadCurl` is enabled, or `fopen()` otherwise.
+- `assetDownloadCurl` — _Deprecated._ Whether to use curl to download assets from a remote source. Only takes effect when `assetDownloadGuzzle` is set to `false`. If both settings are `false`, Feed Me falls back to `fopen()`.
 - `allowedPrivateHosts` — Hostnames that are allowed to resolve to private IP addresses (e.g. `10.0.0.0/8`, `192.168.0.0/16`), for feeds and assets served from internal services. By default, URLs that resolve to private IP addresses are rejected. Can only be set in `config/feed-me.php`, and not per feed via `feedOptions`. See [Example `allowedPrivateHosts`](#example-allowedprivatehosts).
 - `feedOptions` — Provide an array of any of the above options (or [feed settings](../feature-tour/feed-overview.md)) to set or override for specific feeds, keyed by their existing feed IDs. _Note that feed IDs may be different across environments!_
+
+::: warning
+The `assetDownloadGuzzle` and `assetDownloadCurl` settings are deprecated, and support for downloading remote assets with curl or `fopen()` will be removed in a future version of Feed Me. Remove both settings from your config file to use Guzzle.
+
+`fopen()` is the least secure of the three options, as it doesn’t pin the connection to the IP addresses Feed Me has validated, so we recommend avoiding it.
+:::
 
 #### Example `requestOptions`
 

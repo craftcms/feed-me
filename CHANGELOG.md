@@ -1,5 +1,18 @@
 # Release Notes for Feed Me
 
+## Unreleased
+
+> [!WARNING]
+> Remote assets are now downloaded using Guzzle by default.
+> See [Configuration > Configuration options](https://docs.craftcms.com/feed-me/v6/get-started/configuration.html#configuration-options) for more details.
+
+- Remote assets are now downloaded using Guzzle by default.
+- Remote asset downloads now always use Guzzle’s curl handler, even when a custom handler is configured via `clientOptions` or `config/guzzle.php`. Middleware added to a custom handler stack is still applied.
+- Remote assets are no longer decompressed when downloaded.
+- Remote asset downloads that return an empty response are now treated as failed.
+- Deprecated the `assetDownloadCurl` and `assetDownloadGuzzle` config settings.
+- Fixed a bug where a failed asset download could be imported as the asset on subsequent feed runs.
+
 ## 6.17.0 - 2016-10-27
 
 - Added support for importing into Mapbox Address fields. ([#1774](https://github.com/craftcms/feed-me/pull/1774))
