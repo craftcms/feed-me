@@ -269,16 +269,19 @@ class Asset extends Element
 
         if ($create) {
             $lastCreatedFolder = null;
+            $parentId = $rootFolder->id;
 
             // Process all folders (create them)
             foreach (explode('/', $value) as $folderName) {
                 $existingFolder = $assets->findFolder([
                     'name' => $folderName,
                     'volumeId' => $volumeId,
+                    'parentId' => $parentId,
                 ]);
 
                 if ($existingFolder) {
                     $lastCreatedFolder = $existingFolder;
+                    $parentId = $existingFolder->id;
                     continue;
                 }
 
@@ -293,6 +296,7 @@ class Asset extends Element
                 $assets->createFolder($folderModel);
 
                 $lastCreatedFolder = $folderModel;
+                $parentId = $folderModel->id;
             }
 
             // Then, we just want the lowest level folder to use
