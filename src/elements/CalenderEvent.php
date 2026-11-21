@@ -56,6 +56,14 @@ class CalenderEvent extends Element
     public static string $class = 'Solspace\Calendar\Elements\Event';
 
     /**
+     * @inheritdoc
+     */
+    public function getName(): string
+    {
+        return Craft::t('feed-me', 'Calendar Event');
+    }
+
+    /**
      * @var array
      */
     private array $rruleInfo = [];

@@ -127,7 +127,7 @@ class Plugin extends \craft\base\Plugin
 
     public function getPluginName(): string
     {
-        return Craft::t('feed-me', $this->getSettings()->pluginName);
+        return Craft::t('site', $this->getSettings()->pluginName);
     }
 
     /**

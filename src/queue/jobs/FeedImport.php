@@ -14,6 +14,7 @@ use craft\feedme\services\Process;
 use craft\helpers\Db;
 use craft\helpers\Json;
 use craft\helpers\Queue;
+use craft\i18n\Translation;
 use craft\queue\BaseBatchedJob;
 use Throwable;
 use yii\queue\RetryableJobInterface;
@@ -218,7 +219,7 @@ class FeedImport extends BaseBatchedJob implements RetryableJobInterface
      */
     protected function defaultDescription(): string
     {
-        return Craft::t('feed-me', 'Running {name} feed.', ['name' => $this->feed->name]);
+        return Translation::prep('feed-me', 'Running {name} feed.', ['name' => $this->feed->name]);
     }
 
     /**
