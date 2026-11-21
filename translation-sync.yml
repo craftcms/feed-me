@@ -1,0 +1,8 @@
+# Branches whose translation files are kept in sync, oldest first.
+# When branches translate a string differently, the newest branch's translation wins.
+branches:
+  6.x: src/translations
+files:
+  - feed-me.php
+source_language: en
+commit_message: Update translations
