@@ -2,9 +2,9 @@
 
 ## Unreleased
 
-- Added translations for Arabic, Chinese, Croatian, Czech, Danish, Dutch, English (UK), French, French (Canada), German, German (Switzerland), Greek, Hebrew, Hungarian, Icelandic, Indonesian, Italian, Japanese, Korean, Kyrgyz, Norwegian Bokmål, Norwegian Nynorsk, Persian, Polish, Portuguese, Russian, Slovak, Spanish, Swedish, Thai, Turkish, Ukrainian, and Welsh. ([#PR](https://github.com/craftcms/feed-me/pull/PR))
-- Fixed a bug where element type names, option labels, and some messages were always shown in English. ([#PR](https://github.com/craftcms/feed-me/pull/PR))
-- Fixed a bug where feed names and the plugin name were translated with the `feed-me` category instead of `site`. ([#PR](https://github.com/craftcms/feed-me/pull/PR))
+- Added translations for Arabic, Chinese, Croatian, Czech, Danish, Dutch, English (UK), French, French (Canada), German, German (Switzerland), Greek, Hebrew, Hungarian, Icelandic, Indonesian, Italian, Japanese, Korean, Kyrgyz, Norwegian Bokmål, Norwegian Nynorsk, Persian, Polish, Portuguese, Russian, Slovak, Spanish, Swedish, Thai, Turkish, Ukrainian, and Welsh. ([#1792](https://github.com/craftcms/feed-me/pull/1792))
+- Fixed a bug where element type names, option labels, and some messages were always shown in English. ([#1792](https://github.com/craftcms/feed-me/pull/1792))
+- Fixed a bug where feed names and the plugin name were translated with the `feed-me` category instead of `site`. ([#1792](https://github.com/craftcms/feed-me/pull/1792))
 
 ## 6.17.0 - 2016-10-27
 
