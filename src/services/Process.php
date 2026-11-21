@@ -314,7 +314,7 @@ class Process extends Component
             // existing elements - that's a problem no matter which option is selected, so don't proceed.
             // Even if Add is selected, we'll end up with duplicates because it can't find existing elements to skip over
             if ($existingElement === false) {
-                Plugin::info('No existing element mapping data found. Have you ensured you\'ve supplied all correct data in your feed?');
+                Plugin::info('No existing element mapping data found. Have you ensured you’ve supplied all correct data in your feed?');
 
                 return;
             }
@@ -569,7 +569,7 @@ class Process extends Component
     public function afterProcessFeed($settings, $feed, $processedElementIds, $startTime = null): void
     {
         if ((int)DuplicateHelper::isDelete($feed) + (int)DuplicateHelper::isDisable($feed) + (int)DuplicateHelper::isDisableForSite($feed) > 1) {
-            Plugin::info("You can't have Delete and Disabled enabled at the same time as an Import Strategy.");
+            Plugin::info('You can’t have Delete and Disabled enabled at the same time as an Import Strategy.');
             return;
         }
 
