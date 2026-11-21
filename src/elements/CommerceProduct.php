@@ -56,6 +56,14 @@ class CommerceProduct extends Element
     public static string $class = ProductElement::class;
 
     /**
+     * @inheritdoc
+     */
+    public function getName(): string
+    {
+        return Craft::t('feed-me', 'Commerce Product');
+    }
+
+    /**
      * @var bool
      * @since x.x.x
      */

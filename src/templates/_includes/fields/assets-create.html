@@ -43,9 +43,9 @@
             name: 'options[conflict]',
             class: '',
             options: [
-                { value: 'index', label: 'Use existing asset' },
-                { value: 'replace', label: 'Replace existing asset' },
-                { value: 'create', label: 'Keep both (rename feed data)' },
+                { value: 'index', label: 'Use existing asset'|t('feed-me') },
+                { value: 'replace', label: 'Replace existing asset'|t('feed-me') },
+                { value: 'create', label: 'Keep both (rename feed data)'|t('feed-me') },
             ],
             value: hash_get(feed.fieldMapping, optionsPath ~ '.conflict') ?: '',
         }) }}

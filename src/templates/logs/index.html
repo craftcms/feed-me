@@ -3,7 +3,7 @@
 {% import '_includes/forms' as forms %}
 
 {% set crumbs = [
-    { label: craft.feedme.getPluginName|t('feed-me'), url: url('feed-me') },
+    { label: craft.feedme.getPluginName, url: url('feed-me') },
     { label: "Logs"|t('feed-me'), url: url('feed-me/logs') }
 ] %}
 
@@ -13,14 +13,14 @@
     <form class="log-type-form">
         {{ forms.selectField({
             label: 'Show logs for:'|t('feed-me'),
-            instructions: ''|t('feed-me'),
+            instructions: '',
             id: 'show',
             name: 'show',
             value: show,
             options: [
-                { label: 'All', value: '' },
-                { label: 'Info', value: 'info' },
-                { label: 'Errors', value: 'error' },
+                { label: 'All'|t('app'), value: '' },
+                { label: 'Info'|t('feed-me'), value: 'info' },
+                { label: 'Errors'|t('feed-me'), value: 'error' },
             ],
         }) }}
     </form>
@@ -33,8 +33,8 @@
         <table class="data fullwidth collapsible feed-me-logs-table">
             <thead>
                 <tr>
-                    <th scope="col">{{ "Type"|t('feed-me') }}</th>
-                    <th scope="col">{{ "Message"|t('feed-me') }}</th>
+                    <th scope="col">{{ "Type"|t('app') }}</th>
+                    <th scope="col">{{ "Message"|t('app') }}</th>
                     <th scope="col">{{ "Timestamp"|t('feed-me') }}</th>
                 </tr>
             </thead>
@@ -60,11 +60,11 @@
                             {% endif %}
                         </td>
 
-                        <td class="col-label" data-title="{{ 'Message'|t('feed-me') }}">
+                        <td class="col-label" data-title="{{ 'Message'|t('app') }}">
                             {{ logEntry.message|md|striptags('<code><strong><a>')|raw }}
 
                             {% if logEntry.items is defined %}
-                                <a class="log-detail-link" href="#" data-key="{{ logEntry.key }}">Show detail</a>
+                                <a class="log-detail-link" href="#" data-key="{{ logEntry.key }}">{{ "Show detail"|t('feed-me') }}</a>
                             {% endif %}
                         </td>
 
@@ -82,7 +82,7 @@
                                     <span class="log-result type-{{ subEntry.type }}">{{ subEntry.type }}</span>
                                 </td>
 
-                                <td class="col-label" data-title="{{ 'Message'|t('feed-me') }}">
+                                <td class="col-label" data-title="{{ 'Message'|t('app') }}">
                                     &rdsh; {{ subEntry.message|md|striptags('<code><strong><a>')|raw }}
                                 </td>
 
