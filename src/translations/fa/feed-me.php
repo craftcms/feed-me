@@ -112,7 +112,6 @@ return [
     'Disables any elements that are missing from the feed, across all sites.' => 'هر مؤلفه‌ای را که در فید وجود ندارد، در همه سایت‌ها غیرفعال می‌کند.',
     'Disables any elements that are missing from the feed, in the feed’s target site only.' => 'هر مؤلفه‌ای را که در فید وجود ندارد، فقط در سایت مقصد فید غیرفعال می‌کند.',
     'Disables any elements that are missing from the feed.' => 'هر مؤلفه‌ای را که در فید وجود ندارد غیرفعال می‌کند.',
-    'Don\'t Import' => 'درون‌ریزی نشود',
     'Don’t import' => 'درون‌ریزی نشود',
     'Duplicate Feed' => 'کپی برداری از فید',
     'Element Group' => 'گروه مؤلفه',

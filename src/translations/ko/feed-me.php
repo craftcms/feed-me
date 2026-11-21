@@ -112,7 +112,6 @@ return [
     'Disables any elements that are missing from the feed, across all sites.' => '피드에서 누락된 모든 요소를 모든 사이트에서 비활성화합니다.',
     'Disables any elements that are missing from the feed, in the feed’s target site only.' => '피드에서 누락된 모든 요소를 피드의 대상 사이트에서만 비활성화합니다.',
     'Disables any elements that are missing from the feed.' => '피드에서 누락된 모든 요소를 비활성화합니다.',
-    'Don\'t Import' => '가져오지 않음',
     'Don’t import' => '가져오지 않음',
     'Duplicate Feed' => '피드 복제',
     'Element Group' => '요소 그룹',

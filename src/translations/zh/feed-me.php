@@ -112,7 +112,6 @@ return [
     'Disables any elements that are missing from the feed, across all sites.' => '在所有站点中禁用数据源中缺失的所有元素。',
     'Disables any elements that are missing from the feed, in the feed’s target site only.' => '仅在数据源的目标站点中禁用数据源中缺失的所有元素。',
     'Disables any elements that are missing from the feed.' => '禁用数据源中缺失的所有元素。',
-    'Don\'t Import' => '不导入',
     'Don’t import' => '不导入',
     'Duplicate Feed' => '复制数据源',
     'Element Group' => '元素组',

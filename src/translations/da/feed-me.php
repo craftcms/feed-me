@@ -112,7 +112,6 @@ return [
     'Disables any elements that are missing from the feed, across all sites.' => 'Deaktiverer alle elementer, der mangler i feedet, på tværs af alle sites.',
     'Disables any elements that are missing from the feed, in the feed’s target site only.' => 'Deaktiverer alle elementer, der mangler i feedet, kun på feedets målsite.',
     'Disables any elements that are missing from the feed.' => 'Deaktiverer alle elementer, der mangler i feedet.',
-    'Don\'t Import' => 'Importér ikke',
     'Don’t import' => 'Importér ikke',
     'Duplicate Feed' => 'Dupliker feed',
     'Element Group' => 'Elementgruppe',

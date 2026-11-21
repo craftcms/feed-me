@@ -112,7 +112,6 @@ return [
     'Disables any elements that are missing from the feed, across all sites.' => 'Schakelt alle elementen die in de feed ontbreken uit, op alle websites.',
     'Disables any elements that are missing from the feed, in the feed’s target site only.' => 'Schakelt alle elementen die in de feed ontbreken uit, alleen op de doelwebsite van de feed.',
     'Disables any elements that are missing from the feed.' => 'Schakelt alle elementen uit die in de feed ontbreken.',
-    'Don\'t Import' => 'Niet importeren',
     'Don’t import' => 'Niet importeren',
     'Duplicate Feed' => 'Feed dupliceren',
     'Element Group' => 'Elementgroep',

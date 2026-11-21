@@ -112,7 +112,6 @@ return [
     'Disables any elements that are missing from the feed, across all sites.' => 'Onemogućuje sve elemente koji nedostaju u feedu, na svim web-mjestima.',
     'Disables any elements that are missing from the feed, in the feed’s target site only.' => 'Onemogućuje sve elemente koji nedostaju u feedu, samo na ciljnom web-mjestu feeda.',
     'Disables any elements that are missing from the feed.' => 'Onemogućuje sve elemente koji nedostaju u feedu.',
-    'Don\'t Import' => 'Nemoj uvoziti',
     'Don’t import' => 'Nemoj uvoziti',
     'Duplicate Feed' => 'Dupliciraj feed',
     'Element Group' => 'Grupa elemenata',

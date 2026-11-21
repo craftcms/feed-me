@@ -112,7 +112,6 @@ return [
     'Disables any elements that are missing from the feed, across all sites.' => 'フィードにないエレメントを、すべてのサイトで無効化します。',
     'Disables any elements that are missing from the feed, in the feed’s target site only.' => 'フィードにないエレメントを、フィードの対象サイトでのみ無効化します。',
     'Disables any elements that are missing from the feed.' => 'フィードにないエレメントをすべて無効化します。',
-    'Don\'t Import' => 'インポートしない',
     'Don’t import' => 'インポートしない',
     'Duplicate Feed' => 'フィードを複製',
     'Element Group' => 'エレメントグループ',

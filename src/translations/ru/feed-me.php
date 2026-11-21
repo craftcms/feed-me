@@ -112,7 +112,6 @@ return [
     'Disables any elements that are missing from the feed, across all sites.' => 'Выключает все элементы, отсутствующие в фиде, на всех сайтах.',
     'Disables any elements that are missing from the feed, in the feed’s target site only.' => 'Выключает все элементы, отсутствующие в фиде, только на целевом сайте фида.',
     'Disables any elements that are missing from the feed.' => 'Выключает все элементы, отсутствующие в фиде.',
-    'Don\'t Import' => 'Не импортировать',
     'Don’t import' => 'Не импортировать',
     'Duplicate Feed' => 'Скопировать фид',
     'Element Group' => 'Группа элементов',

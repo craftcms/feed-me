@@ -112,7 +112,6 @@ return [
     'Disables any elements that are missing from the feed, across all sites.' => 'Вимикає всі елементи, яких немає у фіді, на всіх сайтах.',
     'Disables any elements that are missing from the feed, in the feed’s target site only.' => 'Вимикає всі елементи, яких немає у фіді, лише на цільовому сайті фіду.',
     'Disables any elements that are missing from the feed.' => 'Вимикає всі елементи, яких немає у фіді.',
-    'Don\'t Import' => 'Не імпортувати',
     'Don’t import' => 'Не імпортувати',
     'Duplicate Feed' => 'Дублювати фід',
     'Element Group' => 'Група елементів',

@@ -112,7 +112,6 @@ return [
     'Disables any elements that are missing from the feed, across all sites.' => 'يعطّل أي عناصر مفقودة من التغذية، في جميع المواقع.',
     'Disables any elements that are missing from the feed, in the feed’s target site only.' => 'يعطّل أي عناصر مفقودة من التغذية، في الموقع المستهدف للتغذية فقط.',
     'Disables any elements that are missing from the feed.' => 'يعطّل أي عناصر مفقودة من التغذية.',
-    'Don\'t Import' => 'عدم الاستيراد',
     'Don’t import' => 'عدم الاستيراد',
     'Duplicate Feed' => 'تكرار التغذية',
     'Element Group' => 'مجموعة العناصر',

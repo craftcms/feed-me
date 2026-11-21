@@ -112,7 +112,6 @@ return [
     'Disables any elements that are missing from the feed, across all sites.' => 'Wyłącza wszystkie elementy, których brakuje w feedzie, we wszystkich witrynach.',
     'Disables any elements that are missing from the feed, in the feed’s target site only.' => 'Wyłącza wszystkie elementy, których brakuje w feedzie, tylko w witrynie docelowej feedu.',
     'Disables any elements that are missing from the feed.' => 'Wyłącza wszystkie elementy, których brakuje w feedzie.',
-    'Don\'t Import' => 'Nie importuj',
     'Don’t import' => 'Nie importuj',
     'Duplicate Feed' => 'Powiel feed',
     'Element Group' => 'Grupa elementów',

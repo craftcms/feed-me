@@ -112,7 +112,6 @@ return [
     'Disables any elements that are missing from the feed, across all sites.' => 'Menonaktifkan semua elemen yang tidak ada di feed, di semua situs.',
     'Disables any elements that are missing from the feed, in the feed’s target site only.' => 'Menonaktifkan semua elemen yang tidak ada di feed, hanya di situs tujuan feed.',
     'Disables any elements that are missing from the feed.' => 'Menonaktifkan semua elemen yang tidak ada di feed.',
-    'Don\'t Import' => 'Jangan impor',
     'Don’t import' => 'Jangan impor',
     'Duplicate Feed' => 'Duplikat Feed',
     'Element Group' => 'Grup Elemen',

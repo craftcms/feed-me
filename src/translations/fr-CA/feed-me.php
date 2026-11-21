@@ -112,7 +112,6 @@ return [
     'Disables any elements that are missing from the feed, across all sites.' => 'Désactive tous les éléments absents du flux, sur l’ensemble des sites.',
     'Disables any elements that are missing from the feed, in the feed’s target site only.' => 'Désactive tous les éléments absents du flux, uniquement dans le site cible du flux.',
     'Disables any elements that are missing from the feed.' => 'Désactive tous les éléments absents du flux.',
-    'Don\'t Import' => 'Ne pas importer',
     'Don’t import' => 'Ne pas importer',
     'Duplicate Feed' => 'Dupliquer le flux',
     'Element Group' => 'Groupe d’éléments',

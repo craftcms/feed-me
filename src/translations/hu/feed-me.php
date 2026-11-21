@@ -112,7 +112,6 @@ return [
     'Disables any elements that are missing from the feed, across all sites.' => 'Kikapcsolja mindazokat az elemeket, amelyek hiányoznak a feedből, az összes webhelyen.',
     'Disables any elements that are missing from the feed, in the feed’s target site only.' => 'Kikapcsolja mindazokat az elemeket, amelyek hiányoznak a feedből, csak a feed célwebhelyén.',
     'Disables any elements that are missing from the feed.' => 'Kikapcsolja mindazokat az elemeket, amelyek hiányoznak a feedből.',
-    'Don\'t Import' => 'Nincs importálás',
     'Don’t import' => 'Nincs importálás',
     'Duplicate Feed' => 'Feed duplikálása',
     'Element Group' => 'Elemcsoport',

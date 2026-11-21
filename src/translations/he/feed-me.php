@@ -112,7 +112,6 @@ return [
     'Disables any elements that are missing from the feed, across all sites.' => 'משבית כל רכיב שחסר בפיד, בכל האתרים.',
     'Disables any elements that are missing from the feed, in the feed’s target site only.' => 'משבית כל רכיב שחסר בפיד, באתר היעד של הפיד בלבד.',
     'Disables any elements that are missing from the feed.' => 'משבית כל רכיב שחסר בפיד.',
-    'Don\'t Import' => 'אל תייבא',
     'Don’t import' => 'אל תייבא',
     'Duplicate Feed' => 'שכפל פיד',
     'Element Group' => 'קבוצת רכיבים',

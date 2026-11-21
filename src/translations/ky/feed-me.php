@@ -112,7 +112,6 @@ return [
     'Disables any elements that are missing from the feed, across all sites.' => 'Тасмада жок бардык элементтерди бардык сайттарда иштен чыгарат.',
     'Disables any elements that are missing from the feed, in the feed’s target site only.' => 'Тасмада жок бардык элементтерди тасманын максаттуу сайтында гана иштен чыгарат.',
     'Disables any elements that are missing from the feed.' => 'Тасмада жок бардык элементтерди иштен чыгарат.',
-    'Don\'t Import' => 'Импорттобоо',
     'Don’t import' => 'Импорттобоо',
     'Duplicate Feed' => 'Тасманын көчүрмөсүн түзүү',
     'Element Group' => 'Элементтер тобу',
