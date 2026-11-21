@@ -7,7 +7,6 @@
 /.gitignore export-ignore
 /.lintstagedrc.json export-ignore
 /.nvmrc export-ignore
-/crowdin.yml export-ignore
 /CHANGELOG.md export-ignore
 /README.md export-ignore
 /SECURITY.md export-ignore
