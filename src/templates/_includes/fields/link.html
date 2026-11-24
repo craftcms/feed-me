@@ -40,24 +40,24 @@
 </tr>
 
 {% set subfields = {
-    type: 'Type'|t('feed-me'),
-    value: 'Value'|t('feed-me'),
+    type: 'Type'|t('app'),
+    value: 'Value'|t('app'),
 } %}
 
 {% if field is defined and field.showLabelField %}
-    {% set subfields = subfields|merge({ label: 'Label'|t('feed-me') }) %}
+    {% set subfields = subfields|merge({ label: 'Label'|t('app') }) %}
 {% endif %}
 
 {% set advancedFieldLabels = {
-    urlSuffix: 'URL Suffix'|t('feed-me'),
-    target: 'Open in a new tab'|t('feed-me'),
-    title: 'Title Text'|t('feed-me'),
-    class: 'Class Name'|t('feed-me'),
-    id: 'ID'|t('feed-me'),
+    urlSuffix: 'URL Suffix'|t('app'),
+    target: 'Open in a new tab'|t('app'),
+    title: 'Title Text'|t('app'),
+    class: 'Class Name'|t('app'),
+    id: 'ID'|t('app'),
     rel: 'Relation (rel)'|t('feed-me'),
-    ariaLabel: 'ARIA Label'|t('feed-me'),
-    download: 'Download'|t('feed-me'),
-    filename: 'Filename'|t('feed-me'),
+    ariaLabel: 'ARIA Label'|t('app'),
+    download: 'Download'|t('app'),
+    filename: 'Filename'|t('app'),
 } %}
 
 {% if field is defined %}
@@ -98,15 +98,15 @@
             type: 'select',
             options: [
                 { label: 'Don’t import'|t('feed-me'), value: '' },
-                { label: 'Open in a new tab'|t('feed-me'), value: '_blank' },
+                { label: 'Open in a new tab'|t('app'), value: '_blank' },
             ],
         } %}
     {% elseif key == 'download' %}
         {% set default = {
             type: 'select',
             options: [
-                { label: 'No'|t('feed-me'), value: '' },
-                { label: 'Yes'|t('feed-me'), value: '1' },
+                { label: 'No'|t('app'), value: '' },
+                { label: 'Yes'|t('app'), value: '1' },
             ],
         } %}
     {% endif %}

@@ -60,7 +60,7 @@ class GetHelp extends Model
     public function attributeLabels(): array
     {
         return [
-            'fromEmail' => Craft::t('feed-me', 'Your Email'),
+            'fromEmail' => Craft::t('app', 'Your Email'),
         ];
     }
 

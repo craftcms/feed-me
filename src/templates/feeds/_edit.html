@@ -5,16 +5,18 @@
 {% do view.registerTranslations('feed-me', [
     'Suspend missing users',
     'Suspends any users that are missing from the feed.',
+]) %}
+{% do view.registerTranslations('app', [
     'None',
 ]) %}
 
 {% set crumbs = [
-    { label: craft.feedme.getPluginName|t('feed-me'), url: url('feed-me') },
+    { label: craft.feedme.getPluginName, url: url('feed-me') },
 ] %}
 
 {% if feed.id %}
     {% set crumbs = crumbs|merge([
-        { label: feed.name|t('feed-me'), url: url('feed-me/feeds/' ~ feed.id) },
+        { label: feed.name|t('site'), url: url('feed-me/feeds/' ~ feed.id) },
     ]) %}
 {% endif %}
 
@@ -25,7 +27,7 @@
 
 {% set buttons %}
     <div class="buttons">
-        <input type="button" data-action="feed-me/feeds/save-feed" class="btn submit" value="{{ 'Save'|t('feed-me') }}">
+        <input type="button" data-action="feed-me/feeds/save-feed" class="btn submit" value="{{ 'Save'|t('app') }}">
         <input type="button" data-action="feed-me/feeds/save-and-element-feed" class="btn submit" value="{{ 'Save & Continue'|t('feed-me') }}">
     </div>
 {% endset %}
@@ -41,7 +43,7 @@
 
     {{ forms.textField({
         first: true,
-        label: "Name"|t('feed-me'),
+        label: "Name"|t('app'),
         instructions: "What this feed will be called in the CP."|t('feed-me'),
         id: 'name',
         name: 'name',
@@ -84,7 +86,7 @@
         instructions: 'Choose what element you want to save your feed data to.'|t('feed-me'),
         id: 'elementType',
         name: 'elementType',
-        options: [{ label: 'Select', value: '' }]|merge(elementsList),
+        options: [{ label: 'Select'|t('app'), value: '' }]|merge(elementsList),
         value: feed.elementType,
         errors: feed.getErrors('elementType'),
         required: true,
@@ -204,7 +206,7 @@
 
     {{ forms.lightswitchField({
         first: true,
-        label: 'Backup'|t('feed-me'),
+        label: 'Backup'|t('app'),
         instructions: 'Perform a full backup each time this feed is processed.'|t('feed-me'),
         name: 'backup',
         on: (feed.id) ? feed.backup : true,

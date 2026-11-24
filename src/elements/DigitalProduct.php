@@ -34,6 +34,14 @@ class DigitalProduct extends Element
      */
     public static string $class = 'craft\digitalproducts\elements\Product';
 
+    /**
+     * @inheritdoc
+     */
+    public function getName(): string
+    {
+        return Craft::t('feed-me', 'Digital Product');
+    }
+
     // Templates
     // =========================================================================
 

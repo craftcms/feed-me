@@ -58,7 +58,7 @@ $(function () {
 
     var currentValue = $('.element-child-group select').val();
 
-    var newOptions = [$('<option />').val('').text(Craft.t('feed-me', 'None'))];
+    var newOptions = [$('<option />').val('').text(Craft.t('app', 'None'))];
     $.each(entryTypes, function (index, value) {
       if (index) {
         newOptions.push($('<option/>').val(index).text(value));

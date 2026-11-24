@@ -3,7 +3,7 @@
 {% import '_includes/forms' as forms %}
 
 {% set crumbs = [
-    { label: craft.feedme.getPluginName|t('feed-me'), url: url('feed-me') },
+    { label: craft.feedme.getPluginName, url: url('feed-me') },
     { label: "Feeds"|t('feed-me'), url: url('feed-me/feeds') },
 ] %}
 
@@ -21,8 +21,8 @@
     {% if feeds|length %}
         <table id="feeds" class="data fullwidth collapsible table-feed-me">
             <thead>
-                <th scope="col">{{ "Name"|t('feed-me') }}</th>
-                <th scope="col">{{ "Type"|t('feed-me') }}</th>
+                <th scope="col">{{ "Name"|t('app') }}</th>
+                <th scope="col">{{ "Type"|t('app') }}</th>
                 <th scope="col">{{ "Element Type"|t('feed-me') }}</th>
                 <th scope="col">{{ "Element Group"|t('feed-me') }}</th>
                 <th scope="col">{{ "Strategy"|t('feed-me') }}</th>
@@ -31,9 +31,9 @@
             </thead>
             <tbody>
                 {% for feed in feeds %}
-                    <tr data-id="{{ feed.id }}" data-name="{{ feed.name|t('feed-me') }}">
+                    <tr data-id="{{ feed.id }}" data-name="{{ feed.name|t('site') }}">
                         <th scope="row" data-title="Name">
-                            <a href="{{ url('feed-me/feeds/' ~ feed.id) }}">{{ feed.name|t('feed-me') }}</a>
+                            <a href="{{ url('feed-me/feeds/' ~ feed.id) }}">{{ feed.name|t('site') }}</a>
 
                             <span class="index-url">
                                 {% if feed.feedUrl|length > 40 %}
@@ -67,15 +67,15 @@
                         <td><a href="{{ url('feed-me/feeds/run/' ~ feed.id) }}">{{ 'Run Feed'|t('feed-me') }}</a></td>
 
                         <td class="thin action">
-                            <a class="settings icon" title="{{ 'Settings'|t('feed-me') }}" role="button"></a>
+                            <a class="settings icon" title="{{ 'Settings'|t('app') }}" role="button"></a>
                         </td>
 
                         <td class="thin action">
-                            <a class="move icon" title="{{ 'Reorder'|t('feed-me') }}" role="button"></a>
+                            <a class="move icon" title="{{ 'Reorder'|t('app') }}" role="button"></a>
                         </td>
 
                         <td class="thin action">
-                            <a class="delete icon" title="{{ 'Delete'|t('feed-me') }}" role="button"></a>
+                            <a class="delete icon" title="{{ 'Delete'|t('app') }}" role="button"></a>
                         </td>
                     </tr>
 
@@ -132,7 +132,7 @@
         sortable: true,
         reorderAction: 'feed-me/feeds/reorder-feeds',
         deleteAction: 'feed-me/feeds/delete-feed',
-        confirmDeleteMessage: '{{ "Are you sure you want to delete “{name}”?"|t('feed-me') }}'
+        confirmDeleteMessage: '{{ "Are you sure you want to delete “{name}”?"|t('app')|e('js') }}'
     });
 {% endjs %}
 

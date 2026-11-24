@@ -232,7 +232,7 @@ class FieldHelper
 
         $return = [];
 
-        $return[''] = Craft::t('feed-me', 'Don\'t Import');
+        $return[''] = Craft::t('feed-me', 'Don’t import');
 
         foreach ($folders as $folder) {
             $return[] = [

@@ -37,6 +37,14 @@ class Category extends Element
      */
     public static string $class = CategoryElement::class;
 
+    /**
+     * @inheritdoc
+     */
+    public function getName(): string
+    {
+        return Craft::t('app', 'Category');
+    }
+
     // Templates
     // =========================================================================
 

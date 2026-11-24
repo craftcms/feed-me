@@ -55,8 +55,8 @@
         type: 'select',
         options: [
             { label: 'Don’t import'|t('feed-me'), value: '' },
-            { label: 'Enabled', value: '1' },
-            { label: 'Disabled', value: '0' },
+            { label: 'Enabled'|t('app'), value: '1' },
+            { label: 'Disabled'|t('app'), value: '0' },
         ],
     },
 }, {
@@ -76,8 +76,8 @@
         type: 'select',
         options: [
             { label: 'Don’t import'|t('feed-me'), value: '' },
-            { label: 'Enabled', value: '1' },
-            { label: 'Disabled', value: '0' },
+            { label: 'Enabled'|t('app'), value: '1' },
+            { label: 'Disabled'|t('app'), value: '0' },
         ],
     },
 }, {
@@ -203,9 +203,9 @@
 
 <table class="feedme-mapping data fullwidth collapsible">
     <thead>
-        <th>{{ 'Field'|t('feed-me') }}</th>
+        <th>{{ 'Field'|t('app') }}</th>
         <th>{{ 'Feed Element'|t('feed-me') }}</th>
-        <th>{{ 'Default Value'|t('feed-me') }}</th>
+        <th>{{ 'Default Value'|t('app') }}</th>
     </thead>
     <tbody>
         {% for field in fields %}
@@ -223,9 +223,9 @@
 
 <table class="feedme-mapping data fullwidth collapsible">
     <thead>
-        <th>{{ 'Field'|t('feed-me') }}</th>
+        <th>{{ 'Field'|t('app') }}</th>
         <th>{{ 'Feed Element'|t('feed-me') }}</th>
-        <th>{{ 'Default Value'|t('feed-me') }}</th>
+        <th>{{ 'Default Value'|t('app') }}</th>
     </thead>
     <tbody>
         {% for field in fieldsVariants %}
@@ -252,9 +252,9 @@
         {% else %}
             <table class="feedme-mapping data fullwidth collapsible">
                 <thead>
-                    <th>{{ 'Field'|t('feed-me') }}</th>
+                    <th>{{ 'Field'|t('app') }}</th>
                     <th>{{ 'Feed Element'|t('feed-me') }}</th>
-                    <th>{{ 'Default Value'|t('feed-me') }}</th>
+                    <th>{{ 'Default Value'|t('app') }}</th>
                 </thead>
                 <tbody>
                     {% for layoutField in tab.getElements()|filter(e => e is instance of('craft\\fieldlayoutelements\\CustomField')) %}
@@ -289,9 +289,9 @@
         {% else %}
             <table class="feedme-mapping data fullwidth collapsible">
                 <thead>
-                    <th>{{ 'Field'|t('feed-me') }}</th>
+                    <th>{{ 'Field'|t('app') }}</th>
                     <th>{{ 'Feed Element'|t('feed-me') }}</th>
-                    <th>{{ 'Default Value'|t('feed-me') }}</th>
+                    <th>{{ 'Default Value'|t('app') }}</th>
                 </thead>
                 <tbody>
                     {% for layoutField in tab.getElements()|filter(e => e is instance of('craft\\fieldlayoutelements\\CustomField')) %}

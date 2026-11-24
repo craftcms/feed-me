@@ -44,6 +44,14 @@ class Entry extends Element
      */
     public static string $class = EntryElement::class;
 
+    /**
+     * @inheritdoc
+     */
+    public function getName(): string
+    {
+        return Craft::t('app', 'Entry');
+    }
+
     // Templates
     // =========================================================================
 
