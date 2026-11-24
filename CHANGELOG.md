@@ -14,6 +14,7 @@
 - Deprecated the `assetDownloadCurl` and `assetDownloadGuzzle` config settings.
 - Feed Me now logs a deprecation warning when remote assets are downloaded with `fopen()`.
 - Fixed a bug where a failed asset download could be imported as the asset on subsequent feed runs.
+- Fixed a [moderate-severity](https://github.com/craftcms/cms/security/policy#severity--remediation) SSRF vulnerability. (GHSA-mcxq-jpmm-57v9)
 
 ## 6.17.0 - 2016-10-27
 
