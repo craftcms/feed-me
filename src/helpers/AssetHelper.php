@@ -98,7 +98,10 @@ class AssetHelper
             } catch (Throwable $e) {
             }
 
-            fclose($fp);
+            // Guzzle closes the sink when the request fails without a response
+            if (is_resource($fp)) {
+                fclose($fp);
+            }
 
             if ($response?->getStatusCode() !== 200) {
                 return false;
