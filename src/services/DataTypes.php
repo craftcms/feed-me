@@ -180,7 +180,7 @@ class DataTypes extends Component
             $filepath = realpath($url);
 
             if (!$filepath) {
-                $response = ['success' => false, 'error' => 'File path cannot be found.'];
+                $response = ['success' => false, 'error' => Craft::t('feed-me', 'File path cannot be found.')];
 
                 return $this->_triggerEventAfterFetchFeed([
                     'url' => $url,
@@ -190,7 +190,7 @@ class DataTypes extends Component
             }
 
             if (!$this->isFilepathAllowed($filepath)) {
-                $response = ['success' => false, 'error' => 'Access to this file path is not permitted.'];
+                $response = ['success' => false, 'error' => Craft::t('feed-me', 'Access to this file path is not permitted.')];
 
                 return $this->_triggerEventAfterFetchFeed([
                     'url' => $url,
@@ -206,7 +206,7 @@ class DataTypes extends Component
             if ($error) {
                 $response = ['success' => false, 'error' => $error['message']];
             } elseif (!$data) {
-                $response = ['success' => false, 'error' => 'Unable to parse data.'];
+                $response = ['success' => false, 'error' => Craft::t('feed-me', 'Unable to parse data.')];
             } else {
                 $response = ['success' => true, 'data' => $data];
             }

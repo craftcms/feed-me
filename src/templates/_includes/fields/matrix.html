@@ -50,7 +50,7 @@
 
                         {% namespace 'fieldMapping[' ~ blockPath|join('][') ~ ']' %}
                             {{ feedMeMacro.checkbox({
-                                label: 'Disabled'|t('feed-me'),
+                                label: 'Disabled'|t('app'),
                                 name: 'disabled',
                                 value: 1,
                                 checked: disabled,
@@ -108,7 +108,7 @@
                         <td class="col-field">
                             <div class="field">
                                 <div class="heading">
-                                    <label class="">{{ tab.name }} Fields</label>
+                                    <label class="">{{ '{name} Fields'|t('feed-me', { name: tab.name|t('site') }) }}</label>
                                 </div>
                             </div>
                         </td>
