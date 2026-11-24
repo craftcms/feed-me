@@ -171,6 +171,8 @@ class AssetHelper
         $url = $srcName;
         $context = null;
         if ($curlOptResolve !== null) {
+            Craft::$app->getDeprecator()->log('feed-me.assetDownloadFopen', 'Downloading remote assets with `fopen()` is deprecated, and isn’t protected against DNS rebinding. Remove the `assetDownloadGuzzle` and `assetDownloadCurl` settings from `config/feed-me.php` to download assets with Guzzle instead.');
+
             // redirects are followed manually, so that each redirect target can be validated
             $context = stream_context_create(['http' => ['follow_location' => 0]]);
         }

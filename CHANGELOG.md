@@ -11,6 +11,7 @@
 - Remote assets are no longer decompressed when downloaded.
 - Remote asset downloads that return an empty response are now treated as failed.
 - Deprecated the `assetDownloadCurl` and `assetDownloadGuzzle` config settings.
+- Feed Me now logs a deprecation warning when remote assets are downloaded with `fopen()`.
 - Fixed a bug where a failed asset download could be imported as the asset on subsequent feed runs.
 
 ## 6.17.0 - 2016-10-27
