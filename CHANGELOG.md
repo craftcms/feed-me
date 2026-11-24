@@ -19,7 +19,7 @@
 - Fixed a bug where feed import job descriptions were shown in the language of the user who started the import. ([#1792](https://github.com/craftcms/feed-me/pull/1792))
 - Fixed a [moderate-severity](https://github.com/craftcms/cms/security/policy#severity--remediation) SSRF vulnerability. (GHSA-mcxq-jpmm-57v9)
 
-## 6.17.0 - 2016-10-27
+## 6.17.0 - 2026-10-27
 
 - Added support for importing into Mapbox Address fields. ([#1774](https://github.com/craftcms/feed-me/pull/1774))
 - Added the ability to match SolSpace Calendar Events by custom fields. ([#1772](https://github.com/craftcms/feed-me/pull/1772))
