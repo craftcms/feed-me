@@ -2,10 +2,22 @@
 
 ## Unreleased
 
+> [!WARNING]
+> Remote assets are now downloaded using Guzzle by default.
+> See [Configuration > Configuration options](https://docs.craftcms.com/feed-me/v6/get-started/configuration.html#configuration-options) for more details.
+
+- Remote asset downloads now always use Guzzle’s curl handler, even when a custom handler is configured via `clientOptions` or `config/guzzle.php`. Middleware added to a custom handler stack is still applied.
+- Remote assets are no longer decompressed when downloaded.
+- Remote asset downloads no longer send the `auth`, `cookies`, `cert`, or `ssl_key` client options, or `Authorization` and `Cookie` headers, from `clientOptions` or `config/guzzle.php`, unless the asset is on the same origin as the feed URL.
+- Remote asset downloads that return an empty response are now treated as failed.
 - Added translations for Arabic, Chinese, Croatian, Czech, Danish, Dutch, English (UK), French, French (Canada), German, German (Switzerland), Greek, Hebrew, Hungarian, Icelandic, Indonesian, Italian, Japanese, Korean, Kyrgyz, Norwegian Bokmål, Norwegian Nynorsk, Persian, Polish, Portuguese, Russian, Slovak, Spanish, Swedish, Thai, Turkish, Ukrainian, and Welsh. ([#1792](https://github.com/craftcms/feed-me/pull/1792))
+- Deprecated the `assetDownloadCurl` and `assetDownloadGuzzle` config settings.
+- Feed Me now logs a deprecation warning when remote assets are downloaded with `fopen()`.
+- Fixed a bug where a failed asset download could be imported as the asset on subsequent feed runs.
 - Fixed a bug where element type names, option labels, and some messages were always shown in English. ([#1792](https://github.com/craftcms/feed-me/pull/1792))
 - Fixed a bug where feed names and the plugin name were translated with the `feed-me` category instead of `site`. ([#1792](https://github.com/craftcms/feed-me/pull/1792))
 - Fixed a bug where feed import job descriptions were shown in the language of the user who started the import. ([#1792](https://github.com/craftcms/feed-me/pull/1792))
+- Fixed a [moderate-severity](https://github.com/craftcms/cms/security/policy#severity--remediation) SSRF vulnerability. (GHSA-mcxq-jpmm-57v9)
 
 ## 6.17.0 - 2016-10-27
 
