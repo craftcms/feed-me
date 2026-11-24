@@ -42,6 +42,14 @@ class User extends Element
     public static string $class = UserElement::class;
 
     /**
+     * @inheritdoc
+     */
+    public function getName(): string
+    {
+        return Craft::t('app', 'User');
+    }
+
+    /**
      * @var
      */
     public mixed $status = null;

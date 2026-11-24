@@ -26,14 +26,14 @@
                 because we don't know for which country will the each address in the dataset be
 #}
 {% set addressFields = {
-    'administrativeArea': 'Administrative Area'|t('feed-me'),
-    'locality': 'Locality'|t('feed-me'),
-    'dependentLocality': 'Dependent Locality'|t('feed-me'),
-    'postalCode': 'Postal Code'|t('feed-me'),
-    'sortingCode': 'Sorting Code'|t('feed-me'),
-    'addressLine1': 'Address Line 1'|t('feed-me'),
-    'addressLine2': 'Address Line 2'|t('feed-me'),
-    'addressLine3': 'Address Line 3'|t('feed-me'),
+    'administrativeArea': 'Administrative Area'|t('app'),
+    'locality': 'Locality'|t('app'),
+    'dependentLocality': 'Dependent Locality'|t('app'),
+    'postalCode': 'Postal Code'|t('app'),
+    'sortingCode': 'Sorting Code'|t('app'),
+    'addressLine1': 'Address Line 1'|t('app'),
+    'addressLine2': 'Address Line 2'|t('app'),
+    'addressLine3': 'Address Line 3'|t('app'),
 } %}
 
 {% set path = prefixPath|merge(['nativeFields', nativeField.attribute]) %}

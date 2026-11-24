@@ -1,8 +1,8 @@
 {% extends 'feed-me/_layouts' %}
 
 {% set crumbs = [
-    { label: craft.feedme.getPluginName|t('feed-me'), url: url('feed-me') },
-    { label: feed.name|t('feed-me'), url: url('feed-me/feeds/' ~ feed.id) },
+    { label: craft.feedme.getPluginName, url: url('feed-me') },
+    { label: feed.name|t('site'), url: url('feed-me/feeds/' ~ feed.id) },
 ] %}
 
 {% set title = feed.name %}

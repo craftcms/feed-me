@@ -64,10 +64,10 @@
         type: 'select',
         options: [
             { label: 'Don’t import'|t('feed-me'), value: '' },
-            { label: 'Active', value: 'active' },
-            { label: 'Locked', value: 'locked' },
-            { label: 'Suspended', value: 'suspended' },
-            { label: 'Pending', value: 'pending' },
+            { label: 'Active'|t('app'), value: 'active' },
+            { label: 'Locked'|t('app'), value: 'locked' },
+            { label: 'Suspended'|t('app'), value: 'suspended' },
+            { label: 'Pending'|t('app'), value: 'pending' },
         ],
     },
 }, {
@@ -83,9 +83,9 @@
 
 <table class="feedme-mapping data fullwidth collapsible">
     <thead>
-        <th>{{ 'Field'|t('feed-me') }}</th>
+        <th>{{ 'Field'|t('app') }}</th>
         <th>{{ 'Feed Element'|t('feed-me') }}</th>
-        <th>{{ 'Default Value'|t('feed-me') }}</th>
+        <th>{{ 'Default Value'|t('app') }}</th>
     </thead>
     <tbody>
         {% for field in fields %}
@@ -110,13 +110,13 @@
     },
 }] %}
 
-<h2>{{ 'User Groups'|t('feed-me') }}</h2>
+<h2>{{ 'User Groups'|t('app') }}</h2>
 
 <table class="feedme-mapping data fullwidth collapsible">
     <thead>
-        <th>{{ 'Field'|t('feed-me') }}</th>
+        <th>{{ 'Field'|t('app') }}</th>
         <th>{{ 'Feed Element'|t('feed-me') }}</th>
-        <th>{{ 'Default Value'|t('feed-me') }}</th>
+        <th>{{ 'Default Value'|t('app') }}</th>
     </thead>
     <tbody>
         {% for field in groupFields %}
@@ -129,13 +129,13 @@
 </table>
 
 
-<h2>{{ 'Addresses'|t('feed-me') }}</h2>
+<h2>{{ 'Addresses'|t('app') }}</h2>
 
 <table class="feedme-mapping data fullwidth collapsible">
     <thead>
-        <th>{{ 'Field'|t('feed-me') }}</th>
+        <th>{{ 'Field'|t('app') }}</th>
         <th>{{ 'Feed Element'|t('feed-me') }}</th>
-        <th>{{ 'Default Value'|t('feed-me') }}</th>
+        <th>{{ 'Default Value'|t('app') }}</th>
     </thead>
     <tbody>
         {% set template = 'addresses' %}
@@ -157,13 +157,13 @@
 {% for tab in tabs %}
     <hr>
 
-    <h2>{{ tab.name }} Fields</h2>
+    <h2>{{ '{name} Fields'|t('feed-me', { name: tab.name|t('site') }) }}</h2>
 
     <table class="feedme-mapping data fullwidth collapsible">
         <thead>
-            <th>{{ 'Field'|t('feed-me') }}</th>
+            <th>{{ 'Field'|t('app') }}</th>
             <th>{{ 'Feed Element'|t('feed-me') }}</th>
-            <th>{{ 'Default Value'|t('feed-me') }}</th>
+            <th>{{ 'Default Value'|t('app') }}</th>
         </thead>
         <tbody>
             {% for layoutField in tab.getElements()|filter(e => e is instance of('craft\\fieldlayoutelements\\CustomField')) %}

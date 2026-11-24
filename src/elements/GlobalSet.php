@@ -33,6 +33,14 @@ class GlobalSet extends Element
     public static string $class = GlobalSetElement::class;
 
     /**
+     * @inheritdoc
+     */
+    public function getName(): string
+    {
+        return Craft::t('feed-me', 'Global Set');
+    }
+
+    /**
      * @inheritDoc
      */
     public function getGroupsTemplate(): string

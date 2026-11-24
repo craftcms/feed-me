@@ -41,10 +41,10 @@
         <span>{{ 'Data provided for this user is:'|t('feed-me') }}</span>
 
         {% set matchAttributes = [
-            { value: 'email', label: 'Email'|t('feed-me') },
-            { value: 'id', label: 'ID'|t('feed-me') },
-            { value: 'username', label: 'Username'|t('feed-me') },
-            { value: 'fullName', label: 'Full Name'|t('feed-me') },
+            { value: 'email', label: 'Email'|t('app') },
+            { value: 'id', label: 'ID'|t('app') },
+            { value: 'username', label: 'Username'|t('app') },
+            { value: 'fullName', label: 'Full Name'|t('app') },
         ] %}
 
         {% if field is defined and field is not empty %}

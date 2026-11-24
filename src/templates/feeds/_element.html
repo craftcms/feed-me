@@ -3,9 +3,9 @@
 {% extends 'feed-me/_layouts' %}
 
 {% set crumbs = [
-    { label: craft.feedme.getPluginName|t('feed-me'), url: url('feed-me') },
-    { label: feed.name|t('feed-me'), url: url('feed-me/feeds/' ~ feed.id) },
-    { label: 'Element'|t('feed-me'), url: url('feed-me/feeds/element/' ~ feed.id) },
+    { label: craft.feedme.getPluginName, url: url('feed-me') },
+    { label: feed.name|t('site'), url: url('feed-me/feeds/' ~ feed.id) },
+    { label: 'Element'|t('app'), url: url('feed-me/feeds/element/' ~ feed.id) },
 ] %}
 
 {% set title = feed.name %}
@@ -17,7 +17,7 @@
 {% set buttons %}
     {% if primaryElements.success %}
         <div class="buttons">
-            <input type="button" data-action="feed-me/feeds/save-and-element-feed" class="btn submit" value="{{ 'Save'|t('feed-me') }}">
+            <input type="button" data-action="feed-me/feeds/save-and-element-feed" class="btn submit" value="{{ 'Save'|t('app') }}">
             <input type="button" data-action="feed-me/feeds/save-and-map-feed" class="btn submit" value="{{ 'Save & Continue'|t('feed-me') }}">
         </div>
     {% endif %}
