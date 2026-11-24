@@ -1,6 +1,6 @@
 # Release Notes for Feed Me
 
-## Unreleased
+## 6.18.0 - 2026-11-24
 
 > [!WARNING]
 > Remote assets are now downloaded using Guzzle by default.
