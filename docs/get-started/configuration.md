@@ -41,7 +41,7 @@ return [
 - `pluginName` — Optionally change the name of the plugin.
 - `cache` — For template calls, change the default cache time.
 - `enabledTabs` — Hide tabs in the Feed Me navigation. Pass an array with one or more of: `feeds`, `logs`, and `settings`. _This does not affect permissions, only the tabs’ visibility!_
-- `clientOptions` — An array of Guzzle [client options](https://docs.guzzlephp.org/en/stable/quickstart.html#creating-a-client) to be merged with Craft’s defaults.
+- `clientOptions` — An array of Guzzle [client options](https://docs.guzzlephp.org/en/stable/quickstart.html#creating-a-client) to be merged with Craft’s defaults. When downloading remote assets, the `auth`, `cookies`, `cert`, and `ssl_key` options and any `Authorization` or `Cookie` headers are only sent to assets on the same origin (scheme, host, and port) as the feed URL. Credentials added by custom handler middleware are sent with every asset download.
 - `requestOptions` — Any additional options to be sent with requests when fetching your feed content Guzzle [request options](https://docs.guzzlephp.org/en/stable/request-options.html). See an example below.
 - `compareContent` — Whether to check against existing element content before updating. This can have considerable performance improvements and prevent against needless updating.
 - `skipUpdateFieldHandle` — Feed Me checks the provided field handle on each element that _would_ be updated while processing a feed. If its value is exactly `'1'`, the element is skipped. _This behavior only supports legacy Lightswitch fields in Craft 3.x._ If you need to control which elements in a feed are updated, consider preventing it via the `craft\feedme\services\Process::EVENT_STEP_BEFORE_PARSE_CONTENT` event.

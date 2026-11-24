@@ -22,6 +22,8 @@ use CraftCms\UrlValidator\UrlValidationException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\CurlHandler;
 use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Psr7\Uri;
+use GuzzleHttp\Psr7\UriComparator;
 use GuzzleHttp\RequestOptions;
 use Throwable;
 use yii\base\Exception;
@@ -83,7 +85,7 @@ class AssetHelper
         if ($assetDownloadGuzzle && $curlOptResolve !== null) {
             $fp = fopen($dstName, 'wb');
             $response = null;
-            $client = self::createDownloadClient($feedId);
+            $client = self::createDownloadClient($feedId, $srcName);
             try {
                 $options = [
                     RequestOptions::SINK => $fp,
@@ -610,10 +612,26 @@ class AssetHelper
     /**
      * Creates a Guzzle client for downloading assets, which always sends requests via curl,
      * so that the hostname of every request (including redirects) stays pinned to the validated IPs.
+     *
+     * Credentials from the client config are only sent when the asset is on the same origin as the feed.
      */
-    private static function createDownloadClient(?int $feedId): Client
+    private static function createDownloadClient(?int $feedId, string $url): Client
     {
         $config = Plugin::$plugin->service->createGuzzleClient($feedId)->getConfig();
+
+        // feeds can list assets on any host, so don't send credentials meant for the feed to them
+        $feedUrl = $feedId ? Plugin::$plugin->feeds->getFeedById($feedId)?->feedUrl : null;
+        $feedUrl = $feedUrl ? Craft::getAlias($feedUrl) : null;
+        if (!$feedUrl || UriComparator::isCrossOrigin(new Uri($feedUrl), new Uri($url))) {
+            unset($config['auth'], $config['cookies'], $config['cert'], $config['ssl_key']);
+
+            foreach (array_keys($config['headers'] ?? []) as $name) {
+                if (in_array(strtolower($name), ['authorization', 'cookie'], true)) {
+                    unset($config['headers'][$name]);
+                }
+            }
+        }
+
         $handler = $config['handler'] ?? null;
 
         if ($handler instanceof HandlerStack) {

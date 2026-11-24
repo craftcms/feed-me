@@ -9,6 +9,7 @@
 - Remote assets are now downloaded using Guzzle by default.
 - Remote asset downloads now always use Guzzle’s curl handler, even when a custom handler is configured via `clientOptions` or `config/guzzle.php`. Middleware added to a custom handler stack is still applied.
 - Remote assets are no longer decompressed when downloaded.
+- Remote asset downloads no longer send the `auth`, `cookies`, `cert`, or `ssl_key` client options, or `Authorization` and `Cookie` headers, from `clientOptions` or `config/guzzle.php`, unless the asset is on the same origin as the feed URL.
 - Remote asset downloads that return an empty response are now treated as failed.
 - Deprecated the `assetDownloadCurl` and `assetDownloadGuzzle` config settings.
 - Feed Me now logs a deprecation warning when remote assets are downloaded with `fopen()`.
