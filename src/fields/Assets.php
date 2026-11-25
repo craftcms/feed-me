@@ -116,6 +116,7 @@ class Assets extends Field implements FieldInterface
             }
         }
 
+        $allowedKinds = $this->_getAllowedKinds($settings);
         $foundElements = [];
         $urlsToUpload = [];
         $base64ToUpload = [];
@@ -207,7 +208,7 @@ class Assets extends Field implements FieldInterface
 
                 $criteria['status'] = null;
                 $criteria['folderId'] = $folderIds;
-                $criteria['kind'] = $this->_getAllowedKinds($settings);
+                $criteria['kind'] = $allowedKinds;
                 $criteria['limit'] = $limit;
 
                 if ($match === 'id') {
@@ -222,7 +223,8 @@ class Assets extends Field implements FieldInterface
 
                 Plugin::info('Search for existing asset with query `{i}`', ['i' => Json::encode($criteria)]);
 
-                $ids = $query->ids();
+                // An empty list means the field's selection condition doesn't allow any file kind
+                $ids = $allowedKinds === [] ? [] : $query->ids();
                 $foundElements = array_merge($foundElements, $ids);
                 $urlsToUpload[$key]['foundElementId'] = !empty($ids) ? reset($ids) : null;
 
@@ -305,12 +307,12 @@ class Assets extends Field implements FieldInterface
      * Craft 6 stores them as File Type rules in the field’s selection condition, rather than in `allowedKinds`.
      *
      * @param array|null $settings
-     * @return string[]|null The kinds, or `null` if the field allows any kind
+     * @return string[]|null The kinds, which can be empty if the field allows none, or `null` if it allows any kind
      */
     private function _getAllowedKinds(?array $settings): ?array
     {
         if (is_array($settings) && array_key_exists('allowedKinds', $settings)) {
-            return $settings['allowedKinds'];
+            return $settings['allowedKinds'] ?: null;
         }
 
         $condition = $this->field->getSelectionCondition();
