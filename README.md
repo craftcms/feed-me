@@ -27,6 +27,9 @@ cd /path/to/my-project.test
 # tell Composer to load the plugin
 composer require craftcms/feed-me
 
+# on Craft CMS 6, load the plugin with the Yii 2 adapter instead
+composer require craftcms/feed-me craftcms/yii2-adapter -w
+
 # tell Craft to install the plugin
 ./craft plugin/install feed-me
 ```

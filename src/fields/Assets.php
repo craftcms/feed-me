@@ -207,7 +207,7 @@ class Assets extends Field implements FieldInterface
 
                 $criteria['status'] = null;
                 $criteria['folderId'] = $folderIds;
-                $criteria['kind'] = $settings['allowedKinds'] ?? null;
+                $criteria['kind'] = $this->_getAllowedKinds($settings);
                 $criteria['limit'] = $limit;
 
                 if ($match === 'id') {
@@ -294,5 +294,31 @@ class Assets extends Field implements FieldInterface
         }
 
         return $foundElements;
+    }
+
+    // Private Methods
+    // =========================================================================
+
+    /**
+     * Returns the file kinds the field allows.
+     *
+     * Craft 6 stores them as File Type rules in the field’s selection condition, rather than in `allowedKinds`.
+     *
+     * @param array|null $settings
+     * @return string[]|null The kinds, or `null` if the field allows any kind
+     */
+    private function _getAllowedKinds(?array $settings): ?array
+    {
+        if (is_array($settings) && array_key_exists('allowedKinds', $settings)) {
+            return $settings['allowedKinds'];
+        }
+
+        $rules = $this->field->getSelectionCondition()?->getConditionRules()->findRules(
+            fn($rule) => is_a($rule, 'CraftCms\Cms\Asset\Conditions\FileTypeConditionRule')
+        ) ?? [];
+
+        $kinds = array_values(array_unique(array_merge(...array_map(fn($rule) => $rule->getValues(), $rules))));
+
+        return $kinds ?: null;
     }
 }

@@ -13,6 +13,10 @@ test('field can be unique id', function() {
     expect(FieldHelper::fieldCanBeUniqueId(new PlainText()))->toBeTrue();
     expect(FieldHelper::fieldCanBeUniqueId(new Matrix()))->toBeFalse();
 
+    // So is a custom field type that extends a supported one.
+    expect(FieldHelper::fieldCanBeUniqueId(new class() extends PlainText {
+    }))->toBeTrue();
+
     // A plain attribute array with no 'type' defaults to 'attribute', which is supported.
     expect(FieldHelper::fieldCanBeUniqueId([]))->toBeTrue();
 

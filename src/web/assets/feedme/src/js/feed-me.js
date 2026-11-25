@@ -236,10 +236,23 @@ $(function () {
 
   $('.field-extra-settings .element-group-section select').trigger('change');
 
-  // Selectize inputs
-  $('.feedme-mapping .selectize select').selectize({
-    allowEmptyOption: true,
-  });
+  // Selectize inputs. Craft 5 puts the class on the select's container; Craft 6 puts it on the select itself
+  $('.feedme-mapping .selectize select, .feedme-mapping select.selectize')
+    .each(function () {
+      // Craft 6 wraps the select in <craft-select>, which only shows the select itself, so selectize's control
+      // would be hidden. Swap it for a plain container in the same slot of its <craft-field>.
+      var $craftSelect = $(this).parent('craft-select');
+
+      if ($craftSelect.length) {
+        $('<div/>')
+          .attr('slot', $craftSelect.attr('slot'))
+          .append($(this).removeAttr('slot'))
+          .replaceAll($craftSelect);
+      }
+    })
+    .selectize({
+      allowEmptyOption: true,
+    });
 
   // Help with sub-element field toggle
   $('.subelement-toggle label').on('click', function (e) {

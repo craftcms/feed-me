@@ -38,6 +38,9 @@
     "seld/jsonlint": "^1.7",
     "craftcms/url-validator": "^1.2"
   },
+  "suggest": {
+    "craftcms/yii2-adapter": "Required on Craft CMS 6, where it provides the Craft 5 APIs that Feed Me uses. It can’t be installed on Craft CMS 5."
+  },
   "require-dev": {
     "craftcms/ecs": "dev-main",
     "craftcms/phpstan": "dev-main",
