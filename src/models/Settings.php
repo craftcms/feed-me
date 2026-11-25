@@ -100,14 +100,16 @@ class Settings extends Model
 
     /**
      * @var bool
+     * @deprecated in 6.18.0
      */
     public bool $assetDownloadCurl = false;
 
     /**
      * @var bool
      * @since 5.9.0
+     * @deprecated in 6.18.0
      */
-    public bool $assetDownloadGuzzle = false;
+    public bool $assetDownloadGuzzle = true;
 
     /**
      * Whether the pagination URL should allow path/relative URL values

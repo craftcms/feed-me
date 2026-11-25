@@ -19,6 +19,11 @@ use craft\models\FsListing;
 use craft\models\VolumeFolder;
 use CraftCms\UrlValidator\GuzzleMiddleware;
 use CraftCms\UrlValidator\UrlValidationException;
+use GuzzleHttp\Client;
+use GuzzleHttp\Handler\CurlHandler;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Psr7\Uri;
+use GuzzleHttp\Psr7\UriComparator;
 use GuzzleHttp\RequestOptions;
 use Throwable;
 use yii\base\Exception;
@@ -75,6 +80,41 @@ class AssetHelper
             }
         }
 
+        $assetDownloadGuzzle = Plugin::$plugin->service->getConfig('assetDownloadGuzzle', $feedId);
+        // local files can't be fetched with Guzzle
+        if ($assetDownloadGuzzle && $curlOptResolve !== null) {
+            $fp = fopen($dstName, 'wb');
+            $response = null;
+            $client = self::createDownloadClient($feedId, $srcName);
+            try {
+                $options = [
+                    RequestOptions::SINK => $fp,
+                    // Pin the hostname/port to the IPs we just validated.
+                    'curl' => [CURLOPT_RESOLVE => $curlOptResolve],
+                    // save the response body as-is, so a small compressed response can't expand into a huge file
+                    RequestOptions::HEADERS => ['Accept-Encoding' => 'identity'],
+                    RequestOptions::DECODE_CONTENT => false,
+                ];
+
+                $response = $client->get($srcName, $options);
+            } catch (Throwable $e) {
+            }
+
+            // Guzzle closes the sink when the request fails without a response
+            if (is_resource($fp)) {
+                fclose($fp);
+            }
+
+            if ($response?->getStatusCode() !== 200) {
+                return false;
+            }
+
+            // disallow empty downloads
+            clearstatcache(true, $dstName);
+
+            return (bool)filesize($dstName);
+        }
+
         $assetDownloadCurl = Plugin::$plugin->service->getConfig('assetDownloadCurl', $feedId);
 
         // Provide some legacy support
@@ -128,37 +168,13 @@ class AssetHelper
 
         $fp = fopen($dstName, 'wb');
 
-        $assetDownloadGuzzle = Plugin::$plugin->service->getConfig('assetDownloadGuzzle', $feedId);
-        if ($assetDownloadGuzzle) {
-            $response = null;
-            $client = Plugin::$plugin->service->createGuzzleClient($feedId);
-            try {
-                $options = ['sink' => $fp];
-                if ($curlOptResolve) {
-                    // Pin the hostname/port to the IPs we just validated.
-                    $options['curl'] = [CURLOPT_RESOLVE => $curlOptResolve];
-                }
-
-                // validate and pin every redirect target too
-                if (!GuzzleMiddleware::attach($client, BaseHelper::urlValidator())) {
-                    // the client uses a custom handler, so only the pinned URL can be validated; don't follow redirects
-                    $options[RequestOptions::ALLOW_REDIRECTS] = false;
-                }
-
-                $response = $client->get($srcName, $options);
-            } catch (Throwable $e) {
-            }
-
-            fclose($fp);
-
-            return $response?->getStatusCode() === 200;
-        }
-
         $newChunkSize = $chunkSize * (1024 * 1024);
         $bytesCount = 0;
         $url = $srcName;
         $context = null;
         if ($curlOptResolve !== null) {
+            Craft::$app->getDeprecator()->log('feed-me.assetDownloadFopen', 'Downloading remote assets with `fopen()` is deprecated, and isn’t protected against DNS rebinding. Remove the `assetDownloadGuzzle` and `assetDownloadCurl` settings from `config/feed-me.php` to download assets with Guzzle instead.');
+
             // redirects are followed manually, so that each redirect target can be validated
             $context = stream_context_create(['http' => ['follow_location' => 0]]);
         }
@@ -327,6 +343,11 @@ class AssetHelper
                     }
 
                     if ($downloadFileResult === false) {
+                        // don't leave a partial download behind, or it'll be picked up as a cached image next time
+                        if (file_exists($fetchedImage)) {
+                            @unlink($fetchedImage);
+                        }
+
                         Plugin::error('Failed to create asset from `{i}`', ['i' => $url]);
                     } else {
                         $result = self::createAsset($fetchedImage, $filename, $folderId, $field, $element, $conflict, Hash::get($feed, 'updateSearchIndexes'));
@@ -586,6 +607,47 @@ class AssetHelper
         }
 
         return StringHelper::toLowerCase($extension);
+    }
+
+    /**
+     * Creates a Guzzle client for downloading assets, which always sends requests via curl,
+     * so that the hostname of every request (including redirects) stays pinned to the validated IPs.
+     *
+     * Credentials from the client config are only sent when the asset is on the same origin as the feed.
+     */
+    private static function createDownloadClient(?int $feedId, string $url): Client
+    {
+        $config = Plugin::$plugin->service->createGuzzleClient($feedId)->getConfig();
+
+        // feeds can list assets on any host, so don't send credentials meant for the feed to them
+        $feedUrl = $feedId ? Plugin::$plugin->feeds->getFeedById($feedId)?->feedUrl : null;
+        $feedUrl = $feedUrl ? Craft::getAlias($feedUrl) : null;
+        if (!$feedUrl || UriComparator::isCrossOrigin(new Uri($feedUrl), new Uri($url))) {
+            unset($config['auth'], $config['cookies'], $config['cert'], $config['ssl_key']);
+
+            foreach (array_keys($config['headers'] ?? []) as $name) {
+                if (in_array(strtolower($name), ['authorization', 'cookie'], true)) {
+                    unset($config['headers'][$name]);
+                }
+            }
+        }
+
+        $handler = $config['handler'] ?? null;
+
+        if ($handler instanceof HandlerStack) {
+            // keep any configured middleware, but swap the handler for curl;
+            // clone the stack first, as it might be used elsewhere
+            $handler = clone $handler;
+            $handler->setHandler(new CurlHandler());
+        } else {
+            $handler = HandlerStack::create(new CurlHandler());
+        }
+
+        // validate and pin every redirect target too
+        GuzzleMiddleware::push($handler, BaseHelper::urlValidator());
+        $config['handler'] = $handler;
+
+        return Craft::createObject(Client::class, [$config]);
     }
 
     /**
