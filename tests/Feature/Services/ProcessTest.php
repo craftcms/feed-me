@@ -4,10 +4,14 @@ namespace craft\feedme\tests\Feature\Services;
 
 use Craft;
 use craft\elements\Entry as EntryElement;
+use craft\enums\PropagationMethod;
 use craft\feedme\models\FeedModel;
 use craft\feedme\Plugin;
 use craft\feedme\services\Process;
 use craft\feedme\tests\Helpers\ElementFactory;
+use craft\helpers\StringHelper;
+use craft\models\Section_SiteSettings;
+use craft\models\Site;
 use craft\services\Elements as ElementsService;
 
 beforeEach(function() {
@@ -233,3 +237,77 @@ it('still matches existing elements by id', function() {
     expect($updated->title)->toBe('Updated Title');
     expect(EntryElement::find()->status(null)->sectionId($this->section->id)->count())->toEqual(1);
 });
+
+it('uses the target site default status when adding a matched entry to a new site', function(bool $enabledByDefault) {
+    // https://github.com/craftcms/feed-me/issues/1787 - with the `custom` propagation method, an
+    // entry matched on another site gets added to the feed's target site by checkPropagation().
+    // Its status there should come from the section's default status for that site (same as
+    // setModel() does for new entries), rather than being copied from whichever site the entry
+    // was found on.
+    $sitesService = Craft::$app->getSites();
+    $primarySite = $sitesService->getPrimarySite();
+    $targetSite = new Site([
+        'groupId' => $primarySite->groupId,
+        'name' => 'Target site',
+        'handle' => 'targetSite' . StringHelper::randomString(6),
+        'language' => 'en-US',
+        'hasUrls' => false,
+    ]);
+    $sitesService->saveSite($targetSite);
+    setIsMultiSite(true);
+
+    try {
+        $this->section = ElementFactory::createSection([
+            'propagationMethod' => PropagationMethod::Custom,
+            'siteSettings' => [
+                $primarySite->id => new Section_SiteSettings(['siteId' => $primarySite->id]),
+                $targetSite->id => new Section_SiteSettings(['siteId' => $targetSite->id, 'enabledByDefault' => $enabledByDefault]),
+            ],
+        ]);
+        $this->entryType = $this->section->getEntryTypes()[0];
+
+        // Enabled, and only saved to the primary site
+        $entry = new EntryElement([
+            'sectionId' => $this->section->id,
+            'typeId' => $this->entryType->id,
+            'siteId' => $primarySite->id,
+            'slug' => 'fixed-slug',
+            'title' => 'Original Title',
+        ]);
+        $entry->setEnabledForSite([$primarySite->id => true]);
+        Craft::$app->getElements()->saveElement($entry);
+
+        // The feed doesn't map the status ("Don't import")
+        runFeed(makeProcessFeed(['siteId' => $targetSite->id, 'duplicateHandle' => ['add', 'update']]), [
+            ['slug' => 'fixed-slug', 'title' => 'Original Title'],
+        ]);
+
+        $targetEntry = EntryElement::find()->status(null)->id($entry->id)->siteId($targetSite->id)->one();
+        expect($targetEntry)->not->toBeNull();
+        expect($targetEntry->getEnabledForSite())->toBe($enabledByDefault);
+
+        $primaryEntry = EntryElement::find()->status(null)->id($entry->id)->siteId($primarySite->id)->one();
+        expect($primaryEntry->getEnabledForSite())->toBeTrue();
+    } finally {
+        // Sites are cached in memory and stored in the project config, neither of which gets
+        // rolled back with the DB transaction.
+        $sitesService->deleteSite($targetSite);
+        // The deleted site is only soft-deleted until the transaction is rolled back.
+        setIsMultiSite(false);
+    }
+})->with([
+    'disabled by default' => [false],
+    'enabled by default' => [true],
+]);
+
+/**
+ * Overrides the app's memoized "is multi-site" values, which element queries use to decide whether
+ * to filter by site at all.
+ */
+function setIsMultiSite(bool $value): void
+{
+    (function() use ($value) {
+        $this->_isMultiSite = $value;
+        $this->_isMultiSiteWithTrashed = $value;
+    })->call(Craft::$app);
+}
