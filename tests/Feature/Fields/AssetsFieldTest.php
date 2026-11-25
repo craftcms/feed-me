@@ -86,6 +86,34 @@ it('matches by id across multiple allowed volumes', function() {
     expect($service->parseField())->toBe([$asset->id]);
 });
 
+it('only matches existing assets of the file kinds the field allows', function() {
+    $volume = ElementFactory::createVolume();
+    // a .txt file, so its kind is `text`
+    $asset = ElementFactory::createAsset($volume);
+
+    $parseField = function(array $allowedKinds) use ($volume, $asset) {
+        $field = new AssetsField([
+            'restrictLocation' => false,
+            'defaultUploadLocationSource' => 'volume:' . $volume->uid,
+            'sources' => ['volume:' . $volume->uid],
+            'restrictFiles' => true,
+            'allowedKinds' => $allowedKinds,
+        ]);
+
+        $service = FieldServiceFactory::create(Assets::class, $field);
+        $service->fieldInfo = [
+            'node' => 'image',
+            'options' => ['match' => 'filename'],
+        ];
+        $service->feedData = ['image' => $asset->getFilename()];
+
+        return $service->parseField();
+    };
+
+    expect($parseField(['image']))->toBeNull();
+    expect($parseField(['text']))->toBe([$asset->id]);
+});
+
 it('sets the native alt field via the sub-fields mechanism', function() {
     // https://github.com/craftcms/feed-me/issues/1727 - populating a native asset attribute
     // (like `alt`) through the Assets field's sub-fields mapping used to throw

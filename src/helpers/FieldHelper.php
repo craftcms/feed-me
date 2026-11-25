@@ -29,7 +29,7 @@ class FieldHelper
     /**
      * Returns the class name Feed Me knows a field or field layout element type by.
      *
-     * On Craft 6, `craftcms/yii2-adapter` provides Craft 5 class names as aliases of native classes, or, for
+     * On Craft 6, `craftcms/yii2-adapter` and plugins such as Commerce provide Craft 5 class names as aliases of native classes, or, for
      * field types, as `craft\fields\*` subclasses of the native classes the fields actually use. This resolves
      * both to the same name, so either can be compared with the names Feed Me registers its handlers for.
      *
@@ -191,12 +191,12 @@ class FieldHelper
             }
         } elseif ($type === 'craft\fields\Tags') {
             $source = static::getTagSourcesByField($field);
-        } elseif ($type === 'craft\commerce\fields\Products' || $type === 'craft\commerce\fields\Variants') {
+        } elseif ($type === static::fieldClass('craft\commerce\fields\Products') || $type === static::fieldClass('craft\commerce\fields\Variants')) {
             $source = static::getCommerceProductSourcesByField($field)[0] ?? null;
         }
 
         $fieldLayoutParam = 'fieldLayoutId';
-        if ($type === 'craft\commerce\fields\Variants') {
+        if ($type === static::fieldClass('craft\commerce\fields\Variants')) {
             $fieldLayoutParam = 'variantFieldLayoutId';
         }
 
@@ -302,14 +302,33 @@ class FieldHelper
             return true;
         }
 
-        // Include any field types that extend one of the above
+        // Include any field types that extend one of the above, or the native Craft 6 class it extends
         foreach ($supportedFields as $supportedField) {
-            if (is_a($type, $supportedField, true)) {
+            $nativeField = static::nativeFieldClass($supportedField);
+
+            if (is_a($type, $supportedField, true) || ($nativeField && is_a($type, $nativeField, true))) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    /**
+     * Returns the native Craft 6 field class that a `craft\fields\*` class from `craftcms/yii2-adapter` extends.
+     *
+     * @param string $class
+     * @return string|null The native class, or `null` on Craft 5 or if there isn’t one
+     */
+    private static function nativeFieldClass(string $class): ?string
+    {
+        if (!str_starts_with($class, 'craft\\fields\\')) {
+            return null;
+        }
+
+        $nativeClass = 'CraftCms\\Cms\\Field\\' . substr($class, strlen('craft\\fields\\'));
+
+        return class_exists($nativeClass) && is_subclass_of($class, $nativeClass) ? $nativeClass : null;
     }
 
     /**
