@@ -313,12 +313,38 @@ class Assets extends Field implements FieldInterface
             return $settings['allowedKinds'];
         }
 
-        $rules = $this->field->getSelectionCondition()?->getConditionRules()->findRules(
-            fn($rule) => is_a($rule, 'CraftCms\Cms\Asset\Conditions\FileTypeConditionRule')
-        ) ?? [];
+        $condition = $this->field->getSelectionCondition();
 
-        $kinds = array_values(array_unique(array_merge(...array_map(fn($rule) => $rule->getValues(), $rules))));
+        return $condition ? $this->_getConditionKinds($condition->getConditionRules()) : null;
+    }
 
-        return $kinds ?: null;
+    /**
+     * Returns the file kinds that a selection condition group or rule limits assets to.
+     *
+     * Kinds are intersected across an AND group’s rules and combined across an OR group’s, where any rule that
+     * doesn’t limit kinds leaves the whole OR group unlimited.
+     *
+     * @param object $component
+     * @return string[]|null The kinds, or `null` if it doesn’t limit them
+     */
+    private function _getConditionKinds(object $component): ?array
+    {
+        if (is_a($component, 'CraftCms\Cms\Asset\Conditions\FileTypeConditionRule')) {
+            return $component->getValues() ?: null;
+        }
+
+        if (!is_a($component, 'CraftCms\Cms\Condition\Contracts\ConditionGroupInterface')) {
+            return null;
+        }
+
+        $kinds = array_map(fn($rule) => $this->_getConditionKinds($rule), $component->getRules());
+
+        if (($component->operator->value ?? 'and') === 'or') {
+            return !$kinds || in_array(null, $kinds, true) ? null : array_values(array_unique(array_merge(...$kinds)));
+        }
+
+        $kinds = array_filter($kinds, fn($kind) => $kind !== null);
+
+        return $kinds ? array_values(array_intersect(...$kinds)) : null;
     }
 }
