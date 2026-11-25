@@ -1,6 +1,6 @@
 # Release Notes for Feed Me
 
-## Unreleased
+## 6.19.0 - 2026-11-25
 
 - Added Craft CMS 6 compatibility, via the `craftcms/yii2-adapter` package. ([#1731](https://github.com/craftcms/feed-me/pull/1731))
 - Fixed a bug where saving a feed without an import strategy failed without saying why. ([#1731](https://github.com/craftcms/feed-me/pull/1731))
