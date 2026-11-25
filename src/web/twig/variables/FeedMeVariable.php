@@ -20,6 +20,7 @@ use craft\fields\Email;
 use craft\fields\Entries;
 use craft\fields\Icon;
 use craft\fields\Lightswitch;
+use craft\fields\Link;
 use craft\fields\Money;
 use craft\fields\MultiSelect;
 use craft\fields\Number;
@@ -261,5 +262,16 @@ class FeedMeVariable extends ServiceLocator
         }
 
         return $matchAttributes;
+    }
+
+    /**
+     * Returns a Link field's element link types (e.g. Asset, Entry), with the options for matching their elements.
+     *
+     * @param Link $field
+     * @return array
+     */
+    public function getLinkElementTypes(Link $field): array
+    {
+        return \craft\feedme\fields\Link::getElementLinkTypes($field);
     }
 }
