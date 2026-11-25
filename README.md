@@ -6,7 +6,7 @@ Feed Me is a Craft plugin for super-simple importing of content, either once-off
 
 ## Requirements
 
-This plugin requires Craft CMS 5.0.0-beta.2 or later.
+This plugin requires Craft CMS 5.0.0-beta.2+ or 6.0.0-beta.1+ with the `craftcms/yii2-adapter` package.
 
 ## Installation
 
@@ -27,6 +27,9 @@ cd /path/to/my-project.test
 # tell Composer to load the plugin
 composer require craftcms/feed-me
 
+# on Craft CMS 6, load the plugin with the Yii 2 adapter instead
+composer require craftcms/feed-me craftcms/yii2-adapter -w
+
 # tell Craft to install the plugin
 ./craft plugin/install feed-me
 ```
@@ -45,6 +48,7 @@ return [
     'logging' => false,
 ];
 ```
+use `config/craft/feed-me.php` if you’re using Craft CMS v6
 
 ### config/app.php
 
@@ -77,6 +81,7 @@ return [
     ],
 ];
 ```
+use `config/craft/app.php` if you’re using Craft CMS v6
 
 ## Resources
 

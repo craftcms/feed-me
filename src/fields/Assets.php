@@ -116,6 +116,7 @@ class Assets extends Field implements FieldInterface
             }
         }
 
+        $allowedKinds = $this->_getAllowedKinds($settings);
         $foundElements = [];
         $urlsToUpload = [];
         $base64ToUpload = [];
@@ -207,7 +208,7 @@ class Assets extends Field implements FieldInterface
 
                 $criteria['status'] = null;
                 $criteria['folderId'] = $folderIds;
-                $criteria['kind'] = $settings['allowedKinds'];
+                $criteria['kind'] = $allowedKinds;
                 $criteria['limit'] = $limit;
 
                 if ($match === 'id') {
@@ -222,7 +223,8 @@ class Assets extends Field implements FieldInterface
 
                 Plugin::info('Search for existing asset with query `{i}`', ['i' => Json::encode($criteria)]);
 
-                $ids = $query->ids();
+                // An empty list means the field's selection condition doesn't allow any file kind
+                $ids = $allowedKinds === [] ? [] : $query->ids();
                 $foundElements = array_merge($foundElements, $ids);
                 $urlsToUpload[$key]['foundElementId'] = !empty($ids) ? reset($ids) : null;
 
@@ -294,5 +296,57 @@ class Assets extends Field implements FieldInterface
         }
 
         return $foundElements;
+    }
+
+    // Private Methods
+    // =========================================================================
+
+    /**
+     * Returns the file kinds the field allows.
+     *
+     * Craft 6 stores them as File Type rules in the field’s selection condition, rather than in `allowedKinds`.
+     *
+     * @param array|null $settings
+     * @return string[]|null The kinds, which can be empty if the field allows none, or `null` if it allows any kind
+     */
+    private function _getAllowedKinds(?array $settings): ?array
+    {
+        if (is_array($settings) && array_key_exists('allowedKinds', $settings)) {
+            return $settings['allowedKinds'] ?: null;
+        }
+
+        $condition = $this->field->getSelectionCondition();
+
+        return $condition ? $this->_getConditionKinds($condition->getConditionRules()) : null;
+    }
+
+    /**
+     * Returns the file kinds that a selection condition group or rule limits assets to.
+     *
+     * Kinds are intersected across an AND group’s rules and combined across an OR group’s, where any rule that
+     * doesn’t limit kinds leaves the whole OR group unlimited.
+     *
+     * @param object $component
+     * @return string[]|null The kinds, or `null` if it doesn’t limit them
+     */
+    private function _getConditionKinds(object $component): ?array
+    {
+        if (is_a($component, 'CraftCms\Cms\Asset\Conditions\FileTypeConditionRule')) {
+            return $component->getValues() ?: null;
+        }
+
+        if (!is_a($component, 'CraftCms\Cms\Condition\Contracts\ConditionGroupInterface')) {
+            return null;
+        }
+
+        $kinds = array_map(fn($rule) => $this->_getConditionKinds($rule), $component->getRules());
+
+        if (($component->operator->value ?? 'and') === 'or') {
+            return !$kinds || in_array(null, $kinds, true) ? null : array_values(array_unique(array_merge(...$kinds)));
+        }
+
+        $kinds = array_filter($kinds, fn($kind) => $kind !== null);
+
+        return $kinds ? array_values(array_intersect(...$kinds)) : null;
     }
 }

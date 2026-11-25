@@ -62,7 +62,7 @@ class CalendarEvents extends Field implements FieldInterface
      * @param BaseRelationField|null $field
      * @return array
      */
-    public static function getMatchFields(FeedModel $feed, ?BaseRelationField $field = null): array
+    public static function getMatchFields(FeedModel $feed, $field = null): array
     {
         $calendarsService = Calendar::getInstance()?->calendars;
 

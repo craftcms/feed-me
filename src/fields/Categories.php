@@ -232,7 +232,7 @@ class Categories extends Field implements FieldInterface
      * @param BaseRelationField|null $field
      * @return array
      */
-    public static function getMatchFields(FeedModel $feed, ?BaseRelationField $field = null): array
+    public static function getMatchFields(FeedModel $feed, $field = null): array
     {
         // The field will be null e.g. when importing into a categories group with maintain hierarchy turned on;
         // in that case, there's the option to select a parent;

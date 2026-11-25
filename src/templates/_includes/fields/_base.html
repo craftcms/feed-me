@@ -215,7 +215,8 @@
             {% set elementFieldHandle = elementField['handle'] ?? elementField['attribute'] ?? '' %}
             {% set nativeField = false %}
 
-            {% if elementField is instance of('craft\\base\\Field')  %}
+            {# Craft 6 fields extend CraftCms\Cms\Field\Field #}
+            {% if elementField is instance of('craft\\base\\Field') or elementField is instance of('CraftCms\\Cms\\Field\\Field') %}
                 {% set fieldClass = craft.feedme.fields.getRegisteredField(className(elementField)) %}
                 {% if parentPath is defined %}
                     {% set path = parentPath|merge([ 'fields', elementFieldHandle ]) %}

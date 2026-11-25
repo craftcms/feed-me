@@ -52,6 +52,7 @@ use craft\feedme\fields\Tags;
 use craft\feedme\fields\Time;
 use craft\feedme\fields\TypedLink;
 use craft\feedme\fields\Users;
+use craft\feedme\helpers\FieldHelper;
 use craft\helpers\Component as ComponentHelper;
 use yii\base\InvalidConfigException;
 
@@ -109,7 +110,7 @@ class Fields extends Component
                 continue;
             }
 
-            $handle = $field::$class;
+            $handle = FieldHelper::fieldClass($field::$class);
 
             $this->_fields[$handle] = $field;
         }
@@ -122,7 +123,7 @@ class Fields extends Component
                 continue;
             }
 
-            $handle = $field::$class;
+            $handle = FieldHelper::fieldClass($field::$class);
 
             $this->_nativeFields[$handle] = $field;
         }
@@ -135,7 +136,7 @@ class Fields extends Component
      */
     public function getRegisteredField($handle): mixed
     {
-        return $this->_fields[$handle] ?? $this->createField(DefaultField::class);
+        return $this->_fields[FieldHelper::fieldClass($handle)] ?? $this->createField(DefaultField::class);
     }
 
     /**
@@ -146,7 +147,7 @@ class Fields extends Component
      */
     public function getRegisteredNativeField($handle): mixed
     {
-        return $this->_nativeFields[$handle] ?? $this->createField(DefaultField::class);
+        return $this->_nativeFields[FieldHelper::fieldClass($handle)] ?? $this->createField(DefaultField::class);
     }
 
     /**
@@ -385,7 +386,7 @@ class Fields extends Component
      * @param FieldLayoutElement $layoutElement
      * @return CraftFieldInterface|null
      */
-    public function getFieldFromLayoutElement(FieldLayoutElement $layoutElement): ?CraftFieldInterface
+    public function getFieldFromLayoutElement($layoutElement)
     {
         try {
             $field = $layoutElement->getField();

@@ -215,7 +215,7 @@ class FeedMeVariable extends ServiceLocator
             AltField::class,
         ];
 
-        return in_array($class, $supportedSubFields, true);
+        return in_array(FieldHelper::fieldClass($class), array_map([FieldHelper::class, 'fieldClass'], $supportedSubFields), true);
     }
 
     /**
@@ -236,18 +236,18 @@ class FeedMeVariable extends ServiceLocator
      * @param BaseRelationField|null $field
      * @return array
      */
-    public function getRelationFieldMatchOptions(string $className, FeedModel $feed, ?BaseRelationField $field = null): array
+    public function getRelationFieldMatchOptions(string $className, FeedModel $feed, $field = null): array
     {
         $allowedFields = [];
         $matchAttributes = [];
 
-        $feedMeField = match ($className) {
+        $feedMeField = match (FieldHelper::fieldClass($className)) {
             Categories::class => \craft\feedme\fields\Categories::class,
             Entries::class => \craft\feedme\fields\Entries::class,
             Users::class => \craft\feedme\fields\Users::class,
             // yes, this mapping is intentional because the logic in getMatchFields() is almost the same for products and variants
             /** @phpstan-ignore-next-line */
-            Products::class, Variants::class => \craft\feedme\fields\CommerceProducts::class,
+            FieldHelper::fieldClass(Products::class), FieldHelper::fieldClass(Variants::class) => \craft\feedme\fields\CommerceProducts::class,
             'Solspace\Calendar\FieldTypes\EventFieldType' => \craft\feedme\fields\CalendarEvents::class,
             default => null,
         };

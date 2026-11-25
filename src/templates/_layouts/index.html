@@ -12,7 +12,9 @@
 {% endif %}
 
 {% block content %}
-    {% if block('footerButton') is defined %}
+    {# Craft 6 repeats a full-page form's save controls in its own footer below
+       the content, so this row would only double them up there. #}
+    {% if block('footerButton') is defined and craft.app.version|split('.')|first < 6 %}
         <hr>
 
         <div id="plugin-footer">
