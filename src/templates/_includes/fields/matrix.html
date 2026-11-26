@@ -139,14 +139,7 @@
                                 classes: ['inner-matrix']
                             } %}
 
-                            {% if fieldClass is instance of ('craft\\feedme\\fields\\Matrix') %}
-                                {% include template ignore missing with {
-                                    nestedField: true,
-                                    nameLabel: field.name,
-                                    instructionsHandle: field.handle,
-                                    instructions: 'Importing to a matrix in a matrix isn\'t yet supported.'
-                                } only %}
-                            {% elseif fieldClass is instance of ('craft\\feedme\\fields\\ContentBlock') %}
+                            {% if fieldClass is instance of ('craft\\feedme\\fields\\ContentBlock') %}
                                 {% include template ignore missing with {
                                     nestedField: true,
                                     nameLabel: field.name,
